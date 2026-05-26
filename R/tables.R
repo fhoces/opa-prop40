@@ -76,6 +76,49 @@ build_tab2 <- function(data_sec_agg_r, billionaires_ca_inctax_r, data_sec_top4) 
   tab
 }
 
+build_tab5 <- function(tab5_r) {
+  # Table 5: Scoring the One-Time 5% CA Wealth Tax.
+  # 4 scenarios × 7 metric columns. tab5_r already verified element-wise
+  # against the Excel sheet in Phase 2.
+
+  long_labels <- c(
+    "1. Benchmark: Forbes estimates + 10% avoidance",
+    "2. Adding missing small billionaires (Pareto extrapolation)",
+    "3. Aggressive assumptions for pre/post-2026 leavers",
+    "4. Benchmark with both adding small billionaires and aggressive leavers"
+  )
+  panel <- tab5_r
+  panel$scenario <- long_labels
+
+  tab <- gt::gt(panel) |>
+    gt::tab_header(title = "Table 5. Scoring the One-Time 5% California Wealth Tax") |>
+    gt::cols_label(
+      scenario              = "",
+      n_billionaires        = "# CA billionaires",
+      wealth                = "Wealth ($B)",
+      taxable_wealth        = "Taxable wealth ($B)",
+      avoidance_rate        = "Avoidance rate",
+      wealth_tax_revenue    = "Wealth tax revenue ($B)",
+      extra_ca_inctax_sales = "Extra CA inctax from sales ($B)",
+      annual_ca_inctax_loss = "Annual CA inctax loss ($B)"
+    ) |>
+    gt::fmt_number(columns = c(n_billionaires, wealth, taxable_wealth,
+                                wealth_tax_revenue, extra_ca_inctax_sales,
+                                annual_ca_inctax_loss),
+                   decimals = 1, use_seps = TRUE) |>
+    gt::fmt_percent(columns = avoidance_rate, decimals = 1) |>
+    gt::tab_source_note(source_note = gt::md(paste(
+      "**Notes:** Scenarios assume a one-time 5% wealth tax. Wealth tax revenue =",
+      "taxable_wealth × 5%. Extra CA income tax from sales reflects forced",
+      "asset sales to pay the tax (33% realization × 80% LTCG-taxable × 13.3%",
+      "CA rate). Annual CA inctax loss is the steady-state revenue forgone from",
+      "billionaires leaving California. Source: Phase 2 `tab5_r`."
+    )))
+
+  attr(tab, "panel") <- panel
+  tab
+}
+
 build_tab4 <- function(data_sec_top4) {
   # Table 4: Wealth, Income, and Taxes of the Top 4, 2019-2025.
   # Two columns: "Total 2019-2025" and "Annual average" (= total / 7).

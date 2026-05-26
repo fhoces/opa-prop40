@@ -157,6 +157,33 @@ test_that("build_tab4 renders to non-empty HTML and LaTeX", {
   expect_gt(nchar(tex), 200)
 })
 
+test_that("build_tab5 reproduces Tab5 sheet (uses tab5_r already verified)", {
+  par_r <- compute_pareto_missing(extract_pareto_missing())
+  t5_r  <- compute_tab5(par_r, extract_tab2(), extract_tab3())
+  tab5 <- build_tab5(t5_r)
+  p <- attr(tab5, "panel")
+  xl <- read_sheet("Tab5", range = "B6:H9")
+
+  expect_equal(p$n_billionaires,        xl$A, tolerance = 1e-4)
+  expect_equal(p$wealth,                xl$B, tolerance = 1e-4)
+  expect_equal(p$taxable_wealth,        xl$C, tolerance = 1e-4)
+  expect_equal(p$avoidance_rate,        xl$D, tolerance = 1e-6)
+  expect_equal(p$wealth_tax_revenue,    xl$E, tolerance = 1e-4)
+  expect_equal(p$extra_ca_inctax_sales, xl$F, tolerance = 1e-4)
+  expect_equal(p$annual_ca_inctax_loss, xl$G, tolerance = 1e-4)
+})
+
+test_that("build_tab5 renders to non-empty HTML and LaTeX", {
+  par_r <- compute_pareto_missing(extract_pareto_missing())
+  t5_r  <- compute_tab5(par_r, extract_tab2(), extract_tab3())
+  tab5  <- build_tab5(t5_r)
+  html <- as.character(gt::as_raw_html(tab5))
+  expect_gt(nchar(html), 1000)
+  expect_true(grepl("One-Time 5% California Wealth Tax", html))
+  tex <- as.character(gt::as_latex(tab5))
+  expect_gt(nchar(tex), 200)
+})
+
 test_that("build_tab1 renders to non-empty HTML and LaTeX", {
   agg <- compute_data_sec_agg(extract_data_sec_all())
   bci_x <- extract_billionaires_ca_inctax()

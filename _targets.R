@@ -65,5 +65,9 @@ list(
 
   tar_target(tab4_gt,    build_tab4(data_sec_top4)),
   tar_target(tab4_html,  render_table_html(tab4_gt, "tab4"),  format = "file"),
-  tar_target(tab4_latex, render_table_latex(tab4_gt, "tab4"), format = "file")
+  tar_target(tab4_latex, render_table_latex(tab4_gt, "tab4"), format = "file"),
+
+  tar_target(tab5_gt,    build_tab5(tab5_r)),
+  tar_target(tab5_html,  render_table_html(tab5_gt, "tab5"),  format = "file"),
+  tar_target(tab5_latex, render_table_latex(tab5_gt, "tab5"), format = "file")
 )
