@@ -84,6 +84,35 @@ test_that("build_fig3 renders to a non-empty PNG", {
   expect_gt(file.info(png_path)$size, 5000)
 })
 
+test_that("build_fig4 returns a stacked area chart with 4 tax components", {
+  agg <- compute_data_sec_agg(extract_data_sec_all())
+  bci_x <- extract_billionaires_ca_inctax()
+  ftb <- extract_ftb_b4a()
+  b <- compute_billionaires_ca_inctax(agg, bci_x, ftb)
+  p <- build_fig4(b)
+  expect_s3_class(p, "ggplot")
+  expect_equal(nrow(p$data), 28)   # 4 components × 7 yrs
+  expect_setequal(levels(p$data$tax),
+                  c("CA income tax", "Federal income tax",
+                    "Corporate taxes", "Property + sales taxes"))
+  # 2025 CA inctax/wealth ≈ 0.00202
+  expect_equal(p$data$share[p$data$year == 2025 & p$data$tax == "CA income tax"],
+                0.002019, tolerance = 1e-5)
+})
+
+test_that("build_fig4 renders to a non-empty PNG", {
+  agg <- compute_data_sec_agg(extract_data_sec_all())
+  bci_x <- extract_billionaires_ca_inctax()
+  ftb <- extract_ftb_b4a()
+  b <- compute_billionaires_ca_inctax(agg, bci_x, ftb)
+  p <- build_fig4(b)
+  tmpdir <- tempfile("fig4_"); dir.create(tmpdir)
+  png_path <- file.path(tmpdir, "fig4.png")
+  ggplot2::ggsave(png_path, plot = p, width = 7, height = 5, dpi = 100)
+  expect_true(file.exists(png_path))
+  expect_gt(file.info(png_path)$size, 5000)
+})
+
 test_that("build_fig1 renders to a non-empty PNG file", {
   agg <- compute_data_sec_agg(extract_data_sec_all())
   bci_x <- extract_billionaires_ca_inctax()

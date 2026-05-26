@@ -86,5 +86,9 @@ list(
 
   tar_target(fig3,     build_fig3(shortrunseries_r)),
   tar_target(fig3_png, render_figure_png(fig3, "fig3", width = 11, height = 5), format = "file"),
-  tar_target(fig3_pdf, render_figure_pdf(fig3, "fig3", width = 11, height = 5), format = "file")
+  tar_target(fig3_pdf, render_figure_pdf(fig3, "fig3", width = 11, height = 5), format = "file"),
+
+  tar_target(fig4,     build_fig4(billionaires_ca_inctax_r)),
+  tar_target(fig4_png, render_figure_png(fig4, "fig4"), format = "file"),
+  tar_target(fig4_pdf, render_figure_pdf(fig4, "fig4"), format = "file")
 )

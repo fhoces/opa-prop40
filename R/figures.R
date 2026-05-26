@@ -3,6 +3,53 @@
 # Each builder takes already-validated upstream targets and returns a ggplot.
 # Render to PNG / PDF downstream via R/render.R helpers.
 
+build_fig4 <- function(billionaires_ca_inctax_r) {
+  # Figure 4: Total Taxes Paid by California Billionaires relative to Wealth.
+  # Stacked area chart of 4 tax components (CA inctax, fed inctax, corporate,
+  # property+sales) as % of total wealth, 2019-2025.
+  at <- billionaires_ca_inctax_r$all_taxes
+  yrs <- 2019:2025
+  d <- at[at$year %in% yrs, ]
+
+  long <- tibble::tibble(
+    year = rep(d$year, 4),
+    share = c(d$ca_inctax_per_total_wealth,
+              d$fed_inctax_per_total_wealth,
+              d$corp_per_total_wealth,
+              d$prop_sales_per_total_wealth),
+    tax = factor(rep(c("CA income tax",
+                        "Federal income tax",
+                        "Corporate taxes",
+                        "Property + sales taxes"),
+                       each = nrow(d)),
+                  # Stack from bottom up in this order:
+                  levels = c("CA income tax", "Federal income tax",
+                              "Corporate taxes", "Property + sales taxes"))
+  )
+
+  ggplot2::ggplot(long, ggplot2::aes(x = year, y = share, fill = tax)) +
+    ggplot2::geom_area(alpha = 0.85, color = "white", linewidth = 0.3) +
+    ggplot2::scale_x_continuous(breaks = yrs) +
+    ggplot2::scale_y_continuous(labels = scales::percent_format(accuracy = 0.1)) +
+    ggplot2::scale_fill_manual(values = c(
+      "CA income tax"          = "#1f77b4",
+      "Federal income tax"     = "#2ca02c",
+      "Corporate taxes"        = "#d62728",
+      "Property + sales taxes" = "#ff7f0e"
+    )) +
+    ggplot2::labs(
+      title    = "Figure 4: Total Taxes Paid by California Billionaires (% of wealth)",
+      subtitle = "CA income tax + Federal income tax + Corporate + Property/sales, 2019-2025",
+      x = NULL, y = NULL, fill = NULL
+    ) +
+    ggplot2::theme_minimal(base_size = 12) +
+    ggplot2::theme(
+      legend.position    = "bottom",
+      plot.title         = ggplot2::element_text(face = "bold"),
+      panel.grid.minor   = ggplot2::element_blank()
+    )
+}
+
 build_fig3 <- function(shortrunseries_r) {
   # Figure 3: The California Income Tax Paid by Billionaires.
   # Panel A: $B income tax for all CA billionaires + top 5 (from SEC),
