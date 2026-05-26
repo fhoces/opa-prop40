@@ -339,20 +339,25 @@ compute_billionaires_ca_inctax <- function(data_sec_agg_r,
   ftb_sum <- function(col_letter, row_lo, row_hi, scale = 1) {
     sum(ftb_cols[[col_letter]][row_lo:row_hi], na.rm = TRUE) * scale
   }
-  # FTB year row ranges (year -> start, end). 2022 sits at top of sheet; 2018 bottom.
-  ftb_yr <- list(
-    "2018" = c(242, 300),
-    "2019" = c(183, 241),
-    "2020" = c(124, 182),
-    "2021" = c(64,  123),
-    "2022" = c(4,   63)
+  # FTB row indices per year + per top-bracket position. 2022 sits at top
+  # of sheet; 2018 at bottom. Fields:
+  #   whole_year — (first, last) row of the year's 59-60 AGI brackets
+  #                (use with ftb_sum_year() below).
+  #   top_10m    — single row for the $10M+ bracket (2021 / 2022 only).
+  #   top_5m_9m  — single row for the $5M-$9.999M bracket (2021 / 2022 only).
+  #   top_5m     — single row for the $5M+ aggregate (2018-2020 only;
+  #                later years split this into two rows).
+  ftb_rows <- list(
+    "2018" = list(whole_year = c(242, 300), top_5m  = 300),
+    "2019" = list(whole_year = c(183, 241), top_5m  = 241),
+    "2020" = list(whole_year = c(124, 182), top_5m  = 182),
+    "2021" = list(whole_year = c(64,  123), top_10m = 123, top_5m_9m = 122),
+    "2022" = list(whole_year = c(4,   63),  top_10m = 63,  top_5m_9m = 62)
   )
-  # FTB top-bracket rows per year:
-  #   2021 / 2022: $10m+ is the last row; $5m-9.999m is the row above
-  #   2018-2020:   $5m+ aggregated (only the last row)
-  ftb_10m  <- list("2021" = 123, "2022" = 63)
-  ftb_5m99 <- list("2021" = 122, "2022" = 62)
-  ftb_5m   <- list("2018" = 300, "2019" = 241, "2020" = 182)
+  ftb_sum_year <- function(col, yr, scale = 1) {
+    rng <- ftb_rows[[as.character(yr)]]$whole_year
+    ftb_sum(col, rng[1], rng[2], scale)
+  }
 
   # ---- Memo 1: US top .001% income calibration (rows 58-72) ----------------
   # Calendar-year panel 2018..2022 (cols B..F).
@@ -420,33 +425,22 @@ compute_billionaires_ca_inctax <- function(data_sec_agg_r,
   avg_w_ca    <- total_w_ca / n_ca_b                           # row 9
 
   # Block B: aggregate CA income tax stats
+  ftb_yrs_with_data <- 2018:2022
   # Row 13 (#returns): SUM(FTB col D) by year; 2023+ missing
   n_returns_ca <- c(
-    ftb_sum("D", ftb_yr$`2018`[1], ftb_yr$`2018`[2]),
-    ftb_sum("D", ftb_yr$`2019`[1], ftb_yr$`2019`[2]),
-    ftb_sum("D", ftb_yr$`2020`[1], ftb_yr$`2020`[2]),
-    ftb_sum("D", ftb_yr$`2021`[1], ftb_yr$`2021`[2]),
-    ftb_sum("D", ftb_yr$`2022`[1], ftb_yr$`2022`[2]),
-    NA_real_, NA_real_, NA_real_, NA_real_
+    vapply(ftb_yrs_with_data, function(y) ftb_sum_year("D", y), numeric(1)),
+    rep(NA_real_, 4)
   )
   # Row 14 (CA AGI $B): SUM(H) * 1e-9 for 2018-2022; 2023 literal (G14=1946170/1000)
   ca_agi_b <- c(
-    ftb_sum("H", ftb_yr$`2018`[1], ftb_yr$`2018`[2], 1e-9),
-    ftb_sum("H", ftb_yr$`2019`[1], ftb_yr$`2019`[2], 1e-9),
-    ftb_sum("H", ftb_yr$`2020`[1], ftb_yr$`2020`[2], 1e-9),
-    ftb_sum("H", ftb_yr$`2021`[1], ftb_yr$`2021`[2], 1e-9),
-    ftb_sum("H", ftb_yr$`2022`[1], ftb_yr$`2022`[2], 1e-9),
+    vapply(ftb_yrs_with_data, function(y) ftb_sum_year("H", y, 1e-9), numeric(1)),
     1946170 / 1000,    # G14 published 2023 literal
-    NA_real_, NA_real_, NA_real_
+    rep(NA_real_, 3)
   )
   # Row 15 (CA inctax all residents $B): SUM(K)*1e-9 for 2018-2022; 2023 literal;
   # 2024, 2025 derived from row 18 - row 17
   ca_inctax_resid_b_pre <- c(
-    ftb_sum("K", ftb_yr$`2018`[1], ftb_yr$`2018`[2], 1e-9),
-    ftb_sum("K", ftb_yr$`2019`[1], ftb_yr$`2019`[2], 1e-9),
-    ftb_sum("K", ftb_yr$`2020`[1], ftb_yr$`2020`[2], 1e-9),
-    ftb_sum("K", ftb_yr$`2021`[1], ftb_yr$`2021`[2], 1e-9),
-    ftb_sum("K", ftb_yr$`2022`[1], ftb_yr$`2022`[2], 1e-9),
+    vapply(ftb_yrs_with_data, function(y) ftb_sum_year("K", y, 1e-9), numeric(1)),
     97293 / 1000       # G15 published 2023 literal
   )
   # Row 16 passthrough: literal G16 = 15.219; F16 = G16*F15/G15; E16 = F16
@@ -500,23 +494,23 @@ compute_billionaires_ca_inctax <- function(data_sec_agg_r,
   pc6 <- pan_cols[1:6]   # B..G
   # Row 26 (# returns $10m+): cells E26, F26 from FTB; G26 = literal; others NA
   n_ret_10m <- rep(NA_real_, 6)
-  n_ret_10m[4] <- ftb_D[ftb_10m$`2021`]      # E26 = D123 for 2021
-  n_ret_10m[5] <- ftb_D[ftb_10m$`2022`]      # F26 = D63 for 2022
+  n_ret_10m[4] <- ftb_D[ftb_rows$`2021`$top_10m]      # E26 = D123 for 2021
+  n_ret_10m[5] <- ftb_D[ftb_rows$`2022`$top_10m]      # F26 = D63 for 2022
   n_ret_10m[6] <- cell("G26")                     # G26 literal 4729
   # Row 27 (CA AGI $B $10m+): from FTB col H * 1e-9; G27 literal
   agi_10m_b <- rep(NA_real_, 6)
-  agi_10m_b[4] <- ftb_H[ftb_10m$`2021`] * 1e-9
-  agi_10m_b[5] <- ftb_H[ftb_10m$`2022`] * 1e-9
+  agi_10m_b[4] <- ftb_H[ftb_rows$`2021`$top_10m] * 1e-9
+  agi_10m_b[5] <- ftb_H[ftb_rows$`2022`$top_10m] * 1e-9
   agi_10m_b[6] <- cell("G27")                     # 150.394
   # Row 28 (taxable income $B $10m+): FTB col J for 2021/2022; G28 not present
   taxable_10m_b <- rep(NA_real_, 6)
-  taxable_10m_b[4] <- ftb_J[ftb_10m$`2021`] * 1e-9
-  taxable_10m_b[5] <- ftb_J[ftb_10m$`2022`] * 1e-9
+  taxable_10m_b[4] <- ftb_J[ftb_rows$`2021`$top_10m] * 1e-9
+  taxable_10m_b[5] <- ftb_J[ftb_rows$`2022`$top_10m] * 1e-9
   taxable_10m_b[6] <- cell("G28")                 # literal (no value in sheet, NA)
   # Row 29 (tax $B $10m+): FTB col K for 2021/2022; G29 literal
   tax_10m_b <- rep(NA_real_, 6)
-  tax_10m_b[4] <- ftb_K[ftb_10m$`2021`] * 1e-9
-  tax_10m_b[5] <- ftb_K[ftb_10m$`2022`] * 1e-9
+  tax_10m_b[4] <- ftb_K[ftb_rows$`2021`$top_10m] * 1e-9
+  tax_10m_b[5] <- ftb_K[ftb_rows$`2022`$top_10m] * 1e-9
   tax_10m_b[6] <- cell("G29")                     # literal
   # Row 30 = row 29 / row 28
   tax_rate_10m <- tax_10m_b / taxable_10m_b
@@ -525,35 +519,35 @@ compute_billionaires_ca_inctax <- function(data_sec_agg_r,
 
   # Row 32 (# returns $5m+): formulas tie to FTB sheet differently by year
   n_ret_5m <- numeric(6)
-  n_ret_5m[1] <- ftb_D[ftb_5m$`2018`]                                    # B32 = D300
-  n_ret_5m[2] <- ftb_D[ftb_5m$`2019`]                                    # C32 = D241
-  n_ret_5m[3] <- ftb_D[ftb_5m$`2020`]                                    # D32 = D182
-  n_ret_5m[4] <- ftb_D[ftb_5m99$`2021`] + ftb_D[ftb_10m$`2021`]      # E32 = D122+D123
-  n_ret_5m[5] <- ftb_D[ftb_5m99$`2022`] + ftb_D[ftb_10m$`2022`]      # F32 = D62+D63
+  n_ret_5m[1] <- ftb_D[ftb_rows$`2018`$top_5m]                                    # B32 = D300
+  n_ret_5m[2] <- ftb_D[ftb_rows$`2019`$top_5m]                                    # C32 = D241
+  n_ret_5m[3] <- ftb_D[ftb_rows$`2020`$top_5m]                                    # D32 = D182
+  n_ret_5m[4] <- ftb_D[ftb_rows$`2021`$top_5m_9m] + ftb_D[ftb_rows$`2021`$top_10m]      # E32 = D122+D123
+  n_ret_5m[5] <- ftb_D[ftb_rows$`2022`$top_5m_9m] + ftb_D[ftb_rows$`2022`$top_10m]      # F32 = D62+D63
   n_ret_5m[6] <- 7463 + n_ret_10m[6]                                          # G32 = 7463 + G26
   # Row 33 (CA AGI $B $5m+): same pattern
   agi_5m_b <- numeric(6)
-  agi_5m_b[1] <- ftb_H[ftb_5m$`2018`] * 1e-9
-  agi_5m_b[2] <- ftb_H[ftb_5m$`2019`] * 1e-9
-  agi_5m_b[3] <- ftb_H[ftb_5m$`2020`] * 1e-9
-  agi_5m_b[4] <- agi_10m_b[4] + ftb_H[ftb_5m99$`2021`] * 1e-9            # E33 = E27 + H122*1e-9
-  agi_5m_b[5] <- agi_10m_b[5] + ftb_H[ftb_5m99$`2022`] * 1e-9
+  agi_5m_b[1] <- ftb_H[ftb_rows$`2018`$top_5m] * 1e-9
+  agi_5m_b[2] <- ftb_H[ftb_rows$`2019`$top_5m] * 1e-9
+  agi_5m_b[3] <- ftb_H[ftb_rows$`2020`$top_5m] * 1e-9
+  agi_5m_b[4] <- agi_10m_b[4] + ftb_H[ftb_rows$`2021`$top_5m_9m] * 1e-9            # E33 = E27 + H122*1e-9
+  agi_5m_b[5] <- agi_10m_b[5] + ftb_H[ftb_rows$`2022`$top_5m_9m] * 1e-9
   agi_5m_b[6] <- agi_10m_b[6] + 51.097                                        # G33 = G27 + 51.097
   # Row 34 (taxable income $B $5m+)
   taxable_5m_b <- numeric(6)
-  taxable_5m_b[1] <- ftb_J[ftb_5m$`2018`] * 1e-9
-  taxable_5m_b[2] <- ftb_J[ftb_5m$`2019`] * 1e-9
-  taxable_5m_b[3] <- ftb_J[ftb_5m$`2020`] * 1e-9
-  taxable_5m_b[4] <- taxable_10m_b[4] + ftb_J[ftb_5m99$`2021`] * 1e-9
-  taxable_5m_b[5] <- taxable_10m_b[5] + ftb_J[ftb_5m99$`2022`] * 1e-9
+  taxable_5m_b[1] <- ftb_J[ftb_rows$`2018`$top_5m] * 1e-9
+  taxable_5m_b[2] <- ftb_J[ftb_rows$`2019`$top_5m] * 1e-9
+  taxable_5m_b[3] <- ftb_J[ftb_rows$`2020`$top_5m] * 1e-9
+  taxable_5m_b[4] <- taxable_10m_b[4] + ftb_J[ftb_rows$`2021`$top_5m_9m] * 1e-9
+  taxable_5m_b[5] <- taxable_10m_b[5] + ftb_J[ftb_rows$`2022`$top_5m_9m] * 1e-9
   taxable_5m_b[6] <- taxable_10m_b[6] + 48.479                                # G34 = G28 + 48.479
   # Row 35 (tax $B $5m+)
   tax_5m_b <- numeric(6)
-  tax_5m_b[1] <- ftb_K[ftb_5m$`2018`] * 1e-9
-  tax_5m_b[2] <- ftb_K[ftb_5m$`2019`] * 1e-9
-  tax_5m_b[3] <- ftb_K[ftb_5m$`2020`] * 1e-9
-  tax_5m_b[4] <- tax_10m_b[4] + ftb_K[ftb_5m99$`2021`] * 1e-9
-  tax_5m_b[5] <- tax_10m_b[5] + ftb_K[ftb_5m99$`2022`] * 1e-9
+  tax_5m_b[1] <- ftb_K[ftb_rows$`2018`$top_5m] * 1e-9
+  tax_5m_b[2] <- ftb_K[ftb_rows$`2019`$top_5m] * 1e-9
+  tax_5m_b[3] <- ftb_K[ftb_rows$`2020`$top_5m] * 1e-9
+  tax_5m_b[4] <- tax_10m_b[4] + ftb_K[ftb_rows$`2021`$top_5m_9m] * 1e-9
+  tax_5m_b[5] <- tax_10m_b[5] + ftb_K[ftb_rows$`2022`$top_5m_9m] * 1e-9
   tax_5m_b[6] <- 4.347 + tax_10m_b[6]                                         # G35 = 4.347 + G29
   # Row 36, 37
   tax_rate_5m  <- tax_5m_b / taxable_5m_b
