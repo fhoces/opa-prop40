@@ -267,3 +267,52 @@ test_that("compute_shortrunseries matches Excel formula cells", {
   expect_equal(growth$total_growth_us_only,    num_col("C", 16:21), tolerance = 1e-3)
   expect_equal(growth$annualized_us_only,      num_col("M", 16:21), tolerance = 1e-4)
 })
+
+test_that("compute_top4taxes matches Excel formula cells", {
+  top4 <- extract_data_sec_top4()
+  out <- compute_top4taxes(top4)
+  t4x <- read_sheet("top4taxes")
+  num_col <- function(L, rows) {
+    unname(vapply(rows, function(r) suppressWarnings(as.numeric(t4x[[L]][r])), numeric(1)))
+  }
+  panel_rows <- 5:26  # years 2004..2025
+
+  panel <- out$panel
+  expect_equal(panel$total_tax_per_income,    num_col("C", panel_rows), tolerance = 1e-4)
+  expect_equal(panel$ca_inctax_per_income,    num_col("D", panel_rows), tolerance = 1e-4)
+  expect_equal(panel$fed_inctax_per_income,   num_col("E", panel_rows), tolerance = 1e-4)
+  expect_equal(panel$sales_tax_per_income,    num_col("F", panel_rows), tolerance = 1e-5)
+  expect_equal(panel$corp_tax_per_income,     num_col("G", panel_rows), tolerance = 1e-4)
+  expect_equal(panel$property_tax_per_income, num_col("H", panel_rows), tolerance = 1e-5)
+  expect_equal(panel$check_income_decomp,     num_col("I", panel_rows), tolerance = 1e-6)
+  expect_equal(panel$total_tax_per_wealth,    num_col("J", panel_rows), tolerance = 1e-4)
+  expect_equal(panel$ca_inctax_per_wealth,    num_col("K", panel_rows), tolerance = 1e-5)
+  expect_equal(panel$fed_inctax_per_wealth,   num_col("L", panel_rows), tolerance = 1e-5)
+  expect_equal(panel$sales_tax_per_wealth,    num_col("M", panel_rows), tolerance = 1e-6)
+  expect_equal(panel$corp_tax_per_wealth,     num_col("N", panel_rows), tolerance = 1e-4)
+  expect_equal(panel$property_tax_per_wealth, num_col("O", panel_rows), tolerance = 1e-6)
+  expect_equal(panel$check_wealth_decomp,     num_col("P", panel_rows), tolerance = 1e-7)
+  expect_equal(panel$income_per_wealth,       num_col("R", panel_rows), tolerance = 1e-4)
+  expect_equal(panel$avg_wealth_m,            num_col("S", panel_rows), tolerance = 1e-2)
+  expect_equal(panel$economic_income_m,       num_col("T", panel_rows), tolerance = 1e-3)
+
+  # Sub-period averages (rows 27, 28)
+  avg <- out$averages
+  expect_equal(avg$total_tax_per_income,    num_col("C", 27:28), tolerance = 1e-5)
+  expect_equal(avg$ca_inctax_per_income,    num_col("D", 27:28), tolerance = 1e-5)
+  expect_equal(avg$fed_inctax_per_income,   num_col("E", 27:28), tolerance = 1e-5)
+  expect_equal(avg$sales_tax_per_income,    num_col("F", 27:28), tolerance = 1e-6)
+  expect_equal(avg$corp_tax_per_income,     num_col("G", 27:28), tolerance = 1e-5)
+  expect_equal(avg$property_tax_per_income, num_col("H", 27:28), tolerance = 1e-6)
+  expect_equal(avg$check_income_decomp,     num_col("I", 27:28), tolerance = 1e-7)
+  expect_equal(avg$total_tax_per_wealth,    num_col("J", 27:28), tolerance = 1e-5)
+  expect_equal(avg$ca_inctax_per_wealth,    num_col("K", 27:28), tolerance = 1e-6)
+  expect_equal(avg$fed_inctax_per_wealth,   num_col("L", 27:28), tolerance = 1e-6)
+  expect_equal(avg$sales_tax_per_wealth,    num_col("M", 27:28), tolerance = 1e-7)
+  expect_equal(avg$corp_tax_per_wealth,     num_col("N", 27:28), tolerance = 1e-5)
+  expect_equal(avg$property_tax_per_wealth, num_col("O", 27:28), tolerance = 1e-6)
+  expect_equal(avg$check_wealth_decomp,     num_col("P", 27:28), tolerance = 1e-7)
+  expect_equal(avg$income_per_wealth,       num_col("R", 27:28), tolerance = 1e-5)
+  expect_equal(avg$avg_wealth_m,            num_col("S", 27:28), tolerance = 1)
+  expect_equal(avg$economic_income_m,       num_col("T", 27:28), tolerance = 1e-1)
+})

@@ -47,5 +47,6 @@ list(
              compute_shortrunseries(data_sec_agg_r,
                                     data_sec_top4,
                                     billionaires_ca_inctax_r,
-                                    shortrunseries))
+                                    shortrunseries)),
+  tar_target(top4taxes_r,            compute_top4taxes(data_sec_top4))
 )

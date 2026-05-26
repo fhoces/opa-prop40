@@ -1107,3 +1107,132 @@ compute_shortrunseries <- function(data_sec_agg_r,
     growth       = growth
   )
 }
+
+compute_top4taxes <- function(data_sec_top4) {
+  # Re-derives the 429 formula cells of top4taxes: per-year tax rates of the
+  # CA top-4 billionaires, 2004..2025, plus 2004-2016 / 2017-2025 averages.
+  # The "top 4" composition shifts in three phases (see comment on `agg`).
+
+  d <- data_sec_top4
+  pick <- function(id, yr, col) {
+    row <- d[d$forbes_id == id & d$year == yr, ]
+    if (nrow(row) == 1L) row[[col]] else NA_real_
+  }
+  # Aggregate the 8 metric columns for the dynamic "top 4" composition.
+  metric_cols <- c("ca_income_tax", "fed_income_tax", "sales_tax",
+                   "w_txt", "w_tax_ppent", "total_tax", "economic_income",
+                   "public_worth_avg")
+  agg <- function(yr) {
+    total <- vapply(metric_cols, pick, numeric(1),
+                    id = "Total (excluding Ellison)", yr = yr)
+    if (yr <= 2015) {
+      ell <- vapply(metric_cols, pick, numeric(1), id = "larry-ellison", yr = yr)
+      total + ell
+    } else if (yr <= 2020) {
+      ell <- vapply(metric_cols, pick, numeric(1), id = "larry-ellison", yr = yr)
+      hua <- vapply(metric_cols, pick, numeric(1), id = "jensen-huang",  yr = yr)
+      total + ell - hua
+    } else {
+      total
+    }
+  }
+
+  yrs <- 2004:2025
+  mat <- vapply(yrs, agg, numeric(length(metric_cols)))
+  rownames(mat) <- metric_cols
+  # Columns of `mat` are years; rows are metrics.
+  ca_tax  <- mat["ca_income_tax", ]
+  fed_tax <- mat["fed_income_tax", ]
+  sales_t <- mat["sales_tax", ]
+  corp_t  <- mat["w_txt", ]
+  prop_t  <- mat["w_tax_ppent", ]
+  total_t <- mat["total_tax", ]
+  econ_i  <- mat["economic_income", ]      # T
+  wealth  <- mat["public_worth_avg", ]     # S
+
+  # Per-income ratios (cols C..H, /T)
+  C_total_per_inc  <- total_t / econ_i
+  D_ca_per_inc     <- ca_tax  / econ_i
+  E_fed_per_inc    <- fed_tax / econ_i
+  F_sales_per_inc  <- sales_t / econ_i
+  G_corp_per_inc   <- corp_t  / econ_i
+  H_prop_per_inc   <- prop_t  / econ_i
+  I_check_inc      <- C_total_per_inc -
+                       (D_ca_per_inc + E_fed_per_inc + F_sales_per_inc +
+                        G_corp_per_inc + H_prop_per_inc)
+
+  # Per-wealth ratios (cols J..O, /S)
+  J_total_per_w  <- total_t / wealth
+  K_ca_per_w     <- ca_tax  / wealth
+  L_fed_per_w    <- fed_tax / wealth
+  M_sales_per_w  <- sales_t / wealth
+  N_corp_per_w   <- corp_t  / wealth
+  O_prop_per_w   <- prop_t  / wealth
+  P_check_w      <- J_total_per_w -
+                     (K_ca_per_w + L_fed_per_w + M_sales_per_w +
+                      N_corp_per_w + O_prop_per_w)
+
+  R_inc_per_w    <- econ_i / wealth
+
+  panel <- tibble::tibble(
+    year = yrs,
+    total_tax_per_income     = C_total_per_inc,
+    ca_inctax_per_income     = D_ca_per_inc,
+    fed_inctax_per_income    = E_fed_per_inc,
+    sales_tax_per_income     = F_sales_per_inc,
+    corp_tax_per_income      = G_corp_per_inc,
+    property_tax_per_income  = H_prop_per_inc,
+    check_income_decomp      = I_check_inc,
+    total_tax_per_wealth     = J_total_per_w,
+    ca_inctax_per_wealth     = K_ca_per_w,
+    fed_inctax_per_wealth    = L_fed_per_w,
+    sales_tax_per_wealth     = M_sales_per_w,
+    corp_tax_per_wealth      = N_corp_per_w,
+    property_tax_per_wealth  = O_prop_per_w,
+    check_wealth_decomp      = P_check_w,
+    income_per_wealth        = R_inc_per_w,
+    avg_wealth_m             = wealth,
+    economic_income_m        = econ_i
+  )
+
+  # Sub-period averages (rows 27, 28 of the sheet)
+  panel_cols <- setdiff(names(panel), "year")
+  avg_2004_2016 <- vapply(panel_cols,
+                          \(col) mean(panel[[col]][panel$year %in% 2004:2016]),
+                          numeric(1))
+  avg_2017_2025 <- vapply(panel_cols,
+                          \(col) mean(panel[[col]][panel$year %in% 2017:2025]),
+                          numeric(1))
+  # Excel re-derives the check cells in the avg row as J27-SUM(K27:O27),
+  # not as the mean of the per-year checks; match that.
+  avg_2004_2016["check_income_decomp"] <-
+    avg_2004_2016["total_tax_per_income"] -
+      sum(avg_2004_2016[c("ca_inctax_per_income", "fed_inctax_per_income",
+                          "sales_tax_per_income", "corp_tax_per_income",
+                          "property_tax_per_income")])
+  avg_2004_2016["check_wealth_decomp"] <-
+    avg_2004_2016["total_tax_per_wealth"] -
+      sum(avg_2004_2016[c("ca_inctax_per_wealth", "fed_inctax_per_wealth",
+                          "sales_tax_per_wealth", "corp_tax_per_wealth",
+                          "property_tax_per_wealth")])
+  avg_2017_2025["check_income_decomp"] <-
+    avg_2017_2025["total_tax_per_income"] -
+      sum(avg_2017_2025[c("ca_inctax_per_income", "fed_inctax_per_income",
+                          "sales_tax_per_income", "corp_tax_per_income",
+                          "property_tax_per_income")])
+  avg_2017_2025["check_wealth_decomp"] <-
+    avg_2017_2025["total_tax_per_wealth"] -
+      sum(avg_2017_2025[c("ca_inctax_per_wealth", "fed_inctax_per_wealth",
+                          "sales_tax_per_wealth", "corp_tax_per_wealth",
+                          "property_tax_per_wealth")])
+
+  averages <- tibble::tibble(
+    period = c("2004-2016", "2017-2025"),
+    !!!setNames(
+      lapply(panel_cols, \(col) c(avg_2004_2016[[col]], avg_2017_2025[[col]])),
+      panel_cols
+    )
+  )
+
+  list(panel = panel, averages = averages)
+}
