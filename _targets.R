@@ -122,5 +122,22 @@ list(
 
   tar_target(fig_a4,     build_fig_a4(pareto_missing_r)),
   tar_target(fig_a4_png, render_figure_png(fig_a4, "fig_a4", width = 11, height = 5), format = "file"),
-  tar_target(fig_a4_pdf, render_figure_pdf(fig_a4, "fig_a4", width = 11, height = 5), format = "file")
+  tar_target(fig_a4_pdf, render_figure_pdf(fig_a4, "fig_a4", width = 11, height = 5), format = "file"),
+
+  # Phase 4 - Quarto report. The render targets list every gt/figure object as
+  # an explicit dependency so the report re-renders when any artifact changes.
+  # Requires Quarto CLI on PATH (https://quarto.org/docs/get-started/).
+  tar_target(report_qmd, "report.qmd", format = "file"),
+  tar_target(report_html,
+             render_report(report_qmd, "html",
+                            tab1_gt, tab2_gt, tab3_gt, tab4_gt, tab5_gt, tab_a1_gt,
+                            fig1, fig2, fig3, fig4, fig5, fig6, fig7, fig8,
+                            fig_a1, fig_a2, fig_a3, fig_a4),
+             format = "file"),
+  tar_target(report_pdf,
+             render_report(report_qmd, "pdf",
+                            tab1_gt, tab2_gt, tab3_gt, tab4_gt, tab5_gt, tab_a1_gt,
+                            fig1, fig2, fig3, fig4, fig5, fig6, fig7, fig8,
+                            fig_a1, fig_a2, fig_a3, fig_a4),
+             format = "file")
 )

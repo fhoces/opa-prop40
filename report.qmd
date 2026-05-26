@@ -1,0 +1,239 @@
+---
+title: "California Billionaires: Wealth, Taxes, and Wealth Tax Revenue Estimates"
+subtitle: "R replication of Boll, Saez, and Zucman (2026) — NBER WP 35218"
+author: "Fernando Hoces de la Guardia"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: true
+    embed-resources: true
+  pdf:
+    toc: true
+    number-sections: true
+    documentclass: article
+    fontsize: 11pt
+    geometry: margin=1in
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r setup}
+library(targets)
+library(gt)
+library(ggplot2)
+```
+
+## Overview
+
+This document is a section-by-section R replication of *California Billionaires:
+Wealth, Taxes, and Wealth Tax Revenue Estimates* by Jasper Boll, Emmanuel Saez,
+and Gabriel Zucman (NBER Working Paper No. 35218, May 2026). Every table and
+figure embedded below is built from the project's `{targets}` pipeline; the
+upstream targets re-derive each Excel cell of the BSZ supplementary workbook in
+R and verify element-wise against the cached values (see `Phase 2` in
+`memory/project_state.md`).
+
+The text from the original paper is shown in **blockquotes**; section commentary
+outside the blockquotes is the replicator's own.
+
+### Abstract (verbatim from BSZ 2026)
+
+> This paper documents the wealth of California's billionaires and the taxes
+> they pay. California billionaires' wealth exceeds \$2 trillion today, the
+> equivalent of 50% of California's GDP. It has grown 144% from 2023 to 2025,
+> fueled by the AI boom. Over the longer run, the real wealth of California's
+> billionaire class — the 0.0002% richest households — has been multiplied by
+> 30 from 1982 to 2025, while average real family income in California has
+> about doubled. California billionaires pay about 0.2% of their wealth in
+> California income tax (\$3.2 billion/year), representing 2.4% of total
+> California income tax revenue on average over 2023-2025. Using Securities
+> and Exchange Commission data from Alphabet, Meta, Oracle, and Nvidia since
+> 2004, we estimate the trajectory of wealth, income, and taxes paid by the
+> top 4 California billionaires — Page, Brin, Zuckerberg, Ellison (through
+> 2020), and Huang (since 2021) — focusing on their business wealth. This
+> group alone holds nearly \$1 trillion in business wealth, almost half of
+> total California billionaire wealth. For this group, wealth growth (+322%
+> over 2023-2025) and low taxation (0.04% of wealth in annual California
+> income tax) are more pronounced. The proposed one-off California billionaire
+> tax of 5%, payable over 5 years, is both small relative to California
+> billionaires' wealth gains and large relative to the taxes they currently
+> pay. We estimate that it could raise about \$100 billion, with comparatively
+> minor impacts on income tax revenue. Using empirical estimates of mobility
+> responses to wealth taxation, we find that an annual wealth tax on
+> California billionaires could raise substantial additional revenue even
+> after accounting for income tax losses due to mobility.
+
+# 1. California Billionaires Wealth Growth
+
+This section documents the level and growth of California billionaire wealth,
+both recent (2019-2025, where SEC Form 4 filings give per-individual detail)
+and long-run (1982-2025, where Forbes 400 lists give the top .0002%).
+
+## 1.1 Recent and long-term wealth growth
+
+Table 1 (Panel A) shows nominal wealth for the four most recent years and the
+cumulative growth from 2023 to 2025. Panel B compares 1982 vs. 2025 in real
+2025 dollars for the top .0002% wealthiest California families.
+
+```{r tab1}
+tar_read(tab1_gt)
+```
+
+Figure 1 visualizes the same growth episode for both all California
+billionaires and the top 4 (Page, Brin, Zuckerberg, Huang), with dashed
+segments illustrating the impact of a hypothetical 5% wealth tax on 2025
+year-end wealth.
+
+```{r fig1, fig.width=7, fig.height=5}
+tar_read(fig1)
+```
+
+Figure 2 places this in the long run. Panel A juxtaposes the real wealth of
+the top .0002% California families against California GDP per family
+(1982-2025, both in 2025 dollars). Panel B expresses the top .0002% wealth
+as a share of GDP for both the US (top 400 families) and California (top 45
+families).
+
+```{r fig2, fig.width=11, fig.height=5}
+tar_read(fig2)
+```
+
+# 2. Taxes paid by California Billionaires
+
+Section 2 estimates the California income tax paid by California billionaires
+each year from 2019 through 2025. Two complementary approaches are used: a
+top-down extrapolation from California Franchise Tax Board (FTB) tabulated
+statistics for high-AGI brackets, and a bottom-up calculation from SEC Form 4
+filings of the top-4 holders' realized capital gains, dividends, and exercised
+stock options.
+
+## 2.1 Headline estimates for all California billionaires
+
+```{r tab2}
+tar_read(tab2_gt)
+```
+
+```{r fig3, fig.width=11, fig.height=5}
+tar_read(fig3)
+```
+
+## 2.2 Per-billionaire detail (Top 4)
+
+```{r tab3}
+tar_read(tab3_gt)
+```
+
+```{r tab4}
+tar_read(tab4_gt)
+```
+
+## 2.3 Total tax burden relative to wealth
+
+Figure 4 stacks the four tax components (California income tax, federal income
+tax, corporate taxes, property + sales taxes) as a fraction of total wealth
+for all California billionaires, 2019-2025.
+
+```{r fig4, fig.width=7, fig.height=5}
+tar_read(fig4)
+```
+
+Figure 5 compares the cumulative size of three income/wealth concepts for the
+Top 4 (Fiscal Income, Economic Income, Wealth Gain) and decomposes each into
+net-of-taxes plus tax components.
+
+```{r fig5, fig.width=7, fig.height=5}
+tar_read(fig5)
+```
+
+Figure 6 traces the Top 4's effective tax rate on wealth and on economic
+income across the 2004-2025 panel, and Figure 7 places those rates next to
+the US-wide and California-wide averages from the Distributional National
+Accounts (Saez and Zucman).
+
+```{r fig6, fig.width=11, fig.height=5}
+tar_read(fig6)
+```
+
+```{r fig7, fig.width=11, fig.height=5}
+tar_read(fig7)
+```
+
+# 3. The Economics of Taxing California Billionaires' Wealth
+
+Section 3 scores two policy options: a one-time 5% wealth tax payable over
+five years, and a permanent annual wealth tax.
+
+## 3.1 One-time wealth tax
+
+Table 5 reports four scenarios for the one-time tax. The benchmark uses the
+Forbes 4/15/2026 billionaire list and a 10% avoidance rate. Scenarios 2-4
+add Pareto-extrapolated missing small billionaires and an aggressive
+pre/post-2026-leaver assumption.
+
+```{r tab5}
+tar_read(tab5_gt)
+```
+
+## 3.2 Permanent Billionaire Wealth Tax
+
+Figure 8 plots the Laffer curve for a permanent annual California wealth tax
+under three behavioral scenarios: mechanical (no response), short-run
+(mobility semi-elasticity *e* = 10), and long-run (mobility plus
+deconcentration elasticity *d* = 15).
+
+```{r fig8, fig.width=7, fig.height=5}
+tar_read(fig8)
+```
+
+# Appendix
+
+## A.1 US wealth growth comparison
+
+Table A1 mirrors Table 1 for the US rather than California.
+
+```{r tab_a1}
+tar_read(tab_a1_gt)
+```
+
+## A.2 Industry composition
+
+```{r fig_a1, fig.width=8, fig.height=6}
+tar_read(fig_a1)
+```
+
+## A.3 Robustness: alternative method for CA income tax
+
+```{r fig_a2, fig.width=7, fig.height=5}
+tar_read(fig_a2)
+```
+
+## A.4 Taxes on public-stock wealth
+
+```{r fig_a3, fig.width=11, fig.height=5}
+tar_read(fig_a3)
+```
+
+## A.5 Pareto extrapolation for missing billionaires
+
+```{r fig_a4, fig.width=11, fig.height=5}
+tar_read(fig_a4)
+```
+
+# Reproducibility
+
+This report is built from the `{targets}` pipeline rooted at
+`~/Desktop/sandbox/CAWT-BSZ`. All upstream inputs come from
+`original-materials/BSZ_MainTablesFigures.xlsx`. To re-render:
+
+```r
+targets::tar_make()
+quarto::quarto_render("report.qmd")
+```
+
+The 473-expectation `testthat` suite (`Rscript tests/testthat.R`) verifies
+every Phase-2 R re-derivation against the Excel cached values within
+documented tolerances.
