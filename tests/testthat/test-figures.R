@@ -24,18 +24,20 @@ test_that("build_fig2 returns a patchwork object spanning 1982-2025", {
   lrs <- extract_longrunseries()
   p <- build_fig2(lrs)
   expect_s3_class(p, "patchwork")
-  # First subplot's data: Panel A (44 rows: 1982-2025)
+  # Panel A: long format, 2 series × 44 years = 88 rows
   pa <- p[[1]]
   expect_s3_class(pa, "ggplot")
-  expect_equal(nrow(pa$data), 44)
+  expect_equal(nrow(pa$data), 88)
   expect_equal(range(pa$data$year), c(1982, 2025))
-  # Panel B should have 2 series x 44 yrs = 88 rows
+  # Panel B: 2 series x 44 yrs = 88 rows
   pb <- p[[2]]
   expect_equal(nrow(pb$data), 88)
   expect_setequal(levels(pb$data$region),
                   c("US (top 400)", "California (top 45)"))
-  # Sanity checks on values: AZ 2025 ≈ 28.37, AW 2025 ≈ 0.298
-  expect_equal(pa$data$wealth[pa$data$year == 2025], 28.365, tolerance = 1e-2)
+  # 2025 wealth (AZ) ≈ 28.37
+  expect_equal(pa$data$value[pa$data$year == 2025 &
+                              pa$data$series == "CA top .0002% wealth ($B, 2025 $)"],
+                28.365, tolerance = 1e-2)
   expect_equal(pb$data$share[pb$data$year == 2025 & pb$data$region == "California (top 45)"],
                 0.2979, tolerance = 1e-3)
 })

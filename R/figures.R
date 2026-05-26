@@ -24,10 +24,10 @@ build_fig_a4 <- function(pareto_missing_r) {
                              each = n),
                         levels = c("Density (Forbes)", "Density (Pareto-projected)"))
   )
-  colors_a <- c("Pareto b (Forbes data)" = "#1f77b4",
-                "Pareto b (projected)"  = "#d62728")
-  colors_b <- c("Density (Forbes)"            = "#1f77b4",
-                "Density (Pareto-projected)" = "#d62728")
+  colors_a <- c("Pareto b (Forbes data)" = "#d62728",
+                "Pareto b (projected)"  = "#1f77b4")
+  colors_b <- c("Density (Forbes)"            = "#d62728",
+                "Density (Pareto-projected)" = "#1f77b4")
 
   pa <- ggplot2::ggplot(panel_a,
                          ggplot2::aes(x = threshold, y = pareto_b, color = series,
@@ -145,7 +145,7 @@ build_fig_a2 <- function(shortrunseries_r) {
     ggplot2::scale_y_continuous(labels = scales::percent_format(accuracy = 0.1),
                                  limits = c(0, NA)) +
     ggplot2::scale_color_manual(values = c(
-      "All CA billionaires" = "#1f77b4", "Top 5 (SEC filings)" = "#d62728"
+      "All CA billionaires" = "#d62728", "Top 5 (SEC filings)" = "#1f77b4"
     )) +
     ggplot2::labs(
       title    = "Appendix Figure A2: CA Income Tax Paid by Billionaires",
@@ -284,9 +284,9 @@ build_fig7 <- function(top4taxes_r, data_dina) {
                      levels = c("Top 4 (CA billionaires)", "CA average"))
   )
 
-  colors <- c("Top 4 (CA billionaires)" = "#d62728",
-              "US average"              = "#1f77b4",
-              "CA average"              = "#1f77b4")
+  colors <- c("Top 4 (CA billionaires)" = "#1f77b4",
+              "US average"              = "#d62728",
+              "CA average"              = "#d62728")
 
   pa <- ggplot2::ggplot(panel_a,
                          ggplot2::aes(x = year, y = value, color = series)) +
@@ -516,7 +516,7 @@ build_fig3 <- function(shortrunseries_r) {
                      levels = c("All CA billionaires", "Top 5 (SEC filings)"))
   )
 
-  colors <- c("All CA billionaires" = "#1f77b4", "Top 5 (SEC filings)" = "#d62728")
+  colors <- c("All CA billionaires" = "#d62728", "Top 5 (SEC filings)" = "#1f77b4")
 
   panel_a <- ggplot2::ggplot(panel_a_data,
                               ggplot2::aes(x = year, y = value, color = series,
@@ -575,32 +575,32 @@ build_fig2 <- function(longrunseries) {
   us_share   <- num("AV")   # US top 400 wealth / GDP
   ca_share   <- num("AW")   # CA top 45  wealth / GDP
 
-  # Panel A: dual-axis. Scale GDP-per-family to wealth-axis range so both
-  # fit comfortably. wealth ranges ~0.9..28.4; gdp_per_fam ~1.0..1.9.
-  # Use a fixed scaling factor: gdp shown as wealth * (gdp_max / wealth_max).
-  wealth_max <- max(wealth_b);  gdp_max <- max(gdp_per_fam)
-  scale_factor <- wealth_max / gdp_max     # multiply gdp by this to plot
+  # Panel A: single y-axis — both series naturally fit in 0..30 (wealth in $B,
+  # GDP per family in $100Ks). Wealth is the headline (red, with points);
+  # GDP per family is the baseline (black, also with points).
+  n_a <- length(year)
   panel_a_data <- tibble::tibble(
-    year = year,
-    wealth = wealth_b,
-    gdp_scaled = gdp_per_fam * scale_factor
+    year   = rep(year, 2),
+    value  = c(wealth_b, gdp_per_fam),
+    series = factor(rep(c("CA top .0002% wealth ($B, 2025 $)",
+                            "CA GDP per family ($100K, 2025 $)"),
+                          each = n_a),
+                     levels = c("CA top .0002% wealth ($B, 2025 $)",
+                                "CA GDP per family ($100K, 2025 $)"))
   )
-  panel_a <- ggplot2::ggplot(panel_a_data, ggplot2::aes(x = year)) +
-    ggplot2::geom_line(ggplot2::aes(y = wealth, color = "Top .0002% wealth ($B)"),
-                       linewidth = 0.9) +
-    ggplot2::geom_line(ggplot2::aes(y = gdp_scaled,
-                                     color = "CA GDP per family ($100K)"),
-                       linewidth = 0.9, linetype = "dashed") +
-    ggplot2::scale_y_continuous(
-      name = "Top .0002% wealth ($B, 2025 $)",
-      sec.axis = ggplot2::sec_axis(~ . / scale_factor,
-                                    name = "CA GDP per family ($100K, 2025 $)")
-    ) +
-    ggplot2::scale_color_manual(values = c("Top .0002% wealth ($B)" = "#d62728",
-                                            "CA GDP per family ($100K)" = "#1f77b4")) +
+  panel_a <- ggplot2::ggplot(panel_a_data,
+                              ggplot2::aes(x = year, y = value, color = series)) +
+    ggplot2::geom_line(linewidth = 0.9) +
+    ggplot2::geom_point(size = 1.5) +
+    ggplot2::scale_color_manual(values = c(
+      "CA top .0002% wealth ($B, 2025 $)" = "#a91d22",
+      "CA GDP per family ($100K, 2025 $)" = "#222222"
+    )) +
+    ggplot2::scale_y_continuous(limits = c(0, NA),
+                                 breaks = seq(0, 30, by = 5)) +
     ggplot2::labs(
       title = "A. CA Top .0002% wealth vs. GDP per family",
-      x = NULL, color = NULL
+      x = NULL, y = NULL, color = NULL
     ) +
     ggplot2::theme_minimal(base_size = 11) +
     ggplot2::theme(
@@ -620,8 +620,8 @@ build_fig2 <- function(longrunseries) {
                               ggplot2::aes(x = year, y = share, color = region)) +
     ggplot2::geom_line(linewidth = 0.9) +
     ggplot2::scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
-    ggplot2::scale_color_manual(values = c("US (top 400)"       = "#1f77b4",
-                                            "California (top 45)" = "#d62728")) +
+    ggplot2::scale_color_manual(values = c("US (top 400)"       = "#d62728",
+                                            "California (top 45)" = "#1f77b4")) +
     ggplot2::labs(
       title = "B. Top .0002% wealth (% of annual GDP)",
       x = NULL, y = NULL, color = NULL
@@ -685,8 +685,8 @@ build_fig1 <- function(shortrunseries_r) {
       labels = function(v) format(v, big.mark = ",", scientific = FALSE),
       limits = c(0, NA)
     ) +
-    ggplot2::scale_color_manual(values = c("All CA billionaires" = "#1f77b4",
-                                            "Top 4 (Page, Brin, Zuck, Huang)" = "#d62728")) +
+    ggplot2::scale_color_manual(values = c("All CA billionaires" = "#d62728",
+                                            "Top 4 (Page, Brin, Zuck, Huang)" = "#1f77b4")) +
     ggplot2::labs(
       title    = "Figure 1: The Rise of California Billionaires' Wealth",
       subtitle = "Wealth of CA billionaires ($B, end of year). Dashed: 5% wealth-tax counterfactual.",
