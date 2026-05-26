@@ -38,5 +38,9 @@ list(
   tar_target(pareto_missing_r,      compute_pareto_missing(pareto_missing)),
   tar_target(pareto_summary,        compute_pareto_summary(pareto_missing_r)),
   tar_target(tab5_r,                compute_tab5(pareto_missing_r, tab2, tab3)),
-  tar_target(fig8_laffer_r,         compute_fig8_laffer())
+  tar_target(fig8_laffer_r,         compute_fig8_laffer()),
+  tar_target(billionaires_ca_inctax_r,
+             compute_billionaires_ca_inctax(data_sec_agg_r,
+                                            billionaires_ca_inctax,
+                                            ftb_b4a))
 )

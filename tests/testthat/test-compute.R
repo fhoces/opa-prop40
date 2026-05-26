@@ -84,3 +84,89 @@ test_that("compute_data_sec_agg excludes Ellison from every year", {
     agg_no_ell$forbes_worth[agg_no_ell$year == 2019] + 60   # Ellison ~ $68B in 2019
   )
 })
+
+test_that("compute_billionaires_ca_inctax matches Excel formula cells", {
+  agg <- compute_data_sec_agg(extract_data_sec_all())
+  bci <- extract_billionaires_ca_inctax()
+  ftb <- extract_ftb_b4a()
+  out <- compute_billionaires_ca_inctax(agg, bci, ftb)
+
+  # Helper: numeric coercion of positional dump cells in a given row range,
+  # one panel column per element. Panel cols B..J = year 2018..2026.
+  num_row <- function(row, cols) {
+    unname(vapply(cols, function(L) suppressWarnings(as.numeric(bci[[L]][row])), numeric(1)))
+  }
+  pan_cols <- c("B", "C", "D", "E", "F", "G", "H", "I", "J")
+
+  m1 <- out$method1
+  # Block A (rows 9-10): wealth + avg wealth (years 2019..2025 only)
+  expect_equal(m1$total_wealth_ca_b[2:8],            num_row(10, pan_cols[2:8]), tolerance = 1e-2)
+  expect_equal(m1$avg_wealth_ca_b[2:8],              num_row(9,  pan_cols[2:8]), tolerance = 1e-3)
+
+  # Block B (rows 13..18, 21): FTB aggregates
+  expect_equal(m1$n_returns_ca[1:5],                 num_row(13, pan_cols[1:5]), tolerance = 1e-3)
+  expect_equal(m1$ca_agi_b[1:6],                     num_row(14, pan_cols[1:6]), tolerance = 1e-3)
+  expect_equal(m1$ca_inctax_residents_b[1:8],        num_row(15, pan_cols[1:8]), tolerance = 1e-3)
+  expect_equal(m1$ca_inctax_total_b[1:8],            num_row(18, pan_cols[1:8]), tolerance = 1e-3)
+  expect_equal(m1$fy_to_cy_adjustment[1:8],          num_row(21, pan_cols[1:8]), tolerance = 1e-4)
+
+  # Block C (rows 32..44): top-bracket Pareto projections
+  expect_equal(m1$n_returns_5m[1:6],                 num_row(32, pan_cols[1:6]), tolerance = 1e-3)
+  expect_equal(m1$ca_agi_5m_b[1:6],                  num_row(33, pan_cols[1:6]), tolerance = 1e-3)
+  expect_equal(m1$ca_tax_5m_b[1:6],                  num_row(35, pan_cols[1:6]), tolerance = 1e-3)
+  expect_equal(m1$pareto_b_5m_bracket[1:6],          num_row(37, pan_cols[1:6]), tolerance = 1e-4)
+  expect_equal(m1$proj_cutoff_top_5m_m[1:6],         num_row(41, pan_cols[1:6]), tolerance = 1e-3)
+  expect_equal(m1$proj_agi_top_5m_b[1:6],            num_row(42, pan_cols[1:6]), tolerance = 1e-3)
+  expect_equal(m1$proj_cutoff_top_pre_m[1:6],        num_row(38, pan_cols[1:6]), tolerance = 1e-3)
+  expect_equal(m1$proj_agi_top_pre_b[1:6],           num_row(39, pan_cols[1:6]), tolerance = 1e-3)
+  expect_equal(m1$proj_tax_top_pre_b[1:6],           num_row(40, pan_cols[1:6]), tolerance = 1e-3)
+  expect_equal(m1$proj_agi_top_corr_b[1:6],          num_row(43, pan_cols[1:6]), tolerance = 1e-3)
+  expect_equal(m1$proj_tax_top_corr_b[1:6],          num_row(44, pan_cols[1:6]), tolerance = 1e-3)
+
+  # Final block (rows 49..55): headline outputs
+  expect_equal(m1$ca_inctax_ca_billionaires_b[1:8],    num_row(49, pan_cols[1:8]), tolerance = 1e-3)
+  expect_equal(m1$pct_ca_inctax_by_billionaires[1:8],  num_row(50, pan_cols[1:8]), tolerance = 1e-4)
+  expect_equal(m1$ca_inctax_per_wealth[2:8],           num_row(51, pan_cols[2:8]), tolerance = 1e-5)
+  expect_equal(m1$ca_inctax_public_assets_b[2:8],      num_row(53, pan_cols[2:8]), tolerance = 1e-2)
+  expect_equal(m1$public_assets_share[2:8],            num_row(54, pan_cols[2:8]), tolerance = 1e-4)
+  # Row 55 ratio uses data_sec_agg!S which Excel rounds to 2 decimals; use $-tier tolerance.
+  expect_equal(m1$ca_inctax_public_share_of_total[2:8], num_row(55, pan_cols[2:8]), tolerance = 1e-2)
+
+  # Memo 1 (rows 62, 64, 72): US top .001% Pareto calibration
+  memo1 <- out$memo1
+  m1_cols <- c("B","C","D","E","F")
+  expect_equal(memo1$pareto_b_001,    num_row(62, m1_cols), tolerance = 1e-4)
+  expect_equal(memo1$fed_tax_per_agi, num_row(64, m1_cols), tolerance = 1e-5)
+  expect_equal(memo1$pct_overshoot,   num_row(72, m1_cols), tolerance = 1e-5)
+
+  # Robustness scalars (D99, B100, B102..B105, C105)
+  expect_equal(out$robustness$D99,  as.numeric(bci$D[99]),  tolerance = 1e-5)
+  expect_equal(out$robustness$B100, as.numeric(bci$B[100]), tolerance = 1e-2)
+  expect_equal(out$robustness$B102, as.numeric(bci$B[102]), tolerance = 1e-4)
+  expect_equal(out$robustness$B103, as.numeric(bci$B[103]), tolerance = 1e-4)
+  expect_equal(out$robustness$B104, as.numeric(bci$B[104]), tolerance = 1e-4)
+  expect_equal(out$robustness$B105, as.numeric(bci$B[105]), tolerance = 1e-4)
+  expect_equal(out$robustness$C105, as.numeric(bci$C[105]), tolerance = 1e-4)
+
+  # All-taxes block (rows 111..148)
+  at <- out$all_taxes
+  expect_equal(at$ca_agi_ca_billionaires_b[1:8],     num_row(111, pan_cols[1:8]), tolerance = 1e-3)
+  expect_equal(at$ca_inctax_ca_billionaires_b[1:8],  num_row(112, pan_cols[1:8]), tolerance = 1e-3)
+  expect_equal(at$fed_inctax_ca_billionaires_b[1:8], num_row(113, pan_cols[1:8]), tolerance = 1e-3)
+  expect_equal(at$fed_to_ca_inctax_ratio[1:8],       num_row(114, pan_cols[1:8]), tolerance = 1e-4)
+  expect_equal(at$sales_gross_up_public[2:8],        num_row(116, pan_cols[2:8]), tolerance = 1e-5)
+  expect_equal(at$public_wealth_b[2:8],              num_row(123, pan_cols[2:8]), tolerance = 1e-2)
+  expect_equal(at$total_tax_per_public_wealth[2:8],  num_row(124, pan_cols[2:8]), tolerance = 1e-5)
+  expect_equal(at$ca_inctax_per_public_wealth[2:8],  num_row(125, pan_cols[2:8]), tolerance = 1e-5)
+  expect_equal(at$private_share[2:8],                num_row(137, pan_cols[2:8]), tolerance = 1e-5)
+  expect_equal(at$passthrough_share[2:8],            num_row(138, pan_cols[2:8]), tolerance = 1e-5)
+  expect_equal(at$corp_tax_private_c_b[2:8],         num_row(141, pan_cols[2:8]), tolerance = 1e-3)
+  expect_equal(at$corp_tax_diversified_b[2:8],       num_row(142, pan_cols[2:8]), tolerance = 1e-3)
+  # Row 143 chains data_sec_agg columns (rounded to 2dp in Excel) — use $-tier tolerance.
+  expect_equal(at$property_tax_private_b[2:8],       num_row(143, pan_cols[2:8]), tolerance = 1e-2)
+  expect_equal(at$total_corp_property_b[2:8],        num_row(144, pan_cols[2:8]), tolerance = 1e-3)
+  expect_equal(at$total_sales_tax_b[2:8],            num_row(145, pan_cols[2:8]), tolerance = 1e-4)
+  expect_equal(at$total_inctax_b[2:8],               num_row(146, pan_cols[2:8]), tolerance = 1e-3)
+  expect_equal(at$total_taxes_b[2:8],                num_row(147, pan_cols[2:8]), tolerance = 1e-3)
+  expect_equal(at$total_per_total_wealth[2:8],       num_row(148, pan_cols[2:8]), tolerance = 1e-5)
+})

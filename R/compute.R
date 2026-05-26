@@ -289,6 +289,551 @@ compute_tab5 <- function(pareto_missing_r, tab2, tab3,
   )
 }
 
+compute_billionaires_ca_inctax <- function(data_sec_agg_r,
+                                            billionaires_ca_inctax,
+                                            ftb_b4a) {
+  # Re-derives the 727 formula cells of the billionairesCAinctax sheet.
+  # Returns a list of four blocks; literal-input cells (Forbes counts, IRS/SCF
+  # published stats, state-budget revenue, FTB top-bracket 2023 figures that
+  # aren't in ftb_b4a) are read through from the positional dump.
+
+  bci <- billionaires_ca_inctax
+  cell <- function(addr) {
+    m <- regmatches(addr, regexec("^([A-Z]+)([0-9]+)$", addr))[[1]]
+    v <- bci[[m[2]]][as.integer(m[3])]
+    suppressWarnings(as.numeric(v))
+  }
+  agg_map <- c(
+    C  = "forbes_worth",       D  = "forbes_public_worth",
+    S  = "ca_income_tax",      V  = "fed_income_tax",
+    AB = "sales_tax",          AC = "w_txt",
+    AD = "w_tax_ppent",        AF = "total_tax",
+    AG = "economic_income"
+  )
+  agg <- function(letter) {
+    # data_sec_agg_r is years 2019..2025 (rows in panel = columns C..I in Excel)
+    data_sec_agg_r[[agg_map[[letter]]]]
+  }
+  ftb_D <- suppressWarnings(as.numeric(ftb_b4a$D))
+  ftb_H <- suppressWarnings(as.numeric(ftb_b4a$H))
+  ftb_J <- suppressWarnings(as.numeric(ftb_b4a$J))
+  ftb_K <- suppressWarnings(as.numeric(ftb_b4a$K))
+  ftb_cols <- list(D = ftb_D, H = ftb_H, J = ftb_J, K = ftb_K)
+  ftb_sum <- function(col_letter, row_lo, row_hi, scale = 1) {
+    sum(ftb_cols[[col_letter]][row_lo:row_hi], na.rm = TRUE) * scale
+  }
+  # FTB year row ranges (year -> start, end). 2022 sits at top of sheet; 2018 bottom.
+  ftb_yr <- list(
+    "2018" = c(242, 300),
+    "2019" = c(183, 241),
+    "2020" = c(124, 182),
+    "2021" = c(64,  123),
+    "2022" = c(4,   63)
+  )
+  # FTB top-bracket rows per year:
+  #   2021 / 2022: $10m+ is the last row; $5m-9.999m is the row above
+  #   2018-2020:   $5m+ aggregated (only the last row)
+  ftb_10m  <- list("2021" = 123, "2022" = 63)
+  ftb_5m99 <- list("2021" = 122, "2022" = 62)
+  ftb_5m   <- list("2018" = 300, "2019" = 241, "2020" = 182)
+
+  # ---- Memo 1: US top .001% income calibration (rows 58-72) ----------------
+  # Calendar-year panel 2018..2022 (cols B..F).
+  m1_years <- 2018:2022
+  m1_cols  <- c("B","C","D","E","F")
+  literal <- function(addr_col, row) unname(vapply(m1_cols, function(L) cell(paste0(L, row)), numeric(1)))
+  # Inputs (literal IRS / Pareto stats)
+  m1_n_returns       <- literal("B", 59)
+  m1_agi_cutoff      <- literal("B", 60)
+  m1_agi_avg         <- literal("B", 61)
+  m1_tax_total       <- literal("B", 63)
+  m1_top10m_n        <- literal("B", 66)
+  m1_top10m_cutoff   <- literal("B", 67)
+  m1_top10m_agi_avg  <- literal("B", 68)
+
+  m1_pareto_b_001    <- m1_agi_avg / m1_agi_cutoff               # row 62
+  m1_fed_tax_per_agi <- 1000 * (m1_tax_total / m1_n_returns) / m1_agi_avg  # row 64
+  m1_pareto_b_10m    <- m1_top10m_agi_avg / m1_top10m_cutoff     # row 69
+  m1_proj_cutoff_001 <- m1_top10m_cutoff *
+                         (m1_top10m_n / m1_n_returns)^(1 - 1 / m1_pareto_b_10m)  # row 70
+  m1_proj_agi_001    <- m1_proj_cutoff_001 * m1_pareto_b_10m     # row 71
+  m1_pct_overshoot   <- unname((m1_proj_agi_001 - m1_agi_avg) / m1_proj_agi_001)  # row 72 (B..F)
+  m1_pareto_b_001    <- unname(m1_pareto_b_001)
+  m1_fed_tax_per_agi <- unname(m1_fed_tax_per_agi)
+  m1_pareto_b_10m    <- unname(m1_pareto_b_10m)
+  m1_proj_cutoff_001 <- unname(m1_proj_cutoff_001)
+  m1_proj_agi_001    <- unname(m1_proj_agi_001)
+  # G72 = F72 (continuation for 2023)
+
+  memo1 <- tibble::tibble(
+    year                = m1_years,
+    n_returns           = m1_n_returns,
+    agi_cutoff_k        = m1_agi_cutoff,
+    agi_avg_k           = m1_agi_avg,
+    pareto_b_001        = m1_pareto_b_001,
+    fed_tax_total_m     = m1_tax_total,
+    fed_tax_per_agi     = m1_fed_tax_per_agi,
+    n_returns_10m       = m1_top10m_n,
+    agi_cutoff_10m_k    = m1_top10m_cutoff,
+    agi_avg_10m_k       = m1_top10m_agi_avg,
+    pareto_b_10m        = m1_pareto_b_10m,
+    proj_cutoff_001_k   = m1_proj_cutoff_001,
+    proj_agi_001_k      = m1_proj_agi_001,
+    pct_overshoot       = m1_pct_overshoot
+  )
+  # Mapped to panel-year offsets: 2018->B (panel col B), ..., 2023->G uses F-value
+  pct_overshoot_panel <- c(
+    "2018" = m1_pct_overshoot[1], "2019" = m1_pct_overshoot[2],
+    "2020" = m1_pct_overshoot[3], "2021" = m1_pct_overshoot[4],
+    "2022" = m1_pct_overshoot[5], "2023" = m1_pct_overshoot[5]   # G72 = F72
+  )
+
+  # ---- D99 correction (Memo 2 robustness, scalar) --------------------------
+  B96 <- cell("B96")  # 172669
+  B98 <- cell("B98")  # 36894
+  B99 <- B98 / B96
+  C99 <- mean(m1_fed_tax_per_agi[1:3])     # AVERAGE(B64:D64) = years 2018-2020
+  D99 <- B99 / C99                          # ~0.92118
+
+  # ---- Method I year panel (rows 6..55) ------------------------------------
+  yrs <- 2018:2026
+  pan_cols <- c("B","C","D","E","F","G","H","I","J")  # 9 panel columns
+  pan_lit <- function(row) unname(vapply(pan_cols, function(L) cell(paste0(L, row)), numeric(1)))
+  # Block A: CA billionaires (row 8 = counts; row 10 = total wealth from data_sec_agg)
+  n_ca_b      <- pan_lit(8)                                    # row 8
+  total_w_ca  <- c(NA_real_, agg("C"), NA_real_)               # row 10 (2018=NA, 2019..2025, 2026=NA)
+  avg_w_ca    <- total_w_ca / n_ca_b                           # row 9
+
+  # Block B: aggregate CA income tax stats
+  # Row 13 (#returns): SUM(FTB col D) by year; 2023+ missing
+  n_returns_ca <- c(
+    ftb_sum("D", ftb_yr$`2018`[1], ftb_yr$`2018`[2]),
+    ftb_sum("D", ftb_yr$`2019`[1], ftb_yr$`2019`[2]),
+    ftb_sum("D", ftb_yr$`2020`[1], ftb_yr$`2020`[2]),
+    ftb_sum("D", ftb_yr$`2021`[1], ftb_yr$`2021`[2]),
+    ftb_sum("D", ftb_yr$`2022`[1], ftb_yr$`2022`[2]),
+    NA_real_, NA_real_, NA_real_, NA_real_
+  )
+  # Row 14 (CA AGI $B): SUM(H) * 1e-9 for 2018-2022; 2023 literal (G14=1946170/1000)
+  ca_agi_b <- c(
+    ftb_sum("H", ftb_yr$`2018`[1], ftb_yr$`2018`[2], 1e-9),
+    ftb_sum("H", ftb_yr$`2019`[1], ftb_yr$`2019`[2], 1e-9),
+    ftb_sum("H", ftb_yr$`2020`[1], ftb_yr$`2020`[2], 1e-9),
+    ftb_sum("H", ftb_yr$`2021`[1], ftb_yr$`2021`[2], 1e-9),
+    ftb_sum("H", ftb_yr$`2022`[1], ftb_yr$`2022`[2], 1e-9),
+    1946170 / 1000,    # G14 published 2023 literal
+    NA_real_, NA_real_, NA_real_
+  )
+  # Row 15 (CA inctax all residents $B): SUM(K)*1e-9 for 2018-2022; 2023 literal;
+  # 2024, 2025 derived from row 18 - row 17
+  ca_inctax_resid_b_pre <- c(
+    ftb_sum("K", ftb_yr$`2018`[1], ftb_yr$`2018`[2], 1e-9),
+    ftb_sum("K", ftb_yr$`2019`[1], ftb_yr$`2019`[2], 1e-9),
+    ftb_sum("K", ftb_yr$`2020`[1], ftb_yr$`2020`[2], 1e-9),
+    ftb_sum("K", ftb_yr$`2021`[1], ftb_yr$`2021`[2], 1e-9),
+    ftb_sum("K", ftb_yr$`2022`[1], ftb_yr$`2022`[2], 1e-9),
+    97293 / 1000       # G15 published 2023 literal
+  )
+  # Row 16 passthrough: literal G16 = 15.219; F16 = G16*F15/G15; E16 = F16
+  G16 <- cell("G16")   # 15.219 literal
+  F16 <- G16 * ca_inctax_resid_b_pre[5] / ca_inctax_resid_b_pre[6]
+  E16 <- F16
+  # Row 17 part-year/non-resident: cells B..E = B15*(F17/F15) (panel col F = year 2022)
+  F17 <- cell("F17")   # literal 6.6 (panel 2022)
+  G17 <- ca_inctax_resid_b_pre[6] * (F17 / ca_inctax_resid_b_pre[5])
+  # Row 18 = row 15 + row 16 + row 17 (and for 2024,2025 row 18 = row 20*(1+row21))
+  # Row 20 (CA inctax revenue fiscal year $B): literal sums
+  ca_inctax_fy_b <- pan_lit(20)
+  # Row 18 for 2018-2023:
+  pre_part17 <- c(
+    ca_inctax_resid_b_pre[1] * (F17 / ca_inctax_resid_b_pre[5]),   # B17
+    ca_inctax_resid_b_pre[2] * (F17 / ca_inctax_resid_b_pre[5]),   # C17
+    ca_inctax_resid_b_pre[3] * (F17 / ca_inctax_resid_b_pre[5]),   # D17
+    ca_inctax_resid_b_pre[4] * (F17 / ca_inctax_resid_b_pre[5]),   # E17
+    F17,                                                             # F17 literal
+    G17                                                              # G17 formula
+  )
+  pre_part16 <- c(NA, NA, NA, E16, F16, G16)                          # rows 16 (panel B..G)
+  ca_inctax_total_b_pre <- ca_inctax_resid_b_pre +
+                            ifelse(is.na(pre_part16), 0, pre_part16) +
+                            pre_part17
+  # Row 21 (fy_to_cy_adj) for 2018-2023: =(B18)/B20-1; H21, I21 = AVG(D21:G21)
+  ca_inctax_total_b_full <- numeric(9)
+  ca_inctax_total_b_full[1:6] <- ca_inctax_total_b_pre
+  fy_to_cy_adj <- numeric(9)
+  fy_to_cy_adj[1:6] <- ca_inctax_total_b_pre / ca_inctax_fy_b[1:6] - 1
+  fy_to_cy_adj[7] <- mean(fy_to_cy_adj[3:6])    # H21 = AVERAGE(D21:G21)
+  fy_to_cy_adj[8] <- fy_to_cy_adj[7]            # I21
+  ca_inctax_total_b_full[7] <- ca_inctax_fy_b[7] * (1 + fy_to_cy_adj[7])    # H18
+  ca_inctax_total_b_full[8] <- ca_inctax_fy_b[8] * (1 + fy_to_cy_adj[8])    # I18
+  ca_inctax_total_b_full[9] <- NA_real_
+  # Row 15 for 2024,2025: =H18 - H17 (where H17 = $G17 * (H18/$G18); but $G18 is from pre)
+  G18 <- ca_inctax_total_b_full[6]
+  H18 <- ca_inctax_total_b_full[7]
+  I18 <- ca_inctax_total_b_full[8]
+  H17 <- G17 * (H18 / G18)
+  I17 <- G17 * (I18 / G18)
+  H15 <- H18 - H17
+  I15 <- I18 - I17
+  ca_inctax_resid_b <- c(ca_inctax_resid_b_pre, H15, I15, NA_real_)
+  ca_inctax_part17  <- c(pre_part17, H17, I17, NA_real_)
+  ca_inctax_part16  <- c(pre_part16, NA_real_, NA_real_, NA_real_)
+
+  # Row 22 CA total tax revenue fiscal year — literal pass-through (not used downstream here)
+
+  # Block C: top-bracket rows 26..44 — only 2018..2023 (panel cols B..G)
+  pc6 <- pan_cols[1:6]   # B..G
+  # Row 26 (# returns $10m+): cells E26, F26 from FTB; G26 = literal; others NA
+  n_ret_10m <- rep(NA_real_, 6)
+  n_ret_10m[4] <- ftb_D[ftb_10m$`2021`]      # E26 = D123 for 2021
+  n_ret_10m[5] <- ftb_D[ftb_10m$`2022`]      # F26 = D63 for 2022
+  n_ret_10m[6] <- cell("G26")                     # G26 literal 4729
+  # Row 27 (CA AGI $B $10m+): from FTB col H * 1e-9; G27 literal
+  agi_10m_b <- rep(NA_real_, 6)
+  agi_10m_b[4] <- ftb_H[ftb_10m$`2021`] * 1e-9
+  agi_10m_b[5] <- ftb_H[ftb_10m$`2022`] * 1e-9
+  agi_10m_b[6] <- cell("G27")                     # 150.394
+  # Row 28 (taxable income $B $10m+): FTB col J for 2021/2022; G28 not present
+  taxable_10m_b <- rep(NA_real_, 6)
+  taxable_10m_b[4] <- ftb_J[ftb_10m$`2021`] * 1e-9
+  taxable_10m_b[5] <- ftb_J[ftb_10m$`2022`] * 1e-9
+  taxable_10m_b[6] <- cell("G28")                 # literal (no value in sheet, NA)
+  # Row 29 (tax $B $10m+): FTB col K for 2021/2022; G29 literal
+  tax_10m_b <- rep(NA_real_, 6)
+  tax_10m_b[4] <- ftb_K[ftb_10m$`2021`] * 1e-9
+  tax_10m_b[5] <- ftb_K[ftb_10m$`2022`] * 1e-9
+  tax_10m_b[6] <- cell("G29")                     # literal
+  # Row 30 = row 29 / row 28
+  tax_rate_10m <- tax_10m_b / taxable_10m_b
+  # Row 31 = 1000 * row 27 / (10 * row 26)
+  pareto_b_10m <- 1000 * agi_10m_b / (10 * n_ret_10m)
+
+  # Row 32 (# returns $5m+): formulas tie to FTB sheet differently by year
+  n_ret_5m <- numeric(6)
+  n_ret_5m[1] <- ftb_D[ftb_5m$`2018`]                                    # B32 = D300
+  n_ret_5m[2] <- ftb_D[ftb_5m$`2019`]                                    # C32 = D241
+  n_ret_5m[3] <- ftb_D[ftb_5m$`2020`]                                    # D32 = D182
+  n_ret_5m[4] <- ftb_D[ftb_5m99$`2021`] + ftb_D[ftb_10m$`2021`]      # E32 = D122+D123
+  n_ret_5m[5] <- ftb_D[ftb_5m99$`2022`] + ftb_D[ftb_10m$`2022`]      # F32 = D62+D63
+  n_ret_5m[6] <- 7463 + n_ret_10m[6]                                          # G32 = 7463 + G26
+  # Row 33 (CA AGI $B $5m+): same pattern
+  agi_5m_b <- numeric(6)
+  agi_5m_b[1] <- ftb_H[ftb_5m$`2018`] * 1e-9
+  agi_5m_b[2] <- ftb_H[ftb_5m$`2019`] * 1e-9
+  agi_5m_b[3] <- ftb_H[ftb_5m$`2020`] * 1e-9
+  agi_5m_b[4] <- agi_10m_b[4] + ftb_H[ftb_5m99$`2021`] * 1e-9            # E33 = E27 + H122*1e-9
+  agi_5m_b[5] <- agi_10m_b[5] + ftb_H[ftb_5m99$`2022`] * 1e-9
+  agi_5m_b[6] <- agi_10m_b[6] + 51.097                                        # G33 = G27 + 51.097
+  # Row 34 (taxable income $B $5m+)
+  taxable_5m_b <- numeric(6)
+  taxable_5m_b[1] <- ftb_J[ftb_5m$`2018`] * 1e-9
+  taxable_5m_b[2] <- ftb_J[ftb_5m$`2019`] * 1e-9
+  taxable_5m_b[3] <- ftb_J[ftb_5m$`2020`] * 1e-9
+  taxable_5m_b[4] <- taxable_10m_b[4] + ftb_J[ftb_5m99$`2021`] * 1e-9
+  taxable_5m_b[5] <- taxable_10m_b[5] + ftb_J[ftb_5m99$`2022`] * 1e-9
+  taxable_5m_b[6] <- taxable_10m_b[6] + 48.479                                # G34 = G28 + 48.479
+  # Row 35 (tax $B $5m+)
+  tax_5m_b <- numeric(6)
+  tax_5m_b[1] <- ftb_K[ftb_5m$`2018`] * 1e-9
+  tax_5m_b[2] <- ftb_K[ftb_5m$`2019`] * 1e-9
+  tax_5m_b[3] <- ftb_K[ftb_5m$`2020`] * 1e-9
+  tax_5m_b[4] <- tax_10m_b[4] + ftb_K[ftb_5m99$`2021`] * 1e-9
+  tax_5m_b[5] <- tax_10m_b[5] + ftb_K[ftb_5m99$`2022`] * 1e-9
+  tax_5m_b[6] <- 4.347 + tax_10m_b[6]                                         # G35 = 4.347 + G29
+  # Row 36, 37
+  tax_rate_5m  <- tax_5m_b / taxable_5m_b
+  pareto_b_5m  <- 1000 * agi_5m_b / (5 * n_ret_5m[1:6])
+
+  # Row 38 (proj cutoff $m top taxpayer using $10m anchor):
+  # B-D38: =B41*($F38/$F41) (Pareto-scaling adjustment to row-41 cutoff)
+  # E-G38: =10*(row26/row8)^(1-1/row31)
+  F8_v <- n_ca_b[5]      # 2022 panel B = year 2022 count = 175
+  proj_cutoff_top <- numeric(6)
+  # First compute E38..G38 directly
+  proj_cutoff_top[4] <- 10 * (n_ret_10m[4] / n_ca_b[4])^(1 - 1 / pareto_b_10m[4])
+  proj_cutoff_top[5] <- 10 * (n_ret_10m[5] / n_ca_b[5])^(1 - 1 / pareto_b_10m[5])
+  proj_cutoff_top[6] <- 10 * (n_ret_10m[6] / n_ca_b[6])^(1 - 1 / pareto_b_10m[6])
+  # Row 41 first (B-G): =5*(row32/row8)^(1-1/row37)
+  proj_cutoff_top_5m <- 5 * (n_ret_5m[1:6] / n_ca_b[1:6])^(1 - 1 / pareto_b_5m)
+  # B-D38: scale row 41 cutoff by row38/row41 ratio at F (2022 reference)
+  F38 <- proj_cutoff_top[5]; F41 <- proj_cutoff_top_5m[5]
+  for (i in 1:3) proj_cutoff_top[i] <- proj_cutoff_top_5m[i] * (F38 / F41)
+  # Row 39 (proj AGI top taxpayer $B):
+  # E-G39: =0.001*row38*row31*row8
+  # B-D39: =B42*($F39/$F42); row42 below
+  proj_agi_top <- numeric(6)
+  proj_agi_top[4] <- 0.001 * proj_cutoff_top[4] * pareto_b_10m[4] * n_ca_b[4]
+  proj_agi_top[5] <- 0.001 * proj_cutoff_top[5] * pareto_b_10m[5] * n_ca_b[5]
+  proj_agi_top[6] <- 0.001 * proj_cutoff_top[6] * pareto_b_10m[6] * n_ca_b[6]
+  proj_agi_top_5m <- 0.001 * proj_cutoff_top_5m * pareto_b_5m * n_ca_b[1:6]
+  F39 <- proj_agi_top[5]; F42 <- proj_agi_top_5m[5]
+  for (i in 1:3) proj_agi_top[i] <- proj_agi_top_5m[i] * (F39 / F42)
+  # Row 40 (proj tax top taxpayer $B):
+  # B-D40: =row39*(row35/row33)   (5m tax rate)
+  # E-G40: =row39*(row29/row27)   (10m tax rate)
+  proj_tax_top <- numeric(6)
+  for (i in 1:3) proj_tax_top[i] <- proj_agi_top[i] * (tax_5m_b[i] / agi_5m_b[i])
+  for (i in 4:6) proj_tax_top[i] <- proj_agi_top[i] * (tax_10m_b[i] / agi_10m_b[i])
+  # Row 43 (corrected AGI top taxpayer): row39 * (1 - row72)
+  pct_overshoot_yr <- c(
+    pct_overshoot_panel["2018"], pct_overshoot_panel["2019"],
+    pct_overshoot_panel["2020"], pct_overshoot_panel["2021"],
+    pct_overshoot_panel["2022"], pct_overshoot_panel["2023"]
+  )
+  pct_overshoot_yr <- unname(pct_overshoot_yr)
+  proj_agi_top_corr <- proj_agi_top * (1 - pct_overshoot_yr)
+  # Row 44 (corrected tax top taxpayer): row40 * (1 - row72)
+  # E-G44 also multiplied by AVERAGE($B$36:$D$36)/row30 to use $5m rate context
+  avg_tax_rate_5m_bcd <- mean(tax_rate_5m[1:3])
+  proj_tax_top_corr <- proj_tax_top * (1 - pct_overshoot_yr)
+  for (i in 4:6) proj_tax_top_corr[i] <- proj_tax_top_corr[i] * avg_tax_rate_5m_bcd / tax_rate_10m[i]
+
+  # Row 46 literal (0.5 for B..G); rows 47 = D99
+  inc_top_w_rel <- c(rep(cell("B46"), 6), NA_real_, NA_real_, NA_real_)   # row 46 over panel
+  corr_passthru <- c(rep(D99, 6), NA_real_, NA_real_, NA_real_)            # row 47
+
+  # Row 49 (CA income tax paid by CA Forbes billionaires $B) — MAIN OUTPUT
+  # B-G49: =row44 * row46 * row47
+  ca_inctax_ca_b <- rep(NA_real_, 9)
+  ca_inctax_ca_b[1:6] <- proj_tax_top_corr * inc_top_w_rel[1:6] * corr_passthru[1:6]
+  # H49: =H50*H15; I49: =I50*I15
+  # Row 50 (% CA inctax paid by CA billionaires): row49/row18
+  # H50 = AVERAGE(B50:G50); I50 = E50
+  pct_ca_inctax_by_b <- numeric(9)
+  pct_ca_inctax_by_b[1:6] <- ca_inctax_ca_b[1:6] / ca_inctax_total_b_full[1:6]
+  pct_ca_inctax_by_b[7] <- mean(pct_ca_inctax_by_b[1:6])    # H50
+  pct_ca_inctax_by_b[8] <- pct_ca_inctax_by_b[4]            # I50 = E50 (year 2021)
+  pct_ca_inctax_by_b[9] <- NA_real_
+  ca_inctax_ca_b[7] <- pct_ca_inctax_by_b[7] * H15           # H49
+  ca_inctax_ca_b[8] <- pct_ca_inctax_by_b[8] * I15           # I49
+
+  # Row 51 = row49 / row10 (C..I columns; B51 NA since total_w_ca[B]=NA)
+  ca_inctax_b_per_w <- ca_inctax_ca_b / total_w_ca
+
+  # Row 53 (CA inctax public assets $B) = data_sec_agg!S (C..I = years 2019..2025)
+  ca_inctax_public_b <- c(NA_real_, agg("S"), NA_real_)
+  # Row 54: data_sec_agg!D / data_sec_agg!C (public_share)
+  public_share_b <- c(NA_real_, agg("D") / agg("C"), NA_real_)
+  # Row 55: row53 / row49
+  ca_inctax_public_per_b_b <- ca_inctax_public_b / ca_inctax_ca_b
+
+  method1 <- tibble::tibble(
+    year                          = yrs,
+    n_ca_billionaires             = n_ca_b,
+    avg_wealth_ca_b               = avg_w_ca,
+    total_wealth_ca_b             = total_w_ca,
+    n_returns_ca                  = n_returns_ca,
+    ca_agi_b                      = ca_agi_b,
+    ca_inctax_residents_b         = ca_inctax_resid_b,
+    ca_inctax_passthrough_b       = ca_inctax_part16,
+    ca_inctax_partyear_nonres_b   = ca_inctax_part17,
+    ca_inctax_total_b             = ca_inctax_total_b_full,
+    ca_inctax_fy_b                = ca_inctax_fy_b,
+    fy_to_cy_adjustment           = fy_to_cy_adj,
+    n_returns_10m                 = c(n_ret_10m, NA_real_, NA_real_, NA_real_),
+    ca_agi_10m_b                  = c(agi_10m_b, NA_real_, NA_real_, NA_real_),
+    ca_taxable_10m_b              = c(taxable_10m_b, NA_real_, NA_real_, NA_real_),
+    ca_tax_10m_b                  = c(tax_10m_b, NA_real_, NA_real_, NA_real_),
+    ca_tax_rate_10m               = c(tax_rate_10m, NA_real_, NA_real_, NA_real_),
+    pareto_b_10m_bracket          = c(pareto_b_10m, NA_real_, NA_real_, NA_real_),
+    n_returns_5m                  = c(n_ret_5m, NA_real_, NA_real_, NA_real_),
+    ca_agi_5m_b                   = c(agi_5m_b, NA_real_, NA_real_, NA_real_),
+    ca_taxable_5m_b               = c(taxable_5m_b, NA_real_, NA_real_, NA_real_),
+    ca_tax_5m_b                   = c(tax_5m_b, NA_real_, NA_real_, NA_real_),
+    ca_tax_rate_5m                = c(tax_rate_5m, NA_real_, NA_real_, NA_real_),
+    pareto_b_5m_bracket           = c(pareto_b_5m, NA_real_, NA_real_, NA_real_),
+    proj_cutoff_top_pre_m         = c(proj_cutoff_top, NA_real_, NA_real_, NA_real_),
+    proj_agi_top_pre_b            = c(proj_agi_top, NA_real_, NA_real_, NA_real_),
+    proj_tax_top_pre_b            = c(proj_tax_top, NA_real_, NA_real_, NA_real_),
+    proj_cutoff_top_5m_m          = c(proj_cutoff_top_5m, NA_real_, NA_real_, NA_real_),
+    proj_agi_top_5m_b             = c(proj_agi_top_5m, NA_real_, NA_real_, NA_real_),
+    proj_agi_top_corr_b           = c(proj_agi_top_corr, NA_real_, NA_real_, NA_real_),
+    proj_tax_top_corr_b           = c(proj_tax_top_corr, NA_real_, NA_real_, NA_real_),
+    income_top_wealth_relative    = inc_top_w_rel,
+    correction_passthrough        = corr_passthru,
+    ca_inctax_ca_billionaires_b   = ca_inctax_ca_b,
+    pct_ca_inctax_by_billionaires = pct_ca_inctax_by_b,
+    ca_inctax_per_wealth          = ca_inctax_b_per_w,
+    ca_inctax_public_assets_b     = ca_inctax_public_b,
+    public_assets_share           = public_share_b,
+    ca_inctax_public_share_of_total = ca_inctax_public_per_b_b
+  )
+
+  # ---- Memo 2 robustness check (rows 76-105) -------------------------------
+  # B100 = D99 * B96 * SUM(row35[B..D]) / SUM(row33[B..D])  -- avg CA tax rate * top .0002% AGI
+  B100 <- D99 * B96 * sum(tax_5m_b[1:3]) / sum(agi_5m_b[1:3])
+  B101 <- cell("B101")                                # 90 literal (# CA residents in top .0002%)
+  B102 <- B101 * B100 / 1e6                            # ~1.70
+  B103 <- mean(ca_inctax_ca_b[1:3])                    # 2018-2020 avg of row 49
+  # B104 = AVG(D104:F104) — those are literal pre-filled from data_sec_agg's scaled column
+  D104 <- cell("D104"); E104 <- cell("E104"); F104 <- cell("F104")
+  B104 <- mean(c(D104, E104, F104))
+  B105 <- B102 * B103 / B104
+  C105 <- B105 / B103 - 1
+
+  robustness <- list(
+    D99   = D99,
+    B100  = B100,
+    B102  = B102,
+    B103  = B103,
+    B104  = B104,
+    B105  = B105,
+    C105  = C105
+  )
+
+  # ---- All-taxes block (rows 110-153) --------------------------------------
+  # Years (panel cols B..J = 2018..2026); only 2019-2025 has data.
+  # Row 111: CA AGI for all CA Forbes billionaires
+  #   B-G111 = row43 * row46   (proj_agi_corr * 0.5)
+  #   H,I111 = $G111 * H,I112 / $G112
+  ca_agi_billionaires <- numeric(9)
+  ca_agi_billionaires[1:6] <- proj_agi_top_corr * inc_top_w_rel[1:6]
+  G111 <- ca_agi_billionaires[6]
+  G112 <- ca_inctax_ca_b[6]
+  ca_agi_billionaires[7] <- G111 * ca_inctax_ca_b[7] / G112
+  ca_agi_billionaires[8] <- G111 * ca_inctax_ca_b[8] / G112
+  ca_agi_billionaires[9] <- NA_real_
+  # Row 112 = row 49
+  ca_inctax_b_at <- ca_inctax_ca_b
+  # Row 113 Fed inctax billionaires:
+  #   B-F113 = row64(memo1) * row111 * D99
+  #   G,H,I113 = row112 * row114
+  fed_inctax_b <- numeric(9)
+  fed_inctax_b[1] <- m1_fed_tax_per_agi[1] * ca_agi_billionaires[1] * D99
+  fed_inctax_b[2] <- m1_fed_tax_per_agi[2] * ca_agi_billionaires[2] * D99
+  fed_inctax_b[3] <- m1_fed_tax_per_agi[3] * ca_agi_billionaires[3] * D99
+  fed_inctax_b[4] <- m1_fed_tax_per_agi[4] * ca_agi_billionaires[4] * D99
+  fed_inctax_b[5] <- m1_fed_tax_per_agi[5] * ca_agi_billionaires[5] * D99
+  # Row 114 = row113 / row112 (B..F)
+  fed_to_ca_ratio <- rep(NA_real_, 9)
+  fed_to_ca_ratio[1:5] <- fed_inctax_b[1:5] / ca_inctax_b_at[1:5]
+  fed_to_ca_ratio[6] <- fed_to_ca_ratio[5]                              # G114 = F114
+  fed_to_ca_ratio[7] <- mean(fed_to_ca_ratio[1:3])                       # H114 = AVG(B114:D114)
+  fed_to_ca_ratio[8] <- fed_to_ca_ratio[7]                               # I114 = H114
+  # Then 113[6:8] = 112[6:8] * 114[6:8]
+  fed_inctax_b[6] <- ca_inctax_b_at[6] * fed_to_ca_ratio[6]
+  fed_inctax_b[7] <- ca_inctax_b_at[7] * fed_to_ca_ratio[7]
+  fed_inctax_b[8] <- ca_inctax_b_at[8] * fed_to_ca_ratio[8]
+  fed_inctax_b[9] <- NA_real_
+
+  # Row 115 = row 54 (public_share_b, C..I = 2019..2025; B = NA)
+  public_share_a <- public_share_b
+  # Row 116 = 0.11 * row 115
+  sales_gross_up_public <- 0.11 * public_share_a
+  # Row 117 = data_sec_agg!S, row118 = !V, row119 = !AC, row120 = !AD, row121 = !AB,
+  # row122 = !AF, row130 = !AG  (all panel cols C..I)
+  ca_inctax_pub <- c(NA_real_, agg("S"), NA_real_)
+  fed_inctax_pub <- c(NA_real_, agg("V"), NA_real_)
+  corp_tax_pub   <- c(NA_real_, agg("AC"), NA_real_)
+  prop_tax_pub   <- c(NA_real_, agg("AD"), NA_real_)
+  sales_tax_pub  <- c(NA_real_, agg("AB"), NA_real_)
+  total_tax_pub  <- c(NA_real_, agg("AF"), NA_real_)
+  econ_income_pub <- c(NA_real_, agg("AG"), NA_real_)
+  # Row 123 = row115 * row10  (public wealth $B)
+  public_wealth_b <- public_share_a * total_w_ca
+  # Rows 124..128: per-wealth ratios
+  tot_tax_per_wealth     <- total_tax_pub / public_wealth_b
+  ca_inctax_per_w        <- ca_inctax_pub / public_wealth_b
+  fed_inctax_per_w       <- fed_inctax_pub / public_wealth_b
+  corp_per_w             <- corp_tax_pub  / public_wealth_b
+  prop_sales_per_w       <- (prop_tax_pub + sales_tax_pub) / public_wealth_b
+  check_w                <- tot_tax_per_wealth - (ca_inctax_per_w + fed_inctax_per_w +
+                                                   corp_per_w + prop_sales_per_w)
+  # Rows 131..135: per-econ_inc ratios
+  tot_tax_per_ei  <- total_tax_pub / econ_income_pub
+  ca_inctax_per_ei <- ca_inctax_pub / econ_income_pub
+  fed_inctax_per_ei <- fed_inctax_pub / econ_income_pub
+  corp_per_ei     <- corp_tax_pub  / econ_income_pub
+  prop_sales_per_ei <- (prop_tax_pub + sales_tax_pub) / econ_income_pub
+  check_ei         <- tot_tax_per_ei - (ca_inctax_per_ei + fed_inctax_per_ei +
+                                         corp_per_ei + prop_sales_per_ei)
+  # Row 137 = 1 - row115 - row116 (private + diversified share)
+  private_share    <- 1 - public_share_a - sales_gross_up_public
+  # Row 138 = row137 * (46.8+25)/(61+46.8+25)
+  passthrough_share <- private_share * (46.8 + 25) / (61 + 46.8 + 25)
+  # Row 139 = row137 * 61/(61+46.8+25)
+  private_c_share   <- private_share * 61 / (61 + 46.8 + 25)
+  # Row 140 = row115 + row116 + row138 + row139
+  test_share        <- public_share_a + sales_gross_up_public + passthrough_share + private_c_share
+  # Row 141 = row119 * (row139 / row115)
+  corp_tax_priv_c   <- corp_tax_pub * (private_c_share / public_share_a)
+  # Row 142 = 0.11 * row119
+  corp_tax_div      <- 0.11 * corp_tax_pub
+  # Row 143 = (row120/row119) * (row141 + row142)
+  prop_tax_priv     <- (prop_tax_pub / corp_tax_pub) * (corp_tax_priv_c + corp_tax_div)
+  # Row 144 = (row119 + row120) + row141 + row142 + row143
+  tot_corp_prop     <- (corp_tax_pub + prop_tax_pub) + corp_tax_priv_c + corp_tax_div + prop_tax_priv
+  # Row 145 = 0.03 * (row111 - row112 - row113 - 0.25*row111) * 0.5
+  total_sales_tax <- 0.03 * (ca_agi_billionaires - ca_inctax_b_at - fed_inctax_b -
+                              0.25 * ca_agi_billionaires) * 0.5
+  # Row 146 = row112 + row113
+  total_inctax_b  <- ca_inctax_b_at + fed_inctax_b
+  # Row 147 = row144 + row145 + row146
+  total_taxes_b   <- tot_corp_prop + total_sales_tax + total_inctax_b
+  # Rows 148..152: per-total-wealth ratios (using row10 = total_w_ca)
+  tot_per_total_w  <- total_taxes_b / total_w_ca
+  ca_per_total_w   <- ca_inctax_b_at / total_w_ca
+  fed_per_total_w  <- fed_inctax_b   / total_w_ca
+  corp_per_total_w <- (corp_tax_pub + corp_tax_priv_c + corp_tax_div) / total_w_ca
+  ps_per_total_w   <- (prop_tax_pub + prop_tax_priv + total_sales_tax) / total_w_ca
+  check_total      <- tot_per_total_w - (ca_per_total_w + fed_per_total_w +
+                                          corp_per_total_w + ps_per_total_w)
+
+  all_taxes <- tibble::tibble(
+    year                          = yrs,
+    ca_agi_ca_billionaires_b      = ca_agi_billionaires,
+    ca_inctax_ca_billionaires_b   = ca_inctax_b_at,
+    fed_inctax_ca_billionaires_b  = fed_inctax_b,
+    fed_to_ca_inctax_ratio        = fed_to_ca_ratio,
+    public_assets_share           = public_share_a,
+    sales_gross_up_public         = sales_gross_up_public,
+    ca_inctax_public_b            = ca_inctax_pub,
+    fed_inctax_public_b           = fed_inctax_pub,
+    corp_tax_public_b             = corp_tax_pub,
+    property_tax_public_b         = prop_tax_pub,
+    sales_tax_public_b            = sales_tax_pub,
+    total_tax_public_b            = total_tax_pub,
+    public_wealth_b               = public_wealth_b,
+    total_tax_per_public_wealth   = tot_tax_per_wealth,
+    ca_inctax_per_public_wealth   = ca_inctax_per_w,
+    fed_inctax_per_public_wealth  = fed_inctax_per_w,
+    corp_per_public_wealth        = corp_per_w,
+    prop_sales_per_public_wealth  = prop_sales_per_w,
+    check_decomp_public_wealth    = check_w,
+    public_econ_income_b          = econ_income_pub,
+    total_tax_per_econ_income     = tot_tax_per_ei,
+    ca_inctax_per_econ_income     = ca_inctax_per_ei,
+    fed_inctax_per_econ_income    = fed_inctax_per_ei,
+    corp_per_econ_income          = corp_per_ei,
+    prop_sales_per_econ_income    = prop_sales_per_ei,
+    check_decomp_econ_income      = check_ei,
+    private_share                 = private_share,
+    passthrough_share             = passthrough_share,
+    private_c_share               = private_c_share,
+    test_share_sum                = test_share,
+    corp_tax_private_c_b          = corp_tax_priv_c,
+    corp_tax_diversified_b        = corp_tax_div,
+    property_tax_private_b        = prop_tax_priv,
+    total_corp_property_b         = tot_corp_prop,
+    total_sales_tax_b             = total_sales_tax,
+    total_inctax_b                = total_inctax_b,
+    total_taxes_b                 = total_taxes_b,
+    total_per_total_wealth        = tot_per_total_w,
+    ca_inctax_per_total_wealth    = ca_per_total_w,
+    fed_inctax_per_total_wealth   = fed_per_total_w,
+    corp_per_total_wealth         = corp_per_total_w,
+    prop_sales_per_total_wealth   = ps_per_total_w,
+    check_total_decomp            = check_total
+  )
+
+  list(
+    method1     = method1,
+    memo1       = memo1,
+    robustness  = robustness,
+    all_taxes   = all_taxes
+  )
+}
+
 compute_data_sec_agg <- function(data_sec_all,
                                  exclude_ids = ELLISON_FORBES_ID,
                                  m_to_b = 1000) {
