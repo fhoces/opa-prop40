@@ -49,6 +49,41 @@ test_that("build_fig2 renders to a non-empty PNG", {
   expect_gt(file.info(png_path)$size, 5000)
 })
 
+test_that("build_fig3 returns a 2-panel patchwork over 2019-2025", {
+  agg <- compute_data_sec_agg(extract_data_sec_all())
+  bci_x <- extract_billionaires_ca_inctax()
+  ftb <- extract_ftb_b4a()
+  b <- compute_billionaires_ca_inctax(agg, bci_x, ftb)
+  top4 <- extract_data_sec_top4()
+  srs_raw <- extract_shortrunseries()
+  srs_r <- compute_shortrunseries(agg, top4, b, srs_raw)
+  p <- build_fig3(srs_r)
+  expect_s3_class(p, "patchwork")
+  pa <- p[[1]]; pb <- p[[2]]
+  expect_equal(nrow(pa$data), 14)   # 2 series × 7 yrs
+  expect_equal(nrow(pb$data), 14)
+  # Sanity: 2025 all-billionaires CA inctax ≈ 4.14 $B
+  expect_equal(pa$data$value[pa$data$year == 2025 &
+                              pa$data$series == "All CA billionaires"],
+                4.14264, tolerance = 1e-3)
+})
+
+test_that("build_fig3 renders to a non-empty PNG", {
+  agg <- compute_data_sec_agg(extract_data_sec_all())
+  bci_x <- extract_billionaires_ca_inctax()
+  ftb <- extract_ftb_b4a()
+  b <- compute_billionaires_ca_inctax(agg, bci_x, ftb)
+  top4 <- extract_data_sec_top4()
+  srs_raw <- extract_shortrunseries()
+  srs_r <- compute_shortrunseries(agg, top4, b, srs_raw)
+  p <- build_fig3(srs_r)
+  tmpdir <- tempfile("fig3_"); dir.create(tmpdir)
+  png_path <- file.path(tmpdir, "fig3.png")
+  ggplot2::ggsave(png_path, plot = p, width = 11, height = 5, dpi = 100)
+  expect_true(file.exists(png_path))
+  expect_gt(file.info(png_path)$size, 5000)
+})
+
 test_that("build_fig1 renders to a non-empty PNG file", {
   agg <- compute_data_sec_agg(extract_data_sec_all())
   bci_x <- extract_billionaires_ca_inctax()

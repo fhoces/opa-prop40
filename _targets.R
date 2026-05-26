@@ -82,5 +82,9 @@ list(
 
   tar_target(fig2,     build_fig2(longrunseries)),
   tar_target(fig2_png, render_figure_png(fig2, "fig2", width = 11, height = 5), format = "file"),
-  tar_target(fig2_pdf, render_figure_pdf(fig2, "fig2", width = 11, height = 5), format = "file")
+  tar_target(fig2_pdf, render_figure_pdf(fig2, "fig2", width = 11, height = 5), format = "file"),
+
+  tar_target(fig3,     build_fig3(shortrunseries_r)),
+  tar_target(fig3_png, render_figure_png(fig3, "fig3", width = 11, height = 5), format = "file"),
+  tar_target(fig3_pdf, render_figure_pdf(fig3, "fig3", width = 11, height = 5), format = "file")
 )

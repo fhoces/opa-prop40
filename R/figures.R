@@ -3,6 +3,72 @@
 # Each builder takes already-validated upstream targets and returns a ggplot.
 # Render to PNG / PDF downstream via R/render.R helpers.
 
+build_fig3 <- function(shortrunseries_r) {
+  # Figure 3: The California Income Tax Paid by Billionaires.
+  # Panel A: $B income tax for all CA billionaires + top 5 (from SEC),
+  # 2019-2025. Panel B: same series as % of wealth.
+  panel <- shortrunseries_r$panel
+  d <- panel[panel$year %in% 2019:2025, ]
+  n_yrs <- nrow(d)
+
+  panel_a_data <- tibble::tibble(
+    year   = rep(d$year, 2),
+    value  = c(d$ca_inctax_billionaires_b, d$top5_sec_ca_inctax_b),
+    series = factor(rep(c("All CA billionaires", "Top 5 (SEC filings)"),
+                          each = n_yrs),
+                     levels = c("All CA billionaires", "Top 5 (SEC filings)"))
+  )
+  panel_b_data <- tibble::tibble(
+    year   = rep(d$year, 2),
+    value  = c(d$ca_inctax_per_wealth, d$top5_sec_tax_rate),
+    series = factor(rep(c("All CA billionaires", "Top 5 (SEC filings)"),
+                          each = n_yrs),
+                     levels = c("All CA billionaires", "Top 5 (SEC filings)"))
+  )
+
+  colors <- c("All CA billionaires" = "#1f77b4", "Top 5 (SEC filings)" = "#d62728")
+
+  panel_a <- ggplot2::ggplot(panel_a_data,
+                              ggplot2::aes(x = year, y = value, color = series,
+                                            shape = series)) +
+    ggplot2::geom_line(linewidth = 0.9) +
+    ggplot2::geom_point(size = 2.2) +
+    ggplot2::scale_x_continuous(breaks = 2019:2025) +
+    ggplot2::scale_y_continuous(limits = c(0, NA)) +
+    ggplot2::scale_color_manual(values = colors) +
+    ggplot2::labs(
+      title = "A. CA income tax paid by billionaires ($B)",
+      x = NULL, y = NULL, color = NULL, shape = NULL
+    ) +
+    ggplot2::theme_minimal(base_size = 11) +
+    ggplot2::theme(legend.position = "bottom",
+                    plot.title = ggplot2::element_text(face = "bold"),
+                    panel.grid.minor.x = ggplot2::element_blank())
+
+  panel_b <- ggplot2::ggplot(panel_b_data,
+                              ggplot2::aes(x = year, y = value, color = series,
+                                            shape = series)) +
+    ggplot2::geom_line(linewidth = 0.9) +
+    ggplot2::geom_point(size = 2.2) +
+    ggplot2::scale_x_continuous(breaks = 2019:2025) +
+    ggplot2::scale_y_continuous(labels = scales::percent_format(accuracy = 0.1),
+                                 limits = c(0, NA)) +
+    ggplot2::scale_color_manual(values = colors) +
+    ggplot2::labs(
+      title = "B. CA income tax / wealth",
+      x = NULL, y = NULL, color = NULL, shape = NULL
+    ) +
+    ggplot2::theme_minimal(base_size = 11) +
+    ggplot2::theme(legend.position = "bottom",
+                    plot.title = ggplot2::element_text(face = "bold"),
+                    panel.grid.minor.x = ggplot2::element_blank())
+
+  patchwork::wrap_plots(panel_a, panel_b, ncol = 2) +
+    patchwork::plot_annotation(
+      title = "Figure 3: California Income Tax Paid by Billionaires"
+    )
+}
+
 build_fig2 <- function(longrunseries) {
   # Figure 2: Billionaire Class Wealth Grows Much Faster than the Economy.
   # Two panels stacked horizontally via patchwork.
