@@ -184,6 +184,44 @@ test_that("build_tab5 renders to non-empty HTML and LaTeX", {
   expect_gt(nchar(tex), 200)
 })
 
+test_that("build_tab_a1 panel A reproduces TabA1 sheet 2022-2025 + growth row", {
+  srs <- extract_shortrunseries()
+  lrs <- extract_longrunseries()
+  ta1 <- build_tab_a1(srs, lrs)
+  pa <- attr(ta1, "panel_a")
+  xl <- read_sheet("TabA1", range = "B6:D10")
+
+  expect_equal(pa$n_us_billionaires[1:4], xl$A[1:4], tolerance = 1e-6)
+  expect_equal(pa$wealth_b[1:4],          xl$B[1:4], tolerance = 1e-2)
+  expect_equal(pa$annual_growth[2:4],     xl$C[2:4], tolerance = 1e-4)
+  expect_equal(pa$wealth_b[5],            xl$B[5],   tolerance = 1e-4)
+})
+
+test_that("build_tab_a1 panel B reproduces TabA1 sheet 1982 vs 2025", {
+  srs <- extract_shortrunseries()
+  lrs <- extract_longrunseries()
+  ta1 <- build_tab_a1(srs, lrs)
+  pb <- attr(ta1, "panel_b")
+  xl <- read_sheet("TabA1", range = "B14:G17")
+  expect_equal(pb$families_top0002_k,   xl$A, tolerance = 1e-2)
+  expect_equal(pb$wealth_top0002_b,     xl$B, tolerance = 1e-1)
+  expect_equal(pb$wealth_per_family_b,  xl$C, tolerance = 1e-3)
+  expect_equal(pb$n_us_families_m,      xl$D, tolerance = 1e-3)
+  expect_equal(pb$us_gdp_2025dollars_b, xl$E, tolerance = 1)
+  expect_equal(pb$gdp_per_family_k,     xl$F, tolerance = 1)
+})
+
+test_that("build_tab_a1 renders to non-empty HTML and LaTeX", {
+  srs <- extract_shortrunseries()
+  lrs <- extract_longrunseries()
+  ta1 <- build_tab_a1(srs, lrs)
+  html <- as.character(gt::as_raw_html(ta1))
+  expect_gt(nchar(html), 1000)
+  expect_true(grepl("Wealth Growth of US Billionaires", html))
+  tex <- as.character(gt::as_latex(ta1))
+  expect_gt(nchar(tex), 200)
+})
+
 test_that("build_tab1 renders to non-empty HTML and LaTeX", {
   agg <- compute_data_sec_agg(extract_data_sec_all())
   bci_x <- extract_billionaires_ca_inctax()

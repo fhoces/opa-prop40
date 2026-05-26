@@ -76,6 +76,135 @@ build_tab2 <- function(data_sec_agg_r, billionaires_ca_inctax_r, data_sec_top4) 
   tab
 }
 
+build_tab_a1 <- function(shortrunseries, longrunseries) {
+  # Appendix Table A1: Wealth Growth of US Billionaires (mirrors Tab1 but
+  # for the US). Panel A: recent nominal growth 2022-2025. Panel B: 1982 vs
+  # 2025 long-term real growth of the top .0002% US families.
+  srs <- shortrunseries
+  lrs <- longrunseries
+  num <- function(df, col, rows) {
+    unname(vapply(rows, function(r) suppressWarnings(as.numeric(df[[col]][r])),
+                  numeric(1)))
+  }
+
+  # ---- Panel A inputs (shortrunseries rows 10..13 = years 2022..2025) ------
+  # Col I = # US citizen billionaires (literal); Col Q = US billionaire wealth.
+  n_us_b <- num(srs, "I", 10:13)
+  w_us_b <- num(srs, "Q", 10:13)
+
+  panel_a <- tibble::tibble(
+    year                = as.character(2022:2025),
+    n_us_billionaires   = n_us_b,
+    wealth_b            = w_us_b,
+    annual_growth       = c(NA_real_, w_us_b[-1] / w_us_b[-4] - 1)
+  )
+  growth_row <- tibble::tibble(
+    year                = "Growth during 3 years (2023-2025)",
+    n_us_billionaires   = NA_integer_,
+    wealth_b            = panel_a$wealth_b[4] / panel_a$wealth_b[1] - 1,
+    annual_growth       = NA_real_
+  )
+  panel_a_full <- dplyr::bind_rows(panel_a, growth_row)
+
+  # ---- Panel B inputs (longrunseries rows 8 = 1982, 51 = 2025) -------------
+  num_lr <- function(col, row) suppressWarnings(as.numeric(lrs[[col]][row]))
+  W8  <- num_lr("W", 8);  W51 <- num_lr("W", 51)
+  defl_1982 <- W8  / W51
+  AM_1982 <- num_lr("AM", 8);  AM_2025 <- num_lr("AM", 51)
+  AP_1982 <- num_lr("AP", 8);  AP_2025 <- num_lr("AP", 51)
+  X_1982  <- num_lr("X",  8);  X_2025  <- num_lr("X",  51)
+  AS_1982 <- num_lr("AS", 8);  AS_2025 <- num_lr("AS", 51)
+
+  row_1982 <- tibble::tibble(
+    year                  = "1982",
+    families_top0002_k    = AM_1982,
+    wealth_top0002_b      = AP_1982 * defl_1982,
+    wealth_per_family_b   = NA_real_,
+    n_us_families_m       = X_1982 / 1000,
+    us_gdp_2025dollars_b  = AS_1982 * defl_1982,
+    gdp_per_family_k      = NA_real_
+  )
+  row_1982$wealth_per_family_b <- row_1982$wealth_top0002_b / row_1982$families_top0002_k
+  row_1982$gdp_per_family_k    <- 1000 * row_1982$us_gdp_2025dollars_b / row_1982$n_us_families_m
+
+  row_2025 <- tibble::tibble(
+    year                  = "2025",
+    families_top0002_k    = AM_2025,
+    wealth_top0002_b      = AP_2025,         # already in 2025 $
+    wealth_per_family_b   = NA_real_,
+    n_us_families_m       = X_2025 / 1000,
+    us_gdp_2025dollars_b  = AS_2025,
+    gdp_per_family_k      = NA_real_
+  )
+  row_2025$wealth_per_family_b <- row_2025$wealth_top0002_b / row_2025$families_top0002_k
+  row_2025$gdp_per_family_k    <- 1000 * row_2025$us_gdp_2025dollars_b / row_2025$n_us_families_m
+
+  ratio_row <- tibble::tibble(
+    year                  = "Ratio 2025 to 1982",
+    families_top0002_k    = row_2025$families_top0002_k    / row_1982$families_top0002_k,
+    wealth_top0002_b      = row_2025$wealth_top0002_b      / row_1982$wealth_top0002_b,
+    wealth_per_family_b   = row_2025$wealth_per_family_b   / row_1982$wealth_per_family_b,
+    n_us_families_m       = row_2025$n_us_families_m       / row_1982$n_us_families_m,
+    us_gdp_2025dollars_b  = row_2025$us_gdp_2025dollars_b  / row_1982$us_gdp_2025dollars_b,
+    gdp_per_family_k      = row_2025$gdp_per_family_k      / row_1982$gdp_per_family_k
+  )
+  annualized_row <- tibble::tibble(
+    year                  = "Annualized growth",
+    families_top0002_k    = ratio_row$families_top0002_k   ^(1/43) - 1,
+    wealth_top0002_b      = ratio_row$wealth_top0002_b     ^(1/43) - 1,
+    wealth_per_family_b   = ratio_row$wealth_per_family_b  ^(1/43) - 1,
+    n_us_families_m       = ratio_row$n_us_families_m      ^(1/43) - 1,
+    us_gdp_2025dollars_b  = ratio_row$us_gdp_2025dollars_b ^(1/43) - 1,
+    gdp_per_family_k      = ratio_row$gdp_per_family_k     ^(1/43) - 1
+  )
+  panel_b <- dplyr::bind_rows(row_1982, row_2025, ratio_row, annualized_row)
+
+  panel_a_render <- tibble::tibble(
+    section = "A. Recent nominal wealth growth of US billionaires",
+    year    = panel_a_full$year,
+    col1    = panel_a_full$n_us_billionaires,
+    col2    = panel_a_full$wealth_b,
+    col3    = panel_a_full$annual_growth,
+    col4    = NA_real_, col5 = NA_real_, col6 = NA_real_
+  )
+  panel_b_render <- tibble::tibble(
+    section = "B. Long-term real wealth growth: top .0002% wealthiest US families (2025 $)",
+    year    = panel_b$year,
+    col1    = panel_b$families_top0002_k,
+    col2    = panel_b$wealth_top0002_b,
+    col3    = panel_b$wealth_per_family_b,
+    col4    = panel_b$n_us_families_m,
+    col5    = panel_b$us_gdp_2025dollars_b,
+    col6    = panel_b$gdp_per_family_k
+  )
+  combined <- dplyr::bind_rows(panel_a_render, panel_b_render)
+
+  tab <- gt::gt(combined, groupname_col = "section") |>
+    gt::tab_header(title = "Appendix Table A1. Wealth Growth of US Billionaires") |>
+    gt::cols_label(
+      year = "Year",
+      col1 = "# / families",
+      col2 = "Wealth",
+      col3 = "Growth / per family",
+      col4 = "# US families (M)",
+      col5 = "US GDP",
+      col6 = "GDP / family ($)"
+    ) |>
+    gt::fmt_number(columns = c(col1, col2, col4, col5, col6),
+                   decimals = 0, use_seps = TRUE) |>
+    gt::fmt_percent(columns = col3, decimals = 1) |>
+    gt::sub_missing(missing_text = "—") |>
+    gt::tab_source_note(source_note = gt::md(paste(
+      "**Notes:** Repeats Tab 1 for US billionaires instead of CA. Panel A:",
+      "nominal wealth of all US citizen billionaires (Forbes). Panel B: 1982",
+      "vs 2025 real wealth of top .0002% US families, in 2025 dollars."
+    )))
+
+  attr(tab, "panel_a") <- panel_a_full
+  attr(tab, "panel_b") <- panel_b
+  tab
+}
+
 build_tab5 <- function(tab5_r) {
   # Table 5: Scoring the One-Time 5% CA Wealth Tax.
   # 4 scenarios × 7 metric columns. tab5_r already verified element-wise
