@@ -202,90 +202,111 @@ compute_tab5 <- function(pareto_missing_r, tab2, tab3,
   zuck_avg_tax_M    <- avg_metric_row$zuckerberg        # Tab3!$D$13
   top4_avg_tax_M    <- avg_metric_row$all_top4          # Tab3!F13
 
-  # Bridge to Tab5 row 17/18 (wealth and CA income tax denominators
-  # used to apportion the leaver CA income tax loss by wealth share):
-  B17 <- baseline_wealth                                # all CA billionaire wealth
-  F17 <- ca_inctax_avg                                  # all CA billionaire avg CA tax
-  # B18: wealth excluding top-4 company wealth
-  top4_company_wealth_M <- wealth_end_row$all_top4
-  page_wealth_M         <- wealth_end_row$page
-  brin_wealth_M         <- wealth_end_row$brin
-  zuck_wealth_M         <- wealth_end_row$zuckerberg
-  huang_wealth_M        <- wealth_end_row$huang
-  # Tab5 row 30: All top 4 (private + company breakouts hardcoded in Tab5)
+  # Top-4 wealth breakouts hardcoded in Tab5 row 30 (in $B):
   page_wealth_B  <- 276;   page_private_B  <- 13.4
   brin_wealth_B  <- 254.6; brin_private_B  <- 13.2
   zuck_wealth_B  <- 230.2; zuck_private_B  <- 2.5
   huang_wealth_B <- 172;   huang_private_B <- 2.84
-  top4_total_B   <- page_wealth_B + brin_wealth_B + zuck_wealth_B + huang_wealth_B
+  top4_wealth_B  <- page_wealth_B + brin_wealth_B + zuck_wealth_B + huang_wealth_B
   top4_private_B <- page_private_B + brin_private_B + zuck_private_B + huang_private_B
-  B18 <- B17 - (top4_total_B - top4_private_B)
-  F18 <- F17 - (top4_avg_tax_M / 1000)                  # convert $M -> $B
 
-  # Pre-2026 leavers (Page, Thiel, Hankey, Kalanick) -- Tab5 rows 20-23
+  # Wealth and CA income tax denominators used to apportion the leaver CA
+  # income tax loss by wealth share (Tab5 rows 17-18):
+  total_wealth_all_b        <- baseline_wealth
+  avg_ca_inctax_all_b       <- ca_inctax_avg
+  wealth_excl_top4_company  <- total_wealth_all_b - (top4_wealth_B - top4_private_B)
+  ca_inctax_excl_top4       <- avg_ca_inctax_all_b - top4_avg_tax_M / 1000
+  inctax_per_wealth_residual <- ca_inctax_excl_top4 / wealth_excl_top4_company
+
+  # Pre-2026 leavers (Page, Thiel, Hankey, Kalanick) — Tab5 rows 20-23.
+  # Page contributes company-tax + private-wealth share; the other three
+  # contribute private-wealth share only (apportioned from residual rate).
   thiel_wealth_B    <- 28.9
   hankey_wealth_B   <- 8.15
   kalanick_wealth_B <- 3.56
-  B19 <- page_wealth_B + thiel_wealth_B + hankey_wealth_B + kalanick_wealth_B
-  F20 <- (page_avg_tax_M / 1000) + page_private_B * (F18 / B18)
-  F21 <- thiel_wealth_B    * (F18 / B18)
-  F22 <- hankey_wealth_B   * (F18 / B18)
-  F23 <- kalanick_wealth_B * (F18 / B18)
-  F19 <- F20 + F21 + F22 + F23
+  ca_inctax_loss_pre2026 <-
+      (page_avg_tax_M / 1000) + page_private_B * inctax_per_wealth_residual +
+      (thiel_wealth_B + hankey_wealth_B + kalanick_wealth_B) * inctax_per_wealth_residual
 
-  # Post-2026 leavers (Brin, Zuckerberg, Andy Fang) -- Tab5 rows 25-27
+  # Post-2026 leavers (Brin, Zuckerberg, Andy Fang) — Tab5 rows 25-27.
   fang_wealth_B <- 1.5
-  B24 <- brin_wealth_B + zuck_wealth_B + fang_wealth_B
-  F25 <- (brin_avg_tax_M / 1000) + brin_private_B * (F18 / B18)
-  F26 <- (zuck_avg_tax_M / 1000) + zuck_private_B * (F18 / B18)
-  F27 <- fang_wealth_B * (F18 / B18)
-  F24 <- F25 + F26 + F27
+  ca_inctax_loss_post2026 <-
+      (brin_avg_tax_M / 1000) + brin_private_B * inctax_per_wealth_residual +
+      (zuck_avg_tax_M / 1000) + zuck_private_B * inctax_per_wealth_residual +
+      fang_wealth_B * inctax_per_wealth_residual
 
-  # --- Scenario 1: Benchmark ---
-  C6 <- baseline_wealth
-  D6 <- C6 * (1 - avoidance_rate)
-  E6 <- avoidance_rate
-  F6 <- C6 * (1 - E6) * wealth_tax_rate
-  G6 <- F6 * realization_share * ltcg_taxable * ca_ltcg_rate
-  H6 <- -wealth_tax_rate * ca_inctax_avg
+  total_leaver_inctax_loss <- ca_inctax_loss_pre2026 + ca_inctax_loss_post2026
+  wealth_pre2026_leavers   <- page_wealth_B + thiel_wealth_B + hankey_wealth_B + kalanick_wealth_B
 
-  # --- Scenario 2: Adding missing small billionaires ---
-  B7 <- baseline_n * (1 + pareto$pct_count_increase)
-  C7 <- C6 * (1 + pareto$pct_wealth_increase)
-  D7 <- C6 * ((1 - avoidance_rate) + (1 - avoidance_small) * pareto$pct_wealth_increase)
-  E7 <- 1 - D7 / C7
-  F7 <- C7 * (1 - E7) * wealth_tax_rate -
-        (C7 - C6) * pareto$fraction_in_phasein * phasein_rate
-  G7 <- F7 * realization_share * ltcg_taxable * ca_ltcg_rate
-  H7 <- -wealth_tax_rate * ca_inctax_avg * (1 + pareto$pct_wealth_increase)
+  # Scenario engine: given a scenario's wealth + taxable wealth + the
+  # baseline-inctax denominator + optional adjustments, compute the 7 result
+  # columns. Avoidance rate is derived as (1 - taxable/wealth).
+  scenario_revenue <- function(n, wealth, taxable_wealth,
+                                baseline_inctax_effective,
+                                phasein_deduction = 0,
+                                extra_inctax_loss = 0) {
+    avoidance        <- 1 - taxable_wealth / wealth
+    wealth_tax_rev   <- taxable_wealth * wealth_tax_rate - phasein_deduction
+    extra_inctax     <- wealth_tax_rev * realization_share * ltcg_taxable * ca_ltcg_rate
+    annual_loss      <- -wealth_tax_rate * baseline_inctax_effective - extra_inctax_loss
+    c(n              = n,
+      wealth         = wealth,
+      taxable_wealth = taxable_wealth,
+      avoidance_rate = avoidance,
+      wealth_tax_rev = wealth_tax_rev,
+      extra_inctax   = extra_inctax,
+      annual_loss    = annual_loss)
+  }
 
-  # --- Scenario 3: Aggressive pre/post-2026 leavers ---
-  B8 <- baseline_n
-  C8 <- C6
-  D8 <- 0.9 * (C6 - B19)
-  E8 <- 1 - D8 / C8
-  F8 <- C8 * (1 - E8) * wealth_tax_rate
-  G8 <- F8 * realization_share * ltcg_taxable * ca_ltcg_rate
-  H8 <- H6 - (F19 + F24)
+  # --- Scenario 1: Benchmark (Forbes 4/15/2026 + 10% avoidance) ---
+  s1 <- scenario_revenue(
+    n                          = baseline_n,
+    wealth                     = baseline_wealth,
+    taxable_wealth             = baseline_wealth * (1 - avoidance_rate),
+    baseline_inctax_effective  = ca_inctax_avg
+  )
 
-  # --- Scenario 4: Both 2 and 3 ---
-  B9 <- B7
-  C9 <- C8 + (C7 - C6)
-  D9 <- D8 + (D7 - D6)
-  E9 <- 1 - D9 / C9
-  F9 <- C9 * (1 - E9) * wealth_tax_rate
-  G9 <- F9 * realization_share * ltcg_taxable * ca_ltcg_rate
-  H9 <- H7 - (F19 + F24)
+  # --- Scenario 2: + Pareto-missing small billionaires ---
+  wealth_2 <- baseline_wealth * (1 + pareto$pct_wealth_increase)
+  s2 <- scenario_revenue(
+    n                          = baseline_n * (1 + pareto$pct_count_increase),
+    wealth                     = wealth_2,
+    taxable_wealth             = baseline_wealth *
+        ((1 - avoidance_rate) + (1 - avoidance_small) * pareto$pct_wealth_increase),
+    baseline_inctax_effective  = ca_inctax_avg * (1 + pareto$pct_wealth_increase),
+    phasein_deduction          = (wealth_2 - baseline_wealth) *
+        pareto$fraction_in_phasein * phasein_rate
+  )
 
+  # --- Scenario 3: + Aggressive pre/post-2026 leavers ---
+  s3 <- scenario_revenue(
+    n                          = baseline_n,
+    wealth                     = baseline_wealth,
+    taxable_wealth             = 0.9 * (baseline_wealth - wealth_pre2026_leavers),
+    baseline_inctax_effective  = ca_inctax_avg,
+    extra_inctax_loss          = total_leaver_inctax_loss
+  )
+
+  # --- Scenario 4: scenarios 2 and 3 combined ---
+  s4 <- scenario_revenue(
+    n                          = s2[["n"]],
+    wealth                     = s3[["wealth"]] + (s2[["wealth"]] - baseline_wealth),
+    taxable_wealth             = s3[["taxable_wealth"]] +
+                                  (s2[["taxable_wealth"]] - s1[["taxable_wealth"]]),
+    baseline_inctax_effective  = ca_inctax_avg * (1 + pareto$pct_wealth_increase),
+    extra_inctax_loss          = total_leaver_inctax_loss
+  )
+
+  rows <- rbind(s1, s2, s3, s4)
   tibble::tibble(
-    scenario = paste0("Scenario ", 1:4),
-    n_billionaires            = c(baseline_n, B7, B8, B9),
-    wealth                    = c(C6, C7, C8, C9),
-    taxable_wealth            = c(D6, D7, D8, D9),
-    avoidance_rate            = c(E6, E7, E8, E9),
-    wealth_tax_revenue        = c(F6, F7, F8, F9),
-    extra_ca_inctax_sales     = c(G6, G7, G8, G9),
-    annual_ca_inctax_loss     = c(H6, H7, H8, H9)
+    scenario              = paste0("Scenario ", 1:4),
+    n_billionaires        = unname(rows[, "n"]),
+    wealth                = unname(rows[, "wealth"]),
+    taxable_wealth        = unname(rows[, "taxable_wealth"]),
+    avoidance_rate        = unname(rows[, "avoidance_rate"]),
+    wealth_tax_revenue    = unname(rows[, "wealth_tax_rev"]),
+    extra_ca_inctax_sales = unname(rows[, "extra_inctax"]),
+    annual_ca_inctax_loss = unname(rows[, "annual_loss"])
   )
 }
 
