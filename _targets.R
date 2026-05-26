@@ -37,5 +37,6 @@ list(
   tar_target(data_sec_agg_r,        compute_data_sec_agg(data_sec_all)),
   tar_target(pareto_missing_r,      compute_pareto_missing(pareto_missing)),
   tar_target(pareto_summary,        compute_pareto_summary(pareto_missing_r)),
-  tar_target(tab5_r,                compute_tab5(pareto_missing_r, tab2, tab3))
+  tar_target(tab5_r,                compute_tab5(pareto_missing_r, tab2, tab3)),
+  tar_target(fig8_laffer_r,         compute_fig8_laffer())
 )

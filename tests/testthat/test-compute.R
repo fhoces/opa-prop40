@@ -62,6 +62,18 @@ test_that("compute_tab5 matches the 4-scenario Excel Tab5 to 1e-3", {
   expect_equal(t5_r$annual_ca_inctax_loss, xl$G, tolerance = 1e-4)
 })
 
+test_that("compute_fig8_laffer matches Excel Fig8 columns A-E across all rates", {
+  laffer <- compute_fig8_laffer()
+  xl <- read_sheet("Fig8", range = "A11:E211")  # 201 rows of computed Laffer values
+
+  expect_equal(nrow(laffer), 201)
+  expect_equal(laffer$tax_rate,               xl$A, tolerance = 1e-9)
+  expect_equal(laffer$mechanical_tax_revenue, xl$B, tolerance = 1e-6)
+  expect_equal(laffer$wealth_tax_base,        xl$C, tolerance = 1e-6)
+  expect_equal(laffer$actual_tax_revenue,     xl$D, tolerance = 1e-6)
+  expect_equal(laffer$long_run_tax_revenue,   xl$E, tolerance = 1e-6)
+})
+
 test_that("compute_data_sec_agg excludes Ellison from every year", {
   d_all <- extract_data_sec_all()
   # If we DON'T exclude Ellison, totals must diverge for years he was on the list

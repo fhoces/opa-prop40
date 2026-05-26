@@ -144,6 +144,29 @@ compute_pareto_summary <- function(pareto_missing_r,
   )
 }
 
+compute_fig8_laffer <- function(
+  semi_elasticity_mobility   = 10,      # Fig8!B8 - mobility semi-elasticity e
+  current_inctax_per_wealth  = 0.002,   # Fig8!C8 - current CA income tax / wealth
+  current_wealth_tax_base    = 2000,    # Fig8!D8 - current wealth tax base ($B)
+  deconcentration_elasticity = 15,      # Fig8!E8 - deconcentration elasticity d
+  rate_step                  = 0.001,
+  max_rate                   = 0.20
+) {
+  # Laffer curve for a permanent annual CA wealth tax under mobility +
+  # deconcentration responses. Mirrors Fig8 columns A-E.
+  rates  <- seq(0, max_rate, by = rate_step)
+  base   <- current_wealth_tax_base *
+              exp(-(rates - current_inctax_per_wealth) * semi_elasticity_mobility)
+  ref_pow <- (1 - current_inctax_per_wealth)^deconcentration_elasticity
+  tibble::tibble(
+    tax_rate               = rates,
+    mechanical_tax_revenue = rates * current_wealth_tax_base,
+    wealth_tax_base        = base,
+    actual_tax_revenue     = rates * base,
+    long_run_tax_revenue   = rates * base * (1 - rates)^deconcentration_elasticity / ref_pow
+  )
+}
+
 compute_tab5 <- function(pareto_missing_r, tab2, tab3,
                          baseline_n        = 249,
                          baseline_wealth   = 2182,
