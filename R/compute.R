@@ -870,13 +870,24 @@ compute_shortrunseries <- function(data_sec_agg_r,
   cell <- function(addr) xls_cell(srs, addr)
   # Pull per-billionaire CA income tax (col S) and wealth (cols C/D, $M)
   top4 <- data_sec_top4
-  bsec <- function(forbes_id, yrs, col) {
-    out <- numeric(length(yrs))
-    for (i in seq_along(yrs)) {
-      row <- top4[top4$forbes_id == forbes_id & top4$year == yrs[i], ]
-      out[i] <- if (nrow(row) == 1L) row[[col]] else NA_real_
-    }
-    out
+  # The 5 "top 5" billionaires, in Excel column order AJ..AN. Used to query
+  # per-billionaire columns of data_sec_top4. Mapping: short name -> forbes_id.
+  TOP5 <- c(
+    brin    = "sergey-brin",
+    page    = "larry-page",
+    zuck    = "mark-zuckerberg",
+    ellison = "larry-ellison",
+    huang   = "jensen-huang"
+  )
+  # For a data_sec_top4 column + year span, return a named list (one vector
+  # per billionaire in TOP5).
+  query_top5 <- function(col, yrs) {
+    lapply(TOP5, function(id) {
+      vapply(yrs, function(y) {
+        row <- top4[top4$forbes_id == id & top4$year == y, ]
+        if (nrow(row) == 1L) row[[col]] else NA_real_
+      }, numeric(1))
+    })
   }
 
   yrs <- 2018:2025
@@ -952,15 +963,10 @@ compute_shortrunseries <- function(data_sec_agg_r,
   AF_top5_share_of_total <- AE_top5_ca_inctax_sec / Z_ca_inctax_total
 
   # Cols AJ..AN per-billionaire CA income tax / 1000 (years 2018..2025)
-  AJ_brin    <- bsec("sergey-brin",     yrs, "ca_income_tax") / 1000
-  AK_page    <- bsec("larry-page",      yrs, "ca_income_tax") / 1000
-  AL_zuck    <- bsec("mark-zuckerberg", yrs, "ca_income_tax") / 1000
-  AM_ellison <- bsec("larry-ellison",   yrs, "ca_income_tax") / 1000
-  AN_huang   <- bsec("jensen-huang",    yrs, "ca_income_tax") / 1000
-  # Col AG = AJ + AK + AL (top 3 sum: Brin + Page + Zuck)
-  AG_top3 <- AJ_brin + AK_page + AL_zuck
-  # Col AH = AJ + AK (top 2 sum: Brin + Page)
-  AH_top2 <- AJ_brin + AK_page
+  tax_b <- lapply(query_top5("ca_income_tax", yrs), `/`, 1000)
+  # Col AG = top 3 sum (Brin + Page + Zuck); Col AH = top 2 sum (Brin + Page)
+  AG_top3 <- tax_b$brin + tax_b$page + tax_b$zuck
+  AH_top2 <- tax_b$brin + tax_b$page
 
   panel <- tibble::tibble(
     year                     = yrs,
@@ -992,40 +998,28 @@ compute_shortrunseries <- function(data_sec_agg_r,
     top5_sec_share_of_total  = AF_top5_share_of_total,
     top3_ca_inctax_sum_b     = AG_top3,
     top2_ca_inctax_sum_b     = AH_top2,
-    brin_ca_inctax_b         = AJ_brin,
-    page_ca_inctax_b         = AK_page,
-    zuck_ca_inctax_b         = AL_zuck,
-    ellison_ca_inctax_b      = AM_ellison,
-    huang_ca_inctax_b        = AN_huang
+    brin_ca_inctax_b         = tax_b$brin,
+    page_ca_inctax_b         = tax_b$page,
+    zuck_ca_inctax_b         = tax_b$zuck,
+    ellison_ca_inctax_b      = tax_b$ellison,
+    huang_ca_inctax_b        = tax_b$huang
   )
 
   # Row 14 = "2026 (feb 1)" public-wealth snapshot of TOP 5 using 2025 values
-  # AJ14 = data_sec_top4!D$98/1000 = Brin 2025 public wealth, etc.
-  brin_2025_pub   <- bsec("sergey-brin",     2025, "public_worth") / 1000
-  page_2025_pub   <- bsec("larry-page",      2025, "public_worth") / 1000
-  zuck_2025_pub   <- bsec("mark-zuckerberg", 2025, "public_worth") / 1000
-  ell_2025_pub    <- bsec("larry-ellison",   2025, "public_worth") / 1000
-  huang_2025_pub  <- bsec("jensen-huang",    2025, "public_worth") / 1000
-  AG14 <- brin_2025_pub + page_2025_pub + zuck_2025_pub                # top 3
-  AH14 <- brin_2025_pub + page_2025_pub                                  # top 2
+  # (AJ14 = data_sec_top4!D$98/1000 = Brin 2025 public wealth, etc.)
+  pub_2025 <- vapply(query_top5("public_worth", 2025), `[`, numeric(1), 1L) / 1000
+  AG14 <- pub_2025[["brin"]] + pub_2025[["page"]] + pub_2025[["zuck"]]   # top 3
+  AH14 <- pub_2025[["brin"]] + pub_2025[["page"]]                         # top 2
 
   # Row 17 = top 5 TOTAL wealth (incl private) end of 2025: col C ($M) of each
-  brin_2025_tot  <- bsec("sergey-brin",     2025, "forbes_worth") / 1000
-  page_2025_tot  <- bsec("larry-page",      2025, "forbes_worth") / 1000
-  zuck_2025_tot  <- bsec("mark-zuckerberg", 2025, "forbes_worth") / 1000
-  ell_2025_tot   <- bsec("larry-ellison",   2025, "forbes_worth") / 1000
-  huang_2025_tot <- bsec("jensen-huang",    2025, "forbes_worth") / 1000
-  AG17 <- brin_2025_tot + page_2025_tot + zuck_2025_tot
-  AH17 <- brin_2025_tot + page_2025_tot
+  tot_2025 <- vapply(query_top5("forbes_worth", 2025), `[`, numeric(1), 1L) / 1000
+  AG17 <- tot_2025[["brin"]] + tot_2025[["page"]] + tot_2025[["zuck"]]
+  AH17 <- tot_2025[["brin"]] + tot_2025[["page"]]
 
   # Row 18 = row 14 / row 17 (public share by group)
+  share_2025 <- pub_2025 / tot_2025
   AG18 <- AG14 / AG17
   AH18 <- AH14 / AH17
-  AJ18 <- brin_2025_pub  / brin_2025_tot
-  AK18 <- page_2025_pub  / page_2025_tot
-  AL18 <- zuck_2025_pub  / zuck_2025_tot
-  AM18 <- ell_2025_pub   / ell_2025_tot
-  AN18 <- huang_2025_pub / huang_2025_tot
 
   # Row 15: averages of cols X..AN over rows 7..13 (years 2019..2025)
   idx_2019_2025 <- 2:8
@@ -1037,38 +1031,32 @@ compute_shortrunseries <- function(data_sec_agg_r,
   AF15 <- AE15 / X15
   AG15 <- mean(AG_top3[idx_2019_2025])
   AH15 <- mean(AH_top2[idx_2019_2025])
-  AJ15 <- mean(AJ_brin[idx_2019_2025])
-  AK15 <- mean(AK_page[idx_2019_2025])
-  AL15 <- mean(AL_zuck[idx_2019_2025])
-  AM15 <- mean(AM_ellison[idx_2019_2025])
-  AN15 <- mean(AN_huang[idx_2019_2025])
+  # Per-billionaire 2019-2025 averages of CA income tax
+  tax_b_avg <- vapply(tax_b, function(v) mean(v[idx_2019_2025]), numeric(1))
   Q15  <- V_share_top5_in_total[8]      # =B13/Q13
 
   # Row 16: AG16 = AG13/AG14 (% wealth in 2025 CA inctax / 2025 public wealth)
   AG16 <- AG_top3[8] / AG14
   AH16 <- AH_top2[8] / AH14
-  AJ16 <- AJ_brin[8] / brin_2025_pub
-  AK16 <- AK_page[8] / page_2025_pub
-  AL16 <- AL_zuck[8] / zuck_2025_pub
-  AM16 <- AM_ellison[8] / ell_2025_pub
-  AN16 <- AN_huang[8] / huang_2025_pub
+  # Per-billionaire: 2025 CA inctax / 2025 public wealth
+  share_2025_tax <- vapply(names(TOP5),
+                            function(nm) tax_b[[nm]][8] / pub_2025[[nm]],
+                            numeric(1))
 
   summary_2025 <- list(
-    top5_public_b      = c(brin = brin_2025_pub, page = page_2025_pub, zuck = zuck_2025_pub,
-                            ellison = ell_2025_pub, huang = huang_2025_pub,
-                            top3 = AG14, top2 = AH14),
-    top5_total_b       = c(brin = brin_2025_tot, page = page_2025_tot, zuck = zuck_2025_tot,
-                            ellison = ell_2025_tot, huang = huang_2025_tot,
-                            top3 = AG17, top2 = AH17),
-    public_share       = c(brin = AJ18, page = AK18, zuck = AL18, ellison = AM18,
-                            huang = AN18, top3 = AG18, top2 = AH18),
+    top5_public_b      = c(pub_2025, top3 = AG14, top2 = AH14),
+    top5_total_b       = c(tot_2025, top3 = AG17, top2 = AH17),
+    public_share       = c(share_2025, top3 = AG18, top2 = AH18),
     avg_2019_2025      = list(
       X = X15, Y = Y15, AA = AA15, AD = AD15, AE = AE15, AF = AF15,
-      AG = AG15, AH = AH15, AJ = AJ15, AK = AK15, AL = AL15, AM = AM15, AN = AN15
+      AG = AG15, AH = AH15,
+      AJ = unname(tax_b_avg["brin"]),
+      AK = unname(tax_b_avg["page"]),
+      AL = unname(tax_b_avg["zuck"]),
+      AM = unname(tax_b_avg["ellison"]),
+      AN = unname(tax_b_avg["huang"])
     ),
-    avg_share_2025_wealth = c(top3 = AG16, top2 = AH16,
-                               brin = AJ16, page = AK16, zuck = AL16,
-                               ellison = AM16, huang = AN16),
+    avg_share_2025_wealth = c(top3 = AG16, top2 = AH16, share_2025_tax),
     share_top5_2025_in_total = Q15
   )
 
