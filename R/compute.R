@@ -310,6 +310,205 @@ compute_tab5 <- function(pareto_missing_r, tab2, tab3,
   )
 }
 
+.bci_memo1 <- function(bci) {
+  # Memo 1: US top .001% IRS Pareto calibration (billionairesCAinctax rows
+  # 58-72). Returns a list:
+  #   $memo1            — the tibble exposed downstream
+  #   $fed_tax_per_agi  — row 64 vector (used by D99 + the all-taxes block)
+  #   $pct_overshoot    — row 72 vector indexed by panel year 2018..2023
+  m1_cols <- c("B", "C", "D", "E", "F")          # IRS years 2018..2022
+  read_row <- function(row) xls_cells_row(bci, m1_cols, row)
+
+  n_returns        <- read_row(59)
+  agi_cutoff_k     <- read_row(60)
+  agi_avg_k        <- read_row(61)
+  fed_tax_total_m  <- read_row(63)
+  top10m_n         <- read_row(66)
+  top10m_cutoff_k  <- read_row(67)
+  top10m_agi_avg_k <- read_row(68)
+
+  pareto_b_001     <- agi_avg_k / agi_cutoff_k                     # row 62
+  fed_tax_per_agi  <- 1000 * (fed_tax_total_m / n_returns) / agi_avg_k  # row 64
+  pareto_b_10m     <- top10m_agi_avg_k / top10m_cutoff_k           # row 69
+  proj_cutoff_001  <- top10m_cutoff_k *
+                       (top10m_n / n_returns)^(1 - 1 / pareto_b_10m)  # row 70
+  proj_agi_001     <- proj_cutoff_001 * pareto_b_10m              # row 71
+  pct_overshoot    <- (proj_agi_001 - agi_avg_k) / proj_agi_001    # row 72
+
+  memo1 <- tibble::tibble(
+    year                = 2018:2022,
+    n_returns           = n_returns,
+    agi_cutoff_k        = agi_cutoff_k,
+    agi_avg_k           = agi_avg_k,
+    pareto_b_001        = unname(pareto_b_001),
+    fed_tax_total_m     = fed_tax_total_m,
+    fed_tax_per_agi     = unname(fed_tax_per_agi),
+    n_returns_10m       = top10m_n,
+    agi_cutoff_10m_k    = top10m_cutoff_k,
+    agi_avg_10m_k       = top10m_agi_avg_k,
+    pareto_b_10m        = unname(pareto_b_10m),
+    proj_cutoff_001_k   = unname(proj_cutoff_001),
+    proj_agi_001_k      = unname(proj_agi_001),
+    pct_overshoot       = unname(pct_overshoot)
+  )
+
+  # Map to billionairesCAinctax panel-year offsets (G72 = F72 for 2023).
+  pct_by_panel_year <- c(
+    `2018` = pct_overshoot[1], `2019` = pct_overshoot[2],
+    `2020` = pct_overshoot[3], `2021` = pct_overshoot[4],
+    `2022` = pct_overshoot[5], `2023` = pct_overshoot[5]
+  )
+
+  list(
+    memo1            = memo1,
+    fed_tax_per_agi  = unname(fed_tax_per_agi),
+    pct_overshoot    = pct_by_panel_year   # keep names; downstream uses ["2018"] etc.
+  )
+}
+
+.bci_all_taxes <- function(yrs, proj_agi_top_corr, inc_top_w_rel,
+                            ca_inctax_ca_b, m1_fed_tax_per_agi, D99,
+                            agg, public_share_b, total_w_ca) {
+  # All-taxes block (billionairesCAinctax rows 110-153). Decomposes the tax
+  # burden of CA billionaires into CA inctax / fed inctax / corporate /
+  # property+sales on both PUBLIC-asset wealth (rows 117-129) and the broader
+  # TOTAL wealth (rows 144-153), with sub-shares for private-C / passthrough
+  # imputed from national-accounts weights (46.8 / 25 / 61).
+
+  # Row 111: CA AGI for all CA Forbes billionaires.
+  # B-G111 = row43 * row46 (proj_agi_corr * 0.5); H,I111 = $G111 * H,I112 / $G112.
+  ca_agi_billionaires <- numeric(9)
+  ca_agi_billionaires[1:6] <- proj_agi_top_corr * inc_top_w_rel[1:6]
+  ca_agi_billionaires[7]   <- ca_agi_billionaires[6] * ca_inctax_ca_b[7] / ca_inctax_ca_b[6]
+  ca_agi_billionaires[8]   <- ca_agi_billionaires[6] * ca_inctax_ca_b[8] / ca_inctax_ca_b[6]
+  ca_agi_billionaires[9]   <- NA_real_
+
+  # Row 113: Fed inctax billionaires.
+  # B-F113 = row64(memo1) * row111 * D99; G,H,I113 = row112 * row114.
+  fed_inctax_b <- numeric(9)
+  fed_inctax_b[1:5] <- m1_fed_tax_per_agi * ca_agi_billionaires[1:5] * D99
+  fed_to_ca_ratio <- rep(NA_real_, 9)
+  fed_to_ca_ratio[1:5] <- fed_inctax_b[1:5] / ca_inctax_ca_b[1:5]
+  fed_to_ca_ratio[6]   <- fed_to_ca_ratio[5]              # G114 = F114
+  fed_to_ca_ratio[7]   <- mean(fed_to_ca_ratio[1:3])       # H114 = AVG(B114:D114)
+  fed_to_ca_ratio[8]   <- fed_to_ca_ratio[7]               # I114 = H114
+  fed_inctax_b[6:8] <- ca_inctax_ca_b[6:8] * fed_to_ca_ratio[6:8]
+  fed_inctax_b[9]   <- NA_real_
+
+  # Rows 115-116 share + 11% gross-up on public assets.
+  public_share         <- public_share_b
+  sales_gross_up_public <- 0.11 * public_share
+
+  # Rows 117-122, 130: pull data_sec_agg columns (years 2019..2025 only).
+  pad <- function(v) c(NA_real_, v, NA_real_)
+  ca_inctax_pub   <- pad(agg("S"))
+  fed_inctax_pub  <- pad(agg("V"))
+  corp_tax_pub    <- pad(agg("AC"))
+  prop_tax_pub    <- pad(agg("AD"))
+  sales_tax_pub   <- pad(agg("AB"))
+  total_tax_pub   <- pad(agg("AF"))
+  econ_income_pub <- pad(agg("AG"))
+  public_wealth_b <- public_share * total_w_ca           # row 123
+
+  # Rows 124-128: per-public-wealth ratios.
+  per_wealth        <- function(x) x / public_wealth_b
+  tot_tax_per_w     <- per_wealth(total_tax_pub)
+  ca_inctax_per_w   <- per_wealth(ca_inctax_pub)
+  fed_inctax_per_w  <- per_wealth(fed_inctax_pub)
+  corp_per_w        <- per_wealth(corp_tax_pub)
+  prop_sales_per_w  <- per_wealth(prop_tax_pub + sales_tax_pub)
+  check_w <- tot_tax_per_w -
+              (ca_inctax_per_w + fed_inctax_per_w + corp_per_w + prop_sales_per_w)
+
+  # Rows 131-135: per-economic-income ratios.
+  per_ei           <- function(x) x / econ_income_pub
+  tot_tax_per_ei   <- per_ei(total_tax_pub)
+  ca_inctax_per_ei <- per_ei(ca_inctax_pub)
+  fed_inctax_per_ei <- per_ei(fed_inctax_pub)
+  corp_per_ei      <- per_ei(corp_tax_pub)
+  prop_sales_per_ei <- per_ei(prop_tax_pub + sales_tax_pub)
+  check_ei <- tot_tax_per_ei -
+               (ca_inctax_per_ei + fed_inctax_per_ei + corp_per_ei + prop_sales_per_ei)
+
+  # Rows 137-140: private-wealth share decomposition (BSZ Saez-Zucman national
+  # accounts weights: passthroughs 46.8 + 25, private-C corps 61).
+  private_share     <- 1 - public_share - sales_gross_up_public
+  weight_passthrough <- 46.8 + 25
+  weight_private_c   <- 61
+  weight_total       <- weight_passthrough + weight_private_c
+  passthrough_share  <- private_share * weight_passthrough / weight_total
+  private_c_share    <- private_share * weight_private_c   / weight_total
+  test_share         <- public_share + sales_gross_up_public + passthrough_share + private_c_share
+
+  # Rows 141-145: imputed corporate, property, and sales taxes on private wealth.
+  corp_tax_priv_c  <- corp_tax_pub * (private_c_share / public_share)
+  corp_tax_div     <- 0.11 * corp_tax_pub
+  prop_tax_priv    <- (prop_tax_pub / corp_tax_pub) * (corp_tax_priv_c + corp_tax_div)
+  tot_corp_prop    <- (corp_tax_pub + prop_tax_pub) + corp_tax_priv_c + corp_tax_div + prop_tax_priv
+  # Row 145: 3% sales tax on (AGI - CA inctax - fed inctax - 25% standard ded) × 0.5 propensity.
+  total_sales_tax  <- 0.03 * (ca_agi_billionaires - ca_inctax_ca_b - fed_inctax_b -
+                               0.25 * ca_agi_billionaires) * 0.5
+  total_inctax_b   <- ca_inctax_ca_b + fed_inctax_b
+  total_taxes_b    <- tot_corp_prop + total_sales_tax + total_inctax_b
+
+  # Rows 148-152: per-total-wealth ratios.
+  per_total_w      <- function(x) x / total_w_ca
+  tot_per_total_w  <- per_total_w(total_taxes_b)
+  ca_per_total_w   <- per_total_w(ca_inctax_ca_b)
+  fed_per_total_w  <- per_total_w(fed_inctax_b)
+  corp_per_total_w <- per_total_w(corp_tax_pub + corp_tax_priv_c + corp_tax_div)
+  ps_per_total_w   <- per_total_w(prop_tax_pub + prop_tax_priv + total_sales_tax)
+  check_total      <- tot_per_total_w -
+                       (ca_per_total_w + fed_per_total_w + corp_per_total_w + ps_per_total_w)
+
+  tibble::tibble(
+    year                          = yrs,
+    ca_agi_ca_billionaires_b      = ca_agi_billionaires,
+    ca_inctax_ca_billionaires_b   = ca_inctax_ca_b,
+    fed_inctax_ca_billionaires_b  = fed_inctax_b,
+    fed_to_ca_inctax_ratio        = fed_to_ca_ratio,
+    public_assets_share           = public_share,
+    sales_gross_up_public         = sales_gross_up_public,
+    ca_inctax_public_b            = ca_inctax_pub,
+    fed_inctax_public_b           = fed_inctax_pub,
+    corp_tax_public_b             = corp_tax_pub,
+    property_tax_public_b         = prop_tax_pub,
+    sales_tax_public_b            = sales_tax_pub,
+    total_tax_public_b            = total_tax_pub,
+    public_wealth_b               = public_wealth_b,
+    total_tax_per_public_wealth   = tot_tax_per_w,
+    ca_inctax_per_public_wealth   = ca_inctax_per_w,
+    fed_inctax_per_public_wealth  = fed_inctax_per_w,
+    corp_per_public_wealth        = corp_per_w,
+    prop_sales_per_public_wealth  = prop_sales_per_w,
+    check_decomp_public_wealth    = check_w,
+    public_econ_income_b          = econ_income_pub,
+    total_tax_per_econ_income     = tot_tax_per_ei,
+    ca_inctax_per_econ_income     = ca_inctax_per_ei,
+    fed_inctax_per_econ_income    = fed_inctax_per_ei,
+    corp_per_econ_income          = corp_per_ei,
+    prop_sales_per_econ_income    = prop_sales_per_ei,
+    check_decomp_econ_income      = check_ei,
+    private_share                 = private_share,
+    passthrough_share             = passthrough_share,
+    private_c_share               = private_c_share,
+    test_share_sum                = test_share,
+    corp_tax_private_c_b          = corp_tax_priv_c,
+    corp_tax_diversified_b        = corp_tax_div,
+    property_tax_private_b        = prop_tax_priv,
+    total_corp_property_b         = tot_corp_prop,
+    total_sales_tax_b             = total_sales_tax,
+    total_inctax_b                = total_inctax_b,
+    total_taxes_b                 = total_taxes_b,
+    total_per_total_wealth        = tot_per_total_w,
+    ca_inctax_per_total_wealth    = ca_per_total_w,
+    fed_inctax_per_total_wealth   = fed_per_total_w,
+    corp_per_total_wealth         = corp_per_total_w,
+    prop_sales_per_total_wealth   = ps_per_total_w,
+    check_total_decomp            = check_total
+  )
+}
+
 compute_billionaires_ca_inctax <- function(data_sec_agg_r,
                                             billionaires_ca_inctax,
                                             ftb_b4a) {
@@ -370,54 +569,10 @@ compute_billionaires_ca_inctax <- function(data_sec_agg_r,
   TOP_5M_9M_2023_INCTAX_B <- 4.347          # G35: tax in $5m-9.999m ($B)
 
   # ---- Memo 1: US top .001% income calibration (rows 58-72) ----------------
-  # Calendar-year panel 2018..2022 (cols B..F).
-  m1_years <- 2018:2022
-  m1_cols  <- c("B","C","D","E","F")
-  # Inputs (literal IRS / Pareto stats)
-  m1_n_returns       <- xls_cells_row(bci, m1_cols, 59)
-  m1_agi_cutoff      <- xls_cells_row(bci, m1_cols, 60)
-  m1_agi_avg         <- xls_cells_row(bci, m1_cols, 61)
-  m1_tax_total       <- xls_cells_row(bci, m1_cols, 63)
-  m1_top10m_n        <- xls_cells_row(bci, m1_cols, 66)
-  m1_top10m_cutoff   <- xls_cells_row(bci, m1_cols, 67)
-  m1_top10m_agi_avg  <- xls_cells_row(bci, m1_cols, 68)
-
-  m1_pareto_b_001    <- m1_agi_avg / m1_agi_cutoff               # row 62
-  m1_fed_tax_per_agi <- 1000 * (m1_tax_total / m1_n_returns) / m1_agi_avg  # row 64
-  m1_pareto_b_10m    <- m1_top10m_agi_avg / m1_top10m_cutoff     # row 69
-  m1_proj_cutoff_001 <- m1_top10m_cutoff *
-                         (m1_top10m_n / m1_n_returns)^(1 - 1 / m1_pareto_b_10m)  # row 70
-  m1_proj_agi_001    <- m1_proj_cutoff_001 * m1_pareto_b_10m     # row 71
-  m1_pct_overshoot   <- unname((m1_proj_agi_001 - m1_agi_avg) / m1_proj_agi_001)  # row 72 (B..F)
-  m1_pareto_b_001    <- unname(m1_pareto_b_001)
-  m1_fed_tax_per_agi <- unname(m1_fed_tax_per_agi)
-  m1_pareto_b_10m    <- unname(m1_pareto_b_10m)
-  m1_proj_cutoff_001 <- unname(m1_proj_cutoff_001)
-  m1_proj_agi_001    <- unname(m1_proj_agi_001)
-  # G72 = F72 (continuation for 2023)
-
-  memo1 <- tibble::tibble(
-    year                = m1_years,
-    n_returns           = m1_n_returns,
-    agi_cutoff_k        = m1_agi_cutoff,
-    agi_avg_k           = m1_agi_avg,
-    pareto_b_001        = m1_pareto_b_001,
-    fed_tax_total_m     = m1_tax_total,
-    fed_tax_per_agi     = m1_fed_tax_per_agi,
-    n_returns_10m       = m1_top10m_n,
-    agi_cutoff_10m_k    = m1_top10m_cutoff,
-    agi_avg_10m_k       = m1_top10m_agi_avg,
-    pareto_b_10m        = m1_pareto_b_10m,
-    proj_cutoff_001_k   = m1_proj_cutoff_001,
-    proj_agi_001_k      = m1_proj_agi_001,
-    pct_overshoot       = m1_pct_overshoot
-  )
-  # Mapped to panel-year offsets: 2018->B (panel col B), ..., 2023->G uses F-value
-  pct_overshoot_panel <- c(
-    "2018" = m1_pct_overshoot[1], "2019" = m1_pct_overshoot[2],
-    "2020" = m1_pct_overshoot[3], "2021" = m1_pct_overshoot[4],
-    "2022" = m1_pct_overshoot[5], "2023" = m1_pct_overshoot[5]   # G72 = F72
-  )
+  m1            <- .bci_memo1(bci)
+  memo1         <- m1$memo1
+  m1_fed_tax_per_agi  <- m1$fed_tax_per_agi
+  pct_overshoot_panel <- m1$pct_overshoot
 
   # ---- D99 correction (Memo 2 robustness, scalar) --------------------------
   B96 <- cell("B96")  # 172669
@@ -701,148 +856,16 @@ compute_billionaires_ca_inctax <- function(data_sec_agg_r,
   )
 
   # ---- All-taxes block (rows 110-153) --------------------------------------
-  # Years (panel cols B..J = 2018..2026); only 2019-2025 has data.
-  # Row 111: CA AGI for all CA Forbes billionaires
-  #   B-G111 = row43 * row46   (proj_agi_corr * 0.5)
-  #   H,I111 = $G111 * H,I112 / $G112
-  ca_agi_billionaires <- numeric(9)
-  ca_agi_billionaires[1:6] <- proj_agi_top_corr * inc_top_w_rel[1:6]
-  G111 <- ca_agi_billionaires[6]
-  G112 <- ca_inctax_ca_b[6]
-  ca_agi_billionaires[7] <- G111 * ca_inctax_ca_b[7] / G112
-  ca_agi_billionaires[8] <- G111 * ca_inctax_ca_b[8] / G112
-  ca_agi_billionaires[9] <- NA_real_
-  # Row 112 = row 49
-  ca_inctax_b_at <- ca_inctax_ca_b
-  # Row 113 Fed inctax billionaires:
-  #   B-F113 = row64(memo1) * row111 * D99
-  #   G,H,I113 = row112 * row114
-  fed_inctax_b <- numeric(9)
-  fed_inctax_b[1] <- m1_fed_tax_per_agi[1] * ca_agi_billionaires[1] * D99
-  fed_inctax_b[2] <- m1_fed_tax_per_agi[2] * ca_agi_billionaires[2] * D99
-  fed_inctax_b[3] <- m1_fed_tax_per_agi[3] * ca_agi_billionaires[3] * D99
-  fed_inctax_b[4] <- m1_fed_tax_per_agi[4] * ca_agi_billionaires[4] * D99
-  fed_inctax_b[5] <- m1_fed_tax_per_agi[5] * ca_agi_billionaires[5] * D99
-  # Row 114 = row113 / row112 (B..F)
-  fed_to_ca_ratio <- rep(NA_real_, 9)
-  fed_to_ca_ratio[1:5] <- fed_inctax_b[1:5] / ca_inctax_b_at[1:5]
-  fed_to_ca_ratio[6] <- fed_to_ca_ratio[5]                              # G114 = F114
-  fed_to_ca_ratio[7] <- mean(fed_to_ca_ratio[1:3])                       # H114 = AVG(B114:D114)
-  fed_to_ca_ratio[8] <- fed_to_ca_ratio[7]                               # I114 = H114
-  # Then 113[6:8] = 112[6:8] * 114[6:8]
-  fed_inctax_b[6] <- ca_inctax_b_at[6] * fed_to_ca_ratio[6]
-  fed_inctax_b[7] <- ca_inctax_b_at[7] * fed_to_ca_ratio[7]
-  fed_inctax_b[8] <- ca_inctax_b_at[8] * fed_to_ca_ratio[8]
-  fed_inctax_b[9] <- NA_real_
-
-  # Row 115 = row 54 (public_share_b, C..I = 2019..2025; B = NA)
-  public_share_a <- public_share_b
-  # Row 116 = 0.11 * row 115
-  sales_gross_up_public <- 0.11 * public_share_a
-  # Row 117 = data_sec_agg!S, row118 = !V, row119 = !AC, row120 = !AD, row121 = !AB,
-  # row122 = !AF, row130 = !AG  (all panel cols C..I)
-  ca_inctax_pub <- c(NA_real_, agg("S"), NA_real_)
-  fed_inctax_pub <- c(NA_real_, agg("V"), NA_real_)
-  corp_tax_pub   <- c(NA_real_, agg("AC"), NA_real_)
-  prop_tax_pub   <- c(NA_real_, agg("AD"), NA_real_)
-  sales_tax_pub  <- c(NA_real_, agg("AB"), NA_real_)
-  total_tax_pub  <- c(NA_real_, agg("AF"), NA_real_)
-  econ_income_pub <- c(NA_real_, agg("AG"), NA_real_)
-  # Row 123 = row115 * row10  (public wealth $B)
-  public_wealth_b <- public_share_a * total_w_ca
-  # Rows 124..128: per-wealth ratios
-  tot_tax_per_wealth     <- total_tax_pub / public_wealth_b
-  ca_inctax_per_w        <- ca_inctax_pub / public_wealth_b
-  fed_inctax_per_w       <- fed_inctax_pub / public_wealth_b
-  corp_per_w             <- corp_tax_pub  / public_wealth_b
-  prop_sales_per_w       <- (prop_tax_pub + sales_tax_pub) / public_wealth_b
-  check_w                <- tot_tax_per_wealth - (ca_inctax_per_w + fed_inctax_per_w +
-                                                   corp_per_w + prop_sales_per_w)
-  # Rows 131..135: per-econ_inc ratios
-  tot_tax_per_ei  <- total_tax_pub / econ_income_pub
-  ca_inctax_per_ei <- ca_inctax_pub / econ_income_pub
-  fed_inctax_per_ei <- fed_inctax_pub / econ_income_pub
-  corp_per_ei     <- corp_tax_pub  / econ_income_pub
-  prop_sales_per_ei <- (prop_tax_pub + sales_tax_pub) / econ_income_pub
-  check_ei         <- tot_tax_per_ei - (ca_inctax_per_ei + fed_inctax_per_ei +
-                                         corp_per_ei + prop_sales_per_ei)
-  # Row 137 = 1 - row115 - row116 (private + diversified share)
-  private_share    <- 1 - public_share_a - sales_gross_up_public
-  # Row 138 = row137 * (46.8+25)/(61+46.8+25)
-  passthrough_share <- private_share * (46.8 + 25) / (61 + 46.8 + 25)
-  # Row 139 = row137 * 61/(61+46.8+25)
-  private_c_share   <- private_share * 61 / (61 + 46.8 + 25)
-  # Row 140 = row115 + row116 + row138 + row139
-  test_share        <- public_share_a + sales_gross_up_public + passthrough_share + private_c_share
-  # Row 141 = row119 * (row139 / row115)
-  corp_tax_priv_c   <- corp_tax_pub * (private_c_share / public_share_a)
-  # Row 142 = 0.11 * row119
-  corp_tax_div      <- 0.11 * corp_tax_pub
-  # Row 143 = (row120/row119) * (row141 + row142)
-  prop_tax_priv     <- (prop_tax_pub / corp_tax_pub) * (corp_tax_priv_c + corp_tax_div)
-  # Row 144 = (row119 + row120) + row141 + row142 + row143
-  tot_corp_prop     <- (corp_tax_pub + prop_tax_pub) + corp_tax_priv_c + corp_tax_div + prop_tax_priv
-  # Row 145 = 0.03 * (row111 - row112 - row113 - 0.25*row111) * 0.5
-  total_sales_tax <- 0.03 * (ca_agi_billionaires - ca_inctax_b_at - fed_inctax_b -
-                              0.25 * ca_agi_billionaires) * 0.5
-  # Row 146 = row112 + row113
-  total_inctax_b  <- ca_inctax_b_at + fed_inctax_b
-  # Row 147 = row144 + row145 + row146
-  total_taxes_b   <- tot_corp_prop + total_sales_tax + total_inctax_b
-  # Rows 148..152: per-total-wealth ratios (using row10 = total_w_ca)
-  tot_per_total_w  <- total_taxes_b / total_w_ca
-  ca_per_total_w   <- ca_inctax_b_at / total_w_ca
-  fed_per_total_w  <- fed_inctax_b   / total_w_ca
-  corp_per_total_w <- (corp_tax_pub + corp_tax_priv_c + corp_tax_div) / total_w_ca
-  ps_per_total_w   <- (prop_tax_pub + prop_tax_priv + total_sales_tax) / total_w_ca
-  check_total      <- tot_per_total_w - (ca_per_total_w + fed_per_total_w +
-                                          corp_per_total_w + ps_per_total_w)
-
-  all_taxes <- tibble::tibble(
-    year                          = yrs,
-    ca_agi_ca_billionaires_b      = ca_agi_billionaires,
-    ca_inctax_ca_billionaires_b   = ca_inctax_b_at,
-    fed_inctax_ca_billionaires_b  = fed_inctax_b,
-    fed_to_ca_inctax_ratio        = fed_to_ca_ratio,
-    public_assets_share           = public_share_a,
-    sales_gross_up_public         = sales_gross_up_public,
-    ca_inctax_public_b            = ca_inctax_pub,
-    fed_inctax_public_b           = fed_inctax_pub,
-    corp_tax_public_b             = corp_tax_pub,
-    property_tax_public_b         = prop_tax_pub,
-    sales_tax_public_b            = sales_tax_pub,
-    total_tax_public_b            = total_tax_pub,
-    public_wealth_b               = public_wealth_b,
-    total_tax_per_public_wealth   = tot_tax_per_wealth,
-    ca_inctax_per_public_wealth   = ca_inctax_per_w,
-    fed_inctax_per_public_wealth  = fed_inctax_per_w,
-    corp_per_public_wealth        = corp_per_w,
-    prop_sales_per_public_wealth  = prop_sales_per_w,
-    check_decomp_public_wealth    = check_w,
-    public_econ_income_b          = econ_income_pub,
-    total_tax_per_econ_income     = tot_tax_per_ei,
-    ca_inctax_per_econ_income     = ca_inctax_per_ei,
-    fed_inctax_per_econ_income    = fed_inctax_per_ei,
-    corp_per_econ_income          = corp_per_ei,
-    prop_sales_per_econ_income    = prop_sales_per_ei,
-    check_decomp_econ_income      = check_ei,
-    private_share                 = private_share,
-    passthrough_share             = passthrough_share,
-    private_c_share               = private_c_share,
-    test_share_sum                = test_share,
-    corp_tax_private_c_b          = corp_tax_priv_c,
-    corp_tax_diversified_b        = corp_tax_div,
-    property_tax_private_b        = prop_tax_priv,
-    total_corp_property_b         = tot_corp_prop,
-    total_sales_tax_b             = total_sales_tax,
-    total_inctax_b                = total_inctax_b,
-    total_taxes_b                 = total_taxes_b,
-    total_per_total_wealth        = tot_per_total_w,
-    ca_inctax_per_total_wealth    = ca_per_total_w,
-    fed_inctax_per_total_wealth   = fed_per_total_w,
-    corp_per_total_wealth         = corp_per_total_w,
-    prop_sales_per_total_wealth   = ps_per_total_w,
-    check_total_decomp            = check_total
+  all_taxes <- .bci_all_taxes(
+    yrs                = yrs,
+    proj_agi_top_corr  = proj_agi_top_corr,
+    inc_top_w_rel      = inc_top_w_rel,
+    ca_inctax_ca_b     = ca_inctax_ca_b,
+    m1_fed_tax_per_agi = m1_fed_tax_per_agi,
+    D99                = D99,
+    agg                = agg,
+    public_share_b     = public_share_b,
+    total_w_ca         = total_w_ca
   )
 
   list(
