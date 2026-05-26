@@ -102,5 +102,9 @@ list(
 
   tar_target(fig7,     build_fig7(top4taxes_r, data_dina)),
   tar_target(fig7_png, render_figure_png(fig7, "fig7", width = 11, height = 5), format = "file"),
-  tar_target(fig7_pdf, render_figure_pdf(fig7, "fig7", width = 11, height = 5), format = "file")
+  tar_target(fig7_pdf, render_figure_pdf(fig7, "fig7", width = 11, height = 5), format = "file"),
+
+  tar_target(fig8,     build_fig8(fig8_laffer_r)),
+  tar_target(fig8_png, render_figure_png(fig8, "fig8"), format = "file"),
+  tar_target(fig8_pdf, render_figure_pdf(fig8, "fig8"), format = "file")
 )

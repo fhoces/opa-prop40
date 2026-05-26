@@ -3,6 +3,57 @@
 # Each builder takes already-validated upstream targets and returns a ggplot.
 # Render to PNG / PDF downstream via R/render.R helpers.
 
+build_fig8 <- function(fig8_laffer_r) {
+  # Figure 8: Laffer Curve for a permanent annual CA wealth tax.
+  # Three lines: mechanical revenue (rate * base), actual revenue (with
+  # mobility response), long-run revenue (mobility + deconcentration).
+  d <- fig8_laffer_r
+  long <- tibble::tibble(
+    rate   = rep(d$tax_rate, 3),
+    revenue = c(d$mechanical_tax_revenue, d$actual_tax_revenue, d$long_run_tax_revenue),
+    series  = factor(rep(c("Mechanical (no behavior)",
+                            "Short-run (with mobility)",
+                            "Long-run (mobility + deconcentration)"),
+                          each = nrow(d)),
+                      levels = c("Mechanical (no behavior)",
+                                 "Short-run (with mobility)",
+                                 "Long-run (mobility + deconcentration)"))
+  )
+
+  ggplot2::ggplot(long, ggplot2::aes(x = rate, y = revenue,
+                                       color = series, linetype = series)) +
+    ggplot2::geom_line(linewidth = 0.9) +
+    ggplot2::scale_x_continuous(labels = scales::percent_format(accuracy = 1),
+                                 breaks = seq(0, 0.2, by = 0.05)) +
+    ggplot2::scale_y_continuous(
+      labels = function(v) format(v, big.mark = ",", scientific = FALSE),
+      limits = c(0, NA)
+    ) +
+    ggplot2::scale_color_manual(values = c(
+      "Mechanical (no behavior)"            = "#999999",
+      "Short-run (with mobility)"           = "#1f77b4",
+      "Long-run (mobility + deconcentration)" = "#d62728"
+    )) +
+    ggplot2::scale_linetype_manual(values = c(
+      "Mechanical (no behavior)"            = "dashed",
+      "Short-run (with mobility)"           = "solid",
+      "Long-run (mobility + deconcentration)" = "solid"
+    )) +
+    ggplot2::labs(
+      title    = "Figure 8: Laffer Curve for a Permanent California Wealth Tax",
+      subtitle = "Annual revenue ($B) vs. tax rate, under mobility (e=10) + deconcentration (d=15) responses",
+      x = "Annual wealth-tax rate",
+      y = "Annual revenue ($B)",
+      color    = NULL, linetype = NULL
+    ) +
+    ggplot2::theme_minimal(base_size = 12) +
+    ggplot2::theme(
+      legend.position = "bottom",
+      plot.title      = ggplot2::element_text(face = "bold"),
+      panel.grid.minor = ggplot2::element_blank()
+    )
+}
+
 build_fig7 <- function(top4taxes_r, data_dina) {
   # Figure 7: Total Taxes / Economic Income, Top 4 vs US-wide average; and
   # CA income tax / Economic Income, Top 4 vs CA average. 2004-2025.

@@ -185,6 +185,23 @@ test_that("build_fig7 renders to a non-empty PNG", {
   expect_gt(file.info(png_path)$size, 5000)
 })
 
+test_that("build_fig8 returns 3-series Laffer curve over 201 rates", {
+  laffer <- compute_fig8_laffer()
+  p <- build_fig8(laffer)
+  expect_s3_class(p, "ggplot")
+  expect_equal(nrow(p$data), 603)   # 201 rates × 3 series
+  expect_equal(range(p$data$rate), c(0, 0.20))
+})
+
+test_that("build_fig8 renders to a non-empty PNG", {
+  p <- build_fig8(compute_fig8_laffer())
+  tmpdir <- tempfile("fig8_"); dir.create(tmpdir)
+  png_path <- file.path(tmpdir, "fig8.png")
+  ggplot2::ggsave(png_path, plot = p, width = 7, height = 5, dpi = 100)
+  expect_true(file.exists(png_path))
+  expect_gt(file.info(png_path)$size, 5000)
+})
+
 test_that("build_fig1 renders to a non-empty PNG file", {
   agg <- compute_data_sec_agg(extract_data_sec_all())
   bci_x <- extract_billionaires_ca_inctax()
