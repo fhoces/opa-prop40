@@ -73,5 +73,9 @@ list(
 
   tar_target(tab_a1_gt,    build_tab_a1(shortrunseries, longrunseries)),
   tar_target(tab_a1_html,  render_table_html(tab_a1_gt, "tab_a1"),  format = "file"),
-  tar_target(tab_a1_latex, render_table_latex(tab_a1_gt, "tab_a1"), format = "file")
+  tar_target(tab_a1_latex, render_table_latex(tab_a1_gt, "tab_a1"), format = "file"),
+
+  tar_target(fig1,     build_fig1(shortrunseries_r)),
+  tar_target(fig1_png, render_figure_png(fig1, "fig1"), format = "file"),
+  tar_target(fig1_pdf, render_figure_pdf(fig1, "fig1"), format = "file")
 )

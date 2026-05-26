@@ -40,6 +40,6 @@ render_figure_pdf <- function(plot_obj, name, width = 7, height = 5) {
   if (!dir.exists(dir)) dir.create(dir, recursive = TRUE)
   path <- file.path(dir, paste0(name, ".pdf"))
   ggplot2::ggsave(path, plot = plot_obj, width = width, height = height,
-                  units = "in", device = grDevices::cairo_pdf)
+                  units = "in")
   path
 }
