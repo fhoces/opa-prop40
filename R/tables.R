@@ -4,6 +4,78 @@
 # Phase-2 `*_r` re-derivations) and returns a `gt` object. Render to HTML or
 # LaTeX downstream via `gt::as_raw_html()` / `gt::as_latex()`.
 
+build_tab2 <- function(data_sec_agg_r, billionaires_ca_inctax_r, data_sec_top4) {
+  # Table 2: California Income Tax Paid by California Billionaires.
+  # Two side-by-side sub-panels: all CA billionaires (cols B-D) and the top 4
+  # on company wealth (cols F-H), 2019-2025 + a 2019-2025 average row.
+
+  yrs <- 2019:2025
+  m1 <- billionaires_ca_inctax_r$method1
+  m1_idx <- match(yrs, m1$year)
+
+  agg_y <- data_sec_agg_r[match(yrs, data_sec_agg_r$year), ]
+  total_excl <- data_sec_top4[data_sec_top4$forbes_id == "Total (excluding Ellison)" &
+                                data_sec_top4$year %in% yrs, ]
+  total_excl <- total_excl[order(total_excl$year), ]
+
+  panel <- tibble::tibble(
+    year                       = as.character(yrs),
+    wealth_b                   = agg_y$forbes_worth,
+    ca_inctax_b                = m1$ca_inctax_ca_billionaires_b[m1_idx],
+    ca_inctax_per_wealth       = NA_real_,
+    top4_company_wealth_b      = total_excl$public_worth   / 1000,
+    top4_ca_inctax_b           = total_excl$ca_income_tax  / 1000,
+    top4_ca_inctax_per_wealth  = NA_real_
+  )
+  panel$ca_inctax_per_wealth      <- panel$ca_inctax_b      / panel$wealth_b
+  panel$top4_ca_inctax_per_wealth <- panel$top4_ca_inctax_b / panel$top4_company_wealth_b
+
+  # Average row — Excel quirk: D14 = AVERAGE(D7:D12) (6 yrs, 2019-2024 only)
+  # while B/C/F/G14 = AVERAGE(*7:*13) (7 yrs). Reproduce as-is for fidelity.
+  avg_row <- tibble::tibble(
+    year                      = "2019-2025 average",
+    wealth_b                  = mean(panel$wealth_b),
+    ca_inctax_b               = mean(panel$ca_inctax_b),
+    ca_inctax_per_wealth      = mean(panel$ca_inctax_per_wealth[1:6]),  # 2019-2024
+    top4_company_wealth_b     = mean(panel$top4_company_wealth_b),
+    top4_ca_inctax_b          = mean(panel$top4_ca_inctax_b),
+    top4_ca_inctax_per_wealth = mean(panel$top4_ca_inctax_b) /
+                                  mean(panel$top4_company_wealth_b)
+  )
+  full <- dplyr::bind_rows(panel, avg_row)
+
+  tab <- gt::gt(full) |>
+    gt::tab_header(title = "Table 2. California Income Tax Paid by California Billionaires") |>
+    gt::tab_spanner(label = "All California Billionaires",
+                    columns = c(wealth_b, ca_inctax_b, ca_inctax_per_wealth)) |>
+    gt::tab_spanner(label = "Top 4 (Page, Brin, Zuckerberg, Huang) on Company Wealth",
+                    columns = c(top4_company_wealth_b, top4_ca_inctax_b,
+                                top4_ca_inctax_per_wealth)) |>
+    gt::cols_label(
+      year                      = "Year",
+      wealth_b                  = "Wealth ($B)",
+      ca_inctax_b               = "Est. CA inc. tax ($B)",
+      ca_inctax_per_wealth      = "Tax / wealth",
+      top4_company_wealth_b     = "Company wealth ($B)",
+      top4_ca_inctax_b          = "Est. CA inc. tax ($B)",
+      top4_ca_inctax_per_wealth = "Tax / wealth"
+    ) |>
+    gt::fmt_number(columns = c(wealth_b, top4_company_wealth_b),
+                   decimals = 0, use_seps = TRUE) |>
+    gt::fmt_number(columns = c(ca_inctax_b, top4_ca_inctax_b),
+                   decimals = 2) |>
+    gt::fmt_percent(columns = c(ca_inctax_per_wealth, top4_ca_inctax_per_wealth),
+                    decimals = 3) |>
+    gt::tab_source_note(source_note = gt::md(paste(
+      "**Notes:** All amounts in nominal $B. CA income tax for all billionaires comes",
+      "from the Method I FTB-extrapolation calculation; top 4 figures come from SEC",
+      "filings. Source: Phase 2 `billionaires_ca_inctax_r` + `data_sec_top4`."
+    )))
+
+  attr(tab, "panel") <- full
+  tab
+}
+
 build_tab1 <- function(data_sec_agg_r, shortrunseries_r, longrunseries) {
   # Table 1: Wealth Growth of California Billionaires.
   # Panel A: 2022-2025 nominal wealth + growth + CA GDP comparison.

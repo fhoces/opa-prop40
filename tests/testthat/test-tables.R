@@ -48,6 +48,38 @@ test_that("build_tab1 panel B reproduces Tab1 sheet 1982 + 2025 + ratios + annua
   expect_equal(pb$gdp_per_family_k,     xl$F, tolerance = 1)
 })
 
+test_that("build_tab2 reproduces Tab2 sheet 2019-2025 + average row", {
+  agg <- compute_data_sec_agg(extract_data_sec_all())
+  bci_x <- extract_billionaires_ca_inctax()
+  ftb <- extract_ftb_b4a()
+  b <- compute_billionaires_ca_inctax(agg, bci_x, ftb)
+  top4 <- extract_data_sec_top4()
+  tab2 <- build_tab2(agg, b, top4)
+  p <- attr(tab2, "panel")
+  xl <- read_sheet("Tab2", range = "B7:H14")  # cols B..H, rows 7..14
+
+  expect_equal(p$wealth_b,                  xl$A, tolerance = 1e-2)
+  expect_equal(p$ca_inctax_b,               xl$B, tolerance = 1e-3)
+  expect_equal(p$ca_inctax_per_wealth,      xl$C, tolerance = 1e-5)
+  expect_equal(p$top4_company_wealth_b,     xl$E, tolerance = 1e-2)
+  expect_equal(p$top4_ca_inctax_b,          xl$F, tolerance = 1e-3)
+  expect_equal(p$top4_ca_inctax_per_wealth, xl$G, tolerance = 1e-5)
+})
+
+test_that("build_tab2 renders to non-empty HTML and LaTeX", {
+  agg <- compute_data_sec_agg(extract_data_sec_all())
+  bci_x <- extract_billionaires_ca_inctax()
+  ftb <- extract_ftb_b4a()
+  b <- compute_billionaires_ca_inctax(agg, bci_x, ftb)
+  top4 <- extract_data_sec_top4()
+  tab2 <- build_tab2(agg, b, top4)
+  html <- as.character(gt::as_raw_html(tab2))
+  expect_gt(nchar(html), 1000)
+  expect_true(grepl("Income Tax Paid by California Billionaires", html))
+  tex <- as.character(gt::as_latex(tab2))
+  expect_gt(nchar(tex), 200)
+})
+
 test_that("build_tab1 renders to non-empty HTML and LaTeX", {
   agg <- compute_data_sec_agg(extract_data_sec_all())
   bci_x <- extract_billionaires_ca_inctax()
