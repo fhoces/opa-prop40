@@ -29,5 +29,9 @@ list(
   tar_target(data_dina,             extract_data_dina(xlsx_path)),
   tar_target(data_sec_propublica,   extract_data_sec_propublica(xlsx_path)),
   tar_target(billionaires_ca_inctax, extract_billionaires_ca_inctax(xlsx_path)),
-  tar_target(ftb_b4a,                extract_ftb_b4a(xlsx_path))
+  tar_target(ftb_b4a,                extract_ftb_b4a(xlsx_path)),
+
+  # Phase 2 - re-derived from upstream inputs
+  tar_target(data_sec_agg_r,        compute_data_sec_agg(data_sec_all)),
+  tar_target(pareto_missing_r,      compute_pareto_missing(pareto_missing))
 )
