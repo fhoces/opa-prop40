@@ -202,6 +202,29 @@ test_that("build_fig8 renders to a non-empty PNG", {
   expect_gt(file.info(png_path)$size, 5000)
 })
 
+test_that("build_fig_a1 returns industry stacked bar with 3 components", {
+  p <- build_fig_a1(xlsx_path_default())
+  expect_s3_class(p, "ggplot")
+  # 13 industries × 3 components = 39 rows (assuming all rows kept)
+  expect_equal(nrow(p$data) %% 3, 0)
+  expect_setequal(levels(p$data$component),
+                  c("Public stock (Top 4)", "Public stock (other)",
+                    "Private stock"))
+  # Technology row's Top-4 share ≈ 0.417 (the dominant industry)
+  tech_top4 <- p$data$share[p$data$industry == "Technology" &
+                              p$data$component == "Public stock (Top 4)"]
+  expect_equal(tech_top4, 0.417, tolerance = 1e-3)
+})
+
+test_that("build_fig_a1 renders to a non-empty PNG", {
+  p <- build_fig_a1(xlsx_path_default())
+  tmpdir <- tempfile("fig_a1_"); dir.create(tmpdir)
+  png_path <- file.path(tmpdir, "fig_a1.png")
+  ggplot2::ggsave(png_path, plot = p, width = 8, height = 6, dpi = 100)
+  expect_true(file.exists(png_path))
+  expect_gt(file.info(png_path)$size, 5000)
+})
+
 test_that("build_fig1 renders to a non-empty PNG file", {
   agg <- compute_data_sec_agg(extract_data_sec_all())
   bci_x <- extract_billionaires_ca_inctax()

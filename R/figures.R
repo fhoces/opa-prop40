@@ -3,6 +3,55 @@
 # Each builder takes already-validated upstream targets and returns a ggplot.
 # Render to PNG / PDF downstream via R/render.R helpers.
 
+build_fig_a1 <- function(xlsx_path) {
+  # Appendix Figure A1: California Billionaires Wealth by Industry.
+  # Stacked horizontal bar, 13 industries × 3 components: Public stock held
+  # by Top 4 (col I), other public stock (col G), private stock (col H).
+  # Block 2 of rtb_2026_industry: rows 22-34, cols A and G-I.
+  raw <- read_sheet("rtb_2026_industry", path = xlsx_path,
+                    range = cellranger::cell_limits(ul = c(22, 1), lr = c(34, 9)))
+  names(raw) <- c("industry", paste0("c", 2:ncol(raw)))
+  d <- raw
+  d$top4_public    <- suppressWarnings(as.numeric(d$c9))  # col I
+  d$other_public   <- suppressWarnings(as.numeric(d$c7))  # col G
+  d$private        <- suppressWarnings(as.numeric(d$c8))  # col H
+  d$total          <- d$top4_public + d$other_public + d$private
+  d <- d[!is.na(d$total) & d$total > 0, ]
+  d <- d[order(d$total, decreasing = TRUE), ]
+  d$industry <- factor(d$industry, levels = rev(d$industry))
+
+  long <- tibble::tibble(
+    industry  = rep(d$industry, 3),
+    share     = c(d$top4_public, d$other_public, d$private),
+    component = factor(rep(c("Public stock (Top 4)",
+                              "Public stock (other)",
+                              "Private stock"), each = nrow(d)),
+                        levels = c("Public stock (Top 4)",
+                                   "Public stock (other)",
+                                   "Private stock"))
+  )
+
+  ggplot2::ggplot(long, ggplot2::aes(y = industry, x = share, fill = component)) +
+    ggplot2::geom_col() +
+    ggplot2::scale_x_continuous(labels = scales::percent_format(accuracy = 1)) +
+    ggplot2::scale_fill_manual(values = c(
+      "Public stock (Top 4)" = "#d62728",
+      "Public stock (other)" = "#1f77b4",
+      "Private stock"        = "#999999"
+    )) +
+    ggplot2::labs(
+      title    = "Appendix Figure A1: CA Billionaire Wealth by Industry",
+      subtitle = "% of total CA billionaire wealth, end of 2025 (Forbes 2026/01/01)",
+      x = NULL, y = NULL, fill = NULL
+    ) +
+    ggplot2::theme_minimal(base_size = 12) +
+    ggplot2::theme(
+      legend.position    = "bottom",
+      plot.title         = ggplot2::element_text(face = "bold"),
+      panel.grid.major.y = ggplot2::element_blank()
+    )
+}
+
 build_fig8 <- function(fig8_laffer_r) {
   # Figure 8: Laffer Curve for a permanent annual CA wealth tax.
   # Three lines: mechanical revenue (rate * base), actual revenue (with

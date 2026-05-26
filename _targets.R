@@ -106,5 +106,9 @@ list(
 
   tar_target(fig8,     build_fig8(fig8_laffer_r)),
   tar_target(fig8_png, render_figure_png(fig8, "fig8"), format = "file"),
-  tar_target(fig8_pdf, render_figure_pdf(fig8, "fig8"), format = "file")
+  tar_target(fig8_pdf, render_figure_pdf(fig8, "fig8"), format = "file"),
+
+  tar_target(fig_a1,     build_fig_a1(xlsx_path)),
+  tar_target(fig_a1_png, render_figure_png(fig_a1, "fig_a1", width = 8, height = 6), format = "file"),
+  tar_target(fig_a1_pdf, render_figure_pdf(fig_a1, "fig_a1", width = 8, height = 6), format = "file")
 )
