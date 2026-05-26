@@ -67,6 +67,59 @@ outside the blockquotes is the replicator's own.
 > California billionaires could raise substantial additional revenue even
 > after accounting for income tax losses due to mobility.
 
+# Pipeline
+
+`targets::tar_make()` walks the DAG below in topological order. Each layer
+reads from the layer above and writes new `tar_target`s consumed downstream.
+The figures and tables embedded throughout this report are all read via
+`tar_read()` from the "Exhibits" layer.
+
+```
+                  original-materials/BSZ_MainTablesFigures.xlsx
+                                  │
+                                  │  xlsx_path  (format = "file")
+                                  ▼
+   ┌─────────────────────────────────────────────────────────────────┐
+   │ Excel extractors  (R/data_sheets.R, 16 tar_target's)            │
+   │   data_sec_codebook   data_sec_top4   data_sec_all              │
+   │   data_sec_agg        rtb_2026_industry   pareto_missing        │
+   │   tab2   tab3   longrunseries   shortrunseries                  │
+   │   data_dina   data_sec_propublica                               │
+   │   billionaires_ca_inctax   ftb_b4a                              │
+   └────────────────────────────────┬────────────────────────────────┘
+                                    ▼
+   ┌─────────────────────────────────────────────────────────────────┐
+   │ R re-derivations  (R/compute_*.R, 8 tar_target's, _r suffix)    │
+   │   data_sec_agg_r        ← compute_data_sec_agg.R                │
+   │   pareto_missing_r,                                             │
+   │   pareto_summary,                                               │
+   │   fig8_laffer_r         ← compute_pareto.R                      │
+   │   tab5_r                ← compute_tab5.R                        │
+   │   billionaires_ca_inctax_r  ← compute_billionaires_ca_inctax.R  │
+   │   shortrunseries_r      ← compute_shortrunseries.R              │
+   │   top4taxes_r           ← compute_top4taxes.R                   │
+   └────────────────────────────────┬────────────────────────────────┘
+                                    ▼
+   ┌─────────────────────────────────────────────────────────────────┐
+   │ Exhibits  (R/tables.R + R/figures.R, 18 builder tar_target's)   │
+   │   tab1_gt .. tab5_gt   tab_a1_gt           (6 gt tables)        │
+   │   fig1 .. fig8   fig_a1 .. fig_a4          (12 ggplots)         │
+   │                                  │                              │
+   │                                  ▼                              │
+   │ Rendered files  (R/render.R, 36 file tar_target's)              │
+   │   outputs/tables/tab*.html  outputs/tables/tab*.tex             │
+   │   outputs/figures/fig*.png  outputs/figures/fig*.pdf            │
+   └────────────────────────────────┬────────────────────────────────┘
+                                    ▼
+   ┌─────────────────────────────────────────────────────────────────┐
+   │ Quarto report  (report.qmd, 2 file tar_target's)                │
+   │   report_html  →  report.html                                   │
+   │   report_pdf   →  report.pdf                                    │
+   │   (depends explicitly on every gt + ggplot above; re-renders    │
+   │    whenever any exhibit changes)                                │
+   └─────────────────────────────────────────────────────────────────┘
+```
+
 # 1. California Billionaires Wealth Growth
 
 This section documents the level and growth of California billionaire wealth,

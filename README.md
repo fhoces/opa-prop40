@@ -122,6 +122,64 @@ CAWT-BSZ/
     └── figures/                          # fig1..fig8, fig_a1..fig_a4 × {.png, .pdf}
 ```
 
+## Pipeline execution flow
+
+`targets::tar_make()` walks the DAG below in topological order. Each layer
+reads from the layer above and writes new `tar_target`s consumed downstream.
+
+```
+                  original-materials/BSZ_MainTablesFigures.xlsx
+                                  │
+                                  │  xlsx_path  (format = "file")
+                                  ▼
+   ┌─────────────────────────────────────────────────────────────────┐
+   │ Excel extractors  (R/data_sheets.R, 16 tar_target's)            │
+   │   data_sec_codebook   data_sec_top4   data_sec_all              │
+   │   data_sec_agg        rtb_2026_industry   pareto_missing        │
+   │   tab2   tab3   longrunseries   shortrunseries                  │
+   │   data_dina   data_sec_propublica                               │
+   │   billionaires_ca_inctax   ftb_b4a                              │
+   └────────────────────────────────┬────────────────────────────────┘
+                                    ▼
+   ┌─────────────────────────────────────────────────────────────────┐
+   │ R re-derivations  (R/compute_*.R, 8 tar_target's, _r suffix)    │
+   │   data_sec_agg_r        ← compute_data_sec_agg.R                │
+   │   pareto_missing_r,                                             │
+   │   pareto_summary,                                               │
+   │   fig8_laffer_r         ← compute_pareto.R                      │
+   │   tab5_r                ← compute_tab5.R                        │
+   │   billionaires_ca_inctax_r  ← compute_billionaires_ca_inctax.R  │
+   │   shortrunseries_r      ← compute_shortrunseries.R              │
+   │   top4taxes_r           ← compute_top4taxes.R                   │
+   └────────────────────────────────┬────────────────────────────────┘
+                                    ▼
+   ┌─────────────────────────────────────────────────────────────────┐
+   │ Exhibits  (R/tables.R + R/figures.R, 18 builder tar_target's)   │
+   │   tab1_gt .. tab5_gt   tab_a1_gt           (6 gt tables)        │
+   │   fig1 .. fig8   fig_a1 .. fig_a4          (12 ggplots)         │
+   │                                  │                              │
+   │                                  ▼                              │
+   │ Rendered files  (R/render.R, 36 file tar_target's)              │
+   │   outputs/tables/tab*.html  outputs/tables/tab*.tex             │
+   │   outputs/figures/fig*.png  outputs/figures/fig*.pdf            │
+   └────────────────────────────────┬────────────────────────────────┘
+                                    ▼
+   ┌─────────────────────────────────────────────────────────────────┐
+   │ Quarto report  (report.qmd, 2 file tar_target's)                │
+   │   report_html  →  report.html                                   │
+   │   report_pdf   →  report.pdf                                    │
+   │   (depends explicitly on every gt + ggplot above; re-renders    │
+   │    whenever any exhibit changes)                                │
+   └─────────────────────────────────────────────────────────────────┘
+```
+
+Helper modules (loaded by `_targets.R` but not part of the DAG):
+
+- `R/ingest_excel.R` — `read_sheet()`, `list_sheets()`, `xlsx_path_default()`.
+- `R/excel_cells.R` — `xls_cell()`, `xls_cells_row()`, `xls_cells_col()`
+  shared by the larger `compute_*` functions.
+- `R/verify.R` — `expect_matches_excel()` testthat helper.
+
 ## Inputs and outputs (by `tar_target`)
 
 ### Excel extractors (16 targets, all read `BSZ_MainTablesFigures.xlsx`)
