@@ -170,3 +170,100 @@ test_that("compute_billionaires_ca_inctax matches Excel formula cells", {
   expect_equal(at$total_taxes_b[2:8],                num_row(147, pan_cols[2:8]), tolerance = 1e-3)
   expect_equal(at$total_per_total_wealth[2:8],       num_row(148, pan_cols[2:8]), tolerance = 1e-5)
 })
+
+test_that("compute_shortrunseries matches Excel formula cells", {
+  agg <- compute_data_sec_agg(extract_data_sec_all())
+  bci_x <- extract_billionaires_ca_inctax()
+  ftb <- extract_ftb_b4a()
+  b <- compute_billionaires_ca_inctax(agg, bci_x, ftb)
+  top4 <- extract_data_sec_top4()
+  srs <- extract_shortrunseries()
+  out <- compute_shortrunseries(agg, top4, b, srs)
+
+  # Helper: numeric coercion of positional dump cells. Panel rows 6..13 = years 2018..2025.
+  num_col <- function(L, rows) {
+    unname(vapply(rows, function(r) suppressWarnings(as.numeric(srs[[L]][r])), numeric(1)))
+  }
+  rows_panel <- 6:13   # year 2018..2025
+
+  panel <- out$panel
+  # Column C (forbes_worth), rows 7..13 (years 2019..2025)
+  expect_equal(panel$wealth_us_citizens_b[2:8], num_col("C", 7:13), tolerance = 1e-2)
+  expect_equal(panel$top5_total_b,              num_col("E", rows_panel), tolerance = 1e-2)
+  expect_equal(panel$top5_company_wealth_b,     num_col("G", rows_panel), tolerance = 1e-2)
+  expect_equal(panel$share_public,              num_col("H", rows_panel), tolerance = 1e-4)
+  expect_equal(panel$n_ca_billionaires[2:8],    num_col("J", 7:13),       tolerance = 1e-6)
+  expect_equal(panel$share_ellison[2:8],        num_col("L", 7:13),       tolerance = 1e-4)
+  expect_equal(panel$yoy_growth_wealth[3:8],    num_col("M", 8:13),       tolerance = 1e-4)
+  expect_equal(panel$cum_growth_from_2019[2:8], num_col("N", 7:13),       tolerance = 1e-4)
+  expect_equal(panel$cum_growth_from_2022[5:8], num_col("O", 10:13),      tolerance = 1e-4)
+  expect_equal(panel$cum_growth_from_2023[6:8], num_col("P", 11:13),      tolerance = 1e-4)
+  expect_equal(panel$top5_yoy_growth[3:8],      num_col("R", 8:13),       tolerance = 1e-4)
+  expect_equal(panel$top5_cum_growth_from_2019, num_col("S", rows_panel), tolerance = 1e-4)
+  expect_equal(panel$top5_cum_growth_from_2022[5:8], num_col("T", 10:13), tolerance = 1e-4)
+  expect_equal(panel$share_ca_in_top5_b[2:8],   num_col("V", 7:13),       tolerance = 1e-4)
+  expect_equal(panel$ca_inctax_billionaires_b[2:8], num_col("X", 7:13),   tolerance = 1e-3)
+  expect_equal(panel$ca_inctax_per_wealth[2:8],     num_col("Y", 7:13),   tolerance = 1e-5)
+  expect_equal(panel$ca_inctax_total_b[2:8],        num_col("Z", 7:13),   tolerance = 1e-2)
+  expect_equal(panel$ca_inctax_share_total[2:8],    num_col("AA", 7:13),  tolerance = 1e-4)
+  expect_equal(panel$top5_sec_tax_rate[2:8],        num_col("AD", 7:13),  tolerance = 1e-4)
+  expect_equal(panel$top5_sec_ca_inctax_b[2:8],     num_col("AE", 7:13),  tolerance = 1e-4)
+  expect_equal(panel$top5_sec_share_of_total[2:8],  num_col("AF", 7:13),  tolerance = 1e-4)
+  expect_equal(panel$top3_ca_inctax_sum_b[2:8],     num_col("AG", 7:13),  tolerance = 1e-4)
+  expect_equal(panel$top2_ca_inctax_sum_b[2:8],     num_col("AH", 7:13),  tolerance = 1e-4)
+  expect_equal(panel$brin_ca_inctax_b[2:8],         num_col("AJ", 7:13),  tolerance = 1e-4)
+  expect_equal(panel$page_ca_inctax_b[2:8],         num_col("AK", 7:13),  tolerance = 1e-4)
+  expect_equal(panel$zuck_ca_inctax_b[2:8],         num_col("AL", 7:13),  tolerance = 1e-4)
+  expect_equal(panel$ellison_ca_inctax_b[2:8],      num_col("AM", 7:13),  tolerance = 1e-4)
+  expect_equal(panel$huang_ca_inctax_b[2:8],        num_col("AN", 7:13),  tolerance = 1e-4)
+  # D and F columns only filled rows 12-13 (2024, 2025)
+  expect_equal(panel$wealth_w_avoid_b[7:8],  num_col("D", 12:13), tolerance = 1e-2)
+  expect_equal(panel$top5_w_avoid_b[7:8],    num_col("F", 12:13), tolerance = 1e-2)
+
+  # Row 14 "2026 (feb 1)" snapshot
+  s <- out$summary_2025
+  expect_equal(unname(s$top5_public_b["brin"]),   as.numeric(srs$AJ[14]), tolerance = 1e-2)
+  expect_equal(unname(s$top5_public_b["page"]),   as.numeric(srs$AK[14]), tolerance = 1e-2)
+  expect_equal(unname(s$top5_public_b["zuck"]),   as.numeric(srs$AL[14]), tolerance = 1e-2)
+  expect_equal(unname(s$top5_public_b["ellison"]),as.numeric(srs$AM[14]), tolerance = 1e-2)
+  expect_equal(unname(s$top5_public_b["huang"]),  as.numeric(srs$AN[14]), tolerance = 1e-2)
+  expect_equal(unname(s$top5_public_b["top3"]),   as.numeric(srs$AG[14]), tolerance = 1e-2)
+  expect_equal(unname(s$top5_public_b["top2"]),   as.numeric(srs$AH[14]), tolerance = 1e-2)
+  # Row 17 = total wealth incl private end of 2025
+  expect_equal(unname(s$top5_total_b["brin"]),    as.numeric(srs$AJ[17]), tolerance = 1e-2)
+  expect_equal(unname(s$top5_total_b["page"]),    as.numeric(srs$AK[17]), tolerance = 1e-2)
+  expect_equal(unname(s$top5_total_b["zuck"]),    as.numeric(srs$AL[17]), tolerance = 1e-2)
+  expect_equal(unname(s$top5_total_b["top3"]),    as.numeric(srs$AG[17]), tolerance = 1e-2)
+  # Row 18 = public share by group
+  expect_equal(unname(s$public_share["top3"]),    as.numeric(srs$AG[18]), tolerance = 1e-4)
+  expect_equal(unname(s$public_share["brin"]),    as.numeric(srs$AJ[18]), tolerance = 1e-4)
+  expect_equal(unname(s$public_share["page"]),    as.numeric(srs$AK[18]), tolerance = 1e-4)
+
+  # Row 15 averages
+  avg <- s$avg_2019_2025
+  expect_equal(avg$X,  as.numeric(srs$X[15]),  tolerance = 1e-4)
+  expect_equal(avg$Y,  as.numeric(srs$Y[15]),  tolerance = 1e-6)
+  expect_equal(avg$AA, as.numeric(srs$AA[15]), tolerance = 1e-5)
+  expect_equal(avg$AD, as.numeric(srs$AD[15]), tolerance = 1e-6)
+  expect_equal(avg$AE, as.numeric(srs$AE[15]), tolerance = 1e-4)
+  expect_equal(avg$AF, as.numeric(srs$AF[15]), tolerance = 1e-5)
+  expect_equal(avg$AG, as.numeric(srs$AG[15]), tolerance = 1e-5)
+  expect_equal(avg$AH, as.numeric(srs$AH[15]), tolerance = 1e-5)
+  expect_equal(avg$AJ, as.numeric(srs$AJ[15]), tolerance = 1e-5)
+  expect_equal(avg$AK, as.numeric(srs$AK[15]), tolerance = 1e-5)
+  expect_equal(avg$AL, as.numeric(srs$AL[15]), tolerance = 1e-5)
+  expect_equal(avg$AM, as.numeric(srs$AM[15]), tolerance = 1e-5)
+  expect_equal(avg$AN, as.numeric(srs$AN[15]), tolerance = 1e-5)
+
+  # Row 16 (per-2025-wealth ratios) — uses /AG14 etc. (small denominators -> tolerance loose)
+  ratios <- s$avg_share_2025_wealth
+  expect_equal(unname(ratios["top3"]), as.numeric(srs$AG[16]), tolerance = 1e-5)
+  expect_equal(unname(ratios["brin"]), as.numeric(srs$AJ[16]), tolerance = 1e-5)
+  expect_equal(unname(ratios["page"]), as.numeric(srs$AK[16]), tolerance = 1e-5)
+
+  # Growth-summary block (rows 16..21)
+  growth <- out$growth
+  expect_equal(growth$total_growth_incl_nonus, num_col("B", 16:21), tolerance = 1e-3)
+  expect_equal(growth$total_growth_us_only,    num_col("C", 16:21), tolerance = 1e-3)
+  expect_equal(growth$annualized_us_only,      num_col("M", 16:21), tolerance = 1e-4)
+})

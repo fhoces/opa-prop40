@@ -42,5 +42,10 @@ list(
   tar_target(billionaires_ca_inctax_r,
              compute_billionaires_ca_inctax(data_sec_agg_r,
                                             billionaires_ca_inctax,
-                                            ftb_b4a))
+                                            ftb_b4a)),
+  tar_target(shortrunseries_r,
+             compute_shortrunseries(data_sec_agg_r,
+                                    data_sec_top4,
+                                    billionaires_ca_inctax_r,
+                                    shortrunseries))
 )
