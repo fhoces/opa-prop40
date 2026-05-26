@@ -25,6 +25,8 @@ outputs/report.pdf
 report.html
 report.pdf
 report_files/
+README.html
+README_files/
 
 # cached raw pulls
 data-raw/sec/cache/
