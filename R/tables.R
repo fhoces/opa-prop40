@@ -76,6 +76,94 @@ build_tab2 <- function(data_sec_agg_r, billionaires_ca_inctax_r, data_sec_top4) 
   tab
 }
 
+build_tab4 <- function(data_sec_top4) {
+  # Table 4: Wealth, Income, and Taxes of the Top 4, 2019-2025.
+  # Two columns: "Total 2019-2025" and "Annual average" (= total / 7).
+
+  d <- data_sec_top4
+  total_excl <- d[d$forbes_id == "Total (excluding Ellison)" &
+                    d$year %in% 2019:2025, ]
+  total_excl <- total_excl[order(total_excl$year), ]
+  begin <- d[d$forbes_id == "Total (excluding Ellison)" & d$year == 2018, ]
+  end   <- d[d$forbes_id == "Total (excluding Ellison)" & d$year == 2025, ]
+  # All values converted from $M to $B by dividing by 1000.
+  wealth_begin <- begin$public_worth / 1000
+  wealth_end   <- end$public_worth   / 1000
+  wealth_gain  <- wealth_end - wealth_begin
+  wealth_avg   <- mean(total_excl$public_worth) / 1000
+
+  sum_col <- function(col) sum(total_excl[[col]]) / 1000
+
+  fiscal_income      <- sum_col("fiscal_income")
+  stock_options      <- sum_col("option_profit") + sum_col("noneq_comp")
+  dividends          <- sum_col("dividend")
+  realized_gains     <- sum_col("kg_taxable")
+  appreciated_stock  <- sum_col("donation")
+  net_collateral     <- sum_col("value_borrowed")
+  fed_inctax         <- sum_col("fed_income_tax")
+  ca_inctax          <- sum_col("ca_income_tax")
+  corp_profits       <- sum_col("w_pi")
+  corp_taxes         <- sum_col("w_txt")
+
+  rows <- tibble::tibble(
+    metric = c(
+      "Wealth in 2019 (beginning of year)",
+      "Wealth in 2025 (end of year)",
+      "Gain in wealth during 2019-2025",
+      "Wealth (average over 2019-2025)",
+      "Fiscal individual income",
+      "        Stock-options exercise + non-equity comp",
+      "        Dividends",
+      "        Realized capital gains",
+      "Memo: Appreciated stock donated to charity",
+      "Memo: Net collateral pledged",
+      "Federal individual income tax",
+      "California individual income tax",
+      "Individual taxes / individual income",
+      "Corporate profits",
+      "Corporate taxes (federal)",
+      "Corporate tax rate (effective)"
+    ),
+    total = c(
+      wealth_begin, wealth_end, wealth_gain, NA_real_,
+      fiscal_income, stock_options, dividends, realized_gains,
+      appreciated_stock, net_collateral,
+      fed_inctax, ca_inctax,
+      (fed_inctax + ca_inctax) / fiscal_income,
+      corp_profits, corp_taxes, corp_taxes / corp_profits
+    ),
+    annual_avg = c(
+      NA_real_, NA_real_, wealth_gain / 7, wealth_avg,
+      fiscal_income / 7, stock_options / 7, dividends / 7, realized_gains / 7,
+      appreciated_stock / 7, net_collateral / 7,
+      fed_inctax / 7, ca_inctax / 7,
+      (fed_inctax + ca_inctax) / fiscal_income,
+      corp_profits / 7, corp_taxes / 7, corp_taxes / corp_profits
+    )
+  )
+
+  ratio_rows <- c(13, 16)        # tax-rate rows
+  fmt_rows   <- setdiff(seq_len(nrow(rows)), ratio_rows)
+
+  tab <- gt::gt(rows) |>
+    gt::tab_header(title = "Table 4. Wealth, Income, and Taxes of the Top 4, 2019-2025") |>
+    gt::cols_label(
+      metric     = "",
+      total      = "Total 2019-2025 ($B)",
+      annual_avg = "Annual average ($B)"
+    ) |>
+    gt::fmt_number(rows = fmt_rows, decimals = 2) |>
+    gt::fmt_percent(rows = ratio_rows, decimals = 1) |>
+    gt::sub_missing(missing_text = "—") |>
+    gt::tab_source_note(source_note = gt::md(paste(
+      "**Notes:** All amounts in nominal $B. Source: per-billionaire SEC Form 4",
+      "filings aggregated as `data_sec_top4`'s \"Total (excluding Ellison)\" rows."
+    )))
+
+  attr(tab, "panel") <- rows
+  tab
+}
+
 build_tab3 <- function(data_sec_top4) {
   # Table 3: CA Income Tax Paid by the Top 4 on Company Wealth.
   # Per-billionaire panel (Page, Brin, Zuckerberg, Huang) + all-top-4 sum.

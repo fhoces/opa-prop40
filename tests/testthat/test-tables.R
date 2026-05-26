@@ -121,6 +121,42 @@ test_that("build_tab3 renders to non-empty HTML and LaTeX", {
   expect_gt(nchar(tex), 200)
 })
 
+test_that("build_tab4 reproduces Tab4 sheet Total + Annual-average columns", {
+  top4 <- extract_data_sec_top4()
+  tab4 <- build_tab4(top4)
+  p <- attr(tab4, "panel")
+  xl <- read_sheet("Tab4", range = "D6:F23")  # cols D and F (skip blank E)
+
+  # Map sheet rows 6..23 to panel rows; sheet has blank rows 10, 20.
+  # panel rows: 1..4 = wealth (sheet 6..9), 5..10 = income items (sheet 11..16),
+  # 11..13 = inctax + ratio (sheet 17..19), 14..16 = corporate (sheet 21..23)
+  sheet_to_panel <- c(`6`=1,  `7`=2,  `8`=3,  `9`=4,
+                      `11`=5, `12`=6, `13`=7, `14`=8, `15`=9, `16`=10,
+                      `17`=11,`18`=12,`19`=13,
+                      `21`=14,`22`=15,`23`=16)
+  for (sheet_row in names(sheet_to_panel)) {
+    pi <- sheet_to_panel[[sheet_row]]
+    xl_i <- as.integer(sheet_row) - 5L
+    if (!is.na(xl$A[xl_i])) {
+      expect_equal(p$total[pi], xl$A[xl_i], tolerance = 1e-3,
+                   info = paste("metric:", p$metric[pi]))
+    }
+    if (!is.na(xl$C[xl_i])) {
+      expect_equal(p$annual_avg[pi], xl$C[xl_i], tolerance = 1e-3,
+                   info = paste("metric:", p$metric[pi], "avg"))
+    }
+  }
+})
+
+test_that("build_tab4 renders to non-empty HTML and LaTeX", {
+  tab4 <- build_tab4(extract_data_sec_top4())
+  html <- as.character(gt::as_raw_html(tab4))
+  expect_gt(nchar(html), 1000)
+  expect_true(grepl("Wealth, Income, and Taxes of the Top 4", html))
+  tex <- as.character(gt::as_latex(tab4))
+  expect_gt(nchar(tex), 200)
+})
+
 test_that("build_tab1 renders to non-empty HTML and LaTeX", {
   agg <- compute_data_sec_agg(extract_data_sec_all())
   bci_x <- extract_billionaires_ca_inctax()
