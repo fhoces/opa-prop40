@@ -1,5 +1,5 @@
 ---
-title: "California Billionaires: Wealth, Taxes, and Wealth Tax Revenue Estimates"
+title: "Reproduction of: California Billionaires: Wealth, Taxes, and Wealth Tax Revenue Estimates"
 subtitle: "R replication of Boll, Saez, and Zucman (2026) — NBER WP 35218"
 author: "Fernando Hoces de la Guardia"
 date: today
