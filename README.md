@@ -15,13 +15,13 @@ renders the paper's six tables and twelve figures plus a Quarto report.
 |---|---|---|
 | Paper PDF | `original-materials/BSZ26CAbillionaires.pdf` | Tracked verbatim where quoted |
 | Authors' supplementary workbook | `original-materials/BSZ_MainTablesFigures.xlsx` | **Required input. NOT redistributed in this repo** |
-| Excel extractors (Phase 1) | 16 `tar_target`s reading the workbook | Complete |
-| R re-derivations (Phase 2) | 8 `compute_*` functions, ~1,640 Excel formula cells | Complete; all verified within tolerance |
-| Tables (Phase 3) | 6 `gt` builders + HTML/LaTeX renders | Complete |
-| Figures (Phase 3) | 12 `ggplot` builders + PNG/PDF renders | Complete |
-| Quarto report (Phase 4) | `report.qmd` -> `report.{html,pdf}` | Complete |
-| Primary-source cross-validation (Phase 1.5) | SEC EDGAR / BEA / FTB / DINA | **Partial — see below** |
-| `renv` lock + CI (Phase 5) | `renv.lock`, `.github/workflows/` | Not started |
+| Excel extractors | 16 `tar_target`s reading the workbook | Complete |
+| R re-derivations | 8 `compute_*` functions, ~1,640 Excel formula cells | Complete; all verified within tolerance |
+| Tables | 6 `gt` builders + HTML/LaTeX renders | Complete |
+| Figures | 12 `ggplot` builders + PNG/PDF renders | Complete |
+| Quarto report | `report.qmd` -> `report.{html,pdf}` | Complete |
+| Primary-source cross-validation | SEC EDGAR / BEA / FTB / DINA | **Partial — see below** |
+| Environment lock + CI | `renv.lock`, `.github/workflows/` | Not started |
 
 ## What is and is not in the repo
 
@@ -31,13 +31,13 @@ renders the paper's six tables and twelve figures plus a Quarto report.
   (`tests/testthat/*`), and the Quarto report (`report.qmd`).
 - The original paper PDF (`original-materials/BSZ26CAbillionaires.pdf`),
   included for quoting and section-structure reference.
-- The Phase 1.5 SEC EDGAR cross-validation script and its findings document
+- The SEC EDGAR cross-validation script and its findings document
   (`data-raw/sec/fetch_huang_2025.R`, `data-raw/sec/POC_findings.md`).
 
 ### NOT in the repo (must be obtained separately)
 
 - **`original-materials/BSZ_MainTablesFigures.xlsx`** — the authors' Excel
-  supplement. Every Phase 1 extractor reads from this file. Without it the
+  supplement. Every Excel extractor reads from this file. Without it the
   pipeline cannot run. The workbook is the authors' work and is not
   redistributed here; obtain it from the paper's NBER page or the authors.
 - **`outputs/`, `_targets/`, `data-raw/sec/cache/`, `report.{html,pdf}`** —
@@ -45,9 +45,9 @@ renders the paper's six tables and twelve figures plus a Quarto report.
 
 ### Raw data sources that are NOT yet independently pulled
 
-The Excel workbook combines several public and proprietary inputs. Phase 1.5
-re-pulls each one from the primary source to cross-check the workbook's
-cached values. Status:
+The Excel workbook combines several public and proprietary inputs.
+Independent re-pulls from each primary source — to cross-check the workbook's
+cached values — are an ongoing strand of this project. Status:
 
 | Raw source | Workbook sheet it feeds | Status |
 |---|---|---|
@@ -60,11 +60,11 @@ cached values. Status:
 | ProPublica IRS leak | `data_sec_propublica` | **Cannot be re-pulled** — restricted-access data |
 | Compustat (corporate financials feeding SEC top-4 columns) | parts of `data_sec_top4` | **Cannot be re-pulled here** — paywalled |
 
-**Interpretation:** Phase 2 verifies that R reproduces the Excel cells.
-Phase 1.5 (in progress) verifies that the Excel cells reproduce the public
-raw data. Until Phase 1.5 is complete, the replication is "faithful to the
-authors' workbook" but not yet "independently sourced from underlying public
-data" for most series.
+**Interpretation:** The R pipeline verifies that R reproduces the Excel
+cells. The cross-validation work (in progress) verifies that the Excel
+cells in turn reproduce the public raw data. Until that second layer is
+complete, the replication is "faithful to the authors' workbook" but not
+yet "independently sourced from underlying public data" for most series.
 
 ## Repository layout
 
@@ -73,22 +73,22 @@ CAWT-BSZ/
 ├── original-materials/
 │   ├── BSZ_MainTablesFigures.xlsx        # REQUIRED — not in repo, see above
 │   └── BSZ26CAbillionaires.pdf           # paper PDF (provided)
-├── _targets.R                            # {targets} DAG (Phase 1 -> 4)
+├── _targets.R                            # {targets} DAG
 ├── DESCRIPTION                           # package manifest (deps)
 ├── R/
 │   ├── ingest_excel.R                    # helpers: read_sheet, list_sheets
 │   ├── verify.R                          # expect_matches_excel testhat helper
-│   ├── data_sheets.R                     # 16 extract_* functions (Phase 1)
-│   ├── compute.R                         # 8 compute_* functions (Phase 2)
-│   ├── tables.R                          # 6 build_tab*_gt functions (Phase 3)
-│   ├── figures.R                         # 12 build_fig*_ggplot functions (Phase 3)
+│   ├── data_sheets.R                     # 16 extract_* functions (read Excel)
+│   ├── compute.R                         # 8 compute_* functions (re-derive in R)
+│   ├── tables.R                          # 6 build_tab*_gt functions
+│   ├── figures.R                         # 12 build_fig*_ggplot functions
 │   └── render.R                          # render_table_*, render_figure_*, render_report
-├── report.qmd                            # Quarto narrative (Phase 4)
+├── report.qmd                            # Quarto narrative report
 ├── tests/testthat/                       # 472 expectations across 6 files
 ├── data-raw/
 │   └── sec/
-│       ├── fetch_huang_2025.R            # Phase 1.5 SEC POC script
-│       ├── POC_findings.md               # SEC POC results
+│       ├── fetch_huang_2025.R            # SEC cross-validation script
+│       ├── POC_findings.md               # SEC cross-validation results
 │       └── cache/                        # SEC XML downloads (gitignored)
 └── outputs/                              # all generated artifacts (gitignored)
     ├── tables/                           # tab1..tab5, tab_a1 × {.html, .tex}
@@ -97,7 +97,7 @@ CAWT-BSZ/
 
 ## Inputs and outputs (by `tar_target`)
 
-### Phase 1: Excel extractors (16 targets, all read `BSZ_MainTablesFigures.xlsx`)
+### Excel extractors (16 targets, all read `BSZ_MainTablesFigures.xlsx`)
 
 | Target | Sheet | Notes |
 |---|---|---|
@@ -115,7 +115,7 @@ CAWT-BSZ/
 | `billionaires_ca_inctax` | `billionairesCAinctax` | positional dump |
 | `ftb_b4a` | `2023-b-4a__adjusted_gross_incom` | FTB AGI brackets |
 
-### Phase 2: R re-derivations (8 targets, `_r` suffix)
+### R re-derivations (8 targets, `_r` suffix)
 
 | Target | Verifies against | Tolerance |
 |---|---|---|
@@ -128,7 +128,7 @@ CAWT-BSZ/
 | `shortrunseries_r` | `shortrunseries` 268 formula cells | 1e-3 / 1e-2 |
 | `top4taxes_r` | `top4taxes` 429 formula cells | 1e-4 / 1e-2 |
 
-### Phase 3: Tables (gt) and figures (ggplot)
+### Tables (gt) and figures (ggplot)
 
 | Target | Output files | Inputs |
 |---|---|---|
@@ -151,7 +151,7 @@ CAWT-BSZ/
 | `fig_a3` | `outputs/figures/fig_a3.{png,pdf}` | `billionaires_ca_inctax_r$all_taxes` |
 | `fig_a4` | `outputs/figures/fig_a4.{png,pdf}` | `pareto_missing_r` |
 
-### Phase 4: Report
+### Quarto report
 
 | Target | Output | Inputs |
 |---|---|---|
@@ -175,14 +175,14 @@ Rscript -e 'install.packages(c(
 # 3. Install Quarto CLI (https://quarto.org/docs/get-started/).
 #    On macOS:  brew install --cask quarto
 
-# 4. Build the pipeline (Phase 1..3 + Quarto report):
+# 4. Build the pipeline (all targets + Quarto report):
 Rscript -e 'targets::tar_make()'
 
 # 5. Run the test suite (472 expectations):
 Rscript tests/testthat.R
 ```
 
-To rebuild just Phase 1..3 without rendering the (slow) Quarto report:
+To rebuild the data + tables + figures without rendering the (slow) Quarto report:
 
 ```sh
 Rscript -e 'targets::tar_make(names = -c(report_html, report_pdf))'
@@ -190,7 +190,7 @@ Rscript -e 'targets::tar_make(names = -c(report_html, report_pdf))'
 
 ## Verification approach
 
-Every Phase 2 R function is paired with a `testthat` block that reads the
+Every `compute_*` R function is paired with a `testthat` block that reads the
 corresponding Excel sheet's cached values via `read_sheet()` (a thin
 `readxl` wrapper) and asserts element-wise equality within a documented
 tolerance. The test count is reported by `Rscript tests/testthat.R`:
