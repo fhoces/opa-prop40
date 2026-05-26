@@ -225,6 +225,66 @@ test_that("build_fig_a1 renders to a non-empty PNG", {
   expect_gt(file.info(png_path)$size, 5000)
 })
 
+test_that("build_fig_a2 returns 2-series share-of-CA-inctax line chart", {
+  agg <- compute_data_sec_agg(extract_data_sec_all())
+  bci_x <- extract_billionaires_ca_inctax()
+  ftb <- extract_ftb_b4a()
+  b <- compute_billionaires_ca_inctax(agg, bci_x, ftb)
+  top4 <- extract_data_sec_top4()
+  srs_raw <- extract_shortrunseries()
+  srs_r <- compute_shortrunseries(agg, top4, b, srs_raw)
+  p <- build_fig_a2(srs_r)
+  expect_s3_class(p, "ggplot")
+  expect_equal(nrow(p$data), 14)
+  # 2025 all-billionaires share ≈ 0.0284 (X13/Z13 from shortrunseries)
+  expect_equal(p$data$share[p$data$year == 2025 &
+                              p$data$series == "All CA billionaires"],
+                0.028412, tolerance = 1e-4)
+})
+
+test_that("build_fig_a3 returns 2-panel stacked area chart on public wealth", {
+  agg <- compute_data_sec_agg(extract_data_sec_all())
+  bci_x <- extract_billionaires_ca_inctax()
+  ftb <- extract_ftb_b4a()
+  b <- compute_billionaires_ca_inctax(agg, bci_x, ftb)
+  p <- build_fig_a3(b)
+  expect_s3_class(p, "patchwork")
+  pw <- p[[1]]; pei <- p[[2]]
+  expect_equal(nrow(pw$data), 28)   # 4 components × 7 yrs
+  expect_equal(nrow(pei$data), 28)
+})
+
+test_that("build_fig_a4 returns 2-panel Pareto chart over thresholds", {
+  par_r <- compute_pareto_missing(extract_pareto_missing())
+  p <- build_fig_a4(par_r)
+  expect_s3_class(p, "patchwork")
+  pa <- p[[1]]; pb <- p[[2]]
+  expect_equal(nrow(pa$data), 34)   # 17 thresholds × 2 series
+  expect_equal(nrow(pb$data), 34)
+})
+
+test_that("appendix figures render to non-empty PNGs", {
+  agg <- compute_data_sec_agg(extract_data_sec_all())
+  bci_x <- extract_billionaires_ca_inctax()
+  ftb <- extract_ftb_b4a()
+  b <- compute_billionaires_ca_inctax(agg, bci_x, ftb)
+  top4 <- extract_data_sec_top4()
+  srs_raw <- extract_shortrunseries()
+  srs_r <- compute_shortrunseries(agg, top4, b, srs_raw)
+  par_r <- compute_pareto_missing(extract_pareto_missing())
+  tmpdir <- tempfile("figax_"); dir.create(tmpdir)
+  for (nm in c("fig_a2", "fig_a3", "fig_a4")) {
+    obj <- switch(nm,
+                  fig_a2 = build_fig_a2(srs_r),
+                  fig_a3 = build_fig_a3(b),
+                  fig_a4 = build_fig_a4(par_r))
+    path <- file.path(tmpdir, paste0(nm, ".png"))
+    ggplot2::ggsave(path, plot = obj, width = 11, height = 5, dpi = 100)
+    expect_true(file.exists(path), info = nm)
+    expect_gt(file.info(path)$size, 5000)
+  }
+})
+
 test_that("build_fig1 renders to a non-empty PNG file", {
   agg <- compute_data_sec_agg(extract_data_sec_all())
   bci_x <- extract_billionaires_ca_inctax()

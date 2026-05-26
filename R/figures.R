@@ -3,6 +3,163 @@
 # Each builder takes already-validated upstream targets and returns a ggplot.
 # Render to PNG / PDF downstream via R/render.R helpers.
 
+build_fig_a4 <- function(pareto_missing_r) {
+  # Appendix Figure A4: Pareto extrapolation for missing CA billionaires.
+  # Panel A: Pareto b (empirical vs projected) at each wealth threshold.
+  # Panel B: density (empirical vs projected) at each wealth threshold.
+  d <- pareto_missing_r
+  n <- nrow(d)
+
+  panel_a <- tibble::tibble(
+    threshold = rep(d$threshold_b, 2),
+    pareto_b  = c(d$pareto_b_emp, d$pareto_b_proj),
+    series    = factor(rep(c("Pareto b (Forbes data)", "Pareto b (projected)"),
+                             each = n),
+                        levels = c("Pareto b (Forbes data)", "Pareto b (projected)"))
+  )
+  panel_b <- tibble::tibble(
+    threshold = rep(d$threshold_b, 2),
+    density   = c(d$actual_density, d$projected_density),
+    series    = factor(rep(c("Density (Forbes)", "Density (Pareto-projected)"),
+                             each = n),
+                        levels = c("Density (Forbes)", "Density (Pareto-projected)"))
+  )
+  colors_a <- c("Pareto b (Forbes data)" = "#1f77b4",
+                "Pareto b (projected)"  = "#d62728")
+  colors_b <- c("Density (Forbes)"            = "#1f77b4",
+                "Density (Pareto-projected)" = "#d62728")
+
+  pa <- ggplot2::ggplot(panel_a,
+                         ggplot2::aes(x = threshold, y = pareto_b, color = series,
+                                        shape = series)) +
+    ggplot2::geom_line(linewidth = 0.9) +
+    ggplot2::geom_point(size = 2) +
+    ggplot2::labs(title = "A. Pareto coefficient b (actual and projected)",
+                   x = "Wealth threshold ($B)", y = "Pareto b", color = NULL, shape = NULL) +
+    ggplot2::scale_color_manual(values = colors_a) +
+    ggplot2::theme_minimal(base_size = 11) +
+    ggplot2::theme(legend.position = "bottom",
+                    plot.title = ggplot2::element_text(face = "bold"),
+                    panel.grid.minor = ggplot2::element_blank())
+
+  pb <- ggplot2::ggplot(panel_b,
+                         ggplot2::aes(x = threshold, y = density, color = series,
+                                        shape = series)) +
+    ggplot2::geom_line(linewidth = 0.9) +
+    ggplot2::geom_point(size = 2) +
+    ggplot2::labs(title = "B. Density (Forbes vs. adding missing)",
+                   x = "Wealth threshold ($B)", y = "# billionaires in bracket",
+                   color = NULL, shape = NULL) +
+    ggplot2::scale_color_manual(values = colors_b) +
+    ggplot2::theme_minimal(base_size = 11) +
+    ggplot2::theme(legend.position = "bottom",
+                    plot.title = ggplot2::element_text(face = "bold"),
+                    panel.grid.minor = ggplot2::element_blank())
+
+  patchwork::wrap_plots(pa, pb, ncol = 2) +
+    patchwork::plot_annotation(
+      title = "Appendix Figure A4: Pareto Extrapolation for Missing CA Billionaires"
+    )
+}
+
+build_fig_a3 <- function(billionaires_ca_inctax_r) {
+  # Appendix Figure A3: Total Taxes Paid by CA Billionaires on their Public
+  # Stock Wealth. Two area panels (% of public-asset wealth; % of public-asset
+  # economic income), each stacking CA inctax + Fed inctax + Corp + Property/sales.
+  at <- billionaires_ca_inctax_r$all_taxes
+  d <- at[at$year %in% 2019:2025, ]
+  n <- nrow(d)
+
+  stack_levels <- c("CA income tax", "Federal income tax",
+                     "Corporate taxes", "Property + sales taxes")
+  panel_w <- tibble::tibble(
+    year  = rep(d$year, 4),
+    share = c(d$ca_inctax_per_public_wealth,
+              d$fed_inctax_per_public_wealth,
+              d$corp_per_public_wealth,
+              d$prop_sales_per_public_wealth),
+    tax   = factor(rep(stack_levels, each = n), levels = stack_levels)
+  )
+  panel_ei <- tibble::tibble(
+    year  = rep(d$year, 4),
+    share = c(d$ca_inctax_per_econ_income,
+              d$fed_inctax_per_econ_income,
+              d$corp_per_econ_income,
+              d$prop_sales_per_econ_income),
+    tax   = factor(rep(stack_levels, each = n), levels = stack_levels)
+  )
+  fills <- c("CA income tax"          = "#1f77b4",
+             "Federal income tax"     = "#2ca02c",
+             "Corporate taxes"        = "#d62728",
+             "Property + sales taxes" = "#ff7f0e")
+
+  pw <- ggplot2::ggplot(panel_w, ggplot2::aes(x = year, y = share, fill = tax)) +
+    ggplot2::geom_area(alpha = 0.85, color = "white", linewidth = 0.3) +
+    ggplot2::scale_x_continuous(breaks = 2019:2025) +
+    ggplot2::scale_y_continuous(labels = scales::percent_format(accuracy = 0.1)) +
+    ggplot2::scale_fill_manual(values = fills) +
+    ggplot2::labs(title = "A. Total taxes as % of public-asset wealth",
+                   x = NULL, y = NULL, fill = NULL) +
+    ggplot2::theme_minimal(base_size = 11) +
+    ggplot2::theme(legend.position = "bottom",
+                    plot.title = ggplot2::element_text(face = "bold"),
+                    panel.grid.minor = ggplot2::element_blank())
+
+  pei <- ggplot2::ggplot(panel_ei, ggplot2::aes(x = year, y = share, fill = tax)) +
+    ggplot2::geom_area(alpha = 0.85, color = "white", linewidth = 0.3) +
+    ggplot2::scale_x_continuous(breaks = 2019:2025) +
+    ggplot2::scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+    ggplot2::scale_fill_manual(values = fills) +
+    ggplot2::labs(title = "B. Total taxes as % of economic income on public assets",
+                   x = NULL, y = NULL, fill = NULL) +
+    ggplot2::theme_minimal(base_size = 11) +
+    ggplot2::theme(legend.position = "bottom",
+                    plot.title = ggplot2::element_text(face = "bold"),
+                    panel.grid.minor = ggplot2::element_blank())
+
+  patchwork::wrap_plots(pw, pei, ncol = 2) +
+    patchwork::plot_annotation(
+      title = "Appendix Figure A3: Total Taxes on CA Billionaire Public Stock Wealth"
+    )
+}
+
+build_fig_a2 <- function(shortrunseries_r) {
+  # Appendix Figure A2: CA Income Tax paid by Billionaires as % of total CA
+  # income tax revenue. Two-series line, 2019-2025: all CA billionaires + top 5.
+  panel <- shortrunseries_r$panel
+  d <- panel[panel$year %in% 2019:2025, ]
+  n <- nrow(d)
+
+  long <- tibble::tibble(
+    year   = rep(d$year, 2),
+    share  = c(d$ca_inctax_share_total, d$top5_sec_share_of_total),
+    series = factor(rep(c("All CA billionaires", "Top 5 (SEC filings)"), each = n),
+                     levels = c("All CA billionaires", "Top 5 (SEC filings)"))
+  )
+
+  ggplot2::ggplot(long, ggplot2::aes(x = year, y = share, color = series,
+                                       shape = series)) +
+    ggplot2::geom_line(linewidth = 0.9) +
+    ggplot2::geom_point(size = 2.5) +
+    ggplot2::scale_x_continuous(breaks = 2019:2025) +
+    ggplot2::scale_y_continuous(labels = scales::percent_format(accuracy = 0.1),
+                                 limits = c(0, NA)) +
+    ggplot2::scale_color_manual(values = c(
+      "All CA billionaires" = "#1f77b4", "Top 5 (SEC filings)" = "#d62728"
+    )) +
+    ggplot2::labs(
+      title    = "Appendix Figure A2: CA Income Tax Paid by Billionaires",
+      subtitle = "As % of total CA personal income tax revenue, 2019-2025",
+      x = NULL, y = NULL, color = NULL, shape = NULL
+    ) +
+    ggplot2::theme_minimal(base_size = 12) +
+    ggplot2::theme(
+      legend.position    = "bottom",
+      plot.title         = ggplot2::element_text(face = "bold"),
+      panel.grid.minor.x = ggplot2::element_blank()
+    )
+}
+
 build_fig_a1 <- function(xlsx_path) {
   # Appendix Figure A1: California Billionaires Wealth by Industry.
   # Stacked horizontal bar, 13 industries × 3 components: Public stock held

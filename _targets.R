@@ -110,5 +110,17 @@ list(
 
   tar_target(fig_a1,     build_fig_a1(xlsx_path)),
   tar_target(fig_a1_png, render_figure_png(fig_a1, "fig_a1", width = 8, height = 6), format = "file"),
-  tar_target(fig_a1_pdf, render_figure_pdf(fig_a1, "fig_a1", width = 8, height = 6), format = "file")
+  tar_target(fig_a1_pdf, render_figure_pdf(fig_a1, "fig_a1", width = 8, height = 6), format = "file"),
+
+  tar_target(fig_a2,     build_fig_a2(shortrunseries_r)),
+  tar_target(fig_a2_png, render_figure_png(fig_a2, "fig_a2"), format = "file"),
+  tar_target(fig_a2_pdf, render_figure_pdf(fig_a2, "fig_a2"), format = "file"),
+
+  tar_target(fig_a3,     build_fig_a3(billionaires_ca_inctax_r)),
+  tar_target(fig_a3_png, render_figure_png(fig_a3, "fig_a3", width = 11, height = 5), format = "file"),
+  tar_target(fig_a3_pdf, render_figure_pdf(fig_a3, "fig_a3", width = 11, height = 5), format = "file"),
+
+  tar_target(fig_a4,     build_fig_a4(pareto_missing_r)),
+  tar_target(fig_a4_png, render_figure_png(fig_a4, "fig_a4", width = 11, height = 5), format = "file"),
+  tar_target(fig_a4_pdf, render_figure_pdf(fig_a4, "fig_a4", width = 11, height = 5), format = "file")
 )
