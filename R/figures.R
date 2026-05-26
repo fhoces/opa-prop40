@@ -3,6 +3,63 @@
 # Each builder takes already-validated upstream targets and returns a ggplot.
 # Render to PNG / PDF downstream via R/render.R helpers.
 
+build_fig6 <- function(top4taxes_r) {
+  # Figure 6: Taxes paid by Top 4 relative to wealth and economic income.
+  # 2004-2025 line chart, two panels: A) tax/wealth, B) tax/economic income.
+  d <- top4taxes_r$panel
+  yrs <- d$year
+  n  <- length(yrs)
+
+  panel_a <- tibble::tibble(
+    year   = rep(yrs, 2),
+    value  = c(d$total_tax_per_wealth, d$ca_inctax_per_wealth),
+    series = factor(rep(c("Total taxes / wealth", "CA income tax / wealth"),
+                          each = n),
+                     levels = c("Total taxes / wealth", "CA income tax / wealth"))
+  )
+  panel_b <- tibble::tibble(
+    year   = rep(yrs, 2),
+    value  = c(d$total_tax_per_income, d$ca_inctax_per_income),
+    series = factor(rep(c("Total taxes / income", "CA income tax / income"),
+                          each = n),
+                     levels = c("Total taxes / income", "CA income tax / income"))
+  )
+
+  colors_a <- c("Total taxes / wealth" = "#d62728", "CA income tax / wealth" = "#1f77b4")
+  colors_b <- c("Total taxes / income" = "#d62728", "CA income tax / income" = "#1f77b4")
+
+  pa <- ggplot2::ggplot(panel_a, ggplot2::aes(x = year, y = value, color = series)) +
+    ggplot2::geom_line(linewidth = 0.9) +
+    ggplot2::geom_point(size = 1.5) +
+    ggplot2::scale_y_continuous(labels = scales::percent_format(accuracy = 0.1),
+                                 limits = c(0, NA)) +
+    ggplot2::scale_color_manual(values = colors_a) +
+    ggplot2::labs(title = "A. Top 4 Total Tax and CA income tax (% of wealth)",
+                   x = NULL, y = NULL, color = NULL) +
+    ggplot2::theme_minimal(base_size = 11) +
+    ggplot2::theme(legend.position = "bottom",
+                    plot.title = ggplot2::element_text(face = "bold"),
+                    panel.grid.minor = ggplot2::element_blank())
+
+  pb <- ggplot2::ggplot(panel_b, ggplot2::aes(x = year, y = value, color = series)) +
+    ggplot2::geom_line(linewidth = 0.9) +
+    ggplot2::geom_point(size = 1.5) +
+    ggplot2::scale_y_continuous(labels = scales::percent_format(accuracy = 1),
+                                 limits = c(0, NA)) +
+    ggplot2::scale_color_manual(values = colors_b) +
+    ggplot2::labs(title = "B. Top 4 Total Tax and CA income tax (% of economic income)",
+                   x = NULL, y = NULL, color = NULL) +
+    ggplot2::theme_minimal(base_size = 11) +
+    ggplot2::theme(legend.position = "bottom",
+                    plot.title = ggplot2::element_text(face = "bold"),
+                    panel.grid.minor = ggplot2::element_blank())
+
+  patchwork::wrap_plots(pa, pb, ncol = 2) +
+    patchwork::plot_annotation(
+      title = "Figure 6: Taxes Paid by the Top 4 Relative to Wealth and Income"
+    )
+}
+
 build_fig5 <- function(data_sec_top4) {
   # Figure 5: Fiscal Income, Economic Income, and Wealth Gains of the Top 4,
   # 2019-2025. Three stacked bars showing the size of each income/wealth

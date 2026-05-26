@@ -136,6 +136,29 @@ test_that("build_fig5 renders to a non-empty PNG", {
   expect_gt(file.info(png_path)$size, 5000)
 })
 
+test_that("build_fig6 returns 2-panel patchwork with 22-year top4taxes data", {
+  t4t <- compute_top4taxes(extract_data_sec_top4())
+  p <- build_fig6(t4t)
+  expect_s3_class(p, "patchwork")
+  pa <- p[[1]]; pb <- p[[2]]
+  expect_equal(nrow(pa$data), 44)  # 2 series × 22 yrs
+  expect_equal(nrow(pb$data), 44)
+  # 2025: total_tax/wealth ≈ 0.0106, ca_inctax/wealth ≈ 0.000529
+  expect_equal(pa$data$value[pa$data$year == 2025 &
+                              pa$data$series == "Total taxes / wealth"],
+                0.01060, tolerance = 1e-4)
+})
+
+test_that("build_fig6 renders to a non-empty PNG", {
+  t4t <- compute_top4taxes(extract_data_sec_top4())
+  p <- build_fig6(t4t)
+  tmpdir <- tempfile("fig6_"); dir.create(tmpdir)
+  png_path <- file.path(tmpdir, "fig6.png")
+  ggplot2::ggsave(png_path, plot = p, width = 11, height = 5, dpi = 100)
+  expect_true(file.exists(png_path))
+  expect_gt(file.info(png_path)$size, 5000)
+})
+
 test_that("build_fig1 renders to a non-empty PNG file", {
   agg <- compute_data_sec_agg(extract_data_sec_all())
   bci_x <- extract_billionaires_ca_inctax()
