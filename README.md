@@ -94,14 +94,24 @@ CAWT-BSZ/
 ├── DESCRIPTION                           # package manifest (deps)
 ├── R/
 │   ├── ingest_excel.R                    # helpers: read_sheet, list_sheets
-│   ├── verify.R                          # expect_matches_excel testhat helper
+│   ├── excel_cells.R                     # xls_cell, xls_cells_row, xls_cells_col
+│   ├── verify.R                          # expect_matches_excel testthat helper
 │   ├── data_sheets.R                     # 16 extract_* functions (read Excel)
-│   ├── compute.R                         # 8 compute_* functions (re-derive in R)
+│   ├── compute_data_sec_agg.R            # group-by aggregator (excludes Ellison)
+│   ├── compute_pareto.R                  # Pareto extrapolation + Laffer sweep
+│   ├── compute_tab5.R                    # one-time wealth-tax scoring (4 scenarios)
+│   ├── compute_billionaires_ca_inctax.R  # 727-formula sheet (Method I + memos + all-taxes)
+│   ├── compute_shortrunseries.R          # wealth-growth panel + 2025 snapshot
+│   ├── compute_top4taxes.R               # 22-year per-billionaire tax-rate panel
 │   ├── tables.R                          # 6 build_tab*_gt functions
 │   ├── figures.R                         # 12 build_fig*_ggplot functions
 │   └── render.R                          # render_table_*, render_figure_*, render_report
 ├── report.qmd                            # Quarto narrative report
-├── tests/testthat/                       # 472 expectations across 6 files
+├── tests/
+│   ├── testthat.R                        # entry point
+│   ├── snapshots/*.rds                   # 34 golden-master outputs (committed)
+│   ├── snapshot_regenerate.R             # re-baseline script (run on intentional change)
+│   └── testthat/                         # 506 expectations across 7 files
 ├── data-raw/
 │   └── sec/
 │       ├── fetch_huang_2025.R            # SEC cross-validation script
@@ -195,7 +205,7 @@ Rscript -e 'install.packages(c(
 # 4. Build the pipeline (all targets + Quarto report):
 Rscript -e 'targets::tar_make()'
 
-# 5. Run the test suite (472 expectations):
+# 5. Run the test suite (506 expectations):
 Rscript tests/testthat.R
 ```
 
@@ -217,11 +227,24 @@ compute:      215
 data_sheets:   45
 figures:       76
 ingest_excel:  20
+snapshots:     34       # pin exact output of every exhibit + compute_* fn
 tables:       109
 verify:         7
               ---
-total:        472
+total:        506
 ```
+
+The snapshot tests load `tests/snapshots/*.rds` (committed golden masters of
+every Phase-2 R output and every Phase-3 exhibit) and assert byte-level
+equality against the current pipeline. They catch any refactor that changes
+a numeric value, even within Excel-rounding tolerance. Re-baseline only when
+an output change is intentional:
+
+```sh
+Rscript tests/snapshot_regenerate.R
+```
+
+and commit the updated `.rds` files with an explanatory message.
 
 If you see a different total, something has regressed or new tests were
 added since this README.
