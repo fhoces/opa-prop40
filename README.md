@@ -39,7 +39,24 @@ renders the paper's six tables and twelve figures plus a Quarto report.
 - **`original-materials/BSZ_MainTablesFigures.xlsx`** — the authors' Excel
   supplement. Every Excel extractor reads from this file. Without it the
   pipeline cannot run. The workbook is the authors' work and is not
-  redistributed here; obtain it from the paper's NBER page or the authors.
+  redistributed here; download it from:
+
+  ```
+  https://eml.berkeley.edu/~saez/BSZ_MainTablesFigures.xlsx
+  ```
+
+  Verified version (Last-Modified 2026-05-13):
+  ```
+  SHA-256  cffe04bd950fc63350ce4f084b9d6cdf9bc1e5a8ab6b80ca0ccebb4f796b7b1a
+  ```
+
+  Quick fetch + verify:
+  ```sh
+  curl -L -o original-materials/BSZ_MainTablesFigures.xlsx \
+       https://eml.berkeley.edu/~saez/BSZ_MainTablesFigures.xlsx
+  shasum -a 256 original-materials/BSZ_MainTablesFigures.xlsx
+  # Expected: cffe04bd950fc63350ce4f084b9d6cdf9bc1e5a8ab6b80ca0ccebb4f796b7b1a
+  ```
 - **`outputs/`, `_targets/`, `data-raw/sec/cache/`, `report.{html,pdf}`** —
   generated artifacts. Gitignored. Rebuild via `targets::tar_make()`.
 
