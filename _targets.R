@@ -90,5 +90,9 @@ list(
 
   tar_target(fig4,     build_fig4(billionaires_ca_inctax_r)),
   tar_target(fig4_png, render_figure_png(fig4, "fig4"), format = "file"),
-  tar_target(fig4_pdf, render_figure_pdf(fig4, "fig4"), format = "file")
+  tar_target(fig4_pdf, render_figure_pdf(fig4, "fig4"), format = "file"),
+
+  tar_target(fig5,     build_fig5(data_sec_top4)),
+  tar_target(fig5_png, render_figure_png(fig5, "fig5"), format = "file"),
+  tar_target(fig5_pdf, render_figure_pdf(fig5, "fig5"), format = "file")
 )

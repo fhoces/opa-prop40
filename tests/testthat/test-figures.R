@@ -113,6 +113,29 @@ test_that("build_fig4 renders to a non-empty PNG", {
   expect_gt(file.info(png_path)$size, 5000)
 })
 
+test_that("build_fig5 returns stacked-bar data summing to Fig5 totals", {
+  top4 <- extract_data_sec_top4()
+  p <- build_fig5(top4)
+  expect_s3_class(p, "ggplot")
+  expect_equal(nrow(p$data), 15)   # 3 bars × 5 components
+  # Check each bar's total against Excel cached: Fiscal=18.44, Econ=142.9, Wealth=723.2
+  totals <- aggregate(value ~ bar, data = p$data, sum)
+  expect_equal(totals$value[totals$bar == "Fiscal Income"],   18.443, tolerance = 1e-2)
+  expect_equal(totals$value[totals$bar == "Economic Income"], 142.9,  tolerance = 1e-1)
+  # Wealth Gain bar adds 5% wealth tax to net + corp + CA + Fed:
+  # Excel C5+C6 type structure: wealth_gain (723.2) + 5% tax (42.78) = 765.98
+  expect_equal(totals$value[totals$bar == "Wealth Gain"],     765.98, tolerance = 1e-1)
+})
+
+test_that("build_fig5 renders to a non-empty PNG", {
+  p <- build_fig5(extract_data_sec_top4())
+  tmpdir <- tempfile("fig5_"); dir.create(tmpdir)
+  png_path <- file.path(tmpdir, "fig5.png")
+  ggplot2::ggsave(png_path, plot = p, width = 7, height = 5, dpi = 100)
+  expect_true(file.exists(png_path))
+  expect_gt(file.info(png_path)$size, 5000)
+})
+
 test_that("build_fig1 renders to a non-empty PNG file", {
   agg <- compute_data_sec_agg(extract_data_sec_all())
   bci_x <- extract_billionaires_ca_inctax()

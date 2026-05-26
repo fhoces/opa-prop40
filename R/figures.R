@@ -3,6 +3,73 @@
 # Each builder takes already-validated upstream targets and returns a ggplot.
 # Render to PNG / PDF downstream via R/render.R helpers.
 
+build_fig5 <- function(data_sec_top4) {
+  # Figure 5: Fiscal Income, Economic Income, and Wealth Gains of the Top 4,
+  # 2019-2025. Three stacked bars showing the size of each income/wealth
+  # concept and the share absorbed by taxes (CA, federal, corporate, and a
+  # hypothetical 5% wealth tax).
+  total_excl <- data_sec_top4[data_sec_top4$forbes_id == "Total (excluding Ellison)" &
+                                data_sec_top4$year %in% 2019:2025, ]
+  d <- total_excl[order(total_excl$year), ]
+  begin <- data_sec_top4[data_sec_top4$forbes_id == "Total (excluding Ellison)" &
+                           data_sec_top4$year == 2018, ]
+  end   <- data_sec_top4[data_sec_top4$forbes_id == "Total (excluding Ellison)" &
+                           data_sec_top4$year == 2025, ]
+
+  fiscal_income  <- sum(d$fiscal_income) / 1000
+  econ_income    <- sum(d$economic_income) / 1000
+  wealth_gain    <- (end$public_worth - begin$public_worth) / 1000
+  ca_inctax      <- sum(d$ca_income_tax) / 1000
+  fed_inctax     <- sum(d$fed_income_tax) / 1000
+  corp_tax       <- sum(d$total_tax) / 1000 - ca_inctax - fed_inctax
+  wealth_tax_5p  <- 0.05 * end$public_worth / 1000
+
+  # Per-bar breakdown: net income + CA + Fed + (corp only for Econ/Wealth) +
+  # (5% wealth tax only for Wealth Gain).
+  net_fi <- fiscal_income - ca_inctax - fed_inctax
+  net_ei <- econ_income   - ca_inctax - fed_inctax - corp_tax
+  net_wg <- wealth_gain   - wealth_tax_5p           # corporate taxes absorbed within net
+
+  bars <- tibble::tibble(
+    bar = factor(rep(c("Fiscal Income", "Economic Income", "Wealth Gain"), each = 5),
+                  levels = c("Fiscal Income", "Economic Income", "Wealth Gain")),
+    component = factor(rep(c("Net of taxes", "CA income tax", "Federal income tax",
+                              "Corporate taxes", "5% wealth tax"), times = 3),
+                        levels = c("Net of taxes", "CA income tax",
+                                   "Federal income tax", "Corporate taxes",
+                                   "5% wealth tax")),
+    value = c(
+      net_fi, ca_inctax, fed_inctax, 0, 0,
+      net_ei, ca_inctax, fed_inctax, corp_tax, 0,
+      net_wg, ca_inctax, fed_inctax, corp_tax, wealth_tax_5p
+    )
+  )
+
+  ggplot2::ggplot(bars, ggplot2::aes(x = bar, y = value, fill = component)) +
+    ggplot2::geom_col(width = 0.65) +
+    ggplot2::scale_y_continuous(
+      labels = function(v) format(v, big.mark = ",", scientific = FALSE)
+    ) +
+    ggplot2::scale_fill_manual(values = c(
+      "Net of taxes"        = "#a6cee3",
+      "CA income tax"       = "#1f77b4",
+      "Federal income tax"  = "#2ca02c",
+      "Corporate taxes"     = "#d62728",
+      "5% wealth tax"       = "#ff7f0e"
+    )) +
+    ggplot2::labs(
+      title = "Figure 5: Fiscal Income, Economic Income, and Wealth Gains of the Top 4",
+      subtitle = "2019-2025 cumulative, $B; bars stack net + tax components",
+      x = NULL, y = "$B", fill = NULL
+    ) +
+    ggplot2::theme_minimal(base_size = 12) +
+    ggplot2::theme(
+      legend.position = "bottom",
+      plot.title      = ggplot2::element_text(face = "bold"),
+      panel.grid.major.x = ggplot2::element_blank()
+    )
+}
+
 build_fig4 <- function(billionaires_ca_inctax_r) {
   # Figure 4: Total Taxes Paid by California Billionaires relative to Wealth.
   # Stacked area chart of 4 tax components (CA inctax, fed inctax, corporate,
