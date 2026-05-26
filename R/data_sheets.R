@@ -112,6 +112,31 @@ extract_rtb_2026_industry <- function(path = xlsx_path_default()) {
   )
 }
 
+extract_tab2 <- function(path = xlsx_path_default()) {
+  nm <- c("year", "ca_billionaires_wealth", "ca_inctax_estimated",
+          "ca_inctax_per_wealth", "gap_1",
+          "top4_company_wealth", "top4_ca_inctax",
+          "top4_ca_inctax_per_wealth", "gap_2", "gap_3")
+  out <- read_rectangular(
+    "Tab2", path = path, skip = 5,
+    col_types = c("text", rep("numeric", 9)),
+    names = nm,
+    n_max = 8  # rows 7-14: 2019..2025 + "2019-2025 average"
+  )
+  out
+}
+
+extract_tab3 <- function(path = xlsx_path_default()) {
+  nm <- c("metric", "page", "brin", "zuckerberg", "huang", "all_top4",
+          "gap_1", "gap_2", "gap_3")
+  read_rectangular(
+    "Tab3", path = path, skip = 4,
+    col_types = c("text", rep("numeric", 8)),
+    names = nm,
+    n_max = 11  # rows 6-16: years 2019-2025 + average + wealth begin/end + total tax/wealth
+  )
+}
+
 extract_longrunseries <- function(path = xlsx_path_default()) {
   read_sheet("longrunseries", path = path)
 }
