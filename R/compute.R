@@ -359,6 +359,16 @@ compute_billionaires_ca_inctax <- function(data_sec_agg_r,
     ftb_sum(col, rng[1], rng[2], scale)
   }
 
+  # FTB published statistics for 2023 that the workbook hand-enters (the
+  # ftb_b4a sheet only goes through 2022). All from FTB's annual personal-
+  # income-tax-statistics release.
+  CA_AGI_2023_B          <- 1946170 / 1000  # G14: total CA AGI ($B)
+  CA_INCTAX_2023_B       <- 97293 / 1000    # G15: total CA inctax ($B)
+  TOP_5M_9M_2023_RETURNS <- 7463            # G32: # returns in $5m-9.999m
+  TOP_5M_9M_2023_AGI_B   <- 51.097          # G33: AGI in $5m-9.999m ($B)
+  TOP_5M_9M_2023_TAX_B   <- 48.479          # G34: taxable income in $5m-9.999m
+  TOP_5M_9M_2023_INCTAX_B <- 4.347          # G35: tax in $5m-9.999m ($B)
+
   # ---- Memo 1: US top .001% income calibration (rows 58-72) ----------------
   # Calendar-year panel 2018..2022 (cols B..F).
   m1_years <- 2018:2022
@@ -434,14 +444,14 @@ compute_billionaires_ca_inctax <- function(data_sec_agg_r,
   # Row 14 (CA AGI $B): SUM(H) * 1e-9 for 2018-2022; 2023 literal (G14=1946170/1000)
   ca_agi_b <- c(
     vapply(ftb_yrs_with_data, function(y) ftb_sum_year("H", y, 1e-9), numeric(1)),
-    1946170 / 1000,    # G14 published 2023 literal
+    CA_AGI_2023_B,
     rep(NA_real_, 3)
   )
   # Row 15 (CA inctax all residents $B): SUM(K)*1e-9 for 2018-2022; 2023 literal;
   # 2024, 2025 derived from row 18 - row 17
   ca_inctax_resid_b_pre <- c(
     vapply(ftb_yrs_with_data, function(y) ftb_sum_year("K", y, 1e-9), numeric(1)),
-    97293 / 1000       # G15 published 2023 literal
+    CA_INCTAX_2023_B
   )
   # Row 16 passthrough: literal G16 = 15.219; F16 = G16*F15/G15; E16 = F16
   G16 <- cell("G16")   # 15.219 literal
@@ -524,7 +534,7 @@ compute_billionaires_ca_inctax <- function(data_sec_agg_r,
   n_ret_5m[3] <- ftb_D[ftb_rows$`2020`$top_5m]                                    # D32 = D182
   n_ret_5m[4] <- ftb_D[ftb_rows$`2021`$top_5m_9m] + ftb_D[ftb_rows$`2021`$top_10m]      # E32 = D122+D123
   n_ret_5m[5] <- ftb_D[ftb_rows$`2022`$top_5m_9m] + ftb_D[ftb_rows$`2022`$top_10m]      # F32 = D62+D63
-  n_ret_5m[6] <- 7463 + n_ret_10m[6]                                          # G32 = 7463 + G26
+  n_ret_5m[6] <- TOP_5M_9M_2023_RETURNS + n_ret_10m[6]                       # G32
   # Row 33 (CA AGI $B $5m+): same pattern
   agi_5m_b <- numeric(6)
   agi_5m_b[1] <- ftb_H[ftb_rows$`2018`$top_5m] * 1e-9
@@ -532,7 +542,7 @@ compute_billionaires_ca_inctax <- function(data_sec_agg_r,
   agi_5m_b[3] <- ftb_H[ftb_rows$`2020`$top_5m] * 1e-9
   agi_5m_b[4] <- agi_10m_b[4] + ftb_H[ftb_rows$`2021`$top_5m_9m] * 1e-9            # E33 = E27 + H122*1e-9
   agi_5m_b[5] <- agi_10m_b[5] + ftb_H[ftb_rows$`2022`$top_5m_9m] * 1e-9
-  agi_5m_b[6] <- agi_10m_b[6] + 51.097                                        # G33 = G27 + 51.097
+  agi_5m_b[6] <- agi_10m_b[6] + TOP_5M_9M_2023_AGI_B                          # G33
   # Row 34 (taxable income $B $5m+)
   taxable_5m_b <- numeric(6)
   taxable_5m_b[1] <- ftb_J[ftb_rows$`2018`$top_5m] * 1e-9
@@ -540,7 +550,7 @@ compute_billionaires_ca_inctax <- function(data_sec_agg_r,
   taxable_5m_b[3] <- ftb_J[ftb_rows$`2020`$top_5m] * 1e-9
   taxable_5m_b[4] <- taxable_10m_b[4] + ftb_J[ftb_rows$`2021`$top_5m_9m] * 1e-9
   taxable_5m_b[5] <- taxable_10m_b[5] + ftb_J[ftb_rows$`2022`$top_5m_9m] * 1e-9
-  taxable_5m_b[6] <- taxable_10m_b[6] + 48.479                                # G34 = G28 + 48.479
+  taxable_5m_b[6] <- taxable_10m_b[6] + TOP_5M_9M_2023_TAX_B                  # G34
   # Row 35 (tax $B $5m+)
   tax_5m_b <- numeric(6)
   tax_5m_b[1] <- ftb_K[ftb_rows$`2018`$top_5m] * 1e-9
@@ -548,7 +558,7 @@ compute_billionaires_ca_inctax <- function(data_sec_agg_r,
   tax_5m_b[3] <- ftb_K[ftb_rows$`2020`$top_5m] * 1e-9
   tax_5m_b[4] <- tax_10m_b[4] + ftb_K[ftb_rows$`2021`$top_5m_9m] * 1e-9
   tax_5m_b[5] <- tax_10m_b[5] + ftb_K[ftb_rows$`2022`$top_5m_9m] * 1e-9
-  tax_5m_b[6] <- 4.347 + tax_10m_b[6]                                         # G35 = 4.347 + G29
+  tax_5m_b[6] <- TOP_5M_9M_2023_INCTAX_B + tax_10m_b[6]                       # G35
   # Row 36, 37
   tax_rate_5m  <- tax_5m_b / taxable_5m_b
   pareto_b_5m  <- 1000 * agi_5m_b / (5 * n_ret_5m[1:6])
