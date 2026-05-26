@@ -298,11 +298,7 @@ compute_billionaires_ca_inctax <- function(data_sec_agg_r,
   # aren't in ftb_b4a) are read through from the positional dump.
 
   bci <- billionaires_ca_inctax
-  cell <- function(addr) {
-    m <- regmatches(addr, regexec("^([A-Z]+)([0-9]+)$", addr))[[1]]
-    v <- bci[[m[2]]][as.integer(m[3])]
-    suppressWarnings(as.numeric(v))
-  }
+  cell <- function(addr) xls_cell(bci, addr)
   agg_map <- c(
     C  = "forbes_worth",       D  = "forbes_public_worth",
     S  = "ca_income_tax",      V  = "fed_income_tax",
@@ -341,15 +337,14 @@ compute_billionaires_ca_inctax <- function(data_sec_agg_r,
   # Calendar-year panel 2018..2022 (cols B..F).
   m1_years <- 2018:2022
   m1_cols  <- c("B","C","D","E","F")
-  literal <- function(addr_col, row) unname(vapply(m1_cols, function(L) cell(paste0(L, row)), numeric(1)))
   # Inputs (literal IRS / Pareto stats)
-  m1_n_returns       <- literal("B", 59)
-  m1_agi_cutoff      <- literal("B", 60)
-  m1_agi_avg         <- literal("B", 61)
-  m1_tax_total       <- literal("B", 63)
-  m1_top10m_n        <- literal("B", 66)
-  m1_top10m_cutoff   <- literal("B", 67)
-  m1_top10m_agi_avg  <- literal("B", 68)
+  m1_n_returns       <- xls_cells_row(bci, m1_cols, 59)
+  m1_agi_cutoff      <- xls_cells_row(bci, m1_cols, 60)
+  m1_agi_avg         <- xls_cells_row(bci, m1_cols, 61)
+  m1_tax_total       <- xls_cells_row(bci, m1_cols, 63)
+  m1_top10m_n        <- xls_cells_row(bci, m1_cols, 66)
+  m1_top10m_cutoff   <- xls_cells_row(bci, m1_cols, 67)
+  m1_top10m_agi_avg  <- xls_cells_row(bci, m1_cols, 68)
 
   m1_pareto_b_001    <- m1_agi_avg / m1_agi_cutoff               # row 62
   m1_fed_tax_per_agi <- 1000 * (m1_tax_total / m1_n_returns) / m1_agi_avg  # row 64
@@ -398,9 +393,8 @@ compute_billionaires_ca_inctax <- function(data_sec_agg_r,
   # ---- Method I year panel (rows 6..55) ------------------------------------
   yrs <- 2018:2026
   pan_cols <- c("B","C","D","E","F","G","H","I","J")  # 9 panel columns
-  pan_lit <- function(row) unname(vapply(pan_cols, function(L) cell(paste0(L, row)), numeric(1)))
   # Block A: CA billionaires (row 8 = counts; row 10 = total wealth from data_sec_agg)
-  n_ca_b      <- pan_lit(8)                                    # row 8
+  n_ca_b      <- xls_cells_row(bci, pan_cols, 8)               # row 8
   total_w_ca  <- c(NA_real_, agg("C"), NA_real_)               # row 10 (2018=NA, 2019..2025, 2026=NA)
   avg_w_ca    <- total_w_ca / n_ca_b                           # row 9
 
@@ -443,7 +437,7 @@ compute_billionaires_ca_inctax <- function(data_sec_agg_r,
   G17 <- ca_inctax_resid_b_pre[6] * (F17 / ca_inctax_resid_b_pre[5])
   # Row 18 = row 15 + row 16 + row 17 (and for 2024,2025 row 18 = row 20*(1+row21))
   # Row 20 (CA inctax revenue fiscal year $B): literal sums
-  ca_inctax_fy_b <- pan_lit(20)
+  ca_inctax_fy_b <- xls_cells_row(bci, pan_cols, 20)
   # Row 18 for 2018-2023:
   pre_part17 <- c(
     ca_inctax_resid_b_pre[1] * (F17 / ca_inctax_resid_b_pre[5]),   # B17
@@ -873,10 +867,7 @@ compute_shortrunseries <- function(data_sec_agg_r,
   # Wealth-growth panel + averages + cumulative growth from base years.
   # Returns list(panel, summary_2025, growth).
   srs <- shortrunseries
-  cell <- function(addr) {
-    m <- regmatches(addr, regexec("^([A-Z]+)([0-9]+)$", addr))[[1]]
-    suppressWarnings(as.numeric(srs[[m[2]]][as.integer(m[3])]))
-  }
+  cell <- function(addr) xls_cell(srs, addr)
   # Pull per-billionaire CA income tax (col S) and wealth (cols C/D, $M)
   top4 <- data_sec_top4
   bsec <- function(forbes_id, yrs, col) {
@@ -893,12 +884,9 @@ compute_shortrunseries <- function(data_sec_agg_r,
   m1 <- billionaires_ca_inctax_r$method1
 
   # Literal inputs (panel rows 6..13)
-  literal_col <- function(L, rows) {
-    vapply(rows, function(r) cell(paste0(L, r)), numeric(1))
-  }
-  B_wealth_incl_nonus <- c(NA_real_, literal_col("B", 7:13))         # row 7..13
-  K_ellison           <- literal_col("K", 6:13)                       # 2018..2025
-  Q_top5_incl_nonus   <- literal_col("Q", 6:13)                       # 2018..2025
+  B_wealth_incl_nonus <- c(NA_real_, xls_cells_col(srs, "B", 7:13))   # row 7..13
+  K_ellison           <- xls_cells_col(srs, "K", 6:13)                # 2018..2025
+  Q_top5_incl_nonus   <- xls_cells_col(srs, "Q", 6:13)                # 2018..2025
 
   # Col C = total CA billionaire wealth (US citizens only) = data_sec_agg_r$forbes_worth
   C_wealth <- c(NA_real_, data_sec_agg_r$forbes_worth)
