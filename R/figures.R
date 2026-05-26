@@ -3,6 +3,68 @@
 # Each builder takes already-validated upstream targets and returns a ggplot.
 # Render to PNG / PDF downstream via R/render.R helpers.
 
+build_fig7 <- function(top4taxes_r, data_dina) {
+  # Figure 7: Total Taxes / Economic Income, Top 4 vs US-wide average; and
+  # CA income tax / Economic Income, Top 4 vs CA average. 2004-2025.
+  d <- top4taxes_r$panel
+  yrs <- d$year   # 2004:2025
+  # data_dina K = US avg total tax/economic income, S = CA avg ca_inctax/economic
+  # income. Rows 6..27 = years 2004..2025.
+  dina_K <- suppressWarnings(as.numeric(data_dina$K[6:27]))
+  dina_S <- suppressWarnings(as.numeric(data_dina$S[6:27]))
+
+  n <- length(yrs)
+  panel_a <- tibble::tibble(
+    year   = rep(yrs, 2),
+    value  = c(d$total_tax_per_income, dina_K),
+    series = factor(rep(c("Top 4 (CA billionaires)", "US average"), each = n),
+                     levels = c("Top 4 (CA billionaires)", "US average"))
+  )
+  panel_b <- tibble::tibble(
+    year   = rep(yrs, 2),
+    value  = c(d$ca_inctax_per_income, dina_S),
+    series = factor(rep(c("Top 4 (CA billionaires)", "CA average"), each = n),
+                     levels = c("Top 4 (CA billionaires)", "CA average"))
+  )
+
+  colors <- c("Top 4 (CA billionaires)" = "#d62728",
+              "US average"              = "#1f77b4",
+              "CA average"              = "#1f77b4")
+
+  pa <- ggplot2::ggplot(panel_a,
+                         ggplot2::aes(x = year, y = value, color = series)) +
+    ggplot2::geom_line(linewidth = 0.9) +
+    ggplot2::geom_point(size = 1.5) +
+    ggplot2::scale_y_continuous(labels = scales::percent_format(accuracy = 1),
+                                 limits = c(0, NA)) +
+    ggplot2::scale_color_manual(values = colors) +
+    ggplot2::labs(title = "A. Top 4 vs. US average: Total Taxes / Economic Income",
+                   x = NULL, y = NULL, color = NULL) +
+    ggplot2::theme_minimal(base_size = 11) +
+    ggplot2::theme(legend.position = "bottom",
+                    plot.title = ggplot2::element_text(face = "bold"),
+                    panel.grid.minor = ggplot2::element_blank())
+
+  pb <- ggplot2::ggplot(panel_b,
+                         ggplot2::aes(x = year, y = value, color = series)) +
+    ggplot2::geom_line(linewidth = 0.9) +
+    ggplot2::geom_point(size = 1.5) +
+    ggplot2::scale_y_continuous(labels = scales::percent_format(accuracy = 0.1),
+                                 limits = c(0, NA)) +
+    ggplot2::scale_color_manual(values = colors) +
+    ggplot2::labs(title = "B. Top 4 vs. CA average: CA Income Tax / Economic Income",
+                   x = NULL, y = NULL, color = NULL) +
+    ggplot2::theme_minimal(base_size = 11) +
+    ggplot2::theme(legend.position = "bottom",
+                    plot.title = ggplot2::element_text(face = "bold"),
+                    panel.grid.minor = ggplot2::element_blank())
+
+  patchwork::wrap_plots(pa, pb, ncol = 2) +
+    patchwork::plot_annotation(
+      title = "Figure 7: Top 4 Effective Tax Rates vs. US/CA Averages"
+    )
+}
+
 build_fig6 <- function(top4taxes_r) {
   # Figure 6: Taxes paid by Top 4 relative to wealth and economic income.
   # 2004-2025 line chart, two panels: A) tax/wealth, B) tax/economic income.

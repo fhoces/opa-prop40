@@ -159,6 +159,32 @@ test_that("build_fig6 renders to a non-empty PNG", {
   expect_gt(file.info(png_path)$size, 5000)
 })
 
+test_that("build_fig7 returns 2-panel patchwork comparing top4 vs US/CA averages", {
+  t4t <- compute_top4taxes(extract_data_sec_top4())
+  dina <- extract_data_dina()
+  p <- build_fig7(t4t, dina)
+  expect_s3_class(p, "patchwork")
+  pa <- p[[1]]; pb <- p[[2]]
+  expect_equal(nrow(pa$data), 44)
+  expect_setequal(levels(pa$data$series), c("Top 4 (CA billionaires)", "US average"))
+  # 2025 DINA values: K=0.311, S=0.0496
+  expect_equal(pa$data$value[pa$data$year == 2025 & pa$data$series == "US average"],
+                0.311, tolerance = 1e-3)
+  expect_equal(pb$data$value[pb$data$year == 2025 & pb$data$series == "CA average"],
+                0.0496, tolerance = 1e-3)
+})
+
+test_that("build_fig7 renders to a non-empty PNG", {
+  t4t <- compute_top4taxes(extract_data_sec_top4())
+  dina <- extract_data_dina()
+  p <- build_fig7(t4t, dina)
+  tmpdir <- tempfile("fig7_"); dir.create(tmpdir)
+  png_path <- file.path(tmpdir, "fig7.png")
+  ggplot2::ggsave(png_path, plot = p, width = 11, height = 5, dpi = 100)
+  expect_true(file.exists(png_path))
+  expect_gt(file.info(png_path)$size, 5000)
+})
+
 test_that("build_fig1 renders to a non-empty PNG file", {
   agg <- compute_data_sec_agg(extract_data_sec_all())
   bci_x <- extract_billionaires_ca_inctax()
