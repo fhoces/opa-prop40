@@ -1,7 +1,8 @@
 library(targets)
 
 tar_option_set(
-  packages = c("tibble", "dplyr", "readxl", "cellranger", "gt", "ggplot2"),
+  packages = c("tibble", "dplyr", "readxl", "cellranger", "gt", "ggplot2",
+               "patchwork", "scales"),
   format = "rds"
 )
 
@@ -77,5 +78,9 @@ list(
 
   tar_target(fig1,     build_fig1(shortrunseries_r)),
   tar_target(fig1_png, render_figure_png(fig1, "fig1"), format = "file"),
-  tar_target(fig1_pdf, render_figure_pdf(fig1, "fig1"), format = "file")
+  tar_target(fig1_pdf, render_figure_pdf(fig1, "fig1"), format = "file"),
+
+  tar_target(fig2,     build_fig2(longrunseries)),
+  tar_target(fig2_png, render_figure_png(fig2, "fig2", width = 11, height = 5), format = "file"),
+  tar_target(fig2_pdf, render_figure_pdf(fig2, "fig2", width = 11, height = 5), format = "file")
 )

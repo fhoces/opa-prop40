@@ -20,6 +20,35 @@ test_that("build_fig1 returns a ggplot with two line series + dashed counterfact
   expect_equal(d25$wealth[d25$series == "Top 4 (Page, Brin, Zuck, Huang)"], 882.363, tolerance = 1e-2)
 })
 
+test_that("build_fig2 returns a patchwork object spanning 1982-2025", {
+  lrs <- extract_longrunseries()
+  p <- build_fig2(lrs)
+  expect_s3_class(p, "patchwork")
+  # First subplot's data: Panel A (44 rows: 1982-2025)
+  pa <- p[[1]]
+  expect_s3_class(pa, "ggplot")
+  expect_equal(nrow(pa$data), 44)
+  expect_equal(range(pa$data$year), c(1982, 2025))
+  # Panel B should have 2 series x 44 yrs = 88 rows
+  pb <- p[[2]]
+  expect_equal(nrow(pb$data), 88)
+  expect_setequal(levels(pb$data$region),
+                  c("US (top 400)", "California (top 45)"))
+  # Sanity checks on values: AZ 2025 ≈ 28.37, AW 2025 ≈ 0.298
+  expect_equal(pa$data$wealth[pa$data$year == 2025], 28.365, tolerance = 1e-2)
+  expect_equal(pb$data$share[pb$data$year == 2025 & pb$data$region == "California (top 45)"],
+                0.2979, tolerance = 1e-3)
+})
+
+test_that("build_fig2 renders to a non-empty PNG", {
+  p <- build_fig2(extract_longrunseries())
+  tmpdir <- tempfile("fig2_"); dir.create(tmpdir)
+  png_path <- file.path(tmpdir, "fig2.png")
+  ggplot2::ggsave(png_path, plot = p, width = 11, height = 5, dpi = 100)
+  expect_true(file.exists(png_path))
+  expect_gt(file.info(png_path)$size, 5000)
+})
+
 test_that("build_fig1 renders to a non-empty PNG file", {
   agg <- compute_data_sec_agg(extract_data_sec_all())
   bci_x <- extract_billionaires_ca_inctax()
