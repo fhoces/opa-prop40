@@ -76,6 +76,93 @@ build_tab2 <- function(data_sec_agg_r, billionaires_ca_inctax_r, data_sec_top4) 
   tab
 }
 
+build_tab3 <- function(data_sec_top4) {
+  # Table 3: CA Income Tax Paid by the Top 4 on Company Wealth.
+  # Per-billionaire panel (Page, Brin, Zuckerberg, Huang) + all-top-4 sum.
+  # 7 yearly CA income tax rows (2019-2025) + 1 average row +
+  # begin-of-2019 wealth + end-of-2025 wealth + tax / wealth-gain.
+
+  ids <- c("larry-page", "sergey-brin", "mark-zuckerberg", "jensen-huang")
+  ids_lbl <- c("page", "brin", "zuckerberg", "huang")
+
+  d <- data_sec_top4
+  pick <- function(id, yr, col) {
+    row <- d[d$forbes_id == id & d$year == yr, ]
+    if (nrow(row) == 1L) row[[col]] else NA_real_
+  }
+  ca_tax_yearly <- function(yr) {
+    setNames(vapply(ids, pick, numeric(1), yr = yr, col = "ca_income_tax"), ids_lbl)
+  }
+
+  tax_yrs <- lapply(2019:2025, ca_tax_yearly)
+  # Per-row: per-billionaire + all_top4 sum
+  yearly_rows <- lapply(seq_along(tax_yrs), function(i) {
+    row <- as.list(tax_yrs[[i]])
+    row$all_top4 <- sum(unlist(row))
+    row$metric   <- paste("CA income tax", 2018 + i)
+    tibble::as_tibble(row)
+  })
+  panel <- dplyr::bind_rows(yearly_rows)
+  panel <- panel[, c("metric", "page", "brin", "zuckerberg", "huang", "all_top4")]
+
+  # Average row (mean of the 7 yearly rows, per column)
+  num_cols <- setdiff(names(panel), "metric")
+  avg_values <- setNames(lapply(num_cols, function(c) mean(panel[[c]])), num_cols)
+  avg_row <- tibble::as_tibble(c(
+    list(metric = "Average CA income tax 2019-2025"),
+    avg_values
+  ))
+
+  # Wealth rows: begin = end-of-2018 public_worth; end = end-of-2025 public_worth.
+  wealth_begin <- setNames(vapply(ids, pick, numeric(1),
+                                   yr = 2018, col = "public_worth"), ids_lbl)
+  wealth_end   <- setNames(vapply(ids, pick, numeric(1),
+                                   yr = 2025, col = "public_worth"), ids_lbl)
+  wealth_begin_row <- tibble::as_tibble(c(
+    list(metric = "Wealth at the beginning of 2019"),
+    as.list(wealth_begin),
+    list(all_top4 = sum(wealth_begin))
+  ))
+  wealth_end_row <- tibble::as_tibble(c(
+    list(metric = "Wealth at end of 2025"),
+    as.list(wealth_end),
+    list(all_top4 = sum(wealth_end))
+  ))
+  # Total CA income tax / (end_wealth - begin_wealth), per column.
+  total_taxes <- vapply(num_cols, function(c) sum(panel[[c]]), numeric(1))
+  end_minus_begin <- c(wealth_end, all_top4 = sum(wealth_end)) -
+                      c(wealth_begin, all_top4 = sum(wealth_begin))
+  ratio_row <- tibble::as_tibble(c(
+    list(metric = "Total CA income tax / wealth gain 2019-2025"),
+    as.list(total_taxes / end_minus_begin)
+  ))
+
+  full <- dplyr::bind_rows(panel, avg_row, wealth_begin_row, wealth_end_row, ratio_row)
+
+  tab <- gt::gt(full) |>
+    gt::tab_header(title = "Table 3. California Income Tax Paid by the Top 4 on Company Wealth") |>
+    gt::cols_label(
+      metric     = "",
+      page       = "Larry Page (Alphabet)",
+      brin       = "Sergei Brin (Alphabet)",
+      zuckerberg = "Mark Zuckerberg (Meta)",
+      huang      = "Jensen Huang (Nvidia)",
+      all_top4   = "All top 4"
+    ) |>
+    gt::fmt_number(rows = 1:8, decimals = 2, use_seps = TRUE) |>
+    gt::fmt_number(rows = 9:10, decimals = 0, use_seps = TRUE) |>
+    gt::fmt_percent(rows = 11, decimals = 3) |>
+    gt::tab_source_note(source_note = gt::md(paste(
+      "**Notes:** All amounts in nominal $M unless noted. CA income tax is",
+      "computed from each billionaire's SEC Form 4 filings (Phase-1 target",
+      "`data_sec_top4`). Row 11 is the lifetime effective tax rate on the",
+      "2019-2025 wealth gain."
+    )))
+
+  attr(tab, "panel") <- full
+  tab
+}
+
 build_tab1 <- function(data_sec_agg_r, shortrunseries_r, longrunseries) {
   # Table 1: Wealth Growth of California Billionaires.
   # Panel A: 2022-2025 nominal wealth + growth + CA GDP comparison.

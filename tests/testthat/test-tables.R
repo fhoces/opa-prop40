@@ -80,6 +80,47 @@ test_that("build_tab2 renders to non-empty HTML and LaTeX", {
   expect_gt(nchar(tex), 200)
 })
 
+test_that("build_tab3 reproduces Tab3 sheet per-billionaire CA income tax + wealth", {
+  top4 <- extract_data_sec_top4()
+  tab3 <- build_tab3(top4)
+  p <- attr(tab3, "panel")
+  xl <- read_sheet("Tab3", range = "B6:F16")  # cols B..F (page,brin,zuck,huang,top4)
+
+  # Rows 1..7 = yearly tax; 8 = average; 9 = begin wealth; 10 = end wealth; 11 = ratio
+  expect_equal(p$page[1:7],       xl$A[1:7],  tolerance = 1e-3)
+  expect_equal(p$brin[1:7],       xl$B[1:7],  tolerance = 1e-3)
+  expect_equal(p$zuckerberg[1:7], xl$C[1:7],  tolerance = 1e-3)
+  expect_equal(p$huang[1:7],      xl$D[1:7],  tolerance = 1e-3)
+  expect_equal(p$all_top4[1:7],   xl$E[1:7],  tolerance = 1e-3)
+  # Average row
+  expect_equal(p$page[8],       xl$A[8],  tolerance = 1e-3)
+  expect_equal(p$brin[8],       xl$B[8],  tolerance = 1e-3)
+  expect_equal(p$zuckerberg[8], xl$C[8],  tolerance = 1e-3)
+  expect_equal(p$huang[8],      xl$D[8],  tolerance = 1e-3)
+  expect_equal(p$all_top4[8],   xl$E[8],  tolerance = 1e-3)
+  # Wealth rows
+  expect_equal(p$page[9:10],       xl$A[9:10],  tolerance = 1)
+  expect_equal(p$brin[9:10],       xl$B[9:10],  tolerance = 1)
+  expect_equal(p$zuckerberg[9:10], xl$C[9:10],  tolerance = 1)
+  expect_equal(p$huang[9:10],      xl$D[9:10],  tolerance = 1)
+  expect_equal(p$all_top4[9:10],   xl$E[9:10],  tolerance = 1)
+  # Ratio row
+  expect_equal(p$page[11],       xl$A[11],  tolerance = 1e-5)
+  expect_equal(p$brin[11],       xl$B[11],  tolerance = 1e-5)
+  expect_equal(p$zuckerberg[11], xl$C[11],  tolerance = 1e-5)
+  expect_equal(p$huang[11],      xl$D[11],  tolerance = 1e-5)
+  expect_equal(p$all_top4[11],   xl$E[11],  tolerance = 1e-5)
+})
+
+test_that("build_tab3 renders to non-empty HTML and LaTeX", {
+  tab3 <- build_tab3(extract_data_sec_top4())
+  html <- as.character(gt::as_raw_html(tab3))
+  expect_gt(nchar(html), 1000)
+  expect_true(grepl("Top 4 on Company Wealth", html))
+  tex <- as.character(gt::as_latex(tab3))
+  expect_gt(nchar(tex), 200)
+})
+
 test_that("build_tab1 renders to non-empty HTML and LaTeX", {
   agg <- compute_data_sec_agg(extract_data_sec_all())
   bci_x <- extract_billionaires_ca_inctax()

@@ -57,5 +57,9 @@ list(
 
   tar_target(tab2_gt,    build_tab2(data_sec_agg_r, billionaires_ca_inctax_r, data_sec_top4)),
   tar_target(tab2_html,  render_table_html(tab2_gt, "tab2"),  format = "file"),
-  tar_target(tab2_latex, render_table_latex(tab2_gt, "tab2"), format = "file")
+  tar_target(tab2_latex, render_table_latex(tab2_gt, "tab2"), format = "file"),
+
+  tar_target(tab3_gt,    build_tab3(data_sec_top4)),
+  tar_target(tab3_html,  render_table_html(tab3_gt, "tab3"),  format = "file"),
+  tar_target(tab3_latex, render_table_latex(tab3_gt, "tab3"), format = "file")
 )
