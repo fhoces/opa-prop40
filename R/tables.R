@@ -1,8 +1,8 @@
-# Phase 3 - gt table builders.
+# gt table builders.
 #
-# Each builder takes already-validated upstream targets (Phase-1 extractors or
-# Phase-2 `*_r` re-derivations) and returns a `gt` object. Render to HTML or
-# LaTeX downstream via `gt::as_raw_html()` / `gt::as_latex()`.
+# Each builder takes already-validated upstream targets (Excel extractors or
+# `*_r` re-derivations) and returns a `gt` object. Render to HTML or LaTeX
+# downstream via `gt::as_raw_html()` / `gt::as_latex()`.
 
 build_tab2 <- function(data_sec_agg_r, billionaires_ca_inctax_r, data_sec_top4) {
   # Table 2: California Income Tax Paid by California Billionaires.
@@ -69,7 +69,7 @@ build_tab2 <- function(data_sec_agg_r, billionaires_ca_inctax_r, data_sec_top4) 
     gt::tab_source_note(source_note = gt::md(paste(
       "**Notes:** All amounts in nominal $B. CA income tax for all billionaires comes",
       "from the Method I FTB-extrapolation calculation; top 4 figures come from SEC",
-      "filings. Source: Phase 2 `billionaires_ca_inctax_r` + `data_sec_top4`."
+      "filings. Source: `billionaires_ca_inctax_r` + `data_sec_top4`."
     )))
 
   attr(tab, "panel") <- full
@@ -208,7 +208,7 @@ build_tab_a1 <- function(shortrunseries, longrunseries) {
 build_tab5 <- function(tab5_r) {
   # Table 5: Scoring the One-Time 5% CA Wealth Tax.
   # 4 scenarios × 7 metric columns. tab5_r already verified element-wise
-  # against the Excel sheet in Phase 2.
+  # against the Excel sheet by the upstream R re-derivation.
 
   long_labels <- c(
     "1. Benchmark: Forbes estimates + 10% avoidance",
@@ -241,7 +241,7 @@ build_tab5 <- function(tab5_r) {
       "taxable_wealth × 5%. Extra CA income tax from sales reflects forced",
       "asset sales to pay the tax (33% realization × 80% LTCG-taxable × 13.3%",
       "CA rate). Annual CA inctax loss is the steady-state revenue forgone from",
-      "billionaires leaving California. Source: Phase 2 `tab5_r`."
+      "billionaires leaving California. Source: `tab5_r`."
     )))
 
   attr(tab, "panel") <- panel
@@ -414,7 +414,7 @@ build_tab3 <- function(data_sec_top4) {
     gt::fmt_percent(rows = 11, decimals = 3) |>
     gt::tab_source_note(source_note = gt::md(paste(
       "**Notes:** All amounts in nominal $M unless noted. CA income tax is",
-      "computed from each billionaire's SEC Form 4 filings (Phase-1 target",
+      "computed from each billionaire's SEC Form 4 filings (target",
       "`data_sec_top4`). Row 11 is the lifetime effective tax rate on the",
       "2019-2025 wealth gain."
     )))
@@ -563,8 +563,7 @@ build_tab1 <- function(data_sec_agg_r, shortrunseries_r, longrunseries) {
     gt::tab_source_note(source_note = gt::md(paste(
       "**Notes:** Panel A illustrates the wealth growth of CA billionaires in 2022-2025.",
       "Panel B compares the top .0002% wealthiest CA families' wealth in 1982 vs 2025,",
-      "all in 2025 dollars. Source: Forbes RTB snapshots + SEC EDGAR (Phase 1 / Phase 2",
-      "of `~/Desktop/sandbox/CAWT-BSZ`)."
+      "all in 2025 dollars. Source: Forbes RTB snapshots + SEC EDGAR."
     )))
 
   # Attach a tidy version for downstream use / tests.

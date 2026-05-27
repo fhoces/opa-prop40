@@ -1,7 +1,7 @@
-# Phase 2 computation layer.
+# Computation layer.
 #
 # Re-derives an Excel sheet from its upstream inputs in R; the test suite
-# asserts the R output matches the Phase-1 Excel extraction within a
+# asserts the R output matches the upstream Excel extraction within a
 # documented tolerance.
 
 compute_tab5 <- function(pareto_missing_r, tab2, tab3,

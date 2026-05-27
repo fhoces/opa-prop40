@@ -1,7 +1,7 @@
-# Phase 2 computation layer.
+# Computation layer.
 #
 # Re-derives an Excel sheet from its upstream inputs in R; the test suite
-# asserts the R output matches the Phase-1 Excel extraction within a
+# asserts the R output matches the upstream Excel extraction within a
 # documented tolerance.
 
 compute_shortrunseries <- function(data_sec_agg_r,

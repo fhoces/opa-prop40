@@ -25,6 +25,11 @@ execute:
 library(targets)
 library(gt)
 library(ggplot2)
+# Source R/ files. keep.source = TRUE preserves srcref attributes so the
+# read-only code listings below can pull each function body straight from
+# disk and report its exact file:line range.
+options(keep.source = TRUE)
+invisible(lapply(list.files("R", pattern = "\\.R$", full.names = TRUE), source))
 ```
 
 ## Overview
@@ -34,8 +39,8 @@ Wealth, Taxes, and Wealth Tax Revenue Estimates* by Jasper Boll, Emmanuel Saez,
 and Gabriel Zucman (NBER Working Paper No. 35218, May 2026). Every table and
 figure embedded below is built from the project's `{targets}` pipeline; the
 upstream targets re-derive each Excel cell of the BSZ supplementary workbook in
-R and verify element-wise against the cached values (see `Phase 2` in
-`memory/project_state.md`).
+R and verify element-wise against the cached values; see the project README
+for the full pipeline structure.
 
 The text from the original paper is shown in **blockquotes**; section commentary
 outside the blockquotes is the replicator's own.
@@ -67,57 +72,23 @@ outside the blockquotes is the replicator's own.
 > California billionaires could raise substantial additional revenue even
 > after accounting for income tax losses due to mobility.
 
-# Pipeline
 
-`targets::tar_make()` walks the DAG below in topological order. Each layer
-reads from the layer above and writes new `tar_target`s consumed downstream.
-The figures and tables embedded throughout this report are all read via
-`tar_read()` from the "Exhibits" layer.
+## R re-derivations (computed once, cached, reused below)
 
-```
-                  original-materials/BSZ_MainTablesFigures.xlsx
-                                  │
-                                  │  xlsx_path  (format = "file")
-                                  ▼
-   ┌─────────────────────────────────────────────────────────────────┐
-   │ Excel extractors  (R/data_sheets.R, 16 tar_target's)            │
-   │   data_sec_codebook   data_sec_top4   data_sec_all              │
-   │   data_sec_agg        rtb_2026_industry   pareto_missing        │
-   │   tab2   tab3   longrunseries   shortrunseries                  │
-   │   data_dina   data_sec_propublica                               │
-   │   billionaires_ca_inctax   ftb_b4a                              │
-   └────────────────────────────────┬────────────────────────────────┘
-                                    ▼
-   ┌─────────────────────────────────────────────────────────────────┐
-   │ R re-derivations  (R/compute_*.R, 8 tar_target's, _r suffix)    │
-   │   data_sec_agg_r        ← compute_data_sec_agg.R                │
-   │   pareto_missing_r,                                             │
-   │   pareto_summary,                                               │
-   │   fig8_laffer_r         ← compute_pareto.R                      │
-   │   tab5_r                ← compute_tab5.R                        │
-   │   billionaires_ca_inctax_r  ← compute_billionaires_ca_inctax.R  │
-   │   shortrunseries_r      ← compute_shortrunseries.R              │
-   │   top4taxes_r           ← compute_top4taxes.R                   │
-   └────────────────────────────────┬────────────────────────────────┘
-                                    ▼
-   ┌─────────────────────────────────────────────────────────────────┐
-   │ Exhibits  (R/tables.R + R/figures.R, 18 builder tar_target's)   │
-   │   tab1_gt .. tab5_gt   tab_a1_gt           (6 gt tables)        │
-   │   fig1 .. fig8   fig_a1 .. fig_a4          (12 ggplots)         │
-   │                                  │                              │
-   │                                  ▼                              │
-   │ Rendered files  (R/render.R, 36 file tar_target's)              │
-   │   outputs/tables/tab*.html  outputs/tables/tab*.tex             │
-   │   outputs/figures/fig*.png  outputs/figures/fig*.pdf            │
-   └────────────────────────────────┬────────────────────────────────┘
-                                    ▼
-   ┌─────────────────────────────────────────────────────────────────┐
-   │ Quarto report  (report.qmd, 2 file tar_target's)                │
-   │   report_html  →  report.html                                   │
-   │   report_pdf   →  report.pdf                                    │
-   │   (depends explicitly on every gt + ggplot above; re-renders    │
-   │    whenever any exhibit changes)                                │
-   └─────────────────────────────────────────────────────────────────┘
+```{r compute-outputs, eval=FALSE, echo=TRUE}
+data_sec_agg_r           <- compute_data_sec_agg(data_sec_all)
+pareto_missing_r         <- compute_pareto_missing(pareto_missing)
+pareto_summary           <- compute_pareto_summary(pareto_missing_r)
+tab5_r                   <- compute_tab5(pareto_missing_r, tab2, tab3)
+fig8_laffer_r            <- compute_fig8_laffer()
+billionaires_ca_inctax_r <- compute_billionaires_ca_inctax(
+                              data_sec_agg_r, billionaires_ca_inctax, ftb_b4a)
+shortrunseries_r         <- compute_shortrunseries(
+                              data_sec_agg_r, data_sec_top4,
+                              billionaires_ca_inctax_r, shortrunseries)
+top4taxes_r              <- compute_top4taxes(data_sec_top4)
+# Read-only display. Function bodies live in R/compute_*.R; tar_target() wiring
+# is in _targets.R. The report imports each value via tar_read(<name>).
 ```
 
 # 1. California Billionaires Wealth Growth
@@ -128,28 +99,63 @@ and long-run (1982-2025, where Forbes 400 lists give the top .0002%).
 
 ## 1.1 Recent and long-term wealth growth
 
-Table 1 (Panel A) shows nominal wealth for the four most recent years and the
-cumulative growth from 2023 to 2025. Panel B compares 1982 vs. 2025 in real
-2025 dollars for the top .0002% wealthiest California families.
+> Table 1 Panel A provides basic statistics on California billionaires in
+> recent years. Appendix Table A1 provides the same statistics at the US level
+> (instead of California). \[…\] Larry Ellison is excluded from these series
+> throughout the 2019 to 2025 period for consistency. (BSZ 2026, p. 3)
+
+**How it is built.** Table 1 is rendered by
+[`build_tab1()`](#sec-build_tab1) from three upstream tibbles —
+[`compute_data_sec_agg()`](#sec-compute_data_sec_agg) for the year-by-year
+totals, [`compute_shortrunseries()`](#sec-compute_shortrunseries) for the
+top-4 wealth column, and [`extract_longrunseries()`](#sec-extract_longrunseries)
+for CA GDP. Each function name links to its source in the Source code
+appendix.
+
+```{r tab1-call, eval=FALSE, echo=TRUE}
+data_sec_agg_r   <- compute_data_sec_agg(data_sec_all)
+shortrunseries_r <- compute_shortrunseries(
+                       data_sec_agg_r, data_sec_top4,
+                       billionaires_ca_inctax_r, shortrunseries)
+build_tab1(data_sec_agg_r, shortrunseries_r, longrunseries)
+# Read-only display. _targets.R wires these into the pipeline.
+```
 
 ```{r tab1}
 tar_read(tab1_gt)
 ```
 
-Figure 1 visualizes the same growth episode for both all California
-billionaires and the top 4 (Page, Brin, Zuckerberg, Huang), with dashed
-segments illustrating the impact of a hypothetical 5% wealth tax on 2025
-year-end wealth.
+> Figure 1 plots the trajectory of California's billionaires' total wealth
+> (in nominal current dollars) at the end of years 2019 to 2025, the longest
+> time series we have for all California billionaires. It also plots the
+> wealth trajectory of the top 4 (Larry Page, Sergei Brin, Mark Zuckerberg,
+> and Jensen Huang) who are centi-billionaires (wealth above \$100 billion).
+> (BSZ 2026, p. 2–3)
+
+**How it is built.** Figure 1 is rendered by [`build_fig1()`](#sec-build_fig1)
+from a single tibble produced by [`compute_shortrunseries()`](#sec-compute_shortrunseries).
+
+```{r fig1-call, eval=FALSE, echo=TRUE}
+build_fig1(shortrunseries_r)
+# Read-only display. _targets.R wires this into the pipeline.
+```
 
 ```{r fig1, fig.width=7, fig.height=5}
 tar_read(fig1)
 ```
 
-Figure 2 places this in the long run. Panel A juxtaposes the real wealth of
-the top .0002% California families against California GDP per family
-(1982-2025, both in 2025 dollars). Panel B expresses the top .0002% wealth
-as a share of GDP for both the US (top 400 families) and California (top 45
-families).
+> Figure 2 depicts the full time series. Panel A depicts the trajectory of
+> top .0002% wealth (top 45 families in California today) in 2025 \$ billions
+> vs. the trajectory of California GDP per family. (BSZ 2026, p. 4)
+
+**How it is built.** Figure 2 is rendered by [`build_fig2()`](#sec-build_fig2)
+from the positional dump produced by
+[`extract_longrunseries()`](#sec-extract_longrunseries).
+
+```{r fig2-call, eval=FALSE, echo=TRUE}
+build_fig2(longrunseries)
+# Read-only display. _targets.R wires this into the pipeline.
+```
 
 ```{r fig2, fig.width=11, fig.height=5}
 tar_read(fig2)
@@ -166,8 +172,38 @@ stock options.
 
 ## 2.1 Headline estimates for all California billionaires
 
+> For all California billionaires, we estimate the California income tax they
+> pay using Franchise Tax Board (the California tax administration) tabulated
+> statistics, a Pareto extrapolation, and an adjustment based on Federal tax
+> data. (BSZ 2026, p. 6)
+
+**How it is built.** Table 2 is rendered by
+[`build_tab2()`](#sec-build_tab2) from the year-aggregate
+[`compute_data_sec_agg()`](#sec-compute_data_sec_agg), the headline
+[`compute_billionaires_ca_inctax()`](#sec-compute_billionaires_ca_inctax),
+and the per-billionaire panel from
+[`extract_data_sec_top4()`](#sec-extract_data_sec_top4).
+
+```{r tab2-call, eval=FALSE, echo=TRUE}
+build_tab2(data_sec_agg_r, billionaires_ca_inctax_r, data_sec_top4)
+# Read-only display. _targets.R wires this into the pipeline.
+```
+
 ```{r tab2}
 tar_read(tab2_gt)
+```
+
+> Figure 3 depicts the estimated annual California individual income tax
+> paid by all California billionaires and the top 4 (in nominal \$ billions)
+> each year from 2019 to 2025. (BSZ 2026, p. 7)
+
+**How it is built.** Figure 3 is rendered by
+[`build_fig3()`](#sec-build_fig3) from
+[`compute_shortrunseries()`](#sec-compute_shortrunseries).
+
+```{r fig3-call, eval=FALSE, echo=TRUE}
+build_fig3(shortrunseries_r)
+# Read-only display. _targets.R wires this into the pipeline.
 ```
 
 ```{r fig3, fig.width=11, fig.height=5}
@@ -176,8 +212,32 @@ tar_read(fig3)
 
 ## 2.2 Per-billionaire detail (Top 4)
 
+> Table 3 reports statistics for each of the top 4. (BSZ 2026, p. 7)
+
+**How it is built.** Table 3 is rendered by
+[`build_tab3()`](#sec-build_tab3) from
+[`extract_data_sec_top4()`](#sec-extract_data_sec_top4).
+
+```{r tab3-call, eval=FALSE, echo=TRUE}
+build_tab3(data_sec_top4)
+# Read-only display. _targets.R wires this into the pipeline.
+```
+
 ```{r tab3}
 tar_read(tab3_gt)
+```
+
+> Table 4. First, their companies pay low dividends relative to the
+> corporate net profits they make. \[…\] Second, they realize modest capital
+> gains relative to the enormous wealth gains they are making. (BSZ 2026, p. 10)
+
+**How it is built.** Table 4 is rendered by
+[`build_tab4()`](#sec-build_tab4) from
+[`extract_data_sec_top4()`](#sec-extract_data_sec_top4).
+
+```{r tab4-call, eval=FALSE, echo=TRUE}
+build_tab4(data_sec_top4)
+# Read-only display. _targets.R wires this into the pipeline.
 ```
 
 ```{r tab4}
@@ -186,29 +246,73 @@ tar_read(tab4_gt)
 
 ## 2.3 Total tax burden relative to wealth
 
-Figure 4 stacks the four tax components (California income tax, federal income
-tax, corporate taxes, property + sales taxes) as a fraction of total wealth
-for all California billionaires, 2019-2025.
+> Figure 4 depicts the estimated total annual taxes paid by all California
+> billionaires and the composition by tax type from 2019 to 2025 relative
+> to end of year wealth. Federal and California individual income taxes are
+> estimated using Franchise Tax Board tabulated statistics, a simple Pareto
+> extrapolation, and an adjustment based on Federal tax data. (BSZ 2026, p. 8)
+
+**How it is built.** Figure 4 is rendered by
+[`build_fig4()`](#sec-build_fig4) from the `all_taxes` block of
+[`compute_billionaires_ca_inctax()`](#sec-compute_billionaires_ca_inctax).
+
+```{r fig4-call, eval=FALSE, echo=TRUE}
+build_fig4(billionaires_ca_inctax_r)
+# Read-only display. _targets.R wires this into the pipeline.
+```
 
 ```{r fig4, fig.width=7, fig.height=5}
 tar_read(fig4)
 ```
 
-Figure 5 compares the cumulative size of three income/wealth concepts for the
-Top 4 (Fiscal Income, Economic Income, Wealth Gain) and decomposes each into
-net-of-taxes plus tax components.
+> Figure 5 illustrates the statistics from Table 4 on income and taxes of
+> the top 4 richest Californians in the period 2019-2025 on their company
+> wealth (which is 97% of their total wealth at the end of 2025).
+> (BSZ 2026, p. 11)
+
+**How it is built.** Figure 5 is rendered by
+[`build_fig5()`](#sec-build_fig5) from
+[`extract_data_sec_top4()`](#sec-extract_data_sec_top4).
+
+```{r fig5-call, eval=FALSE, echo=TRUE}
+build_fig5(data_sec_top4)
+# Read-only display. _targets.R wires this into the pipeline.
+```
 
 ```{r fig5, fig.width=7, fig.height=5}
 tar_read(fig5)
 ```
 
-Figure 6 traces the Top 4's effective tax rate on wealth and on economic
-income across the 2004-2025 panel, and Figure 7 places those rates next to
-the US-wide and California-wide averages from the Distributional National
-Accounts (Saez and Zucman).
+> Figure 6 depicts the estimated taxes paid by the top 4 each year from 2004
+> to 2025 relative to their wealth (top panel) and relative to their full
+> economic income (bottom panel). (BSZ 2026, p. 13)
+
+**How it is built.** Figure 6 is rendered by
+[`build_fig6()`](#sec-build_fig6) from the 22-year panel of
+[`compute_top4taxes()`](#sec-compute_top4taxes).
+
+```{r fig6-call, eval=FALSE, echo=TRUE}
+build_fig6(top4taxes_r)
+# Read-only display. _targets.R wires this into the pipeline.
+```
 
 ```{r fig6, fig.width=11, fig.height=5}
 tar_read(fig6)
+```
+
+> Figure 7 compares taxes paid relative to economic income for the top 4 vs.
+> the average economy wide. \[…\] The macroeconomic average effective tax
+> rate for the US population is computed using the updated Distributional
+> National Accounts series. (BSZ 2026, p. 15)
+
+**How it is built.** Figure 7 is rendered by
+[`build_fig7()`](#sec-build_fig7) from
+[`compute_top4taxes()`](#sec-compute_top4taxes) and the DINA tables loaded
+by [`extract_data_dina()`](#sec-extract_data_dina).
+
+```{r fig7-call, eval=FALSE, echo=TRUE}
+build_fig7(top4taxes_r, data_dina)
+# Read-only display. _targets.R wires this into the pipeline.
 ```
 
 ```{r fig7, fig.width=11, fig.height=5}
@@ -222,10 +326,25 @@ five years, and a permanent annual wealth tax.
 
 ## 3.1 One-time wealth tax
 
-Table 5 reports four scenarios for the one-time tax. The benchmark uses the
-Forbes 4/15/2026 billionaire list and a 10% avoidance rate. Scenarios 2-4
-add Pareto-extrapolated missing small billionaires and an aggressive
-pre/post-2026-leaver assumption.
+> Table 5 reports a column of this extra CA income tax generated assuming
+> that wealth taxes will be paid one-third by selling assets triggering
+> taxable realized capital gains (with a basis of 20% of selling price
+> consistent with our earlier estimation that California billionaire wealth
+> is 80% unrealized gains) and two-thirds with liquidities or debt.
+> (BSZ 2026, p. 22)
+
+**How it is built.** Table 5 is rendered by
+[`build_tab5()`](#sec-build_tab5) from the scoring tibble produced by
+[`compute_tab5()`](#sec-compute_tab5), which in turn pulls Pareto
+summary stats from [`compute_pareto_missing()`](#sec-compute_pareto_missing)
+plus the averages rows of [`extract_tab2()`](#sec-extract_tab2) and
+[`extract_tab3()`](#sec-extract_tab3).
+
+```{r tab5-call, eval=FALSE, echo=TRUE}
+tab5_r <- compute_tab5(pareto_missing_r, tab2, tab3)
+build_tab5(tab5_r)
+# Read-only display. _targets.R wires these into the pipeline.
+```
 
 ```{r tab5}
 tar_read(tab5_gt)
@@ -233,10 +352,20 @@ tar_read(tab5_gt)
 
 ## 3.2 Permanent Billionaire Wealth Tax
 
-Figure 8 plots the Laffer curve for a permanent annual California wealth tax
-under three behavioral scenarios: mechanical (no response), short-run
-(mobility semi-elasticity *e* = 10), and long-run (mobility plus
-deconcentration elasticity *d* = 15).
+> Figure 8 depicts the revenue collected from billionaires from a permanent
+> annual wealth tax as a function of the tax rate (on the x-axis) in the
+> solid red line. This tax revenue estimate takes into account income and
+> wealth tax revenue lost because of mobility responses calibrated using
+> the empirical literature. (BSZ 2026, p. 25)
+
+**How it is built.** Figure 8 is rendered by
+[`build_fig8()`](#sec-build_fig8) from the 201-rate Laffer sweep produced
+by [`compute_fig8_laffer()`](#sec-compute_fig8_laffer).
+
+```{r fig8-call, eval=FALSE, echo=TRUE}
+build_fig8(fig8_laffer_r)
+# Read-only display. _targets.R wires this into the pipeline.
+```
 
 ```{r fig8, fig.width=7, fig.height=5}
 tar_read(fig8)
@@ -246,7 +375,20 @@ tar_read(fig8)
 
 ## A.1 US wealth growth comparison
 
-Table A1 mirrors Table 1 for the US rather than California.
+> Table A1 provides the same statistics at the US level (instead of
+> California). (BSZ 2026, p. 3)
+
+**How it is built.** Table A1 is rendered by
+[`build_tab_a1()`](#sec-build_tab_a1) from the positional dumps
+[`extract_shortrunseries()`](#sec-extract_shortrunseries) (Panel A's #
+US-citizen-billionaire count and total wealth) and
+[`extract_longrunseries()`](#sec-extract_longrunseries) (Panel B's 1982 vs
+2025 long-run real growth).
+
+```{r tab_a1-call, eval=FALSE, echo=TRUE}
+build_tab_a1(shortrunseries, longrunseries)
+# Read-only display. _targets.R wires this into the pipeline.
+```
 
 ```{r tab_a1}
 tar_read(tab_a1_gt)
@@ -254,11 +396,40 @@ tar_read(tab_a1_gt)
 
 ## A.2 Industry composition
 
+> Figure A1 depicts the industry composition of California billionaires'
+> wealth with a breakdown between SEC reported publicly traded stock vs.
+> other for each industry. (BSZ 2026, p. 5)
+
+**How it is built.** Figure A1 is rendered by
+[`build_fig_a1()`](#sec-build_fig_a1). It reads block 2 of the
+`rtb_2026_industry` sheet directly (cols A, G, H, I, rows 22-34) at build
+time rather than from a pre-extracted target.
+
+```{r fig_a1-call, eval=FALSE, echo=TRUE}
+build_fig_a1(xlsx_path)
+# Read-only display. _targets.R wires this into the pipeline.
+```
+
 ```{r fig_a1, fig.width=8, fig.height=6}
 tar_read(fig_a1)
 ```
 
 ## A.3 Robustness: alternative method for CA income tax
+
+> Appendix Figure A2 displays the California income tax paid by California
+> billionaires as a percent of California wide state individual income tax
+> revenue. (BSZ 2026, p. 7)
+
+**How it is built.** Figure A2 is rendered by
+[`build_fig_a2()`](#sec-build_fig_a2) from
+[`compute_shortrunseries()`](#sec-compute_shortrunseries) (the AA / AF
+columns express the headline and SEC-top-5 figures as a share of total CA
+income tax revenue).
+
+```{r fig_a2-call, eval=FALSE, echo=TRUE}
+build_fig_a2(shortrunseries_r)
+# Read-only display. _targets.R wires this into the pipeline.
+```
 
 ```{r fig_a2, fig.width=7, fig.height=5}
 tar_read(fig_a2)
@@ -266,27 +437,230 @@ tar_read(fig_a2)
 
 ## A.4 Taxes on public-stock wealth
 
+> Figure A3-A produces the same statistics for wealth arising from publicly
+> traded stock. (BSZ 2026, p. 36)
+
+**How it is built.** Figure A3 is rendered by
+[`build_fig_a3()`](#sec-build_fig_a3) from the `all_taxes` block of
+[`compute_billionaires_ca_inctax()`](#sec-compute_billionaires_ca_inctax),
+restricting to the public-asset rows (rows 117-135 of the source sheet).
+
+```{r fig_a3-call, eval=FALSE, echo=TRUE}
+build_fig_a3(billionaires_ca_inctax_r)
+# Read-only display. _targets.R wires this into the pipeline.
+```
+
 ```{r fig_a3, fig.width=11, fig.height=5}
 tar_read(fig_a3)
 ```
 
 ## A.5 Pareto extrapolation for missing billionaires
 
+Panel A plots the Pareto coefficient *b* at each wealth threshold (Forbes
+data + projected). Panel B compares the density of billionaires-per-bracket
+empirically vs. the Pareto-extrapolation that adds the small billionaires
+Forbes is likely missing below the \$4.5B anchor.
+
+**How it is built.** Figure A4 is rendered by
+[`build_fig_a4()`](#sec-build_fig_a4) from
+[`compute_pareto_missing()`](#sec-compute_pareto_missing).
+
+```{r fig_a4-call, eval=FALSE, echo=TRUE}
+build_fig_a4(pareto_missing_r)
+# Read-only display. _targets.R wires this into the pipeline.
+```
+
 ```{r fig_a4, fig.width=11, fig.height=5}
 tar_read(fig_a4)
 ```
 
+# Source code {#sec-source-code}
+
+The function bodies listed below live in `R/*.R` files (one canonical
+location per function). Each listing is pulled from disk at render time via
+R's `getSrcref()` so the report never drifts from the actual code.
+
+**Where each kind of function lives:**
+
+- `extract_*()`                   → `R/data_sheets.R`
+- `compute_data_sec_agg()`        → `R/compute_data_sec_agg.R`
+- `compute_pareto_*()`, `compute_fig8_laffer()` → `R/compute_pareto.R`
+- `compute_tab5()`                → `R/compute_tab5.R`
+- `compute_billionaires_ca_inctax()` → `R/compute_billionaires_ca_inctax.R`
+- `compute_shortrunseries()`      → `R/compute_shortrunseries.R`
+- `compute_top4taxes()`           → `R/compute_top4taxes.R`
+- `build_tab*_gt()`               → `R/tables.R`
+- `build_fig*()`                  → `R/figures.R`
+
+Each entry's header below repeats the file path, and the last line of each
+listing gives the precise line range pulled from `getSrcref()`.
+
+## `extract_data_dina()` {#sec-extract_data_dina}
+
+```{r src-extract_data_dina, eval=FALSE, echo=TRUE, code=deparse_function("extract_data_dina")}
+```
+
+## `extract_data_sec_top4()` {#sec-extract_data_sec_top4}
+
+```{r src-extract_data_sec_top4, eval=FALSE, echo=TRUE, code=deparse_function("extract_data_sec_top4")}
+```
+
+## `extract_longrunseries()` {#sec-extract_longrunseries}
+
+```{r src-extract_longrunseries, eval=FALSE, echo=TRUE, code=deparse_function("extract_longrunseries")}
+```
+
+## `extract_shortrunseries()` {#sec-extract_shortrunseries}
+
+```{r src-extract_shortrunseries, eval=FALSE, echo=TRUE, code=deparse_function("extract_shortrunseries")}
+```
+
+## `extract_tab2()` {#sec-extract_tab2}
+
+```{r src-extract_tab2, eval=FALSE, echo=TRUE, code=deparse_function("extract_tab2")}
+```
+
+## `extract_tab3()` {#sec-extract_tab3}
+
+```{r src-extract_tab3, eval=FALSE, echo=TRUE, code=deparse_function("extract_tab3")}
+```
+
+## `compute_billionaires_ca_inctax()` {#sec-compute_billionaires_ca_inctax}
+
+```{r src-compute_billionaires_ca_inctax, eval=FALSE, echo=TRUE, code=deparse_function("compute_billionaires_ca_inctax")}
+```
+
+## `compute_data_sec_agg()` {#sec-compute_data_sec_agg}
+
+```{r src-compute_data_sec_agg, eval=FALSE, echo=TRUE, code=deparse_function("compute_data_sec_agg")}
+```
+
+## `compute_fig8_laffer()` {#sec-compute_fig8_laffer}
+
+```{r src-compute_fig8_laffer, eval=FALSE, echo=TRUE, code=deparse_function("compute_fig8_laffer")}
+```
+
+## `compute_pareto_missing()` {#sec-compute_pareto_missing}
+
+```{r src-compute_pareto_missing, eval=FALSE, echo=TRUE, code=deparse_function("compute_pareto_missing")}
+```
+
+## `compute_shortrunseries()` {#sec-compute_shortrunseries}
+
+```{r src-compute_shortrunseries, eval=FALSE, echo=TRUE, code=deparse_function("compute_shortrunseries")}
+```
+
+## `compute_tab5()` {#sec-compute_tab5}
+
+```{r src-compute_tab5, eval=FALSE, echo=TRUE, code=deparse_function("compute_tab5")}
+```
+
+## `compute_top4taxes()` {#sec-compute_top4taxes}
+
+```{r src-compute_top4taxes, eval=FALSE, echo=TRUE, code=deparse_function("compute_top4taxes")}
+```
+
+## `build_tab1()` {#sec-build_tab1}
+
+```{r src-build_tab1, eval=FALSE, echo=TRUE, code=deparse_function("build_tab1")}
+```
+
+## `build_tab2()` {#sec-build_tab2}
+
+```{r src-build_tab2, eval=FALSE, echo=TRUE, code=deparse_function("build_tab2")}
+```
+
+## `build_tab3()` {#sec-build_tab3}
+
+```{r src-build_tab3, eval=FALSE, echo=TRUE, code=deparse_function("build_tab3")}
+```
+
+## `build_tab4()` {#sec-build_tab4}
+
+```{r src-build_tab4, eval=FALSE, echo=TRUE, code=deparse_function("build_tab4")}
+```
+
+## `build_tab5()` {#sec-build_tab5}
+
+```{r src-build_tab5, eval=FALSE, echo=TRUE, code=deparse_function("build_tab5")}
+```
+
+## `build_tab_a1()` {#sec-build_tab_a1}
+
+```{r src-build_tab_a1, eval=FALSE, echo=TRUE, code=deparse_function("build_tab_a1")}
+```
+
+## `build_fig1()` {#sec-build_fig1}
+
+```{r src-build_fig1, eval=FALSE, echo=TRUE, code=deparse_function("build_fig1")}
+```
+
+## `build_fig2()` {#sec-build_fig2}
+
+```{r src-build_fig2, eval=FALSE, echo=TRUE, code=deparse_function("build_fig2")}
+```
+
+## `build_fig3()` {#sec-build_fig3}
+
+```{r src-build_fig3, eval=FALSE, echo=TRUE, code=deparse_function("build_fig3")}
+```
+
+## `build_fig4()` {#sec-build_fig4}
+
+```{r src-build_fig4, eval=FALSE, echo=TRUE, code=deparse_function("build_fig4")}
+```
+
+## `build_fig5()` {#sec-build_fig5}
+
+```{r src-build_fig5, eval=FALSE, echo=TRUE, code=deparse_function("build_fig5")}
+```
+
+## `build_fig6()` {#sec-build_fig6}
+
+```{r src-build_fig6, eval=FALSE, echo=TRUE, code=deparse_function("build_fig6")}
+```
+
+## `build_fig7()` {#sec-build_fig7}
+
+```{r src-build_fig7, eval=FALSE, echo=TRUE, code=deparse_function("build_fig7")}
+```
+
+## `build_fig8()` {#sec-build_fig8}
+
+```{r src-build_fig8, eval=FALSE, echo=TRUE, code=deparse_function("build_fig8")}
+```
+
+## `build_fig_a1()` {#sec-build_fig_a1}
+
+```{r src-build_fig_a1, eval=FALSE, echo=TRUE, code=deparse_function("build_fig_a1")}
+```
+
+## `build_fig_a2()` {#sec-build_fig_a2}
+
+```{r src-build_fig_a2, eval=FALSE, echo=TRUE, code=deparse_function("build_fig_a2")}
+```
+
+## `build_fig_a3()` {#sec-build_fig_a3}
+
+```{r src-build_fig_a3, eval=FALSE, echo=TRUE, code=deparse_function("build_fig_a3")}
+```
+
+## `build_fig_a4()` {#sec-build_fig_a4}
+
+```{r src-build_fig_a4, eval=FALSE, echo=TRUE, code=deparse_function("build_fig_a4")}
+```
+
 # Reproducibility
 
-This report is built from the `{targets}` pipeline rooted at
-`~/Desktop/sandbox/CAWT-BSZ`. All upstream inputs come from
-`original-materials/BSZ_MainTablesFigures.xlsx`. To re-render:
+This report is built from the `{targets}` pipeline in the project root.
+All upstream inputs come from `original-materials/BSZ_MainTablesFigures.xlsx`.
+To re-render:
 
 ```r
 targets::tar_make()
 quarto::quarto_render("report.qmd")
 ```
 
-The 473-expectation `testthat` suite (`Rscript tests/testthat.R`) verifies
-every Phase-2 R re-derivation against the Excel cached values within
-documented tolerances.
+The 506-expectation `testthat` suite (`Rscript tests/testthat.R`) verifies
+every R re-derivation against the Excel cached values within documented
+tolerances.

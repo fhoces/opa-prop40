@@ -1,4 +1,4 @@
-# Phase 3 - render gt + ggplot objects to files in outputs/.
+# Render gt + ggplot objects to files in outputs/.
 #
 # Each render function returns a file path so it can be registered as a
 # `format = "file"` tar_target, which makes the file part of the pipeline's

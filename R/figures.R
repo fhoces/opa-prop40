@@ -1,4 +1,4 @@
-# Phase 3 - ggplot figure builders.
+# ggplot figure builders.
 #
 # Each builder takes already-validated upstream targets and returns a ggplot.
 # Render to PNG / PDF downstream via R/render.R helpers.
