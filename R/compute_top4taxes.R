@@ -4,6 +4,31 @@
 # asserts the R output matches the upstream Excel extraction within a
 # documented tolerance.
 
+# Six tax-type ratio columns that decompose into a total + a residual check.
+# Used twice (per-income and per-wealth) and again when collapsing across
+# years in the sub-period averages.
+.T4T_INC_COMPONENTS <- c("ca_inctax_per_income", "fed_inctax_per_income",
+                          "sales_tax_per_income", "corp_tax_per_income",
+                          "property_tax_per_income")
+.T4T_W_COMPONENTS   <- c("ca_inctax_per_wealth", "fed_inctax_per_wealth",
+                          "sales_tax_per_wealth", "corp_tax_per_wealth",
+                          "property_tax_per_wealth")
+
+.t4t_period_avg <- function(panel, panel_cols, years) {
+  # Average each column over the given panel years, then overwrite the two
+  # check-decomp cells to match Excel: the sheet computes the average-row
+  # check as (avg total) - SUM(avg components), not the mean of per-year
+  # checks. Rounding differences make those two values differ.
+  out <- vapply(panel_cols,
+                 \(col) mean(panel[[col]][panel$year %in% years]),
+                 numeric(1))
+  out["check_income_decomp"] <-
+    out["total_tax_per_income"] - sum(out[.T4T_INC_COMPONENTS])
+  out["check_wealth_decomp"] <-
+    out["total_tax_per_wealth"] - sum(out[.T4T_W_COMPONENTS])
+  out
+}
+
 compute_top4taxes <- function(data_sec_top4) {
   # Re-derives the 429 formula cells of top4taxes: per-year tax rates of the
   # CA top-4 billionaires, 2004..2025, plus 2004-2016 / 2017-2025 averages.
@@ -92,35 +117,9 @@ compute_top4taxes <- function(data_sec_top4) {
   )
 
   # Sub-period averages (rows 27, 28 of the sheet)
-  panel_cols <- setdiff(names(panel), "year")
-  avg_2004_2016 <- vapply(panel_cols,
-                          \(col) mean(panel[[col]][panel$year %in% 2004:2016]),
-                          numeric(1))
-  avg_2017_2025 <- vapply(panel_cols,
-                          \(col) mean(panel[[col]][panel$year %in% 2017:2025]),
-                          numeric(1))
-  # Excel re-derives the check cells in the avg row as J27-SUM(K27:O27),
-  # not as the mean of the per-year checks; match that.
-  avg_2004_2016["check_income_decomp"] <-
-    avg_2004_2016["total_tax_per_income"] -
-      sum(avg_2004_2016[c("ca_inctax_per_income", "fed_inctax_per_income",
-                          "sales_tax_per_income", "corp_tax_per_income",
-                          "property_tax_per_income")])
-  avg_2004_2016["check_wealth_decomp"] <-
-    avg_2004_2016["total_tax_per_wealth"] -
-      sum(avg_2004_2016[c("ca_inctax_per_wealth", "fed_inctax_per_wealth",
-                          "sales_tax_per_wealth", "corp_tax_per_wealth",
-                          "property_tax_per_wealth")])
-  avg_2017_2025["check_income_decomp"] <-
-    avg_2017_2025["total_tax_per_income"] -
-      sum(avg_2017_2025[c("ca_inctax_per_income", "fed_inctax_per_income",
-                          "sales_tax_per_income", "corp_tax_per_income",
-                          "property_tax_per_income")])
-  avg_2017_2025["check_wealth_decomp"] <-
-    avg_2017_2025["total_tax_per_wealth"] -
-      sum(avg_2017_2025[c("ca_inctax_per_wealth", "fed_inctax_per_wealth",
-                          "sales_tax_per_wealth", "corp_tax_per_wealth",
-                          "property_tax_per_wealth")])
+  panel_cols    <- setdiff(names(panel), "year")
+  avg_2004_2016 <- .t4t_period_avg(panel, panel_cols, 2004:2016)
+  avg_2017_2025 <- .t4t_period_avg(panel, panel_cols, 2017:2025)
 
   averages <- tibble::tibble(
     period = c("2004-2016", "2017-2025"),

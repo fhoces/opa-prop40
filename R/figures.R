@@ -70,15 +70,19 @@ build_fig_a3 <- function(billionaires_ca_inctax_r) {
   d <- at[at$year %in% 2019:2025, ]
   n <- nrow(d)
 
-  stack_levels <- c("CA income tax", "Federal income tax",
-                     "Corporate taxes", "Property + sales taxes")
+  # Tax labels in the natural reading order; factor levels listed in
+  # TOP-TO-BOTTOM stack order so geom_area places CA inctax at the bottom
+  # (matches the original BSZ chart).
+  labels      <- c("CA income tax", "Federal income tax",
+                    "Corporate taxes", "Property + sales taxes")
+  stack_levels <- rev(labels)
   panel_w <- tibble::tibble(
     year  = rep(d$year, 4),
     share = c(d$ca_inctax_per_public_wealth,
               d$fed_inctax_per_public_wealth,
               d$corp_per_public_wealth,
               d$prop_sales_per_public_wealth),
-    tax   = factor(rep(stack_levels, each = n), levels = stack_levels)
+    tax   = factor(rep(labels, each = n), levels = stack_levels)
   )
   panel_ei <- tibble::tibble(
     year  = rep(d$year, 4),
@@ -86,12 +90,12 @@ build_fig_a3 <- function(billionaires_ca_inctax_r) {
               d$fed_inctax_per_econ_income,
               d$corp_per_econ_income,
               d$prop_sales_per_econ_income),
-    tax   = factor(rep(stack_levels, each = n), levels = stack_levels)
+    tax   = factor(rep(labels, each = n), levels = stack_levels)
   )
-  fills <- c("CA income tax"          = "#1f77b4",
-             "Federal income tax"     = "#2ca02c",
-             "Corporate taxes"        = "#d62728",
-             "Property + sales taxes" = "#ff7f0e")
+  fills <- c("CA income tax"          = "#4a1414",
+             "Federal income tax"     = "#8a2c2c",
+             "Corporate taxes"        = "#c47878",
+             "Property + sales taxes" = "#f0d4d4")
 
   pw <- ggplot2::ggplot(panel_w, ggplot2::aes(x = year, y = share, fill = tax)) +
     ggplot2::geom_area(alpha = 0.85, color = "white", linewidth = 0.3) +
@@ -454,31 +458,32 @@ build_fig4 <- function(billionaires_ca_inctax_r) {
   yrs <- 2019:2025
   d <- at[at$year %in% yrs, ]
 
+  # geom_area's default stacking plots the FIRST factor level on TOP. To
+  # match the BSZ figure (CA income tax at the bottom, property+sales as the
+  # thin top sliver), list factor levels in TOP-TO-BOTTOM order.
+  stack_levels <- c("Property + sales taxes", "Corporate taxes",
+                     "Federal income tax", "CA income tax")
   long <- tibble::tibble(
-    year = rep(d$year, 4),
+    year  = rep(d$year, 4),
     share = c(d$ca_inctax_per_total_wealth,
               d$fed_inctax_per_total_wealth,
               d$corp_per_total_wealth,
               d$prop_sales_per_total_wealth),
-    tax = factor(rep(c("CA income tax",
-                        "Federal income tax",
-                        "Corporate taxes",
-                        "Property + sales taxes"),
-                       each = nrow(d)),
-                  # Stack from bottom up in this order:
-                  levels = c("CA income tax", "Federal income tax",
-                              "Corporate taxes", "Property + sales taxes"))
+    tax   = factor(rep(c("CA income tax", "Federal income tax",
+                           "Corporate taxes", "Property + sales taxes"),
+                        each = nrow(d)),
+                    levels = stack_levels)
   )
 
   ggplot2::ggplot(long, ggplot2::aes(x = year, y = share, fill = tax)) +
-    ggplot2::geom_area(alpha = 0.85, color = "white", linewidth = 0.3) +
+    ggplot2::geom_area(alpha = 0.95, color = "white", linewidth = 0.3) +
     ggplot2::scale_x_continuous(breaks = yrs) +
     ggplot2::scale_y_continuous(labels = scales::percent_format(accuracy = 0.1)) +
     ggplot2::scale_fill_manual(values = c(
-      "CA income tax"          = "#1f77b4",
-      "Federal income tax"     = "#2ca02c",
-      "Corporate taxes"        = "#d62728",
-      "Property + sales taxes" = "#ff7f0e"
+      "CA income tax"          = "#4a1414",   # darkest, anchor band
+      "Federal income tax"     = "#8a2c2c",   # burgundy
+      "Corporate taxes"        = "#c47878",   # rose
+      "Property + sales taxes" = "#f0d4d4"    # pale pink, top sliver
     )) +
     ggplot2::labs(
       title    = "Figure 4: Total Taxes Paid by California Billionaires (% of wealth)",

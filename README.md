@@ -62,6 +62,7 @@ renders the paper's six tables and twelve figures plus a Quarto report.
 
 ### Raw data sources that are NOT yet independently pulled
 
+<!-- include:_raw-sources.md -->
 The Excel workbook combines several public and proprietary inputs.
 Independent re-pulls from each primary source — to cross-check the workbook's
 cached values — are an ongoing strand of this project. Status:
@@ -77,11 +78,18 @@ cached values — are an ongoing strand of this project. Status:
 | ProPublica IRS leak | `data_sec_propublica` | **Cannot be re-pulled** — restricted-access data |
 | Compustat (corporate financials feeding SEC top-4 columns) | parts of `data_sec_top4` | **Cannot be re-pulled here** — paywalled |
 
-**Interpretation:** The R pipeline verifies that R reproduces the Excel
+**Interpretation.** The R pipeline verifies that R reproduces the Excel
 cells. The cross-validation work (in progress) verifies that the Excel
 cells in turn reproduce the public raw data. Until that second layer is
 complete, the replication is "faithful to the authors' workbook" but not
 yet "independently sourced from underlying public data" for most series.
+<!-- /include -->
+
+<!--
+The block above is auto-synced from _raw-sources.md. Do not edit by hand;
+edit _raw-sources.md and run tools/sync-readme.sh to refresh.
+-->
+
 
 ## Repository layout
 
