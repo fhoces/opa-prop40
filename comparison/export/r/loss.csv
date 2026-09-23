@@ -1,0 +1,8 @@
+"source_id","label","side","annual_loss","where","pv_5yr","pv_perpetuity","net_at_rauh_revenue_perpetuity"
+"bsz_row1","BSZ Table 5 row 1 (benchmark)","supporting",0.15306818872854,"BSZ PDF p.39",0.701344319518683,5.60541977137812,45.6495802286219
+"bsz_row3","BSZ Table 5 row 3 (aggressive leavers)","supporting",0.515430591207278,"BSZ PDF p.39",2.36165541809916,18.8752793818595,32.3797206181405
+"lao_upper","LAO ballot analysis (upper bound, 'less than $1 billion')","neutral",1,"LAO p.2",4.58190774545904,36.6204096222703,14.6345903777297
+"rauh_ssrn","Rauh SSRN: E[f] x E[C]","opposing",2.07430732484076,"Rauh p.20",9.50428479815032,75.9619839181446,-24.7069839181446
+"rauh_nber","Rauh NBER: E[f] x E[C]","opposing",2.0475,"NBER p.35",9.38145610882738,74.9802887015985,-23.7252887015985
+"walczak_low","Walczak / CalTax, low (incl. spillovers)","opposing (credited dial)",3.53,"Walczak p.1",16.1741343414704,129.270045966614,-78.0150459666143
+"walczak_high","Walczak / CalTax, high (incl. spillovers)","opposing (credited dial)",4.49,"Walczak p.1",20.5727657771111,164.425639203994,-113.170639203994
