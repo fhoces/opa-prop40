@@ -1,0 +1,383 @@
+---
+title: "Prop 40, supporting side"
+subtitle: "How a one-time billionaire tax gets scored at $104 billion, and which parts are guesswork"
+output:
+  xaringan::moon_reader:
+    self_contained: true
+    includes:
+      in_header: mathjax-config.html
+    css: [default, default-fonts]
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: "16:9"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE, fig.align = "center",
+  fig.width = 10, fig.height = 4.2, dpi = 150,
+  message = FALSE, warning = FALSE
+)
+library(ggplot2)
+theme_set(theme_minimal(base_size = 15))
+
+# Every number in this deck is read from the CSVs the targets pipeline writes
+# (supporting-analysis/_targets.R: site_tab5_csv, site_inputs_csv,
+# site_grid_csv, site_leavers_csv). Nothing below is retyped.
+t5  <- read.csv("../data/tab5.csv")
+ins <- read.csv("../data/inputs.csv", stringsAsFactors = FALSE)
+grd <- read.csv("../data/grid.csv")
+lv  <- read.csv("../data/leavers.csv", stringsAsFactors = FALSE)
+tst <- read.csv("../data/test-results.csv", stringsAsFactors = FALSE)
+W0 <- t5$wealth[1]; n0 <- t5$n_billionaires[1]
+C  <- -t5$annual_ca_inctax_loss[1] / 0.05
+bn <- function(x, d = 1) formatC(x, format = "f", digits = d, big.mark = ",")
+row1 <- with(grd, avoidance == 0.10 & mobility_share == 0.5 & avoidance_small == 0.2 &
+                  abs(sell_share - 1/3) < 1e-9 & pareto == 0 & leavers == 0)
+```
+
+name: opa-frame
+class: center, middle, opa-slide
+
+# An Open Reproduction
+
+.opa-intro[
+Of the supporting side's revenue estimate for California's Proposition 40,
+Boll, Saez and Zucman (2026) and the GGSS expert report,
+following the
+[Open Policy Analysis](https://tinyurl.com/1qypbihb) framework.
+]
+
+<img src="../assets/opa/opa-details.png" class="opa-mark" alt="">
+
+.opa-legend[
+**Open Output**: [the explorer](../explorer/), the assumptions as dials, the revenue as output<br>
+**Open Analysis**: [the report](../repro.html), and this deck<br>
+**Open Materials**: [the materials page](../materials.html),
+the pipeline, its tests and every exported CSV
+]
+
+---
+
+```{css, echo=FALSE}
+.remark-code, .remark-inline-code { font-size: 80%; }
+.remark-slide-content { padding: 1em 2em; }
+.small { font-size: 80%; }
+.tiny { font-size: 65%; }
+.small table { font-size: 70%; }
+.tiny table { font-size: 62%; width: 100%; }
+.highlight-box {
+  background: #fff3e0;
+  border-left: 4px solid #e65100;
+  padding: 0.5em 1em;
+  margin: 0.5em 0;
+}
+.blue-box {
+  background: #e3f2fd;
+  border-left: 4px solid #1565c0;
+  padding: 0.5em 1em;
+  margin: 0.5em 0;
+}
+a.reflink {
+  color: #3b4a5a;
+  text-decoration: none;
+  border-bottom: 1px dotted #9aa6b2;
+}
+a.reflink:hover { color: #1a237e; border-bottom-color: #1a237e; }
+.site-nav {
+  font-size: 11px;
+  color: #5b6873;
+  margin: 0 0 14px;
+}
+.site-nav a { color: #1a237e; text-decoration: none; }
+.site-nav a:hover { text-decoration: underline; }
+.remark-slide-content.opa-slide { position: relative; z-index: 0; overflow: hidden; }
+.opa-intro { font-size: 92%; max-width: 30em; margin: 0 auto 1.1em; }
+.opa-legend { font-size: 85%; line-height: 1.75; max-width: 34em; margin: 0 auto;
+              text-align: left; }
+.opa-intro a, .opa-legend a { color: #1a237e; }
+.opa-mark {
+  position: absolute; top: 26px; right: 34px; height: 190px; width: auto;
+  opacity: 0.218; z-index: -1; pointer-events: none;
+}
+.steps table { width: 100%; font-size: 80%; border-collapse: collapse; }
+.steps td, .steps th { padding: 5px 8px; border-bottom: 1px solid #e2e7ec; text-align: left; }
+.steps td.num { text-align: right; font-family: monospace; }
+.guess { color: #e65100; font-weight: 600; }
+```
+
+.site-nav[
+Supporting side of California Proposition 40:
+[Open Output (the explorer)](../explorer/) &middot; Open Analysis:
+[Report](../repro.html) and Slides (here) &middot;
+[Open Materials](../materials.html) &middot;
+[Overview](../index.html)
+]
+
+# Deck Map
+
+<table style="width:100%; font-size:85%; border-collapse:collapse;">
+<tr style="background:#e8eaf6;"><th style="text-align:left; padding:6px;">Part</th><th style="text-align:left; padding:6px;">What it covers</th></tr>
+<tr><td style="padding:6px;"><b><a href="#part-policy">1. What is being scored</a></b></td><td style="padding:6px;">The tax, and the two documents that make the supporting side's case</td></tr>
+<tr><td style="padding:6px;"><b><a href="#part-steps">2. Five steps to $`r round(t5$wealth_tax_revenue[1])` billion</a></b></td><td style="padding:6px;">Table 5, row 1, built one line at a time</td></tr>
+<tr><td style="padding:6px;"><b><a href="#part-rows">3. The other rows</a></b></td><td style="padding:6px;">Missing billionaires, and who may have left</td></tr>
+<tr><td style="padding:6px;"><b><a href="#part-guess">4. What is guesswork</a></b></td><td style="padding:6px;">Every input by origin, and how far each guess moves the result</td></tr>
+<tr><td style="padding:6px;"><b><a href="#part-repro">5. What reproduces</a></b></td><td style="padding:6px;">Tests, mismatches found, and what is not checked</td></tr>
+</table>
+
+.blue-box[
+Every number in this deck comes from the R pipeline that reproduces the authors' August 2026
+workbook cell by cell. The deck reads that pipeline's exported CSVs; nothing is retyped.
+]
+
+---
+name: part-policy
+class: center, middle, inverse
+
+# Part 1: What is being scored
+
+---
+
+# The tax, in one line
+
+.pull-left[
+**Proposition 40** (the Billionaire Tax Act):
+
+- a **one-time** 5% tax on net worth
+- on California residents on **1 January 2026**
+- paid 1% a year over **five years**
+- wealth valued on 31 December 2026
+
+Directly held real estate is excluded; business real estate is not.
+]
+
+.pull-right[
+**Two documents make the supporting side's case**
+
+1. Boll, Saez and Zucman (**BSZ**), NBER WP 35218, August 2026, with a public Excel
+   workbook. Table 5, row 1: **$`r bn(t5$wealth_tax_revenue[1])` billion.**
+2. Galle, Gamage, Saez and Shanske (**GGSS**), expert report, 20 July 2026:
+   **$100 billion**.
+
+.highlight-box[
+GGSS p.4: "a scoring of $104 billion that we round to $100 billion for simplicity."
+**The two are one computation.**
+]
+]
+
+---
+name: part-steps
+class: center, middle, inverse
+
+# Part 2: Five steps to $`r round(t5$wealth_tax_revenue[1])` billion
+
+---
+
+# Step 1 and 2: the base, and what escapes it
+
+**Step 1.** Forbes' real-time list on 1 July 2026: $n_0$ = `r n0` California billionaires
+holding $W_0$ = $`r bn(W0, 0)` billion. **Data**, read off Forbes that day.
+
+**Step 2.** Some wealth escapes: under-valued, hidden, or moved out in time. The authors
+assume a share $\alpha$ = 10% of all of it together:
+
+$$W^{\text{tax}} = (1-\alpha)\,W_0 = 0.9 \times `r bn(W0, 0)` = `r bn(t5$taxable_wealth[1])`$$
+
+.highlight-box[
+The 10% is <span class="guess">guesswork</span>. GGSS argue it is small: most of the wealth is
+listed stock, easy to value, and 250 taxpayers can each be audited. Nobody has measured it,
+because the tax has never existed.
+]
+
+.small[Details: [report, step 2](../repro.html#step-2-avoidance-and-evasion).]
+
+---
+
+# Step 3: the revenue
+
+$$T = \tau \, W^{\text{tax}} = 0.05 \times `r bn(t5$taxable_wealth[1])` = `r bn(t5$wealth_tax_revenue[1])`$$
+
+That is the whole headline: **$`r bn(t5$wealth_tax_revenue[1])` billion, once**, paid in five
+yearly installments of about $`r bn(t5$wealth_tax_revenue[1] / 5)` billion.
+
+```{r fig-waterfall, fig.height=3.2}
+d <- data.frame(
+  step = factor(c("5% of the list", "less 10% avoidance", "revenue"),
+                levels = c("5% of the list", "less 10% avoidance", "revenue")),
+  value = c(0.05 * W0, -(0.05 * W0 - t5$wealth_tax_revenue[1]), t5$wealth_tax_revenue[1]))
+d$start <- c(0, 0.05 * W0, 0); d$end <- d$start + d$value
+ggplot(d, aes(x = step, xmin = as.numeric(step) - 0.35, xmax = as.numeric(step) + 0.35,
+              ymin = start, ymax = end, fill = step)) +
+  geom_rect() +
+  geom_text(aes(y = pmax(start, end), label = paste0("$", bn(abs(value)), "B")), vjust = -0.5) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
+  scale_fill_manual(values = c("#9aa6b2", "#e65100", "#1f6fce"), guide = "none") +
+  labs(x = NULL, y = "$ billion")
+```
+
+---
+
+# Step 4 and 5: two income tax effects
+
+**Step 4. Selling assets to pay raises income tax.** If a share $s$ = 1/3 of the tax is paid
+by selling, and 80% of a sale is taxable gain at 13.3%:
+
+$$E = s \cdot g \cdot t_{cg} \cdot T = \tfrac13 \times 0.8 \times 0.133 \times `r bn(t5$wealth_tax_revenue[1])` = `r bn(t5$extra_ca_inctax_sales[1], 2)`$$
+
+**Step 5. Leavers stop paying income tax.** Half the avoidance, *m* = 50%, is people leaving,
+so 5% of the $`r bn(C, 2)` billion billionaires pay each year is lost:
+
+$$L = \alpha \, m \, C = 0.10 \times 0.5 \times `r bn(C, 2)` = `r bn(-t5$annual_ca_inctax_loss[1], 3)` \text{ per year}$$
+
+.highlight-box[
+$L$ is **per year**, and Table 5 does not say for how many years. BSZ argue about 5; the
+opposing side counts it forever. That horizon is the biggest dispute between the sides.
+]
+
+---
+name: part-rows
+class: center, middle, inverse
+
+# Part 3: The other rows
+
+---
+
+# Row 2: the billionaires Forbes misses
+
+Above $4.5 billion, Forbes' list looks like a Pareto distribution. Below it, the list thins
+out far faster than the pattern predicts, which is what missing small fortunes look like.
+
+Filling the gap adds **`r bn(100 * (t5$n_billionaires[2] / n0 - 1), 0)`%** more billionaires
+but only **`r bn(100 * (t5$wealth[2] / W0 - 1))`%** more wealth. Taxing them at a higher
+20% avoidance rate gives:
+
+.pull-left[
+| Row | Revenue, $B |
+|---|---:|
+| 1. Benchmark | `r bn(t5$wealth_tax_revenue[1])` |
+| 2. + missing billionaires | `r bn(t5$wealth_tax_revenue[2])` |
+]
+
+.pull-right[
+.small[The Pareto coefficient is **research** (estimated from the data); counting these
+people is a scenario choice; the 20% is <span class="guess">guesswork</span>.
+[Report, row 2](../repro.html#row-2-adding-the-billionaires-forbes-misses).]
+]
+
+---
+
+# Row 3: who may have left
+
+.pull-left[
+```{r leavers-tab}
+x <- lv
+x$name <- tools::toTitleCase(x$name)
+x$timing <- ifelse(grepl("^pre", x$timing), "before 1 Jan", "later")
+x$wealth <- bn(x$wealth)
+x$annual_inctax_loss <- bn(x$annual_inctax_loss, 3)
+names(x) <- c("Person", "Left", "Wealth $B", "Inc. tax lost $B/yr")
+knitr::kable(x, format = "html", align = "llrr")
+```
+]
+
+.pull-right[
+Assume the four who left **before** 1 January escape the tax, and three more leave later.
+Revenue falls to **$`r bn(t5$wealth_tax_revenue[3])` billion**; the yearly income tax loss
+rises to **$`r bn(-t5$annual_ca_inctax_loss[3], 2)` billion**.
+
+.highlight-box[
+Why so little income tax? SEC filings show the top three pay very little state income tax
+relative to their wealth: they rarely sell. Whether any of them has **legally** left is a
+<span class="guess">legal judgment</span>, not data.
+]
+]
+
+---
+name: part-guess
+class: center, middle, inverse
+
+# Part 4: What is guesswork
+
+---
+
+# Every input, by origin
+
+```{r origins, fig.height=3.6}
+lev <- c("data", "research", "guesswork", "scenario", "derived", "convention")
+cnt <- as.data.frame(table(factor(ins$origin, levels = lev)))
+ggplot(cnt, aes(x = Var1, y = Freq, fill = Var1 == "guesswork")) +
+  geom_col(width = 0.6) + geom_text(aes(label = Freq), vjust = -0.3, size = 5) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.2))) +
+  scale_fill_manual(values = c("#9aa6b2", "#e65100"), guide = "none") +
+  labs(x = NULL, y = "inputs", title = paste(nrow(ins), "inputs of the one-time scoring"))
+```
+
+.small[The `r sum(ins$origin == "guesswork")` guesswork inputs are exactly the dials of the
+[explorer](../explorer/). Full table with sources:
+[report](../repro.html#every-input-by-origin).]
+
+---
+
+# How far does each guess move the revenue?
+
+```{r tornado, fig.height=3.8}
+keys <- c(avoidance = "Avoidance and evasion", mobility_share = "Share that is leaving",
+          avoidance_small = "Avoidance, less visible", sell_share = "Share paid by selling",
+          pareto = "Count missing billionaires", leavers = "Aggressive leavers")
+base <- grd[row1, ]
+rows <- do.call(rbind, lapply(names(keys), function(k) {
+  keep <- Reduce(`&`, lapply(setdiff(names(keys), k), function(o) abs(grd[[o]] - base[[o]]) < 1e-9))
+  data.frame(input = keys[[k]], lo = min(grd$wealth_tax_revenue[keep]),
+             hi = max(grd$wealth_tax_revenue[keep]))
+}))
+rows$input <- factor(rows$input, levels = rows$input[order(rows$hi - rows$lo)])
+guess <- c("Avoidance and evasion", "Share that is leaving", "Avoidance, less visible",
+           "Share paid by selling", "Aggressive leavers")   # origin labels: data/inputs.csv
+movers <- as.character(rows$input[rows$hi - rows$lo > 1e-9 & rows$input %in% guess])
+ggplot(rows, aes(y = input)) +
+  geom_segment(aes(x = lo, xend = hi, yend = input), linewidth = 7, colour = "#1f6fce") +
+  geom_vline(xintercept = base$wealth_tax_revenue, colour = "#e65100") +
+  labs(x = "one-time revenue, $ billion (others at row 1)", y = NULL)
+```
+
+.small[Orange line: the preferred $`r bn(base$wealth_tax_revenue)` billion. Of the five
+guesses, only `r length(movers)` move it on their own: `r tolower(paste(movers, collapse = " and "))`.
+Counting the missing billionaires is research, and only raises it.]
+
+---
+name: part-repro
+class: center, middle, inverse
+
+# Part 5: What reproduces
+
+---
+
+# Checked, found, and not checked
+
+.pull-left[
+**Checked.** `r sum(tst$passed)` test expectations pass, `r sum(tst$failed)` fail
+(`r tst$vintage[1]` workbook, run `r tst$run_date[1]`). They compare every formula cell the
+pipeline re-derives against the workbook's own cached value, and pin the explorer to
+Table 5.
+
+**Found.**
+- a block of 4 rows pasted twice in the workbook's billionaire list (244 counted, 240 real)
+- Table 5 row 4 skips a deduction row 2 applies
+- 10 layout and formula changes between the May and August workbooks
+]
+
+.pull-right[
+**Not checked.**
+- the raw inputs: Forbes wealth, tax statistics, SEC filings are taken as the workbook
+  records them
+- GGSS has no workbook; its $100 billion is BSZ row 1, rounded
+
+.blue-box[
+The reproduction shows the arithmetic from the authors' inputs to their tables is what the
+paper says. It cannot show the inputs are right, and it cannot settle the guesses.
+]
+
+.small[[Materials page](../materials.html) &middot; [report, what reproduces](../repro.html#what-reproduces)]
+]

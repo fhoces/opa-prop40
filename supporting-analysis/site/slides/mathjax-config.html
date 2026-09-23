@@ -1,0 +1,72 @@
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  TeX: { extensions: ["color.js"], maxBuffer: 120 * 1024, maxMacros: 20000 }
+});
+</script>
+
+<!-- A persistent "back to the landing page" link, present on every slide. remark.js
+     renders one slide at a time inside .remark-slide-container elements it toggles
+     visibility on, the same way it keeps its own bottom-right slide-number counter
+     "present" throughout: that counter isn't per-slide markup either, it's a single
+     element remark repositions/relabels on each transition. A real <a> can't be done
+     that way (remark owns that element), so this attaches one plain, position:fixed
+     link straight to <body>, outside every .remark-slide-container. It used to sit at
+     a fixed viewport offset (top:8px/left:10px), which put it in the grey letterboxing
+     outside the slide's own box whenever the browser window wasn't exactly the deck's
+     aspect ratio: this reads the currently VISIBLE slide's own .remark-slide-scaler
+     rect and offsets from it instead, landing the link inside the slide regardless of
+     window size, and re-measures on resize, on remark's own show-slide events, and via
+     a MutationObserver on the slides area as a fallback in case a given browser/remark
+     version doesn't fire the events the same way. Colors match this deck's .nav-btn
+     buttons. -->
+<style>
+  .site-footer-link {
+    position: fixed;
+    z-index: 200;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 11px;
+    background: #e8eaf6;
+    padding: 2px 8px;
+    border-radius: 3px;
+    text-decoration: none;
+    color: #1a237e;
+  }
+  .site-footer-link:hover { background: #c5cae9; }
+</style>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  var a = document.createElement("a");
+  a.href = "../index.html";
+  a.className = "site-footer-link";
+  a.textContent = "← Overview";
+  document.body.appendChild(a);
+
+  function positionLink() {
+    // Read the VISIBLE slide's own scaler, not just the first one in the DOM: each
+    // of the 81 slides has its own .remark-slide-scaler, and while a fresh page load
+    // gives them all identical inline styles, there is no guarantee every hidden one
+    // stays in sync with every resize/fullscreen toggle. The visible one is always
+    // authoritative for what is actually on screen.
+    var visible = document.querySelector(".remark-slide-container.remark-visible .remark-slide-scaler");
+    var scaler = visible || document.querySelector(".remark-slide-scaler");
+    if (!scaler) return;
+    var rect = scaler.getBoundingClientRect();
+    a.style.top = (rect.top + 8) + "px";
+    a.style.left = (rect.left + 10) + "px";
+  }
+  positionLink();
+  window.addEventListener("resize", positionLink);
+  if (window.slideshow && typeof window.slideshow.on === "function") {
+    window.slideshow.on("afterShowSlide", positionLink);
+    window.slideshow.on("showSlide", positionLink);
+  }
+  // Belt and suspenders: watch the DOM directly for whichever slide remark marks
+  // visible, independent of which JS event API actually fires.
+  var slidesArea = document.querySelector(".remark-slides-area");
+  if (slidesArea && window.MutationObserver) {
+    new MutationObserver(positionLink).observe(slidesArea, {
+      attributes: true, attributeFilter: ["class", "style"], subtree: true
+    });
+  }
+});
+</script>

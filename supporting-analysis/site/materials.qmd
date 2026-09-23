@@ -1,0 +1,198 @@
+---
+title: "Prop 40, supporting side: the materials"
+subtitle: "Every script, test, data file and source behind the explorer, the report and the slides"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    toc-location: left
+    embed-resources: true
+    theme: cosmo
+    css: repro.css
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+::: {.site-nav}
+Supporting side of California Proposition 40:
+[Open Output (the explorer)](explorer/) &middot; Open Analysis: [Report](repro.html) and
+[Slides](slides/slides.html) &middot;
+Open Materials (here) &middot;
+[Overview](index.html)
+:::
+
+```{r}
+#| label: setup
+REPO <- "https://github.com/fhoces/opa-prop40/blob/main/supporting-analysis/"
+SA <- normalizePath("..")
+link <- function(path, text = path) sprintf('<a href="%s%s"><code>%s</code></a>', REPO, path, text)
+show <- function(df) knitr::kable(df, format = "html", escape = FALSE,
+                                  table.attr = 'class="table table-sm"')
+first_comment <- function(f) {
+  l <- readLines(f, warn = FALSE, n = 12)
+  l <- sub("^#+ ?", "", l[grepl("^#", l)])
+  l <- l[nzchar(trimws(l))]
+  if (length(l)) l[1] else ""
+}
+tests <- read.csv("data/test-results.csv", stringsAsFactors = FALSE)
+```
+
+::: {.report-intro}
+![](assets/opa/opa-materials.png){.opa-figure}
+
+This page is the **open materials** layer of the supporting side: what to download, what
+to run, and what the checks found. Everything lives in one repository,
+[fhoces/opa-prop40](https://github.com/fhoces/opa-prop40), under `supporting-analysis/`.
+The tables on this page are built from the files themselves when the page is rendered, so
+they cannot fall out of date with the code without a re-render showing it.
+:::
+
+## Rebuild everything
+
+```sh
+git clone https://github.com/fhoces/opa-prop40 && cd opa-prop40/supporting-analysis
+curl -L -o original-materials/BSZ_MainTablesFigures.xlsx \
+     https://eml.berkeley.edu/~saez/BSZ_MainTablesFigures.xlsx   # check the SHA-256 below
+Rscript -e 'targets::tar_make(names = !tidyselect::any_of(c("report_html","report_pdf")))'
+Rscript tools/site-test-results.R        # the full test suite; writes site/data/test-results.csv
+cd site && quarto render repro.qmd && quarto render materials.qmd
+cd slides && Rscript -e 'rmarkdown::render("slides.Rmd")'
+```
+
+The pipeline is an R [`{targets}`](https://docs.ropensci.org/targets/) project. The
+default workbook vintage is August 2026; `BSZ_VINTAGE=may` switches every
+vintage-dependent path, column and constant to May. `CAWTBSZ_MATERIALS` points the
+pipeline at the sources if they are not in `original-materials/`.
+
+## Tests
+
+```{r}
+#| label: tests
+by_file <- aggregate(cbind(blocks = 1, passed, failed, skipped) ~ file, data = tests, FUN = sum)
+by_file$file <- vapply(by_file$file, function(f) link(paste0("tests/testthat/", f), f), "")
+show(rbind(by_file, data.frame(file = "<b>total</b>", blocks = sum(by_file$blocks),
+                               passed = sum(by_file$passed), failed = sum(by_file$failed),
+                               skipped = sum(by_file$skipped))))
+```
+
+Last run: `r tests$run_date[1]`, `r tests$vintage[1]` vintage: **`r sum(tests$passed)`
+expectations passed, `r sum(tests$failed)` failed**, in `r nrow(tests)` test blocks. Of
+these, `r sum(tests$passed[tests$file != "test-site.R"])` belong to the reproduction itself
+and `r sum(tests$passed[tests$file == "test-site.R"])` to this site: they check that the
+explorer reproduces Table 5 exactly, that `explorer/grid.js` is the exporter's own output,
+and that every number typed into a hand-written page still matches the pipeline. GitHub
+Actions rebuilds the pipeline and runs the suite on every push that touches
+`supporting-analysis/` (`.github/workflows/ci.yml`); it does not render the Quarto pages or
+the slides.
+
+## Scripts
+
+```{r}
+#| label: scripts
+# One-line roles, from the repository README's layout section. A file not in
+# this list falls back to its own first comment line, so a new script still
+# shows up here.
+role <- c(
+  "ingest_excel.R" = "reads the workbook: sheet reader, vintage switch, source directory",
+  "excel_cells.R" = "single-cell and row/column readers shared by the compute files",
+  "vintage.R" = "everything that differs between the May and August workbooks, in one place",
+  "data_sheets.R" = "16 extractors, one per workbook sheet the pipeline reads",
+  "compute_data_sec_agg.R" = "yearly totals from the billionaire list (drops the duplicated rows)",
+  "compute_pareto.R" = "Pareto extrapolation of missing billionaires; the Laffer curve",
+  "compute_tab5.R" = "Table 5: the four scoring rows of the one-time tax",
+  "compute_billionaires_ca_inctax.R" = "CA income tax of all billionaires (FTB + Pareto), and all taxes",
+  "compute_shortrunseries.R" = "wealth growth panel and the 2025 snapshot",
+  "compute_top4taxes.R" = "taxes of the top 4 by year, 2004-2025",
+  "tables.R" = "the six gt tables",
+  "figures.R" = "the twelve ggplot figures",
+  "render.R" = "writes tables and figures to outputs/",
+  "verify.R" = "the test helper that compares R with the workbook's cached cells",
+  "code_listing.R" = "helper for code listings in the original report",
+  "site_exports.R" = "this site's data: the generalised Table 5 scorer, the grid, input origins")
+fs <- sort(list.files(file.path(SA, "R"), pattern = "[.]R$"))
+show(data.frame(
+  file = vapply(fs, function(f) link(paste0("R/", f)), ""),
+  lines = vapply(fs, function(f) length(readLines(file.path(SA, "R", f), warn = FALSE)), 1L),
+  `what it does` = vapply(fs, function(f) if (!is.na(role[f])) role[[f]] else first_comment(file.path(SA, "R", f)), ""),
+  check.names = FALSE, row.names = NULL))
+```
+
+Also: `r link("_targets.R")` (the pipeline: which function builds which result),
+`r link("tools/site-test-results.R")` (runs the suite for this page), and the site sources
+`r link("site/repro.qmd")`, `r link("site/materials.qmd")`, `r link("site/slides/slides.Rmd")`,
+`r link("site/index.html")` and `r link("site/explorer/index.html")`.
+
+## Data files the site publishes
+
+```{r}
+#| label: data
+desc <- c(
+  "grid.csv" = "every cell of the explorer: six inputs and seven outcomes",
+  "inputs.csv" = "every input of the one-time scoring, with value, origin label and source",
+  "tab5.csv" = "Table 5, the four scoring rows, as the pipeline computes them",
+  "tab5-vs-printed.csv" = "every Table 5 cell against the digit printed in the paper",
+  "leavers.csv" = "the seven named leavers of Table 5 rows 3 and 4",
+  "test-results.csv" = "one row per test block from the last full run")
+dfs <- names(desc)
+show(data.frame(
+  file = sprintf('<a href="data/%s"><code>%s</code></a>', dfs, dfs),
+  rows = vapply(dfs, function(f) nrow(read.csv(file.path("data", f))), 1L),
+  columns = vapply(dfs, function(f) ncol(read.csv(file.path("data", f))), 1L),
+  contents = unname(desc), row.names = NULL))
+```
+
+Every file except `test-results.csv` is written by a target in `_targets.R`
+(`site_grid_csv`, `site_inputs_csv`, `site_tab5_csv`, `site_tab5_printed_csv`,
+`site_leavers_csv`; the explorer's
+`grid.js` by `site_grid_js`). None is edited by hand.
+
+## Sources
+
+The authors' workbook and paper are not redistributed here. The manifest records where each
+file came from, its SHA-256 and its terms:
+
+```{r}
+#| label: sources
+ds <- read.csv(file.path(SA, "DATA-SOURCES.csv"), stringsAsFactors = FALSE)
+show(data.frame(
+  file = sprintf("<code>%s</code>", sub("^original-materials/", "", ds$file)),
+  provider = ds$provider,
+  obtained = paste(ds$obtained_via, ds$date_obtained),
+  `SHA-256 (first 12)` = sprintf("<code>%s</code>", substr(ds$sha256, 1, 12)),
+  terms = ds$terms,
+  check.names = FALSE))
+```
+
+Full rows, including what each source feeds: `r link("DATA-SOURCES.csv")`; the column
+definitions: `r link("DATA-SOURCES.md")`. The author-shared bundle is confidential and is not
+used by anything published here.
+
+## What the checks found
+
+- **Ten root causes** of the 184 failures when the May code met the August workbook, each
+  traced before fixing: `r link("VERIFY-AUGUST.md")`, summarised in the report's
+  [What reproduces](repro.html#what-reproduces).
+- **A data-entry error in the workbook**: rows 1338 to 1341 of `data_sec_all` repeated at
+  rows 1342 to 1345 (244 billionaires counted instead of 240); handled in
+  `r link("R/compute_data_sec_agg.R")`.
+- **Two implicit readings** in Table 5 (the literal 5% income tax loss share; row 4 omitting
+  row 2's phase-in deduction), kept at the workbook's behaviour and disclosed on the
+  [explorer](explorer/).
+- **Two printed cells** of Table 5 (the income tax loss in rows 2 and 3) that the paper rounds
+  differently from its own workbook.
+- **Display labels** in Tables 1 and A1 that still carry May wording over August values.
+- **A malformed row in our own source manifest**: two `provider` fields contained an
+  unquoted comma, which shifted every later column for any CSV reader; quoted on 2026-09-23.
+- **Not reproduced**: August's new Figure 8 and Appendix Figure A1, and the raw data behind
+  the workbook, which the pipeline takes as given.
+
+::: {.site-nav}
+Supporting side of California Proposition 40:
+[Open Output (the explorer)](explorer/) &middot; Open Analysis: [Report](repro.html) and
+[Slides](slides/slides.html) &middot;
+Open Materials (here) &middot;
+[Overview](index.html)
+:::
