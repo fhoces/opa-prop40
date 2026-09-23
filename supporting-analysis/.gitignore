@@ -1,0 +1,38 @@
+.DS_Store
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj
+
+# renv
+renv/library/
+renv/local/
+renv/cellar/
+renv/python/
+renv/staging/
+
+# targets
+_targets/
+
+# build artifacts
+outputs/figures/*.pdf
+outputs/figures/*.png
+outputs/tables/*.html
+outputs/tables/*.tex
+outputs/report.html
+outputs/report.pdf
+report.html
+report.pdf
+report_files/
+README.html
+README_files/
+
+# cached raw pulls
+data-raw/sec/cache/
+data-raw/bea/cache/
+data-raw/ftb/cache/
+data-raw/irs/cache/
+
+/.quarto/
+**/*.quarto_ipynb

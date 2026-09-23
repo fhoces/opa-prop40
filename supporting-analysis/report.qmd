@@ -1,0 +1,1119 @@
+---
+title: "Reproduction of: California Billionaires: Wealth, Taxes, and Wealth Tax Revenue Estimates"
+subtitle: "R replication of Boll, Saez, and Zucman (2026) — NBER WP 35218"
+author: "Fernando Hoces de la Guardia"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: true
+    embed-resources: true
+  pdf:
+    toc: true
+    number-sections: true
+    documentclass: article
+    fontsize: 11pt
+    geometry: margin=1in
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r setup}
+library(targets)
+library(gt)
+library(ggplot2)
+# Source R/ files. keep.source = TRUE preserves srcref attributes so the
+# read-only code listings below can pull each function body straight from
+# disk and report its exact file:line range.
+options(keep.source = TRUE)
+invisible(lapply(list.files("R", pattern = "\\.R$", full.names = TRUE), source))
+```
+
+## Overview
+
+This document is a section-by-section R replication of *California Billionaires:
+Wealth, Taxes, and Wealth Tax Revenue Estimates* by Jasper Boll, Emmanuel Saez,
+and Gabriel Zucman (NBER Working Paper No. 35218, May 2026). Every table and
+figure embedded below is built from the project's `{targets}` pipeline; the
+upstream targets re-derive each Excel cell of the BSZ supplementary workbook in
+R and verify element-wise against the cached values; see the project README
+for the full pipeline structure.
+
+The text from the original paper is shown in **blockquotes**; section commentary
+outside the blockquotes is the replicator's own.
+
+### Abstract (verbatim from BSZ 2026)
+
+> This paper documents the wealth of California's billionaires and the taxes
+> they pay. California billionaires' wealth exceeds \$2 trillion today, the
+> equivalent of 50% of California's GDP. It has grown 144% from 2023 to 2025,
+> fueled by the AI boom. Over the longer run, the real wealth of California's
+> billionaire class — the 0.0002% richest households — has been multiplied by
+> 30 from 1982 to 2025, while average real family income in California has
+> about doubled. California billionaires pay about 0.2% of their wealth in
+> California income tax (\$3.2 billion/year), representing 2.4% of total
+> California income tax revenue on average over 2023-2025. Using Securities
+> and Exchange Commission data from Alphabet, Meta, Oracle, and Nvidia since
+> 2004, we estimate the trajectory of wealth, income, and taxes paid by the
+> top 4 California billionaires — Page, Brin, Zuckerberg, Ellison (through
+> 2020), and Huang (since 2021) — focusing on their business wealth. This
+> group alone holds nearly \$1 trillion in business wealth, almost half of
+> total California billionaire wealth. For this group, wealth growth (+322%
+> over 2023-2025) and low taxation (0.04% of wealth in annual California
+> income tax) are more pronounced. The proposed one-off California billionaire
+> tax of 5%, payable over 5 years, is both small relative to California
+> billionaires' wealth gains and large relative to the taxes they currently
+> pay. We estimate that it could raise about \$100 billion, with comparatively
+> minor impacts on income tax revenue. Using empirical estimates of mobility
+> responses to wealth taxation, we find that an annual wealth tax on
+> California billionaires could raise substantial additional revenue even
+> after accounting for income tax losses due to mobility.
+
+
+## R re-derivations (computed once, cached, reused below)
+
+```{r compute-outputs, eval=FALSE, echo=TRUE}
+data_sec_agg_r           <- compute_data_sec_agg(data_sec_all)
+pareto_missing_r         <- compute_pareto_missing(pareto_missing)
+pareto_summary           <- compute_pareto_summary(pareto_missing_r)
+tab5_r                   <- compute_tab5(pareto_missing_r, tab2, tab3)
+fig8_laffer_r            <- compute_fig8_laffer()
+billionaires_ca_inctax_r <- compute_billionaires_ca_inctax(
+                              data_sec_agg_r, billionaires_ca_inctax, ftb_b4a)
+shortrunseries_r         <- compute_shortrunseries(
+                              data_sec_agg_r, data_sec_top4,
+                              billionaires_ca_inctax_r, shortrunseries)
+top4taxes_r              <- compute_top4taxes(data_sec_top4)
+# Read-only display. Function bodies live in R/compute_*.R; tar_target() wiring
+# is in _targets.R. The report imports each value via tar_read(<name>).
+```
+
+# 1. California Billionaires Wealth Growth
+
+This section documents the level and growth of California billionaire wealth,
+both recent (2019-2025, where SEC Form 4 filings give per-individual detail)
+and long-run (1982-2025, where Forbes 400 lists give the top .0002%).
+
+## 1.1 Recent and long-term wealth growth
+
+> Table 1 Panel A provides basic statistics on California billionaires in
+> recent years. Appendix Table A1 provides the same statistics at the US level
+> (instead of California). \[…\] Larry Ellison is excluded from these series
+> throughout the 2019 to 2025 period for consistency. (BSZ 2026, p. 3)
+
+**Methodology.** Panel A pulls 2022-2025 totals straight from the Forbes
+real-time billionaire list (Ellison excluded). For each year, total CA
+billionaire wealth is the sum across CA residents,
+$$
+W_t \;=\; \sum_{i \in \text{CA}_t} w_{i,t},
+$$
+the public-stock fraction divides the public-worth aggregate by the total,
+and the top-4 column sums Page + Brin + Zuckerberg + Huang's individual SEC
+Form 4-derived wealth. Year-over-year growth is $g_t = W_t / W_{t-1} - 1$;
+the 2023-2025 cumulative growth row is $W_{2025} / W_{2022} - 1$.
+
+Panel B uses the Forbes 400 historical lists. The "billionaire class" is
+defined as a fixed fraction of all US (or CA) families — the top .0002% — so
+the population size is dynamic (45 families in CA in 2025, 24 in 1982); this
+controls for population growth across the 43-year window. All dollar values
+are deflated to 2025 dollars to control for inflation. The "annualized growth"
+row is the geometric average growth rate over the period,
+$$
+\bar{g} \;=\; \left(\frac{X_{2025}}{X_{1982}}\right)^{1/43} - 1,
+$$
+applied separately to top-class wealth, top-class wealth per family, # CA
+families, CA GDP, and CA GDP per family.
+
+::: {.callout-note collapse="true" appearance="simple" title="Code"}
+
+Table 1 is rendered by [`build_tab1()`](#sec-build_tab1) from three
+upstream tibbles — [`compute_data_sec_agg()`](#sec-compute_data_sec_agg) for
+the year-by-year totals,
+[`compute_shortrunseries()`](#sec-compute_shortrunseries) for the top-4 wealth
+column, and [`extract_longrunseries()`](#sec-extract_longrunseries) for CA GDP.
+
+```{r tab1-call, eval=FALSE, echo=TRUE}
+data_sec_agg_r   <- compute_data_sec_agg(data_sec_all)
+shortrunseries_r <- compute_shortrunseries(
+                       data_sec_agg_r, data_sec_top4,
+                       billionaires_ca_inctax_r, shortrunseries)
+build_tab1(data_sec_agg_r, shortrunseries_r, longrunseries)
+# Read-only display. _targets.R wires these into the pipeline.
+```
+
+:::
+
+```{r tab1}
+tar_read(tab1_gt)
+```
+
+> Figure 1 plots the trajectory of California's billionaires' total wealth
+> (in nominal current dollars) at the end of years 2019 to 2025, the longest
+> time series we have for all California billionaires. It also plots the
+> wealth trajectory of the top 4 (Larry Page, Sergei Brin, Mark Zuckerberg,
+> and Jensen Huang) who are centi-billionaires (wealth above \$100 billion).
+> (BSZ 2026, p. 2–3)
+
+**Methodology.** Two lines, the all-CA total $W_t$ and the top-4 sum
+$W_t^{\text{top4}}$ from Table 1 Panel A, plotted at the end of years
+2019-2025. The dashed counterfactuals depict the post-tax wealth $0.95 \cdot W_{2025}$
+to visualize the magnitude of the proposed 5% one-off wealth tax against the
+2023-2025 wealth build-up.
+
+::: {.callout-note collapse="true" appearance="simple" title="Code"}
+
+Figure 1 is rendered by [`build_fig1()`](#sec-build_fig1) from the
+panel produced by [`compute_shortrunseries()`](#sec-compute_shortrunseries).
+
+```{r fig1-call, eval=FALSE, echo=TRUE}
+build_fig1(shortrunseries_r)
+# Read-only display. _targets.R wires this into the pipeline.
+```
+
+:::
+
+```{r fig1, fig.width=7, fig.height=5}
+tar_read(fig1)
+```
+
+> Figure 2 depicts the full time series. Panel A depicts the trajectory of
+> top .0002% wealth (top 45 families in California today) in 2025 \$ billions
+> vs. the trajectory of California GDP per family. (BSZ 2026, p. 4)
+
+**Methodology.** Panel A overlays two inflation-controlled trajectories at
+annual frequency 1982-2025: the wealth of the top .0002% CA families
+(in 2025 \$ billions) and CA GDP per family (in 2025 \$100,000s). The two
+series are plotted on the same y-axis after rescaling by $\$100\text{k}$
+versus $\$1\text{B}$, so the steeper slope of the wealth series is read
+directly off the chart. Panel B normalizes both series by GDP to remove the
+remaining drift from real economic growth: each year's value is
+$W_t^{0.0002\%} / \text{GDP}_t$ for the US and CA separately, where
+$W_t^{0.0002\%}$ is the aggregate wealth of the year-specific top .0002%
+group. Both panels exclude Ellison from CA after 2020.
+
+::: {.callout-note collapse="true" appearance="simple" title="Code"}
+
+Figure 2 is rendered by [`build_fig2()`](#sec-build_fig2) from the
+positional dump produced by
+[`extract_longrunseries()`](#sec-extract_longrunseries).
+
+```{r fig2-call, eval=FALSE, echo=TRUE}
+build_fig2(longrunseries)
+# Read-only display. _targets.R wires this into the pipeline.
+```
+
+:::
+
+```{r fig2, fig.width=11, fig.height=5}
+tar_read(fig2)
+```
+
+# 2. Taxes paid by California Billionaires
+
+Section 2 estimates the California income tax paid by California billionaires
+each year from 2019 through 2025. Two complementary approaches are used: a
+top-down extrapolation from California Franchise Tax Board (FTB) tabulated
+statistics for high-AGI brackets, and a bottom-up calculation from SEC Form 4
+filings of the top-4 holders' realized capital gains, dividends, and exercised
+stock options.
+
+## 2.1 Headline estimates for all California billionaires
+
+> For all California billionaires, we estimate the California income tax they
+> pay using Franchise Tax Board (the California tax administration) tabulated
+> statistics, a Pareto extrapolation, and an adjustment based on Federal tax
+> data. (BSZ 2026, p. 6)
+
+**Methodology.** The left half of Table 2 ("All California Billionaires") is
+the centerpiece of the paper's headline-tax estimate and combines (i) Franchise
+Tax Board bracket-level tabulations, (ii) a Pareto extrapolation to project the
+top-$N$ taxpayer (where $N$ is the number of CA billionaires that year), and
+(iii) two empirical corrections that adjust the projected top-income result
+into a top-wealth result. The right half ("Top 4") is mechanically simpler:
+SEC Form 4 transaction-level data lets us compute Larry Page, Sergey Brin,
+Mark Zuckerberg, and Jensen Huang's California income tax cell-by-cell, with
+no extrapolation.
+
+**Pareto extrapolation (left half).** A Pareto distribution with parameter
+$b$ has the property that the mean of any upper tail equals $b$ times the
+tail's cutoff. Concretely, if FTB's top bracket has $n_t$ filers above
+threshold $t$ with total AGI $A_t$, then
+$$
+b_t \;=\; \frac{A_t / n_t}{t}.
+$$
+Inverting the tail CDF places exactly $N$ filers above some projected cutoff
+$\hat{t}_N$:
+$$
+\hat{t}_N \;=\; t \cdot \left(\frac{n_t}{N}\right)^{1 - 1/b_t},
+$$
+and the mean AGI of those top $N$ is then $\hat{A}_N = b_t \cdot \hat{t}_N$
+(so total AGI $= N \cdot b_t \cdot \hat{t}_N$). Multiplying by the
+bracket-level effective tax rate $\tau_t = T_t / A_t$ gives an uncorrected
+projection of the top-$N$ tax payment, $\tilde{T}_N$.
+
+**Two corrections.** That projection over-estimates the actual top-$N$ tax
+for two reasons documented in the paper.
+
+*Overshoot correction* ($1 - \pi$, BSZ p. 47). Calibrating the same Pareto
+procedure on US-wide IRS data, where the true top .001% is observable,
+shows that extrapolating from the $10M+ bracket overshoots by roughly 10%.
+The replication uses a year-specific overshoot factor $\pi_t$ stored in the
+$72$ row of the workbook's Memo 1 block.
+
+*Wealth-versus-income discount* ($\theta = 0.5$). Top wealth-holders are not
+top income-earners; Balkir et al. (2025) IRS-matched evidence and the Survey
+of Consumer Finance both find that top wealth-holders' incomes are about
+50% of top income-earners' incomes.
+
+*Charity/federal-rate consistency correction* ($D_{99} \approx 0.92$).
+A second cross-check (Memo 2 of the workbook) confirms that top wealth-holders
+pay roughly 8% lower federal income tax rates than top income-earners, again
+because of charitable giving. This produces a scalar $D_{99}$ recomputed each
+run as the ratio of Memo 2's implied federal rate to Memo 1's 2018-2020
+average federal rate.
+
+**Headline formula.** Putting it together,
+$$
+T_N^{\text{CA-bn}} \;=\; \theta \;\cdot\; D_{99} \;\cdot\;
+                       (1 - \pi_t) \;\cdot\; \tau_t \;\cdot\; \hat{A}_N.
+$$
+In workbook terms this is row 49 = row 44 × row 46 × row 47. The 2024 and
+2025 values use a different identity (no FTB bracket tabulation yet exists
+for those years): an average $\pi_t$ from prior years is extrapolated and the
+$T_N$ value is implied by row-50 share of FTB row-18 total CA income tax.
+
+::: {.callout-note collapse="true" appearance="simple" title="Code"}
+
+The Pareto projection lives in
+[`.bci_top_brackets()`](#sec-compute_billionaires_ca_inctax) (rows 26-44 of
+the workbook); the headline pipeline (rows 49-55, including the $\theta$,
+$D_{99}$ multiplications) is the second half of
+[`compute_billionaires_ca_inctax()`](#sec-compute_billionaires_ca_inctax).
+Table 2 itself is rendered by [`build_tab2()`](#sec-build_tab2) from the
+year-aggregate [`compute_data_sec_agg()`](#sec-compute_data_sec_agg), the
+headline [`compute_billionaires_ca_inctax()`](#sec-compute_billionaires_ca_inctax),
+and the per-billionaire panel from
+[`extract_data_sec_top4()`](#sec-extract_data_sec_top4).
+
+```{r tab2-call, eval=FALSE, echo=TRUE}
+build_tab2(data_sec_agg_r, billionaires_ca_inctax_r, data_sec_top4)
+# Read-only display. _targets.R wires this into the pipeline.
+```
+
+:::
+
+```{r tab2}
+tar_read(tab2_gt)
+```
+
+> Figure 3 depicts the estimated annual California individual income tax
+> paid by all California billionaires and the top 4 (in nominal \$ billions)
+> each year from 2019 to 2025. (BSZ 2026, p. 7)
+
+**Methodology.** A grouped bar chart of the Table 2 columns. The "all CA
+billionaires" bars are the Pareto-extrapolated $T_N^{\text{CA-bn}}$
+(see Table 2 methodology); the "Top 4" bars are direct SEC-derived totals
+$\sum_{i \in \text{top4}} t_{i,t}$, where each $t_{i,t}$ is the CA income tax
+implied by individual $i$'s SEC Form 4 stock sales, exercised stock-options,
+dividends, and executive compensation that year (full per-billionaire
+breakdown is in Table 3). Panel B normalizes Panel A by year-end wealth so
+the visual scale is comparable across years despite the rapid wealth growth.
+
+::: {.callout-note collapse="true" appearance="simple" title="Code"}
+
+Figure 3 is rendered by [`build_fig3()`](#sec-build_fig3) from
+[`compute_shortrunseries()`](#sec-compute_shortrunseries).
+
+```{r fig3-call, eval=FALSE, echo=TRUE}
+build_fig3(shortrunseries_r)
+# Read-only display. _targets.R wires this into the pipeline.
+```
+
+:::
+
+```{r fig3, fig.width=11, fig.height=5}
+tar_read(fig3)
+```
+
+## 2.2 Per-billionaire detail (Top 4)
+
+> Table 3 reports statistics for each of the top 4. (BSZ 2026, p. 7)
+
+**Methodology.** Per-billionaire CA income tax, computed directly from SEC
+Form 4 line-item data (no extrapolation). For each individual $i$ and year
+$t$, fiscal income is
+$$
+y_{i,t} \;=\; \underbrace{\text{salary} + \text{stock-option exercises} + \text{other comp}}_{\text{ordinary income}}
+  \;+\; \text{dividends}
+  \;+\; \text{realized cap.\ gains}_{i,t},
+$$
+where realized capital gains are calculated transaction-by-transaction by
+matching every Form 4 sale to its highest-cost-basis acquisition (the
+HIFO rule the paper assumes; Appendix C.3.e). The CA tax is then the
+top-bracket statutory rate applied to taxable income, less the standard
+deduction. The "Total CA income tax / wealth gain" row at the bottom
+divides each individual's 2019-2025 cumulative tax by the same individual's
+$W_{i,2025} - W_{i,2019}$, where wealth is share-count × price-per-share at
+the relevant year-end.
+
+::: {.callout-note collapse="true" appearance="simple" title="Code"}
+
+Table 3 is rendered by [`build_tab3()`](#sec-build_tab3) from the
+per-billionaire panel produced upstream by SEC Form 4 ingest in
+[`extract_data_sec_top4()`](#sec-extract_data_sec_top4). The transaction-
+level capital-gains accumulation runs outside this R replication (it is in
+the paper's separate top-4 pipeline); this report reads the cached
+year-billionaire-level result.
+
+```{r tab3-call, eval=FALSE, echo=TRUE}
+build_tab3(data_sec_top4)
+# Read-only display. _targets.R wires this into the pipeline.
+```
+
+:::
+
+```{r tab3}
+tar_read(tab3_gt)
+```
+
+> Table 4. First, their companies pay low dividends relative to the
+> corporate net profits they make. \[…\] Second, they realize modest capital
+> gains relative to the enormous wealth gains they are making. (BSZ 2026, p. 10)
+
+**Methodology.** Table 4 aggregates the Table 3 individual stream into a
+single "Top 4" total across 2019-2025 and decomposes total taxes
+$T^{\text{top4}}$ into individual-income + corporate + other components, so
+the reader can see *why* the top-4 effective tax rate ends up so low. Each
+line is built bottom-up from SEC + Compustat.
+
+Fiscal individual income is the sum of stock-option exercises, dividends,
+and realized capital gains (per Table 3). Corporate profits are pro-rated by
+ownership share $s_{i,t}$:
+$$
+\Pi_{i,t} \;=\; s_{i,t} \cdot \Pi_{\text{firm},t},
+$$
+with corporate taxes (federal + state + foreign) pro-rated the same way and
+divided by $\Pi$ to back out the effective corporate rate. Other taxes
+(property + sales) are imputed per Appendix B:
+$$
+\text{prop tax}_{i,t} \;=\; 0.01 \cdot \text{P\&PE}_{i,t},
+\quad
+\text{sales tax}_{i,t} \;=\; 0.03 \cdot 0.5 \cdot
+    \left(\text{AGI}_{i,t} - \text{tax}_{i,t}^{\text{CA}} - \text{tax}_{i,t}^{\text{Fed}} - 0.25 \cdot \text{AGI}_{i,t}\right).
+$$
+The two summary tax-rate rows at the bottom are
+$T^{\text{top4}} / Y^{\text{top4}}$ (vs. economic income) and
+$T^{\text{top4}} / (W_{2025} - W_{2019})$ (vs. wealth gains).
+
+::: {.callout-note collapse="true" appearance="simple" title="Code"}
+
+Table 4 is rendered by [`build_tab4()`](#sec-build_tab4) from
+[`extract_data_sec_top4()`](#sec-extract_data_sec_top4); the corporate-profit
+proration and property/sales imputation also live in the
+[`compute_top4taxes()`](#sec-compute_top4taxes) downstream panel used by
+Figure 6 and 7.
+
+```{r tab4-call, eval=FALSE, echo=TRUE}
+build_tab4(data_sec_top4)
+# Read-only display. _targets.R wires this into the pipeline.
+```
+
+:::
+
+```{r tab4}
+tar_read(tab4_gt)
+```
+
+## 2.3 Total tax burden relative to wealth
+
+> Figure 4 depicts the estimated total annual taxes paid by all California
+> billionaires and the composition by tax type from 2019 to 2025 relative
+> to end of year wealth. Federal and California individual income taxes are
+> estimated using Franchise Tax Board tabulated statistics, a simple Pareto
+> extrapolation, and an adjustment based on Federal tax data. (BSZ 2026, p. 8)
+
+**Methodology.** A stacked-area chart of total annual taxes paid by all CA
+billionaires, decomposed into four components, each expressed as a percent
+of end-of-year wealth $W_t$:
+
+- $\tau^{\text{CA-inctax}}_t / W_t$ — from the Table 2 Pareto extrapolation
+- $\tau^{\text{Fed-inctax}}_t / W_t$ — symmetric Pareto procedure on
+  federal-tax rates
+- $\tau^{\text{corp}}_t / W_t$ — Compustat-derived effective corporate rate
+  applied to pro-rated profits, scaled to all CA billionaires using the
+  public-stock share
+- $\tau^{\text{prop+sales}}_t / W_t$ — imputed property + sales taxes per
+  Appendix B (formulas in Table 4 methodology)
+
+The scaling from "top 4 / public-stock wealth" up to "all CA billionaires /
+all wealth" uses the BSZ Saez-Zucman national-accounts weights to split
+private wealth into pass-through ($46.8 + 25$) and private-C-corp ($61$)
+shares:
+$$
+s^{\text{pass}} \;=\; (1 - s^{\text{pub}} - 0.11 \cdot s^{\text{pub}}) \cdot \frac{46.8 + 25}{46.8 + 25 + 61},
+\quad
+s^{\text{priv-C}} \;=\; (1 - s^{\text{pub}} - 0.11 \cdot s^{\text{pub}}) \cdot \frac{61}{46.8 + 25 + 61}.
+$$
+Imputed corporate tax on private-C wealth is then
+$\tau^{\text{corp,pub}}_t \cdot (s^{\text{priv-C}}/s^{\text{pub}})$, plus an
+11% gross-up on diversified non-public holdings, plus the property-tax-to-
+corporate-tax ratio applied to the imputed corporate base.
+
+::: {.callout-note collapse="true" appearance="simple" title="Code"}
+
+Figure 4 is rendered by [`build_fig4()`](#sec-build_fig4) from the
+`all_taxes` block of
+[`compute_billionaires_ca_inctax()`](#sec-compute_billionaires_ca_inctax);
+the wealth-share decomposition is in
+[`.bci_all_taxes()`](#sec-compute_billionaires_ca_inctax), rows 110-153 of
+the workbook.
+
+```{r fig4-call, eval=FALSE, echo=TRUE}
+build_fig4(billionaires_ca_inctax_r)
+# Read-only display. _targets.R wires this into the pipeline.
+```
+
+:::
+
+```{r fig4, fig.width=7, fig.height=5}
+tar_read(fig4)
+```
+
+> Figure 5 illustrates the statistics from Table 4 on income and taxes of
+> the top 4 richest Californians in the period 2019-2025 on their company
+> wealth (which is 97% of their total wealth at the end of 2025).
+> (BSZ 2026, p. 11)
+
+**Methodology.** A two-panel visualization of Table 4. The top panel shows
+the bar heights are three different denominators for top-4 tax rates over
+2019-2025:
+
+1. Fiscal individual income $Y^{\text{fisc}} = \sum_t \sum_i y_{i,t}$
+2. Economic income $Y^{\text{econ}} = Y^{\text{fisc}} + \sum_t \sum_i (\Pi_{i,t} - \text{div}_{i,t})$
+   (fiscal income plus undistributed corporate profits, avoiding the
+   double-counting of distributed dividends)
+3. Wealth gain $\Delta W = W_{2025} - W_{2019}$
+
+Tax bars in light blue use the matching numerator: CA + Fed individual tax
+for the first denominator, *total* taxes for the latter two. The displayed
+percentages on the bars are exactly the effective rates
+$T / Y^{\text{fisc}}$, $T^{\text{total}} / Y^{\text{econ}}$,
+$T^{\text{total}} / \Delta W$ from Table 4.
+
+::: {.callout-note collapse="true" appearance="simple" title="Code"}
+
+Figure 5 is rendered by [`build_fig5()`](#sec-build_fig5) from
+[`extract_data_sec_top4()`](#sec-extract_data_sec_top4).
+
+```{r fig5-call, eval=FALSE, echo=TRUE}
+build_fig5(data_sec_top4)
+# Read-only display. _targets.R wires this into the pipeline.
+```
+
+:::
+
+```{r fig5, fig.width=7, fig.height=5}
+tar_read(fig5)
+```
+
+> Figure 6 depicts the estimated taxes paid by the top 4 each year from 2004
+> to 2025 relative to their wealth (top panel) and relative to their full
+> economic income (bottom panel). (BSZ 2026, p. 13)
+
+**Methodology.** A 22-year extension of the Figure 5 top panel back to 2004
+(the earliest year SEC Form 4 filings are available in machine-readable
+format). The numerator is total taxes paid (CA + Fed + corp + prop + sales,
+all pro-rated to the top 4's ownership shares); the denominators are wealth
+(top sub-panel) and economic income (bottom sub-panel) of the top 4. Larry
+Ellison is in the series through 2020 and Jensen Huang replaces him from
+2021 onward — the paper justifies this swap on residence (Ellison moved to
+Hawaii in late 2020) and concentration (Huang's wealth only became
+top-4-sized around 2021).
+
+::: {.callout-note collapse="true" appearance="simple" title="Code"}
+
+Figure 6 is rendered by [`build_fig6()`](#sec-build_fig6) from the
+22-year panel produced by [`compute_top4taxes()`](#sec-compute_top4taxes);
+the per-year corporate-tax pro-ration and property/sales imputation use the
+same Appendix B formulas documented under Table 4.
+
+```{r fig6-call, eval=FALSE, echo=TRUE}
+build_fig6(top4taxes_r)
+# Read-only display. _targets.R wires this into the pipeline.
+```
+
+:::
+
+```{r fig6, fig.width=11, fig.height=5}
+tar_read(fig6)
+```
+
+> Figure 7 compares taxes paid relative to economic income for the top 4 vs.
+> the average economy wide. \[…\] The macroeconomic average effective tax
+> rate for the US population is computed using the updated Distributional
+> National Accounts series. (BSZ 2026, p. 15)
+
+**Methodology.** Two-panel comparison of top-4 effective tax rates against
+two macro benchmarks. Panel A (total taxes / economic income) compares
+$T^{\text{top4}}_t / Y^{\text{econ,top4}}_t$ (built as in Tables 4 + 6)
+against the US-wide Distributional National Accounts (DINA) macro average,
+$$
+\bar{\tau}_t^{\text{US-DINA}} \;=\; \frac{T_t^{\text{US, all taxes, all govt}}}
+                                   {Y_t^{\text{US, econ income}}},
+$$
+where the DINA numerator + denominator are the totals across all tax types
+and levels of government from Piketty-Saez-Zucman (2018) / Saez-Zucman (2023).
+Panel B (CA individual income tax / economic income) compares the top-4
+$\tau^{\text{CA,top4}}_t / Y^{\text{econ,top4}}_t$ against a CA-wide average
+constructed as
+$$
+\bar{\tau}_t^{\text{CA}} \;=\; \frac{T_t^{\text{CA-inctax,resid}}}
+                                   {\text{AGI}_t^{\text{CA-resid}} \cdot
+                                    \big(\text{econ-inc}^{\text{US-DINA}}_t / \text{AGI}^{\text{US-IRS}}_t\big)},
+$$
+i.e. CA AGI is rescaled to economic income using the US-wide DINA-to-AGI
+ratio (the paper notes this assumes the CA economic-to-AGI ratio matches
+the US-wide ratio, BSZ p. 48).
+
+::: {.callout-note collapse="true" appearance="simple" title="Code"}
+
+Figure 7 is rendered by [`build_fig7()`](#sec-build_fig7) from
+[`compute_top4taxes()`](#sec-compute_top4taxes) and the DINA tables loaded
+by [`extract_data_dina()`](#sec-extract_data_dina).
+
+```{r fig7-call, eval=FALSE, echo=TRUE}
+build_fig7(top4taxes_r, data_dina)
+# Read-only display. _targets.R wires this into the pipeline.
+```
+
+:::
+
+```{r fig7, fig.width=11, fig.height=5}
+tar_read(fig7)
+```
+
+# 3. The Economics of Taxing California Billionaires' Wealth
+
+Section 3 scores two policy options: a one-time 5% wealth tax payable over
+five years, and a permanent annual wealth tax.
+
+## 3.1 One-time wealth tax
+
+> Table 5 reports a column of this extra CA income tax generated assuming
+> that wealth taxes will be paid one-third by selling assets triggering
+> taxable realized capital gains (with a basis of 20% of selling price
+> consistent with our earlier estimation that California billionaire wealth
+> is 80% unrealized gains) and two-thirds with liquidities or debt.
+> (BSZ 2026, p. 22)
+
+**Methodology.** Four scoring scenarios for the proposed 5% one-time wealth
+tax. Each row has the same five-column structure: number of taxable
+billionaires, gross wealth $W$, taxable wealth $W^{\text{tax}}$ after
+avoidance, total avoidance/evasion rate $\alpha$, wealth-tax revenue
+$T^{\text{wealth}}$, extra income tax from triggered capital-gains sales
+$T^{\text{extra}}$, and the annual income-tax loss $L$ from leavers.
+
+The benchmark formulas are
+$$
+W^{\text{tax}} \;=\; W \cdot (1 - \alpha),
+\qquad
+T^{\text{wealth}} \;=\; 0.90 \cdot 0.05 \cdot W^{\text{tax}}
+$$
+(the $0.90$ phase-in accounts for the linear ramp between \$1B and \$1.1B
+taxable net worth, BSZ fn. 11). Extra income tax from sales assumes
+billionaires fund 1/3 of the tax bill via asset sales with a 20% basis (so
+80% of each sale is realized capital gains taxed at the 13.3% top CA rate):
+$$
+T^{\text{extra}} \;=\; \tfrac{1}{3} \cdot T^{\text{wealth}} \cdot 0.80 \cdot 0.133.
+$$
+Income-tax loss from leavers assumes half of total avoidance is mobility
+($\alpha^{\text{mob}} = \alpha / 2$) and that those leavers stop paying
+the average CA inctax billionaires pay:
+$$
+L \;=\; -\alpha^{\text{mob}} \cdot \bar{T}^{\text{CA-bn}}_{2019\text{-}2025}.
+$$
+Scenario 2 adds the Pareto-extrapolated "missing small billionaires"
+($\$1B$-$\$4.5B$, where Forbes' empirical $b$ rises sharply, see Figure A4)
+to both the count and wealth — the implied "true" $b = 4.48$ above $\$4.5B$
+is held constant down to $\$1B$, yielding $n^{\text{extra}}$ extra
+billionaires with $\$615$B extra wealth, at a higher 20% evasion rate for
+those less-visible cases. Scenario 3 removes specific named leavers (Page,
+Thiel, Hankey, Kalanick + the future-mover income-tax loss from Brin,
+Zuckerberg, Fang) from the benchmark; scenario 4 stacks 2 + 3.
+
+::: {.callout-note collapse="true" appearance="simple" title="Code"}
+
+Table 5 is rendered by [`build_tab5()`](#sec-build_tab5) from the
+scoring tibble produced by [`compute_tab5()`](#sec-compute_tab5), which in
+turn pulls Pareto summary stats from
+[`compute_pareto_missing()`](#sec-compute_pareto_missing) plus the averages
+rows of [`extract_tab2()`](#sec-extract_tab2) and
+[`extract_tab3()`](#sec-extract_tab3).
+
+```{r tab5-call, eval=FALSE, echo=TRUE}
+tab5_r <- compute_tab5(pareto_missing_r, tab2, tab3)
+build_tab5(tab5_r)
+# Read-only display. _targets.R wires these into the pipeline.
+```
+
+:::
+
+```{r tab5}
+tar_read(tab5_gt)
+```
+
+## 3.2 Permanent Billionaire Wealth Tax
+
+> Figure 8 depicts the revenue collected from billionaires from a permanent
+> annual wealth tax as a function of the tax rate (on the x-axis) in the
+> solid red line. This tax revenue estimate takes into account income and
+> wealth tax revenue lost because of mobility responses calibrated using
+> the empirical literature. (BSZ 2026, p. 25)
+
+**Methodology.** A Laffer-curve sweep of permanent annual wealth-tax revenue
+as a function of the tax rate $\tau$. Three curves on the same panel:
+
+*No-behavioral-response benchmark* (dashed line):
+$$
+T^{\text{naive}}(\tau) \;=\; \tau \cdot W_0,
+$$
+where $W_0$ is the current CA billionaire wealth base.
+
+*With mobility response only* (solid line). With constant
+semi-elasticity $e$, the tax base shrinks geometrically:
+$Z(\tau) = W_0 \cdot e^{-e \cdot (\tau + \tau_0)}$, where
+$\tau_0 \approx 0.2\%$ is the existing CA-inctax-as-share-of-wealth that a
+mover would also avoid by leaving. Total revenue including the existing
+income tax is therefore
+$$
+T^{\text{mob}}(\tau) \;=\; (\tau + \tau_0) \cdot W_0 \cdot \exp(-e \cdot (\tau + \tau_0))
+$$
+minus the foregone-baseline $\tau_0 \cdot W_0$. The revenue-maximizing rate is
+$\tau^* = 1/e - \tau_0$ (the textbook Laffer apex shifted by the pre-existing
+tax); with $e = 10$ this gives $\tau^* = 9.8\%$.
+
+*With de-concentration too* (third line). Repeated annual taxation
+mechanically erodes the base over time:
+$$
+Z(\tau) \;=\; W_0 \cdot (1 - \tau)^d \cdot \exp(-e \cdot (\tau + \tau_0)),
+$$
+where $d \approx 15.2$ is the wealth-weighted average # years current
+billionaires have been on the Forbes list (a proxy for "how long has the
+tax been compounding for the average billionaire"). The revenue-maximizing
+rate becomes $\tau^* = 1/(1 + d + e) \approx 3.8\%$ (BSZ p. 25).
+
+::: {.callout-note collapse="true" appearance="simple" title="Code"}
+
+Figure 8 is rendered by [`build_fig8()`](#sec-build_fig8) from the
+201-rate Laffer sweep produced by
+[`compute_fig8_laffer()`](#sec-compute_fig8_laffer).
+
+```{r fig8-call, eval=FALSE, echo=TRUE}
+build_fig8(fig8_laffer_r)
+# Read-only display. _targets.R wires this into the pipeline.
+```
+
+:::
+
+```{r fig8, fig.width=7, fig.height=5}
+tar_read(fig8)
+```
+
+# Appendix
+
+## A.1 US wealth growth comparison
+
+> Table A1 provides the same statistics at the US level (instead of
+> California). (BSZ 2026, p. 3)
+
+**Methodology.** US-wide twin of Table 1. Same formulas as Table 1, applied
+to the full US Forbes 400 sample rather than the CA subset, with two
+mechanical differences: (i) Panel A's "# billionaires" uses the Forbes
+real-time *US-citizen* count (not CA-resident), and (ii) Panel B's
+"top .0002%" is dynamically resized to the larger US population (about 400
+families in 2025 vs. 45 in CA). Annualized growth rates use the same
+geometric average $\bar{g} = (X_{2025}/X_{1982})^{1/43} - 1$.
+
+::: {.callout-note collapse="true" appearance="simple" title="Code"}
+
+Table A1 is rendered by [`build_tab_a1()`](#sec-build_tab_a1) from
+the positional dumps [`extract_shortrunseries()`](#sec-extract_shortrunseries)
+(Panel A's # US-citizen-billionaire count and total wealth) and
+[`extract_longrunseries()`](#sec-extract_longrunseries) (Panel B's 1982 vs
+2025 long-run real growth).
+
+```{r tab_a1-call, eval=FALSE, echo=TRUE}
+build_tab_a1(shortrunseries, longrunseries)
+# Read-only display. _targets.R wires this into the pipeline.
+```
+
+:::
+
+```{r tab_a1}
+tar_read(tab_a1_gt)
+```
+
+## A.2 Industry composition
+
+> Figure A1 depicts the industry composition of California billionaires'
+> wealth with a breakdown between SEC reported publicly traded stock vs.
+> other for each industry. (BSZ 2026, p. 5)
+
+**Methodology.** A horizontal stacked bar chart of CA billionaire wealth by
+industry as of 2026/01/01, decomposed into SEC-reported public-stock wealth
+vs. other. Industries are sorted by total wealth. Each bar is
+$$
+W^{\text{industry } j} \;=\;
+\underbrace{W_j^{\text{pub}}}_{\text{from SEC Form 13D/G + 14A}}
+\;+\; \underbrace{W_j^{\text{other}}}_{\text{Forbes total} - W_j^{\text{pub}}}.
+$$
+The Forbes industry tag comes from the source spreadsheet's
+`rtb_2026_industry` sheet — read at figure-render time rather than via the
+{targets} cache because the data block is small and stable.
+
+::: {.callout-note collapse="true" appearance="simple" title="Code"}
+
+Figure A1 is rendered by [`build_fig_a1()`](#sec-build_fig_a1).
+It reads block 2 of the `rtb_2026_industry` sheet directly
+(cols A, G, H, I, rows 22-34) at build time rather than from a
+pre-extracted target.
+
+```{r fig_a1-call, eval=FALSE, echo=TRUE}
+build_fig_a1(xlsx_path)
+# Read-only display. _targets.R wires this into the pipeline.
+```
+
+:::
+
+```{r fig_a1, fig.width=8, fig.height=6}
+tar_read(fig_a1)
+```
+
+## A.3 Robustness: alternative method for CA income tax
+
+> Appendix Figure A2 displays the California income tax paid by California
+> billionaires as a percent of California wide state individual income tax
+> revenue. (BSZ 2026, p. 7)
+
+**Methodology.** Two ratios plotted against year, both with the
+Pareto-extrapolated $T_N^{\text{CA-bn}}$ in the numerator and *total* CA
+inctax in the denominator:
+$$
+\text{headline series}_t \;=\;
+\frac{T_N^{\text{CA-bn}}(t)}{T_t^{\text{CA-inctax-total}}},
+$$
+where the denominator comes from FTB statewide aggregates (workbook row 18).
+This is a robustness check showing the headline estimate sits in a plausible
+$2$-$3\%$ range across years, and is consistent with the upper end of the
+Balkir et al. (2025) direct IRS-match estimate for the US wide top .0002%.
+
+::: {.callout-note collapse="true" appearance="simple" title="Code"}
+
+Figure A2 is rendered by [`build_fig_a2()`](#sec-build_fig_a2)
+from [`compute_shortrunseries()`](#sec-compute_shortrunseries) (the AA / AF
+columns express the headline and SEC-top-5 figures as a share of total CA
+income tax revenue).
+
+```{r fig_a2-call, eval=FALSE, echo=TRUE}
+build_fig_a2(shortrunseries_r)
+# Read-only display. _targets.R wires this into the pipeline.
+```
+
+:::
+
+```{r fig_a2, fig.width=7, fig.height=5}
+tar_read(fig_a2)
+```
+
+## A.4 Taxes on public-stock wealth
+
+> Figure A3-A produces the same statistics for wealth arising from publicly
+> traded stock. (BSZ 2026, p. 36)
+
+**Methodology.** Figure 4's tax-burden decomposition restricted to wealth in
+the form of publicly traded stock — i.e. only the share that can be
+verified directly against SEC Form 13D/G + 14A filings rather than imputed
+from national-accounts weights. Public wealth in each year is
+$W_t^{\text{pub}} = s^{\text{pub}}_t \cdot W_t$. Tax components are expressed
+as a share of $W_t^{\text{pub}}$:
+$$
+\text{rate}^{(k)}_t \;=\; \tau^{(k)}_t / W_t^{\text{pub}},
+\quad k \in \{\text{CA inctax}, \text{Fed inctax}, \text{corp}, \text{prop+sales}\}.
+$$
+The numerators come from the same `all_taxes` block as Figure 4, but the
+private-wealth imputation rows are dropped (the public-restricted figures
+sit in workbook rows 117-135 versus the full decomposition in rows 144-153).
+The companion panel (sometimes denoted A3-B) repeats the exercise with
+economic income $Y^{\text{econ,pub}}_t$ as denominator instead of wealth.
+
+::: {.callout-note collapse="true" appearance="simple" title="Code"}
+
+Figure A3 is rendered by [`build_fig_a3()`](#sec-build_fig_a3)
+from the `all_taxes` block of
+[`compute_billionaires_ca_inctax()`](#sec-compute_billionaires_ca_inctax),
+restricting to the public-asset rows (rows 117-135 of the source sheet).
+
+```{r fig_a3-call, eval=FALSE, echo=TRUE}
+build_fig_a3(billionaires_ca_inctax_r)
+# Read-only display. _targets.R wires this into the pipeline.
+```
+
+:::
+
+```{r fig_a3, fig.width=11, fig.height=5}
+tar_read(fig_a3)
+```
+
+## A.5 Pareto extrapolation for missing billionaires
+
+Panel A plots the Pareto coefficient *b* at each wealth threshold (Forbes
+data + projected). Panel B compares the density of billionaires-per-bracket
+empirically vs. the Pareto-extrapolation that adds the small billionaires
+Forbes is likely missing below the \$4.5B anchor.
+
+**Methodology.** Panel A plots the empirical Pareto coefficient
+$b$ as a function of wealth threshold,
+$$
+b(t) \;=\; \frac{\text{mean wealth above } t}{t},
+$$
+computed directly from the Forbes real-time list as of 4/15/2026. For
+thresholds above \$4.5B (where Forbes' coverage is essentially complete) $b$
+is roughly constant at about $4.48$, the empirical regularity that a Pareto
+tail predicts. Below \$4.5B, observed $b$ rises sharply — diagnostic that
+Forbes is undercounting small billionaires.
+
+Panel B plots two empirical CDFs of wealth: the raw Forbes count by bracket,
+versus a counterfactual that extends the constant-$b$ Pareto tail from
+\$4.5B down to \$1B. Under the counterfactual,
+$$
+n^{\text{Pareto}}(t) \;=\; n_{4.5} \cdot \left(\frac{t}{4.5}\right)^{-b/(b-1)}
+\quad \text{for } t < 4.5,
+$$
+implying about 368 extra "missing" billionaires (Forbes counts 249, the
+extrapolation says 617) with about \$615B in extra wealth. These figures
+flow into the Table 5 scenario-2 / 4 scoring.
+
+::: {.callout-note collapse="true" appearance="simple" title="Code"}
+
+Figure A4 is rendered by [`build_fig_a4()`](#sec-build_fig_a4)
+from [`compute_pareto_missing()`](#sec-compute_pareto_missing).
+
+```{r fig_a4-call, eval=FALSE, echo=TRUE}
+build_fig_a4(pareto_missing_r)
+# Read-only display. _targets.R wires this into the pipeline.
+```
+
+:::
+
+```{r fig_a4, fig.width=11, fig.height=5}
+tar_read(fig_a4)
+```
+
+# Source code {#sec-source-code}
+
+The function bodies listed below live in `R/*.R` files (one canonical
+location per function). Each listing is pulled from disk at render time via
+R's `getSrcref()` so the report never drifts from the actual code.
+
+**Where each kind of function lives:**
+
+- `extract_*()`                   → `R/data_sheets.R`
+- `compute_data_sec_agg()`        → `R/compute_data_sec_agg.R`
+- `compute_pareto_*()`, `compute_fig8_laffer()` → `R/compute_pareto.R`
+- `compute_tab5()`                → `R/compute_tab5.R`
+- `compute_billionaires_ca_inctax()` → `R/compute_billionaires_ca_inctax.R`
+- `compute_shortrunseries()`      → `R/compute_shortrunseries.R`
+- `compute_top4taxes()`           → `R/compute_top4taxes.R`
+- `build_tab*_gt()`               → `R/tables.R`
+- `build_fig*()`                  → `R/figures.R`
+
+Each entry's header below repeats the file path, and the last line of each
+listing gives the precise line range pulled from `getSrcref()`. Listings are
+grouped by stage of the pipeline: `extract_*` ingestors that read the
+upstream Excel cells positionally, `compute_*` re-derivations that turn the
+extracted inputs into validated tibbles, and `build_*` rendererings that
+take those tibbles and produce the gt tables / ggplot figures embedded
+above.
+
+## Extract
+
+### `extract_data_dina()` {#sec-extract_data_dina}
+
+```{r src-extract_data_dina, eval=FALSE, echo=TRUE, code=deparse_function("extract_data_dina")}
+```
+
+### `extract_data_sec_top4()` {#sec-extract_data_sec_top4}
+
+```{r src-extract_data_sec_top4, eval=FALSE, echo=TRUE, code=deparse_function("extract_data_sec_top4")}
+```
+
+### `extract_longrunseries()` {#sec-extract_longrunseries}
+
+```{r src-extract_longrunseries, eval=FALSE, echo=TRUE, code=deparse_function("extract_longrunseries")}
+```
+
+### `extract_shortrunseries()` {#sec-extract_shortrunseries}
+
+```{r src-extract_shortrunseries, eval=FALSE, echo=TRUE, code=deparse_function("extract_shortrunseries")}
+```
+
+### `extract_tab2()` {#sec-extract_tab2}
+
+```{r src-extract_tab2, eval=FALSE, echo=TRUE, code=deparse_function("extract_tab2")}
+```
+
+### `extract_tab3()` {#sec-extract_tab3}
+
+```{r src-extract_tab3, eval=FALSE, echo=TRUE, code=deparse_function("extract_tab3")}
+```
+
+## Compute
+
+### `compute_billionaires_ca_inctax()` {#sec-compute_billionaires_ca_inctax}
+
+```{r src-compute_billionaires_ca_inctax, eval=FALSE, echo=TRUE, code=deparse_function("compute_billionaires_ca_inctax")}
+```
+
+### `compute_data_sec_agg()` {#sec-compute_data_sec_agg}
+
+```{r src-compute_data_sec_agg, eval=FALSE, echo=TRUE, code=deparse_function("compute_data_sec_agg")}
+```
+
+### `compute_fig8_laffer()` {#sec-compute_fig8_laffer}
+
+```{r src-compute_fig8_laffer, eval=FALSE, echo=TRUE, code=deparse_function("compute_fig8_laffer")}
+```
+
+### `compute_pareto_missing()` {#sec-compute_pareto_missing}
+
+```{r src-compute_pareto_missing, eval=FALSE, echo=TRUE, code=deparse_function("compute_pareto_missing")}
+```
+
+### `compute_shortrunseries()` {#sec-compute_shortrunseries}
+
+```{r src-compute_shortrunseries, eval=FALSE, echo=TRUE, code=deparse_function("compute_shortrunseries")}
+```
+
+### `compute_tab5()` {#sec-compute_tab5}
+
+```{r src-compute_tab5, eval=FALSE, echo=TRUE, code=deparse_function("compute_tab5")}
+```
+
+### `compute_top4taxes()` {#sec-compute_top4taxes}
+
+```{r src-compute_top4taxes, eval=FALSE, echo=TRUE, code=deparse_function("compute_top4taxes")}
+```
+
+## Build
+
+### `build_tab1()` {#sec-build_tab1}
+
+```{r src-build_tab1, eval=FALSE, echo=TRUE, code=deparse_function("build_tab1")}
+```
+
+### `build_tab2()` {#sec-build_tab2}
+
+```{r src-build_tab2, eval=FALSE, echo=TRUE, code=deparse_function("build_tab2")}
+```
+
+### `build_tab3()` {#sec-build_tab3}
+
+```{r src-build_tab3, eval=FALSE, echo=TRUE, code=deparse_function("build_tab3")}
+```
+
+### `build_tab4()` {#sec-build_tab4}
+
+```{r src-build_tab4, eval=FALSE, echo=TRUE, code=deparse_function("build_tab4")}
+```
+
+### `build_tab5()` {#sec-build_tab5}
+
+```{r src-build_tab5, eval=FALSE, echo=TRUE, code=deparse_function("build_tab5")}
+```
+
+### `build_tab_a1()` {#sec-build_tab_a1}
+
+```{r src-build_tab_a1, eval=FALSE, echo=TRUE, code=deparse_function("build_tab_a1")}
+```
+
+### `build_fig1()` {#sec-build_fig1}
+
+```{r src-build_fig1, eval=FALSE, echo=TRUE, code=deparse_function("build_fig1")}
+```
+
+### `build_fig2()` {#sec-build_fig2}
+
+```{r src-build_fig2, eval=FALSE, echo=TRUE, code=deparse_function("build_fig2")}
+```
+
+### `build_fig3()` {#sec-build_fig3}
+
+```{r src-build_fig3, eval=FALSE, echo=TRUE, code=deparse_function("build_fig3")}
+```
+
+### `build_fig4()` {#sec-build_fig4}
+
+```{r src-build_fig4, eval=FALSE, echo=TRUE, code=deparse_function("build_fig4")}
+```
+
+### `build_fig5()` {#sec-build_fig5}
+
+```{r src-build_fig5, eval=FALSE, echo=TRUE, code=deparse_function("build_fig5")}
+```
+
+### `build_fig6()` {#sec-build_fig6}
+
+```{r src-build_fig6, eval=FALSE, echo=TRUE, code=deparse_function("build_fig6")}
+```
+
+### `build_fig7()` {#sec-build_fig7}
+
+```{r src-build_fig7, eval=FALSE, echo=TRUE, code=deparse_function("build_fig7")}
+```
+
+### `build_fig8()` {#sec-build_fig8}
+
+```{r src-build_fig8, eval=FALSE, echo=TRUE, code=deparse_function("build_fig8")}
+```
+
+### `build_fig_a1()` {#sec-build_fig_a1}
+
+```{r src-build_fig_a1, eval=FALSE, echo=TRUE, code=deparse_function("build_fig_a1")}
+```
+
+### `build_fig_a2()` {#sec-build_fig_a2}
+
+```{r src-build_fig_a2, eval=FALSE, echo=TRUE, code=deparse_function("build_fig_a2")}
+```
+
+### `build_fig_a3()` {#sec-build_fig_a3}
+
+```{r src-build_fig_a3, eval=FALSE, echo=TRUE, code=deparse_function("build_fig_a3")}
+```
+
+### `build_fig_a4()` {#sec-build_fig_a4}
+
+```{r src-build_fig_a4, eval=FALSE, echo=TRUE, code=deparse_function("build_fig_a4")}
+```
+
+# Reproducibility
+
+This report is built from the `{targets}` pipeline in the project root.
+All upstream inputs come from `original-materials/BSZ_MainTablesFigures.xlsx`.
+To re-render:
+
+```r
+targets::tar_make()
+quarto::quarto_render("report.qmd")
+```
+
+The 506-expectation `testthat` suite (`Rscript tests/testthat.R`) verifies
+every R re-derivation against the Excel cached values within documented
+tolerances.
+
+## To-do: Raw data sources that are NOT yet independently pulled
+
+{{< include _raw-sources.md >}}

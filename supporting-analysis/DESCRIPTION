@@ -1,0 +1,19 @@
+Package: cawtbsz
+Type: Project
+Title: California Billionaire Wealth & Tax Replication (Boll-Saez-Zucman 2026)
+Version: 0.0.0.9000
+Authors@R: person("Fernando", "Hoces", role = c("aut", "cre"))
+Description: Reproduces the tables and figures of Boll, Saez, and Zucman
+    (2026) "California Billionaires: Wealth, Taxes, and Wealth Tax Revenue
+    Estimates" (NBER WP 35218) from the authors' supplementary Excel workbook
+    and re-pulled public sources (SEC EDGAR, BEA, FTB, IRS SOI).
+Encoding: UTF-8
+Imports:
+    dplyr,
+    ggplot2,
+    gt,
+    readxl,
+    targets,
+    tarchetypes,
+    testthat,
+    tibble
