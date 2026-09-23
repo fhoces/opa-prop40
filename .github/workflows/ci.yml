@@ -51,8 +51,10 @@ jobs:
           echo "c236cc9413374402973d61bfdfc02b7e573b05ad9c2f0658ee6b66ad898cb6ce  original-materials/BSZ_MainTablesFigures.xlsx" \
             | sha256sum -c -
 
-      - name: Run the pipeline (tar_make)
-        run: Rscript -e 'targets::tar_make()'
+      # The Quarto report targets need Quarto + LaTeX, which this runner lacks; CI
+      # builds and tests every computation, table and figure, not the rendered report.
+      - name: Run the pipeline (tar_make, without the report)
+        run: Rscript -e 'targets::tar_make(names = !tidyselect::any_of(c("report_html", "report_pdf")))'
 
       - name: Run the test suite
         continue-on-error: true
