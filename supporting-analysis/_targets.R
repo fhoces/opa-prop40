@@ -136,6 +136,9 @@ list(
   tar_target(site_tab5_csv,   write_site_csv(tab5_r, "data/tab5.csv"),        format = "file"),
   tar_target(site_leavers_csv,
              write_site_csv(site_scoring_inputs$leavers, "data/leavers.csv"), format = "file"),
+  tar_target(site_tab5_printed, compare_tab5_printed(tab5_r)),
+  tar_target(site_tab5_printed_csv,
+             write_site_csv(site_tab5_printed, "data/tab5-vs-printed.csv"), format = "file"),
   tar_target(site_grid_js,    write_site_grid_js(site_grid, site_scoring_inputs), format = "file"),
 
   # Phase 4 - Quarto report. The render targets list every gt/figure object as

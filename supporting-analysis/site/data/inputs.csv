@@ -6,6 +6,7 @@
 "m","Share of avoidance that is leaving","50%","guesswork","Asserted (BSZ PDF p.24; Tab5 row 1 label). Explorer dial."
 "αₛ","Avoidance, less visible billionaires","20%","guesswork","Asserted (BSZ PDF p.25). Explorer dial."
 "s","Share of the tax paid by selling assets","1/3","guesswork","Asserted (BSZ PDF p.24). Explorer dial."
+"L","Who left before 1 Jan 2026 (Table 5 rows 3 and 4)","no one (row 1)","guesswork","A legal judgment on residency; rows 3-4 assume Page, Thiel, Hankey, Kalanick (BSZ PDF p.26). Explorer dial."
 "g","Capital-gain share of a sale","80%","research","BSZ's own estimate that CA billionaire wealth is 80% unrealized gains (PDF p.24)."
 "t_cg","Top CA income tax rate on gains","13.3%","data","California statute, top marginal rate (Tab5!G6)."
 "C","CA income tax paid by billionaires, 2019-2025 average","$3.06 B/yr","research","BSZ's own FTB + Pareto estimate (Tab2!C14; Table 2 of the paper), reproduced in this pipeline."

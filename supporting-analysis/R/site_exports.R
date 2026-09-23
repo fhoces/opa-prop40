@@ -67,7 +67,9 @@ tab5_scoring_inputs <- function(pareto_missing_r, tab2, tab3) {
       annual_inctax_loss = c(pre_loss, post_loss)
     ),
     W_pre       = sum(pre_wealth),
-    leaver_loss = sum(pre_loss) + sum(post_loss)
+    leaver_loss = sum(pre_loss) + sum(post_loss),
+    # what row 4 would lose if it applied row 2's phase-in deduction (Tab5!F7 vs F9)
+    row4_phasein_gap = W0 * pareto$pct_wealth_increase * pareto$fraction_in_phasein * 0.025
   )
 }
 
@@ -196,6 +198,8 @@ build_site_inputs <- function(inp) {
       "Asserted (BSZ PDF p.25). Explorer dial.",
     "s", "Share of the tax paid by selling assets", "1/3", "guesswork",
       "Asserted (BSZ PDF p.24). Explorer dial.",
+    "L", "Who left before 1 Jan 2026 (Table 5 rows 3 and 4)", "no one (row 1)", "guesswork",
+      "A legal judgment on residency; rows 3-4 assume Page, Thiel, Hankey, Kalanick (BSZ PDF p.26). Explorer dial.",
     "g", "Capital-gain share of a sale", "80%", "research",
       "BSZ's own estimate that CA billionaire wealth is 80% unrealized gains (PDF p.24).",
     "t_cg", "Top CA income tax rate on gains", "13.3%", "data",
@@ -254,6 +258,8 @@ site_grid_js_text <- function(grid, inp) {
     units    = outs$unit,
     named    = named,
     preferred = "Row 1: benchmark",
+    facts    = list(W0 = inp$W0, n0 = inp$n0, C = round(inp$C, 6),
+                    row4_phasein_gap = round(inp$row4_phasein_gap, 6)),
     snap     = snap
   )
   json <- jsonlite::toJSON(payload, auto_unbox = TRUE, digits = NA, pretty = FALSE)
@@ -267,4 +273,31 @@ write_site_grid_js <- function(grid, inp) {
   # Raw UTF-8 bytes, exactly the text (writeLines would add a second newline).
   writeBin(charToRaw(enc2utf8(site_grid_js_text(grid, inp))), path)
   path
+}
+
+# ---- Table 5 as printed in the paper ---------------------------------------
+# Transcribed from BSZ (August 2026) PDF p.39, with the number of decimals the
+# paper prints. Used to count cells that match the printed digit, which is a
+# stricter test than matching the workbook's cached value.
+bsz_tab5_printed <- function() {
+  tibble::tibble(
+    column = rep(c("n_billionaires", "wealth", "taxable_wealth", "avoidance_rate",
+                   "wealth_tax_revenue", "extra_ca_inctax_sales", "annual_ca_inctax_loss"), 4),
+    row    = rep(1:4, each = 7),
+    printed = c(250, 2307, 2076, 10.0, 104, 3.7, -0.15,
+                620, 2957, 2597, 12.2, 128, 4.5, -0.19,
+                250, 2307, 1776, 23.0,  89, 3.1, -0.51,
+                620, 2957, 2296, 22.4, 115, 4.1, -0.56),
+    digits = rep(c(0, 0, 0, 1, 0, 1, 2), 4),
+    scale  = rep(c(1, 1, 1, 100, 1, 1, 1), 4)
+  )
+}
+
+# One row per Table 5 cell: reproduced value, printed value, and whether the
+# reproduced value rounds to the printed digit.
+compare_tab5_printed <- function(tab5_r) {
+  p <- bsz_tab5_printed()
+  p$reproduced <- mapply(function(col, r, sc) tab5_r[[col]][r] * sc, p$column, p$row, p$scale)
+  p$matches_printed <- round(p$reproduced, p$digits) == p$printed
+  p
 }
