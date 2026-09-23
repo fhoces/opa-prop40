@@ -1,0 +1,15 @@
+"input_id","version","description","value","unit","label","provenance","source","page"
+"n_billionaires","both","CA billionaires on the Forbes real-time list, 1 Jul 2026",250,"count","data","public","Tab5!B6 (BSZ Table 5 row 1); GGSS p.4",24
+"baseline_net_worth","both","Aggregate net worth, CA billionaires, 1 Jul 2026 (incl. non-US citizens)",2307,"$B","data","public","Tab5!C6; BSZ PDF p.24 (=90%*5%*$2307 billion); GGSS p.4",24
+"tax_rate","both","Statutory one-time wealth tax rate",0.05,"rate","data","public","The Act; GGSS p.1",24
+"avoidance_rate","both","Avoidance and evasion allowance (share of the base)",0.1,"share","guesswork","public","GGSS p.4 (""a relatively small avoidance rate of 10%""); BSZ PDF p.24",24
+"mobility_share","bsz","Share of the avoidance allowance that is people leaving CA",0.5,"share","guesswork","public","BSZ PDF p.24 (""half of the 10% avoidance takes the form of mobility"")",24
+"sell_share","bsz","Share of the tax paid by selling assets",0.333333333333333,"share","guesswork","public","BSZ PDF p.24 (""paid one-third by selling assets"")",24
+"gains_share","bsz","Capital-gain share of a sale (1 - basis share)",0.8,"share","research","public","BSZ PDF p.24 (basis of 20%, CA billionaire wealth 80% unrealized gains)",24
+"ca_cg_rate","bsz","Top CA income tax rate on realized gains",0.133,"rate","data","public","Tab5!G6",39
+"ca_inctax_billionaires","bsz","CA income tax paid by billionaires, 2019-2025 average",3.06136377457079,"$B/yr","research","public","Tab2!C14 (BSZ Table 2); BSZ PDF p.11 (""average of $3 billion per year"")",11
+"leavers_wealth","bsz","Wealth of the 7 named leavers in Table 5 rows 3-4 (Page, Thiel, Hankey, Kalanick, Brin, Zuckerberg, Fang)",817.11,"$B","data","public","Tab5!B20:B27 (Forbes 7/1/2026 values)",39
+"leavers_annual_inctax","bsz","Annual CA income tax of the 7 named leavers (top 3 from SEC data, rest wealth-proportional)",0.362362402478738,"$B/yr","data","public","Tab5!F19+F24 (Tab3 row 13 SEC-based); BSZ PDF p.26",26
+"pre2026_leavers_wealth","bsz","Wealth of the 4 pre-2026 leavers in the aggressive row (Page, Thiel, Hankey, Kalanick)",333.61,"$B","guesswork","public","Tab5!B20:B23; BSZ PDF p.26 (a legal judgment on residency)",26
+"semi_elasticity_permanent","bsz","Mobility semi-elasticity for a PERMANENT annual wealth tax",10,"coefficient","research","public","Fig8!B8; BSZ PDF p.28 (Brulhart et al. 2022, ""around 10"")",28
+"pareto_pct_wealth_increase","bsz","Wealth added by the Pareto extrapolation of missing small billionaires",0.281904115590538,"share","research","public","Pareto-missing!I23; BSZ PDF p.25",25

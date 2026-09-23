@@ -141,6 +141,13 @@ list(
              write_site_csv(site_tab5_printed, "data/tab5-vs-printed.csv"), format = "file"),
   tar_target(site_grid_js,    write_site_grid_js(site_grid, site_scoring_inputs), format = "file"),
 
+  # Export contract for the comparison layer (R/export_contract.R): read off
+  # existing targets only, same schema as opposing-analysis/export/r/.
+  tar_target(export_inputs,  export_contract_inputs(site_scoring_inputs)),
+  tar_target(export_outputs, export_contract_outputs(site_tab5_printed)),
+  tar_target(export_inputs_csv,  write_export_csv(export_inputs, "inputs.csv"),   format = "file"),
+  tar_target(export_outputs_csv, write_export_csv(export_outputs, "outputs.csv"), format = "file"),
+
   # Phase 4 - Quarto report. The render targets list every gt/figure object as
   # an explicit dependency so the report re-renders when any artifact changes.
   # Requires Quarto CLI on PATH (https://quarto.org/docs/get-started/).
