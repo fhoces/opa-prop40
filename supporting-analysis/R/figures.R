@@ -564,21 +564,36 @@ build_fig3 <- function(shortrunseries_r) {
     )
 }
 
-build_fig2 <- function(longrunseries) {
+build_fig2 <- function(longrunseries, vintage = bsz_vintage()) {
   # Figure 2: Billionaire Class Wealth Grows Much Faster than the Economy.
   # Two panels stacked horizontally via patchwork.
-  #   A: CA top .0002% wealth (AZ, $B real) vs CA GDP per family (BE, $100K real)
-  #      — dual y-axis line chart.
-  #   B: Top .0002% wealth as % of GDP for US (AV) and CA (AW) — two lines.
-  # Year range 1982-2025 = longrunseries rows 8..51.
+  #   A: CA top .0002% wealth vs CA GDP per family — dual y-axis line chart.
+  #   B: Top .0002% wealth as % of GDP for US and CA — two lines.
+  # Year range 1982-2025 = longrunseries rows 8..51 (both vintages; August
+  # added a 2026 row past this range that fig2 does not extend into).
+  #
+  # Column letters for these 4 series moved in August (longrunseries grew
+  # 80 -> 96 columns): AZ -> BJ (CA top .0002% real average wealth, values
+  # legitimately updated between the May/August Forbes snapshots, not just
+  # relabeled); BE -> BP (CA GDP per family, $100Ks); AV -> BF (US top 400
+  # wealth/GDP - value UNCHANGED, byte-identical between vintages); AW -> BG
+  # (CA top 45 wealth/GDP - also unchanged). Verified cell-by-cell against
+  # both workbooks (openpyxl) - see VERIFY-AUGUST.md.
   lrs <- longrunseries
   rows <- 8:51
   num <- function(col) suppressWarnings(as.numeric(lrs[[col]][rows]))
   year <- num("A")
-  wealth_b   <- num("AZ")   # CA top .0002% real wealth, $B
-  gdp_per_fam <- num("BE")   # CA GDP per family, $100Ks
-  us_share   <- num("AV")   # US top 400 wealth / GDP
-  ca_share   <- num("AW")   # CA top 45  wealth / GDP
+  if (identical(vintage, "may")) {
+    wealth_b    <- num("AZ")   # CA top .0002% real wealth, $B
+    gdp_per_fam <- num("BE")   # CA GDP per family, $100Ks
+    us_share    <- num("AV")   # US top 400 wealth / GDP
+    ca_share    <- num("AW")   # CA top 45  wealth / GDP
+  } else {
+    wealth_b    <- num("BJ")
+    gdp_per_fam <- num("BP")
+    us_share    <- num("BF")
+    ca_share    <- num("BG")
+  }
 
   # Panel A: single y-axis — both series naturally fit in 0..30 (wealth in $B,
   # GDP per family in $100Ks). Wealth is the headline (red, with points);

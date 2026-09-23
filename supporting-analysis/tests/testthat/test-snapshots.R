@@ -1,12 +1,17 @@
-# Golden-master snapshot tests. The .rds files under tests/snapshots/ pin the
-# exact numeric output of every Phase-2 R re-derivation and every Phase-3
-# exhibit at the commit when they were captured.
+# Golden-master snapshot tests. The .rds files under tests/snapshots/<vintage>/
+# pin the exact numeric output of every Phase-2 R re-derivation and every
+# Phase-3 exhibit at the commit when they were captured. Snapshots are
+# vintage-specific (tests/snapshots/may/, tests/snapshots/august/) because the
+# underlying August workbook data legitimately differs from May's - a
+# byte-for-byte snapshot comparison across vintages would always fail by
+# design, not because of a regression.
 #
 # A refactor that changes ANY numeric value will fail these tests. Re-baseline
 # only when the change is intentional: run `Rscript tests/snapshot_regenerate.R`
-# and commit the updated .rds files with an explanatory message.
+# (regenerates the CURRENT vintage's snapshots, from BSZ_VINTAGE) and commit
+# the updated .rds files with an explanatory message.
 
-SNAP_DIR <- testthat::test_path("..", "snapshots")
+SNAP_DIR <- testthat::test_path("..", "snapshots", bsz_vintage())
 load_snap <- function(name) {
   path <- file.path(SNAP_DIR, paste0(name, ".rds"))
   if (!file.exists(path)) {
@@ -54,7 +59,7 @@ test_that("shortrunseries_r matches snapshot",        check_snap(shortrunseries_
 test_that("top4taxes_r matches snapshot",             check_snap(top4taxes_r_v,        "top4taxes_r"))
 
 # ---- Phase-3 table panel snapshots ---------------------------------------
-tab1_gt   <- build_tab1(data_sec_agg_r, shortrunseries_r_v, lrs_raw)
+tab1_gt   <- build_tab1(data_sec_agg_r, shortrunseries_r_v, lrs_raw, srs_raw)
 tab2_gt   <- build_tab2(data_sec_agg_r, b_r, top4_raw)
 tab3_gt   <- build_tab3(top4_raw)
 tab4_gt   <- build_tab4(top4_raw)

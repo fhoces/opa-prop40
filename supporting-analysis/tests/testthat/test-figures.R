@@ -34,10 +34,12 @@ test_that("build_fig2 returns a patchwork object spanning 1982-2025", {
   expect_equal(nrow(pb$data), 88)
   expect_setequal(levels(pb$data$region),
                   c("US (top 400)", "California (top 45)"))
-  # 2025 wealth (AZ) ≈ 28.37
+  # 2025 wealth (AZ May / BJ August - legitimately updated between Forbes
+  # snapshots, not just relabeled; see build_fig2()'s RC1-adjacent column note).
   expect_equal(pa$data$value[pa$data$year == 2025 &
                               pa$data$series == "CA top .0002% wealth ($B, 2025 $)"],
-                28.365, tolerance = 1e-2)
+                if (identical(bsz_vintage(), "may")) 28.365 else 29.216, tolerance = 1e-2)
+  # This ratio is byte-identical between vintages (AW == BG exactly).
   expect_equal(pb$data$share[pb$data$year == 2025 & pb$data$region == "California (top 45)"],
                 0.2979, tolerance = 1e-3)
 })
@@ -64,10 +66,11 @@ test_that("build_fig3 returns a 2-panel patchwork over 2019-2025", {
   pa <- p[[1]]; pb <- p[[2]]
   expect_equal(nrow(pa$data), 14)   # 2 series × 7 yrs
   expect_equal(nrow(pb$data), 14)
-  # Sanity: 2025 all-billionaires CA inctax ≈ 4.14 $B
+  # Sanity: 2025 all-billionaires CA inctax ≈ 4.14 $B (May) / 4.35 $B (August)
   expect_equal(pa$data$value[pa$data$year == 2025 &
                               pa$data$series == "All CA billionaires"],
-                4.14264, tolerance = 1e-3)
+                if (identical(bsz_vintage(), "may")) 4.14264 else 4.345315,
+                tolerance = 1e-3)
 })
 
 test_that("build_fig3 renders to a non-empty PNG", {
@@ -97,9 +100,10 @@ test_that("build_fig4 returns a stacked area chart with 4 tax components", {
   expect_setequal(levels(p$data$tax),
                   c("CA income tax", "Federal income tax",
                     "Corporate taxes", "Property + sales taxes"))
-  # 2025 CA inctax/wealth ≈ 0.00202
+  # 2025 CA inctax/wealth ≈ 0.00202 (May) / 0.00211 (August)
   expect_equal(p$data$share[p$data$year == 2025 & p$data$tax == "CA income tax"],
-                0.002019, tolerance = 1e-5)
+                if (identical(bsz_vintage(), "may")) 0.002019 else 0.002114695,
+                tolerance = 1e-5)
 })
 
 test_that("build_fig4 renders to a non-empty PNG", {
@@ -238,10 +242,11 @@ test_that("build_fig_a2 returns 2-series share-of-CA-inctax line chart", {
   p <- build_fig_a2(srs_r)
   expect_s3_class(p, "ggplot")
   expect_equal(nrow(p$data), 14)
-  # 2025 all-billionaires share ≈ 0.0284 (X13/Z13 from shortrunseries)
+  # 2025 all-billionaires share ≈ 0.0284 (May) / 0.0304 (August)
   expect_equal(p$data$share[p$data$year == 2025 &
                               p$data$series == "All CA billionaires"],
-                0.028412, tolerance = 1e-4)
+                if (identical(bsz_vintage(), "may")) 0.028412 else 0.030359,
+                tolerance = 1e-4)
 })
 
 test_that("build_fig_a3 returns 2-panel stacked area chart on public wealth", {

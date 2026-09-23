@@ -52,7 +52,8 @@ list(
   tar_target(top4taxes_r,            compute_top4taxes(data_sec_top4)),
 
   # Phase 3 - gt tables + ggplot figures
-  tar_target(tab1_gt,    build_tab1(data_sec_agg_r, shortrunseries_r, longrunseries)),
+  tar_target(tab1_gt,    build_tab1(data_sec_agg_r, shortrunseries_r, longrunseries,
+                                    shortrunseries)),
   tar_target(tab1_html,  render_table_html(tab1_gt, "tab1"),  format = "file"),
   tar_target(tab1_latex, render_table_latex(tab1_gt, "tab1"), format = "file"),
 

@@ -99,16 +99,19 @@ extract_data_sec_agg <- function(path = xlsx_path_default()) {
 }
 
 extract_rtb_2026_industry <- function(path = xlsx_path_default()) {
-  # First block (industries x 8 cols, rows 5-18). A second block below (rows 20-35)
-  # adds a top-4 wealth column; ignore here, retrieve separately if needed.
+  # First block (industries x 8 cols, rows 5-18 May / 5-19 August). A second
+  # block below adds a top-4 wealth column; ignore here, retrieve separately
+  # if needed. August added a 15th data row ("Service") before the "Total"
+  # row (13 industries -> 14), so the block is one row taller.
   ct <- c("text", rep("numeric", 7))
+  n_max <- if (identical(bsz_vintage(), "may")) 14 else 15
   read_rectangular(
     "rtb_2026_industry",
     path = path,
     skip = 3,
     col_types = ct,
     key_cols = "industries",
-    n_max = 14
+    n_max = n_max
   )
 }
 

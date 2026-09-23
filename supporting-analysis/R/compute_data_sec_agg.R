@@ -24,6 +24,19 @@ compute_data_sec_agg <- function(data_sec_all,
     "total_tax", "economic_income"
   )
   filtered <- data_sec_all[!(data_sec_all$forbes_id %in% exclude_ids), ]
+  # August's data_sec_all has a 4-row block (sytse-sid-sijbrandij, rihanna,
+  # tom-preston-werner, trae-stephens; year 2025) accidentally pasted twice at
+  # the very tail of the sheet (rows 1338-1341 re-appearing at 1342-1345,
+  # byte-identical or near-identical). This is a genuine data-entry error in
+  # the workbook, not a second legitimate entry: dropping the second copy
+  # reproduces the workbook's OWN data_sec_agg cache (n=240, forbes_worth=
+  # 2054.82B) exactly, and matches the paper's own stated count (Appendix A:
+  # "we identify 240 billionaires with total wealth of $2055 billion").
+  # Distinct same-slug entries with a DIFFERENT forbes_worth (e.g.
+  # stewart-resnick in 2022, two separately-tracked Forbes amounts, $8.0B and
+  # $5.256B, present in both May and August) are left alone: keying the
+  # dedup on (year, forbes_id, forbes_worth) catches only the true re-paste.
+  filtered <- filtered[!duplicated(filtered[c("year", "forbes_id", "forbes_worth")]), ]
   out <- filtered |>
     dplyr::group_by(year) |>
     dplyr::summarise(

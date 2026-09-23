@@ -1,12 +1,16 @@
-# Regenerate the golden-master snapshots in tests/snapshots/.
+# Regenerate the golden-master snapshots in tests/snapshots/<vintage>/.
 #
 # Run from project root: Rscript tests/snapshot_regenerate.R
+# (or BSZ_VINTAGE=may Rscript tests/snapshot_regenerate.R for the other vintage)
 #
 # Snapshots capture the current numeric output of every Phase-2 R re-derivation
-# AND every Phase-3 exhibit (table tibbles + figure data layers). The
-# corresponding testthat block (test-snapshots.R) asserts byte-level equality
-# against these on every test run, so any refactor that changes a value is
-# caught immediately.
+# AND every Phase-3 exhibit (table tibbles + figure data layers), for the
+# CURRENTLY ACTIVE vintage (BSZ_VINTAGE; default "august" - see
+# R/ingest_excel.R's xlsx_path_default()). The corresponding testthat block
+# (test-snapshots.R) asserts byte-level equality against
+# tests/snapshots/<vintage>/ on every test run, so any refactor that changes a
+# value is caught immediately - separately per vintage, since May and August
+# legitimately produce different numbers from the same code.
 #
 # Re-run this script ONLY when an output change is intentional. Each
 # regeneration should be its own commit with a clear "re-baseline" message
@@ -15,7 +19,7 @@
 stopifnot(dir.exists("R"), file.exists("_targets.R"))
 invisible(lapply(list.files("R", pattern = "\\.R$", full.names = TRUE), source))
 
-SNAP_DIR <- "tests/snapshots"
+SNAP_DIR <- file.path("tests/snapshots", bsz_vintage())
 dir.create(SNAP_DIR, showWarnings = FALSE, recursive = TRUE)
 
 save_snap <- function(obj, name) {
@@ -69,7 +73,7 @@ save_snap(top4taxes_r, "top4taxes_r")
 
 # ---- Phase-3 exhibits: table tibbles -------------------------------------
 cat("\nPhase 3 — table tibbles (attr 'panel' or 'panel_a' / 'panel_b'):\n")
-tab1_gt    <- build_tab1(data_sec_agg_r, shortrunseries_r, lrs_raw)
+tab1_gt    <- build_tab1(data_sec_agg_r, shortrunseries_r, lrs_raw, srs_raw)
 save_snap(attr(tab1_gt, "panel_a"), "tab1_panel_a")
 save_snap(attr(tab1_gt, "panel_b"), "tab1_panel_b")
 
