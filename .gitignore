@@ -3,9 +3,6 @@
 *.sqlite
 **/_targets/
 
-# also a source PDF, kept at repo root, not part of either side's analysis
-/prop40.pdf
-
 # R / RStudio
 .Rproj.user/
 .Rhistory
