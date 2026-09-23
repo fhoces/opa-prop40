@@ -138,6 +138,36 @@ opa-prop40/
 8. **Final safety check.** `git status --short` must be clean. Then
    `git log --all --name-only | grep -iE '\.(pdf|xlsx|sqlite)$'` must print nothing.
 
+## Future: author-shared raw data
+
+The user will ask both author teams (BSZ and Rauh et al.) for their raw data. Nothing has
+arrived as of phase 1; phase 1 only prepares the slot.
+
+- **(a) Folder and manifest convention.** Author-shared files go under
+  `<side>/original-materials/author-shared/<YYYY-MM-DD>_<short-desc>/`, which sits under the
+  already-gitignored `original-materials/`, so it and anything derived from it (CSVs,
+  `*.sqlite`) are never committed. Every source file, whether public-downloaded, author-shared,
+  or re-pulled, gets one row in the tracked `<side>/DATA-SOURCES.csv` manifest (columns: `file,
+  side, provider, obtained_via, date_obtained, url_or_contact, sha256, terms, feeds, status`).
+  See `supporting-analysis/DATA-SOURCES.md` for the full column definitions.
+- **(b) One path-resolver per side.** A later pipeline reads every input through a single
+  resolver function per side (the same role `xlsx_path_default()` plays now for `BSZ_VINTAGE`),
+  so an author-shared file can replace a workbook-cached input at the exact stage it feeds
+  without touching downstream code. This extends the vintage-switch idea: a future
+  `BSZ_INPUTS=workbook|author` (or per-input equivalent) selects the source, and the resolver is
+  the one place that knows the mapping from input name to file path, whatever its provenance.
+  Keep the `BSZ_VINTAGE` switch built in phase 1 compatible with this: it is already a single
+  resolver (`xlsx_path_default()` in `R/ingest_excel.R`, called from the one `xlsx_path`
+  `tar_target`), not paths scattered across files, so extending it later means adding branches
+  to that one function, not touching call sites.
+- **(c) `export/inputs.csv` provenance column.** When the `export/inputs.csv` contract is built
+  in a later phase, add a `provenance` column (`public` | `author-shared` | `derived`) alongside
+  the existing data/research/guesswork label, sourced from each input's `DATA-SOURCES.csv` row.
+- **(d) CI must not depend on author-shared data.** Author-shared files cannot be fetched by CI
+  (they aren't public, and may be under restrictive terms). Any test that depends on one must
+  skip cleanly (not fail) when the file is absent, so CI stays green regardless of what has or
+  hasn't been shared yet.
+
 ## Out of scope for phase 1
 
 - Creating a GitHub remote or pushing.

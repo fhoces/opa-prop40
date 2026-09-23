@@ -23,6 +23,10 @@ renders the paper's six tables and twelve figures plus a Quarto report.
 | Primary-source cross-validation | SEC EDGAR / BEA / FTB / DINA | **Partial — see below** |
 | Environment lock + CI | `renv.lock`, `.github/workflows/` | Not started |
 
+See `DATA-SOURCES.csv` for the full source manifest (one row per file, with provenance, terms
+and SHA-256) and `DATA-SOURCES.md` for what the columns mean, including the `author-shared`
+convention for raw data the paper's authors may share later.
+
 ## What is and is not in the repo
 
 ### Provided

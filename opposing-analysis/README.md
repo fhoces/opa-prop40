@@ -12,5 +12,9 @@ Placeholder for phase 2. Will hold an Open Policy Analysis replication of:
 - **PDF**: `original-materials/ssrn-6340778.pdf` (GITIGNORED, not redistributed).
   SHA-256: `edb4ad1e9c165b3478a56b030f8cb17e624fbc95b5ae58e756184120ef9309fe`
 
+See `DATA-SOURCES.csv` for the full source manifest (one row per file, with provenance, terms
+and SHA-256); the column definitions and the `author-shared` convention for data the Rauh et al.
+team may share later are documented in `../supporting-analysis/DATA-SOURCES.md`.
+
 No R/Python pipeline exists yet. Phase 2 will replicate the paper's revenue estimates the same
 way `supporting-analysis/` replicates BSZ.
