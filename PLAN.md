@@ -67,6 +67,13 @@ credited to us.
      (Shapley). The Rauh anchor is the Monte Carlo mean (−$24.7B), not Table 9's central cell.
    - **The vintage gap stated:** Rauh March 2026 vs GGSS July / BSZ August 2026.
 
+**Same format as the previous OPA (user requirement 2026-09-23).** Every public surface (overview
+page, interactive explorer, Quarto reproduction report, teaching deck, reproduction-materials links,
+the OPA background image, the cross-link footer, the CRediT / AI-use table) is instantiated from the
+shared kit at `~/Desktop/sandbox/opa-framework/template/`, which is extracted from
+`opa-ai-macro-econ-scenarios`. The root reconciliation page uses the kit's multi-OPA overview variant.
+Pages are not hand-built from scratch, and any departure from the kit goes back into the kit.
+
 **Site layout (proposed, not yet confirmed):** the reconciliation page is the site root, linking to
 `/supporting-analysis/` and `/opposing-analysis/`. **Blocker:** the root `.gitignore` ignores
 `*.html` (only `README.html` is allowed back). This must be narrowed, for example to render
