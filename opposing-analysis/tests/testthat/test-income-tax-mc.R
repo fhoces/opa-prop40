@@ -24,9 +24,9 @@ test_that("income tax MC matches Table 8's printed cells (p.17)", {
   # printed-rounding tolerance rather than K=212 getting an exact match.
   tol <- 0.01
   for (i in seq_len(nrow(merged))) {
-    expect_equal(merged$mean_fy25[i], merged$mean[i], tolerance = tol[i] / abs(merged$mean[i]))
-    expect_equal(merged$p05_fy25[i], merged$p05[i], tolerance = tol[i] / abs(merged$p05[i]))
-    expect_equal(merged$p95_fy25[i], merged$p95[i], tolerance = tol[i] / abs(merged$p95[i]))
+    expect_equal(merged$mean_fy25[i], merged$mean[i], tolerance = tol / abs(merged$mean[i]))
+    expect_equal(merged$p05_fy25[i], merged$p05[i], tolerance = tol / abs(merged$p05[i]))
+    expect_equal(merged$p95_fy25[i], merged$p95[i], tolerance = tol / abs(merged$p95[i]))
   }
 })
 

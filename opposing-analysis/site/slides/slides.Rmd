@@ -1,0 +1,482 @@
+---
+title: "The Net Present Value of the Billionaire Tax Act"
+subtitle: "Teaching deck: the opposing side's fiscal score of California Proposition 40 (Rauh et al., SSRN March 2026; Jaros and Rauh, NBER September 2026)"
+output:
+  xaringan::moon_reader:
+    self_contained: true
+    includes:
+      in_header: mathjax-config.html
+    css: [default, default-fonts]
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: "16:9"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE, fig.align = "center",
+  fig.width = 10, fig.height = 4.2, dpi = 150,
+  message = FALSE, warning = FALSE
+)
+suppressPackageStartupMessages({ library(targets); library(dplyr); library(ggplot2) })
+theme_set(theme_minimal(base_size = 15))
+
+# Every number in this deck is read from the {targets} store of opposing-analysis/;
+# nothing is retyped except the papers' printed values we compare against.
+store <- "../../_targets"
+tr <- function(name) tar_read_raw(name, store = store)
+for (f in list.files("../../R", pattern = "\\.R$", full.names = TRUE)) source(f)
+rc <- tr("revenue_chain"); pf <- tr("pareto_fit"); t8 <- tr("income_tax_table8")
+t9 <- tr("npv_table9"); t10 <- tr("npv_table10"); mcs <- tr("npv_mc_ssrn"); mcn <- tr("npv_mc_nber")
+nc <- tr("nber_ceiling"); ncol <- tr("nber_collectible"); hl <- tr("site_headlines")
+outputs <- read.csv("../../export/r/outputs.csv"); inputs <- read.csv("../../export/r/inputs.csv")
+ss <- formals(compute_npv_mc_ssrn); nb <- formals(compute_npv_mc_nber)
+num <- function(x, d = 1) { s <- formatC(abs(x), format = "f", digits = d, big.mark = ","); ifelse(x < 0, paste0("&minus;", s), s) }
+h <- function(v, q, col = "reproduced") hl[[col]][hl$version == v & hl$quantity == q]
+out <- function(id, col = "value") outputs[[col]][outputs$output_id == id]
+dials <- site_dials(rc)
+mm_lines <- sub("^## ", "", grep("^## [0-9]+\\.", readLines("../../MISMATCHES.md"), value = TRUE))
+```
+
+name: opa-frame
+class: center, middle, opa-slide
+
+# An Open Reproduction
+
+.opa-intro[
+The opposing side's score of California's Billionaire Tax Act, rebuilt from the authors' own
+code and data and taught step by step, following the
+[Open Policy Analysis](https://tinyurl.com/1qypbihb) framework.
+]
+
+<img src="../assets/opa/opa-details.png" class="opa-mark" alt="">
+
+.opa-legend[
+**Open Output**: [the explorer](../explorer/), the mean NPV for every combination of seven inputs<br>
+**Open Analysis**: [the report](../repro.html), and this deck<br>
+**Open Materials**: [the materials page](../materials.html),
+the pipeline, its tests and every exported CSV
+]
+
+---
+
+```{css, echo=FALSE}
+.remark-code, .remark-inline-code { font-size: 80%; }
+.remark-slide-content { padding: 1em 2em; }
+.small { font-size: 80%; }
+.tiny { font-size: 65%; }
+.small table { font-size: 70%; }
+.tiny table { font-size: 62%; width: 100%; }
+.highlight-box {
+  background: #fff3e0;
+  border-left: 4px solid #e65100;
+  padding: 0.5em 1em;
+  margin: 0.5em 0;
+}
+.blue-box {
+  background: #e3f2fd;
+  border-left: 4px solid #1565c0;
+  padding: 0.5em 1em;
+  margin: 0.5em 0;
+}
+a.reflink {
+  color: #3b4a5a;
+  text-decoration: none;
+  border-bottom: 1px dotted #9aa6b2;
+}
+a.reflink:hover { color: #1a237e; border-bottom-color: #1a237e; }
+.site-nav {
+  font-size: 11px;
+  color: #5b6873;
+  margin: 0 0 14px;
+}
+.site-nav a { color: #1a237e; text-decoration: none; }
+.site-nav a:hover { text-decoration: underline; }
+
+.remark-slide-content.opa-slide { position: relative; z-index: 0; overflow: hidden; }
+.opa-intro { font-size: 92%; max-width: 30em; margin: 0 auto 1.1em; }
+.opa-legend { font-size: 85%; line-height: 1.75; max-width: 34em; margin: 0 auto;
+              text-align: left; }
+.opa-intro a, .opa-legend a { color: #1a237e; }
+.opa-mark {
+  position: absolute; top: 26px; right: 34px; height: 190px; width: auto;
+  opacity: 0.218; z-index: -1; pointer-events: none;
+}
+.two { display: flex; gap: 2em; }
+.two > div { flex: 1; }
+.big { font-size: 180%; font-weight: 600; margin: 0.1em 0; }
+table.dt { border-collapse: collapse; width: 100%; font-size: 80%; }
+table.dt td, table.dt th { padding: 4px 8px; border-bottom: 1px solid #e2e7ec; text-align: right; }
+table.dt td:first-child, table.dt th:first-child { text-align: left; }
+.og { font-size: 70%; padding: 1px 6px; border-radius: 2px; border: 1px solid #d98a5b; color: #b4541f; }
+.og.data { border-color: #6b9bd6; color: #1f5fae; }
+```
+
+.site-nav[
+Part of an Open Policy Analysis of Rauh et al. (2026) on California Proposition 40:
+[Open Output (the explorer)](../explorer/) &middot; Open Analysis:
+[Report](../repro.html) and Slides (here) &middot;
+[Open Materials](../materials.html) &middot;
+[Overview](../index.html)
+]
+
+# Deck Map
+
+<table style="width:100%; font-size:85%; border-collapse:collapse;">
+<tr style="background:#e8eaf6;"><th style="text-align:left; padding:6px;">Part</th><th style="text-align:left; padding:6px;">What it covers</th><th style="padding:6px;">Starts at</th></tr>
+<tr><td style="padding:6px;"><b>1. The claim</b></td><td style="padding:6px;">What is being scored, the one equation, the two headline numbers</td><td style="text-align:center;"><a href="#part-claim">go</a></td></tr>
+<tr><td style="padding:6px;"><b>2. The revenue</b></td><td style="padding:6px;">From $94B before anyone leaves to "about $40B" (Sec 4)</td><td style="text-align:center;"><a href="#part-revenue">go</a></td></tr>
+<tr><td style="padding:6px;"><b>3. The income tax</b></td><td style="padding:6px;">How much billionaires pay each year, and why it is a range (Sec 5.1)</td><td style="text-align:center;"><a href="#part-income">go</a></td></tr>
+<tr><td style="padding:6px;"><b>4. For ever</b></td><td style="padding:6px;">The perpetuity, Table 9 and the break-even share (Secs 5.2-5.4)</td><td style="text-align:center;"><a href="#part-forever">go</a></td></tr>
+<tr><td style="padding:6px;"><b>5. The headline</b></td><td style="padding:6px;">The Monte Carlo, and its exact expectation (Sec 5.5)</td><td style="text-align:center;"><a href="#part-mc">go</a></td></tr>
+<tr><td style="padding:6px;"><b>6. The NBER revision</b></td><td style="padding:6px;">Litigation risk, an independent departure share, a draw from zero</td><td style="text-align:center;"><a href="#part-nber">go</a></td></tr>
+<tr><td style="padding:6px;"><b>7. What to argue about</b></td><td style="padding:6px;">Inputs by origin, and the nine mismatches</td><td style="text-align:center;"><a href="#part-argue">go</a></td></tr>
+</table>
+
+.blue-box[
+Every number in this deck comes from the project's `{targets}` pipeline, which reproduces the
+authors' own workbooks and R scripts (github.com/bjaros20/wealth_tax, commit `25e84dd`). The deck
+reads that pipeline's store; nothing here is retyped except the papers' printed values.
+]
+
+---
+name: part-claim
+class: center, middle, inverse
+
+# Part 1: The claim
+
+---
+
+# What is being scored
+
+**Proposition 40** taxes, once, 5% of the net worth of billionaires who lived in California on
+1 January 2026 (payable over five years). Its proponents score it at about 100 bn. (Amounts in this deck are in billions of dollars, "bn".)
+
+The opposing analysis asks a different question: **is the state better off, counting what it loses?**
+
+$$NPV = WT - f \cdot \frac{C}{r}$$
+
+.pull-left[
+
+- $WT$: wealth tax collected, **once**
+- $C$: income tax the billionaires pay, **per year**
+- $f$: share of that income tax that leaves the state
+- $r$: discount rate; $C/r$ is a stream of $C$ **for ever**, valued today
+
+]
+
+.pull-right[
+
+.highlight-box[
+The whole argument is a race between a one-time sum and a perpetuity. At $r$ = 1.5%, losing
+one dollar a year for ever costs as much as losing `r num(1/0.015, 0)` dollars today.
+]
+
+]
+
+---
+
+# Two versions, side by side
+
+.pull-left[
+
+**SSRN 6340778**, 17 March 2026<br>
+Rauh, Jaros, Kearney, Doran, Cosso
+
+.big[`r num(h("ssrn","mc_mean_npv","printed"))` bn]
+mean NPV; `r h("ssrn","mc_pct_negative","printed")`% of outcomes negative<br>
+revenue "approximately `r h("ssrn","revenue_headline","printed")` billion"
+
+Reproduced: `r num(mcs$summary$mean, 2)` (seeded run), `r num(tr("npv_mc_ssrn_analytic_mean"), 3)` (exact)
+
+]
+
+.pull-right[
+
+**NBER c15504**, 22 September 2026<br>
+Jaros and Rauh, litigation-weighted
+
+.big[`r num(h("nber","mc_mean_npv","printed"))` bn]
+mean NPV; `r h("nber","mc_pct_negative","printed")`% of outcomes negative<br>
+revenue "approximately 30 billion" (`r h("nber","revenue_range_low","printed")` bn to `r h("nber","revenue_range_high","printed")` bn)
+
+Reproduced: `r num(mcn$summary$mean, 2)` (seeded run), `r num(tr("npv_mc_nber_analytic_mean"), 2)` (exact)
+
+]
+
+.blue-box[
+The project fixed, before seeing results, that the opposing side is shown as these **two** estimates
+side by side: the SSRN anchor, and the NBER revision that changes mainly one input, litigation risk.
+]
+
+---
+name: part-revenue
+class: center, middle, inverse
+
+# Part 2: The revenue
+
+---
+
+# From 94 bn to about 40 bn (Sec 4)
+
+```{r revchain, fig.height=3.6}
+d <- data.frame(
+  step = c("No one leaves\n(4.1)", "6 confirmed\ndepartures (4.2)", "10 departures\n(4.3)",
+           "Swiss semi-elasticity\n10.32 (4.4)", "Preferred\n(4.5, printed)"),
+  v = c(rc$baseline_precise, rc$confirmed6_ceiling, rc$expanded10_estimate, rc$literature_calibrated,
+        h("ssrn","revenue_headline","printed")))
+d$step <- factor(d$step, levels = d$step)
+ggplot(d, aes(step, v)) + geom_col(fill = c(rep("#1f6fce", 4), "#eb6834"), width = 0.6) +
+  geom_text(aes(label = sprintf("%.2f", v)), vjust = -0.4, size = 5) +
+  labs(x = NULL, y = "$B") + ylim(0, 105)
+```
+
+.small[
+Each step sums 5% of each stayer's net worth, minus their home. The first four bars come out of the
+authors' workbook to the cent. The fifth is a judgement: a semi-elasticity of 12 to 13 "plausible and
+conservative" (p.14), giving 35-46 bn. Nothing in the code computes the 40 bn.
+]
+
+---
+
+# The semi-elasticity: a 5-point tax, how much base leaves?
+
+$$\varepsilon = \frac{\%\Delta\,\text{base}}{\Delta\,\text{rate (points)}}$$
+
+.pull-left[
+
+- **Observed, 6 departures:** base falls `r num(100*(1 - rc$confirmed6_ceiling/rc$baseline_literal), 1)`%,
+  so $\varepsilon$ = `r num(100*(1 - rc$confirmed6_ceiling/rc$baseline_literal)/5, 2)`
+- **Observed, 10 departures:** $\varepsilon$ = `r num(100*(1 - rc$expanded10_estimate/rc$baseline_literal)/5, 2)`
+- **Swiss literature** (Brülhart et al. 2022): 0.24 × 43 = `r inputs$value[inputs$input_id=="brulhart_semi_elasticity"]`,
+  so `r num(100*rc$migration_share, 1)`% of the base leaves
+
+]
+
+.pull-right[
+
+.highlight-box[
+Two things to argue with: the Swiss estimate comes from a **recurring** tax, applied here to a
+**one-time** one; and it is applied linearly (10.32 × 5), steeper than the log form the NBER
+revision later uses.
+]
+
+]
+
+---
+name: part-income
+class: center, middle, inverse
+
+# Part 3: The income tax
+
+---
+
+# How much do billionaires pay each year? (Sec 5.1)
+
+.pull-left[
+
+**Upper bound.** Fit a Pareto tail to the FTB's filer counts above 1M to 10M dollars of income:
+$\hat\alpha$ = `r num(pf$alpha, 2)`. If the 212 billionaires *are* the 212 highest earners, they pay
+**`r num(t8$mean_fy25[t8$K == 212], 2)` bn** a year.
+
+**But** wealth is not income: many billionaires realise little in a given year. So place them at random
+among the top $K$ filers.
+
+]
+
+.pull-right[
+
+```{r table8, fig.width=5.6, fig.height=3.6}
+ggplot(t8, aes(K, mean_fy25)) +
+  geom_ribbon(aes(ymin = p05_fy25, ymax = p95_fy25), fill = "#1f6fce", alpha = 0.18) +
+  geom_line(colour = "#1f6fce", linewidth = 1) + geom_point(colour = "#1f6fce") +
+  geom_vline(xintercept = 500, linetype = 2) +
+  labs(x = "pool size K", y = "$B per year") + theme_minimal(base_size = 13)
+```
+
+]
+
+.highlight-box[
+The authors call $K \approx 500$ "a reasonable lower bound": `r num(t8$mean_fy25[t8$K == 500], 2)` bn.
+So $C \in [3.3, 5.8]$: a range between a model's upper bound and a **judgement** about the floor.
+]
+
+---
+name: part-forever
+class: center, middle, inverse
+
+# Part 4: For ever
+
+---
+
+# The perpetuity multiplier (Sec 5.2)
+
+```{r mult, fig.height=3.2}
+r <- seq(0.01, 0.06, by = 0.0005)
+ggplot(data.frame(r, m = 1 / r), aes(100 * r, m)) + geom_line(linewidth = 1, colour = "#eb6834") +
+  annotate("point", x = c(1.5, 3, 4.5), y = 1 / c(0.015, 0.03, 0.045), size = 3) +
+  annotate("text", x = c(1.5, 3, 4.5), y = 1 / c(0.015, 0.03, 0.045) + 9,
+           label = sprintf("%.0f", 1 / c(0.015, 0.03, 0.045)), size = 5) +
+  labs(x = "rate, %", y = "$ today per $1 a year for ever")
+```
+
+.small[
+The paper's text says the lost stream grows, so the rate should be $r - g$, and anchors it at 1.5%
+(the S&P dividend yield). The Monte Carlo then draws "$r$" from 1.5% to 4.5% and divides by it
+directly. Same numbers, two meanings ([mismatches 2 and 3](../materials.html#mismatches)).
+Whether the loss lasts **for ever** or about five years is the supporting side's main objection.
+]
+
+---
+
+# Table 9: three scenarios, three rates
+
+```{r t9tab, results="asis"}
+w <- t9 %>% mutate(cell = paste0(num(npv), " <span style='color:#6b7682'>(PV lost ", num(pv_lost), ")</span>")) %>%
+  select(label, r, cell) %>% tidyr::pivot_wider(names_from = r, values_from = cell)
+cat('<table class="dt"><tr><th>Scenario</th><th>1.5%</th><th>3.0%</th><th>4.5%</th></tr>')
+for (i in seq_len(nrow(w))) cat(sprintf("<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>", w$label[i], w[[2]][i], w[[3]][i], w[[4]][i]))
+cat("</table>")
+```
+
+.small[
+NPV in bn; every cell matches the printed Table 9 (p.19). Departure share $f = 1 - WT/94.2$: the income
+tax lost is assumed proportional to the wealth lost.
+]
+
+.highlight-box[
+The central scenario's 42.0 bn has no derivation anywhere ([mismatch 8](../materials.html#mismatches)).
+And the headline `r num(h("ssrn","mc_mean_npv","printed"))` is **not** in this table: the central cell at
+1.5% is `r num(t9$npv[t9$scenario=="central" & t9$r==0.015])`.
+]
+
+---
+
+# The break-even departure share (Sec 5.4)
+
+$$NPV = 0 \quad\Longleftrightarrow\quad x^* = \frac{WT \cdot r}{C}$$
+
+If less than $x^*$ of the income tax base leaves, the tax pays for itself.
+
+```{r t10tab, results="asis"}
+w <- t10 %>% mutate(cell = paste0(num(100 * break_even_pct), "%")) %>% select(label, r, cell) %>%
+  tidyr::pivot_wider(names_from = r, values_from = cell)
+cat('<table class="dt"><tr><th>Scenario</th><th>1.5%</th><th>3.0%</th><th>4.5%</th></tr>')
+for (i in seq_len(nrow(w))) cat(sprintf("<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>", w$label[i], w[[2]][i], w[[3]][i], w[[4]][i]))
+cat("</table>")
+```
+
+.small[
+The authors' preferred revenue implies about 55% has left, above most thresholds. That 55% is itself
+$1 - 42/94.2$: it inherits the proportionality assumption.
+]
+
+---
+name: part-mc
+class: center, middle, inverse
+
+# Part 5: The headline
+
+---
+
+# The Monte Carlo behind `r num(h("ssrn","mc_mean_npv","printed"))` (Sec 5.5)
+
+.pull-left[
+
+Draw 100,000 times, independently:
+
+- revenue $WT \sim U[35, 67.51]$
+- income tax $C \sim U[3.3, 5.8]$
+- rate $r \sim U[0.015, 0.045]$
+- departure share $f = 1 - WT/94.2$
+
+.small[
+The paper prints 67.1: a typo for 67.51 ([mismatch 1](../materials.html#mismatches)).
+The revenue draw has mean `r num(h("ssrn","mc_expected_revenue"), 2)` bn, **above** the preferred 40 bn.
+]
+
+]
+
+.pull-right[
+
+```{r hist, fig.width=5.8, fig.height=3.2}
+ggplot(data.frame(npv = mcs$draws$npv), aes(npv, fill = npv < 0)) +
+  geom_histogram(binwidth = 5, boundary = 0) +
+  geom_vline(xintercept = mean(mcs$draws$npv), linetype = 2) +
+  scale_fill_manual(values = c(`TRUE` = "#eb6834", `FALSE` = "#1f6fce"), guide = "none") +
+  coord_cartesian(xlim = c(-250, 70)) + labs(x = "NPV, $B", y = "draws") + theme_minimal(base_size = 13)
+```
+
+]
+
+.blue-box[
+The draws are independent, so the mean has a closed form: `r num(tr("npv_mc_ssrn_analytic_mean"), 3)`,
+which rounds to the printed value. The seeded run gives `r num(mcs$summary$mean, 2)`
+([mismatch 9](../materials.html#mismatches)). The explorer shows the exact expectation for every setting.
+]
+
+---
+name: part-nber
+class: center, middle, inverse
+
+# Part 6: The NBER revision
+
+---
+
+# What the September version changes
+
+.small[
+1. **Base grown 7%** to 31 Dec 2026, rebuilt person by person (`final.csv`): `r num(nc$domestic_total_grown, 2)` bn face value.
+2. **Seven confirmed departures** (adds Kalanick): ceiling `r num(nc$ceiling_recomputed, 2)` bn from the data; the script
+   hard-codes `r nb$wt_max` ([mismatch 4](../materials.html#mismatches)).
+3. **Litigation discount:** $E[R] = q \times R_{\text{recognized}}$ = `r ncol$q` × `r num(ncol$recognized, 2)` bn =
+   **`r num(ncol$central, 2)` bn**. $q$ = 0.50 is borrowed from an accounting rule (ASC 740-10).
+4. **Departure share drawn on its own:** $f \sim U[`r nb$f_min`, `r nb$f_max`]$.
+5. **Revenue drawn from zero:** $WT \sim U[0, `r nb$wt_max`]$, mean `r num(h("nber","mc_expected_revenue"), 0)` = 0.5 × 72.
+]
+
+.highlight-box[
+The code never multiplies by $q$. Its only trace is the zero lower bound ([mismatch 5](../materials.html#mismatches)):
+a uniform draw from 0 has the same **mean** as a coin flip on 72, not the same distribution.
+Lost income tax is **not** scaled by $q$: people who left do not come back if the Act is struck down.
+]
+
+---
+name: part-argue
+class: center, middle, inverse
+
+# Part 7: What to argue about
+
+---
+
+# The seven inputs that move the answer
+
+```{r origins, results="asis"}
+cat('<table class="dt"><tr><th>Input</th><th>Values in the explorer</th><th>Origin</th></tr>')
+for (d in dials) cat(sprintf("<tr><td>%s</td><td>%s</td><td><span class='og %s'>%s</span></td></tr>",
+  d$label, paste(d$labels, collapse = "; "), d$origin, d$origin))
+cat("</table>")
+```
+
+.highlight-box[
+`r sum(vapply(dials, function(d) d$origin == "guesswork", TRUE))` of the `r length(dials)` are guesswork.
+The data (Forbes, FTB, the Pareto fit) set the scale; the sign is decided by the guesses.
+[Try them in the explorer](../explorer/).
+]
+
+---
+
+# Nine mismatches between text, READMEs and code
+
+.small[
+```{r mm, results="asis"}
+cat(paste0(mm_lines, collapse = "\n"))
+```
+]
+
+.blue-box[
+We reproduce the code as shipped and record each discrepancy rather than fix it. Full text on the
+[materials page](../materials.html#mismatches); every one is pinned by a test.
+]

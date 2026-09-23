@@ -17,6 +17,7 @@
 !README.html
 # the published OPA site pages are tracked; other rendered HTML stays ignored
 !supporting-analysis/site/**/*.html
+!opposing-analysis/site/**/*.html
 
 # python
 __pycache__/
