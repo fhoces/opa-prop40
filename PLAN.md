@@ -12,6 +12,59 @@ The end state is one private repo: a full OPA for each side, plus a comparison l
 both on one input-to-output chain. **Phase 1 covers only the steps below.** No Python twin, no
 SQL files, no Rauh work and no website yet.
 
+## Pre-specified output (fixed 2026-09-23, before any results)
+
+Stated here, before any Rauh reproduction or reconciliation work, so the choice of output cannot
+be tuned to the results (OPA step 1: fix the output first).
+
+**Whose version is analysed: the strongest version of each side.** That means the anchor team's
+latest estimate, plus their own later documents, with any correction they conceded applied. We do
+not strengthen either side ourselves; our own improvements appear only on the reconciliation page,
+credited to us.
+
+- **Supporting side** reports **two estimates side by side**:
+  1. GGSS expert report (updated 20 July 2026): $100B from static scoring with 10% avoidance, the
+     number the campaign cites.
+  2. BSZ NBER WP 35218 (August 2026, workbook): the $104B benchmark and the other rows of its
+     Table 5.
+  The conceded fix is already in both: the non-US-citizen residents are included (see
+  `comparison/DISPUTES.md`, row 8).
+- **Opposing side**: Rauh et al., SSRN 6340778 (17 March 2026). No later technical update exists as
+  of 2026-09-23; the Hoover August 2026 brief repeats $40B / −$25B.
+- **Other same-side work** enters as **credited alternative dials** on specific inputs, never merged
+  into a side's headline. Current candidates: Walczak / California Tax Foundation (2026-04-22),
+  opposing side.
+- **Neutral material** feeds the reconciliation page only: LAO ballot analysis, and Hoopes, "Galle v
+  Rauh" (SSRN 6428578).
+
+**Deliverables: three pages.**
+
+1. **Two full OPAs**, one per side, each shaped like
+   `~/Desktop/sandbox/opa-ai-macro-econ-scenarios/index.html`. A landing page with OPA layer cards:
+   - Open Output: an explorer with dials over a precomputed grid, the preferred estimate highlighted.
+   - Open Analysis: a full reproduction report (sections in order, every equation and step
+     explained) plus a teaching slide deck.
+   - Open Materials: repo, tests, CSVs.
+   Also "What the model says", "What reproduces" (mismatches listed) and a CRediT / AI-use section,
+   with a footer link back to the overview.
+2. **One reconciliation page**, built in this order:
+   - **A common output definition first.** The two headlines answer different questions.
+     BSZ/GGSS report one-time wealth tax revenue; Rauh reports an NPV net of permanently lost income
+     tax. Proposed, to confirm before the bridge is built: report (a) gross one-time wealth tax
+     revenue and (b) the net fiscal effect to the state (a, plus extra income tax from asset sales,
+     minus the present value of lost income tax), with the loss horizon as an explicit dial, since
+     that horizon is itself dispute 2.
+   - **A bridge from Rauh to GGSS, with BSZ as a checkpoint.** One step per disputed input in
+     `comparison/DISPUTES.md`, each labelled data / research / guesswork / scenario with
+     provenance. Order dependence is handled by showing both orders or averaging over orders
+     (Shapley). The Rauh anchor is the Monte Carlo mean (−$24.7B), not Table 9's central cell.
+   - **The vintage gap stated:** Rauh March 2026 vs GGSS July / BSZ August 2026.
+
+**Site layout (proposed, not yet confirmed):** the reconciliation page is the site root, linking to
+`/supporting-analysis/` and `/opposing-analysis/`. **Blocker:** the root `.gitignore` ignores
+`*.html` (only `README.html` is allowed back). This must be narrowed, for example to render
+by-products only, before any site page is committed.
+
 ## Standing conventions (apply to all phases)
 
 - **One git repo** at `~/Desktop/sandbox/opa-prop40`, no nested repos.
