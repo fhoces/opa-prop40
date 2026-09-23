@@ -366,11 +366,11 @@
       th.textContent = label + " (" + G.units[oi] + ")";
       tr.appendChild(th);
       var td = document.createElement("td");
-      td.textContent = snap[oi].toFixed(1);
+      td.textContent = f1(snap[oi]);
       tr.appendChild(td);
       Object.keys(G.named).forEach(function (nm) {
         var td2 = document.createElement("td");
-        td2.textContent = G.snap[namedIdx[nm]][oi].toFixed(1);
+        td2.textContent = f1(G.snap[namedIdx[nm]][oi]);
         tr.appendChild(td2);
       });
       tbody.appendChild(tr);

@@ -66,3 +66,7 @@ mjx-container[jax="CHTML"][display="true"] {
    table in a .table-scroll div rather than fighting table-layout. */
 .table-scroll { overflow-x: auto; margin: 0.4rem 0; }
 .table-scroll table { margin: 0; }
+
+/* Long inline code (workbook cell paths, file paths) must wrap on a phone
+   rather than widen the page; code blocks keep their own scroll box. */
+p code, li code, td code, h3 code { overflow-wrap: anywhere !important; word-break: break-all !important; white-space: pre-wrap !important; }
