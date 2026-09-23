@@ -37,14 +37,11 @@ jobs:
           r-version: "release"
           use-public-rspm: true
 
-      - name: Install DESCRIPTION Imports
-        run: |
-          Rscript -e '
-            deps <- read.dcf("DESCRIPTION", fields = "Imports")[1, 1]
-            pkgs <- trimws(unlist(strsplit(deps, ",[[:space:]]*")))
-            pkgs <- pkgs[nzchar(pkgs)]
-            install.packages(pkgs, repos = "https://cloud.r-project.org")
-          '
+      # Installs DESCRIPTION Imports as RSPM binaries plus their system libraries
+      # (libcurl, libuv, ...), and fails the step if any package does not install.
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          working-directory: supporting-analysis
 
       - name: Fetch the August workbook and verify its SHA-256
         run: |
