@@ -1,0 +1,15 @@
+input_id,version,description,value,unit,label,provenance,source,page
+n_billionaires,both,CA billionaires in the domestic base,212,count,data,public,CA_Billionaires_Revenues_and_Migration_final.xlsx!Summary_Preferred!D15,11
+baseline_net_worth,both,"Aggregate net worth, 212 domestic billionaires",1894.8,$B,data,public,CA_Billionaires_Revenues_and_Migration_final.xlsx!Summary_Preferred!E15,11
+tax_rate,both,Statutory wealth tax rate,0.05,rate,data,public,CA_Billionaires_Revenues_and_Migration_final.xlsx!Calculations_Preferred!N3,10
+pareto_alpha,both,Pareto tail parameter fit to FTB AGI thresholds,1.4378948349646474,coefficient,research,public,"monte_carlo_sim.R:33-44 (FTB PIT Annual Report 2024, Table B-4A)",15
+bracket_tax_ty23,both,"TY2023 tax liability, $10M+ AGI bracket",11.1,$B,data,public,monte_carlo_sim.R:51 (FTB Table B-4A),15
+total_pit_fy25,both,Total FY2024-25 PIT collections,130.0,$B,data,public,monte_carlo_sim.R:89 (CA State Controller cash receipts),15
+brulhart_semi_elasticity,ssrn,"Migration semi-elasticity, Brulhart et al. (2022)",10.32,coefficient,research,public,Summary_Preferred!I8 (paper eq.12),13
+wt_central_scenario,ssrn,"Table 9 Central Scenario wealth tax revenue (literal input, not linked to Sec 4's chain)",42.0,$B,scenario,public,NPV_calculations_5.2.xlsx!B12,19
+npv_r_range,ssrn,Real discount rate (r) simulation range,,rate,guesswork,public,NPV_dist.R:47 (paper eq.24 text; eq.18-20 instead specify r-g),20
+q_litigation_survival,nber,Probability the Act survives constitutional challenge (ASC 740-10 more-likely-than-not),0.5,probability,guesswork,public,NBER_2026_litigation_weighted/README.md (assumptions table); not an explicit multiplier in NPV_dist_v8.R - see MISMATCHES.md #5,
+nber_growth_rate,nber,Growth applied to the Jan-1-2026 snapshot to the Dec-31-2026 valuation date,0.07,rate,data,author-shared,final.csv (net_worth_usd_7pct column); NBER README assumptions table,
+nber_ceiling_hardcoded,nber,"wt_max literal in NPV_dist_v8.R (script uses this, not the value re-derived from final.csv)",72,$B,data,author-shared,NPV_dist_v8.R:19,
+nber_ceiling_recomputed,nber,wt_max re-derived from final.csv: domestic total minus 7 removed_departed rows,72.05146171776506,$B,derived,author-shared,py/nber_final.py:compute_nber_ceiling() from final.csv,
+nber_international_net_worth,nber,28 international billionaires excluded from the domestic base,146.3,$B,data,author-shared,"final.csv (panel == international, net_worth_usd)",
