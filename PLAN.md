@@ -29,8 +29,15 @@ credited to us.
      Table 5.
   The conceded fix is already in both: the non-US-citizen residents are included (see
   `comparison/DISPUTES.md`, row 8).
-- **Opposing side**: Rauh et al., SSRN 6340778 (17 March 2026). No later technical update exists as
-  of 2026-09-23; the Hoover August 2026 brief repeats $40B / −$25B.
+- **Opposing side** reports **two estimates side by side**, mirroring the supporting side (decided
+  2026-09-23):
+  1. Rauh et al., SSRN 6340778 (17 March 2026): European-elasticity approach, about $40B in revenue,
+     mean NPV −$24.7B. This is the anchor that `comparison/DISPUTES.md` is verified against.
+  2. Jaros and Rauh, NBER version (September 2026): litigation-risk-weighted approach, about $30B,
+     mean NPV −$38.9B. It differs from the SSRN version mainly in one input, the probability that the
+     Act survives constitutional challenge, so it enters the bridge as one extra step.
+  Both are replicated from the authors' public MIT repo (github.com/bjaros20/wealth_tax). The Hoover
+  August 2026 brief repeats the SSRN numbers.
 - **Other same-side work** enters as **credited alternative dials** on specific inputs, never merged
   into a side's headline. Current candidates: Walczak / California Tax Foundation (2026-04-22),
   opposing side.
