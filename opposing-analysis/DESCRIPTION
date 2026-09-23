@@ -1,0 +1,20 @@
+Package: rauhwt
+Type: Project
+Title: Billionaire Tax Act NPV Replication (Rauh, Jaros, Kearney, Doran & Cosso 2026)
+Version: 0.0.0.9000
+Authors@R: person("Fernando", "Hoces", role = c("aut", "cre"))
+Description: Reproduces the revenue and net-present-value estimates of Rauh,
+    Jaros, Kearney, Doran & Cosso (2026), "The Net Present Value of the
+    Billionaire Tax Act" (SSRN 6340778, Hoover Institution), and the September
+    2026 NBER litigation-risk-weighted version by Jaros & Rauh, from the
+    authors' public MIT-licensed materials (github.com/bjaros20/wealth_tax).
+Encoding: UTF-8
+Imports:
+    dplyr,
+    ggplot2,
+    ggthemes,
+    readxl,
+    tarchetypes,
+    targets,
+    testthat,
+    tibble
