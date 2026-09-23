@@ -140,7 +140,8 @@ data_sec_agg_r   <- compute_data_sec_agg(data_sec_all)
 shortrunseries_r <- compute_shortrunseries(
                        data_sec_agg_r, data_sec_top4,
                        billionaires_ca_inctax_r, shortrunseries)
-build_tab1(data_sec_agg_r, shortrunseries_r, longrunseries)
+build_tab1(data_sec_agg_r, shortrunseries_r, longrunseries,
+           shortrunseries)  # raw sheet: the August 2026 row
 # Read-only display. _targets.R wires these into the pipeline.
 ```
 
