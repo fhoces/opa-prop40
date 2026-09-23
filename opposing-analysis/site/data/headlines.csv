@@ -1,0 +1,20 @@
+"version","quantity","printed","printed_page","reproduced","reproduced_by","grid_exact"
+"ssrn","revenue_headline",40,"PDF p.1, p.14",NA,"not computed by the authors' code (paper's rounded judgement, range 35 to 46)",NA
+"ssrn","revenue_range_high",46,"PDF p.14",45.5928,"revenue_chain$literature_calibrated",NA
+"ssrn","mc_mean_npv",-24.7,"PDF p.1, p.20",-24.7680753739627,"npv_mc_ssrn_summary (seed 2026, 100,000 draws)",-24.7069839181446
+"ssrn","mc_median_npv",-19.1,"PDF p.20",-19.1004473233777,"npv_mc_ssrn_summary",NA
+"ssrn","mc_sd_npv",38.4,"PDF p.20",38.595461503839,"npv_mc_ssrn_summary",NA
+"ssrn","mc_pct_negative",71,"PDF p.1, p.20",71.024,"npv_mc_ssrn_summary",71.0278547140948
+"ssrn","analytic_mean_npv",NA,NA,-24.7069839181446,"npv_mc_ssrn_analytic_mean",-24.7069839181446
+"ssrn","mc_expected_revenue",NA,NA,51.255,"site_grid (E[WT] of the draw)",51.255
+"ssrn","pv_lost",NA,NA,75.9619839181446,"site_grid",75.9619839181446
+"nber","revenue_headline",29.6,"PDF p.23, eq.6 (about $30B, p.1)",29.5745602421575,"nber_collectible$central",NA
+"nber","revenue_range_low",28.4,"PDF p.23",28.402638600669,"nber_collectible$lower",NA
+"nber","revenue_range_high",35.6,"PDF p.23, eq.7",35.5879602421575,"nber_collectible$upper",NA
+"nber","mc_mean_npv",-38.9,"PDF p.1, p.35",-38.8863482422633,"npv_mc_nber_summary (seed 2026, 100,000 draws)",-38.9802887015985
+"nber","mc_median_npv",-35.3,"PDF p.35",-35.2554952168172,"npv_mc_nber_summary",NA
+"nber","mc_sd_npv",37.6,"PDF p.35",37.6231398893914,"npv_mc_nber_summary",NA
+"nber","mc_pct_negative",85.2,"PDF p.35 (figure alt text; 85% in the text)",85.172,"npv_mc_nber_summary",85.3209068636366
+"nber","analytic_mean_npv",NA,NA,-38.9802887015985,"npv_mc_nber_analytic_mean",-38.9802887015985
+"nber","mc_expected_revenue",NA,NA,36,"site_grid (E[WT] of the draw)",36
+"nber","pv_lost",NA,NA,74.9802887015985,"site_grid",74.9802887015985

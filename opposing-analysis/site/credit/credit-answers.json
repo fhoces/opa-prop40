@@ -1,0 +1,41 @@
+{
+ "_comment": "Skeleton only. Generate this file with the `credit` skill; do not hand-fill it. Structure shown here matches what the skill writes, so index.html's placeholder cells (e.g. {{EXPLORER_IDEAS_SQUARES}}) can be filled by reading this file's answers.",
+ "contributors": {
+  "human": "{{AUTHOR_NAME}}",
+  "ai": "{{AI_TOOL_NAME}}"
+ },
+ "objects": [
+  "Explorer",
+  "Report",
+  "Slides",
+  "Repository",
+  "Overview page"
+ ],
+ "version": "full",
+ "option_set": "",
+ "date": "{{CREDIT_DATE}}",
+ "answers": {
+  "Explorer": {
+   "Conceptualization": "",
+   "Data curation": "",
+   "Formal analysis": "",
+   "Funding acquisition": "",
+   "Investigation": "",
+   "Methodology": "",
+   "Project administration": "",
+   "Resources": "",
+   "Software": "",
+   "Supervision": "",
+   "Validation": "",
+   "Visualization": "",
+   "Writing – original draft": "",
+   "Writing – review & editing": "",
+   "Human verification": ""
+  },
+  "Report": {},
+  "Slides": {},
+  "Repository": {},
+  "Overview page": {}
+ },
+ "notes": {}
+}

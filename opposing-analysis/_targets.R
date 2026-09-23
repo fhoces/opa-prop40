@@ -56,5 +56,21 @@ list(
              format = "file"),
   tar_target(export_outputs_csv,
              { readr_write(export_outputs, "export/r/outputs.csv"); "export/r/outputs.csv" },
+             format = "file"),
+
+  # ---- site/ exports (R/site.R): read-only consumers of the targets above ----
+  # NBER revenue headline (PDF pp.22-23): q x recognized base from final.csv.
+  tar_target(nber_collectible, compute_nber_collectible(nber_final)),
+  # Explorer grid: 3^7 cells, analytic means + quadrature shares, seed-free.
+  tar_target(site_grid, compute_site_grid(revenue_chain)),
+  tar_target(site_headlines,
+             compute_site_headlines(site_grid, npv_mc_ssrn_summary, npv_mc_nber_summary,
+                                    npv_mc_ssrn_analytic_mean, npv_mc_nber_analytic_mean,
+                                    revenue_chain, nber_collectible)),
+  tar_target(site_headlines_csv,
+             { readr_write(site_headlines, "site/data/headlines.csv"); "site/data/headlines.csv" },
+             format = "file"),
+  tar_target(site_grid_js,
+             write_site_grid_js(site_grid, revenue_chain, site_headlines),
              format = "file")
 )

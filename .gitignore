@@ -15,6 +15,8 @@
 *_cache/
 *.html
 !README.html
+# the opposing OPA's public site is committed as rendered HTML
+!opposing-analysis/site/**/*.html
 
 # python
 __pycache__/
