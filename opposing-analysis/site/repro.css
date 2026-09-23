@@ -1,0 +1,68 @@
+/* Compact tables and a readable measure for the report. Copied verbatim from
+   the source project; nothing here is project-specific. */
+body { --repro-ink-2: #52514e; }
+table { font-size: 0.85rem; }
+table td, table th { padding: 0.25rem 0.5rem; }
+thead th { border-bottom: 1px solid #d9d8d2; }
+figcaption { font-size: 0.8rem; color: var(--repro-ink-2); }
+h2 { margin-top: 2.2rem; }
+h3 { margin-top: 1.6rem; font-size: 1.15rem; }
+code.sourceCode { font-size: 0.8rem; }
+.published { color: #52514e; }
+
+/* Small cross-link line to the other two artifacts and the repo, borrowed
+   loosely from index.html's palette since this document uses the Quarto
+   theme rather than those custom properties directly. */
+.site-nav {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.78rem;
+  color: #8994a0;
+  border-bottom: 1px solid #e2e7ec;
+  padding-bottom: 0.7rem;
+  margin-bottom: 1.6rem;
+}
+.site-nav a { color: #2a78d6; text-decoration: none; }
+.site-nav a:hover { text-decoration: underline; }
+
+/* The full OPA stack, floated beside the opening paragraph and its three-item
+   legend of which artifact is which layer. */
+.report-intro { margin-bottom: 1.8rem; overflow: hidden; }
+.report-intro .opa-figure {
+  float: right;
+  width: 150px;
+  height: auto;
+  margin: 0 0 12px 20px;
+}
+.report-intro ul { margin: 0.6rem 0 0; padding-left: 1.2rem; }
+.report-intro li { margin-bottom: 0.25rem; }
+@media (max-width: 520px) {
+  .report-intro .opa-figure { float: none; display: block; margin: 0 auto 12px; }
+}
+
+/* Quarto emits matplotlib/plotnine figures without img-fluid, so nothing caps
+   their width: a wide figure then overflows the text column on screen and is
+   cropped by the print stylesheet. Cap them here. */
+.cell-output-display img,
+figure img {
+  max-width: 100%;
+  height: auto;
+}
+@media print {
+  .cell-output-display img, figure img { max-width: 100% !important; }
+}
+
+/* Wide display equations scroll inside their own box on a phone instead of
+   widening the page. MathJax sets an inline min-width on tagged equations,
+   hence !important. */
+mjx-container[jax="CHTML"][display="true"] {
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+/* Table-layout:auto still lets a table grow past width:100% at narrow
+   viewports (min-content width of an unbreakable header word). Wrap any wide
+   table in a .table-scroll div rather than fighting table-layout. */
+.table-scroll { overflow-x: auto; margin: 0.4rem 0; }
+.table-scroll table { margin: 0; }
