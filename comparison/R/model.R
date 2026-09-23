@@ -51,7 +51,7 @@ bridge_steps <- function() {
                 "avoidance", "one_time_as_permanent", "elasticity_size",
                 "income_proportional", "income_level", "horizon", "asset_sales"),
     disputes_row = c("8", "7", "7", "3", "(not a row)", "1", "4", "6", "5", "2",
-                     "(listed under 'Not yet in the table')"),
+                     "(not a row)"),
     title = c(
       "Non-US-citizen residents",
       "Base list and valuation date",

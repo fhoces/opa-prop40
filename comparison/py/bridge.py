@@ -96,7 +96,7 @@ STEPS = [
     ("income_proportional", "6", "Lost income tax proportional to lost wealth", "data vs guesswork"),
     ("income_level", "5", "Billionaires' annual CA income tax", "research vs guesswork"),
     ("horizon", "2", "How long the income tax loss lasts", "scenario"),
-    ("asset_sales", "(listed under 'Not yet in the table')", "Extra income tax from selling assets to pay", "guesswork"),
+    ("asset_sales", "(not a row)", "Extra income tax from selling assets to pay", "guesswork"),
 ]
 IDS = [s[0] for s in STEPS]
 STEP_INPUTS = {"noncitizens": ["W_noncit"], "base_list": ["W_core"], "real_estate": ["re"],

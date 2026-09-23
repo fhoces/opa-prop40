@@ -48,7 +48,7 @@ test_that("Shapley matches a brute-force average over all orders on a small game
 test_that("every step is labelled and tied to a DISPUTES row or flagged as not one", {
   st <- bridge_steps()
   expect_true(all(nzchar(st$kind)))
-  expect_setequal(setdiff(st$disputes_row, c("(not a row)", "(listed under 'Not yet in the table')")),
+  expect_setequal(setdiff(st$disputes_row, "(not a row)"),
                   as.character(1:8))
   expect_true(all(grepl("data|research|guesswork|scenario", st$kind)))
 })

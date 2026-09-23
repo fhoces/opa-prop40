@@ -68,7 +68,7 @@ build_series <- function(ex, resid_label) {
         if (o == "a") {
           add("ggss", "total", ggss, "GGSS headline, as printed (GGSS p.4)")
           add("ggss_rounding", "model", e$supporting_model - ggss,
-              "GGSS round their $104B scoring down to $100B 'for simplicity' (p.4)", "rounding")
+              "GGSS round their scoring to the nearest $100B 'for simplicity' (p.4)", "rounding")
           add("bsz", "total", e$supporting_model, "BSZ Table 5 row 1 = the model at all-supporting inputs (checkpoint)")
         } else {
           add("bsz_net", "total", e$supporting_model,
@@ -311,6 +311,8 @@ render_site <- function(root = comparison_root(),
     vapply(ls$pv_5yr, money, "", digits = 1), vapply(ls$pv_perpetuity, money, "", digits = 1),
     vapply(ls$net_at_rauh_revenue_perpetuity, money, "", digits = 1)), collapse = "\n")
 
+  tok$walczak_range <- sprintf("$%s-%sB", formatC(dv("walczak_loss_low"), format = "f", digits = 2),
+                               formatC(dv("walczak_loss_high"), format = "f", digits = 2))
   # ---- parity note ----
   tok$parity_note <- "R and Python agree to 1e-9 on every exported number; see comparison/tests"
 

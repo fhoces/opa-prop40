@@ -10,7 +10,7 @@ test_that("index.html and assets/comparison-data.js are the generator's own outp
 test_that("no unfilled tokens, no em-dashes on the page", {
   html <- paste(readLines(file.path(root, "index.html"), encoding = "UTF-8"), collapse = "\n")
   expect_false(grepl("{{", html, fixed = TRUE))
-  expect_false(grepl("—", html, fixed = TRUE))
+  expect_false(grepl(intToUtf8(0x2014), html, fixed = TRUE))
 })
 
 test_that("key numbers appear on the page as computed", {
