@@ -77,7 +77,9 @@ credited to us.
      digitized (labelled as read off the chart, since he prints no values) and shown beside our
      bridge, with every difference listed: exact step values, provenance labels, order dependence,
      vintage (he scores the earlier GGSS text: 213 billionaires, $2.18T, $109B to $99B, p.3 fn.1),
-     and his real-estate step drawn near zero though his text says about $8B (p.4). His stated
+     his real-estate step is drawn near zero, which is consistent with his text: the ~$8B on p.4 is a
+     cut in the taxable BASE, i.e. about $0.4B of revenue at 5% (corrected 2026-09-23; an earlier note
+     here misread it as an inconsistency). His stated
      priors (p.2) and the acknowledgement to Gamage (p.1) are disclosed.
    - Layout: the reconciliation page is the **site root** (`index.html`, the kit's multi-OPA
      overview variant), linking to `supporting-analysis/site/` and `opposing-analysis/site/`.

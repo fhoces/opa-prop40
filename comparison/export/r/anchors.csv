@@ -1,0 +1,5 @@
+"anchor_id","label","value","where","default","residual_vs_model"
+"mc_expected","Expected WT in the Monte Carlo behind the -24.7 mean NPV",51.255,"Rauh p.20 eq.22 (with the code's 67.51 ceiling)",TRUE,-0.000324844738493368
+"literature_calibrated","Literature-calibrated (semi-elasticity 10.32)",45.59,"Rauh p.14 eq.13",FALSE,-5.66532484473849
+"table9_central","Table 9 central scenario",42,"Rauh p.19 Table 9",FALSE,-9.2553248447385
+"preferred_about_40","Preferred estimate, 'about $40 billion'",40,"Rauh p.1 abstract, p.14",FALSE,-11.2553248447385
