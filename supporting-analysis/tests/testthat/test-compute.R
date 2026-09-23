@@ -64,7 +64,9 @@ test_that("compute_tab5 matches the 4-scenario Excel Tab5 to 1e-3", {
 
 test_that("compute_fig8_laffer matches Excel Fig8 columns A-E across all rates", {
   laffer <- compute_fig8_laffer()
-  xl <- read_sheet("Fig8", range = "A11:E211")  # 201 rows of computed Laffer values
+  # August renamed/repurposed Fig8; the Laffer curve moved verbatim to Fig9
+  # (see RC8 / fig8_laffer_sheet() in R/vintage.R).
+  xl <- read_sheet(fig8_laffer_sheet(), range = "A11:E211")  # 201 rows
 
   expect_equal(nrow(laffer), 201)
   expect_equal(laffer$tax_rate,               xl$A, tolerance = 1e-9)
@@ -79,10 +81,24 @@ test_that("compute_data_sec_agg excludes Ellison from every year", {
   # If we DON'T exclude Ellison, totals must diverge for years he was on the list
   agg_with_ell <- compute_data_sec_agg(d_all, exclude_ids = character(0))
   agg_no_ell   <- compute_data_sec_agg(d_all)
-  expect_gt(
-    agg_with_ell$forbes_worth[agg_with_ell$year == 2019],
-    agg_no_ell$forbes_worth[agg_no_ell$year == 2019] + 60   # Ellison ~ $68B in 2019
-  )
+  if (identical(bsz_vintage(), "may")) {
+    expect_gt(
+      agg_with_ell$forbes_worth[agg_with_ell$year == 2019],
+      agg_no_ell$forbes_worth[agg_no_ell$year == 2019] + 60   # Ellison ~ $68B in 2019
+    )
+  } else {
+    # August's data_sec_all no longer has ANY "larry-ellison" row, in any
+    # year (verified: 0 of 1345 rows match, openpyxl direct scan) - the
+    # workbook itself now excludes him at the data layer rather than relying
+    # on a downstream filter, matching the paper's narrative that Ellison
+    # should not count as a CA billionaire. compute_data_sec_agg's
+    # exclude_ids argument is therefore a no-op under this vintage: the
+    # with/without-Ellison aggregates are IDENTICAL, not merely close.
+    expect_identical(
+      agg_with_ell$forbes_worth,
+      agg_no_ell$forbes_worth
+    )
+  }
 })
 
 test_that("compute_billionaires_ca_inctax matches Excel formula cells", {

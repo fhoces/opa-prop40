@@ -5,8 +5,8 @@
 # documented tolerance.
 
 compute_tab5 <- function(pareto_missing_r, tab2, tab3,
-                         baseline_n        = 249,
-                         baseline_wealth   = 2182,
+                         baseline_n        = tab5_const("baseline_n"),
+                         baseline_wealth   = tab5_const("baseline_wealth"),
                          avoidance_rate    = 0.10,
                          avoidance_small   = 0.20,
                          wealth_tax_rate   = 0.05,
@@ -39,11 +39,13 @@ compute_tab5 <- function(pareto_missing_r, tab2, tab3,
   zuck_avg_tax_M    <- avg_metric_row$zuckerberg        # Tab3!$D$13
   top4_avg_tax_M    <- avg_metric_row$all_top4          # Tab3!F13
 
-  # Top-4 wealth breakouts hardcoded in Tab5 row 30 (in $B):
-  page_wealth_B  <- 276;   page_private_B  <- 13.4
-  brin_wealth_B  <- 254.6; brin_private_B  <- 13.2
-  zuck_wealth_B  <- 230.2; zuck_private_B  <- 2.5
-  huang_wealth_B <- 172;   huang_private_B <- 2.84
+  # Top-4 wealth breakouts hardcoded in Tab5 row 30 (in $B). These moved
+  # between vintages (May: Forbes as of 4/15/2026; August: 7/1/2026) - see
+  # .TAB5_CONST in R/vintage.R, ported from both workbooks' Tab5 formulas.
+  page_wealth_B  <- tab5_const("page_wealth_B");   page_private_B  <- tab5_const("page_private_B")
+  brin_wealth_B  <- tab5_const("brin_wealth_B");   brin_private_B  <- tab5_const("brin_private_B")
+  zuck_wealth_B  <- tab5_const("zuck_wealth_B");   zuck_private_B  <- tab5_const("zuck_private_B")
+  huang_wealth_B <- tab5_const("huang_wealth_B");  huang_private_B <- tab5_const("huang_private_B")
   top4_wealth_B  <- page_wealth_B + brin_wealth_B + zuck_wealth_B + huang_wealth_B
   top4_private_B <- page_private_B + brin_private_B + zuck_private_B + huang_private_B
 
@@ -58,15 +60,15 @@ compute_tab5 <- function(pareto_missing_r, tab2, tab3,
   # Pre-2026 leavers (Page, Thiel, Hankey, Kalanick) — Tab5 rows 20-23.
   # Page contributes company-tax + private-wealth share; the other three
   # contribute private-wealth share only (apportioned from residual rate).
-  thiel_wealth_B    <- 28.9
-  hankey_wealth_B   <- 8.15
-  kalanick_wealth_B <- 3.56
+  thiel_wealth_B    <- tab5_const("thiel_wealth_B")
+  hankey_wealth_B   <- tab5_const("hankey_wealth_B")
+  kalanick_wealth_B <- tab5_const("kalanick_wealth_B")
   ca_inctax_loss_pre2026 <-
       (page_avg_tax_M / 1000) + page_private_B * inctax_per_wealth_residual +
       (thiel_wealth_B + hankey_wealth_B + kalanick_wealth_B) * inctax_per_wealth_residual
 
   # Post-2026 leavers (Brin, Zuckerberg, Andy Fang) — Tab5 rows 25-27.
-  fang_wealth_B <- 1.5
+  fang_wealth_B <- tab5_const("fang_wealth_B")
   ca_inctax_loss_post2026 <-
       (brin_avg_tax_M / 1000) + brin_private_B * inctax_per_wealth_residual +
       (zuck_avg_tax_M / 1000) + zuck_private_B * inctax_per_wealth_residual +

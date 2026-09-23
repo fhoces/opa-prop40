@@ -168,3 +168,16 @@ tab5_const <- function(name, vintage = bsz_vintage()) .TAB5_CONST[[vintage]][[na
 # ---------------------------------------------------------------------------
 lrs_current_row <- function(vintage = bsz_vintage()) if (identical(vintage, "may")) 51L else 52L
 lrs_base_row <- 8L  # 1982, unchanged both vintages
+
+# ---------------------------------------------------------------------------
+# RC8: the Laffer-curve sheet was renamed/relocated. May: "Fig8" (Laffer
+# Curve). August: "Fig8" is now a different chart entirely (VC deals in
+# California); the Laffer curve moved to the new "Fig9" sheet, byte-for-byte
+# the same layout and parameter defaults as May's Fig8 (verified: Fig9!B8:E8
+# = 10, 0.002, 2000, 15, matching compute_fig8_laffer()'s defaults exactly).
+# R/compute_pareto.R itself needs no change - it never reads the sheet name,
+# only these parameter defaults, which still match.
+# ---------------------------------------------------------------------------
+fig8_laffer_sheet <- function(vintage = bsz_vintage()) {
+  if (identical(vintage, "may")) "Fig8" else "Fig9"
+}
