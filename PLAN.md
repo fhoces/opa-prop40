@@ -67,6 +67,21 @@ credited to us.
      (Shapley). The Rauh anchor is the Monte Carlo mean (−$24.7B), not Table 9's central cell.
    - **The vintage gap stated:** Rauh March 2026 vs GGSS July / BSZ August 2026.
 
+   **Confirmed by the user 2026-09-23, before any bridge numbers were computed:**
+   - Output: BOTH (a) gross one-time wealth tax revenue and (b) the net fiscal effect, with the
+     income-tax loss horizon as an explicit dial.
+   - Direction: the bridge runs **GGSS to Rauh**, the same start and end as Hoopes (2026, SSRN
+     6428578) Figure 2 (p.6), with BSZ as a checkpoint; step sizes are Shapley averages over orders,
+     so the direction sets only the reading order. Rauh's NBER version enters as one extra step.
+   - Prior comparison: Hoopes (2026) is cited as the existing comparison. His Figure 2 bars are
+     digitized (labelled as read off the chart, since he prints no values) and shown beside our
+     bridge, with every difference listed: exact step values, provenance labels, order dependence,
+     vintage (he scores the earlier GGSS text: 213 billionaires, $2.18T, $109B to $99B, p.3 fn.1),
+     and his real-estate step drawn near zero though his text says about $8B (p.4). His stated
+     priors (p.2) and the acknowledgement to Gamage (p.1) are disclosed.
+   - Layout: the reconciliation page is the **site root** (`index.html`, the kit's multi-OPA
+     overview variant), linking to `supporting-analysis/site/` and `opposing-analysis/site/`.
+
 **Same format as the previous OPA (user requirement 2026-09-23).** Every public surface (overview
 page, interactive explorer, Quarto reproduction report, teaching deck, reproduction-materials links,
 the OPA background image, the cross-link footer, the CRediT / AI-use table) is instantiated from the
@@ -74,7 +89,7 @@ shared kit at `~/Desktop/sandbox/opa-framework/template/`, which is extracted fr
 `opa-ai-macro-econ-scenarios`. The root reconciliation page uses the kit's multi-OPA overview variant.
 Pages are not hand-built from scratch, and any departure from the kit goes back into the kit.
 
-**Site layout (proposed, not yet confirmed):** the reconciliation page is the site root, linking to
+**Site layout (confirmed 2026-09-23):** the reconciliation page is the site root, linking to
 `/supporting-analysis/` and `/opposing-analysis/`. **Blocker:** the root `.gitignore` ignores
 `*.html` (only `README.html` is allowed back). This must be narrowed, for example to render
 by-products only, before any site page is committed.
