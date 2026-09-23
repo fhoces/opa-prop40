@@ -7,9 +7,12 @@ test_that("excel_col_letters covers single, transitional, and double-letter rang
   expect_equal(excel_col_letters(53)[53], "BA")
 })
 
-test_that("list_sheets returns the 36 sheets in the BSZ workbook", {
+test_that("list_sheets returns the sheets in the BSZ workbook", {
   sheets <- list_sheets()
-  expect_length(sheets, 36)
+  # August added 4 sheets (Fig9's predecessor moved there, plus
+  # 2023-b-1__adjusted_gross_income, data_venturemonitor_annual,
+  # data_venturemonitor_quarterly - see RC9c / section 4 of VERIFY-AUGUST.md).
+  expect_length(sheets, if (identical(bsz_vintage(), "may")) 36 else 40)
   expect_true("Index" %in% sheets)
   expect_true("Tab1" %in% sheets)
   expect_true("data_sec_top4" %in% sheets)

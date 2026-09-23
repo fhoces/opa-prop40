@@ -35,16 +35,26 @@ test_that("extract_data_sec_agg covers years 2019-2025 with no summary rows", {
   expect_equal(ncol(agg), 35)
   expect_equal(agg$year, 2019:2025)
   expect_equal(agg$n[agg$year == 2019], 168)
-  expect_equal(agg$forbes_worth[agg$year == 2025], 2051.66, tolerance = 1e-4)
+  # 2025 forbes_worth moved 2051.66 -> 2054.82 between vintages (a legitimate
+  # input update; RC9b).
+  expect_equal(
+    agg$forbes_worth[agg$year == 2025],
+    if (identical(bsz_vintage(), "may")) 2051.66 else 2054.82,
+    tolerance = 1e-4
+  )
 })
 
 test_that("extract_rtb_2026_industry returns the first industry block", {
   rtb <- extract_rtb_2026_industry()
-  expect_equal(nrow(rtb), 14)
+  # August added a 15th industry row ("Service") before "Total" (RC9a).
+  expect_equal(nrow(rtb), if (identical(bsz_vintage(), "may")) 14 else 15)
   expect_equal(ncol(rtb), 8)
   expect_equal(rtb$industries[1], "Technology")
   expect_equal(rtb$industries[nrow(rtb)], "Total")
-  expect_equal(rtb$n_billionaires[rtb$industries == "Total"], 239)
+  expect_equal(
+    rtb$n_billionaires[rtb$industries == "Total"],
+    if (identical(bsz_vintage(), "may")) 239 else 240
+  )
 })
 
 test_that("extract_pareto_missing returns the main Pareto table", {
@@ -68,9 +78,12 @@ test_that("extract_longrunseries returns the raw wide series", {
 test_that("extract_shortrunseries returns the raw wide series", {
   sr <- extract_shortrunseries()
   expect_s3_class(sr, "tbl_df")
-  # 2018 sits at row 6
+  # 2018 sits at row 6 in both vintages. The "top4/5 total Forbes wealth"
+  # column moved E (May) -> K (August) along with the rest of the sheet's
+  # reshuffle (RC1 / RC9d); the 2018 value itself is historical and
+  # unchanged between vintages.
   expect_equal(as.numeric(sr[[6, "A"]]), 2018)
-  expect_equal(as.numeric(sr[[6, "E"]]), 173.8, tolerance = 1e-4)
+  expect_equal(as.numeric(sr[[6, srs_col("top5_total")]]), 173.8, tolerance = 1e-4)
 })
 
 test_that("positional dumps round-trip through expect_matches_excel", {
