@@ -1,0 +1,25 @@
+# third-party sources: never committed (see README "sources" sections for SHA-256 + URLs)
+**/original-materials/
+*.sqlite
+**/_targets/
+
+# also a source PDF, kept at repo root, not part of either side's analysis
+/prop40.pdf
+
+# R / RStudio
+.Rproj.user/
+.Rhistory
+.RData
+*.Rproj
+
+# quarto / render outputs
+/.quarto/
+**/*_files/
+*_cache/
+*.html
+!README.html
+
+# python
+__pycache__/
+.pytest_cache/
+*.pyc
