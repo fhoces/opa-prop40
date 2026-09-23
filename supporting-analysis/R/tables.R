@@ -413,17 +413,27 @@ build_tab3 <- function(data_sec_top4) {
   tab
 }
 
-build_tab1 <- function(data_sec_agg_r, shortrunseries_r, longrunseries) {
+build_tab1 <- function(data_sec_agg_r, shortrunseries_r, longrunseries,
+                       shortrunseries, vintage = bsz_vintage()) {
   # Table 1: Wealth Growth of California Billionaires.
-  # Panel A: 2022-2025 nominal wealth + growth + CA GDP comparison.
-  # Panel B: 1982 vs 2025 long-term real-wealth growth of top .0002%.
+  # Panel A: 2022-2025(+2026 in August) nominal wealth + growth + CA GDP/AGI.
+  # Panel B: 1982 vs 2025(2026 in August) long-term real-wealth growth of the
+  # top .0002% (May) / .001% (August) wealthiest CA families.
+  #
+  # RC4 (class b): August redefined the Panel A/B denominator from CA GDP to
+  # CA total AGI (Tab1!G5 header + formula both changed; new source sheet
+  # `2023-b-1__adjusted_gross_income`). RC5: August inserted a "2026 (July
+  # 1st)" row into Panel A (and pushed the growth row down one). RC6 (class
+  # b): Panel B's percentile widened .0002% -> .001% and its "current year"
+  # endpoint moved 2025 -> 2026. All ported directly from both workbooks'
+  # cell formulas (openpyxl, data_only=False) - see VERIFY-AUGUST.md.
 
   # ---- Panel A inputs --------------------------------------------------------
   agg <- data_sec_agg_r[data_sec_agg_r$year %in% 2022:2025, ]
   srs <- shortrunseries_r$panel
   srs_a <- srs[srs$year %in% 2022:2025, c("year", "top5_total_b")]
-  # CA GDP: longrunseries col AT, rows 48..51 = years 2022..2025
-  ca_gdp <- suppressWarnings(as.numeric(longrunseries$AT[48:51]))
+  denom_col <- if (identical(vintage, "may")) "AT" else "AY"  # GDP (May) / AGI (August)
+  denom_1 <- suppressWarnings(as.numeric(longrunseries[[denom_col]][48:51]))
 
   panel_a <- tibble::tibble(
     year                 = as.character(2022:2025),
@@ -432,10 +442,38 @@ build_tab1 <- function(data_sec_agg_r, shortrunseries_r, longrunseries) {
     annual_growth        = c(NA_real_, agg$forbes_worth[-1] / agg$forbes_worth[-4] - 1),
     fraction_public      = agg$forbes_public_worth / agg$forbes_worth,
     top4_wealth_b        = srs_a$top5_total_b,
-    ca_gdp_b             = ca_gdp,
-    wealth_per_gdp       = agg$forbes_worth / ca_gdp
+    ca_gdp_b             = denom_1,
+    wealth_per_gdp       = agg$forbes_worth / denom_1
   )
-  # Append "Growth during 2023-2025" row (matches Tab1 row 10).
+
+  if (!identical(vintage, "may")) {
+    # August's new "2026 (July 1st)" row (Tab1 row 10): n and the 60%
+    # public-wealth fraction are hand-entered literals; wealth and top-4
+    # wealth are literal reads from shortrunseries (row 14, the 2026 row -
+    # outside compute_shortrunseries()'s 2018-2025 panel, so read directly
+    # from the raw sheet); D10 doubles the (partial-year) growth rate; the
+    # denominator is longrunseries!AY52.
+    cell_2026 <- function(col) xls_cell(shortrunseries, paste0(col, 14))
+    wealth_2026 <- cell_2026("C")
+    top4_2026   <- cell_2026(srs_col("top5_total"))
+    denom_2026  <- suppressWarnings(as.numeric(longrunseries[[denom_col]][52]))
+    row_2026 <- tibble::tibble(
+      year                 = "2026 (July 1st)",
+      n_billionaires       = 250L,
+      wealth_b             = wealth_2026,
+      annual_growth        = 2 * (wealth_2026 / panel_a$wealth_b[4] - 1),
+      fraction_public      = 0.6,
+      top4_wealth_b        = top4_2026,
+      ca_gdp_b             = denom_2026,
+      wealth_per_gdp       = wealth_2026 / denom_2026
+    )
+    panel_a <- dplyr::bind_rows(panel_a, row_2026)
+  }
+
+  # Append "Growth during 2023-2025" row (Tab1 row 10 May / 11 August) - this
+  # stays anchored to the 2022 -> 2025 window in BOTH vintages (indices 1 and
+  # 4 of `panel_a`, which are always 2022 and 2025 regardless of whether the
+  # 2026 row above was appended after them).
   growth_row <- tibble::tibble(
     year                 = "Growth during 2023-2025",
     n_billionaires       = NA_integer_,
@@ -450,24 +488,36 @@ build_tab1 <- function(data_sec_agg_r, shortrunseries_r, longrunseries) {
   panel_a_full$panel <- "A. Recent nominal wealth growth of CA billionaires"
 
   # ---- Panel B inputs --------------------------------------------------------
-  # longrunseries rows 8 = 1982, 51 = 2025. AL = # families top .0002%,
-  # AQ = top .0002% wealth in current $B, AI = # CA families,
-  # AT = CA GDP, W = deflator (W51 / W8 inflates 1982 -> 2025 $).
   lrs <- longrunseries
   num <- function(col, row) suppressWarnings(as.numeric(lrs[[col]][row]))
-  W8  <- num("W", 8);  W51 <- num("W", 51)
-  AL_1982 <- num("AL", 8);  AL_2025 <- num("AL", 51)
-  AQ_1982 <- num("AQ", 8);  AQ_2025 <- num("AQ", 51)
-  AI_1982 <- num("AI", 8);  AI_2025 <- num("AI", 51)
-  AT_1982 <- num("AT", 8);  AT_2025 <- num("AT", 51)
-  # Deflation: 1982 $ -> 2025 $ via W ratio; 2025 row deflator-ratios to 1.
-  defl_1982 <- W8  / W51
-  defl_2025 <- W51 / W51    # = 1
+  W8 <- num("W", 8)
+  cur_row <- lrs_current_row(vintage)   # 51 (May, 2025) / 52 (August, 2026)
+  W_cur <- num("W", cur_row)
+  defl_1982 <- W8 / W_cur
 
-  make_year_row <- function(label, AL, AQ, AI, AT, defl) {
-    wealth_b <- AQ * defl
-    n_fam_m  <- AI / 1000
-    gdp_b    <- AT * defl
+  if (identical(vintage, "may")) {
+    AL_1982 <- num("AL", 8);       AL_cur <- num("AL", cur_row)
+    wealth_1982 <- num("AQ", 8) * defl_1982
+    wealth_cur  <- num("AQ", cur_row)                       # already 2025$
+    gdp_1982    <- num("AT", 8) * defl_1982
+    gdp_cur     <- num("AT", cur_row)                       # already 2025$
+  } else {
+    # Families: top .001% = 5x the top .0002% count (longrunseries!AL, same
+    # column both vintages). Wealth: longrunseries!BT is ALREADY real (2026
+    # $), no deflation needed. AGI: longrunseries!BA (nominal, "CA total AGI
+    # consistent KG") deflated the same way GDP used to be.
+    AL_1982 <- num("AL", 8) * 5;   AL_cur <- num("AL", cur_row) * 5
+    wealth_1982 <- num("BT", 8)
+    wealth_cur  <- num("BT", cur_row)
+    gdp_1982    <- num("BA", 8) * defl_1982
+    gdp_cur     <- num("BA", cur_row) * (W_cur / W_cur)     # = num("BA", cur_row)
+  }
+  AI_1982 <- num("AI", 8);  AI_cur <- num("AI", cur_row)
+
+  make_year_row <- function(label, AL, wealth_b, AI, gdp_b, round_gdp_per_family) {
+    n_fam_m <- AI / 1000
+    gdp_per_family <- 1000 * gdp_b / n_fam_m
+    if (round_gdp_per_family) gdp_per_family <- round(gdp_per_family, -2)
     tibble::tibble(
       year                 = label,
       families_top0002_k   = AL,
@@ -475,13 +525,16 @@ build_tab1 <- function(data_sec_agg_r, shortrunseries_r, longrunseries) {
       wealth_per_family_b  = wealth_b / AL,
       n_ca_families_m      = n_fam_m,
       ca_gdp_2025dollars_b = gdp_b,
-      gdp_per_family_k     = 1000 * gdp_b / n_fam_m
+      gdp_per_family_k     = gdp_per_family
     )
   }
-  row_1982 <- make_year_row("1982", AL_1982, AQ_1982, AI_1982, AT_1982, defl_1982)
-  row_2025 <- make_year_row("2025", AL_2025, AQ_2025, AI_2025, AT_2025, defl_2025)
-  lr <- .long_run_compare(row_1982, row_2025, n_years = 43)
-  panel_b <- dplyr::bind_rows(row_1982, row_2025, lr$ratio, lr$annualized)
+  cur_label <- if (identical(vintage, "may")) "2025" else "2026"
+  n_years   <- if (identical(vintage, "may")) 43 else 44
+  round_gpf <- !identical(vintage, "may")   # August's H column uses ROUND(.,-2)
+  row_1982 <- make_year_row("1982", AL_1982, wealth_1982, AI_1982, gdp_1982, round_gpf)
+  row_cur  <- make_year_row(cur_label, AL_cur, wealth_cur, AI_cur, gdp_cur, round_gpf)
+  lr <- .long_run_compare(row_1982, row_cur, n_years = n_years)
+  panel_b <- dplyr::bind_rows(row_1982, row_cur, lr$ratio, lr$annualized)
 
   # ---- Render with gt -------------------------------------------------------
   # Two stacked panels rendered as one gt; row groups give the panel headers.
@@ -496,8 +549,10 @@ build_tab1 <- function(data_sec_agg_r, shortrunseries_r, longrunseries) {
     col6    = panel_a_full$ca_gdp_b,
     col7    = panel_a_full$wealth_per_gdp
   )
+  pctile_label <- if (identical(vintage, "may")) "top .0002%" else "top .001%"
   panel_b_render <- tibble::tibble(
-    section = "B. Long-term real wealth growth: top .0002% wealthiest CA families (2025 $)",
+    section = paste0("B. Long-term real wealth growth: ", pctile_label,
+                      " wealthiest CA families (", cur_label, " $)"),
     year    = panel_b$year,
     col1    = panel_b$families_top0002_k,
     col2    = panel_b$wealth_top0002_b,

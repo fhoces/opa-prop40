@@ -54,7 +54,7 @@ test_that("shortrunseries_r matches snapshot",        check_snap(shortrunseries_
 test_that("top4taxes_r matches snapshot",             check_snap(top4taxes_r_v,        "top4taxes_r"))
 
 # ---- Phase-3 table panel snapshots ---------------------------------------
-tab1_gt   <- build_tab1(data_sec_agg_r, shortrunseries_r_v, lrs_raw)
+tab1_gt   <- build_tab1(data_sec_agg_r, shortrunseries_r_v, lrs_raw, srs_raw)
 tab2_gt   <- build_tab2(data_sec_agg_r, b_r, top4_raw)
 tab3_gt   <- build_tab3(top4_raw)
 tab4_gt   <- build_tab4(top4_raw)

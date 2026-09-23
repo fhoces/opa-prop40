@@ -1,4 +1,4 @@
-test_that("build_tab1 panel A reproduces Tab1 sheet 2022-2025 + growth row", {
+test_that("build_tab1 panel A reproduces Tab1 sheet 2022-2025(+2026) + growth row", {
   agg <- compute_data_sec_agg(extract_data_sec_all())
   bci_x <- extract_billionaires_ca_inctax()
   ftb <- extract_ftb_b4a()
@@ -7,11 +7,15 @@ test_that("build_tab1 panel A reproduces Tab1 sheet 2022-2025 + growth row", {
   srs_raw <- extract_shortrunseries()
   srs_r <- compute_shortrunseries(agg, top4, b, srs_raw)
   lrs <- extract_longrunseries()
-  tab1 <- build_tab1(agg, srs_r, lrs)
+  tab1 <- build_tab1(agg, srs_r, lrs, srs_raw)
 
   pa <- attr(tab1, "panel_a")
-  # Pull the Tab1 sheet's panel A cells (rows 6..10, cols B..H)
-  xl <- read_sheet("Tab1", range = "B6:H10")
+  may <- identical(bsz_vintage(), "may")
+  # Pull the Tab1 sheet's panel A cells. May: rows 6..10 (4 years + growth
+  # row). August: rows 6..11 (5 years, incl. the new 2026 row, + growth row).
+  xl <- read_sheet("Tab1", range = if (may) "B6:H10" else "B6:H11")
+  n_data <- if (may) 4 else 5
+  growth_idx <- n_data + 1L
 
   expect_equal(pa$n_billionaires[1:4],   xl$A[1:4], tolerance = 1e-6)
   expect_equal(pa$wealth_b[1:4],         xl$B[1:4], tolerance = 1e-2)
@@ -20,13 +24,23 @@ test_that("build_tab1 panel A reproduces Tab1 sheet 2022-2025 + growth row", {
   expect_equal(pa$top4_wealth_b[1:4],    xl$E[1:4], tolerance = 1e-2)
   expect_equal(pa$ca_gdp_b[1:4],         xl$F[1:4], tolerance = 1e-2)
   expect_equal(pa$wealth_per_gdp[1:4],   xl$G[1:4], tolerance = 1e-4)
-  # Growth row (row 10 of Tab1 sheet) — B, E, F columns only
-  expect_equal(pa$wealth_b[5],           xl$B[5], tolerance = 1e-4)
-  expect_equal(pa$top4_wealth_b[5],      xl$E[5], tolerance = 1e-4)
-  expect_equal(pa$ca_gdp_b[5],           xl$F[5], tolerance = 1e-4)
+  if (!may) {
+    # 2026 row (row 5 of the panel)
+    expect_equal(pa$n_billionaires[5],   xl$A[5], tolerance = 1e-6)
+    expect_equal(pa$wealth_b[5],         xl$B[5], tolerance = 1e-2)
+    expect_equal(pa$annual_growth[5],    xl$C[5], tolerance = 1e-4)
+    expect_equal(pa$fraction_public[5],  xl$D[5], tolerance = 1e-4)
+    expect_equal(pa$top4_wealth_b[5],    xl$E[5], tolerance = 1e-2)
+    expect_equal(pa$ca_gdp_b[5],         xl$F[5], tolerance = 1e-2)
+    expect_equal(pa$wealth_per_gdp[5],   xl$G[5], tolerance = 1e-4)
+  }
+  # Growth row — B, E, F columns only
+  expect_equal(pa$wealth_b[growth_idx],      xl$B[growth_idx], tolerance = 1e-4)
+  expect_equal(pa$top4_wealth_b[growth_idx], xl$E[growth_idx], tolerance = 1e-4)
+  expect_equal(pa$ca_gdp_b[growth_idx],      xl$F[growth_idx], tolerance = 1e-4)
 })
 
-test_that("build_tab1 panel B reproduces Tab1 sheet 1982 + 2025 + ratios + annualized", {
+test_that("build_tab1 panel B reproduces Tab1 sheet 1982 + current year + ratios + annualized", {
   agg <- compute_data_sec_agg(extract_data_sec_all())
   bci_x <- extract_billionaires_ca_inctax()
   ftb <- extract_ftb_b4a()
@@ -35,11 +49,13 @@ test_that("build_tab1 panel B reproduces Tab1 sheet 1982 + 2025 + ratios + annua
   srs_raw <- extract_shortrunseries()
   srs_r <- compute_shortrunseries(agg, top4, b, srs_raw)
   lrs <- extract_longrunseries()
-  tab1 <- build_tab1(agg, srs_r, lrs)
+  tab1 <- build_tab1(agg, srs_r, lrs, srs_raw)
 
   pb <- attr(tab1, "panel_b")
-  # Tab1 panel B is at rows 14..17, cols C..H
-  xl <- read_sheet("Tab1", range = "C14:H17")
+  # Tab1 panel B: rows 14..17 (May) / 15..18 (August - pushed down 1 row by
+  # Panel A's new 2026 row), cols C..H.
+  may <- identical(bsz_vintage(), "may")
+  xl <- read_sheet("Tab1", range = if (may) "C14:H17" else "C15:H18")
   expect_equal(pb$families_top0002_k,   xl$A, tolerance = 1e-3)
   expect_equal(pb$wealth_top0002_b,     xl$B, tolerance = 1e-2)
   expect_equal(pb$wealth_per_family_b,  xl$C, tolerance = 1e-3)
@@ -231,7 +247,7 @@ test_that("build_tab1 renders to non-empty HTML and LaTeX", {
   srs_raw <- extract_shortrunseries()
   srs_r <- compute_shortrunseries(agg, top4, b, srs_raw)
   lrs <- extract_longrunseries()
-  tab1 <- build_tab1(agg, srs_r, lrs)
+  tab1 <- build_tab1(agg, srs_r, lrs, srs_raw)
 
   html <- as.character(gt::as_raw_html(tab1))
   expect_gt(nchar(html), 1000)
