@@ -117,9 +117,13 @@ negative** on this machine/R version - matching our R port to 1e-9 (`tests/testt
 but off by ~$0.1-0.2B from the paper's printed mean/sd (median and %negative match exactly). We
 checked whether the eq. 22 typo (mismatch #1, 67.1 vs 67.51) explains the gap by re-running with
 `wt_max <- 67.1`: it does not - that moves the mean *further* from the printed value (to -$25.3B).
-The gap is well within Monte Carlo error for a single run (our tolerance: `4 * sd / sqrt(n)` =~
-$0.5B) but is systematic in one direction across repeated runs on this machine, suggesting the
-paper's printed summary was drafted from a slightly different run (different R/RNG version, or
-before a late code edit) rather than regenerated from the exact script now in the repo. The NBER
+The gap is within Monte Carlo error for one run (our tolerance: `4 * sd / sqrt(n)` =~ $0.5B).
+A fixed seed gives the same draw on every run, so repeated runs cannot show whether the gap is
+systematic. What does explain the printed mean: the draws are independent uniforms, so the
+expectation has a closed form, E[WT] - (1 - E[WT]/94.2) x E[C] x E[1/r], with
+E[1/r] = ln(0.045/0.015)/0.03. That gives **-$24.707B**, which rounds to the printed -$24.7B
+(re-verified by the main session, 2026-09-23). So the printed mean matches the model's exact
+expectation, while the shipped seed-2026 run gives -$24.77B. The printed sd ($38.4B vs $38.6B)
+remains unexplained; a different run or code state is the likeliest source. The NBER
 version's printed summary (mean -$38.9B, median -$35.3B, 85.2% negative), by contrast, reproduces
 from `NPV_dist_v8.R` to within Monte Carlo noise with no directional gap.
