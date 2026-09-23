@@ -100,7 +100,7 @@
   #   $fed_tax_per_agi  — row 64 vector (used by D99 + the all-taxes block)
   #   $pct_overshoot    — row 72 vector indexed by panel year 2018..2023
   m1_cols <- c("B", "C", "D", "E", "F")          # IRS years 2018..2022
-  read_row <- function(row) xls_cells_row(bci, m1_cols, row)
+  read_row <- function(row) xls_cells_row(bci, m1_cols, bci_row(row))
 
   n_returns        <- read_row(59)
   agi_cutoff_k     <- read_row(60)
@@ -153,11 +153,24 @@
 # Block B: aggregate CA income tax stats (rows 13-21)
 # ---------------------------------------------------------------------------
 
-.bci_aggregate_stats <- function(bci, ftb) {
-  # Rows 13-21 of the Method I panel: # returns, CA AGI, CA inctax (residents
-  # / passthrough / part-year), totals, and the fiscal-year -> calendar-year
-  # adjustment. Returns a list of length-9 vectors aligned to years 2018..2026.
-  cell <- function(addr) xls_cell(bci, addr)
+.bci_aggregate_stats <- function(bci, ftb, tax_rate_5m, vintage = bsz_vintage()) {
+  # Rows 13-21 (May numbering) of the Method I panel: # returns, CA AGI, CA
+  # inctax (residents / passthrough / part-year), totals, and the fiscal-year
+  # -> calendar-year adjustment. Returns a list of length-9 vectors aligned to
+  # years 2018..2026. `tax_rate_5m` is `.bci_top_brackets()`'s row-36 series
+  # (needed only by the August branch below).
+  #
+  # August's row 15 ("CA income tax, all resident returns") changed formula:
+  # its own label gained "(and adding shifted pass-through entity in 2021+)",
+  # and for 2021-2023 it now ADDS the passthrough-entity tax directly, rather
+  # than keeping it in a separate row added at total time. This is a genuine
+  # formula change confirmed against both workbooks' cell formulas (openpyxl,
+  # data_only=False) - not a row-shift artifact: every upstream input (the
+  # FTB sums, the passthrough/part-year literals) is IDENTICAL between
+  # vintages, yet the two workbooks' cached row totals differ, because August
+  # folds passthrough into a different row and computes the 2021 passthrough
+  # off the $5M-bracket tax RATE instead of off dollar amounts.
+  cell <- function(addr) bci_cell(bci, addr)
   pan_cols <- c("B","C","D","E","F","G","H","I","J")
   ftb_yrs <- 2018:2022   # years where FTB B4A has bracket-level data
 
@@ -172,39 +185,71 @@
     .BCI_FTB_2023$ca_agi_b,
     rep(NA_real_, 3)
   )
-  # Row 15 (CA inctax residents $B): FTB col K * 1e-9 for 2018-2022; 2023 literal.
-  # Rows 16/17/18 below combine residents + passthrough + part-year/non-resident;
-  # then for 2024/2025 we work backwards: row 18 = row 20 * (1 + fy-to-cy adj).
-  ca_inctax_resid_pre <- c(
+  # Row 15 base (CA inctax residents $B, BEFORE any August passthrough fold):
+  # FTB col K * 1e-9 for 2018-2022; 2023 literal. Identical in both vintages.
+  ca_inctax_resid_base <- c(
     vapply(ftb_yrs, function(y) ftb$sum_year("K", y, 1e-9), numeric(1)),
     .BCI_FTB_2023$ca_inctax_b
   )
-  # Row 16 passthrough: literal G16; F16 scales by ratio of row-15 values; E16=F16.
-  G16 <- cell("G16")
-  F16 <- G16 * ca_inctax_resid_pre[5] / ca_inctax_resid_pre[6]
-  E16 <- F16
-  # Row 17 part-year / non-resident: F17 literal; B..E17 = $F17 * (row15/F15).
-  F17 <- cell("F17")
-  G17 <- ca_inctax_resid_pre[6] * (F17 / ca_inctax_resid_pre[5])
-  pre_part17 <- c(
-    ca_inctax_resid_pre[1] * (F17 / ca_inctax_resid_pre[5]),
-    ca_inctax_resid_pre[2] * (F17 / ca_inctax_resid_pre[5]),
-    ca_inctax_resid_pre[3] * (F17 / ca_inctax_resid_pre[5]),
-    ca_inctax_resid_pre[4] * (F17 / ca_inctax_resid_pre[5]),
-    F17,
-    G17
-  )
-  pre_part16 <- c(NA, NA, NA, E16, F16, G16)
 
-  # Row 18 (total) = row 15 + row 16 + row 17.
-  ca_inctax_total_pre <- ca_inctax_resid_pre +
-                          ifelse(is.na(pre_part16), 0, pre_part16) +
-                          pre_part17
+  # "row16" here always means the May-numbered passthrough row; `cell()`
+  # resolves it to the correct physical row per vintage via bci_row().
+  passthrough_2023 <- cell("G16")   # 15.219, unchanged literal both vintages
 
-  # Row 20: CA inctax revenue, fiscal year ($B). Literal in sheet.
-  ca_inctax_fy_b <- xls_cells_row(bci, pan_cols, 20)
+  if (identical(vintage, "may")) {
+    # Row 16 passthrough: literal G16 (2023); F16 (2022) scales it by the
+    # ratio of row-15 values; E16 (2021) = F16.
+    F16 <- passthrough_2023 * ca_inctax_resid_base[5] / ca_inctax_resid_base[6]
+    E16 <- F16
+    pre_part16 <- c(NA, NA, NA, E16, F16, passthrough_2023)
 
-  # Row 21: fy-to-cy adjustment = row 18 / row 20 - 1. H21, I21 = AVG(D21:G21).
+    ca_inctax_resid_pre <- ca_inctax_resid_base
+
+    # Row 17 part-year / non-resident: F17 literal; every other column scales
+    # the SAME column's row-15 value by the constant ratio (F17 / row15-F).
+    F17 <- cell("F17")
+    ratio_partyear <- F17 / ca_inctax_resid_pre[5]
+    pre_part17 <- c(ca_inctax_resid_pre[1:4] * ratio_partyear, F17,
+                     ca_inctax_resid_pre[6] * ratio_partyear)
+
+    # Row 18 (total) = row 15 + row 16 + row 17.
+    ca_inctax_total_pre <- ca_inctax_resid_pre +
+                            ifelse(is.na(pre_part16), 0, pre_part16) +
+                            pre_part17
+  } else {
+    # August: passthrough (2022, 2023) is now a FLAT 15.219 (no 2022/2023
+    # ratio scaling); 2021's passthrough is scaled off the $5M-bracket
+    # effective tax RATE (tax_rate_5m[2020] vs [2021] vs [2023] - ported
+    # verbatim from the cell formula: `=F17*($D$37-$E$37)/($D$37-$G$37)`,
+    # where D/E/G37 = tax_rate_5m at indices 3/4/6 = 2020/2021/2023).
+    passthrough_2022 <- passthrough_2023
+    passthrough_2021 <- passthrough_2022 *
+      (tax_rate_5m[3] - tax_rate_5m[4]) / (tax_rate_5m[3] - tax_rate_5m[6])
+    pre_part16 <- rep(NA_real_, 6)   # nothing added separately at total time
+
+    ca_inctax_resid_pre <- ca_inctax_resid_base
+    ca_inctax_resid_pre[4] <- ca_inctax_resid_base[4] + passthrough_2021
+    ca_inctax_resid_pre[5] <- ca_inctax_resid_base[5] + passthrough_2022
+    ca_inctax_resid_pre[6] <- ca_inctax_resid_base[6] + passthrough_2023
+
+    # Row 18 (August's part-year row, "row17" in May-numbered `cell()`
+    # calls): same shape as May's row 17, but against the now-folded row-15
+    # base, which changes the ratio's denominator (and hence every column's
+    # value, even 2018-2020 which the fold itself never touched).
+    F_partyear <- cell("F17")
+    ratio_partyear <- F_partyear / ca_inctax_resid_pre[5]
+    pre_part17 <- c(ca_inctax_resid_pre[1:4] * ratio_partyear, F_partyear,
+                     ca_inctax_resid_pre[6] * ratio_partyear)
+
+    # Row 19 (total) = row 15 + row 18 only (passthrough already folded in).
+    ca_inctax_total_pre <- ca_inctax_resid_pre + pre_part17
+  }
+
+  # Row 20 (May) / row 21 (August): CA inctax revenue, fiscal year ($B).
+  # Literal in sheet.
+  ca_inctax_fy_b <- xls_cells_row(bci, pan_cols, bci_row(20))
+
+  # Row 21 (May) / row 22 (August): fy-to-cy adjustment = total/fy - 1.
   ca_inctax_total_full <- numeric(9)
   ca_inctax_total_full[1:6] <- ca_inctax_total_pre
   fy_to_cy_adj <- numeric(9)
@@ -212,32 +257,34 @@
   fy_to_cy_adj[7] <- mean(fy_to_cy_adj[3:6])
   fy_to_cy_adj[8] <- fy_to_cy_adj[7]
 
-  # Row 18 for 2024/2025: row 20 * (1 + fy_to_cy_adj).
+  # Total for 2024/2025: fy figure * (1 + fy_to_cy_adj).
   ca_inctax_total_full[7] <- ca_inctax_fy_b[7] * (1 + fy_to_cy_adj[7])
   ca_inctax_total_full[8] <- ca_inctax_fy_b[8] * (1 + fy_to_cy_adj[8])
   ca_inctax_total_full[9] <- NA_real_
 
-  # Row 15 for 2024/2025: backed out as row 18 - row 17, with row 17 scaled
-  # off G17 by the ratio of new row-18 to G18.
-  G18 <- ca_inctax_total_full[6]
-  H18 <- ca_inctax_total_full[7]
-  I18 <- ca_inctax_total_full[8]
-  H17 <- G17 * (H18 / G18)
-  I17 <- G17 * (I18 / G18)
-  H15 <- H18 - H17
-  I15 <- I18 - I17
+  # Residents for 2024/2025: backed out as total - part-year, with
+  # part-year scaled off the 2023 part-year amount by the ratio of the new
+  # total to the 2023 total.
+  total_2023 <- ca_inctax_total_full[6]
+  total_2024 <- ca_inctax_total_full[7]
+  total_2025 <- ca_inctax_total_full[8]
+  partyear_2023 <- pre_part17[6]
+  partyear_2024 <- partyear_2023 * (total_2024 / total_2023)
+  partyear_2025 <- partyear_2023 * (total_2025 / total_2023)
+  resid_2024 <- total_2024 - partyear_2024
+  resid_2025 <- total_2025 - partyear_2025
 
   list(
     n_returns_ca         = n_returns_ca,
     ca_agi_b             = ca_agi_b,
-    ca_inctax_resid_b    = c(ca_inctax_resid_pre, H15, I15, NA_real_),
+    ca_inctax_resid_b    = c(ca_inctax_resid_pre, resid_2024, resid_2025, NA_real_),
     ca_inctax_part16     = c(pre_part16, NA_real_, NA_real_, NA_real_),
-    ca_inctax_part17     = c(pre_part17, H17, I17, NA_real_),
+    ca_inctax_part17     = c(pre_part17, partyear_2024, partyear_2025, NA_real_),
     ca_inctax_total_full = ca_inctax_total_full,
     ca_inctax_fy_b       = ca_inctax_fy_b,
     fy_to_cy_adj         = fy_to_cy_adj,
-    H15                  = H15,
-    I15                  = I15
+    H15                  = resid_2024,
+    I15                  = resid_2025
   )
 }
 
@@ -249,7 +296,7 @@
   # Build the top-bracket inputs (#returns, AGI, taxable, tax) for the $10M+
   # and $5M+ brackets, then project AGI / tax for the top CA-billionaire-sized
   # taxpayer using a Pareto extrapolation. Years 2018..2023 only (panel B..G).
-  cell <- function(addr) xls_cell(bci, addr)
+  cell <- function(addr) bci_cell(bci, addr)
   ftb_D <- ftb$cols$D; ftb_H <- ftb$cols$H
   ftb_J <- ftb$cols$J; ftb_K <- ftb$cols$K
   rows  <- ftb$rows
@@ -387,7 +434,7 @@
   # .0002% × Memo-1 correction (D99) ought to roughly match the average of
   # row 49 across 2018-2020. C105 is the residual; small means the Method I
   # projection is consistent with directly-observed FTB tax-rate aggregates.
-  cell <- function(addr) xls_cell(bci, addr)
+  cell <- function(addr) bci_cell(bci, addr)
   B96 <- cell("B96")                                          # 172669 literal
   B100 <- D99 * B96 * sum(tax_5m_b[1:3]) / sum(agi_5m_b[1:3])
   B101 <- cell("B101")                                        # 90 literal
@@ -407,7 +454,8 @@
 
 .bci_all_taxes <- function(yrs, proj_agi_top_corr, inc_top_w_rel,
                             ca_inctax_ca_b, m1_fed_tax_per_agi, D99,
-                            agg, public_share_b, total_w_ca) {
+                            agg, public_share_b, total_w_ca,
+                            vintage = bsz_vintage()) {
   # All-taxes block (billionairesCAinctax rows 110-153). Decomposes the tax
   # burden of CA billionaires into CA inctax / fed inctax / corporate /
   # property+sales on both PUBLIC-asset wealth (rows 117-129) and the broader
@@ -434,9 +482,15 @@
   fed_inctax_b[6:8] <- ca_inctax_ca_b[6:8] * fed_to_ca_ratio[6:8]
   fed_inctax_b[9]   <- NA_real_
 
-  # Rows 115-116 share + 11% gross-up on public assets.
+  # Rows 115-116 (May) / 116-117 (August) share + gross-up on public assets.
+  # The gross-up rate itself changed 11% -> 9.5% in August (a genuine
+  # parameter update by the authors, confirmed by the row's own label text
+  # and formula: May C116 = 0.11*C115, August C117 = 0.095*C116). The OTHER
+  # 11% in this file (corp_tax_div below) is a different, unrelated constant
+  # that did not change between vintages (verified against both workbooks'
+  # formulas) - do not touch it.
   public_share         <- public_share_b
-  sales_gross_up_public <- 0.11 * public_share
+  sales_gross_up_public <- bci_sales_gross_up_rate() * public_share
 
   # Rows 117-122, 130: pull data_sec_agg columns (years 2019..2025 only).
   pad <- function(v) c(NA_real_, v, NA_real_)
@@ -469,22 +523,45 @@
   check_ei <- tot_tax_per_ei -
                (ca_inctax_per_ei + fed_inctax_per_ei + corp_per_ei + prop_sales_per_ei)
 
-  # Rows 137-140: private-wealth share decomposition (BSZ Saez-Zucman national
-  # accounts weights: passthroughs 46.8 + 25, private-C corps 61).
+  # Rows 137-140 (May) / 138-141 (August): private-wealth share decomposition
+  # (BSZ Saez-Zucman national-accounts weights). The weights themselves
+  # changed in August - confirmed against both workbooks' formulas (May:
+  # passthrough 46.8+25=71.8, private-C 61; August: passthrough 93,
+  # private-C 116) - a genuine methodology update, not a row-shift artifact.
   private_share     <- 1 - public_share - sales_gross_up_public
-  weight_passthrough <- 46.8 + 25
-  weight_private_c   <- 61
+  if (identical(vintage, "may")) {
+    weight_passthrough <- 46.8 + 25
+    weight_private_c   <- 61
+  } else {
+    weight_passthrough <- 93
+    weight_private_c   <- 116
+  }
   weight_total       <- weight_passthrough + weight_private_c
   passthrough_share  <- private_share * weight_passthrough / weight_total
   private_c_share    <- private_share * weight_private_c   / weight_total
   test_share         <- public_share + sales_gross_up_public + passthrough_share + private_c_share
 
-  # Rows 141-145: imputed corporate, property, and sales taxes on private wealth.
+  # Rows 141-145 (May) / 142-146 (August): imputed corporate, property, and
+  # sales taxes on private wealth.
   corp_tax_priv_c  <- corp_tax_pub * (private_c_share / public_share)
   corp_tax_div     <- 0.11 * corp_tax_pub
   prop_tax_priv    <- (prop_tax_pub / corp_tax_pub) * (corp_tax_priv_c + corp_tax_div)
-  tot_corp_prop    <- (corp_tax_pub + prop_tax_pub) + corp_tax_priv_c + corp_tax_div + prop_tax_priv
-  # Row 145: 3% sales tax on (AGI - CA inctax - fed inctax - 25% standard ded) × 0.5 propensity.
+  # August adds a NEW row ("Property taxes on passthrough") not present in
+  # May: property tax imputed on the passthrough share specifically, using
+  # (public_share + sales_gross_up_public) as its denominator (verified
+  # formula: `=C121*C139/(C116+C117)`, i.e. prop_tax_pub * passthrough_share
+  # / (public_share + sales_gross_up_public)). May's total simply omits this
+  # term (it did not exist in that vintage's sheet).
+  if (identical(vintage, "may")) {
+    prop_tax_passthrough <- 0
+  } else {
+    prop_tax_passthrough <- prop_tax_pub * passthrough_share /
+      (public_share + sales_gross_up_public)
+  }
+  tot_corp_prop    <- (corp_tax_pub + prop_tax_pub) + corp_tax_priv_c + corp_tax_div +
+                       prop_tax_priv + prop_tax_passthrough
+  # Row 145 (May) / 147 (August): 3% sales tax on (AGI - CA inctax - fed
+  # inctax - 25% standard ded) × 0.5 propensity.
   total_sales_tax  <- 0.03 * (ca_agi_billionaires - ca_inctax_ca_b - fed_inctax_b -
                                0.25 * ca_agi_billionaires) * 0.5
   total_inctax_b   <- ca_inctax_ca_b + fed_inctax_b
@@ -556,7 +633,7 @@ compute_billionaires_ca_inctax <- function(data_sec_agg_r,
                                             billionaires_ca_inctax,
                                             ftb_b4a) {
   bci  <- billionaires_ca_inctax
-  cell <- function(addr) xls_cell(bci, addr)
+  cell <- function(addr) bci_cell(bci, addr)
   agg  <- .bci_make_agg(data_sec_agg_r)
   ftb  <- .bci_make_ftb(ftb_b4a)
 
@@ -571,16 +648,18 @@ compute_billionaires_ca_inctax <- function(data_sec_agg_r,
   pan_cols <- c("B","C","D","E","F","G","H","I","J")
 
   # Block A: CA billionaires (rows 8-10).
-  n_ca_b     <- xls_cells_row(bci, pan_cols, 8)
+  n_ca_b     <- xls_cells_row(bci, pan_cols, bci_row(8))
   total_w_ca <- c(NA_real_, agg("C"), NA_real_)
   avg_w_ca   <- total_w_ca / n_ca_b
 
-  # Block B: aggregate CA income tax stats (rows 13-21).
-  stats <- .bci_aggregate_stats(bci, ftb)
-
-  # Block C: top-bracket Pareto projection (rows 26-44).
+  # Block C: top-bracket Pareto projection (rows 26-44). Computed BEFORE
+  # block B because August's row-15 passthrough fold (see
+  # .bci_aggregate_stats) needs this block's tax_rate_5m series.
   pct_overshoot_yr <- unname(m1$pct_overshoot[c("2018","2019","2020","2021","2022","2023")])
   brk <- .bci_top_brackets(bci, ftb, n_ca_b, pct_overshoot_yr)
+
+  # Block B: aggregate CA income tax stats (rows 13-21).
+  stats <- .bci_aggregate_stats(bci, ftb, tax_rate_5m = brk$tax_rate_5m)
 
   # Rows 46-47: literal correction factors.
   inc_top_w_rel <- c(rep(cell("B46"), 6), NA_real_, NA_real_, NA_real_)

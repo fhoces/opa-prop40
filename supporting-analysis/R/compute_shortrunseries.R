@@ -34,18 +34,36 @@
   })
 }
 
-.srs_panel_columns <- function(srs, agg, top4, m1, yrs) {
+.srs_panel_columns <- function(srs, agg, top4, m1, yrs, vintage = bsz_vintage()) {
   # Compute every Excel-column-letter vector that feeds either the panel
-  # tibble, the row 14..18 summary block, or the growth table. Returns a
-  # named list keyed by Excel column letter (B, C, ..., AH, plus tax_b).
+  # tibble, the summary block, or the growth table. Returns a named list
+  # keyed by Excel column letter (B, C, ..., AH, plus tax_b) — the LETTERS
+  # here are always the MAY ones (the return list's own naming convention);
+  # the actual sheet column read for each concept is resolved per-vintage via
+  # `srs_col()` (R/vintage.R). Panel ROWS (6:13 = 2018:2025) are unchanged in
+  # both vintages, so no row-mapping is needed here (only the summary/growth
+  # blocks below the panel shifted rows — see srs_summary_row()).
 
-  # Literal pulls from the sheet (panel rows 6..13 = 2018..2025).
-  B_wealth_incl_nonus <- c(NA_real_, xls_cells_col(srs, "B", 7:13))
-  K_ellison           <- xls_cells_col(srs, "K", 6:13)
-  Q_top5_incl_nonus   <- xls_cells_col(srs, "Q", 6:13)
-
-  # Total CA billionaire wealth, US citizens only.
+  # Total CA billionaire wealth, US citizens only (never read from Excel:
+  # this is R's own re-derivation, used as-is below).
   C_wealth <- c(NA_real_, agg$forbes_worth)
+
+  K_ellison <- xls_cells_col(srs, srs_col("K_ellison", vintage), 6:13)
+  Q_top5_incl_nonus <- xls_cells_col(srs, srs_col("Q_us_wealth", vintage), 6:13)
+
+  # "CA wealth, US citizens only" memo column: present in May (column B) as a
+  # standalone cached series; August dropped it and its own dependent
+  # formulas (the "CA share in US billionaire wealth" / "CA inctax per
+  # wealth" columns) fall back to the all-CA-billionaires total instead
+  # (verified: August's AC7 = C7/X7 exactly, where May's equivalent V7 =
+  # B7/Q7 — the only thing that changed is which wealth total feeds the
+  # ratio). Reuse C_wealth for August so every downstream formula below stays
+  # vintage-agnostic.
+  B_wealth_incl_nonus <- if (identical(vintage, "may")) {
+    c(NA_real_, xls_cells_col(srs, "B", 7:13))
+  } else {
+    C_wealth
+  }
 
   # Top-5 totals from data_sec_top4 "Total (excluding Ellison)" rows.
   total_excl <- top4[top4$forbes_id == "Total (excluding Ellison)" & top4$year %in% yrs, ]
@@ -81,9 +99,13 @@
   S_cum_2019 <- Q_top5_incl_nonus / Q_top5_incl_nonus[2] - 1
   S_cum_2019[1] <- NA_real_   # S6 empty in Excel
   S_cum_2019[2] <- NA_real_   # S7 empty (no formula)
-  # S10 references B instead of Q — apparent typo in the original sheet,
-  # reproduced for fidelity.
-  S_cum_2019[5] <- B_wealth_incl_nonus[5] / B_wealth_incl_nonus[2] - 1
+  if (identical(vintage, "may")) {
+    # S10 references B instead of Q — apparent typo in the original May
+    # sheet, reproduced for fidelity. Verified this typo is gone in August
+    # (its Z10 cell, the equivalent position, equals X10/X7-1 — the standard
+    # Q-based formula — not the B-based one), so no override there.
+    S_cum_2019[5] <- B_wealth_incl_nonus[5] / B_wealth_incl_nonus[2] - 1
+  }
   T_cum_2022 <- rep(NA_real_, 8)
   T_cum_2022[5:8] <- Q_top5_incl_nonus[5:8] / Q_top5_incl_nonus[5] - 1
 
