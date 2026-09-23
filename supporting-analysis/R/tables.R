@@ -90,10 +90,17 @@ build_tab2 <- function(data_sec_agg_r, billionaires_ca_inctax_r, data_sec_top4) 
   tab
 }
 
-build_tab_a1 <- function(shortrunseries, longrunseries) {
+build_tab_a1 <- function(shortrunseries, longrunseries, vintage = bsz_vintage()) {
   # Appendix Table A1: Wealth Growth of US Billionaires (mirrors Tab1 but
-  # for the US). Panel A: recent nominal growth 2022-2025. Panel B: 1982 vs
-  # 2025 long-term real growth of the top .0002% US families.
+  # for the US). Panel A: recent nominal growth 2022-2025(+2026 in August).
+  # Panel B: 1982 vs 2025(2026 in August) long-term real growth of the top
+  # .0002% (May) / .001% (August) US families.
+  #
+  # Mirrors the same RC4/RC5/RC6 August changes as build_tab1() (see its
+  # comment): a new AGI column (August's Panel A gains F/G columns that did
+  # not exist at all in May), a new 2026 row, and the widened/rebased
+  # percentile in Panel B. All ported directly from both workbooks' cell
+  # formulas (openpyxl, data_only=False) - see VERIFY-AUGUST.md.
   srs <- shortrunseries
   lrs <- longrunseries
   num <- function(df, col, rows) {
@@ -101,53 +108,89 @@ build_tab_a1 <- function(shortrunseries, longrunseries) {
                   numeric(1)))
   }
 
-  # ---- Panel A inputs (shortrunseries rows 10..13 = years 2022..2025) ------
-  # Col I = # US citizen billionaires (literal); Col Q = US billionaire wealth.
-  n_us_b <- num(srs, "I", 10:13)
-  w_us_b <- num(srs, "Q", 10:13)
+  # ---- Panel A inputs (shortrunseries rows 10..13 = years 2022..2025, +14
+  # for 2026 in August) ------------------------------------------------------
+  years_a <- if (identical(vintage, "may")) 2022:2025 else 2022:2026
+  rows_a  <- if (identical(vintage, "may")) 10:13 else 10:14
+  n_us_b <- num(srs, srs_col("n_us_citizen"), rows_a)
+  w_us_b <- num(srs, srs_col("Q_us_wealth"),  rows_a)
 
   panel_a <- tibble::tibble(
-    year                = as.character(2022:2025),
+    year                = as.character(years_a),
     n_us_billionaires   = n_us_b,
     wealth_b            = w_us_b,
-    annual_growth       = c(NA_real_, w_us_b[-1] / w_us_b[-4] - 1)
+    annual_growth       = c(NA_real_, w_us_b[-1] / w_us_b[-length(w_us_b)] - 1)
   )
+  if (!identical(vintage, "may")) {
+    # 2026's growth cell doubles the (partial-year) rate, same as Tab1.
+    n <- nrow(panel_a)
+    panel_a$annual_growth[n] <- 2 * (w_us_b[n] / w_us_b[n - 1] - 1)
+    # New AGI columns (August only; May's sheet has no US-AGI columns at all
+    # in Panel A). longrunseries!AV = "US TOTAL AGI", nominal, rows 48:52.
+    agi <- suppressWarnings(as.numeric(lrs$AV[48:52]))
+    panel_a$us_agi_b       <- agi
+    panel_a$wealth_per_agi <- w_us_b / agi
+  }
+  # Growth row stays anchored to the 2022 -> 2025 window (indices 1 and 4)
+  # regardless of whether the 2026 row above extended the table.
   growth_row <- tibble::tibble(
     year                = "Growth during 3 years (2023-2025)",
     n_us_billionaires   = NA_integer_,
     wealth_b            = panel_a$wealth_b[4] / panel_a$wealth_b[1] - 1,
     annual_growth       = NA_real_
   )
+  if (!identical(vintage, "may")) {
+    growth_row$us_agi_b       <- panel_a$us_agi_b[4] / panel_a$us_agi_b[1] - 1
+    growth_row$wealth_per_agi <- NA_real_
+  }
   panel_a_full <- dplyr::bind_rows(panel_a, growth_row)
 
-  # ---- Panel B inputs (longrunseries rows 8 = 1982, 51 = 2025) -------------
+  # ---- Panel B inputs (longrunseries rows 8 = 1982, 51 = 2025 / 52 = 2026) -
   num_lr <- function(col, row) suppressWarnings(as.numeric(lrs[[col]][row]))
-  W8  <- num_lr("W", 8);  W51 <- num_lr("W", 51)
-  defl_1982 <- W8  / W51
-  AM_1982 <- num_lr("AM", 8);  AM_2025 <- num_lr("AM", 51)
-  AP_1982 <- num_lr("AP", 8);  AP_2025 <- num_lr("AP", 51)
-  X_1982  <- num_lr("X",  8);  X_2025  <- num_lr("X",  51)
-  AS_1982 <- num_lr("AS", 8);  AS_2025 <- num_lr("AS", 51)
+  W8 <- num_lr("W", 8)
+  cur_row <- lrs_current_row(vintage)
+  W_cur <- num_lr("W", cur_row)
+  defl_1982 <- W8 / W_cur
 
-  make_year_row <- function(label, AM, AP, X, AS, defl) {
-    wealth_b <- AP * defl
-    n_fam_m  <- X / 1000
-    gdp_b    <- AS * defl
+  if (identical(vintage, "may")) {
+    AM_1982 <- num_lr("AM", 8);  AM_cur <- num_lr("AM", cur_row)
+    wealth_1982 <- num_lr("AP", 8) * defl_1982
+    wealth_cur  <- num_lr("AP", cur_row)             # already 2025$
+    agi_1982    <- num_lr("AS", 8) * defl_1982
+    agi_cur     <- num_lr("AS", cur_row)             # already 2025$
+  } else {
+    # Families: top .001% = 5x top .0002% (longrunseries!AM, US version of
+    # AL, unchanged column both vintages). Wealth: US GDP (longrunseries!G,
+    # nominal) x (US top .001%/GDP ratio, longrunseries!BQ) x deflator - the
+    # workbook's own Pareto-scaled wealth figure (no separate "already real"
+    # column exists for the US the way CA has BT). AGI: longrunseries!AV
+    # (nominal "US TOTAL AGI") x deflator.
+    AM_1982 <- num_lr("AM", 8) * 5;  AM_cur <- num_lr("AM", cur_row) * 5
+    wealth_1982 <- num_lr("G", 8)       * num_lr("BQ", 8)       * defl_1982
+    wealth_cur  <- num_lr("G", cur_row) * num_lr("BQ", cur_row) * (W_cur / W_cur)
+    agi_1982    <- num_lr("AV", 8) * defl_1982
+    agi_cur     <- num_lr("AV", cur_row) * (W_cur / W_cur)
+  }
+  X_1982 <- num_lr("X", 8);  X_cur <- num_lr("X", cur_row)
+
+  make_year_row <- function(label, AM, wealth_b, X, agi_b) {
+    n_fam_m <- X / 1000
     tibble::tibble(
       year                  = label,
       families_top0002_k    = AM,
       wealth_top0002_b      = wealth_b,
       wealth_per_family_b   = wealth_b / AM,
       n_us_families_m       = n_fam_m,
-      us_gdp_2025dollars_b  = gdp_b,
-      gdp_per_family_k      = 1000 * gdp_b / n_fam_m
+      us_gdp_2025dollars_b  = agi_b,
+      gdp_per_family_k      = 1000 * agi_b / n_fam_m
     )
   }
-  # 2025 columns are already in 2025 $; pass defl = 1 to skip the inflate.
-  row_1982 <- make_year_row("1982", AM_1982, AP_1982, X_1982, AS_1982, defl_1982)
-  row_2025 <- make_year_row("2025", AM_2025, AP_2025, X_2025, AS_2025, 1)
-  lr <- .long_run_compare(row_1982, row_2025, n_years = 43)
-  panel_b <- dplyr::bind_rows(row_1982, row_2025, lr$ratio, lr$annualized)
+  cur_label <- if (identical(vintage, "may")) "2025" else "2026"
+  n_years   <- if (identical(vintage, "may")) 43 else 44
+  row_1982 <- make_year_row("1982", AM_1982, wealth_1982, X_1982, agi_1982)
+  row_cur  <- make_year_row(cur_label, AM_cur, wealth_cur, X_cur, agi_cur)
+  lr <- .long_run_compare(row_1982, row_cur, n_years = n_years)
+  panel_b <- dplyr::bind_rows(row_1982, row_cur, lr$ratio, lr$annualized)
 
   panel_a_render <- tibble::tibble(
     section = "A. Recent nominal wealth growth of US billionaires",
@@ -155,10 +198,14 @@ build_tab_a1 <- function(shortrunseries, longrunseries) {
     col1    = panel_a_full$n_us_billionaires,
     col2    = panel_a_full$wealth_b,
     col3    = panel_a_full$annual_growth,
-    col4    = NA_real_, col5 = NA_real_, col6 = NA_real_
+    col4    = NA_real_,
+    col5    = if (!identical(vintage, "may")) panel_a_full$us_agi_b else NA_real_,
+    col6    = if (!identical(vintage, "may")) panel_a_full$wealth_per_agi else NA_real_
   )
+  pctile_label <- if (identical(vintage, "may")) "top .0002%" else "top .001%"
   panel_b_render <- tibble::tibble(
-    section = "B. Long-term real wealth growth: top .0002% wealthiest US families (2025 $)",
+    section = paste0("B. Long-term real wealth growth: ", pctile_label,
+                      " wealthiest US families (", cur_label, " $)"),
     year    = panel_b$year,
     col1    = panel_b$families_top0002_k,
     col2    = panel_b$wealth_top0002_b,

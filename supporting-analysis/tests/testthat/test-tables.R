@@ -200,25 +200,40 @@ test_that("build_tab5 renders to non-empty HTML and LaTeX", {
   expect_gt(nchar(tex), 200)
 })
 
-test_that("build_tab_a1 panel A reproduces TabA1 sheet 2022-2025 + growth row", {
+test_that("build_tab_a1 panel A reproduces TabA1 sheet 2022-2025(+2026) + growth row", {
   srs <- extract_shortrunseries()
   lrs <- extract_longrunseries()
   ta1 <- build_tab_a1(srs, lrs)
   pa <- attr(ta1, "panel_a")
-  xl <- read_sheet("TabA1", range = "B6:D10")
+  may <- identical(bsz_vintage(), "may")
+  # May: rows 6..10 (4 years + growth), cols B..D only (no AGI columns yet).
+  # August: rows 6..11 (5 years incl. 2026 + growth), cols B..G (new F/G AGI
+  # columns - RC5, and the new "2026 (July 1st)" row).
+  xl <- read_sheet("TabA1", range = if (may) "B6:D10" else "B6:G11")
+  n_data <- if (may) 4 else 5
+  growth_idx <- n_data + 1L
 
   expect_equal(pa$n_us_billionaires[1:4], xl$A[1:4], tolerance = 1e-6)
   expect_equal(pa$wealth_b[1:4],          xl$B[1:4], tolerance = 1e-2)
   expect_equal(pa$annual_growth[2:4],     xl$C[2:4], tolerance = 1e-4)
-  expect_equal(pa$wealth_b[5],            xl$B[5],   tolerance = 1e-4)
+  if (!may) {
+    expect_equal(pa$n_us_billionaires[5], xl$A[5], tolerance = 1e-6)
+    expect_equal(pa$wealth_b[5],          xl$B[5], tolerance = 1e-2)
+    expect_equal(pa$annual_growth[5],     xl$C[5], tolerance = 1e-4)
+    expect_equal(pa$us_agi_b[1:5],        xl$E[1:5], tolerance = 1e-2)
+    expect_equal(pa$wealth_per_agi[1:5],  xl$F[1:5], tolerance = 1e-4)
+  }
+  expect_equal(pa$wealth_b[growth_idx],   xl$B[growth_idx], tolerance = 1e-4)
 })
 
-test_that("build_tab_a1 panel B reproduces TabA1 sheet 1982 vs 2025", {
+test_that("build_tab_a1 panel B reproduces TabA1 sheet 1982 vs current year", {
   srs <- extract_shortrunseries()
   lrs <- extract_longrunseries()
   ta1 <- build_tab_a1(srs, lrs)
   pb <- attr(ta1, "panel_b")
-  xl <- read_sheet("TabA1", range = "B14:G17")
+  may <- identical(bsz_vintage(), "may")
+  # May: rows 14..17. August: rows 15..18 (pushed down 1 by Panel A's new row).
+  xl <- read_sheet("TabA1", range = if (may) "B14:G17" else "B15:G18")
   expect_equal(pb$families_top0002_k,   xl$A, tolerance = 1e-2)
   expect_equal(pb$wealth_top0002_b,     xl$B, tolerance = 1e-1)
   expect_equal(pb$wealth_per_family_b,  xl$C, tolerance = 1e-3)
