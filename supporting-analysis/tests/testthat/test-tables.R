@@ -284,5 +284,5 @@ test_that("build_tab1 renders to non-empty HTML and LaTeX", {
 
   tex <- as.character(gt::as_latex(tab1))
   expect_gt(nchar(tex), 200)
-  expect_true(grepl("\\\\begin\\{longtable\\}|\\\\begin\\{tabular\\}", tex))
+  expect_true(grepl("\\\\begin\\{(longtable|tabular)\\*?\\}", tex))  # gt >= 1.0 emits tabular*
 })
