@@ -125,6 +125,22 @@ list(
   tar_target(fig_a4_png, render_figure_png(fig_a4, "fig_a4", width = 11, height = 5), format = "file"),
   tar_target(fig_a4_pdf, render_figure_pdf(fig_a4, "fig_a4", width = 11, height = 5), format = "file"),
 
+  # Site exports - data files for the public OPA pages under site/ (see
+  # R/site_exports.R). They add no new reproduction: score_tab5_cell() is
+  # pinned to tab5_r by tests/testthat/test-site.R.
+  tar_target(site_scoring_inputs, tab5_scoring_inputs(pareto_missing_r, tab2, tab3)),
+  tar_target(site_grid,           build_site_grid(site_scoring_inputs)),
+  tar_target(site_inputs,         build_site_inputs(site_scoring_inputs)),
+  tar_target(site_grid_csv,   write_site_csv(site_grid, "data/grid.csv"),     format = "file"),
+  tar_target(site_inputs_csv, write_site_csv(site_inputs, "data/inputs.csv"), format = "file"),
+  tar_target(site_tab5_csv,   write_site_csv(tab5_r, "data/tab5.csv"),        format = "file"),
+  tar_target(site_leavers_csv,
+             write_site_csv(site_scoring_inputs$leavers, "data/leavers.csv"), format = "file"),
+  tar_target(site_tab5_printed, compare_tab5_printed(tab5_r)),
+  tar_target(site_tab5_printed_csv,
+             write_site_csv(site_tab5_printed, "data/tab5-vs-printed.csv"), format = "file"),
+  tar_target(site_grid_js,    write_site_grid_js(site_grid, site_scoring_inputs), format = "file"),
+
   # Phase 4 - Quarto report. The render targets list every gt/figure object as
   # an explicit dependency so the report re-renders when any artifact changes.
   # Requires Quarto CLI on PATH (https://quarto.org/docs/get-started/).

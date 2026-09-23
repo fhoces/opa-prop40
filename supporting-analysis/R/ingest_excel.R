@@ -14,13 +14,21 @@ project_root <- function() {
   getwd()
 }
 
+# Where the gitignored source files live. Defaults to <project root>/original-materials;
+# CAWTBSZ_MATERIALS overrides only this directory (e.g. a git worktree pointing at the
+# main checkout's sources), leaving project_root() and outputs/ where they are.
+materials_dir <- function() {
+  d <- Sys.getenv("CAWTBSZ_MATERIALS", unset = "")
+  if (nzchar(d)) return(d)
+  file.path(project_root(), "original-materials")
+}
+
 xlsx_path_default <- function() {
   vintage <- Sys.getenv("BSZ_VINTAGE", unset = "august")
   if (identical(vintage, "may")) {
-    file.path(project_root(), "original-materials", "may-2026",
-              "BSZ_MainTablesFigures.xlsx")
+    file.path(materials_dir(), "may-2026", "BSZ_MainTablesFigures.xlsx")
   } else {
-    file.path(project_root(), "original-materials", "BSZ_MainTablesFigures.xlsx")
+    file.path(materials_dir(), "BSZ_MainTablesFigures.xlsx")
   }
 }
 
