@@ -7,6 +7,56 @@ default (August) vintage of `BSZ_MainTablesFigures.xlsx`
 (SHA-256 `c236cc94...cb6ce`), compared against the May vintage
 (SHA-256 `cffe04bd...b7b1a`) already verified clean (see PLAN.md step 5).
 
+## 0. Resolution (step 4)
+
+All 184 August failures classified below are fixed. Full-suite result, `Rscript`-sourcing
+`R/*.R` then `testthat::test_dir("tests/testthat", reporter = testthat::ListReporter$new())`:
+
+| Vintage | Pass | Fail | Error |
+|---|---:|---:|---:|
+| August (`BSZ_VINTAGE` unset / `august`) | 518 | 0 | 0 |
+| May (`BSZ_VINTAGE=may`) | 503 | 3 | 0 |
+
+May's 3 failures are the same pre-existing snapshot factor-ORDER issue (`fig4`, `fig_a3`) noted
+before this work started; left as-is per plan scope, not touched.
+
+Every RC below required more than the row-shift/renamed-sheet description originally given
+it turned out to need — in most cases (RC1, RC2, RC4/RC5/RC6) the columns also reshuffled
+non-uniformly, or a formula genuinely changed, discovered by reading the actual Excel cell
+formulas (`openpyxl`, `data_only=False`) rather than inferring from cached values. See each
+commit message for the full derivation; this table is only an index.
+
+| RC | What | Commit |
+|---|---|---|
+| RC10 | `compute_data_sec_agg` dedupes an accidentally re-pasted 4-row block in August's `data_sec_all` (n 244 -> 240, matching the workbook's own cache and the paper's stated count) | `9bced97` |
+| RC1 | `compute_shortrunseries`: vintage-keyed column-letter lookup (`R/vintage.R`'s `srs_col()`); August dropped the "CA wealth, US citizens only" column entirely, falling back to the all-CA-billionaires total | `f4f0a34` |
+| RC2 | `compute_billionaires_ca_inctax`: `bci_row()` row-offset helper (+1 for rows 16-143, +2 for rows >=144); August also folds the passthrough-entity tax into row 15 for 2021-2023, changed the sales gross-up rate 11%->9.5%, and changed the private-wealth passthrough/private-C weights 71.8/61 -> 93/116 (adding a new "property tax on passthrough" term) | `f4f0a34` |
+| RC3 | `compute_tab5`: vintage-keyed benchmark n/wealth and per-leaver wealth constants (`.TAB5_CONST` in `R/vintage.R`) | `135c6c7` |
+| RC8 | Laffer-curve sheet renamed/relocated May `Fig8` -> August `Fig9`; `fig8_laffer_sheet()` resolves it | `135c6c7` |
+| Ellison test | August's `data_sec_all` has zero `larry-ellison` rows in any year (verified: 0/1345), so with/without-Ellison aggregates are now asserted byte-identical for August, not "+60" | `135c6c7` |
+| RC9a/b/c/d | `rtb_2026_industry` n_max (14->15), `data_sec_agg` 2025 literal, `list_sheets` count (36->40), `shortrunseries` E6/K6 cell reference | `8aadd86` |
+| RC4/RC5/RC6 (Tab1) | `build_tab1`: CA GDP -> CA AGI denominator (`longrunseries!AT` -> `!AY`/`!BA`+deflator), new "2026 (July 1st)" row, Panel B redefined top .0002%->.001% with 2025->2026 endpoint (now reading already-real `!BT`/`!BA` columns) | `fb48dca` |
+| RC4/RC5/RC6 (TabA1) | `build_tab_a1`: same three changes mirrored for the US-billionaires table (new AGI columns `!AV`, new 2026 row, `!AM*5` / `!G*!BQ` percentile widening) | `e0fa46c` |
+| RC7 | `build_tab2` test: top-4 block column position (F:H -> H:J after 2 new "Total taxes" columns); also fixed a genuine average-row ratio formula change (May: mean-of-parts over 7yr; August: `AVERAGE(J7:J12)`, direct ratio average over 6yr) | `f0981cc` |
+| fig2 columns | `build_fig2`: `longrunseries` columns AZ->BJ, BE->BP, AV->BF, AW->BG (sheet grew 80->96 columns) | `3f971b5` |
+| fig3/fig4/fig_a2 literals | Downstream figure "sanity check" literals updated to August's (correct, RC1/RC2-fixed) 2025 values | `3f971b5` |
+| Snapshots | Moved to `tests/snapshots/<vintage>/`; August baseline regenerated only after every Excel-comparison test passed | `a2d8d0f` |
+
+**Did August add the 24 non-US-citizen CA billionaires the GGSS response promised?** Yes, in
+substance. The paper's own Methodological Appendix A (p.54) states: "Forbes lists 237 CA
+residents on Jan 1 2026 ($2277bn), 25 of them non-US citizens ($132bn), all included" and
+p.5 says "We include both US and non-US citizens" - so the 237-resident base already
+contains non-citizens; the response's "24" and the paper's "25" differ by one person,
+immaterial. No dedicated citizenship-flag column exists anywhere in the workbook
+(`data_sec_all`, `rtb_2026_industry`, or any Forbes-list sheet) to independently cross-tabulate
+the exact 25, so this rests on the PDF text, not a spreadsheet check. What IS independently
+verified from the data (via the RC10 investigation above): August's `data_sec_all`, deduped,
+has exactly 240 unique 2025 rows, reconciling exactly with 237 - 1 (Ellison, who has zero rows
+in `data_sec_all` at all, any year) + 4 (Daniela Amodei, Kim Kardashian, Laurene Powell Jobs,
+Oprah Winfrey - all four found in `data_sec_all` at year 2025, combined wealth $22.72B, matching
+the paper's stated "+$22.8bn" for these NA-state-coded additions) = 240, matching both the
+workbook's own `data_sec_agg` cache and the paper's stated count. No code changed for this item.
+
 ## 1. Pipeline status
 
 `Rscript -e 'targets::tar_make()'` with the August default: **every target built. No target
