@@ -41,7 +41,7 @@ August (rows 7 and 8).
 | 5 | **Billionaires' annual CA income tax** | C = $3.3 / 4.55 / 5.8B (p.15-17; Table 8 p.17; Table 9 p.19). 5.76 is the Pareto upper bound, assuming billionaires are the top 212 earners (p.15). 3.3 is the K≈500 dispersion draw (p.16-17). 4.55 is their midpoint, = 0.24% of $1,894.8B | About $3B/yr average over 2019-2025, 0.2% of wealth in 2023-25, 0.26% average 2019-25 (BSZ p.11). Top wealth holders' income is 50% of top earners' (Balkir et al. 2025; SCF), BSZ p.11 and p.55. BSZ p.11 fn.13 puts Rauh's central at 78.4% of top earners' income (= 4.55/5.8) | research (supporting: Balkir 50%) vs guesswork (Rauh: midpoint of two model bounds) | Y (78% derived, not quoted; see caveat) |
 | 6 | **Is the income tax lost proportional to the wealth lost?** | f = 1 − WT/94.20 is used as the lost share of the **income tax** base (p.19; Monte Carlo p.20), so income tax lost scales with wealth departed. Page + Brin + Zuckerberg are ~90% of departed wealth (Tables 6-7) | The top 4 (Page, Brin, Zuckerberg, Huang) pay $0.27B/yr on company wealth, 2019-25, = 0.07% of wealth (BSZ Table 4, p.38; GGSS p.9). Resp p.5: Page + Brin + Zuckerberg paid $269M in 2025, 0.04% of wealth; $222M/yr average 2019-25. With leavers valued from SEC data, BSZ's aggressive scenario loses $0.51B/yr (p.26) | data (SEC filings) vs guesswork (proportionality) | Partial: $0.27B and 0.07% verified in BSZ Aug; Resp's $269M / $222M figures for the top 3 are not restated in the Aug text; check against the workbook `top4taxes` sheet |
 | 7 | **Base definition** | 212 billionaires, $1,894.8B, 2025 Forbes list (p.4-5, Table 2). Removes Ellison, Houston, Snyder; adds Sacks (p.4-5). Deducts directly held residential real estate, $8.19B among stayers (p.8, Table 5). Real-estate-free baseline WT $94.20B (p.5, p.10) | **Ellison now excluded by BSZ too** (p.5 fn.3; p.54; p.54 fn.40, "Rauh et al. 2026 also choose to exclude Larry Ellison"). GGSS removed him relative to the Feb 16 version (GGSS p.2 fn.1). BSZ: 240 billionaires, $2,055B at 1 Jan 2026, adding Amodei, Kardashian, Powell Jobs, Winfrey (+$22.8B) (p.54); 250 and $2,307B at 1 Jul 2026 (p.24, Table 5 p.39). Scoring = 90% × 5% × $2,307B = $104B (p.24), with no separate real-estate deduction | data (list membership, valuation date) | Y. The March dispute over Ellison is closed in the strongest version; what remains is Houston, Snyder, Sacks, the 4 added names, non-citizens (row 8), valuation date, and the real-estate deduction |
-| 8 | **The 24-25 non-US-citizen residents** | Omitted: Rauh starts from Forbes' CA-residence field (p.4), which Resp p.6 fn.5 says covers residence only for US and Chinese residents | Resp p.6: both sides omitted 24 people, $110B, "an omission we will correct in our next iteration". **Corrected by August:** BSZ includes 25 non-US citizens, $132B at 1 Jan 2026 (p.54; "We include both US and non-US citizens", p.5). GGSS July: 24 people, about $150B (p.2 fn.1) | data | Y. Conceded fix applied on the supporting side; Rauh still omits them |
+| 8 | **The 24-25 non-US-citizen residents** | Omitted: Rauh starts from Forbes' CA-residence field (p.4), which Resp p.6 fn.5 says covers residence only for US and Chinese residents | Resp p.6: both sides omitted 24 people, $110B, "an omission we will correct in our next iteration". **Corrected by August:** BSZ includes 25 non-US citizens, $132B at 1 Jan 2026 (p.54; "We include both US and non-US citizens", p.5). GGSS July: 24 people, about $150B (p.2 fn.1) | data | Y. Conceded fix applied on the supporting side. Rauh still omits them, and the NBER version (Sept 2026) now does so explicitly: 28 "international" rows, $146.3B, excluded from the collectible base (`NBER_2026_litigation_weighted/NPV_data/final.csv`, "Section 3.5") |
 
 ## Rauh's headline: where −$24.7B comes from (open item, resolved)
 
@@ -59,10 +59,21 @@ Reproduced here with 10 million draws:
 | **67.51** (the text's ceiling, p.11) | **−24.68** | **−19.04** | **38.41** | **71.0%** |
 | Rauh reports (p.20) | −24.7 | −19.1 | 38.4 | 71% |
 
-So eq.22's "67.1" is a typo for 67.51. The headline is an average over the Monte Carlo's draws of
+So eq.22's "67.1" is a typo for 67.51. The authors' own code confirms it: `NPV_data/NPV_dist.R:31` sets `wt_max <- 67.51` and line 60 divides by the plain discount rate r (`annual_loss / r_discount`), even though the replication README labels that draw "(r − g)" (repo github.com/bjaros20/wealth_tax at 25e84dd). The headline is an average over the Monte Carlo's draws of
 WT and C, not a preferred scenario, and its preferred-WT point (≈$40-42B) sits inside that range.
 For the bridge, the Rauh anchor to use is the Monte Carlo mean (−$24.7B). Table 9's central cell
 (−$126.1B) is a separate, more pessimistic reading.
+
+## The second opposing estimate (NBER, Sept 2026)
+
+Jaros and Rauh, NBER chapter c15504, cover dated 22 Sept 2026: about $30B in revenue (range $28-36B),
+mean NPV −$38.9B, 85% of draws negative (abstract, PDF p.1; restated p.3). The simulation reproduces
+exactly from `NBER_2026_litigation_weighted/NPV_data/NPV_dist_v8.R` (mean −38.9, median −35.3, 85.2%
+negative). Compared with SSRN, it keeps the same 212-person base, grows it 7% to the 31 Dec 2026
+valuation date, removes **7** confirmed departures (SSRN's 6 plus Travis Kalanick, $3.5B), applies a
+litigation-survival probability q = 0.50, drops Zuckerberg from the central base, and draws the
+departure fraction f ~ U[0.30, 0.60] independently of WT. On the bridge it enters as extra steps after
+the SSRN anchor.
 
 ## Not yet in the table
 
