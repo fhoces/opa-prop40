@@ -18,7 +18,8 @@
   )
 }
 
-build_tab2 <- function(data_sec_agg_r, billionaires_ca_inctax_r, data_sec_top4) {
+build_tab2 <- function(data_sec_agg_r, billionaires_ca_inctax_r, data_sec_top4,
+                       vintage = bsz_vintage()) {
   # Table 2: California Income Tax Paid by California Billionaires.
   # Two side-by-side sub-panels: all CA billionaires (cols B-D) and the top 4
   # on company wealth (cols F-H), 2019-2025 + a 2019-2025 average row.
@@ -44,8 +45,20 @@ build_tab2 <- function(data_sec_agg_r, billionaires_ca_inctax_r, data_sec_top4) 
   panel$ca_inctax_per_wealth      <- panel$ca_inctax_b      / panel$wealth_b
   panel$top4_ca_inctax_per_wealth <- panel$top4_ca_inctax_b / panel$top4_company_wealth_b
 
-  # Average row — Excel quirk: D14 = AVERAGE(D7:D12) (6 yrs, 2019-2024 only)
-  # while B/C/F/G14 = AVERAGE(*7:*13) (7 yrs). Reproduce as-is for fidelity.
+  # Average row — Excel quirk: D14 = AVERAGE(D7:D12) (6 yrs, 2019-2024 only,
+  # a direct average of the RATIO column) while B/C/F14 = AVERAGE(*7:*13)
+  # (7 yrs). May's top4-ratio cell (H14) = G14/F14, i.e. mean-of-PARTS over
+  # all 7 years (matches the code below unconditionally). August's
+  # equivalent cell (J14) changed formula entirely to
+  # `=AVERAGE(J7:J12)` - a direct 6-year average of the ratio column itself,
+  # picking up the SAME 6-year truncation quirk as D14/E14 - a genuine,
+  # vintage-specific formula difference, not a row-shift artifact (verified
+  # against both workbooks' formulas directly).
+  top4_ratio_avg <- if (identical(vintage, "may")) {
+    mean(panel$top4_ca_inctax_b) / mean(panel$top4_company_wealth_b)
+  } else {
+    mean(panel$top4_ca_inctax_per_wealth[1:6])   # 2019-2024
+  }
   avg_row <- tibble::tibble(
     year                      = "2019-2025 average",
     wealth_b                  = mean(panel$wealth_b),
@@ -53,8 +66,7 @@ build_tab2 <- function(data_sec_agg_r, billionaires_ca_inctax_r, data_sec_top4) 
     ca_inctax_per_wealth      = mean(panel$ca_inctax_per_wealth[1:6]),  # 2019-2024
     top4_company_wealth_b     = mean(panel$top4_company_wealth_b),
     top4_ca_inctax_b          = mean(panel$top4_ca_inctax_b),
-    top4_ca_inctax_per_wealth = mean(panel$top4_ca_inctax_b) /
-                                  mean(panel$top4_company_wealth_b)
+    top4_ca_inctax_per_wealth = top4_ratio_avg
   )
   full <- dplyr::bind_rows(panel, avg_row)
 

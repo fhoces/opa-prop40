@@ -72,14 +72,26 @@ test_that("build_tab2 reproduces Tab2 sheet 2019-2025 + average row", {
   top4 <- extract_data_sec_top4()
   tab2 <- build_tab2(agg, b, top4)
   p <- attr(tab2, "panel")
-  xl <- read_sheet("Tab2", range = "B7:H14")  # cols B..H, rows 7..14
+  # August inserted 2 new "Total taxes paid" / "Total taxes/wealth" columns
+  # right after the all-billionaire block (old blank spacer E is now data;
+  # the top-4 block shifted from F:H to H:L) - RC7. build_tab2() itself needs
+  # no change (it never reads the Tab2 sheet - only this test verifying
+  # against it does); build_tab2 does not (yet) compute the new total-tax
+  # columns, so only the columns it already had are checked here.
+  if (identical(bsz_vintage(), "may")) {
+    xl <- read_sheet("Tab2", range = "B7:H14")  # cols B..H, rows 7..14
+    top4_company_col <- xl$E; top4_inctax_col <- xl$F; top4_ratio_col <- xl$G
+  } else {
+    xl <- read_sheet("Tab2", range = "B7:L14")  # cols B..L, rows 7..14
+    top4_company_col <- xl$G; top4_inctax_col <- xl$H; top4_ratio_col <- xl$I
+  }
 
   expect_equal(p$wealth_b,                  xl$A, tolerance = 1e-2)
   expect_equal(p$ca_inctax_b,               xl$B, tolerance = 1e-3)
   expect_equal(p$ca_inctax_per_wealth,      xl$C, tolerance = 1e-5)
-  expect_equal(p$top4_company_wealth_b,     xl$E, tolerance = 1e-2)
-  expect_equal(p$top4_ca_inctax_b,          xl$F, tolerance = 1e-3)
-  expect_equal(p$top4_ca_inctax_per_wealth, xl$G, tolerance = 1e-5)
+  expect_equal(p$top4_company_wealth_b,     top4_company_col, tolerance = 1e-2)
+  expect_equal(p$top4_ca_inctax_b,          top4_inctax_col, tolerance = 1e-3)
+  expect_equal(p$top4_ca_inctax_per_wealth, top4_ratio_col, tolerance = 1e-5)
 })
 
 test_that("build_tab2 renders to non-empty HTML and LaTeX", {
