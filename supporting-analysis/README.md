@@ -13,8 +13,8 @@ renders the paper's six tables and twelve figures plus a Quarto report.
 
 | Layer | Source of truth | Status |
 |---|---|---|
-| Paper PDF | `original-materials/BSZ26CAbillionaires.pdf` | Tracked verbatim where quoted |
-| Authors' supplementary workbook | `original-materials/BSZ_MainTablesFigures.xlsx` | **Required input. NOT redistributed in this repo** |
+| Paper PDF | `original-materials/BSZ26CAbillionaires.pdf` | **Required input. NOT redistributed in this repo** |
+| Authors' supplementary workbook | `original-materials/BSZ_MainTablesFigures.xlsx` (August, default) or `original-materials/may-2026/BSZ_MainTablesFigures.xlsx` (`BSZ_VINTAGE=may`) | **Required input. NOT redistributed in this repo** |
 | Excel extractors | 16 `tar_target`s reading the workbook | Complete |
 | R re-derivations | 8 `compute_*` functions, ~1,640 Excel formula cells | Complete; all verified within tolerance |
 | Tables | 6 `gt` builders + HTML/LaTeX renders | Complete |
@@ -29,25 +29,28 @@ renders the paper's six tables and twelve figures plus a Quarto report.
 
 - All R source (`R/*.R`), pipeline definition (`_targets.R`), tests
   (`tests/testthat/*`), and the Quarto report (`report.qmd`).
-- The original paper PDF (`original-materials/BSZ26CAbillionaires.pdf`),
-  included for quoting and section-structure reference.
 - The SEC EDGAR cross-validation script and its findings document
   (`data-raw/sec/fetch_huang_2025.R`, `data-raw/sec/POC_findings.md`).
 
 ### NOT in the repo (must be obtained separately)
 
-- **`original-materials/BSZ_MainTablesFigures.xlsx`** — the authors' Excel
-  supplement. Every Excel extractor reads from this file. Without it the
-  pipeline cannot run. The workbook is the authors' work and is not
-  redistributed here; download it from:
+Nothing under `original-materials/` is tracked; the whole directory is
+gitignored. The pipeline reads two vintages of the authors' workbook, chosen
+by the `BSZ_VINTAGE` environment variable (default `august`; set
+`BSZ_VINTAGE=may` to use the May vintage instead) via `xlsx_path_default()`
+in `R/ingest_excel.R`:
+
+- **`original-materials/BSZ_MainTablesFigures.xlsx`** (August, default) —
+  every Excel extractor reads from this file unless `BSZ_VINTAGE=may` is set.
+  Without it the default pipeline cannot run. Download from:
 
   ```
   https://eml.berkeley.edu/~saez/BSZ_MainTablesFigures.xlsx
   ```
 
-  Verified version (Last-Modified 2026-05-13):
+  As of 2026-09-23 that URL serves the August vintage:
   ```
-  SHA-256  cffe04bd950fc63350ce4f084b9d6cdf9bc1e5a8ab6b80ca0ccebb4f796b7b1a
+  SHA-256  c236cc9413374402973d61bfdfc02b7e573b05ad9c2f0658ee6b66ad898cb6ce
   ```
 
   Quick fetch + verify:
@@ -55,8 +58,31 @@ renders the paper's six tables and twelve figures plus a Quarto report.
   curl -L -o original-materials/BSZ_MainTablesFigures.xlsx \
        https://eml.berkeley.edu/~saez/BSZ_MainTablesFigures.xlsx
   shasum -a 256 original-materials/BSZ_MainTablesFigures.xlsx
-  # Expected: cffe04bd950fc63350ce4f084b9d6cdf9bc1e5a8ab6b80ca0ccebb4f796b7b1a
+  # Expected: c236cc9413374402973d61bfdfc02b7e573b05ad9c2f0658ee6b66ad898cb6ce
   ```
+- **`original-materials/may-2026/BSZ_MainTablesFigures.xlsx`** — the May 2026
+  vintage of the same workbook, used when `BSZ_VINTAGE=may`. This is the
+  version the CAWT-BSZ pipeline was originally built and tested against.
+
+  ```
+  SHA-256  cffe04bd950fc63350ce4f084b9d6cdf9bc1e5a8ab6b80ca0ccebb4f796b7b1a
+  ```
+- **`original-materials/BSZ26CAbillionaires.pdf`** — the paper PDF (August
+  vintage), for quoting and section-structure reference. Not redistributed.
+
+  ```
+  SHA-256  ee1f2ea5a06c78ae0b9c3fbc6cc628f060ba7ee2c0f3363776b457c38d789fd9
+  ```
+- **`original-materials/may-2026/BSZ26CAbillionaires.pdf`** — the May 2026
+  vintage of the paper PDF.
+
+  ```
+  SHA-256  cd8588edf529502560af81b18ba64663c5baa3539b804e3ed6d49eb3f4c50ffa
+  ```
+- **`original-materials/additional-documentation/`** — six supporting PDFs
+  (legal and policy commentary by Galle, Gamage, Saez, Shanske and others,
+  plus a response to Rauh et al.). Not redistributed; not read by the
+  pipeline.
 - **`outputs/`, `_targets/`, `data-raw/sec/cache/`, `report.{html,pdf}`** —
   generated artifacts. Gitignored. Rebuild via `targets::tar_make()`.
 
@@ -94,10 +120,14 @@ edit _raw-sources.md and run tools/sync-readme.sh to refresh.
 ## Repository layout
 
 ```
-CAWT-BSZ/
-├── original-materials/
-│   ├── BSZ_MainTablesFigures.xlsx        # REQUIRED — not in repo, see above
-│   └── BSZ26CAbillionaires.pdf           # paper PDF (provided)
+supporting-analysis/
+├── original-materials/                   # GITIGNORED, see above
+│   ├── BSZ_MainTablesFigures.xlsx        # August (default vintage)
+│   ├── BSZ26CAbillionaires.pdf           # August paper PDF
+│   ├── may-2026/
+│   │   ├── BSZ_MainTablesFigures.xlsx    # May vintage (BSZ_VINTAGE=may)
+│   │   └── BSZ26CAbillionaires.pdf       # May paper PDF
+│   └── additional-documentation/         # six supporting PDFs
 ├── _targets.R                            # {targets} DAG
 ├── DESCRIPTION                           # package manifest (deps)
 ├── R/
@@ -254,8 +284,10 @@ Helper modules (loaded by `_targets.R` but not part of the DAG):
 ## How to reproduce
 
 ```sh
-# 1. Place the workbook here:
+# 1. Place the workbook here (August, default vintage):
 #    original-materials/BSZ_MainTablesFigures.xlsx
+#    or, for the May vintage, here, and run with BSZ_VINTAGE=may:
+#    original-materials/may-2026/BSZ_MainTablesFigures.xlsx
 
 # 2. Install R packages:
 Rscript -e 'install.packages(c(

@@ -15,7 +15,13 @@ project_root <- function() {
 }
 
 xlsx_path_default <- function() {
-  file.path(project_root(), "original-materials", "BSZ_MainTablesFigures.xlsx")
+  vintage <- Sys.getenv("BSZ_VINTAGE", unset = "august")
+  if (identical(vintage, "may")) {
+    file.path(project_root(), "original-materials", "may-2026",
+              "BSZ_MainTablesFigures.xlsx")
+  } else {
+    file.path(project_root(), "original-materials", "BSZ_MainTablesFigures.xlsx")
+  }
 }
 
 excel_col_letters <- function(n) {
