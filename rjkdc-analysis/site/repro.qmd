@@ -195,7 +195,7 @@ that is a Swiss estimate for a recurring annual tax, applied here to a one-time 
 argues a one-time tax with easy interstate moves could provoke a *larger* response (p.14), and the
 BSZ side disputes exactly this ([disputes row 1](https://github.com/fhoces/opa-prop40/blob/main/comparison/DISPUTES.md)).
 Second, a linear 10.32 × 5 = 51.6% loss is steeper than the log form the NBER revision later uses
-(41.1%, NBER PDF p.23).
+(41.1%, NBER PDF p.24).
 
 ### 4.5 The preferred revenue estimate
 
