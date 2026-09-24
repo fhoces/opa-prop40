@@ -21,7 +21,7 @@ May's 3 failures are the same pre-existing snapshot factor-ORDER issue (`fig4`, 
 before this work started; left as-is per plan scope, not touched.
 
 Every RC below required more than the row-shift/renamed-sheet description originally given
-it turned out to need — in most cases (RC1, RC2, RC4/RC5/RC6) the columns also reshuffled
+it turned out to need: in most cases (RC1, RC2, RC4/RC5/RC6) the columns also reshuffled
 non-uniformly, or a formula genuinely changed, discovered by reading the actual Excel cell
 formulas (`openpyxl`, `data_only=False`) rather than inferring from cached values. See each
 commit message for the full derivation; this table is only an index.

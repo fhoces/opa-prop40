@@ -28,13 +28,13 @@ invent the convention under time pressure.
 - **Where it goes**: `<side>/original-materials/author-shared/<YYYY-MM-DD>_<short-desc>/`, e.g.
   `bsz-analysis/original-materials/author-shared/2026-10-05_bsz-sec-panel/`. This sits
   under the already-gitignored `original-materials/`, so author-shared files are never
-  committed, and anything derived from them (CSVs, `*.sqlite` extracts) stays gitignored too —
+  committed, and anything derived from them (CSVs, `*.sqlite` extracts) stays gitignored too;
   the existing root `.gitignore` patterns (`**/original-materials/`, `*.sqlite`) already cover
   both without any change.
 - **Record it**: add a row to this side's `DATA-SOURCES.csv` with `obtained_via=author-shared`,
   the date received, a contact description in `url_or_contact` (e.g. "email from J. Rauh,
   2026-10-05"), the SHA-256, and specific `terms` (author-shared data often comes with tighter
-  restrictions than a public PDF — confirm with the sender rather than defaulting to
+  restrictions than a public PDF, so confirm with the sender rather than defaulting to
   `do-not-redistribute`).
 - **How the pipeline uses it**: see "Future: author-shared raw data" in `../PLAN.md` for how a
   later phase wires an author-shared file into the pipeline through one path-resolver per side,

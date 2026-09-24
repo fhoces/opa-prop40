@@ -1,6 +1,6 @@
 ---
 title: "Reproduction of: California Billionaires: Wealth, Taxes, and Wealth Tax Revenue Estimates"
-subtitle: "R replication of Boll, Saez, and Zucman (2026) — NBER WP 35218"
+subtitle: "R replication of Boll, Saez, and Zucman (2026), NBER WP 35218"
 author: "Fernando Hoces de la Guardia"
 date: today
 format:
@@ -116,7 +116,7 @@ Form 4-derived wealth. Year-over-year growth is $g_t = W_t / W_{t-1} - 1$;
 the 2023-2025 cumulative growth row is $W_{2025} / W_{2022} - 1$.
 
 Panel B uses the Forbes 400 historical lists. The "billionaire class" is
-defined as a fixed fraction of all US (or CA) families — the top .0002% — so
+defined as a fixed fraction of all US (or CA) families (the top .0002%), so
 the population size is dynamic (45 families in CA in 2025, 24 in 1982); this
 controls for population growth across the 43-year window. All dollar values
 are deflated to 2025 dollars to control for inflation. The "annualized growth"
@@ -130,7 +130,7 @@ families, CA GDP, and CA GDP per family.
 ::: {.callout-note collapse="true" appearance="simple" title="Code"}
 
 Table 1 is rendered by [`build_tab1()`](#sec-build_tab1) from three
-upstream tibbles — [`compute_data_sec_agg()`](#sec-compute_data_sec_agg) for
+upstream tibbles: [`compute_data_sec_agg()`](#sec-compute_data_sec_agg) for
 the year-by-year totals,
 [`compute_shortrunseries()`](#sec-compute_shortrunseries) for the top-4 wealth
 column, and [`extract_longrunseries()`](#sec-extract_longrunseries) for CA GDP.
@@ -440,13 +440,13 @@ tar_read(tab4_gt)
 billionaires, decomposed into four components, each expressed as a percent
 of end-of-year wealth $W_t$:
 
-- $\tau^{\text{CA-inctax}}_t / W_t$ — from the Table 2 Pareto extrapolation
-- $\tau^{\text{Fed-inctax}}_t / W_t$ — symmetric Pareto procedure on
+- $\tau^{\text{CA-inctax}}_t / W_t$: from the Table 2 Pareto extrapolation
+- $\tau^{\text{Fed-inctax}}_t / W_t$: symmetric Pareto procedure on
   federal-tax rates
-- $\tau^{\text{corp}}_t / W_t$ — Compustat-derived effective corporate rate
+- $\tau^{\text{corp}}_t / W_t$: Compustat-derived effective corporate rate
   applied to pro-rated profits, scaled to all CA billionaires using the
   public-stock share
-- $\tau^{\text{prop+sales}}_t / W_t$ — imputed property + sales taxes per
+- $\tau^{\text{prop+sales}}_t / W_t$: imputed property + sales taxes per
   Appendix B (formulas in Table 4 methodology)
 
 The scaling from "top 4 / public-stock wealth" up to "all CA billionaires /
@@ -530,7 +530,7 @@ format). The numerator is total taxes paid (CA + Fed + corp + prop + sales,
 all pro-rated to the top 4's ownership shares); the denominators are wealth
 (top sub-panel) and economic income (bottom sub-panel) of the top 4. Larry
 Ellison is in the series through 2020 and Jensen Huang replaces him from
-2021 onward — the paper justifies this swap on residence (Ellison moved to
+2021 onward; the paper justifies this swap on residence (Ellison moved to
 Hawaii in late 2020) and concentration (Huang's wealth only became
 top-4-sized around 2021).
 
@@ -638,7 +638,7 @@ L \;=\; -\alpha^{\text{mob}} \cdot \bar{T}^{\text{CA-bn}}_{2019\text{-}2025}.
 $$
 Scenario 2 adds the Pareto-extrapolated "missing small billionaires"
 ($\$1B$-$\$4.5B$, where Forbes' empirical $b$ rises sharply, see Figure A4)
-to both the count and wealth — the implied "true" $b = 4.48$ above $\$4.5B$
+to both the count and wealth; the implied "true" $b = 4.48$ above $\$4.5B$
 is held constant down to $\$1B$, yielding $n^{\text{extra}}$ extra
 billionaires with $\$615$B extra wealth, at a higher 20% evasion rate for
 those less-visible cases. Scenario 3 removes specific named leavers (Page,
@@ -772,7 +772,7 @@ W^{\text{industry } j} \;=\;
 \;+\; \underbrace{W_j^{\text{other}}}_{\text{Forbes total} - W_j^{\text{pub}}}.
 $$
 The Forbes industry tag comes from the source spreadsheet's
-`rtb_2026_industry` sheet — read at figure-render time rather than via the
+`rtb_2026_industry` sheet, read at figure-render time rather than via the
 {targets} cache because the data block is small and stable.
 
 ::: {.callout-note collapse="true" appearance="simple" title="Code"}
@@ -835,7 +835,7 @@ tar_read(fig_a2)
 > traded stock. (BSZ 2026, p. 36)
 
 **Methodology.** Figure 4's tax-burden decomposition restricted to wealth in
-the form of publicly traded stock — i.e. only the share that can be
+the form of publicly traded stock, i.e. only the share that can be
 verified directly against SEC Form 13D/G + 14A filings rather than imputed
 from national-accounts weights. Public wealth in each year is
 $W_t^{\text{pub}} = s^{\text{pub}}_t \cdot W_t$. Tax components are expressed
@@ -883,7 +883,7 @@ $$
 computed directly from the Forbes real-time list as of 4/15/2026. For
 thresholds above \$4.5B (where Forbes' coverage is essentially complete) $b$
 is roughly constant at about $4.48$, the empirical regularity that a Pareto
-tail predicts. Below \$4.5B, observed $b$ rises sharply — diagnostic that
+tail predicts. Below \$4.5B, observed $b$ rises sharply, a diagnostic that
 Forbes is undercounting small billionaires.
 
 Panel B plots two empirical CDFs of wealth: the raw Forbes count by bracket,
