@@ -1,7 +1,7 @@
 # OPA audit baseline, 2026-09-23
 
 Scored against the BITSS OPA Guidelines (2019), nine steps, levels 0 to 3, baseline
-`0412337`, updated through `f0e1997`. Level wording is quoted from the Guidelines. One vector per page, then the fixes
+`0412337`, updated through `0c6ddc5`. Level wording is quoted from the Guidelines. One vector per page, then the fixes
 with the most credibility per unit of effort.
 
 ## The condition that governs every row: nothing is published yet
@@ -51,7 +51,7 @@ on the comparison layer itself.
 | # | Step | Level | Evidence | What the next level needs |
 |---|---|---|---|---|
 | 1 | Unified output | 1 | Common outputs (a) gross revenue and (b) net fiscal effect, with one bridge highlighted (Shapley, each side's own horizon) on `index.html`; the Rauh (a) default was settled in `PLAN.md` ("Decisions after the first build") | Level 2: the output and bridge direction were fixed in `d9532a2` (16:26), after both side reproductions had merged (15:56 onward), though before any comparison number. Publish the spec before results next time |
-| 2 | Input-output link | 2 | Interactive toggles on `index.html`: output (a/b), method (Shapley / one order), horizon (own / 5 / 10 / 20 / 30 / 50 years / perpetuity) | Level 3: the page reads `assets/comparison-data.js`, written by `comparison/run.R` from the same `build_all()` the tests run, so the code is shared. What keeps this at 2 is that the toggles pick among precomputed settings rather than adjusting inputs. Add input dials (e.g. r range, avoidance) over a grid from `build_all()` |
+| 2 | Input-output link | 3 | Interactive toggles on `index.html`: output (a/b), method (Shapley / one order), horizon (own / 5 / 10 / 20 / 30 / 50 years / perpetuity). The horizon is a disputed input (DISPUTES row 2), and the page reads `assets/comparison-data.js`, written by `comparison/run.R` from the same `build_all()` the tests run | Met, with a caveat: one input dial (horizon), served from `build_all()` like the sides' grids; more dials would strengthen it (e.g. r range, avoidance) |
 | 3 | Methodological accounts | 2 | Annotated R and Python in `comparison/R`, `comparison/py`; `comparison/README.md`, `DISPUTES.md` | Level 3: a dynamic document for the comparison; `index.html` is generated from a template, not a notebook |
 | 4 | Data | 2 | Analytic data: `comparison/export/{r,py}/`. Inputs: `comparison/data/document-inputs.csv`, `hoopes-fig2.csv` (digitized) | Level 3 is met in substance through the sides' raw data; say so on the page |
 | 5 | Open report | 2 | `index.html` plus `DISPUTES.md`, version-controlled | Level 3: as step 3 |
@@ -65,7 +65,7 @@ on the comparison layer itself.
 - **Today: Level 0** on every page, because nothing is public.
 - **On publication: Level 1** for all three pages (the minimum across steps; step 1 sets it
   everywhere). Vectors: BSZ `1-3-3-3-3-3-3-2-3`, RJKDC `1-3-3-3-3-3-3-2-3`,
-  reconciliation `1-2-2-2-2-3-3-2-3`.
+  reconciliation `1-3-2-2-2-3-3-2-3`.
 
 ## Best credibility per unit of effort
 
