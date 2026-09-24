@@ -43,7 +43,8 @@ tests <- read.csv("data/test-results.csv", stringsAsFactors = FALSE)
 ::: {.report-intro}
 ![](assets/opa/opa-materials.png){.opa-figure}
 
-This page is the **open materials** layer of the BSZ side: what to download, what
+This page is the **open materials** layer of the BSZ side (Boll, Saez and Zucman, BSZ, plus the
+Galle, Gamage, Saez and Shanske (GGSS) expert report): what to download, what
 to run, and what the checks found. Everything lives in one repository,
 [fhoces/opa-prop40](https://github.com/fhoces/opa-prop40), under `bsz-analysis/`.
 The tables on this page are built from the files themselves when the page is rendered, so
