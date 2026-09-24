@@ -580,8 +580,9 @@ scroll(kable(checks))
 ```
 
 Both seeded means sit within about one Monte Carlo standard error of the exact expectation, on
-opposite sides, which is why the SSRN printed mean matches the expectation while the NBER printed
-mean matches the seeded run.
+opposite sides. Which one the printed digit matches is a rounding coincidence: the SSRN printed
+`r num(h("ssrn","mc_mean_npv","printed"))` happens to equal the rounded expectation; the NBER printed
+`r num(h("nber","mc_mean_npv","printed"))` equals the rounded seeded run.
 
 ## Reproducing this document
 

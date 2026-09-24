@@ -334,7 +334,7 @@ papers, their READMEs and their code. We reproduce the code as shipped and recor
   <li>The text derives a growing perpetuity, C/(r &minus; g), with C the annual income tax lost, r the real discount rate and g the growth rate of that tax base (SSRN p.18); the Monte Carlo divides by the plain rate.</li>
   <li>The NBER code labels the same 1.5% to 4.5% draw (r &minus; g), so one interval stands for two concepts.</li>
   <li>The NBER ceiling is 72 in the script, 72.06 in the README and 72.05 in the person-level data.</li>
-  <li>The NBER litigation weight q = 0.50 has no multiplier in the code; it lives only in a draw from zero.</li>
+  <li>The NBER litigation weight q = 0.50: the code never multiplies by q; drawing revenue uniformly from 0 to 72 gives the same mean, 0.5 &times; 72, but a different distribution.</li>
   <li>The workbook's baseline is 94.30; the text and every later step use a typed 94.2.</li>
   <li>Two memo cells in the workbook read from the wrong sheet (no headline number affected).</li>
   <li>Table 9's central revenue, 42.0, is a typed literal with no derivation.</li>

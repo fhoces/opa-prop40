@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-09-23">
+<meta name="dcterms.date" content="2026-09-24">
 
 <title>The Net Present Value of the Billionaire Tax Act</title>
 <style>
@@ -2452,7 +2452,7 @@ p code, li code, td code, h3 code { overflow-wrap: anywhere !important; word-bre
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 23, 2026</p>
+      <p class="date">September 24, 2026</p>
     </div>
   </div>
   
@@ -3711,7 +3711,7 @@ r \sim U[0.015, 0.045]\]</span></p>
 </table>
 
 </div>
-<p>Both seeded means sit within about one Monte Carlo standard error of the exact expectation, on opposite sides, which is why the SSRN printed mean matches the expectation while the NBER printed mean matches the seeded run.</p>
+<p>Both seeded means sit within about one Monte Carlo standard error of the exact expectation, on opposite sides. Which one the printed digit matches is a rounding coincidence: the SSRN printed −24.7 happens to equal the rounded expectation; the NBER printed −38.9 equals the rounded seeded run.</p>
 </section>
 </section>
 <section id="reproducing-this-document" class="level2">
@@ -4764,29 +4764,30 @@ r \sim U[0.015, 0.045]\]</span></p>
 <span id="cb17-608"><a href="#cb17-608" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb17-609"><a href="#cb17-609" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-610"><a href="#cb17-610" aria-hidden="true" tabindex="-1"></a>Both seeded means sit within about one Monte Carlo standard error of the exact expectation, on</span>
-<span id="cb17-611"><a href="#cb17-611" aria-hidden="true" tabindex="-1"></a>opposite sides, which is why the SSRN printed mean matches the expectation while the NBER printed</span>
-<span id="cb17-612"><a href="#cb17-612" aria-hidden="true" tabindex="-1"></a>mean matches the seeded run.</span>
-<span id="cb17-613"><a href="#cb17-613" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-614"><a href="#cb17-614" aria-hidden="true" tabindex="-1"></a><span class="fu">## Reproducing this document</span></span>
-<span id="cb17-615"><a href="#cb17-615" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-616"><a href="#cb17-616" aria-hidden="true" tabindex="-1"></a><span class="in">```sh</span></span>
-<span id="cb17-617"><a href="#cb17-617" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> rjkdc-analysis</span>
-<span id="cb17-618"><a href="#cb17-618" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">RAUH_REPO_DIR</span><span class="op">=</span>/path/to/wealth_tax     <span class="co"># clone of github.com/bjaros20/wealth_tax at 25e84dd</span></span>
-<span id="cb17-619"><a href="#cb17-619" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">-e</span> <span class="st">&#39;targets::tar_make()&#39;</span>             <span class="co"># writes the targets store, export/r/, site/data/, site/explorer/grid.js</span></span>
-<span id="cb17-620"><a href="#cb17-620" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> tests/testthat.R                     <span class="co"># full suite</span></span>
-<span id="cb17-621"><a href="#cb17-621" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render site/repro.qmd</span>
-<span id="cb17-622"><a href="#cb17-622" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb17-623"><a href="#cb17-623" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-624"><a href="#cb17-624" aria-hidden="true" tabindex="-1"></a>The authors&#39; repository is MIT licensed but not redistributed here; the tests that re-run the</span>
-<span id="cb17-625"><a href="#cb17-625" aria-hidden="true" tabindex="-1"></a>authors&#39; own scripts skip cleanly without it, and the rest of the suite does not need it.</span>
-<span id="cb17-626"><a href="#cb17-626" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-627"><a href="#cb17-627" aria-hidden="true" tabindex="-1"></a>::: {.site-nav}</span>
-<span id="cb17-628"><a href="#cb17-628" aria-hidden="true" tabindex="-1"></a>Part of an Open Policy Analysis of Rauh et al. (2026) on California Proposition 40:</span>
-<span id="cb17-629"><a href="#cb17-629" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">Open Output (the explorer)</span><span class="co">](explorer/)</span> <span class="dv">&amp;middot;</span> Open Analysis: Report (here) and</span>
-<span id="cb17-630"><a href="#cb17-630" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">Slides</span><span class="co">](slides/slides.html)</span> <span class="dv">&amp;middot;</span></span>
-<span id="cb17-631"><a href="#cb17-631" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">Open Materials</span><span class="co">](materials.html)</span> <span class="dv">&amp;middot;</span></span>
-<span id="cb17-632"><a href="#cb17-632" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">Overview</span><span class="co">](index.html)</span></span>
-<span id="cb17-633"><a href="#cb17-633" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb17-611"><a href="#cb17-611" aria-hidden="true" tabindex="-1"></a>opposite sides. Which one the printed digit matches is a rounding coincidence: the SSRN printed</span>
+<span id="cb17-612"><a href="#cb17-612" aria-hidden="true" tabindex="-1"></a><span class="in">`r num(h(&quot;ssrn&quot;,&quot;mc_mean_npv&quot;,&quot;printed&quot;))`</span> happens to equal the rounded expectation; the NBER printed</span>
+<span id="cb17-613"><a href="#cb17-613" aria-hidden="true" tabindex="-1"></a><span class="in">`r num(h(&quot;nber&quot;,&quot;mc_mean_npv&quot;,&quot;printed&quot;))`</span> equals the rounded seeded run.</span>
+<span id="cb17-614"><a href="#cb17-614" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-615"><a href="#cb17-615" aria-hidden="true" tabindex="-1"></a><span class="fu">## Reproducing this document</span></span>
+<span id="cb17-616"><a href="#cb17-616" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-617"><a href="#cb17-617" aria-hidden="true" tabindex="-1"></a><span class="in">```sh</span></span>
+<span id="cb17-618"><a href="#cb17-618" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> rjkdc-analysis</span>
+<span id="cb17-619"><a href="#cb17-619" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">RAUH_REPO_DIR</span><span class="op">=</span>/path/to/wealth_tax     <span class="co"># clone of github.com/bjaros20/wealth_tax at 25e84dd</span></span>
+<span id="cb17-620"><a href="#cb17-620" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">-e</span> <span class="st">&#39;targets::tar_make()&#39;</span>             <span class="co"># writes the targets store, export/r/, site/data/, site/explorer/grid.js</span></span>
+<span id="cb17-621"><a href="#cb17-621" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> tests/testthat.R                     <span class="co"># full suite</span></span>
+<span id="cb17-622"><a href="#cb17-622" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render site/repro.qmd</span>
+<span id="cb17-623"><a href="#cb17-623" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-624"><a href="#cb17-624" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-625"><a href="#cb17-625" aria-hidden="true" tabindex="-1"></a>The authors&#39; repository is MIT licensed but not redistributed here; the tests that re-run the</span>
+<span id="cb17-626"><a href="#cb17-626" aria-hidden="true" tabindex="-1"></a>authors&#39; own scripts skip cleanly without it, and the rest of the suite does not need it.</span>
+<span id="cb17-627"><a href="#cb17-627" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-628"><a href="#cb17-628" aria-hidden="true" tabindex="-1"></a>::: {.site-nav}</span>
+<span id="cb17-629"><a href="#cb17-629" aria-hidden="true" tabindex="-1"></a>Part of an Open Policy Analysis of Rauh et al. (2026) on California Proposition 40:</span>
+<span id="cb17-630"><a href="#cb17-630" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">Open Output (the explorer)</span><span class="co">](explorer/)</span> <span class="dv">&amp;middot;</span> Open Analysis: Report (here) and</span>
+<span id="cb17-631"><a href="#cb17-631" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">Slides</span><span class="co">](slides/slides.html)</span> <span class="dv">&amp;middot;</span></span>
+<span id="cb17-632"><a href="#cb17-632" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">Open Materials</span><span class="co">](materials.html)</span> <span class="dv">&amp;middot;</span></span>
+<span id="cb17-633"><a href="#cb17-633" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">Overview</span><span class="co">](index.html)</span></span>
+<span id="cb17-634"><a href="#cb17-634" aria-hidden="true" tabindex="-1"></a>:::</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
