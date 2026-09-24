@@ -147,7 +147,7 @@ bsz-analysis/
 │   ├── vintage.R                         # everything that differs between May and August
 │   ├── excel_cells.R                     # xls_cell, xls_cells_row, xls_cells_col
 │   ├── verify.R                          # expect_matches_excel testthat helper
-│   ├── data_sheets.R                     # 16 extract_* functions (read Excel)
+│   ├── data_sheets.R                     # 14 extract_* functions (read Excel)
 │   ├── compute_data_sec_agg.R            # group-by aggregator (excludes Ellison)
 │   ├── compute_pareto.R                  # Pareto extrapolation + Laffer sweep
 │   ├── compute_tab5.R                    # one-time wealth-tax scorer (the explorer runs it too) + 4 scenarios
