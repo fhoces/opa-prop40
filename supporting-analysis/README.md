@@ -1,4 +1,7 @@
-# CAWT-BSZ
+# supporting-analysis
+
+The supporting side of [opa-prop40](../README.md). It began as the standalone CAWT-BSZ repository,
+imported with its history.
 
 R replication pipeline for **Boll, Saez, and Zucman (2026)**, *California
 Billionaires: Wealth, Taxes, and Wealth Tax Revenue Estimates* (NBER Working
@@ -20,8 +23,11 @@ renders the paper's six tables and twelve figures plus a Quarto report.
 | Tables | 6 `gt` builders + HTML/LaTeX renders | Complete |
 | Figures | 12 `ggplot` builders + PNG/PDF renders | Complete |
 | Quarto report | `report.qmd` -> `report.{html,pdf}` | Complete |
-| Primary-source cross-validation | SEC EDGAR / BEA / FTB / DINA | **Partial — see below** |
-| Environment lock + CI | `renv.lock`, `.github/workflows/` | Not started |
+| Primary-source cross-validation | SEC EDGAR / BEA / FTB / DINA | **Partial, see below** |
+| CI | `../.github/workflows/ci.yml` | Rebuilds from a fresh workbook download (SHA-256 checked) and runs the full suite on every push touching `supporting-analysis/`; green |
+| Environment lock | `renv.lock` | Not started; CI installs from `DESCRIPTION` |
+| OPA site | `site/` (explorer, `repro.qmd`, slides, `materials.qmd`) | Complete; see `site/materials.qmd` |
+| Export contract | `export/r/{inputs,outputs}.csv` (`R/export_contract.R`) | Complete; the only files `../comparison/` reads |
 
 See `DATA-SOURCES.csv` for the full source manifest (one row per file, with provenance, terms
 and SHA-256) and `DATA-SOURCES.md` for what the columns mean, including the `author-shared`
@@ -44,7 +50,7 @@ by the `BSZ_VINTAGE` environment variable (default `august`; set
 `BSZ_VINTAGE=may` to use the May vintage instead) via `xlsx_path_default()`
 in `R/ingest_excel.R`:
 
-- **`original-materials/BSZ_MainTablesFigures.xlsx`** (August, default) —
+- **`original-materials/BSZ_MainTablesFigures.xlsx`** (August, default):
   every Excel extractor reads from this file unless `BSZ_VINTAGE=may` is set.
   Without it the default pipeline cannot run. Download from:
 
@@ -64,49 +70,49 @@ in `R/ingest_excel.R`:
   shasum -a 256 original-materials/BSZ_MainTablesFigures.xlsx
   # Expected: c236cc9413374402973d61bfdfc02b7e573b05ad9c2f0658ee6b66ad898cb6ce
   ```
-- **`original-materials/may-2026/BSZ_MainTablesFigures.xlsx`** — the May 2026
+- **`original-materials/may-2026/BSZ_MainTablesFigures.xlsx`**: the May 2026
   vintage of the same workbook, used when `BSZ_VINTAGE=may`. This is the
   version the CAWT-BSZ pipeline was originally built and tested against.
 
   ```
   SHA-256  cffe04bd950fc63350ce4f084b9d6cdf9bc1e5a8ab6b80ca0ccebb4f796b7b1a
   ```
-- **`original-materials/BSZ26CAbillionaires.pdf`** — the paper PDF (August
+- **`original-materials/BSZ26CAbillionaires.pdf`**: the paper PDF (August
   vintage), for quoting and section-structure reference. Not redistributed.
 
   ```
   SHA-256  ee1f2ea5a06c78ae0b9c3fbc6cc628f060ba7ee2c0f3363776b457c38d789fd9
   ```
-- **`original-materials/may-2026/BSZ26CAbillionaires.pdf`** — the May 2026
+- **`original-materials/may-2026/BSZ26CAbillionaires.pdf`**: the May 2026
   vintage of the paper PDF.
 
   ```
   SHA-256  cd8588edf529502560af81b18ba64663c5baa3539b804e3ed6d49eb3f4c50ffa
   ```
-- **`original-materials/additional-documentation/`** — six supporting PDFs
+- **`original-materials/additional-documentation/`**: six supporting PDFs
   (legal and policy commentary by Galle, Gamage, Saez, Shanske and others,
   plus a response to Rauh et al.). Not redistributed; not read by the
   pipeline.
-- **`outputs/`, `_targets/`, `data-raw/sec/cache/`, `report.{html,pdf}`** —
+- **`outputs/`, `_targets/`, `data-raw/sec/cache/`, `report.{html,pdf}`**:
   generated artifacts. Gitignored. Rebuild via `targets::tar_make()`.
 
 ### Raw data sources that are NOT yet independently pulled
 
 <!-- include:_raw-sources.md -->
 The Excel workbook combines several public and proprietary inputs.
-Independent re-pulls from each primary source — to cross-check the workbook's
-cached values — are an ongoing strand of this project. Status:
+Independent re-pulls from each primary source (to cross-check the workbook's
+cached values) are an ongoing strand of this project. Status:
 
 | Raw source | Workbook sheet it feeds | Status |
 |---|---|---|
-| SEC EDGAR Form 4 (insider transactions) | `data_sec_top4`, `data_sec_all`, `data_sec_agg` | **POC done** — Huang 2025 only. `sale` matches exactly; donation $ requires per-day stock close prices (deferred). Other top-4 billionaires and earlier years not yet pulled. |
+| SEC EDGAR Form 4 (insider transactions) | `data_sec_top4`, `data_sec_all`, `data_sec_agg` | **POC done**: Huang 2025 only. `sale` matches exactly; donation $ requires per-day stock close prices (deferred). Other top-4 billionaires and earlier years not yet pulled. |
 | BEA SAGDP / SQGDP macro series (CA + US GDP, deflators) | `longrunseries` cols AS, AT, W | **Not pulled** |
 | California FTB Personal Income Tax Statistics (B4A bracket detail) | `ftb_b4a` | **Not pulled** (workbook ships its own copy; data.ca.gov may have newer release) |
 | Saez-Zucman DINA tables (US-wide + CA-wide effective tax rates) | `data_dina` (cols K, S) | **Not pulled** |
 | IRS SOI Top .001% income statistics | `billionairesCAinctax` rows 59-72 | **Not pulled** (literal pass-through from authors' compilation) |
 | Forbes Real-Time Billionaires snapshots | `shortrunseries` cols B, K, Q | **Not pulled** (no public historical archive) |
-| ProPublica IRS leak | `data_sec_propublica` | **Cannot be re-pulled** — restricted-access data |
-| Compustat (corporate financials feeding SEC top-4 columns) | parts of `data_sec_top4` | **Cannot be re-pulled here** — paywalled |
+| ProPublica IRS leak | `data_sec_propublica` | **Cannot be re-pulled**: restricted-access data |
+| Compustat (corporate financials feeding SEC top-4 columns) | parts of `data_sec_top4` | **Cannot be re-pulled here**: paywalled |
 
 **Interpretation.** The R pipeline verifies that R reproduces the Excel
 cells. The cross-validation work (in progress) verifies that the Excel
@@ -133,9 +139,12 @@ supporting-analysis/
 │   │   └── BSZ26CAbillionaires.pdf       # May paper PDF
 │   └── additional-documentation/         # six supporting PDFs
 ├── _targets.R                            # {targets} DAG
+├── VERIFY-AUGUST.md                      # the August re-verification: 10 root causes, fixes
+├── DATA-SOURCES.csv, DATA-SOURCES.md     # source manifest with SHA-256 and terms
 ├── DESCRIPTION                           # package manifest (deps)
 ├── R/
-│   ├── ingest_excel.R                    # helpers: read_sheet, list_sheets
+│   ├── ingest_excel.R                    # helpers: read_sheet, list_sheets, xlsx_path_default
+│   ├── vintage.R                         # everything that differs between May and August
 │   ├── excel_cells.R                     # xls_cell, xls_cells_row, xls_cells_col
 │   ├── verify.R                          # expect_matches_excel testthat helper
 │   ├── data_sheets.R                     # 16 extract_* functions (read Excel)
@@ -147,13 +156,20 @@ supporting-analysis/
 │   ├── compute_top4taxes.R               # 22-year per-billionaire tax-rate panel
 │   ├── tables.R                          # 6 build_tab*_gt functions
 │   ├── figures.R                         # 12 build_fig*_ggplot functions
-│   └── render.R                          # render_table_*, render_figure_*, render_report
+│   ├── render.R                          # render_table_*, render_figure_*, render_report
+│   ├── code_listing.R                    # code listings for the report
+│   ├── site_exports.R                    # the site's data: generalised Table 5 scorer, grid, origins
+│   └── export_contract.R                 # export/r/*.csv for the comparison layer
 ├── report.qmd                            # Quarto narrative report
 ├── tests/
 │   ├── testthat.R                        # entry point
-│   ├── snapshots/*.rds                   # 34 golden-master outputs (committed)
+│   ├── snapshots/{august,may}/*.rds      # 34 golden-master outputs per vintage (committed)
 │   ├── snapshot_regenerate.R             # re-baseline script (run on intentional change)
-│   └── testthat/                         # 506 expectations across 7 files
+│   └── testthat/                         # 558 expectations across 8 files (August)
+├── tools/site-test-results.R             # runs the suite, writes site/data/test-results.csv
+├── site/                                 # the OPA site: explorer/, repro.qmd, slides/, materials.qmd
+├── export/r/                             # export contract read by ../comparison/
+├── py/, sql/                             # placeholders (README only)
 ├── data-raw/
 │   └── sec/
 │       ├── fetch_huang_2025.R            # SEC cross-validation script
@@ -217,10 +233,10 @@ reads from the layer above and writes new `tar_target`s consumed downstream.
 
 Helper modules (loaded by `_targets.R` but not part of the DAG):
 
-- `R/ingest_excel.R` — `read_sheet()`, `list_sheets()`, `xlsx_path_default()`.
-- `R/excel_cells.R` — `xls_cell()`, `xls_cells_row()`, `xls_cells_col()`
+- `R/ingest_excel.R`: `read_sheet()`, `list_sheets()`, `xlsx_path_default()`.
+- `R/excel_cells.R`: `xls_cell()`, `xls_cells_row()`, `xls_cells_col()`
   shared by the larger `compute_*` functions.
-- `R/verify.R` — `expect_matches_excel()` testthat helper.
+- `R/verify.R`: `expect_matches_excel()` testthat helper.
 
 ## Inputs and outputs (by `tar_target`)
 
@@ -307,8 +323,10 @@ Rscript -e 'install.packages(c(
 # 4. Build the pipeline (all targets + Quarto report):
 Rscript -e 'targets::tar_make()'
 
-# 5. Run the test suite (506 expectations):
+# 5. Run the test suite (558 expectations on the August vintage):
 Rscript tests/testthat.R
+#    or, to also write site/data/test-results.csv for the materials page:
+Rscript tools/site-test-results.R
 ```
 
 To rebuild the data + tables + figures without rendering the (slow) Quarto report:
@@ -329,11 +347,12 @@ compute:      215
 data_sheets:   45
 figures:       76
 ingest_excel:  20
+site:          40       # the explorer reproduces Table 5; grid.js is the exporter's output
 snapshots:     34       # pin exact output of every exhibit + compute_* fn
-tables:       109
+tables:       121
 verify:         7
               ---
-total:        506
+total:        558       # August vintage, 2026-09-23, 99 test blocks
 ```
 
 The snapshot tests load `tests/snapshots/*.rds` (committed golden masters of
@@ -358,8 +377,12 @@ added since this README.
   columns).
 - It reproduces the paper's six tables and twelve figures, formatted for
   HTML / LaTeX / PNG / PDF.
+- Known issues, disclosed rather than fixed: the workbook repeats rows 1338 to 1341 of
+  `data_sec_all` at rows 1342 to 1345 (handled in `R/compute_data_sec_agg.R`; not yet reported
+  to the authors), and Tables 1 and A1 still carry May wording in their labels over August
+  values. See `VERIFY-AUGUST.md` and `site/materials.qmd`.
 - It does **not yet** independently re-fetch raw data from SEC EDGAR, BEA,
-  FTB, DINA, IRS SOI, or Forbes — except for a one-entity-year SEC proof of
+  FTB, DINA, IRS SOI, or Forbes, except for a one-entity-year SEC proof of
   concept (Huang 2025, sale matched exactly). Until that work is complete,
   any error in the Excel workbook would silently propagate through the
   whole pipeline.

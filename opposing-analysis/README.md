@@ -49,6 +49,12 @@ in CI) without touching any other file.
 
 ## Tests (`tests/testthat/`)
 
+156 expectations in 28 test blocks, 0 failed (2026-09-23, with `RAUH_REPO_DIR` set). Count them
+through `Rscript tests/testthat.R`, which sources `R/` first; calling `testthat::test_dir()`
+directly skips that setup and reports spurious errors. `.github/workflows/opposing-ci.yml`
+clones the authors' repo at the pinned SHA, rebuilds R and Python, and runs the suite on every
+push touching `opposing-analysis/`.
+
 Three kinds, per file:
 
 1. **Vs. the paper's printed number**, at printed rounding (deterministic figures) or within
@@ -81,7 +87,16 @@ cannot avoid and don't affect correctness of the comparison):
 `outputs.csv` (`output_id, version, value, unit, printed_value, printed_page, abs_diff`), one row
 per key figure cited in this README's table above. `label` follows the OPA input taxonomy (data /
 research / guesswork / scenario); see `MISMATCHES.md` #8 for why Table 9's Central Scenario WT is
-labelled `scenario` rather than `data` or `research`.
+labelled `scenario` rather than `data` or `research`. The inputs also carry the Monte Carlo
+draw ranges (`rauh_mc_*`, `nber_mc_*`), taken from the simulation functions' own defaults, which
+`../comparison/` reads from here.
+
+## The OPA site (`site/`)
+
+`site/index.html` (landing), `site/explorer/` (7 dials, 2,187 precomputed cells; `grid.js` is
+written by the `site_grid_js` target), `site/repro.qmd` (the reproduction report),
+`site/slides/`, and `site/materials.qmd`. Render the two Quarto pages from `opposing-analysis/`
+with `quarto render site/repro.qmd && quarto render site/materials.qmd`.
 
 ## What reproduces, what doesn't
 
@@ -89,6 +104,8 @@ Every headline number in the table above reproduces from the authors' own code t
 tolerances documented in `tests/testthat/`. `MISMATCHES.md` lists nine discrepancies found along
 the way - between the paper's prose and its own code, between the paper and the NBER README, and
 one case (mismatch #9) where the paper's *printed* Monte Carlo summary doesn't exactly reproduce
-even from the authors' own unmodified script (small, within Monte Carlo error, but systematic).
+even from the authors' own unmodified script. The gap is within Monte Carlo error, and the
+printed mean equals the model's exact (closed-form) expectation, -$24.707B, while the shipped
+seed-2026 run gives -$24.77B.
 We do not fix any of these; the pipeline reproduces the code as shipped and records where it
 disagrees with the surrounding text.
