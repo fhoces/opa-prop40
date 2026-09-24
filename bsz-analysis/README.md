@@ -267,7 +267,7 @@ Helper modules (loaded by `_targets.R` but not part of the DAG):
 | `pareto_missing_r` | `pareto_missing` cells (cols D-L) | 1e-6 |
 | `pareto_summary` | I22-I24, J22-J23 of `Pareto-missing` | 1e-4..1e-8 |
 | `tab5_r` | `Tab5` rows 6-9 (4 scenarios) | 1e-4 |
-| `fig8_laffer_r` | `Fig8` rows 11-211 (201-row Laffer sweep) | 1e-6 |
+| `fig8_laffer_r` | `Fig8` (May) / `Fig9` (August) rows 11-211 (201-row Laffer sweep) | 1e-6 |
 | `billionaires_ca_inctax_r` | `billionairesCAinctax` 727 formula cells | 1e-3 / 1e-2 |
 | `shortrunseries_r` | `shortrunseries` 268 formula cells | 1e-3 / 1e-2 |
 | `top4taxes_r` | `top4taxes` 429 formula cells | 1e-4 / 1e-2 |

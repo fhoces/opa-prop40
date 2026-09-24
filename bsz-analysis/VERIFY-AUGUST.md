@@ -17,6 +17,9 @@ All 184 August failures classified below are fixed. Full-suite result, `Rscript`
 | August (`BSZ_VINTAGE` unset / `august`) | 518 | 0 | 0 |
 | May (`BSZ_VINTAGE=may`) | 503 | 3 | 0 |
 
+These counts are as of this step; the suite has since grown to 561 expectations on August
+(see README.md, counted through `tools/site-test-results.R`).
+
 May's 3 failures are the same pre-existing snapshot factor-ORDER issue (`fig4`, `fig_a3`) noted
 before this work started; left as-is per plan scope, not touched.
 
@@ -292,7 +295,7 @@ was **not** run and no `.rds` file under `tests/snapshots/` was touched.
 
 ## 4. Sheets new in August with no R code yet
 
-- **`Fig9`** (223 rows x 5 cols, 1,004 of 1,025 non-empty cells are formulas). Not new content
+- **`Fig9`** (now read by the pipeline through `fig8_laffer_sheet()`, see RC8; 223 rows x 5 cols, 1,004 of 1,025 non-empty cells are formulas). Not new content
   - this is the May `Fig8` "Laffer Curve" sheet, relocated verbatim (same parameter defaults,
   same 201-row tax-rate/revenue table). See RC8.
 - **`2023-b-1__adjusted_gross_income`** (77 rows x 14 cols, 148 of 535 non-empty cells are
