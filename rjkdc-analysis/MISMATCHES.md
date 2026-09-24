@@ -15,9 +15,9 @@ Table 9's "Only 6 Confirmed Departures" column); `$67.1B` appears nowhere else. 
 the intended value (it is what the shipped, runnable code uses and what every other reference to
 the ceiling states) and reproduce the code, not the typo.
 
-## 2. NPV formula: growing perpetuity (eq. 18/20, `r-g`) vs. plain-`r` code (Sec 5.5)
+## 2. NPV formula: growing perpetuity (eq. 20, `r-g`) vs. plain-`r` code (Sec 5.5)
 
-**Paper**, p.18, eq. 18/20: `NPV = WT - f * C / (r - g)`, introduced with an explicit growth-rate
+**Paper**, p.18, eq. 20: `NPV = WT - f * C / (r - g)` (eq. 18 on the same page is the plain-`r` form, `NPV = WT - f * C / r`), introduced with an explicit growth-rate
 adjustment (Gordon Growth Model discussion, p.18-19).
 **Paper**, p.20, eq. 24 and surrounding prose: switches notation to plain `r ~ U[0.015, 0.045]`
 and states "NPV = WT - f * C / r" for the Sec 5.5 Monte Carlo.

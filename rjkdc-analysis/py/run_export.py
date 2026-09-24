@@ -69,7 +69,7 @@ def build_inputs(pareto_fit, revenue_chain, nber_ceiling):
          "NPV_dist.R; paper eq.23 (Pareto upper bound)", 20),
         ("rauh_mc_r_min", "both", "Discount rate draw: lower bound", mc_ssrn["r_min"], "rate",
          "research", "public",
-         "NPV_dist.R:47; paper eq.24 (S&P 500 dividend yield anchor p.18; eq.18-20 instead specify r-g)",
+         "NPV_dist.R:47; paper eq.24 (S&P 500 dividend yield anchor p.18; eq.19-20 instead specify r-g)",
          20),
         ("rauh_mc_r_max", "both", "Discount rate draw: upper bound", mc_ssrn["r_max"], "rate",
          "research", "public", "NPV_dist.R:47; paper eq.24", 20),

@@ -10,7 +10,7 @@ wt_central_scenario,ssrn,"Table 9 Central Scenario wealth tax revenue (literal i
 rauh_mc_wt_min,ssrn,Monte Carlo wealth tax floor (literature-calibrated scenario; semi-elasticity about 12.6),35,$B,guesswork,public,"NPV_dist.R (wt ~ U[35, 67.51]); paper eq.22 and Table 9",20
 rauh_mc_c_min,both,Annual CA income tax of billionaires: lower bound of the draw,3.3,$B/yr,guesswork,public,NPV_dist.R; paper eq.23 (from the K=500 dispersion draw),20
 rauh_mc_c_max,both,Annual CA income tax of billionaires: upper bound of the draw,5.8,$B/yr,guesswork,public,NPV_dist.R; paper eq.23 (Pareto upper bound),20
-rauh_mc_r_min,both,Discount rate draw: lower bound,0.015,rate,research,public,NPV_dist.R:47; paper eq.24 (S&P 500 dividend yield anchor p.18; eq.18-20 instead specify r-g),20
+rauh_mc_r_min,both,Discount rate draw: lower bound,0.015,rate,research,public,NPV_dist.R:47; paper eq.24 (S&P 500 dividend yield anchor p.18; eq.19-20 instead specify r-g),20
 rauh_mc_r_max,both,Discount rate draw: upper bound,0.045,rate,research,public,NPV_dist.R:47; paper eq.24,20
 nber_mc_f_min,nber,NBER departure fraction of the income tax base: lower bound (drawn independently of WT),0.3,share,guesswork,public,NPV_dist_v8.R; Jaros and Rauh NBER c15504 Sec 5.4,35
 nber_mc_f_max,nber,NBER departure fraction of the income tax base: upper bound,0.6,share,guesswork,public,NPV_dist_v8.R; Jaros and Rauh NBER c15504 Sec 5.4,35

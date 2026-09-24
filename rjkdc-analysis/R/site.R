@@ -107,7 +107,7 @@ site_dials <- function(revenue_chain) {
     list(key = "g", label = "Growth of lost income, g (r vs r - g reading)",
          origin = "guesswork",
          desc = paste0("Both scripts use the drawn rate as the whole denominator, so g = 0 is 'as coded'. ",
-                       "Eq. 17-20 describe a growing perpetuity f*C/(r - g) without giving g; reading the ",
+                       "Eq. 19-20 describe a growing perpetuity f*C/(r - g) without giving g; reading the ",
                        "draw as a real r and subtracting a positive g shows how much that ambiguity is worth ",
                        "(mismatches 2 and 3). The two non-zero values are this reproduction's illustration, ",
                        "not the authors'."),
