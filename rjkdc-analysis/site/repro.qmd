@@ -213,7 +213,7 @@ in this reproduction.
 $$N(y) = A\,y^{-\alpha}, \qquad S(k, n) = \left(\frac{k}{n}\right)^{(\alpha - 1)/\alpha}$$
 
 The state publishes how many tax returns report income above \$1M, \$2M, \$3M, \$4M, \$5M and
-\$10M (Franchise Tax Board (FTB) Personal Income Tax (PIT) Annual Report 2024, Table B-4A). If top incomes follow a Pareto distribution, the log
+\$10M (Franchise Tax Board, FTB below: Personal Income Tax Annual Report 2024, Table B-4A). If top incomes follow a Pareto distribution, the log
 of those counts falls on a straight line against the log of the thresholds, with slope $-\alpha$.
 The fitted line gives $\hat\alpha$ = **`r num(pf$alpha, 3)`** (printed `r out("pareto_alpha","printed_value")`,
 $R^2$ = `r num(pf$r_squared, 4)`).

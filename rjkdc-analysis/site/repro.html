@@ -2641,7 +2641,7 @@ R^{\text{lit}} = (1 - \varepsilon_{\text{lit}} \times 0.05) \times 94.20\]</span
 <section id="the-pareto-upper-bound-eq.-15-and-16" class="level3">
 <h3 class="anchored" data-anchor-id="the-pareto-upper-bound-eq.-15-and-16">The Pareto upper bound (eq. 15 and 16)</h3>
 <p><span class="math display">\[N(y) = A\,y^{-\alpha}, \qquad S(k, n) = \left(\frac{k}{n}\right)^{(\alpha - 1)/\alpha}\]</span></p>
-<p>The state publishes how many tax returns report income above $1M, $2M, $3M, $4M, $5M and $10M (Franchise Tax Board (FTB) Personal Income Tax (PIT) Annual Report 2024, Table B-4A). If top incomes follow a Pareto distribution, the log of those counts falls on a straight line against the log of the thresholds, with slope <span class="math inline">\(-\alpha\)</span>. The fitted line gives <span class="math inline">\(\hat\alpha\)</span> = <strong>1.438</strong> (printed 1.44, <span class="math inline">\(R^2\)</span> = 0.9987).</p>
+<p>The state publishes how many tax returns report income above $1M, $2M, $3M, $4M, $5M and $10M (Franchise Tax Board, FTB below: Personal Income Tax Annual Report 2024, Table B-4A). If top incomes follow a Pareto distribution, the log of those counts falls on a straight line against the log of the thresholds, with slope <span class="math inline">\(-\alpha\)</span>. The fitted line gives <span class="math inline">\(\hat\alpha\)</span> = <strong>1.438</strong> (printed 1.44, <span class="math inline">\(R^2\)</span> = 0.9987).</p>
 <div class="cell">
 <details class="code-fold">
 <summary>code</summary>
@@ -4397,7 +4397,7 @@ r \sim U[0.015, 0.045]\]</span></p>
 <span id="cb17-217"><a href="#cb17-217" aria-hidden="true" tabindex="-1"></a>$$N(y) = A\,y^{-\alpha}, \qquad S(k, n) = \left(\frac{k}{n}\right)^{(\alpha - 1)/\alpha}$$</span>
 <span id="cb17-218"><a href="#cb17-218" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-219"><a href="#cb17-219" aria-hidden="true" tabindex="-1"></a>The state publishes how many tax returns report income above \$1M, \$2M, \$3M, \$4M, \$5M and</span>
-<span id="cb17-220"><a href="#cb17-220" aria-hidden="true" tabindex="-1"></a>\$10M (Franchise Tax Board (FTB) Personal Income Tax (PIT) Annual Report 2024, Table B-4A). If top incomes follow a Pareto distribution, the log</span>
+<span id="cb17-220"><a href="#cb17-220" aria-hidden="true" tabindex="-1"></a>\$10M (Franchise Tax Board, FTB below: Personal Income Tax Annual Report 2024, Table B-4A). If top incomes follow a Pareto distribution, the log</span>
 <span id="cb17-221"><a href="#cb17-221" aria-hidden="true" tabindex="-1"></a>of those counts falls on a straight line against the log of the thresholds, with slope $-\alpha$.</span>
 <span id="cb17-222"><a href="#cb17-222" aria-hidden="true" tabindex="-1"></a>The fitted line gives $\hat\alpha$ = **`r num(pf$alpha, 3)`** (printed <span class="in">`r out(&quot;pareto_alpha&quot;,&quot;printed_value&quot;)`</span>,</span>
 <span id="cb17-223"><a href="#cb17-223" aria-hidden="true" tabindex="-1"></a>$R^2$ = <span class="in">`r num(pf$r_squared, 4)`</span>).</span>
