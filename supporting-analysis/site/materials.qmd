@@ -102,7 +102,7 @@ role <- c(
   "data_sheets.R" = "16 extractors, one per workbook sheet the pipeline reads",
   "compute_data_sec_agg.R" = "yearly totals from the billionaire list (drops the duplicated rows)",
   "compute_pareto.R" = "Pareto extrapolation of missing billionaires; the Laffer curve",
-  "compute_tab5.R" = "Table 5: the four scoring rows of the one-time tax",
+  "compute_tab5.R" = "Table 5: the scorer the explorer also runs, and the four scoring rows of the one-time tax",
   "compute_billionaires_ca_inctax.R" = "CA income tax of all billionaires (FTB + Pareto), and all taxes",
   "compute_shortrunseries.R" = "wealth growth panel and the 2025 snapshot",
   "compute_top4taxes.R" = "taxes of the top 4 by year, 2004-2025",
@@ -111,7 +111,7 @@ role <- c(
   "render.R" = "writes tables and figures to outputs/",
   "verify.R" = "the test helper that compares R with the workbook's cached cells",
   "code_listing.R" = "helper for code listings in the original report",
-  "site_exports.R" = "this site's data: the generalised Table 5 scorer, the grid, input origins")
+  "site_exports.R" = "this site's data: the dials, the grid (scored by compute_tab5.R), input origins")
 fs <- sort(list.files(file.path(SA, "R"), pattern = "[.]R$"))
 show(data.frame(
   file = vapply(fs, function(f) link(paste0("R/", f)), ""),

@@ -40,8 +40,9 @@ compute_nber_collectible <- function(final_df, q = 0.50) {
 # ---- Explorer grid ----------------------------------------------------------
 # Seven dials, three levels each (3^7 = 2187 cells). For every cell the grid
 # stores four outcomes, all seed-free:
-#   1. mean NPV: closed form, q*E[WT] - E[f]*E[C]*E[1/(rho - g)], using the
-#      same independence argument as npv_mc_analytic_mean();
+#   1. mean NPV: closed form, q*E[WT] - E[f]*E[C]*E[1/(rho - g)], computed by
+#      npv_expectation() in R/npv_mc.R, the function behind
+#      npv_mc_analytic_mean();
 #   2. share of outcomes with NPV < 0: deterministic midpoint quadrature over
 #      C, rho (and f when it is drawn), with WT's uniform CDF done exactly;
 #   3. expected wealth tax collected, q*E[WT];
@@ -126,44 +127,16 @@ site_named_labels <- function() {
   c(ssrn = "SSRN, Mar 2026", nber = "NBER, Sept 2026")
 }
 
-# E[1/(rho - g)] for rho ~ U[lo, hi] (or a point when lo == hi).
-e_inv_rate <- function(lo, hi, g = 0) {
-  if (hi > lo) log((hi - g) / (lo - g)) / (hi - lo) else 1 / (lo - g)
-}
-
-mid_nodes <- function(lo, hi, n) {
-  if (hi > lo) lo + (seq_len(n) - 0.5) * (hi - lo) / n else lo
-}
-
-# P(NPV < 0) for one cell. WT ~ U[a, b] is integrated exactly through its
-# CDF; the remaining draws by the midpoint rule.
-cell_share_negative <- function(a, b, q, c_rng, r_rng, f_spec, g, n2 = 400, n3 = 100) {
-  f_drawn <- identical(f_spec$mode, "uniform")
-  n <- if (f_drawn) n3 else n2
-  cn <- mid_nodes(c_rng[1], c_rng[2], n)
-  rn <- mid_nodes(r_rng[1], r_rng[2], n)
-  k <- as.vector(outer(cn, 1 / (rn - g)))           # C / (rho - g)
-  thr <- switch(f_spec$mode,
-    implied = k / (q + k / f_spec$baseline),         # q*WT < (1 - WT/B) k
-    fixed   = f_spec$value * k / q,
-    uniform = as.vector(outer(k, mid_nodes(f_spec$lo, f_spec$hi, n))) / q
-  )
-  mean(stats::punif(thr, a, b))
-}
-
+# One cell of the grid: the analysis's own closed form and exact share
+# (npv_expectation(), npv_share_negative_exact() in R/npv_mc.R), so the
+# explorer runs the same code as the reproduction.
 cell_outcomes <- function(a, b, q, c_rng, r_rng, f_spec, g) {
-  e_wt <- (a + b) / 2
-  e_f <- switch(f_spec$mode,
-    implied = 1 - e_wt / f_spec$baseline,
-    uniform = (f_spec$lo + f_spec$hi) / 2,
-    fixed   = f_spec$value
-  )
-  pv_lost <- e_f * mean(c_rng) * e_inv_rate(r_rng[1], r_rng[2], g)
-  collected <- q * e_wt
-  c(mean_npv = collected - pv_lost,
-    pct_negative = 100 * cell_share_negative(a, b, q, c_rng, r_rng, f_spec, g),
-    wt_collected = collected,
-    pv_lost = pv_lost)
+  e <- npv_expectation(a, b, c_rng[1], c_rng[2], r_rng[1], r_rng[2], f_spec, q = q, g = g)
+  c(mean_npv = e[["mean_npv"]],
+    pct_negative = 100 * npv_share_negative_exact(a, b, c_rng[1], c_rng[2], r_rng[1], r_rng[2],
+                                                  f_spec, q = q, g = g),
+    wt_collected = e[["wt_collected"]],
+    pv_lost = e[["pv_lost"]])
 }
 
 # One row per cell, in mixed-radix order with the LAST dial varying fastest

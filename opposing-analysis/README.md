@@ -49,7 +49,7 @@ in CI) without touching any other file.
 
 ## Tests (`tests/testthat/`)
 
-156 expectations in 28 test blocks, 0 failed (2026-09-23, with `RAUH_REPO_DIR` set). Count them
+159 expectations in 29 test blocks, 0 failed (2026-09-23, with `RAUH_REPO_DIR` set). Count them
 through `Rscript tests/testthat.R`, which sources `R/` first; calling `testthat::test_dir()`
 directly skips that setup and reports spurious errors. `.github/workflows/opposing-ci.yml`
 clones the authors' repo at the pinned SHA, rebuilds R and Python, and runs the suite on every

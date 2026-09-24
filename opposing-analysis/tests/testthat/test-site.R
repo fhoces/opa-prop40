@@ -9,6 +9,14 @@ minus <- function(x, d) {
   if (x < 0) paste0("−", s) else s
 }
 
+test_that("the explorer grid and the analytic mean run the same functions", {
+  # OPA Guidelines step 2 Level 3: the tool shares the analysis's key code.
+  expect_true(all(c("npv_expectation", "npv_share_negative_exact") %in% all.names(body(cell_outcomes))))
+  expect_true("npv_expectation" %in% all.names(body(npv_mc_analytic_mean)))
+  site_src <- readLines(project_path("R", "site.R"))
+  expect_false(any(grepl("(e_inv_rate|mid_nodes|cell_share_negative)\\s*<-\\s*function", site_src)))
+})
+
 test_that("the preferred grid cells equal the pipeline's analytic means", {
   ss <- formals(compute_npv_mc_ssrn); nb <- formals(compute_npv_mc_nber)
   s <- cell_outcomes(ss$wt_min, ss$wt_max, 1, c(ss$c_min, ss$c_max), c(ss$r_min, ss$r_max),

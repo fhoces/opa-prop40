@@ -1,0 +1,69 @@
+name: comparison CI
+
+# Rebuilds the comparison layer from the two sides' committed export contracts
+# (supporting-analysis/export/r/, opposing-analysis/export/r/) plus
+# comparison/data/, with both the R build and its Python twin, then runs the
+# comparison test suite (endpoints vs printed numbers, Shapley identities,
+# R vs Python parity, the page being exactly the generator's output). Finally
+# it checks that the committed site root, index.html, is what the generator
+# writes: a change to either side's contract that was not followed by
+# `Rscript comparison/run.R` fails here. (The data files carry 15-digit floats
+# that can differ in the last digit across platforms, so only the page, whose
+# numbers are rounded, is compared byte for byte.)
+
+on:
+  push:
+    paths:
+      - "comparison/**"
+      - "supporting-analysis/export/**"
+      - "opposing-analysis/export/**"
+      - "index.html"
+      - "assets/comparison-data.js"
+      - ".github/workflows/comparison-ci.yml"
+  pull_request:
+    paths:
+      - "comparison/**"
+      - "supporting-analysis/export/**"
+      - "opposing-analysis/export/**"
+      - "index.html"
+      - "assets/comparison-data.js"
+      - ".github/workflows/comparison-ci.yml"
+  workflow_dispatch: {}
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: "release"
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: |
+            any::testthat
+            any::jsonlite
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install the Python twin's dependencies
+        run: pip install scipy
+
+      - name: Rebuild exports (R and Python) and the site root
+        env:
+          PYTHON: python
+          OPA_PROP40_ROOT: ${{ github.workspace }}
+        run: Rscript comparison/run.R
+
+      - name: Run the comparison test suite
+        env:
+          OPA_PROP40_ROOT: ${{ github.workspace }}
+        run: Rscript comparison/tests/testthat.R
+
+      - name: The committed index.html is the generator's output
+        run: git diff --exit-code -- index.html

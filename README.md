@@ -37,13 +37,13 @@ Each side publishes an export contract (`<side>/export/r/{inputs,outputs}.csv`),
 
 | Part | State | Tests | CI |
 |---|---|---|---|
-| `supporting-analysis/` | BSZ May and August reproduced cell by cell; OPA site (explorer, report, slides, materials) | 558 expectations, 0 failed | `ci.yml`, green |
-| `opposing-analysis/` | SSRN and NBER reproduced from the authors' code, R and Python; 9 documented mismatches (`MISMATCHES.md`); OPA site | 156 expectations, 0 failed | `opposing-ci.yml`, green |
-| `comparison/` | Reconciliation page at the site root; 8 disputed inputs (`DISPUTES.md`) | 172 expectations, 0 failed | none yet |
+| `supporting-analysis/` | BSZ May and August reproduced cell by cell; OPA site (explorer, report, slides, materials) | 561 expectations, 0 failed | `ci.yml`, green |
+| `opposing-analysis/` | SSRN and NBER reproduced from the authors' code, R and Python; 9 documented mismatches (`MISMATCHES.md`); OPA site | 159 expectations, 0 failed | `opposing-ci.yml`, green |
+| `comparison/` | Reconciliation page at the site root; 8 disputed inputs (`DISPUTES.md`) | 172 expectations, 0 failed | `comparison-ci.yml` |
 
 Each part's README gives its rebuild and test commands. The repository is private
 and the site is not yet served (see `AUDIT.md`). Still to do: the CRediT / AI-use tables (the
-`site/credit/` pages are placeholders), a CI workflow for `comparison/`, and the Python twin and
+`site/credit/` pages are placeholders), and the Python twin and
 SQL layer on the supporting side (`supporting-analysis/py/`, `sql/` hold only a README).
 
 ## Sources policy

@@ -2364,8 +2364,8 @@ min-width: 0 !important;
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><a href="https://github.com/fhoces/opa-prop40/blob/main/supporting-analysis/tests/testthat/test-site.R"><code>test-site.R</code></a></td>
-<td style="text-align: right;">6</td>
-<td style="text-align: right;">40</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">43</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
 </tr>
@@ -2392,8 +2392,8 @@ min-width: 0 !important;
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><strong>total</strong></td>
-<td style="text-align: right;">99</td>
-<td style="text-align: right;">558</td>
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">561</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
 </tr>
@@ -2401,7 +2401,7 @@ min-width: 0 !important;
 </table>
 </div>
 </div>
-<p>Last run: 2026-09-23, august vintage: <strong>558 expectations passed, 0 failed</strong>, in 99 test blocks. Of these, 518 belong to the reproduction itself and 40 to this site: they check that the explorer reproduces Table 5 exactly, that <code>explorer/grid.js</code> is the exporter’s own output, and that every number typed into a hand-written page still matches the pipeline. GitHub Actions rebuilds the pipeline and runs the suite on every push that touches <code>supporting-analysis/</code> (<code>.github/workflows/ci.yml</code>); it does not render the Quarto pages or the slides.</p>
+<p>Last run: 2026-09-23, august vintage: <strong>561 expectations passed, 0 failed</strong>, in 100 test blocks. Of these, 518 belong to the reproduction itself and 43 to this site: they check that the explorer reproduces Table 5 exactly, that <code>explorer/grid.js</code> is the exporter’s own output, and that every number typed into a hand-written page still matches the pipeline. GitHub Actions rebuilds the pipeline and runs the suite on every push that touches <code>supporting-analysis/</code> (<code>.github/workflows/ci.yml</code>); it does not render the Quarto pages or the slides.</p>
 </section>
 <section id="scripts" class="level2">
 <h2 class="anchored" data-anchor-id="scripts">Scripts</h2>
@@ -2443,8 +2443,8 @@ min-width: 0 !important;
 </tr>
 <tr class="even">
 <td style="text-align: left;"><a href="https://github.com/fhoces/opa-prop40/blob/main/supporting-analysis/R/compute_tab5.R"><code>R/compute_tab5.R</code></a></td>
-<td style="text-align: right;">150</td>
-<td style="text-align: left;">Table 5: the four scoring rows of the one-time tax</td>
+<td style="text-align: right;">144</td>
+<td style="text-align: left;">Table 5: the scorer the explorer also runs, and the four scoring rows of the one-time tax</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><a href="https://github.com/fhoces/opa-prop40/blob/main/supporting-analysis/R/compute_top4taxes.R"><code>R/compute_top4taxes.R</code></a></td>
@@ -2462,36 +2462,41 @@ min-width: 0 !important;
 <td style="text-align: left;">single-cell and row/column readers shared by the compute files</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;"><a href="https://github.com/fhoces/opa-prop40/blob/main/supporting-analysis/R/export_contract.R"><code>R/export_contract.R</code></a></td>
+<td style="text-align: right;">96</td>
+<td style="text-align: left;">Export contract: the only files the comparison layer (comparison/) reads from</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;"><a href="https://github.com/fhoces/opa-prop40/blob/main/supporting-analysis/R/figures.R"><code>R/figures.R</code></a></td>
 <td style="text-align: right;">724</td>
 <td style="text-align: left;">the twelve ggplot figures</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><a href="https://github.com/fhoces/opa-prop40/blob/main/supporting-analysis/R/ingest_excel.R"><code>R/ingest_excel.R</code></a></td>
 <td style="text-align: right;">70</td>
 <td style="text-align: left;">reads the workbook: sheet reader, vintage switch, source directory</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><a href="https://github.com/fhoces/opa-prop40/blob/main/supporting-analysis/R/render.R"><code>R/render.R</code></a></td>
 <td style="text-align: right;">75</td>
 <td style="text-align: left;">writes tables and figures to outputs/</td>
 </tr>
-<tr class="odd">
-<td style="text-align: left;"><a href="https://github.com/fhoces/opa-prop40/blob/main/supporting-analysis/R/site_exports.R"><code>R/site_exports.R</code></a></td>
-<td style="text-align: right;">303</td>
-<td style="text-align: left;">this site&#39;s data: the generalised Table 5 scorer, the grid, input origins</td>
-</tr>
 <tr class="even">
+<td style="text-align: left;"><a href="https://github.com/fhoces/opa-prop40/blob/main/supporting-analysis/R/site_exports.R"><code>R/site_exports.R</code></a></td>
+<td style="text-align: right;">203</td>
+<td style="text-align: left;">this site&#39;s data: the dials, the grid (scored by compute_tab5.R), input origins</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;"><a href="https://github.com/fhoces/opa-prop40/blob/main/supporting-analysis/R/tables.R"><code>R/tables.R</code></a></td>
 <td style="text-align: right;">652</td>
 <td style="text-align: left;">the six gt tables</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><a href="https://github.com/fhoces/opa-prop40/blob/main/supporting-analysis/R/verify.R"><code>R/verify.R</code></a></td>
 <td style="text-align: right;">59</td>
 <td style="text-align: left;">the test helper that compares R with the workbook&#39;s cached cells</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><a href="https://github.com/fhoces/opa-prop40/blob/main/supporting-analysis/R/vintage.R"><code>R/vintage.R</code></a></td>
 <td style="text-align: right;">183</td>
 <td style="text-align: left;">everything that differs between the May and August workbooks, in one place</td>
@@ -2548,7 +2553,7 @@ min-width: 0 !important;
 </tr>
 <tr class="even">
 <td style="text-align: left;"><a href="data/test-results.csv"><code>test-results.csv</code></a></td>
-<td style="text-align: right;">99</td>
+<td style="text-align: right;">100</td>
 <td style="text-align: right;">7</td>
 <td style="text-align: left;">one row per test block from the last full run</td>
 </tr>

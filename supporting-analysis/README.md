@@ -150,7 +150,7 @@ supporting-analysis/
 │   ├── data_sheets.R                     # 16 extract_* functions (read Excel)
 │   ├── compute_data_sec_agg.R            # group-by aggregator (excludes Ellison)
 │   ├── compute_pareto.R                  # Pareto extrapolation + Laffer sweep
-│   ├── compute_tab5.R                    # one-time wealth-tax scoring (4 scenarios)
+│   ├── compute_tab5.R                    # one-time wealth-tax scorer (the explorer runs it too) + 4 scenarios
 │   ├── compute_billionaires_ca_inctax.R  # 727-formula sheet (Method I + memos + all-taxes)
 │   ├── compute_shortrunseries.R          # wealth-growth panel + 2025 snapshot
 │   ├── compute_top4taxes.R               # 22-year per-billionaire tax-rate panel
@@ -158,14 +158,14 @@ supporting-analysis/
 │   ├── figures.R                         # 12 build_fig*_ggplot functions
 │   ├── render.R                          # render_table_*, render_figure_*, render_report
 │   ├── code_listing.R                    # code listings for the report
-│   ├── site_exports.R                    # the site's data: generalised Table 5 scorer, grid, origins
+│   ├── site_exports.R                    # the site's data: dials, grid, input origins
 │   └── export_contract.R                 # export/r/*.csv for the comparison layer
 ├── report.qmd                            # Quarto narrative report
 ├── tests/
 │   ├── testthat.R                        # entry point
 │   ├── snapshots/{august,may}/*.rds      # 34 golden-master outputs per vintage (committed)
 │   ├── snapshot_regenerate.R             # re-baseline script (run on intentional change)
-│   └── testthat/                         # 558 expectations across 8 files (August)
+│   └── testthat/                         # 561 expectations across 8 files (August)
 ├── tools/site-test-results.R             # runs the suite, writes site/data/test-results.csv
 ├── site/                                 # the OPA site: explorer/, repro.qmd, slides/, materials.qmd
 ├── export/r/                             # export contract read by ../comparison/
@@ -323,7 +323,7 @@ Rscript -e 'install.packages(c(
 # 4. Build the pipeline (all targets + Quarto report):
 Rscript -e 'targets::tar_make()'
 
-# 5. Run the test suite (558 expectations on the August vintage):
+# 5. Run the test suite (561 expectations on the August vintage):
 Rscript tests/testthat.R
 #    or, to also write site/data/test-results.csv for the materials page:
 Rscript tools/site-test-results.R
@@ -347,12 +347,12 @@ compute:      215
 data_sheets:   45
 figures:       76
 ingest_excel:  20
-site:          40       # the explorer reproduces Table 5; grid.js is the exporter's output
+site:          43       # the explorer runs compute_tab5.R's scorer; grid.js is the exporter's output
 snapshots:     34       # pin exact output of every exhibit + compute_* fn
 tables:       121
 verify:         7
               ---
-total:        558       # August vintage, 2026-09-23, 99 test blocks
+total:        561       # August vintage, 2026-09-23, 100 test blocks
 ```
 
 The snapshot tests load `tests/snapshots/*.rds` (committed golden masters of
