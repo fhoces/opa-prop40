@@ -46,7 +46,8 @@ class: center, middle, opa-slide
 # An Open Reproduction
 
 .opa-intro[
-The RJKDC side's score of California's Billionaire Tax Act, rebuilt from the authors' own
+The score of California's Billionaire Tax Act by Rauh, Jaros, Kearney, Doran and Cosso
+(RJKDC), rebuilt from the authors' own
 code and data and taught step by step, following the
 [Open Policy Analysis](https://tinyurl.com/1qypbihb) framework.
 ]
