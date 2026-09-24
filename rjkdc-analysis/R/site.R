@@ -86,7 +86,7 @@ site_dials <- function(revenue_chain) {
          levels = list(c(ss$c_min, ss$c_max), c(ss$c_min, ss$c_min), c(ss$c_max, ss$c_max)),
          labels = c(sprintf("%.1f to %.1f", ss$c_min, ss$c_max),
                     sprintf("%.1f only", ss$c_min), sprintf("%.1f only", ss$c_max))),
-    list(key = "rate", label = "Discount rate drawn, rho",
+    list(key = "rate", label = "Discount rate drawn, r",
          origin = "guesswork",
          desc = paste0("Uniform draw for the rate in the perpetuity's denominator. 1.5% is the S&P ",
                        "dividend-yield anchor (p.18); both scripts draw 1.5% to 4.5%."),
