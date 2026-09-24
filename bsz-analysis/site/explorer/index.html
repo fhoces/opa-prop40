@@ -179,7 +179,8 @@
       assumptions, and most of those assumptions are guesswork: nobody has measured them.
       The inputs below are the five guesses among them, plus one research-based switch (counting the
       billionaires Forbes misses, from a Pareto extrapolation). The two switches, that one and
-      who had left before 2026, reproduce rows 2 to 4 of Table 5 of Boll, Saez and Zucman (2026).
+      the aggressive assumption on who has left, reproduce rows 2 to 4 of Table 5 of Boll, Saez and
+      Zucman (BSZ, 2026).
     </p>
     <p class="standfirst">
       This page is the <strong>open output</strong> of the BSZ side. Every
@@ -299,8 +300,8 @@
   document.getElementById("pref-text").textContent =
     "Boll, Saez and Zucman's benchmark: 5% of the $" + G.facts.W0.toLocaleString("en-US") +
     " billion held by " + G.facts.n0 + " California billionaires on 1 July 2026 is $" +
-    (0.05 * G.facts.W0).toFixed(0) + " billion, less 10% avoidance. Galle, Gamage, Saez and " +
-    "Shanske's expert report (20 July 2026, p.4) makes the same computation and rounds it " +
+    (0.05 * G.facts.W0).toFixed(0) + " billion, less 10% avoidance. The expert report by Galle, Gamage, " +
+    "Saez and Shanske (GGSS, 20 July 2026, p.4) makes the same computation and rounds it " +
     "to $100 billion \"for simplicity\", so the two BSZ-side estimates are one number. " +
     "It sits on the orange-marked value of every input below.";
   document.getElementById("gap").textContent = "$" + G.facts.row4_phasein_gap.toFixed(1) + " billion";

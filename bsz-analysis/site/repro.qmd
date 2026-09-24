@@ -1,6 +1,6 @@
 ---
 title: "Prop 40, BSZ side: the reproduction"
-subtitle: "Boll, Saez and Zucman (2026) and the GGSS expert report, reproduced step by step from the authors' August 2026 workbook"
+subtitle: "Boll, Saez and Zucman (BSZ, 2026) and the Galle, Gamage, Saez and Shanske (GGSS) expert report, reproduced step by step from the authors' August 2026 workbook"
 date: today
 format:
   html:
