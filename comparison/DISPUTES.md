@@ -75,9 +75,9 @@ litigation-survival probability q = 0.50, drops Zuckerberg from the central base
 departure fraction f ~ U[0.30, 0.60] independently of WT. On the bridge it enters as extra steps after
 the SSRN anchor.
 
-## Not yet in the table
+## Handled outside the table
 
-- The pro side's headline counts wealth tax revenue only (GGSS $100B; BSZ $104B benchmark), while
+- The BSZ side's headline counts wealth tax revenue only (GGSS $100B; BSZ $104B benchmark), while
   Rauh's is an NPV net of lost income tax. The reconciliation page first puts both on a common
   output definition (see PLAN.md, "Pre-specified output").
 - Control-weighted valuation (Rauh §2.5 and App. A; GGSS p.8): both sides score economic ownership,
