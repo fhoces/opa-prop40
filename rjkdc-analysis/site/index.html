@@ -255,7 +255,7 @@
       <div class="card-text">
         <span class="kicker">Open Materials</span>
         <h3>Every script, test and CSV &rarr;</h3>
-        <p>The <code>{targets}</code> pipeline in R with its Python twin, the test suite, every
+        <p>The pipeline built with the R pipeline tool <code>{targets}</code> with its Python twin, the test suite, every
            exported CSV, the source manifest with SHA-256 hashes, and the nine mismatches between
            the papers, their READMEs and their code.</p>
       </div>
@@ -297,7 +297,7 @@
    mean of 51.26, above the paper's own preferred "about 40", while the NBER draw's mean, 36, is its
    litigation-discounted ceiling (0.5 &times; 72). Third, of the seven inputs that move the answer,
    six are guesswork; the <a href="explorer/">explorer</a> shows how far each one moves it. Whether
-   the income tax loss really lasts for ever is the main point the BSZ side disputes.</p>
+   the income tax loss really lasts for ever is the main point the BSZ side (Boll, Saez and Zucman, who support the measure) disputes.</p>
 
 <h2>What reproduces</h2>
 
@@ -309,11 +309,11 @@
         <td>94.30 / 67.51 / 55.10 / 45.59 from the authors' workbook; the paper prints 94.20 for the
             first, which its later steps also use (mismatch 6)</td></tr>
     <tr><td>Pareto fit and Table 8, income tax (p.17)</td>
-        <td>alpha 1.44; all 21 cells round to the printed digit, replaying the authors' RNG stream</td></tr>
+        <td>alpha 1.44; all 21 cells round to the printed digit, replaying the authors' random-number (RNG) stream</td></tr>
     <tr><td>Tables 9 and 10, NPV and break-even (pp.19-20)</td>
         <td>all 18 and all 9 cells match the printed digit</td></tr>
     <tr><td>SSRN Monte Carlo, Sec 5.5 (p.20)</td>
-        <td>median and share negative match; mean and SD do not quite (mismatch 9). The printed mean
+        <td>median and share negative match; mean and SD (standard deviation) do not quite (mismatch 9). The printed mean
             equals the exact expectation, not the shipped seed's run</td></tr>
     <tr><td>NBER revenue and Monte Carlo (pp.22-23, 35)</td>
         <td>collectible 29.57 (printed 29.6), range 28.40 to 35.59; mean, median, SD and share
@@ -331,7 +331,7 @@ current count.</p>
 papers, their READMEs and their code. We reproduce the code as shipped and record each one:</p>
 <ol style="margin:0 0 14px; padding-left:22px; color:var(--ink-2); font-size:15px;">
   <li>Eq. 22 prints the revenue ceiling as 67.1; the code and the text use 67.51.</li>
-  <li>The text derives a growing perpetuity, C/(r &minus; g); the Monte Carlo divides by the plain rate.</li>
+  <li>The text derives a growing perpetuity, C/(r &minus; g), with C the annual income tax lost, r the real discount rate and g the growth rate of that tax base (SSRN p.18); the Monte Carlo divides by the plain rate.</li>
   <li>The NBER code labels the same 1.5% to 4.5% draw (r &minus; g), so one interval stands for two concepts.</li>
   <li>The NBER ceiling is 72 in the script, 72.06 in the README and 72.05 in the person-level data.</li>
   <li>The NBER litigation weight q = 0.50 has no multiplier in the code; it lives only in a draw from zero.</li>
@@ -368,7 +368,8 @@ are mechanical checks, not an outside review, and no other person has verified t
   Open Output: <a href="explorer/">the explorer</a> &middot;
   Open Analysis: <a href="repro.html">Report</a> and <a href="slides/slides.html">Slides</a> &middot;
   Open Materials: <a href="materials.html">materials page</a> &middot;
-  Overview (this page). The BSZ side's OPA and the reconciliation page are built separately.
+  Overview (this page). See also the <a href="../../bsz-analysis/site/">BSZ side</a> and the
+  <a href="../../index.html">reconciliation page</a>.
   Source: <a href="https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis">github.com/fhoces/opa-prop40</a>.
 </footer>
 
