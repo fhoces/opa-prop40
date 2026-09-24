@@ -2350,7 +2350,7 @@ p code, li code, td code, h3 code { overflow-wrap: anywhere !important; word-bre
 </tr>
 <tr class="even">
 <td style="text-align: left;"><a href="https://github.com/fhoces/opa-prop40/blob/main/rjkdc-analysis/R/nber_final.R"><code>R/nber_final.R</code></a></td>
-<td style="text-align: left;">NBER bridge inputs, rebuilt from RAUH/NBER_2026_litigation_weighted/ NPV_data/final.csv (240 rows: 212 domestic + 28 international; see extract_nber_final()) rather than hard-coded, per the brief.</td>
+<td style="text-align: left;">NBER bridge inputs, rebuilt from RAUH/NBER_2026_litigation_weighted/ NPV_data/final.csv (240 rows: 212 domestic + 28 international; see extract_nber_final()) rather than hard-coded, by design.</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><a href="https://github.com/fhoces/opa-prop40/blob/main/rjkdc-analysis/R/npv_mc.R"><code>R/npv_mc.R</code></a></td>
@@ -2789,7 +2789,7 @@ p code, li code, td code, h3 code { overflow-wrap: anywhere !important; word-bre
 </section>
 <section id="mismatches" class="level2">
 <h2 class="anchored" data-anchor-id="mismatches">The nine mismatches</h2>
-<p>One numbered item per code/paper or doc/code discrepancy found while reproducing Rauh, Jaros, Kearney, Doran &amp; Cosso (SSRN 6340778) and Jaros &amp; Rauh (NBER, Sept 2026). Per the brief, we do not “fix” the authors: we reproduce their code as run, record the discrepancy, and where it matters expose the alternative reading as a parameter with both sides under test.</p>
+<p>One numbered item per code/paper or doc/code discrepancy found while reproducing Rauh, Jaros, Kearney, Doran &amp; Cosso (SSRN 6340778) and Jaros &amp; Rauh (NBER, Sept 2026). By design, we do not “fix” the authors: we reproduce their code as run, record the discrepancy, and where it matters expose the alternative reading as a parameter with both sides under test.</p>
 <section id="eq.-22s-printed-wt-upper-bound-67.1-vs.-the-codes-literal-67.51" class="level3">
 <h3 class="anchored" data-anchor-id="eq.-22s-printed-wt-upper-bound-67.1-vs.-the-codes-literal-67.51">1. Eq. 22’s printed WT upper bound (67.1) vs. the code’s literal (67.51)</h3>
 <p><strong>Paper</strong>, p.20, eq. 22: <code>WT ~ U[$35B, $67.1B]</code>. <strong>Code</strong>, <code>NPV_data/NPV_dist.R:31</code>: <code>wt_max &lt;- 67.51</code>.</p>
@@ -2807,7 +2807,7 @@ p code, li code, td code, h3 code { overflow-wrap: anywhere !important; word-bre
 <section id="nber-ceiling-hard-coded-72-vs.-72.0572.06-derivable-from-final.csv" class="level3">
 <h3 class="anchored" data-anchor-id="nber-ceiling-hard-coded-72-vs.-72.0572.06-derivable-from-final.csv">4. NBER ceiling: hard-coded 72 vs. 72.05/72.06 derivable from <code>final.csv</code></h3>
 <p><strong>Code</strong>, <code>NBER_2026_litigation_weighted/NPV_data/NPV_dist_v8.R:19</code>: <code>wt_max &lt;- 72</code> (a literal). <strong>NBER README</strong> assumptions table: “$72.06B” (text). <strong>Our recomputation</strong> from <code>final.csv</code> (<code>R/nber_final.R:compute_nber_ceiling()</code>, <code>py/nber_final.py:compute_nber_ceiling()</code>): domestic total at 7% growth (<code>sum(face_tax_5pct[panel==&quot;domestic&quot;])</code> = $100.9056B) minus the 7 <code>removed_departed</code> rows ($28.8541B) = <strong>$72.0515B</strong>.</p>
-<p>Three different numbers for the same quantity: the script’s literal (72), the README’s prose (72.06), and the value the underlying person-level data actually sums to (72.05). We rebuild the ceiling from <code>final.csv</code> per the brief rather than trusting either the script’s literal or the README’s rounding, and flag that the shipped NPV_dist_v8.R does not itself perform this rebuild - it uses the hard-coded 72.</p>
+<p>Three different numbers for the same quantity: the script’s literal (72), the README’s prose (72.06), and the value the underlying person-level data actually sums to (72.05). We rebuild the ceiling from <code>final.csv</code> by design rather than trusting either the script’s literal or the README’s rounding, and flag that the shipped NPV_dist_v8.R does not itself perform this rebuild - it uses the hard-coded 72.</p>
 </section>
 <section id="q-0.50-litigation-survival-weight-has-no-explicit-multiplier-in-the-code" class="level3">
 <h3 class="anchored" data-anchor-id="q-0.50-litigation-survival-weight-has-no-explicit-multiplier-in-the-code">5. <code>q = 0.50</code> litigation-survival weight has no explicit multiplier in the code</h3>

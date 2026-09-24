@@ -1,7 +1,7 @@
 # Mismatches
 
 One numbered item per code/paper or doc/code discrepancy found while reproducing Rauh, Jaros,
-Kearney, Doran & Cosso (SSRN 6340778) and Jaros & Rauh (NBER, Sept 2026). Per the brief, we do not
+Kearney, Doran & Cosso (SSRN 6340778) and Jaros & Rauh (NBER, Sept 2026). By design, we do not
 "fix" the authors: we reproduce their code as run, record the discrepancy, and where it matters
 expose the alternative reading as a parameter with both sides under test.
 
@@ -49,7 +49,7 @@ same calibration should apply to both.
 
 Three different numbers for the same quantity: the script's literal (72), the README's prose
 (72.06), and the value the underlying person-level data actually sums to (72.05). We rebuild the
-ceiling from `final.csv` per the brief rather than trusting either the script's literal or the
+ceiling from `final.csv` by design rather than trusting either the script's literal or the
 README's rounding, and flag that the shipped NPV_dist_v8.R does not itself perform this rebuild -
 it uses the hard-coded 72.
 

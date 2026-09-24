@@ -1,6 +1,6 @@
 # NBER bridge inputs, rebuilt from RAUH/NBER_2026_litigation_weighted/
 # NPV_data/final.csv (240 rows: 212 domestic + 28 international; see
-# extract_nber_final()) rather than hard-coded, per the brief. final.csv's
+# extract_nber_final()) rather than hard-coded, by design. final.csv's
 # `face_tax_5pct` column is 5% of `wealth_in_tax_base_usd_7pct` (net worth
 # grown 7% to the Dec 31 2026 valuation date, net of real estate) - i.e. the
 # NBER-vintage analogue of revenue_chain.R's per-row `O` column.

@@ -62,7 +62,7 @@ Three kinds, per file:
    tolerance).
 2. **Vs. the authors' own scripts**, run unmodified from a scratch copy (tempdir, plot/csv paths
    redirected, no logic changed - `tests/testthat/helper-author-scripts.R`). These skip cleanly
-   (not fail) when `RAUH_REPO_DIR` is unavailable, per the brief and per
+   (not fail) when `RAUH_REPO_DIR` is unavailable, by design and per
    `PLAN.md`'s "CI must not depend on author-shared data" rule.
 3. **Parity between `export/r/` and `export/py/`** (`test-parity.R`): deterministic steps to
    1e-6, Monte-Carlo-derived outputs within a documented tolerance (numpy cannot share R's RNG
