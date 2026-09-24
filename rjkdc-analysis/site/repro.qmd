@@ -442,7 +442,7 @@ Table 9) and changes the revenue side and the Monte Carlo. Five changes, in the 
    (ASC 740-10), not from a legal assessment; it is **guesswork**.
 4. **The departure share is drawn on its own**, $f \sim U[`r nb$f_min`, `r nb$f_max`]$,
    independent of revenue, "centered conservatively around the observed wealth-base departure
-   fraction" (PDF p.30).
+   fraction" (PDF p.31).
 5. **The Monte Carlo draws revenue from zero**: $WT \sim U[0, 72]$ (PDF p.35, eq. 16). Its mean,
    \$`r num(h("nber","mc_expected_revenue"), 0)`B, is $0.5 \times 72$, which the paper calls the
    central estimate (PDF p.33). This is the only place $q$ appears in the code: there is no

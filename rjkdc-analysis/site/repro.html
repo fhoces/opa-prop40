@@ -3110,7 +3110,7 @@ r \sim U[0.015, 0.045]\]</span></p>
 <li><strong>A later valuation date.</strong> Net worth is grown 7% to the 31 December 2026 valuation date, and the base is rebuilt person by person in <code>final.csv</code>: 212 domestic rows, face value $100.91B (printed $100.9B).</li>
 <li><strong>Seven confirmed departures</strong> (the six, plus Travis Kalanick): removing them leaves <strong>$72.05B</strong>. The README says $72.06B and the script hard-codes 72 (<a href="materials.html#mismatches">mismatch 4</a>); three numbers for one quantity. The 28 non-US-citizen residents ($146.3B of net worth) stay outside the base, now explicitly.</li>
 <li><strong>A litigation discount</strong> (PDF pp.19-23, eqs. 5 to 8). Removing three pre-filing departures and Zuckerberg leaves a recognized base of $59.15B; multiplying by <span class="math inline">\(q\)</span> = 0.5, the chance the Act survives in court, gives <span class="math inline">\(E[R] = q \times R_{\text{recognized}}\)</span> = <strong>$29.57B</strong> (printed $29.6B). Keeping Zuckerberg gives $35.59B; moving the gray-zone names out (the seven billionaires with departure signals short of confirmation, plus Jan Koum, Reed Hastings and Andy Fang, reported as considering a move; NBER PDF p.23) gives $28.40B, the printed range $28.4B to $35.6B. The choice of <span class="math inline">\(q\)</span> = 0.50 comes from an accounting standard for uncertain tax positions (ASC 740-10), not from a legal assessment; it is <strong>guesswork</strong>.</li>
-<li><strong>The departure share is drawn on its own</strong>, <span class="math inline">\(f \sim U[0.3, 0.6]\)</span>, independent of revenue, “centered conservatively around the observed wealth-base departure fraction” (PDF p.30).</li>
+<li><strong>The departure share is drawn on its own</strong>, <span class="math inline">\(f \sim U[0.3, 0.6]\)</span>, independent of revenue, “centered conservatively around the observed wealth-base departure fraction” (PDF p.31).</li>
 <li><strong>The Monte Carlo draws revenue from zero</strong>: <span class="math inline">\(WT \sim U[0, 72]\)</span> (PDF p.35, eq. 16). Its mean, $36B, is <span class="math inline">\(0.5 \times 72\)</span>, which the paper calls the central estimate (PDF p.33). This is the only place <span class="math inline">\(q\)</span> appears in the code: there is no explicit multiplier (<a href="materials.html#mismatches">mismatch 5</a>), and a uniform draw from 0 is a different assumption from a survive-or-not coin flip on a fixed base. The paper also states the income tax loss is not scaled by <span class="math inline">\(q\)</span>: people who left do not come back if the Act is struck down (PDF p.33).</li>
 </ol>
 <p>The NBER break-even table, from the same <code>compute_npv_table10()</code> at the paper’s central $36B and $4.55B:</p>
@@ -3283,7 +3283,7 @@ r \sim U[0.015, 0.045]\]</span></p>
 <td style="text-align: left;">Discount rate draw: lower bound</td>
 <td style="text-align: left;">0.015</td>
 <td style="text-align: left;">research</td>
-<td style="text-align: left;">NPV_dist.R:47; paper eq.24 (S&amp;P 500 dividend yield anchor p.18; eq.18-20 instead specify r-g)</td>
+<td style="text-align: left;">NPV_dist.R:47; paper eq.24 (S&amp;P 500 dividend yield anchor p.18; eq.19-20 instead specify r-g)</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">rauh_mc_r_max</td>
@@ -3624,7 +3624,7 @@ r \sim U[0.015, 0.045]\]</span></p>
 </details>
 <ol type="1">
 <li>Eq. 22’s printed WT upper bound (67.1) vs. the code’s literal (67.51)</li>
-<li>NPV formula: growing perpetuity (eq. 18/20, <code>r-g</code>) vs. plain-<code>r</code> code (Sec 5.5)</li>
+<li>NPV formula: growing perpetuity (eq. 20, <code>r-g</code>) vs. plain-<code>r</code> code (Sec 5.5)</li>
 <li>NBER’s <code>rg_discount</code> draw reuses the SSRN plain-<code>r</code> range for an <code>(r-g)</code> quantity</li>
 <li>NBER ceiling: hard-coded 72 vs. 72.05/72.06 derivable from <code>final.csv</code></li>
 <li><code>q = 0.50</code> litigation-survival weight has no explicit multiplier in the code</li>
@@ -4626,7 +4626,7 @@ r \sim U[0.015, 0.045]\]</span></p>
 <span id="cb17-458"><a href="#cb17-458" aria-hidden="true" tabindex="-1"></a>   (ASC 740-10), not from a legal assessment; it is **guesswork**.</span>
 <span id="cb17-459"><a href="#cb17-459" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**The departure share is drawn on its own**, $f \sim U<span class="co">[</span><span class="ot">`r nb$f_min`, `r nb$f_max`</span><span class="co">]</span>$,</span>
 <span id="cb17-460"><a href="#cb17-460" aria-hidden="true" tabindex="-1"></a>   independent of revenue, &quot;centered conservatively around the observed wealth-base departure</span>
-<span id="cb17-461"><a href="#cb17-461" aria-hidden="true" tabindex="-1"></a>   fraction&quot; (PDF p.30).</span>
+<span id="cb17-461"><a href="#cb17-461" aria-hidden="true" tabindex="-1"></a>   fraction&quot; (PDF p.31).</span>
 <span id="cb17-462"><a href="#cb17-462" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**The Monte Carlo draws revenue from zero**: $WT \sim U<span class="co">[</span><span class="ot">0, 72</span><span class="co">]</span>$ (PDF p.35, eq. 16). Its mean,</span>
 <span id="cb17-463"><a href="#cb17-463" aria-hidden="true" tabindex="-1"></a>   \$<span class="in">`r num(h(&quot;nber&quot;,&quot;mc_expected_revenue&quot;), 0)`</span>B, is $0.5 \times 72$, which the paper calls the</span>
 <span id="cb17-464"><a href="#cb17-464" aria-hidden="true" tabindex="-1"></a>   central estimate (PDF p.33). This is the only place $q$ appears in the code: there is no</span>
