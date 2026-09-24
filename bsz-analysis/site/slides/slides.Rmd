@@ -231,7 +231,7 @@ $$E = s \cdot g \cdot t_{cg} \cdot T = \tfrac13 \times 0.8 \times 0.133 \times `
 **Step 5. Leavers stop paying income tax.** Half the avoidance, *m* = 50%, is people leaving,
 so 5% of the $`r bn(C, 2)` billion billionaires pay each year is lost:
 
-$$L = \alpha \, m \, C = 0.10 \times 0.5 \times `r bn(C, 2)` = `r bn(-t5$annual_ca_inctax_loss[1], 3)` \text{ per year}$$
+$$L = -\alpha \, m \, C = -0.10 \times 0.5 \times `r bn(C, 2)` = -`r bn(-t5$annual_ca_inctax_loss[1], 3)` \text{ per year (negative: revenue lost)}$$
 
 .highlight-box[
 $L$ is **per year**, and Table 5 does not say for how many years. BSZ argue about 5; the
