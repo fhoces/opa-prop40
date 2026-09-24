@@ -55,7 +55,7 @@ on the comparison layer itself.
 | 3 | Methodological accounts | 2 | Annotated R and Python in `comparison/R`, `comparison/py`; `comparison/README.md`, `DISPUTES.md` | Level 3: a dynamic document for the comparison; `index.html` is generated from a template, not a notebook |
 | 4 | Data | 2 | Analytic data: `comparison/export/{r,py}/`. Inputs: `comparison/data/document-inputs.csv`, `hoopes-fig2.csv` (digitized) | Level 3 is met in substance through the sides' raw data; say so on the page |
 | 5 | Open report | 2 | `index.html` plus `DISPUTES.md`, version-controlled | Level 3: as step 3 |
-| 6 | File structure | 3 | `comparison/` with `R/`, `py/`, `data/`, `export/`, `tests/`, `README.md` | None. The root `README.md` is out of date: it describes the RJKDC side as "SSRN 6340778. PDF only", before the NBER version and the authors' repo were added |
+| 6 | File structure | 3 | `comparison/` with `R/`, `py/`, `data/`, `export/`, `tests/`, `README.md` | None (the root `README.md` was refreshed in `db8651a`) |
 | 7 | Label inputs | 3 | 18 rows in `document-inputs.csv`, each with a label (data 7, guesswork 5, derived 4, scenario 2), a source and a page | Guesswork analyst/date, as above |
 | 8 | Reproducible code | 2 | `Rscript comparison/run.R` rebuilds everything; 172 tests; `.github/workflows/comparison-ci.yml` rebuilds R and Python on a clean runner and checks the committed `index.html` is the generator's output | One click (Binder/devcontainer) |
 | 9 | Version control | 3 | As above | None |

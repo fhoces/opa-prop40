@@ -1,14 +1,21 @@
 # opa-prop40: plan, phase 1 (repo skeleton + BSZ import + August re-verification)
 
+> Written 2026-09-23 as the phase-1 plan and kept as the record of what was fixed before any
+> result. The "Pre-specified output" and "Decisions after the first build" sections are kept
+> current; the phase scope and status lines below are historical. `README.md` has the present
+> state, `AUDIT.md` the OPA Guidelines baseline.
+
 Project: an Open Policy Analysis (OPA) of the two rival revenue analyses of California's 2026
 Proposition 40 (the Billionaire Tax Act, a one-time 5% tax on net worth above $1bn).
 
 - BSZ, supporting the measure: Boll, Saez & Zucman, NBER WP 35218, May 2026 revised August 2026, with
   an Excel workbook `BSZ_MainTablesFigures.xlsx`.
 - RJKDC, opposing it: Rauh, Jaros, Kearney, Doran & Cosso, Hoover Institution, 17 March 2026
-  (SSRN 6340778). PDF only.
+  (SSRN 6340778), and its September revision, Jaros & Rauh, NBER c15504. Planned from the PDF
+  only; reproduced in the end from the authors' public repository, bjaros20/wealth_tax at `25e84dd`.
 
-The end state is one private repo: a full OPA for each side, plus a comparison layer that puts
+The end state is one repo (private while it is built, public once the blockers in `AUDIT.md` are
+cleared): a full OPA for each side, plus a comparison layer that puts
 both on one input-to-output chain. **Phase 1 covers only the steps below.** No Python twin, no
 SQL files, no Rauh work and no website yet.
 
@@ -124,12 +131,9 @@ by-products only, before any site page is committed.
   dataset of more than 1,000 rows goes through shared `.sql` files that both languages run
   verbatim. The files use the **SQLite** dialect and follow the house style of
   `~/Desktop/sandbox/courses/sql-industry-prep`, since the SQL is there to teach the user.
-- **Commit messages**: no em-dash character anywhere. End each one with:
-
-  ```
-  Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
-  Claude-Session: https://claude.ai/code/session_019r1Nk1vkCPxkHmuokSVrx2
-  ```
+- **Commit messages**: no em-dash character anywhere. End each one with the session's own
+  attribution trailer lines (`Co-Authored-By` and `Claude-Session`, as that session's reminder
+  gives them; the model and session URL change from session to session).
 - **Shell**: zsh on macOS. cwd does NOT persist between Bash calls, so use absolute paths or
   `cd X && ...` in the same call. Quote `echo "==="`-style sentinels. Strip renv noise from
   Rscript output with `2>&1 | grep -vE "out-of-sync|renv|built under"`.

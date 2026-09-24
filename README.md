@@ -37,7 +37,7 @@ Each side publishes an export contract (`<side>/export/r/{inputs,outputs}.csv`),
 
 | Part | State | Tests | CI |
 |---|---|---|---|
-| `bsz-analysis/` | BSZ May and August reproduced cell by cell; OPA site (explorer, report, slides, materials) | 561 expectations, 0 failed | `ci.yml`, green |
+| `bsz-analysis/` | BSZ May and August reproduced cell by cell; OPA site (explorer, report, slides, materials) | 561 expectations, 0 failed | `bsz-ci.yml`, green |
 | `rjkdc-analysis/` | SSRN and NBER reproduced from the authors' code, R and Python; 9 documented mismatches (`MISMATCHES.md`); OPA site | 159 expectations, 0 failed | `rjkdc-ci.yml`, green |
 | `comparison/` | Reconciliation page at the site root; 8 disputed inputs (`DISPUTES.md`) | 172 expectations, 0 failed | `comparison-ci.yml` |
 
