@@ -235,7 +235,7 @@ render_site <- function(root = comparison_root(),
                     income_tax_loss = "Income tax loss")
   hfmt <- function(x, u) if (is.na(x)) "none" else paste0(money(x, 1, TRUE), if (!is.na(u)) paste0(" &plusmn; ", formatC(u, format = "f", digits = 1)) else "")
   hz_end <- as.numeric(hraw$end[hraw$step_id == "income_tax_loss"])
-  hz_pre <- as.numeric(hraw$end[hraw$step_id == "additional_behavioral_response"])
+  hz_pre <- as.numeric(hraw$end[hraw$step_id == "real_estate_exclusion"])
   tok$hoopes_rows <- paste(c(sprintf(
     '    <tr><td>%s</td><td class="num">%s</td><td class="num">%s</td><td class="small">%s</td></tr>',
     hoopes_names[hz$step_id],
