@@ -31,19 +31,19 @@ commit message for the full derivation; this table is only an index.
 
 | RC | What | Commit |
 |---|---|---|
-| RC10 | `compute_data_sec_agg` dedupes an accidentally re-pasted 4-row block in August's `data_sec_all` (n 244 -> 240, matching the workbook's own cache and the paper's stated count) | `9bced97` |
-| RC1 | `compute_shortrunseries`: vintage-keyed column-letter lookup (`R/vintage.R`'s `srs_col()`); August dropped the "CA wealth, US citizens only" column entirely, falling back to the all-CA-billionaires total | `f4f0a34` |
-| RC2 | `compute_billionaires_ca_inctax`: `bci_row()` row-offset helper (+1 for rows 16-143, +2 for rows >=144); August also folds the passthrough-entity tax into row 15 for 2021-2023, changed the sales gross-up rate 11%->9.5%, and changed the private-wealth passthrough/private-C weights 71.8/61 -> 93/116 (adding a new "property tax on passthrough" term) | `f4f0a34` |
-| RC3 | `compute_tab5`: vintage-keyed benchmark n/wealth and per-leaver wealth constants (`.TAB5_CONST` in `R/vintage.R`) | `135c6c7` |
-| RC8 | Laffer-curve sheet renamed/relocated May `Fig8` -> August `Fig9`; `fig8_laffer_sheet()` resolves it | `135c6c7` |
-| Ellison test | August's `data_sec_all` has zero `larry-ellison` rows in any year (verified: 0/1345), so with/without-Ellison aggregates are now asserted byte-identical for August, not "+60" | `135c6c7` |
-| RC9a/b/c/d | `rtb_2026_industry` n_max (14->15), `data_sec_agg` 2025 literal, `list_sheets` count (36->40), `shortrunseries` E6/K6 cell reference | `8aadd86` |
-| RC4/RC5/RC6 (Tab1) | `build_tab1`: CA GDP -> CA AGI denominator (`longrunseries!AT` -> `!AY`/`!BA`+deflator), new "2026 (July 1st)" row, Panel B redefined top .0002%->.001% with 2025->2026 endpoint (now reading already-real `!BT`/`!BA` columns) | `fb48dca` |
-| RC4/RC5/RC6 (TabA1) | `build_tab_a1`: same three changes mirrored for the US-billionaires table (new AGI columns `!AV`, new 2026 row, `!AM*5` / `!G*!BQ` percentile widening) | `e0fa46c` |
-| RC7 | `build_tab2` test: top-4 block column position (F:H -> H:J after 2 new "Total taxes" columns); also fixed a genuine average-row ratio formula change (May: mean-of-parts over 7yr; August: `AVERAGE(J7:J12)`, direct ratio average over 6yr) | `f0981cc` |
-| fig2 columns | `build_fig2`: `longrunseries` columns AZ->BJ, BE->BP, AV->BF, AW->BG (sheet grew 80->96 columns) | `3f971b5` |
-| fig3/fig4/fig_a2 literals | Downstream figure "sanity check" literals updated to August's (correct, RC1/RC2-fixed) 2025 values | `3f971b5` |
-| Snapshots | Moved to `tests/snapshots/<vintage>/`; August baseline regenerated only after every Excel-comparison test passed | `a2d8d0f` |
+| RC10 | `compute_data_sec_agg` dedupes an accidentally re-pasted 4-row block in August's `data_sec_all` (n 244 -> 240, matching the workbook's own cache and the paper's stated count) | `009e539` |
+| RC1 | `compute_shortrunseries`: vintage-keyed column-letter lookup (`R/vintage.R`'s `srs_col()`); August dropped the "CA wealth, US citizens only" column entirely, falling back to the all-CA-billionaires total | `0b27883` |
+| RC2 | `compute_billionaires_ca_inctax`: `bci_row()` row-offset helper (+1 for rows 16-143, +2 for rows >=144); August also folds the passthrough-entity tax into row 15 for 2021-2023, changed the sales gross-up rate 11%->9.5%, and changed the private-wealth passthrough/private-C weights 71.8/61 -> 93/116 (adding a new "property tax on passthrough" term) | `0b27883` |
+| RC3 | `compute_tab5`: vintage-keyed benchmark n/wealth and per-leaver wealth constants (`.TAB5_CONST` in `R/vintage.R`) | `09b46ab` |
+| RC8 | Laffer-curve sheet renamed/relocated May `Fig8` -> August `Fig9`; `fig8_laffer_sheet()` resolves it | `09b46ab` |
+| Ellison test | August's `data_sec_all` has zero `larry-ellison` rows in any year (verified: 0/1345), so with/without-Ellison aggregates are now asserted byte-identical for August, not "+60" | `09b46ab` |
+| RC9a/b/c/d | `rtb_2026_industry` n_max (14->15), `data_sec_agg` 2025 literal, `list_sheets` count (36->40), `shortrunseries` E6/K6 cell reference | `68efbc0` |
+| RC4/RC5/RC6 (Tab1) | `build_tab1`: CA GDP -> CA AGI denominator (`longrunseries!AT` -> `!AY`/`!BA`+deflator), new "2026 (July 1st)" row, Panel B redefined top .0002%->.001% with 2025->2026 endpoint (now reading already-real `!BT`/`!BA` columns) | `f2b1ba5` |
+| RC4/RC5/RC6 (TabA1) | `build_tab_a1`: same three changes mirrored for the US-billionaires table (new AGI columns `!AV`, new 2026 row, `!AM*5` / `!G*!BQ` percentile widening) | `e72a9eb` |
+| RC7 | `build_tab2` test: top-4 block column position (F:H -> H:J after 2 new "Total taxes" columns); also fixed a genuine average-row ratio formula change (May: mean-of-parts over 7yr; August: `AVERAGE(J7:J12)`, direct ratio average over 6yr) | `be32f9b` |
+| fig2 columns | `build_fig2`: `longrunseries` columns AZ->BJ, BE->BP, AV->BF, AW->BG (sheet grew 80->96 columns) | `c0a37ed` |
+| fig3/fig4/fig_a2 literals | Downstream figure "sanity check" literals updated to August's (correct, RC1/RC2-fixed) 2025 values | `c0a37ed` |
+| Snapshots | Moved to `tests/snapshots/<vintage>/`; August baseline regenerated only after every Excel-comparison test passed | `0c2ada7` |
 
 **Did August add the 24 non-US-citizen CA billionaires the GGSS response promised?** Yes, in
 substance. The paper's own Methodological Appendix A (p.54) states: "Forbes lists 237 CA
