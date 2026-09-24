@@ -1,7 +1,7 @@
 # OPA audit baseline, 2026-09-23
 
-Scored against the BITSS OPA Guidelines (2019), nine steps, levels 0 to 3, as of commit
-`0412337`. Level wording is quoted from the Guidelines. One vector per page, then the fixes
+Scored against the BITSS OPA Guidelines (2019), nine steps, levels 0 to 3, baseline
+`0412337`, updated through `f0e1997`. Level wording is quoted from the Guidelines. One vector per page, then the fixes
 with the most credibility per unit of effort.
 
 ## The condition that governs every row: nothing is published yet
@@ -26,7 +26,7 @@ are served**. Nothing else needs to change for them to hold.
 | 5 | Open report | 3 | "A dynamic document ... and include version control tracking": `site/repro.qmd` in git | None |
 | 6 | File structure | 3 | Self-contained `bsz-analysis/` with `R/`, `tests/`, `site/`, `_targets.R`, `README.md` (refreshed `db8651a`) | None |
 | 7 | Label inputs | 3 | 18 inputs in `site/data/inputs.csv`, each with an origin (data 4, research 5, guesswork 5, derived 2, scenario 1, convention 1) and a basis with page or cell references | None under the Guidelines' wording. The paper also asks that guesswork carry "analyst X and date Y"; the 5 guesswork rows do not |
-| 8 | Reproducible code | 2 | "Possible to run regardless of software dependencies": `.github/workflows/bsz-ci.yml` rebuilds the pipeline from `DESCRIPTION` on a clean runner and runs the suite (green on `0412337`) | Level 3 needs "just one click": a Binder or Codespaces devcontainer. A lockfile (none exists) would also stop runner-vs-local package drift |
+| 8 | Reproducible code | 2 | "Possible to run regardless of software dependencies": `.github/workflows/bsz-ci.yml` rebuilds the pipeline from `DESCRIPTION` on a clean runner and runs the suite (green on `fad50f2`) | Level 3 needs "just one click": a Binder or Codespaces devcontainer. A lockfile (none exists) would also stop runner-vs-local package drift |
 | 9 | Version control | 3 | Git plus the shared GitHub repository, all work committed | None |
 
 ## RJKDC OPA, the side opposing it (`rjkdc-analysis/`)
