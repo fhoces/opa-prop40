@@ -9,7 +9,8 @@ Project: an Open Policy Analysis (OPA) of the two rival revenue analyses of Cali
 Proposition 40 (the Billionaire Tax Act, a one-time 5% tax on net worth above $1bn).
 
 - BSZ, supporting the measure: Boll, Saez & Zucman, NBER WP 35218, May 2026 revised August 2026, with
-  an Excel workbook `BSZ_MainTablesFigures.xlsx`.
+  an Excel workbook `BSZ_MainTablesFigures.xlsx`; and the Galle, Gamage, Saez and Shanske (GGSS)
+  expert report of 20 July 2026.
 - RJKDC, opposing it: Rauh, Jaros, Kearney, Doran & Cosso, Hoover Institution, 17 March 2026
   (SSRN 6340778), and its September revision, Jaros & Rauh, NBER c15504. Planned from the PDF
   only; reproduced in the end from the authors' public repository, bjaros20/wealth_tax at `25e84dd`.
