@@ -189,7 +189,8 @@
   <p class="eyebrow">Open Policy Analysis: reconciliation of two rival analyses</p>
   <h1>California's Billionaire Tax (Proposition 40): why the two revenue estimates differ</h1>
   <p class="byline">
-    Supporters score the one-time 5% tax at about $100B; the RJKDC report finds
+    Supporters score the one-time 5% tax on the net worth of California's billionaires at about
+    $100B; the RJKDC report (Rauh, Jaros, Kearney, Doran and Cosso) finds
     −$24.7B once lost income tax is netted out. This page puts both on one common output
     and walks from one number to the other, one disputed input at a time. Each side is also a
     full, independent Open Policy Analysis of its own; this page adds a reconciliation layer on
@@ -202,7 +203,8 @@
   <h2>A common output definition</h2>
 </div>
 
-<p>The two headlines answer different questions. The BSZ side reports how much the
+<p>The two headlines answer different questions. The BSZ side (Boll, Saez and Zucman, plus the
+GGSS expert report by Galle, Gamage, Saez and Shanske) reports how much the
 one-time tax collects; the RJKDC side reports a net present value that subtracts income tax
 lost for ever. Before any step of a bridge means anything, both are put on the same two outputs:</p>
 
@@ -210,7 +212,8 @@ lost for ever. Before any step of a bridge means anything, both are put on the s
 (b) net fiscal effect = (a) + extra income tax from assets sold to pay
                         - present value of income tax lost to departures, over a horizon of H years</div>
 
-<p>The horizon H is itself disputed (DISPUTES row 2): the BSZ side counts the losses for
+<p>The horizon H is itself disputed (row 2 of the project's list of 8 disputed inputs,
+<a href="comparison/DISPUTES.md">comparison/DISPUTES.md</a>): the BSZ side counts the losses for
 about the 5 payment years, the RJKDC side for ever. It is therefore a dial on the bridge
 below, not a fixed choice. Discounting uses the RJKDC report's own range for the discount
 rate, r uniform between 1.5% and 4.5% (Rauh p.20 eq.24); the BSZ side takes no
@@ -267,7 +270,8 @@ Python twin), scores both sides. Every disputed input is an argument that takes 
 BSZ value or Rauh's. With every input at the BSZ value it returns BSZ Table 5 row
 1 exactly ($103.815B); with every input at Rauh's value it returns the expectation of
 Rauh's own Monte Carlo up to a $0.10B model difference that is shown as its own step.
-The bridge runs in the direction of Hoopes (2026) Figure 2, from GGSS to Rauh; BSZ row 1 is the
+The bridge runs in the direction of Figure 2 of Hoopes (2026), the existing comparison
+<a href="#hoopes">described below</a>, from GGSS to Rauh; BSZ row 1 is the
 checkpoint. Because the inputs interact (a departure matters more when the base is larger), the
 size of a step depends on the order the inputs are switched. The default bars are <b>Shapley
 values</b>: each step's switch averaged over all 39,916,800 possible orders, so the steps add up
@@ -314,6 +318,7 @@ the one Hoopes reads in.</p>
   <span style="--c: var(--model)">model difference or rounding</span>
 </div>
 
+<p class="small">In the tables, pp means percentage points; p. and pp. mean pages.</p>
 <div class="table-scroll">
 <table id="bridge-table">
   <thead><tr><th>Step</th><th>DISPUTES row</th><th>Kind</th><th class="num">BSZ value</th><th class="num">Rauh value</th><th class="num" id="bt-col">Step, $B</th><th class="num">Running total</th></tr></thead>
@@ -350,7 +355,7 @@ inputs and every page reference are in <code>comparison/export/r/inputs.csv</cod
 <ul>
   <li>Output (a) falls from $103.8B to $51.3B. The three largest Shapley steps are billionaires already departed (−$21.3B, guesswork on data); one-time tax scored as a permanent 5 pp rate (−$21.1B, scenario + guesswork); base list and valuation date (−$9.4B, data).</li>
   <li>One step favours the BSZ side's number going up: Rauh applies no avoidance or evasion allowance beyond migration (his semi-elasticity is the migration share of Brulhart et al.'s response, Rauh pp.13-14), so dropping GGSS's 10% adds +$8.0B (Shapley). DISPUTES.md does not list this as a row.</li>
-  <li>Order matters most for scoring the one-time tax as a permanent 5 pp rate: −$21.1B averaged over all orders, −$10.2B in the one order shown. Rauh's revenue is uniform between a confirmed-departures ceiling and an elasticity floor, so the elasticity bites only on top of whatever departures are already in: the step is large when switched early and smaller when switched after the departures.</li>
+  <li>Order matters most for scoring the one-time tax as a permanent 5-percentage-point rate: −$21.1B averaged over all orders, −$10.2B in the one order shown. Rauh's revenue is uniform between a confirmed-departures ceiling and an elasticity floor, so the elasticity bites only on top of whatever departures are already in: the step is large when switched early and smaller when switched after the departures.</li>
   <li>For output (b) the horizon is the single largest step read in Hoopes's order (−$66.5B, the last switch, when the loss is already Rauh-sized) but only −$27.1B averaged over orders, because a perpetuity multiplies whatever annual loss the other inputs imply. The annual loss runs from $0.15B (BSZ) to $2.07B (Rauh).</li>
   <li>Model differences are small and shown, not hidden: −$0.0003B on (a) and +$0.10B on (b), from Rauh's rounded literals (MISMATCHES #6 in rjkdc-analysis). Rauh's printed −$24.7B is the expectation of his Monte Carlo (−$24.707B); his seed-2026 run gives −$24.77B.</li>
   <li>The NBER revision is one further step: −$15.3B on (a) and −$14.3B on (b). Its printed −$38.9B is one Monte Carlo run; the expectation is −$38.98B.</li>
@@ -359,7 +364,8 @@ inputs and every page reference are in <code>comparison/export/r/inputs.csv</cod
 <h3 id="open-question">Which of Rauh's revenue numbers is output (a)?</h3>
 <p>Rauh et al. print four different revenue figures. We take the one consistent with the
 −$24.7B headline, the expected revenue in the same Monte Carlo, because it is the revenue the
-headline NPV actually assumes. Using any of the others would add a further step of the size shown.</p>
+headline NPV actually assumes. Using any of the others would add a further step of the size shown. WT is the one-time wealth
+tax revenue.</p>
 <div class="table-scroll">
 <table>
   <thead><tr><th>Candidate</th><th class="num">Value</th><th>Where</th><th class="num">Extra step vs the bridge endpoint</th></tr></thead>
@@ -374,7 +380,7 @@ headline NPV actually assumes. Using any of the others would add a further step 
 
 <div class="section-title">
   <img class="section-title-icon" src="assets/opa/opa-details.png" alt="" aria-hidden="true">
-  <h2>The existing comparison: Hoopes (2026)</h2>
+  <h2 id="hoopes">The existing comparison: Hoopes (2026)</h2>
 </div>
 
 <p>Jeffrey Hoopes, "Galle v Rauh: Comparing Two Revenue Estimates for California Billionaire
@@ -459,7 +465,7 @@ steps cover inputs the crosswalk does not list as rows.</p>
     <tr><td>7</td><td>Real-estate deduction</td><td><span class="kind">data</span></td><td class="small"><b>0.0%</b>. no separate deduction (BSZ PDF p.24: 90% x 5% x $2,307B)</td><td class="small"><b>0.5%</b>. 1 - revenue_baseline / (5% x base) from the RJKDC export (Rauh p.8 Table 5, $8.19B among stayers)</td></tr>
     <tr><td>3</td><td>Billionaires already departed</td><td><span class="kind">guesswork on data</span></td><td class="small"><b>0.0%</b>. benchmark taxes all 1 Jan 2026 residents (BSZ PDF p.23); aggressive row 3 is a checkpoint</td><td class="small"><b>28.4%</b>. 1 - revenue_confirmed6 / revenue_baseline from the RJKDC export (Rauh p.11, 6 departures)</td></tr>
     <tr><td>(not a row)</td><td>Avoidance and evasion allowance</td><td><span class="kind">guesswork</span></td><td class="small"><b>10.0%</b>. BSZ export avoidance_rate (GGSS p.4; BSZ PDF p.24)</td><td class="small"><b>0.0%</b>. none: the elasticity replaces any avoidance allowance (Rauh pp.13-14)</td></tr>
-    <tr><td>1</td><td>One-time tax scored as a permanent 5 pp rate</td><td><span class="kind">scenario + guesswork</span></td><td class="small"><b>none scored</b>. one-time tax, responses temporary: no elasticity applied (BSZ PDF p.22 fn.29; Resp pp.1-3)</td><td class="small"><b>5 pp</b>. semi-elasticity applied to a 5.00 pp rate change (Rauh p.11 eq.7-8, p.14 eq.13)</td></tr>
+    <tr><td>1</td><td>One-time tax scored as a permanent 5 pp rate</td><td><span class="kind">scenario + guesswork</span></td><td class="small"><b>none scored</b>. one-time tax, responses temporary: no elasticity applied (BSZ PDF p.22 fn.29; GGSS response to Rauh, 17 Mar 2026, pp.1-3)</td><td class="small"><b>5 pp</b>. semi-elasticity applied to a 5.00 pp rate change (Rauh p.11 eq.7-8, p.14 eq.13)</td></tr>
     <tr><td>4</td><td>Size of the mobility semi-elasticity</td><td><span class="kind">research + guesswork</span></td><td class="small"><b>10.00</b>. BSZ export semi_elasticity_permanent (BSZ PDF p.28; Fig8!B8), used only for a permanent tax</td><td class="small"><b>12.58</b>. the Monte Carlo floor of $35B (Rauh p.20 eq.22; 'approximately 12.6', p.19)</td></tr>
     <tr><td>6</td><td>Lost income tax proportional to lost wealth</td><td><span class="kind">data vs guesswork</span></td><td class="small"><b>0.33</b>. leavers' tax per $ of wealth / average, from BSZ export leavers_annual_inctax, leavers_wealth, ca_inctax_billionaires (SEC data, BSZ PDF p.26, Table 4 p.38)</td><td class="small"><b>1.00</b>. f = 1 - WT/94.20 (Rauh p.19, p.20)</td></tr>
     <tr><td>5</td><td>Billionaires' annual CA income tax</td><td><span class="kind">research vs guesswork</span></td><td class="small"><b>$3.06B/yr</b>. BSZ export ca_inctax_billionaires (Tab2!C14; BSZ PDF p.11)</td><td class="small"><b>$4.55B/yr</b>. midpoint of C ~ U[3.3, 5.8] (Rauh p.20 eq.23)</td></tr>
@@ -478,7 +484,9 @@ the tax "probably would collect tens of billions of dollars", and responses "pro
 state revenues by less than $1 billion per year" (LAO p.2). It enters here only as context.
 <b>Walczak / California Tax Foundation (22 Apr 2026)</b> is same-side work on the RJKDC side,
 credited as an alternative dial on the annual loss, never merged into Rauh's headline: his
-$3.53-4.49B per year includes spillovers to sales and other taxes (p.1). On one scale:</p>
+$3.53-4.49B per year includes spillovers to sales and other taxes (p.1). On one scale,
+where E[&middot;] is an average over the Monte Carlo draws, WT the one-time wealth tax revenue, f
+the share of the income tax base that leaves and C the annual income tax it pays:</p>
 <div class="table-scroll">
 <table>
   <thead><tr><th>Annual income tax loss</th><th>Side</th><th class="num">Per year</th><th class="num">PV, 5 years</th><th class="num">PV, perpetuity</th><th class="num">Rauh's E[WT] net of it (perpetuity)</th></tr></thead>

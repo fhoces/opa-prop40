@@ -189,7 +189,8 @@
   <p class="eyebrow">Open Policy Analysis: reconciliation of two rival analyses</p>
   <h1>California's Billionaire Tax (Proposition 40): why the two revenue estimates differ</h1>
   <p class="byline">
-    Supporters score the one-time 5% tax at about {{ggss_headline}}; the RJKDC report finds
+    Supporters score the one-time 5% tax on the net worth of California's billionaires at about
+    {{ggss_headline}}; the RJKDC report (Rauh, Jaros, Kearney, Doran and Cosso) finds
     {{rauh_npv}} once lost income tax is netted out. This page puts both on one common output
     and walks from one number to the other, one disputed input at a time. Each side is also a
     full, independent Open Policy Analysis of its own; this page adds a reconciliation layer on
@@ -202,7 +203,8 @@
   <h2>A common output definition</h2>
 </div>
 
-<p>The two headlines answer different questions. The BSZ side reports how much the
+<p>The two headlines answer different questions. The BSZ side (Boll, Saez and Zucman, plus the
+GGSS expert report by Galle, Gamage, Saez and Shanske) reports how much the
 one-time tax collects; the RJKDC side reports a net present value that subtracts income tax
 lost for ever. Before any step of a bridge means anything, both are put on the same two outputs:</p>
 
@@ -210,7 +212,8 @@ lost for ever. Before any step of a bridge means anything, both are put on the s
 (b) net fiscal effect = (a) + extra income tax from assets sold to pay
                         - present value of income tax lost to departures, over a horizon of H years</div>
 
-<p>The horizon H is itself disputed (DISPUTES row 2): the BSZ side counts the losses for
+<p>The horizon H is itself disputed (row 2 of the project's list of 8 disputed inputs,
+<a href="comparison/DISPUTES.md">comparison/DISPUTES.md</a>): the BSZ side counts the losses for
 about the 5 payment years, the RJKDC side for ever. It is therefore a dial on the bridge
 below, not a fixed choice. Discounting uses the RJKDC report's own range for the discount
 rate, r uniform between {{r_min}} and {{r_max}} (Rauh p.20 eq.24); the BSZ side takes no
@@ -264,7 +267,8 @@ Python twin), scores both sides. Every disputed input is an argument that takes 
 BSZ value or Rauh's. With every input at the BSZ value it returns BSZ Table 5 row
 1 exactly ({{bsz_row1_exact}}); with every input at Rauh's value it returns the expectation of
 Rauh's own Monte Carlo up to a {{rauh_resid_b}} model difference that is shown as its own step.
-The bridge runs in the direction of Hoopes (2026) Figure 2, from GGSS to Rauh; BSZ row 1 is the
+The bridge runs in the direction of Figure 2 of Hoopes (2026), the existing comparison
+<a href="#hoopes">described below</a>, from GGSS to Rauh; BSZ row 1 is the
 checkpoint. Because the inputs interact (a departure matters more when the base is larger), the
 size of a step depends on the order the inputs are switched. The default bars are <b>Shapley
 values</b>: each step's switch averaged over all {{n_orders}} possible orders, so the steps add up
@@ -306,6 +310,7 @@ the one Hoopes reads in.</p>
   <span style="--c: var(--model)">model difference or rounding</span>
 </div>
 
+<p class="small">In the tables, pp means percentage points; p. and pp. mean pages.</p>
 <div class="table-scroll">
 <table id="bridge-table">
   <thead><tr><th>Step</th><th>DISPUTES row</th><th>Kind</th><th class="num">BSZ value</th><th class="num">Rauh value</th><th class="num" id="bt-col">Step, $B</th><th class="num">Running total</th></tr></thead>
@@ -328,7 +333,8 @@ inputs and every page reference are in <code>comparison/export/r/inputs.csv</cod
 <h3 id="open-question">Which of Rauh's revenue numbers is output (a)?</h3>
 <p>Rauh et al. print four different revenue figures. We take the one consistent with the
 {{rauh_npv}} headline, the expected revenue in the same Monte Carlo, because it is the revenue the
-headline NPV actually assumes. Using any of the others would add a further step of the size shown.</p>
+headline NPV actually assumes. Using any of the others would add a further step of the size shown. WT is the one-time wealth
+tax revenue.</p>
 <div class="table-scroll">
 <table>
   <thead><tr><th>Candidate</th><th class="num">Value</th><th>Where</th><th class="num">Extra step vs the bridge endpoint</th></tr></thead>
@@ -340,7 +346,7 @@ headline NPV actually assumes. Using any of the others would add a further step 
 
 <div class="section-title">
   <img class="section-title-icon" src="assets/opa/opa-details.png" alt="" aria-hidden="true">
-  <h2>The existing comparison: Hoopes (2026)</h2>
+  <h2 id="hoopes">The existing comparison: Hoopes (2026)</h2>
 </div>
 
 <p>Jeffrey Hoopes, "Galle v Rauh: Comparing Two Revenue Estimates for California Billionaire
@@ -410,7 +416,9 @@ the tax "probably would collect tens of billions of dollars", and responses "pro
 state revenues by less than $1 billion per year" (LAO p.2). It enters here only as context.
 <b>Walczak / California Tax Foundation (22 Apr 2026)</b> is same-side work on the RJKDC side,
 credited as an alternative dial on the annual loss, never merged into Rauh's headline: his
-{{walczak_range}} per year includes spillovers to sales and other taxes (p.1). On one scale:</p>
+{{walczak_range}} per year includes spillovers to sales and other taxes (p.1). On one scale,
+where E[&middot;] is an average over the Monte Carlo draws, WT the one-time wealth tax revenue, f
+the share of the income tax base that leaves and C the annual income tax it pays:</p>
 <div class="table-scroll">
 <table>
   <thead><tr><th>Annual income tax loss</th><th>Side</th><th class="num">Per year</th><th class="num">PV, 5 years</th><th class="num">PV, perpetuity</th><th class="num">Rauh's E[WT] net of it (perpetuity)</th></tr></thead>

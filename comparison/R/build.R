@@ -54,7 +54,7 @@ bridge_input_table <- function(bi) {
       "no separate deduction (BSZ PDF p.24: 90% x 5% x $2,307B)",
       "benchmark taxes all 1 Jan 2026 residents (BSZ PDF p.23); aggressive row 3 is a checkpoint",
       "BSZ export avoidance_rate (GGSS p.4; BSZ PDF p.24)",
-      "one-time tax, responses temporary: no elasticity applied (BSZ PDF p.22 fn.29; Resp pp.1-3)",
+      "one-time tax, responses temporary: no elasticity applied (BSZ PDF p.22 fn.29; GGSS response to Rauh, 17 Mar 2026, pp.1-3)",
       "BSZ export semi_elasticity_permanent (BSZ PDF p.28; Fig8!B8), used only for a permanent tax",
       "leavers' tax per $ of wealth / average, from BSZ export leavers_annual_inctax, leavers_wealth, ca_inctax_billionaires (SEC data, BSZ PDF p.26, Table 4 p.38)",
       "BSZ export ca_inctax_billionaires (Tab2!C14; BSZ PDF p.11)",
