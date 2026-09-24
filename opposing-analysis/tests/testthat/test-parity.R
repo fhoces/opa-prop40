@@ -46,3 +46,25 @@ test_that("export/r and export/py inputs.csv describe the same input_ids", {
   py_in <- utils::read.csv(py_path, stringsAsFactors = FALSE)
   expect_setequal(paste(r_in$input_id, r_in$version), paste(py_in$input_id, py_in$version))
 })
+
+test_that("Monte Carlo ranges in the export are the ones the simulations draw, as printed", {
+  # comparison/ reads these rows from this contract (moved out of
+  # comparison/data/document-inputs.csv), so pin both the code and the paper values.
+  for (side in c("r", "py")) {
+    path <- project_path(file.path("export", side, "inputs.csv"))
+    skip_if_not(file.exists(path), paste(path, "not built yet"))
+    inp <- utils::read.csv(path, stringsAsFactors = FALSE)
+    v <- function(id) inp$value[inp$input_id == id]
+    ssrn <- formals(compute_npv_mc_ssrn); nber <- formals(compute_npv_mc_nber)
+    expect_equal(v("rauh_mc_wt_min"), ssrn$wt_min)
+    expect_equal(v("rauh_mc_c_min"), ssrn$c_min); expect_equal(v("rauh_mc_c_max"), ssrn$c_max)
+    expect_equal(v("rauh_mc_r_min"), ssrn$r_min); expect_equal(v("rauh_mc_r_max"), ssrn$r_max)
+    expect_equal(v("nber_mc_f_min"), nber$f_min); expect_equal(v("nber_mc_f_max"), nber$f_max)
+    # printed: SSRN eq.22-24 (p.20), NBER Sec 5.4 (p.35); NBER shares the C and discount draws
+    expect_equal(c(v("rauh_mc_wt_min"), v("rauh_mc_c_min"), v("rauh_mc_c_max"),
+                   v("rauh_mc_r_min"), v("rauh_mc_r_max"), v("nber_mc_f_min"), v("nber_mc_f_max")),
+                 c(35, 3.3, 5.8, 0.015, 0.045, 0.30, 0.60))
+    # NBER names the discount draw r - g
+    expect_equal(c(nber$c_min, nber$c_max, nber$rg_min, nber$rg_max), c(ssrn$c_min, ssrn$c_max, ssrn$r_min, ssrn$r_max))
+  }
+})

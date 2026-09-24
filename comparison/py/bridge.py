@@ -173,17 +173,17 @@ def bridge_inputs(k):
     base_r = pick(oi, "baseline_net_worth")
     R0_r = pick(oo, "revenue_baseline")
     conf6 = pick(oo, "revenue_confirmed6")
-    wt_min = pick(d, "rauh_mc_wt_min")
+    wt_min = pick(oi, "rauh_mc_wt_min")
     shared = {"tau": tau, "m": pick(si, "mobility_share"), "g": pick(si, "gains_share"),
               "t_cg": pick(si, "ca_cg_rate"),
-              "r_min": pick(d, "rauh_mc_r_min"), "r_max": pick(d, "rauh_mc_r_max")}
+              "r_min": pick(oi, "rauh_mc_r_min"), "r_max": pick(oi, "rauh_mc_r_max")}
     sup = dict(shared, W_noncit=noncit, W_core=W0 - noncit, re=0.0, d_conf=0.0,
                alpha=pick(si, "avoidance_rate"), dtau=0.0,
                eps=pick(si, "semi_elasticity_permanent"), kappa=kappa_s, C=C_sup,
                H=pick(d, "supporting_loss_horizon"), s=pick(si, "sell_share"))
     rauh = dict(shared, W_noncit=0.0, W_core=base_r, re=1 - R0_r / (tau * base_r),
                 d_conf=1 - conf6 / R0_r, alpha=0.0, dtau=tau, eps=(1 - wt_min / R0_r) / tau,
-                kappa=1.0, C=(pick(d, "rauh_mc_c_min") + pick(d, "rauh_mc_c_max")) / 2,
+                kappa=1.0, C=(pick(oi, "rauh_mc_c_min") + pick(oi, "rauh_mc_c_max")) / 2,
                 H=pick(d, "rauh_loss_horizon"), s=0.0)
     return sup, rauh
 
@@ -191,13 +191,14 @@ def bridge_inputs(k):
 def build_all(k):
     sup, rauh = bridge_inputs(k)
     so, oo, d = k["supporting"]["outputs"], k["opposing"]["outputs"], k["docs"]
+    oi = k["opposing"]["inputs"]
     ggss_printed = pick(so, "ggss_headline", "printed_value")
-    ra = dict(wt_min=pick(d, "rauh_mc_wt_min"), wt_max=pick(oo, "revenue_confirmed6", "printed_value"),
+    ra = dict(wt_min=pick(oi, "rauh_mc_wt_min"), wt_max=pick(oo, "revenue_confirmed6", "printed_value"),
               baseline=pick(oo, "revenue_baseline", "printed_value"),
-              c_min=pick(d, "rauh_mc_c_min"), c_max=pick(d, "rauh_mc_c_max"),
-              r_min=pick(d, "rauh_mc_r_min"), r_max=pick(d, "rauh_mc_r_max"))
+              c_min=pick(oi, "rauh_mc_c_min"), c_max=pick(oi, "rauh_mc_c_max"),
+              r_min=pick(oi, "rauh_mc_r_min"), r_max=pick(oi, "rauh_mc_r_max"))
     na = dict(wt_min=0.0, wt_max=pick(k["opposing"]["inputs"], "nber_ceiling_hardcoded"),
-              f_min=pick(d, "nber_mc_f_min"), f_max=pick(d, "nber_mc_f_max"),
+              f_min=pick(oi, "nber_mc_f_min"), f_max=pick(oi, "nber_mc_f_max"),
               c_min=ra["c_min"], c_max=ra["c_max"], r_min=ra["r_min"], r_max=ra["r_max"])
 
     settings = ["own"] + [f"common_{'Inf' if math.isinf(h) else h}" for h in HORIZONS]

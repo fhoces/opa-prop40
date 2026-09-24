@@ -16,10 +16,10 @@ bridge_inputs <- function(k) {
   base_r  <- pick(oi, "baseline_net_worth")
   R0_r    <- pick(oo, "revenue_baseline")           # 94.304, the workbook's own sum
   conf6   <- pick(oo, "revenue_confirmed6")         # 67.511
-  wt_min  <- pick(d, "rauh_mc_wt_min")              # 35
+  wt_min  <- pick(oi, "rauh_mc_wt_min")              # 35
   shared <- list(tau = tau, m = pick(si, "mobility_share"), g = pick(si, "gains_share"),
                  t_cg = pick(si, "ca_cg_rate"),
-                 r_min = pick(d, "rauh_mc_r_min"), r_max = pick(d, "rauh_mc_r_max"))
+                 r_min = pick(oi, "rauh_mc_r_min"), r_max = pick(oi, "rauh_mc_r_max"))
   sup <- c(shared, list(
     W_noncit = noncit, W_core = W0 - noncit, re = 0, d_conf = 0,
     alpha = pick(si, "avoidance_rate"), dtau = 0, eps = pick(si, "semi_elasticity_permanent"),
@@ -29,7 +29,7 @@ bridge_inputs <- function(k) {
     W_noncit = 0, W_core = base_r, re = 1 - R0_r / (tau * base_r),
     d_conf = 1 - conf6 / R0_r, alpha = 0, dtau = tau,
     eps = (1 - wt_min / R0_r) / tau,
-    kappa = 1, C = (pick(d, "rauh_mc_c_min") + pick(d, "rauh_mc_c_max")) / 2,
+    kappa = 1, C = (pick(oi, "rauh_mc_c_min") + pick(oi, "rauh_mc_c_max")) / 2,
     H = pick(d, "rauh_loss_horizon"), s = 0))
   list(sup = sup, rauh = rauh)
 }
@@ -78,19 +78,20 @@ bridge_input_table <- function(bi) {
 build_all <- function(k = read_contracts()) {
   bi <- bridge_inputs(k); sup <- bi$sup; rauh <- bi$rauh
   so <- k$supporting$outputs; oo <- k$opposing$outputs; d <- k$docs
+  oi <- k$opposing$inputs
   steps <- bridge_steps()
   ids <- steps$step_id
 
   # ---- each side's own numbers ------------------------------------------------
   ggss_printed <- pick(so, "ggss_headline", "printed_value")
   bsz_row1     <- pick(so, "tab5_row1_wealth_tax_revenue")
-  rauh_args <- list(wt_min = pick(d, "rauh_mc_wt_min"),
+  rauh_args <- list(wt_min = pick(oi, "rauh_mc_wt_min"),
                     wt_max = pick(oo, "revenue_confirmed6", "printed_value"),  # 67.51
                     baseline = pick(oo, "revenue_baseline", "printed_value"),  # 94.2
-                    c_min = pick(d, "rauh_mc_c_min"), c_max = pick(d, "rauh_mc_c_max"),
-                    r_min = pick(d, "rauh_mc_r_min"), r_max = pick(d, "rauh_mc_r_max"))
+                    c_min = pick(oi, "rauh_mc_c_min"), c_max = pick(oi, "rauh_mc_c_max"),
+                    r_min = pick(oi, "rauh_mc_r_min"), r_max = pick(oi, "rauh_mc_r_max"))
   nber_args <- list(wt_min = 0, wt_max = pick(k$opposing$inputs, "nber_ceiling_hardcoded"),
-                    f_min = pick(d, "nber_mc_f_min"), f_max = pick(d, "nber_mc_f_max"),
+                    f_min = pick(oi, "nber_mc_f_min"), f_max = pick(oi, "nber_mc_f_max"),
                     c_min = rauh_args$c_min, c_max = rauh_args$c_max,
                     r_min = rauh_args$r_min, r_max = rauh_args$r_max)
   rauh_own <- function(H) do.call(rauh_ssrn_expectation, c(rauh_args, list(H = H)))
@@ -161,7 +162,7 @@ build_all <- function(k = read_contracts()) {
     stringsAsFactors = FALSE)
   endpoints$abs_diff_printed <- abs(endpoints$value - endpoints$printed_value)
 
-  # ---- output (a): which Rauh number is "the" revenue? (open question) ----------
+  # ---- output (a): which Rauh number is "the" revenue? (decided: MC mean, PLAN.md) --
   anchors <- data.frame(
     anchor_id = c("mc_expected", "literature_calibrated", "table9_central", "preferred_about_40"),
     label = c(sprintf("Expected WT in the Monte Carlo behind the %s mean NPV",

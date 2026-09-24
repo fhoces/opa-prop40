@@ -1,13 +1,6 @@
 input_id,side,version,description,value,unit,label,provenance,source,page
-rauh_mc_wt_min,opposing,ssrn,Monte Carlo wealth tax floor (literature-calibrated scenario; semi-elasticity about 12.6),35,$B,guesswork,public,Rauh et al. SSRN 6340778 eq.22 and Table 9,20
-rauh_mc_c_min,opposing,both,Annual CA income tax of billionaires: lower bound of the draw,3.3,$B/yr,guesswork,public,Rauh et al. SSRN 6340778 eq.23 (from the K=500 dispersion draw),20
-rauh_mc_c_max,opposing,both,Annual CA income tax of billionaires: upper bound of the draw,5.8,$B/yr,guesswork,public,Rauh et al. SSRN 6340778 eq.23 (Pareto upper bound),20
-rauh_mc_r_min,opposing,both,Discount rate draw: lower bound,0.015,rate,research,public,Rauh et al. SSRN 6340778 eq.24 (S&P 500 dividend yield anchor p.18),20
-rauh_mc_r_max,opposing,both,Discount rate draw: upper bound,0.045,rate,research,public,Rauh et al. SSRN 6340778 eq.24,20
 rauh_loss_horizon,opposing,both,Years the lost income tax is counted (perpetuity),Inf,years,scenario,public,Rauh et al. SSRN 6340778 eq.17-18 (perpetuity),18
 rauh_headline_revenue,opposing,ssrn,Preferred revenue estimate (abstract and Sec 4.5),40,$B,guesswork,public,Rauh et al. SSRN 6340778 abstract p.1 and Sec 4.5 p.14 (range 35-46),1
-nber_mc_f_min,opposing,nber,NBER departure fraction of the income tax base: lower bound (drawn independently of WT),0.30,share,guesswork,public,Jaros and Rauh NBER c15504 Sec 5.4,35
-nber_mc_f_max,opposing,nber,NBER departure fraction of the income tax base: upper bound,0.60,share,guesswork,public,Jaros and Rauh NBER c15504 Sec 5.4,35
 nber_headline_revenue,opposing,nber,NBER preferred revenue estimate (range 28-36),30,$B,guesswork,public,Jaros and Rauh NBER c15504 abstract,1
 nber_headline_npv,opposing,nber,NBER mean NPV (printed),-38.9,$B,derived,public,Jaros and Rauh NBER c15504 abstract and Sec 5.4,1
 ggss_noncitizen_wealth,supporting,ggss,Non-US-citizen CA billionaires added since the February draft (24 people),150,$B,data,public,"GGSS 20 Jul 2026 p.2 fn.1 (""about $150 billion"", 1 Jul 2026 values)",2

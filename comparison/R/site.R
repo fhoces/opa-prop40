@@ -118,8 +118,8 @@ render_site <- function(root = comparison_root(),
   tok$rauh_npv <- money(epv("rauh_ssrn_npv"), 1)
   tok$nber_npv <- money(ep$printed_value[ep$endpoint_id == "rauh_nber_npv"], 1)
   tok$rauh_a <- money(epv("rauh_ssrn_revenue_mc"), 2)
-  tok$r_min <- pct(as.numeric(d$value[d$input_id == "rauh_mc_r_min"]), 1)
-  tok$r_max <- pct(as.numeric(d$value[d$input_id == "rauh_mc_r_max"]), 1)
+  tok$r_min <- pct(pick(k$opposing$inputs, "rauh_mc_r_min"), 1)
+  tok$r_max <- pct(pick(k$opposing$inputs, "rauh_mc_r_max"), 1)
   tok$x_sup <- money(mv("X_supporting"), 2)
   tok$pv_sup <- money(mv("PV_supporting_own"), 2)
   tok$loss_sup <- money(ex$loss$annual_loss[ex$loss$source_id == "bsz_row1"], 2)
@@ -217,7 +217,7 @@ render_site <- function(root = comparison_root(),
             money(ep$printed_value[ep$endpoint_id == "rauh_nber_npv"], 1), money(eb$nber_own, 2))
   )), collapse = "\n")
 
-  # ---- anchors (open question) ----
+  # ---- anchors (output (a) candidates; default decided in PLAN.md) ----
   an <- ex$anchors
   tok$anchor_rows <- paste(sprintf(
     '    <tr%s><td>%s%s</td><td class="num">%s</td><td>%s</td><td class="num">%s</td></tr>',

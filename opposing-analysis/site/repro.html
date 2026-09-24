@@ -3258,11 +3258,53 @@ r \sim U[0.015, 0.045]\]</span></p>
 <td style="text-align: left;">NPV_calculations_5.2.xlsx!B12</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">npv_r_range</td>
-<td style="text-align: left;">Real discount rate (r) simulation range</td>
-<td style="text-align: left;">1.5% to 4.5%</td>
+<td style="text-align: left;">rauh_mc_wt_min</td>
+<td style="text-align: left;">Monte Carlo wealth tax floor (literature-calibrated scenario; semi-elasticity about 12.6)</td>
+<td style="text-align: left;">35</td>
 <td style="text-align: left;">guesswork</td>
-<td style="text-align: left;">NPV_dist.R:47 (paper eq.24 text; eq.18-20 instead specify r-g)</td>
+<td style="text-align: left;">NPV_dist.R (wt ~ U[35, 67.51]); paper eq.22 and Table 9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">rauh_mc_c_min</td>
+<td style="text-align: left;">Annual CA income tax of billionaires: lower bound of the draw</td>
+<td style="text-align: left;">3.3</td>
+<td style="text-align: left;">guesswork</td>
+<td style="text-align: left;">NPV_dist.R; paper eq.23 (from the K=500 dispersion draw)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">rauh_mc_c_max</td>
+<td style="text-align: left;">Annual CA income tax of billionaires: upper bound of the draw</td>
+<td style="text-align: left;">5.8</td>
+<td style="text-align: left;">guesswork</td>
+<td style="text-align: left;">NPV_dist.R; paper eq.23 (Pareto upper bound)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">rauh_mc_r_min</td>
+<td style="text-align: left;">Discount rate draw: lower bound</td>
+<td style="text-align: left;">0.015</td>
+<td style="text-align: left;">research</td>
+<td style="text-align: left;">NPV_dist.R:47; paper eq.24 (S&amp;P 500 dividend yield anchor p.18; eq.18-20 instead specify r-g)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">rauh_mc_r_max</td>
+<td style="text-align: left;">Discount rate draw: upper bound</td>
+<td style="text-align: left;">0.045</td>
+<td style="text-align: left;">research</td>
+<td style="text-align: left;">NPV_dist.R:47; paper eq.24</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">nber_mc_f_min</td>
+<td style="text-align: left;">NBER departure fraction of the income tax base: lower bound (drawn independently of WT)</td>
+<td style="text-align: left;">0.3</td>
+<td style="text-align: left;">guesswork</td>
+<td style="text-align: left;">NPV_dist_v8.R; Jaros and Rauh NBER c15504 Sec 5.4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">nber_mc_f_max</td>
+<td style="text-align: left;">NBER departure fraction of the income tax base: upper bound</td>
+<td style="text-align: left;">0.6</td>
+<td style="text-align: left;">guesswork</td>
+<td style="text-align: left;">NPV_dist_v8.R; Jaros and Rauh NBER c15504 Sec 5.4</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">q_litigation_survival</td>
@@ -3344,7 +3386,7 @@ r \sim U[0.015, 0.045]\]</span></p>
 <tr class="odd">
 <td style="text-align: left;">g</td>
 <td style="text-align: left;">Growth of lost income, g (r vs r - g reading)</td>
-<td style="text-align: left;">0 (as coded); 0.5%; 1.0%</td>
+<td style="text-align: left;">0 (as coded); 0.5% (illustrative); 1.0% (illustrative)</td>
 <td style="text-align: left;">guesswork</td>
 <td style="text-align: left;">explorer dial (R/site.R)</td>
 </tr>
@@ -3375,11 +3417,11 @@ r \sim U[0.015, 0.045]\]</span></p>
 </tr>
 <tr class="even">
 <td style="text-align: left;">research</td>
-<td style="text-align: right;">2</td>
+<td style="text-align: right;">4</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">guesswork</td>
-<td style="text-align: right;">8</td>
+<td style="text-align: right;">12</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">scenario</td>

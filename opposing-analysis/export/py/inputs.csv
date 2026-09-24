@@ -7,7 +7,13 @@ bracket_tax_ty23,both,"TY2023 tax liability, $10M+ AGI bracket",11.1,$B,data,pub
 total_pit_fy25,both,Total FY2024-25 PIT collections,130.0,$B,data,public,monte_carlo_sim.R:89 (CA State Controller cash receipts),15
 brulhart_semi_elasticity,ssrn,"Migration semi-elasticity, Brulhart et al. (2022)",10.32,coefficient,research,public,Summary_Preferred!I8 (paper eq.12),13
 wt_central_scenario,ssrn,"Table 9 Central Scenario wealth tax revenue (literal input, not linked to Sec 4's chain)",42.0,$B,scenario,public,NPV_calculations_5.2.xlsx!B12,19
-npv_r_range,ssrn,Real discount rate (r) simulation range,,rate,guesswork,public,NPV_dist.R:47 (paper eq.24 text; eq.18-20 instead specify r-g),20
+rauh_mc_wt_min,ssrn,Monte Carlo wealth tax floor (literature-calibrated scenario; semi-elasticity about 12.6),35,$B,guesswork,public,"NPV_dist.R (wt ~ U[35, 67.51]); paper eq.22 and Table 9",20
+rauh_mc_c_min,both,Annual CA income tax of billionaires: lower bound of the draw,3.3,$B/yr,guesswork,public,NPV_dist.R; paper eq.23 (from the K=500 dispersion draw),20
+rauh_mc_c_max,both,Annual CA income tax of billionaires: upper bound of the draw,5.8,$B/yr,guesswork,public,NPV_dist.R; paper eq.23 (Pareto upper bound),20
+rauh_mc_r_min,both,Discount rate draw: lower bound,0.015,rate,research,public,NPV_dist.R:47; paper eq.24 (S&P 500 dividend yield anchor p.18; eq.18-20 instead specify r-g),20
+rauh_mc_r_max,both,Discount rate draw: upper bound,0.045,rate,research,public,NPV_dist.R:47; paper eq.24,20
+nber_mc_f_min,nber,NBER departure fraction of the income tax base: lower bound (drawn independently of WT),0.3,share,guesswork,public,NPV_dist_v8.R; Jaros and Rauh NBER c15504 Sec 5.4,35
+nber_mc_f_max,nber,NBER departure fraction of the income tax base: upper bound,0.6,share,guesswork,public,NPV_dist_v8.R; Jaros and Rauh NBER c15504 Sec 5.4,35
 q_litigation_survival,nber,Probability the Act survives constitutional challenge (ASC 740-10 more-likely-than-not),0.5,probability,guesswork,public,NBER_2026_litigation_weighted/README.md (assumptions table); not an explicit multiplier in NPV_dist_v8.R - see MISMATCHES.md #5,
 nber_growth_rate,nber,Growth applied to the Jan-1-2026 snapshot to the Dec-31-2026 valuation date,0.07,rate,data,author-shared,final.csv (net_worth_usd_7pct column); NBER README assumptions table,
 nber_ceiling_hardcoded,nber,"wt_max literal in NPV_dist_v8.R (script uses this, not the value re-derived from final.csv)",72,$B,data,author-shared,NPV_dist_v8.R:19,

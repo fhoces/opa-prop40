@@ -38,11 +38,10 @@ gap in every setting, Shapley against a brute-force average over orders, R vs Py
 1e-9, provenance of every transcribed input, and the page being exactly the generator's output
 with every internal link resolving.
 
-## Open items
+## Settled items (2026-09-23, see PLAN.md)
 
-- Which of Rauh's revenue numbers is output (a): the Monte Carlo's expected revenue (default,
-  consistent with the -24.7 headline), the literature-calibrated 45.59, Table 9's 42, or the
-  abstract's "about $40 billion". All four are exported (`export/r/anchors.csv`).
-- The opposing contract lacks the Monte Carlo ranges (WT floor 35, C in [3.3, 5.8], r in
-  [1.5%, 4.5%], NBER f in [0.30, 0.60]); they are transcribed in `data/document-inputs.csv`
-  until the contract carries them.
+- Rauh's output (a) is the Monte Carlo's expected revenue (51.26 SSRN, 36 NBER), the only choice
+  consistent with the -24.7 headline. The literature-calibrated 45.59, Table 9's 42 and the
+  abstract's "about $40 billion" are exported as alternatives (`export/r/anchors.csv`).
+- The Monte Carlo ranges (WT floor 35, C in [3.3, 5.8], r in [1.5%, 4.5%], NBER f in
+  [0.30, 0.60]) are read from the opposing contract (`rauh_mc_*`, `nber_mc_*` rows).

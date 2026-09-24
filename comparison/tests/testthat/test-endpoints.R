@@ -61,7 +61,7 @@ test_that("the expected annuity has the right limits", {
   expect_true(all(diff(sapply(c(5, 10, 20, 30, 50, 500), expected_annuity, 0.015, 0.045)) > 0))
 })
 
-test_that("open question: every candidate for Rauh's output (a) is reported, MC mean is the default", {
+test_that("output (a): every candidate for Rauh's output (a) is reported, MC mean is the default", {
   a <- res$anchors
   expect_equal(nrow(a), 4)
   expect_equal(a$anchor_id[a$default], "mc_expected")

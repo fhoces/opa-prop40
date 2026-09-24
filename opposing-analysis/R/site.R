@@ -111,7 +111,7 @@ site_dials <- function(revenue_chain) {
                        "(mismatches 2 and 3). The two non-zero values are this reproduction's illustration, ",
                        "not the authors'."),
          levels = c(0, 0.005, 0.01),
-         labels = c("0 (as coded)", "0.5%", "1.0%"))
+         labels = c("0 (as coded)", "0.5% (illustrative)", "1.0% (illustrative)"))
   )
 }
 

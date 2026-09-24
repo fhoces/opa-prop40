@@ -6,6 +6,7 @@ values) so tests/testthat/test-parity.R can join on them.
 Run from opposing-analysis/:  /opt/anaconda3/bin/python3 py/run_export.py
 """
 import csv
+import inspect
 import os
 import sys
 
@@ -27,7 +28,15 @@ OUTPUT_FIELDS = ["output_id", "version", "value", "unit", "printed_value",
                   "printed_page", "abs_diff"]
 
 
+def _defaults(fn):
+    return {k: p.default for k, p in inspect.signature(fn).parameters.items()}
+
+
 def build_inputs(pareto_fit, revenue_chain, nber_ceiling):
+    # Monte Carlo ranges come from the simulation functions' own defaults, so the
+    # contract always carries what the pipeline actually draws.
+    mc_ssrn = _defaults(compute_npv_mc_ssrn)
+    mc_nber = _defaults(compute_npv_mc_nber)
     rows = [
         ("n_billionaires", "both", "CA billionaires in the domestic base", 212, "count", "data",
          "public", "CA_Billionaires_Revenues_and_Migration_final.xlsx!Summary_Preferred!D15", 11),
@@ -48,8 +57,29 @@ def build_inputs(pareto_fit, revenue_chain, nber_ceiling):
         ("wt_central_scenario", "ssrn",
          "Table 9 Central Scenario wealth tax revenue (literal input, not linked to Sec 4's chain)",
          42.0, "$B", "scenario", "public", "NPV_calculations_5.2.xlsx!B12", 19),
-        ("npv_r_range", "ssrn", "Real discount rate (r) simulation range", "", "rate",
-         "guesswork", "public", "NPV_dist.R:47 (paper eq.24 text; eq.18-20 instead specify r-g)", 20),
+        ("rauh_mc_wt_min", "ssrn",
+         "Monte Carlo wealth tax floor (literature-calibrated scenario; semi-elasticity about 12.6)",
+         mc_ssrn["wt_min"], "$B", "guesswork", "public",
+         "NPV_dist.R (wt ~ U[35, 67.51]); paper eq.22 and Table 9", 20),
+        ("rauh_mc_c_min", "both", "Annual CA income tax of billionaires: lower bound of the draw",
+         mc_ssrn["c_min"], "$B/yr", "guesswork", "public",
+         "NPV_dist.R; paper eq.23 (from the K=500 dispersion draw)", 20),
+        ("rauh_mc_c_max", "both", "Annual CA income tax of billionaires: upper bound of the draw",
+         mc_ssrn["c_max"], "$B/yr", "guesswork", "public",
+         "NPV_dist.R; paper eq.23 (Pareto upper bound)", 20),
+        ("rauh_mc_r_min", "both", "Discount rate draw: lower bound", mc_ssrn["r_min"], "rate",
+         "research", "public",
+         "NPV_dist.R:47; paper eq.24 (S&P 500 dividend yield anchor p.18; eq.18-20 instead specify r-g)",
+         20),
+        ("rauh_mc_r_max", "both", "Discount rate draw: upper bound", mc_ssrn["r_max"], "rate",
+         "research", "public", "NPV_dist.R:47; paper eq.24", 20),
+        ("nber_mc_f_min", "nber",
+         "NBER departure fraction of the income tax base: lower bound (drawn independently of WT)",
+         mc_nber["f_min"], "share", "guesswork", "public",
+         "NPV_dist_v8.R; Jaros and Rauh NBER c15504 Sec 5.4", 35),
+        ("nber_mc_f_max", "nber", "NBER departure fraction of the income tax base: upper bound",
+         mc_nber["f_max"], "share", "guesswork", "public",
+         "NPV_dist_v8.R; Jaros and Rauh NBER c15504 Sec 5.4", 35),
         ("q_litigation_survival", "nber",
          "Probability the Act survives constitutional challenge (ASC 740-10 more-likely-than-not)",
          0.50, "probability", "guesswork", "public",

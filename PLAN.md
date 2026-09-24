@@ -84,6 +84,20 @@ credited to us.
    - Layout: the reconciliation page is the **site root** (`index.html`, the kit's multi-OPA
      overview variant), linking to `supporting-analysis/site/` and `opposing-analysis/site/`.
 
+**Decisions after the first build (user, 2026-09-23; no published number changed):**
+1. Rauh output (a) defaults to the expected WT of each Monte Carlo: SSRN 51.26 (U[35, 67.51]),
+   NBER 36 (U[0, 72]). These are the only choices consistent with the NPVs the bridge decomposes
+   (residual 0). 45.59, 42 and "about 40" (SSRN) and "about 30" (NBER) stay visible as alternatives.
+2. Opposing explorer: q defaults to 1 (the code as shipped, MISMATCHES #5). The g dial keeps its
+   non-zero levels 0.5% and 1%, labelled "(illustrative)" on the dial: they are this reproduction's,
+   not the authors'.
+3. Comparison-model calls accepted as disclosed: shared r range; non-citizens $150B (GGSS p.2 fn.1);
+   the DISPUTES row 7 split; 10% avoidance as its own bridge step with no DISPUTES row; supporting
+   output (b) = 106.8 is our construction and labelled so.
+4. The Rauh Monte Carlo input ranges (`rauh_mc_*`, `nber_mc_*`) live in the opposing export contract
+   (`opposing-analysis/export/{r,py}/inputs.csv`, taken from the simulation functions' defaults),
+   not in `comparison/data/document-inputs.csv`.
+
 **Same format as the previous OPA (user requirement 2026-09-23).** Every public surface (overview
 page, interactive explorer, Quarto reproduction report, teaching deck, reproduction-materials links,
 the OPA background image, the cross-link footer, the CRediT / AI-use table) is instantiated from the
