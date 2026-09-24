@@ -29,3 +29,6 @@ __pycache__/
 
 # Claude Code agent worktrees
 .claude/worktrees/
+
+# RPubs/rsconnect deployment records hold claim tokens: never commit
+**/rsconnect/
