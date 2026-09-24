@@ -271,14 +271,21 @@ render_site <- function(root = comparison_root(),
             hfmt(hs_("real_estate_exclusion"), hz$hoopes_uncertainty[hz$step_id == "real_estate_exclusion"]),
             money(dv("hoopes_real_estate_base"), 0), money(dv("hoopes_real_estate_base"), 0),
             money(0.05 * dv("hoopes_real_estate_base"), 1), money(ho("real_estate_exclusion"), 2, TRUE)),
-    sprintf("<b>Level before income tax.</b> His revenue level before the income-tax bar is about %s; Rauh's preferred estimate is 'about %s' (p.14) and the expected revenue in the Monte Carlo behind the headline is %s. Ours is the last.",
-            money(hz_pre, 1), money(dv("rauh_headline_revenue"), 0), money(ea$rauh_own, 2)),
+    sprintf("<b>Level before income tax.</b> His revenue level before the income-tax bar is about %s; Rauh's preferred estimate is 'about %s' (p.14) and the expected revenue in the Monte Carlo behind the headline is %s. Our bridge uses the last, %s.",
+            money(hz_pre, 1), money(dv("rauh_headline_revenue"), 0), money(ea$rauh_own, 2), money(ea$rauh_own, 2)),
     sprintf("<b>Income tax.</b> His single bar, %s, ends at %s, close to Rauh's %s. Rauh's own expected present value of lost income tax is %s against %s of revenue, so with a different starting level his bar works as a plug. We split it into four labelled steps (proportionality, the income tax level, the horizon, asset-sale tax), which interact with the base steps.",
             hfmt(hs_("income_tax_loss"), NA), money(hz_end, 1), tok$rauh_npv, money(ho("income_tax_loss"), 2, TRUE), money(ea$rauh_own, 2)),
     "<b>Order and labels.</b> His is one sequential order, with no provenance labels; ours shows Shapley averages over all orders as well as one order, with each step labelled data, research, guesswork or scenario.",
     "<b>Steps he does not have.</b> The non-US-citizen residents, the BSZ side's avoidance allowance being dropped, the asset-sale income tax, and the NBER revision (which postdates his note)."
   )), collapse = "\n")
   tok$hoopes_fit <- money(as.numeric(hraw$tick_fit_max_resid[1]), 1)
+  # Row 3 departure share, page (workbook values) vs DISPUTES / RJKDC f dial (printed 94.2)
+  oval <- function(id) pick(k$rjkdc$outputs, id)
+  tok$dconf_page <- pct(1 - oval("revenue_confirmed6") / oval("revenue_baseline"), 1)
+  tok$dconf_printed <- pct(1 - opp("revenue_confirmed6") / opp("revenue_baseline"), 1)
+  tok$conf6_value <- formatC(oval("revenue_confirmed6"), format = "f", digits = 2)
+  tok$baseline_value <- formatC(oval("revenue_baseline"), format = "f", digits = 3)
+  tok$baseline_printed <- formatC(opp("revenue_baseline"), format = "f", digits = 1)
   tok$hoopes_unc <- money(as.numeric(hraw$uncertainty[hraw$step_id == "confirmed_departures"]), 1)
 
   # ---- vintage ----
