@@ -76,7 +76,10 @@ on the comparison layer itself.
    `rsconnect/*.dcf` (untracked in `7cceb73`), was cleared on 2026-09-24 by removing those files
    from the whole history with `git filter-repo` and force-pushing; every commit from the CAWT-BSZ
    import onward has a new SHA (timestamps unchanged), and the SHAs cited in this file were updated
-   to match. `**/rsconnect/` stays in `.gitignore`.
+   to match. `**/rsconnect/` stays in `.gitignore`. GitHub keeps unreferenced old commits until its
+   own garbage collection, but both claim links are already used: checked 2026-09-24, each one
+   redirects to its claimed document (1436128 in the BITSS RPubs account, 1436129 in `fhoces`), so
+   a leftover copy of a token cannot claim anything.
 2. **One scorer per side (step 2 to Level 3).** Done 2026-09-23: each explorer grid now calls the
    analysis's own functions (BSZ `6219268`; RJKDC `e899ae9`), with grids and
    exports byte-identical before and after.
