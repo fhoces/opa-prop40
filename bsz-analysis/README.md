@@ -10,7 +10,8 @@ Paper No. 35218).
 This repository re-derives every cell of the authors' supplementary Excel
 workbook in R via a [`{targets}`](https://docs.ropensci.org/targets/) pipeline,
 verifies each derivation against the Excel-cached values element-wise, and
-renders the paper's six tables and twelve figures plus a Quarto report.
+renders the paper's six tables and the twelve figures of the May paper (August adds a
+new Figure 8 and Appendix Figure A1, not built) plus a Quarto report.
 
 ## Reproduction status
 
@@ -375,7 +376,8 @@ added since this README.
 - The R pipeline reproduces the authors' Excel workbook exactly (modulo
   documented Excel display-rounding noise at 1e-2 on a few `data_sec_agg`
   columns).
-- It reproduces the paper's six tables and twelve figures, formatted for
+- It reproduces the paper's six tables and the twelve figures of the May paper (August
+  adds a new Figure 8 and Appendix Figure A1, not built), formatted for
   HTML / LaTeX / PNG / PDF.
 - Known issues, disclosed rather than fixed: the workbook repeats rows 1338 to 1341 of
   `data_sec_all` at rows 1342 to 1345 (handled in `R/compute_data_sec_agg.R`; not yet reported
