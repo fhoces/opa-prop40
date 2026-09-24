@@ -19,7 +19,7 @@ fetch_one <- function(accession, primary, dest) {
   )
   curl::curl_download(url, dest, mode = "wb",
                        handle = curl::new_handle(useragent = UA))
-  Sys.sleep(0.15)  # be polite — SEC suggests <10 req/sec
+  Sys.sleep(0.15)  # be polite; SEC suggests <10 req/sec
 }
 
 parse_form4 <- function(xml_path) {

@@ -24,7 +24,7 @@ compute_pareto_missing <- function(pareto_inputs,
   # Empirical Pareto b at each threshold
   pareto_b_emp <- C / (B * A)
 
-  # Bracket metrics (Excel treats the cell below the last row as 0 — replicate)
+  # Bracket metrics (Excel treats the cell below the last row as 0; replicate)
   next_C <- c(C[-1], 0)
   next_B <- c(B[-1], 0)
   next_A <- c(A[-1], NA_real_)

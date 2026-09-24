@@ -39,7 +39,7 @@ render_report <- function(qmd_path, format, ...) {
   # Renders a Quarto .qmd to `format` ("html" or "pdf"). Requires the Quarto
   # CLI on PATH (install via `brew install --cask quarto` on macOS or download
   # from https://quarto.org/docs/get-started/). The dependency injections via
-  # `...` are ignored — they exist so this function can be a tar_target with
+  # `...` are ignored: they exist so this function can be a tar_target with
   # explicit upstream artifacts, so the report re-renders when data changes.
   qmd_path <- normalizePath(qmd_path)
   qmd_dir  <- dirname(qmd_path)

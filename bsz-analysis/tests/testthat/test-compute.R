@@ -182,7 +182,7 @@ test_that("compute_billionaires_ca_inctax matches Excel formula cells", {
   expect_equal(at$passthrough_share[2:8],            num_row(138, pan_cols[2:8]), tolerance = 1e-5)
   expect_equal(at$corp_tax_private_c_b[2:8],         num_row(141, pan_cols[2:8]), tolerance = 1e-3)
   expect_equal(at$corp_tax_diversified_b[2:8],       num_row(142, pan_cols[2:8]), tolerance = 1e-3)
-  # Row 143 chains data_sec_agg columns (rounded to 2dp in Excel) — use $-tier tolerance.
+  # Row 143 chains data_sec_agg columns (rounded to 2dp in Excel): use $-tier tolerance.
   expect_equal(at$property_tax_private_b[2:8],       num_row(143, pan_cols[2:8]), tolerance = 1e-2)
   expect_equal(at$total_corp_property_b[2:8],        num_row(144, pan_cols[2:8]), tolerance = 1e-3)
   expect_equal(at$total_sales_tax_b[2:8],            num_row(145, pan_cols[2:8]), tolerance = 1e-4)
@@ -293,7 +293,7 @@ test_that("compute_shortrunseries matches Excel formula cells", {
   expect_equal(avg$AM, as.numeric(srs[[srs_col("ellison")]][r15]), tolerance = 1e-5)
   expect_equal(avg$AN, as.numeric(srs[[srs_col("huang")]][r15]), tolerance = 1e-5)
 
-  # Row 16 (per-2025-wealth ratios) — uses /row14 etc. (small denominators -> tolerance loose)
+  # Row 16 (per-2025-wealth ratios): uses /row14 etc. (small denominators -> tolerance loose)
   ratios <- s$avg_share_2025_wealth
   expect_equal(unname(ratios["top3"]), as.numeric(srs[[srs_col("top3_sum")]][r16]), tolerance = 1e-5)
   expect_equal(unname(ratios["brin"]), as.numeric(srs[[srs_col("brin")]][r16]), tolerance = 1e-5)

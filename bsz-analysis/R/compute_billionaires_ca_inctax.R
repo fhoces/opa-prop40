@@ -9,7 +9,7 @@
 #   - Method I year panel (rows 6..55): aggregate CA tax stats + top-bracket
 #     Pareto projection + CA inctax paid by CA billionaires.
 #   - Memo 1: US top .001% IRS Pareto calibration (rows 58..72).
-#   - Memo 2 robustness check (rows 76..105) — scalar sanity check on the
+#   - Memo 2 robustness check (rows 76..105): scalar sanity check on the
 #     Method I projection.
 #   - All-taxes block (rows 110..153): decomposes the billionaire tax burden
 #     into CA inctax / fed inctax / corporate / property+sales on public and
@@ -37,10 +37,10 @@
 
 # FTB row indices per year + per top-bracket position. 2022 sits at top of
 # sheet; 2018 at bottom. Fields:
-#   whole_year — (first, last) row of the year's 59-60 AGI brackets.
-#   top_10m    — single row for the $10M+ bracket (2021 / 2022 only).
-#   top_5m_9m  — single row for the $5M-$9.999M bracket (2021 / 2022 only).
-#   top_5m     — single row for the $5M+ aggregate (2018-2020 only; later
+#   whole_year: (first, last) row of the year's 59-60 AGI brackets.
+#   top_10m: single row for the $10M+ bracket (2021 / 2022 only).
+#   top_5m_9m: single row for the $5M-$9.999M bracket (2021 / 2022 only).
+#   top_5m: single row for the $5M+ aggregate (2018-2020 only; later
 #                years split this into two rows).
 .BCI_FTB_ROWS <- list(
   "2018" = list(whole_year = c(242, 300), top_5m  = 300),
@@ -96,9 +96,9 @@
 
 .bci_memo1 <- function(bci) {
   # Returns a list:
-  #   $memo1            — the tibble exposed downstream
-  #   $fed_tax_per_agi  — row 64 vector (used by D99 + the all-taxes block)
-  #   $pct_overshoot    — row 72 vector indexed by panel year 2018..2023
+  #   $memo1: the tibble exposed downstream
+  #   $fed_tax_per_agi: row 64 vector (used by D99 + the all-taxes block)
+  #   $pct_overshoot: row 72 vector indexed by panel year 2018..2023
   m1_cols <- c("B", "C", "D", "E", "F")          # IRS years 2018..2022
   read_row <- function(row) xls_cells_row(bci, m1_cols, bci_row(row))
 

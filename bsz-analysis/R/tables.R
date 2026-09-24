@@ -45,7 +45,7 @@ build_tab2 <- function(data_sec_agg_r, billionaires_ca_inctax_r, data_sec_top4,
   panel$ca_inctax_per_wealth      <- panel$ca_inctax_b      / panel$wealth_b
   panel$top4_ca_inctax_per_wealth <- panel$top4_ca_inctax_b / panel$top4_company_wealth_b
 
-  # Average row — Excel quirk: D14 = AVERAGE(D7:D12) (6 yrs, 2019-2024 only,
+  # Average row, an Excel quirk: D14 = AVERAGE(D7:D12) (6 yrs, 2019-2024 only,
   # a direct average of the RATIO column) while B/C/F14 = AVERAGE(*7:*13)
   # (7 yrs). May's top4-ratio cell (H14) = G14/F14, i.e. mean-of-PARTS over
   # all 7 years (matches the code below unconditionally). August's

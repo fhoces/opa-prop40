@@ -3,7 +3,7 @@
 # as produced by `read_sheet()` in R/ingest_excel.R).
 #
 # Each helper coerces the underlying character cells to numeric and silences
-# the coercion warning — the positional dumps come back as `character` because
+# the coercion warning: the positional dumps come back as `character` because
 # `readxl` auto-detects per column and many cells in the BSZ workbook mix
 # headers, labels, and numbers.
 

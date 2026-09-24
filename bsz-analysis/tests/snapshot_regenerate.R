@@ -72,7 +72,7 @@ top4taxes_r <- compute_top4taxes(top4_raw)
 save_snap(top4taxes_r, "top4taxes_r")
 
 # ---- Phase-3 exhibits: table tibbles -------------------------------------
-cat("\nPhase 3 — table tibbles (attr 'panel' or 'panel_a' / 'panel_b'):\n")
+cat("\nPhase 3: table tibbles (attr 'panel' or 'panel_a' / 'panel_b'):\n")
 tab1_gt    <- build_tab1(data_sec_agg_r, shortrunseries_r, lrs_raw, srs_raw)
 save_snap(attr(tab1_gt, "panel_a"), "tab1_panel_a")
 save_snap(attr(tab1_gt, "panel_b"), "tab1_panel_b")
@@ -96,7 +96,7 @@ save_snap(attr(tab_a1_gt, "panel_b"), "tab_a1_panel_b")
 # ---- Phase-3 exhibits: figure data layers --------------------------------
 # Single-ggplot figures: snapshot $data directly.
 # Patchwork figures: snapshot each sub-plot's $data as <name>_panel_<i>.rds.
-cat("\nPhase 3 — figure $data layers:\n")
+cat("\nPhase 3: figure $data layers:\n")
 save_fig <- function(obj, name) {
   if (inherits(obj, "patchwork")) {
     for (i in seq_along(obj)) {

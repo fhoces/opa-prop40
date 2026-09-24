@@ -34,7 +34,7 @@ test_that("build_tab1 panel A reproduces Tab1 sheet 2022-2025(+2026) + growth ro
     expect_equal(pa$ca_gdp_b[5],         xl$F[5], tolerance = 1e-2)
     expect_equal(pa$wealth_per_gdp[5],   xl$G[5], tolerance = 1e-4)
   }
-  # Growth row — B, E, F columns only
+  # Growth row: B, E, F columns only
   expect_equal(pa$wealth_b[growth_idx],      xl$B[growth_idx], tolerance = 1e-4)
   expect_equal(pa$top4_wealth_b[growth_idx], xl$E[growth_idx], tolerance = 1e-4)
   expect_equal(pa$ca_gdp_b[growth_idx],      xl$F[growth_idx], tolerance = 1e-4)

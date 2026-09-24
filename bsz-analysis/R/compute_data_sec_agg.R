@@ -10,7 +10,7 @@ ELLISON_FORBES_ID <- "larry-ellison"
 compute_data_sec_agg <- function(data_sec_all,
                                  exclude_ids = ELLISON_FORBES_ID,
                                  m_to_b = 1000) {
-  # Columns to sum (in panel order) — the 27 metric columns shared with data_sec_all
+  # Columns to sum (in panel order): the 27 metric columns shared with data_sec_all
   sum_cols <- c(
     "forbes_worth", "forbes_public_worth",
     "purchase", "sale",

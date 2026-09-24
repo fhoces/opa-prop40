@@ -9,7 +9,7 @@ test_that("expect_matches_excel succeeds within an explicit range", {
 })
 
 test_that("expect_matches_excel fails when a numeric cell is perturbed beyond tolerance", {
-  # Range A6:H9 is the Panel A numeric block — every column reads as numeric.
+  # Range A6:H9 is the Panel A numeric block: every column reads as numeric.
   panel_a <- read_sheet("Tab1", range = "A6:H9")
   panel_a[[1, "C"]] <- panel_a[[1, "C"]] + 1  # 842.53 -> 843.53
   expect_failure(

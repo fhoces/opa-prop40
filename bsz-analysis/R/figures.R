@@ -567,8 +567,8 @@ build_fig3 <- function(shortrunseries_r) {
 build_fig2 <- function(longrunseries, vintage = bsz_vintage()) {
   # Figure 2: Billionaire Class Wealth Grows Much Faster than the Economy.
   # Two panels stacked horizontally via patchwork.
-  #   A: CA top .0002% wealth vs CA GDP per family — dual y-axis line chart.
-  #   B: Top .0002% wealth as % of GDP for US and CA — two lines.
+  #   A: CA top .0002% wealth vs CA GDP per family: dual y-axis line chart.
+  #   B: Top .0002% wealth as % of GDP for US and CA: two lines.
   # Year range 1982-2025 = longrunseries rows 8..51 (both vintages; August
   # added a 2026 row past this range that fig2 does not extend into).
   #
@@ -595,7 +595,7 @@ build_fig2 <- function(longrunseries, vintage = bsz_vintage()) {
     ca_share    <- num("BG")
   }
 
-  # Panel A: single y-axis — both series naturally fit in 0..30 (wealth in $B,
+  # Panel A: single y-axis, since both series naturally fit in 0..30 (wealth in $B,
   # GDP per family in $100Ks). Wealth is the headline (red, with points);
   # GDP per family is the baseline (black, also with points).
   n_a <- length(year)
