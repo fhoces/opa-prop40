@@ -2629,7 +2629,7 @@ p code, li code, td code, h3 code { overflow-wrap: anywhere !important; word-bre
 <h3 class="anchored" data-anchor-id="the-literature-calibration-eq.-12-to-14">4.4 The literature calibration (eq. 12 to 14)</h3>
 <p><span class="math display">\[\varepsilon_{\text{lit}} = 0.24 \times 43.00 = 10.32, \qquad
 R^{\text{lit}} = (1 - \varepsilon_{\text{lit}} \times 0.05) \times 94.20\]</span></p>
-<p>Brülhart et al. (2022) estimate that Swiss taxable wealth falls by 43% per point of wealth tax, about 24% of it through people moving. The authors keep only the moving part, 10.32, and apply it linearly to the full 5-point rate: the base shrinks by 51.6% and revenue is <strong>$45.59B</strong> (printed $45.59B). Two things to notice. First, that is a Swiss estimate for a recurring annual tax, applied here to a one-time tax; the paper argues a one-time tax with easy interstate moves could provoke a <em>larger</em> response (p.14), and the BSZ side disputes exactly this (<a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/DISPUTES.md">disputes row 1</a>). Second, a linear 10.32 × 5 = 51.6% loss is steeper than the log form the NBER revision later uses (41.1%, NBER PDF p.24).</p>
+<p>Brülhart et al. (2022) estimate that Swiss taxable wealth falls by 43% per point of wealth tax, about 24% of it through people moving. The authors keep only the moving part, 10.32, and apply it linearly to the full 5-point rate: the base shrinks by 51.6% and revenue is <strong>$45.59B</strong> (printed $45.59B). Two things to notice. First, that is a Swiss estimate for a recurring annual tax, applied here to a one-time tax; the paper argues a one-time tax with easy interstate moves could provoke a <em>larger</em> response (p.14), and the BSZ side (Boll, Saez and Zucman, who support the measure) disputes exactly this (<a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/DISPUTES.md">disputes row 1</a>). Second, a linear 10.32 × 5 = 51.6% loss is steeper than the log form the NBER revision later uses (41.1%, NBER PDF p.24).</p>
 </section>
 <section id="the-preferred-revenue-estimate" class="level3">
 <h3 class="anchored" data-anchor-id="the-preferred-revenue-estimate">4.5 The preferred revenue estimate</h3>
@@ -2641,7 +2641,7 @@ R^{\text{lit}} = (1 - \varepsilon_{\text{lit}} \times 0.05) \times 94.20\]</span
 <section id="the-pareto-upper-bound-eq.-15-and-16" class="level3">
 <h3 class="anchored" data-anchor-id="the-pareto-upper-bound-eq.-15-and-16">The Pareto upper bound (eq. 15 and 16)</h3>
 <p><span class="math display">\[N(y) = A\,y^{-\alpha}, \qquad S(k, n) = \left(\frac{k}{n}\right)^{(\alpha - 1)/\alpha}\]</span></p>
-<p>The state publishes how many tax returns report income above $1M, $2M, $3M, $4M, $5M and $10M (FTB PIT Annual Report 2024, Table B-4A). If top incomes follow a Pareto distribution, the log of those counts falls on a straight line against the log of the thresholds, with slope <span class="math inline">\(-\alpha\)</span>. The fitted line gives <span class="math inline">\(\hat\alpha\)</span> = <strong>1.438</strong> (printed 1.44, <span class="math inline">\(R^2\)</span> = 0.9987).</p>
+<p>The state publishes how many tax returns report income above $1M, $2M, $3M, $4M, $5M and $10M (Franchise Tax Board (FTB) Personal Income Tax (PIT) Annual Report 2024, Table B-4A). If top incomes follow a Pareto distribution, the log of those counts falls on a straight line against the log of the thresholds, with slope <span class="math inline">\(-\alpha\)</span>. The fitted line gives <span class="math inline">\(\hat\alpha\)</span> = <strong>1.438</strong> (printed 1.44, <span class="math inline">\(R^2\)</span> = 0.9987).</p>
 <div class="cell">
 <details class="code-fold">
 <summary>code</summary>
@@ -3109,7 +3109,7 @@ r \sim U[0.015, 0.045]\]</span></p>
 <ol type="1">
 <li><strong>A later valuation date.</strong> Net worth is grown 7% to the 31 December 2026 valuation date, and the base is rebuilt person by person in <code>final.csv</code>: 212 domestic rows, face value $100.91B (printed $100.9B).</li>
 <li><strong>Seven confirmed departures</strong> (the six, plus Travis Kalanick): removing them leaves <strong>$72.05B</strong>. The README says $72.06B and the script hard-codes 72 (<a href="materials.html#mismatches">mismatch 4</a>); three numbers for one quantity. The 28 non-US-citizen residents ($146.3B of net worth) stay outside the base, now explicitly.</li>
-<li><strong>A litigation discount</strong> (PDF pp.19-23, eqs. 5 to 8). Removing three pre-filing departures and Zuckerberg leaves a recognized base of $59.15B; multiplying by <span class="math inline">\(q\)</span> = 0.5, the chance the Act survives in court, gives <span class="math inline">\(E[R] = q \times R_{\text{recognized}}\)</span> = <strong>$29.57B</strong> (printed $29.6B). Keeping Zuckerberg gives $35.59B; moving the gray-zone names out gives $28.40B, the printed range $28.4B to $35.6B. The choice of <span class="math inline">\(q\)</span> = 0.50 comes from an accounting standard for uncertain tax positions (ASC 740-10), not from a legal assessment; it is <strong>guesswork</strong>.</li>
+<li><strong>A litigation discount</strong> (PDF pp.19-23, eqs. 5 to 8). Removing three pre-filing departures and Zuckerberg leaves a recognized base of $59.15B; multiplying by <span class="math inline">\(q\)</span> = 0.5, the chance the Act survives in court, gives <span class="math inline">\(E[R] = q \times R_{\text{recognized}}\)</span> = <strong>$29.57B</strong> (printed $29.6B). Keeping Zuckerberg gives $35.59B; moving the gray-zone names out (the seven billionaires with departure signals short of confirmation, plus Jan Koum, Reed Hastings and Andy Fang, reported as considering a move; NBER PDF p.23) gives $28.40B, the printed range $28.4B to $35.6B. The choice of <span class="math inline">\(q\)</span> = 0.50 comes from an accounting standard for uncertain tax positions (ASC 740-10), not from a legal assessment; it is <strong>guesswork</strong>.</li>
 <li><strong>The departure share is drawn on its own</strong>, <span class="math inline">\(f \sim U[0.3, 0.6]\)</span>, independent of revenue, “centered conservatively around the observed wealth-base departure fraction” (PDF p.30).</li>
 <li><strong>The Monte Carlo draws revenue from zero</strong>: <span class="math inline">\(WT \sim U[0, 72]\)</span> (PDF p.35, eq. 16). Its mean, $36B, is <span class="math inline">\(0.5 \times 72\)</span>, which the paper calls the central estimate (PDF p.33). This is the only place <span class="math inline">\(q\)</span> appears in the code: there is no explicit multiplier (<a href="materials.html#mismatches">mismatch 5</a>), and a uniform draw from 0 is a different assumption from a survive-or-not coin flip on a fixed base. The paper also states the income tax loss is not scaled by <span class="math inline">\(q\)</span>: people who left do not come back if the Act is struck down (PDF p.33).</li>
 </ol>
@@ -3371,7 +3371,7 @@ r \sim U[0.015, 0.045]\]</span></p>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">rate</td>
-<td style="text-align: left;">Discount rate drawn, rho</td>
+<td style="text-align: left;">Discount rate drawn, r</td>
 <td style="text-align: left;">1.5% to 4.5%; 1.5% only; 4.5% only</td>
 <td style="text-align: left;">guesswork</td>
 <td style="text-align: left;">explorer dial (R/site.R)</td>
@@ -4377,7 +4377,7 @@ r \sim U[0.015, 0.045]\]</span></p>
 <span id="cb17-197"><a href="#cb17-197" aria-hidden="true" tabindex="-1"></a>(printed \$<span class="in">`r out(&quot;revenue_literature_calibrated&quot;,&quot;printed_value&quot;)`</span>B). Two things to notice. First,</span>
 <span id="cb17-198"><a href="#cb17-198" aria-hidden="true" tabindex="-1"></a>that is a Swiss estimate for a recurring annual tax, applied here to a one-time tax; the paper</span>
 <span id="cb17-199"><a href="#cb17-199" aria-hidden="true" tabindex="-1"></a>argues a one-time tax with easy interstate moves could provoke a *larger* response (p.14), and the</span>
-<span id="cb17-200"><a href="#cb17-200" aria-hidden="true" tabindex="-1"></a>BSZ side disputes exactly this (<span class="co">[</span><span class="ot">disputes row 1</span><span class="co">](https://github.com/fhoces/opa-prop40/blob/main/comparison/DISPUTES.md)</span>).</span>
+<span id="cb17-200"><a href="#cb17-200" aria-hidden="true" tabindex="-1"></a>BSZ side (Boll, Saez and Zucman, who support the measure) disputes exactly this (<span class="co">[</span><span class="ot">disputes row 1</span><span class="co">](https://github.com/fhoces/opa-prop40/blob/main/comparison/DISPUTES.md)</span>).</span>
 <span id="cb17-201"><a href="#cb17-201" aria-hidden="true" tabindex="-1"></a>Second, a linear 10.32 × 5 = 51.6% loss is steeper than the log form the NBER revision later uses</span>
 <span id="cb17-202"><a href="#cb17-202" aria-hidden="true" tabindex="-1"></a>(41.1%, NBER PDF p.24).</span>
 <span id="cb17-203"><a href="#cb17-203" aria-hidden="true" tabindex="-1"></a></span>
@@ -4397,7 +4397,7 @@ r \sim U[0.015, 0.045]\]</span></p>
 <span id="cb17-217"><a href="#cb17-217" aria-hidden="true" tabindex="-1"></a>$$N(y) = A\,y^{-\alpha}, \qquad S(k, n) = \left(\frac{k}{n}\right)^{(\alpha - 1)/\alpha}$$</span>
 <span id="cb17-218"><a href="#cb17-218" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-219"><a href="#cb17-219" aria-hidden="true" tabindex="-1"></a>The state publishes how many tax returns report income above \$1M, \$2M, \$3M, \$4M, \$5M and</span>
-<span id="cb17-220"><a href="#cb17-220" aria-hidden="true" tabindex="-1"></a>\$10M (FTB PIT Annual Report 2024, Table B-4A). If top incomes follow a Pareto distribution, the log</span>
+<span id="cb17-220"><a href="#cb17-220" aria-hidden="true" tabindex="-1"></a>\$10M (Franchise Tax Board (FTB) Personal Income Tax (PIT) Annual Report 2024, Table B-4A). If top incomes follow a Pareto distribution, the log</span>
 <span id="cb17-221"><a href="#cb17-221" aria-hidden="true" tabindex="-1"></a>of those counts falls on a straight line against the log of the thresholds, with slope $-\alpha$.</span>
 <span id="cb17-222"><a href="#cb17-222" aria-hidden="true" tabindex="-1"></a>The fitted line gives $\hat\alpha$ = **`r num(pf$alpha, 3)`** (printed <span class="in">`r out(&quot;pareto_alpha&quot;,&quot;printed_value&quot;)`</span>,</span>
 <span id="cb17-223"><a href="#cb17-223" aria-hidden="true" tabindex="-1"></a>$R^2$ = <span class="in">`r num(pf$r_squared, 4)`</span>).</span>
@@ -4618,173 +4618,175 @@ r \sim U[0.015, 0.045]\]</span></p>
 <span id="cb17-450"><a href="#cb17-450" aria-hidden="true" tabindex="-1"></a>   $q$ = <span class="in">`r ncol$q`</span>, the chance the Act survives in court, gives</span>
 <span id="cb17-451"><a href="#cb17-451" aria-hidden="true" tabindex="-1"></a>   $E<span class="co">[</span><span class="ot">R</span><span class="co">]</span> = q \times R_{\text{recognized}}$ = **\$`r num(ncol$central, 2)`B**</span>
 <span id="cb17-452"><a href="#cb17-452" aria-hidden="true" tabindex="-1"></a>   (printed \$<span class="in">`r h(&quot;nber&quot;,&quot;revenue_headline&quot;,&quot;printed&quot;)`</span>B). Keeping Zuckerberg gives</span>
-<span id="cb17-453"><a href="#cb17-453" aria-hidden="true" tabindex="-1"></a>   \$<span class="in">`r num(ncol$upper, 2)`</span>B; moving the gray-zone names out gives \$<span class="in">`r num(ncol$lower, 2)`</span>B,</span>
-<span id="cb17-454"><a href="#cb17-454" aria-hidden="true" tabindex="-1"></a>   the printed range \$<span class="in">`r h(&quot;nber&quot;,&quot;revenue_range_low&quot;,&quot;printed&quot;)`</span>B to \$<span class="in">`r h(&quot;nber&quot;,&quot;revenue_range_high&quot;,&quot;printed&quot;)`</span>B.</span>
-<span id="cb17-455"><a href="#cb17-455" aria-hidden="true" tabindex="-1"></a>   The choice of $q$ = 0.50 comes from an accounting standard for uncertain tax positions</span>
-<span id="cb17-456"><a href="#cb17-456" aria-hidden="true" tabindex="-1"></a>   (ASC 740-10), not from a legal assessment; it is **guesswork**.</span>
-<span id="cb17-457"><a href="#cb17-457" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**The departure share is drawn on its own**, $f \sim U<span class="co">[</span><span class="ot">`r nb$f_min`, `r nb$f_max`</span><span class="co">]</span>$,</span>
-<span id="cb17-458"><a href="#cb17-458" aria-hidden="true" tabindex="-1"></a>   independent of revenue, &quot;centered conservatively around the observed wealth-base departure</span>
-<span id="cb17-459"><a href="#cb17-459" aria-hidden="true" tabindex="-1"></a>   fraction&quot; (PDF p.30).</span>
-<span id="cb17-460"><a href="#cb17-460" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**The Monte Carlo draws revenue from zero**: $WT \sim U<span class="co">[</span><span class="ot">0, 72</span><span class="co">]</span>$ (PDF p.35, eq. 16). Its mean,</span>
-<span id="cb17-461"><a href="#cb17-461" aria-hidden="true" tabindex="-1"></a>   \$<span class="in">`r num(h(&quot;nber&quot;,&quot;mc_expected_revenue&quot;), 0)`</span>B, is $0.5 \times 72$, which the paper calls the</span>
-<span id="cb17-462"><a href="#cb17-462" aria-hidden="true" tabindex="-1"></a>   central estimate (PDF p.33). This is the only place $q$ appears in the code: there is no</span>
-<span id="cb17-463"><a href="#cb17-463" aria-hidden="true" tabindex="-1"></a>   explicit multiplier (<span class="co">[</span><span class="ot">mismatch 5</span><span class="co">](materials.html#mismatches)</span>), and a uniform draw from 0 is a</span>
-<span id="cb17-464"><a href="#cb17-464" aria-hidden="true" tabindex="-1"></a>   different assumption from a survive-or-not coin flip on a fixed base. The paper also states</span>
-<span id="cb17-465"><a href="#cb17-465" aria-hidden="true" tabindex="-1"></a>   the income tax loss is not scaled by $q$: people who left do not come back if the Act is struck</span>
-<span id="cb17-466"><a href="#cb17-466" aria-hidden="true" tabindex="-1"></a>   down (PDF p.33).</span>
-<span id="cb17-467"><a href="#cb17-467" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-468"><a href="#cb17-468" aria-hidden="true" tabindex="-1"></a>The NBER break-even table, from the same <span class="in">`compute_npv_table10()`</span> at the paper&#39;s central</span>
-<span id="cb17-469"><a href="#cb17-469" aria-hidden="true" tabindex="-1"></a>\$36B and \$4.55B:</span>
-<span id="cb17-470"><a href="#cb17-470" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-473"><a href="#cb17-473" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb17-474"><a href="#cb17-474" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: t-nber-table10</span></span>
-<span id="cb17-475"><a href="#cb17-475" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: asis</span></span>
-<span id="cb17-476"><a href="#cb17-476" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: &quot;NBER Table 10 (PDF p.34): same function, NBER central inputs&quot;</span></span>
-<span id="cb17-477"><a href="#cb17-477" aria-hidden="true" tabindex="-1"></a>wt36 <span class="ot">&lt;-</span> <span class="fl">0.5</span> <span class="sc">*</span> nb<span class="sc">$</span>wt_max</span>
-<span id="cb17-478"><a href="#cb17-478" aria-hidden="true" tabindex="-1"></a>n10 <span class="ot">&lt;-</span> <span class="fu">compute_npv_table10</span>(<span class="at">scenarios =</span> <span class="fu">list</span>(<span class="at">central =</span> <span class="fu">list</span>(<span class="at">label =</span> <span class="st">&quot;Central&quot;</span>, <span class="at">WT =</span> wt36, <span class="at">C =</span> <span class="fl">4.55</span>)))</span>
-<span id="cb17-479"><a href="#cb17-479" aria-hidden="true" tabindex="-1"></a>pn <span class="ot">&lt;-</span> printed[printed<span class="sc">$</span>table <span class="sc">==</span> <span class="st">&quot;nber_table10&quot;</span>, ]</span>
-<span id="cb17-480"><a href="#cb17-480" aria-hidden="true" tabindex="-1"></a><span class="fu">scroll</span>(<span class="fu">kable</span>(n10 <span class="sc">%&gt;%</span> <span class="fu">transmute</span>(<span class="st">`</span><span class="at">WT ($B)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">num</span>(WT, <span class="dv">0</span>), <span class="st">`</span><span class="at">C ($B)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">num</span>(C, <span class="dv">2</span>), <span class="st">`</span><span class="at">r - g</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">pct</span>(<span class="dv">100</span> <span class="sc">*</span> r),</span>
-<span id="cb17-481"><a href="#cb17-481" aria-hidden="true" tabindex="-1"></a>                               <span class="st">`</span><span class="at">x*</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">pct</span>(<span class="dv">100</span> <span class="sc">*</span> break_even_pct),</span>
-<span id="cb17-482"><a href="#cb17-482" aria-hidden="true" tabindex="-1"></a>                               <span class="at">printed =</span> <span class="fu">pct</span>(pn<span class="sc">$</span>printed[<span class="fu">match</span>(<span class="fu">paste0</span>(<span class="st">&quot;central@&quot;</span>, r), pn<span class="sc">$</span>row)])),</span>
-<span id="cb17-483"><a href="#cb17-483" aria-hidden="true" tabindex="-1"></a>             <span class="at">align =</span> <span class="st">&quot;rrrrr&quot;</span>, <span class="at">caption =</span> <span class="st">&quot;NBER Table 10 (PDF p.34)&quot;</span>))</span>
-<span id="cb17-484"><a href="#cb17-484" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb17-485"><a href="#cb17-485" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-486"><a href="#cb17-486" aria-hidden="true" tabindex="-1"></a>The NBER Monte Carlo reproduces its printed summary to within Monte Carlo error with no systematic</span>
-<span id="cb17-487"><a href="#cb17-487" aria-hidden="true" tabindex="-1"></a>gap (table above). Its exact expectation is <span class="in">`r num(tr(&quot;npv_mc_nber_analytic_mean&quot;), 2)`</span> \$B, which</span>
-<span id="cb17-488"><a href="#cb17-488" aria-hidden="true" tabindex="-1"></a>rounds to <span class="in">`r num(tr(&quot;npv_mc_nber_analytic_mean&quot;), 1)`</span> rather than the printed</span>
-<span id="cb17-489"><a href="#cb17-489" aria-hidden="true" tabindex="-1"></a><span class="in">`r num(h(&quot;nber&quot;,&quot;mc_mean_npv&quot;,&quot;printed&quot;))`</span>: here the printed value is the seeded run&#39;s, not the</span>
-<span id="cb17-490"><a href="#cb17-490" aria-hidden="true" tabindex="-1"></a>expectation. The explorer shows the exact expectations and says so.</span>
-<span id="cb17-491"><a href="#cb17-491" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-492"><a href="#cb17-492" aria-hidden="true" tabindex="-1"></a><span class="fu">## Every input, by origin {#every-input-by-origin}</span></span>
+<span id="cb17-453"><a href="#cb17-453" aria-hidden="true" tabindex="-1"></a>   \$<span class="in">`r num(ncol$upper, 2)`</span>B; moving the gray-zone names out (the seven</span>
+<span id="cb17-454"><a href="#cb17-454" aria-hidden="true" tabindex="-1"></a>   billionaires with departure signals short of confirmation, plus Jan Koum, Reed Hastings and</span>
+<span id="cb17-455"><a href="#cb17-455" aria-hidden="true" tabindex="-1"></a>   Andy Fang, reported as considering a move; NBER PDF p.23) gives \$<span class="in">`r num(ncol$lower, 2)`</span>B,</span>
+<span id="cb17-456"><a href="#cb17-456" aria-hidden="true" tabindex="-1"></a>   the printed range \$<span class="in">`r h(&quot;nber&quot;,&quot;revenue_range_low&quot;,&quot;printed&quot;)`</span>B to \$<span class="in">`r h(&quot;nber&quot;,&quot;revenue_range_high&quot;,&quot;printed&quot;)`</span>B.</span>
+<span id="cb17-457"><a href="#cb17-457" aria-hidden="true" tabindex="-1"></a>   The choice of $q$ = 0.50 comes from an accounting standard for uncertain tax positions</span>
+<span id="cb17-458"><a href="#cb17-458" aria-hidden="true" tabindex="-1"></a>   (ASC 740-10), not from a legal assessment; it is **guesswork**.</span>
+<span id="cb17-459"><a href="#cb17-459" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**The departure share is drawn on its own**, $f \sim U<span class="co">[</span><span class="ot">`r nb$f_min`, `r nb$f_max`</span><span class="co">]</span>$,</span>
+<span id="cb17-460"><a href="#cb17-460" aria-hidden="true" tabindex="-1"></a>   independent of revenue, &quot;centered conservatively around the observed wealth-base departure</span>
+<span id="cb17-461"><a href="#cb17-461" aria-hidden="true" tabindex="-1"></a>   fraction&quot; (PDF p.30).</span>
+<span id="cb17-462"><a href="#cb17-462" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**The Monte Carlo draws revenue from zero**: $WT \sim U<span class="co">[</span><span class="ot">0, 72</span><span class="co">]</span>$ (PDF p.35, eq. 16). Its mean,</span>
+<span id="cb17-463"><a href="#cb17-463" aria-hidden="true" tabindex="-1"></a>   \$<span class="in">`r num(h(&quot;nber&quot;,&quot;mc_expected_revenue&quot;), 0)`</span>B, is $0.5 \times 72$, which the paper calls the</span>
+<span id="cb17-464"><a href="#cb17-464" aria-hidden="true" tabindex="-1"></a>   central estimate (PDF p.33). This is the only place $q$ appears in the code: there is no</span>
+<span id="cb17-465"><a href="#cb17-465" aria-hidden="true" tabindex="-1"></a>   explicit multiplier (<span class="co">[</span><span class="ot">mismatch 5</span><span class="co">](materials.html#mismatches)</span>), and a uniform draw from 0 is a</span>
+<span id="cb17-466"><a href="#cb17-466" aria-hidden="true" tabindex="-1"></a>   different assumption from a survive-or-not coin flip on a fixed base. The paper also states</span>
+<span id="cb17-467"><a href="#cb17-467" aria-hidden="true" tabindex="-1"></a>   the income tax loss is not scaled by $q$: people who left do not come back if the Act is struck</span>
+<span id="cb17-468"><a href="#cb17-468" aria-hidden="true" tabindex="-1"></a>   down (PDF p.33).</span>
+<span id="cb17-469"><a href="#cb17-469" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-470"><a href="#cb17-470" aria-hidden="true" tabindex="-1"></a>The NBER break-even table, from the same <span class="in">`compute_npv_table10()`</span> at the paper&#39;s central</span>
+<span id="cb17-471"><a href="#cb17-471" aria-hidden="true" tabindex="-1"></a>\$36B and \$4.55B:</span>
+<span id="cb17-472"><a href="#cb17-472" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-475"><a href="#cb17-475" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb17-476"><a href="#cb17-476" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: t-nber-table10</span></span>
+<span id="cb17-477"><a href="#cb17-477" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: asis</span></span>
+<span id="cb17-478"><a href="#cb17-478" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: &quot;NBER Table 10 (PDF p.34): same function, NBER central inputs&quot;</span></span>
+<span id="cb17-479"><a href="#cb17-479" aria-hidden="true" tabindex="-1"></a>wt36 <span class="ot">&lt;-</span> <span class="fl">0.5</span> <span class="sc">*</span> nb<span class="sc">$</span>wt_max</span>
+<span id="cb17-480"><a href="#cb17-480" aria-hidden="true" tabindex="-1"></a>n10 <span class="ot">&lt;-</span> <span class="fu">compute_npv_table10</span>(<span class="at">scenarios =</span> <span class="fu">list</span>(<span class="at">central =</span> <span class="fu">list</span>(<span class="at">label =</span> <span class="st">&quot;Central&quot;</span>, <span class="at">WT =</span> wt36, <span class="at">C =</span> <span class="fl">4.55</span>)))</span>
+<span id="cb17-481"><a href="#cb17-481" aria-hidden="true" tabindex="-1"></a>pn <span class="ot">&lt;-</span> printed[printed<span class="sc">$</span>table <span class="sc">==</span> <span class="st">&quot;nber_table10&quot;</span>, ]</span>
+<span id="cb17-482"><a href="#cb17-482" aria-hidden="true" tabindex="-1"></a><span class="fu">scroll</span>(<span class="fu">kable</span>(n10 <span class="sc">%&gt;%</span> <span class="fu">transmute</span>(<span class="st">`</span><span class="at">WT ($B)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">num</span>(WT, <span class="dv">0</span>), <span class="st">`</span><span class="at">C ($B)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">num</span>(C, <span class="dv">2</span>), <span class="st">`</span><span class="at">r - g</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">pct</span>(<span class="dv">100</span> <span class="sc">*</span> r),</span>
+<span id="cb17-483"><a href="#cb17-483" aria-hidden="true" tabindex="-1"></a>                               <span class="st">`</span><span class="at">x*</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">pct</span>(<span class="dv">100</span> <span class="sc">*</span> break_even_pct),</span>
+<span id="cb17-484"><a href="#cb17-484" aria-hidden="true" tabindex="-1"></a>                               <span class="at">printed =</span> <span class="fu">pct</span>(pn<span class="sc">$</span>printed[<span class="fu">match</span>(<span class="fu">paste0</span>(<span class="st">&quot;central@&quot;</span>, r), pn<span class="sc">$</span>row)])),</span>
+<span id="cb17-485"><a href="#cb17-485" aria-hidden="true" tabindex="-1"></a>             <span class="at">align =</span> <span class="st">&quot;rrrrr&quot;</span>, <span class="at">caption =</span> <span class="st">&quot;NBER Table 10 (PDF p.34)&quot;</span>))</span>
+<span id="cb17-486"><a href="#cb17-486" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-487"><a href="#cb17-487" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-488"><a href="#cb17-488" aria-hidden="true" tabindex="-1"></a>The NBER Monte Carlo reproduces its printed summary to within Monte Carlo error with no systematic</span>
+<span id="cb17-489"><a href="#cb17-489" aria-hidden="true" tabindex="-1"></a>gap (table above). Its exact expectation is <span class="in">`r num(tr(&quot;npv_mc_nber_analytic_mean&quot;), 2)`</span> \$B, which</span>
+<span id="cb17-490"><a href="#cb17-490" aria-hidden="true" tabindex="-1"></a>rounds to <span class="in">`r num(tr(&quot;npv_mc_nber_analytic_mean&quot;), 1)`</span> rather than the printed</span>
+<span id="cb17-491"><a href="#cb17-491" aria-hidden="true" tabindex="-1"></a><span class="in">`r num(h(&quot;nber&quot;,&quot;mc_mean_npv&quot;,&quot;printed&quot;))`</span>: here the printed value is the seeded run&#39;s, not the</span>
+<span id="cb17-492"><a href="#cb17-492" aria-hidden="true" tabindex="-1"></a>expectation. The explorer shows the exact expectations and says so.</span>
 <span id="cb17-493"><a href="#cb17-493" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-494"><a href="#cb17-494" aria-hidden="true" tabindex="-1"></a>This section is not in either paper: it re-sorts every input by *how much evidence stands behind</span>
-<span id="cb17-495"><a href="#cb17-495" aria-hidden="true" tabindex="-1"></a>it*, the question a reader who wants to argue with the result has to answer first.</span>
-<span id="cb17-496"><a href="#cb17-496" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-497"><a href="#cb17-497" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**data**: read off a public dataset or the authors&#39; own person-level file, and recomputable from it.</span>
-<span id="cb17-498"><a href="#cb17-498" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**research**: an estimate taken from a published paper.</span>
-<span id="cb17-499"><a href="#cb17-499" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**guesswork**: set by assumption. Some are bounded by evidence, but no dataset or estimate pins</span>
-<span id="cb17-500"><a href="#cb17-500" aria-hidden="true" tabindex="-1"></a>  the value itself.</span>
-<span id="cb17-501"><a href="#cb17-501" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**scenario**: a choice about which policy or counterfactual is being scored.</span>
-<span id="cb17-502"><a href="#cb17-502" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**derived**: a value another row implies.</span>
-<span id="cb17-503"><a href="#cb17-503" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-506"><a href="#cb17-506" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb17-507"><a href="#cb17-507" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: origins</span></span>
-<span id="cb17-508"><a href="#cb17-508" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: asis</span></span>
-<span id="cb17-509"><a href="#cb17-509" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: &quot;every input: the pipeline&#39;s inputs.csv plus the explorer&#39;s seven dials&quot;</span></span>
-<span id="cb17-510"><a href="#cb17-510" aria-hidden="true" tabindex="-1"></a>dials <span class="ot">&lt;-</span> <span class="fu">site_dials</span>(rc)</span>
-<span id="cb17-511"><a href="#cb17-511" aria-hidden="true" tabindex="-1"></a>dial_rows <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, <span class="fu">lapply</span>(dials, <span class="cf">function</span>(d) <span class="fu">data.frame</span>(</span>
-<span id="cb17-512"><a href="#cb17-512" aria-hidden="true" tabindex="-1"></a>  <span class="at">input =</span> d<span class="sc">$</span>key, <span class="at">what =</span> d<span class="sc">$</span>label, <span class="st">`</span><span class="at">value(s)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">paste</span>(d<span class="sc">$</span>labels, <span class="at">collapse =</span> <span class="st">&quot;; &quot;</span>),</span>
-<span id="cb17-513"><a href="#cb17-513" aria-hidden="true" tabindex="-1"></a>  <span class="at">origin =</span> d<span class="sc">$</span>origin, <span class="at">where =</span> <span class="st">&quot;explorer dial (R/site.R)&quot;</span>, <span class="at">check.names =</span> <span class="cn">FALSE</span>)))</span>
-<span id="cb17-514"><a href="#cb17-514" aria-hidden="true" tabindex="-1"></a>inp_rows <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">input =</span> inputs<span class="sc">$</span>input_id, <span class="at">what =</span> inputs<span class="sc">$</span>description,</span>
-<span id="cb17-515"><a href="#cb17-515" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">value(s)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(inputs<span class="sc">$</span>value), <span class="st">&quot;1.5% to 4.5%&quot;</span>, <span class="fu">vapply</span>(inputs<span class="sc">$</span>value, <span class="cf">function</span>(v) <span class="fu">format</span>(<span class="fu">signif</span>(v, <span class="dv">6</span>)), <span class="st">&quot;&quot;</span>)),</span>
-<span id="cb17-516"><a href="#cb17-516" aria-hidden="true" tabindex="-1"></a>  <span class="at">origin =</span> inputs<span class="sc">$</span>label, <span class="at">where =</span> inputs<span class="sc">$</span>source, <span class="at">check.names =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb17-517"><a href="#cb17-517" aria-hidden="true" tabindex="-1"></a>odf <span class="ot">&lt;-</span> <span class="fu">rbind</span>(inp_rows, dial_rows)</span>
-<span id="cb17-518"><a href="#cb17-518" aria-hidden="true" tabindex="-1"></a><span class="fu">scroll</span>(<span class="fu">kable</span>(odf, <span class="at">caption =</span> <span class="st">&quot;Inputs by origin (export/r/inputs.csv, then the explorer&#39;s dials)&quot;</span>))</span>
-<span id="cb17-519"><a href="#cb17-519" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb17-520"><a href="#cb17-520" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-523"><a href="#cb17-523" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb17-524"><a href="#cb17-524" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: origins-count</span></span>
-<span id="cb17-525"><a href="#cb17-525" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: asis</span></span>
-<span id="cb17-526"><a href="#cb17-526" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: &quot;how many of each kind&quot;</span></span>
-<span id="cb17-527"><a href="#cb17-527" aria-hidden="true" tabindex="-1"></a>cnt <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">table</span>(<span class="fu">factor</span>(odf<span class="sc">$</span>origin, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;data&quot;</span>, <span class="st">&quot;research&quot;</span>, <span class="st">&quot;guesswork&quot;</span>, <span class="st">&quot;scenario&quot;</span>, <span class="st">&quot;derived&quot;</span>))))</span>
-<span id="cb17-528"><a href="#cb17-528" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(cnt) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;origin&quot;</span>, <span class="st">&quot;rows&quot;</span>)</span>
-<span id="cb17-529"><a href="#cb17-529" aria-hidden="true" tabindex="-1"></a>n_guess_dials <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">vapply</span>(dials, <span class="cf">function</span>(d) d<span class="sc">$</span>origin <span class="sc">==</span> <span class="st">&quot;guesswork&quot;</span>, <span class="fu">logical</span>(<span class="dv">1</span>)))</span>
-<span id="cb17-530"><a href="#cb17-530" aria-hidden="true" tabindex="-1"></a><span class="fu">scroll</span>(<span class="fu">kable</span>(cnt))</span>
-<span id="cb17-531"><a href="#cb17-531" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb17-532"><a href="#cb17-532" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-533"><a href="#cb17-533" aria-hidden="true" tabindex="-1"></a>**The headline:** <span class="in">`r n_guess_dials`</span> of the <span class="in">`r length(dials)`</span> inputs that move the result in the</span>
-<span id="cb17-534"><a href="#cb17-534" aria-hidden="true" tabindex="-1"></a>explorer are guesswork. The one labelled data, the revenue ceiling, rests on a legal judgement</span>
-<span id="cb17-535"><a href="#cb17-535" aria-hidden="true" tabindex="-1"></a>about who counts as having left (disputes row 3). The data and research inputs (the Forbes base,</span>
-<span id="cb17-536"><a href="#cb17-536" aria-hidden="true" tabindex="-1"></a>the FTB brackets, the Pareto fit, the Swiss semi-elasticity) fix the *scale*; whether the NPV is</span>
-<span id="cb17-537"><a href="#cb17-537" aria-hidden="true" tabindex="-1"></a>negative is decided by the guesswork: how wide the revenue draw is, where the income tax range</span>
-<span id="cb17-538"><a href="#cb17-538" aria-hidden="true" tabindex="-1"></a>stops, which rate is used, and whether the lost income tax is permanent.</span>
-<span id="cb17-539"><a href="#cb17-539" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-540"><a href="#cb17-540" aria-hidden="true" tabindex="-1"></a><span class="fu">## What reproduces</span></span>
+<span id="cb17-494"><a href="#cb17-494" aria-hidden="true" tabindex="-1"></a><span class="fu">## Every input, by origin {#every-input-by-origin}</span></span>
+<span id="cb17-495"><a href="#cb17-495" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-496"><a href="#cb17-496" aria-hidden="true" tabindex="-1"></a>This section is not in either paper: it re-sorts every input by *how much evidence stands behind</span>
+<span id="cb17-497"><a href="#cb17-497" aria-hidden="true" tabindex="-1"></a>it*, the question a reader who wants to argue with the result has to answer first.</span>
+<span id="cb17-498"><a href="#cb17-498" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-499"><a href="#cb17-499" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**data**: read off a public dataset or the authors&#39; own person-level file, and recomputable from it.</span>
+<span id="cb17-500"><a href="#cb17-500" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**research**: an estimate taken from a published paper.</span>
+<span id="cb17-501"><a href="#cb17-501" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**guesswork**: set by assumption. Some are bounded by evidence, but no dataset or estimate pins</span>
+<span id="cb17-502"><a href="#cb17-502" aria-hidden="true" tabindex="-1"></a>  the value itself.</span>
+<span id="cb17-503"><a href="#cb17-503" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**scenario**: a choice about which policy or counterfactual is being scored.</span>
+<span id="cb17-504"><a href="#cb17-504" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**derived**: a value another row implies.</span>
+<span id="cb17-505"><a href="#cb17-505" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-508"><a href="#cb17-508" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb17-509"><a href="#cb17-509" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: origins</span></span>
+<span id="cb17-510"><a href="#cb17-510" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: asis</span></span>
+<span id="cb17-511"><a href="#cb17-511" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: &quot;every input: the pipeline&#39;s inputs.csv plus the explorer&#39;s seven dials&quot;</span></span>
+<span id="cb17-512"><a href="#cb17-512" aria-hidden="true" tabindex="-1"></a>dials <span class="ot">&lt;-</span> <span class="fu">site_dials</span>(rc)</span>
+<span id="cb17-513"><a href="#cb17-513" aria-hidden="true" tabindex="-1"></a>dial_rows <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, <span class="fu">lapply</span>(dials, <span class="cf">function</span>(d) <span class="fu">data.frame</span>(</span>
+<span id="cb17-514"><a href="#cb17-514" aria-hidden="true" tabindex="-1"></a>  <span class="at">input =</span> d<span class="sc">$</span>key, <span class="at">what =</span> d<span class="sc">$</span>label, <span class="st">`</span><span class="at">value(s)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">paste</span>(d<span class="sc">$</span>labels, <span class="at">collapse =</span> <span class="st">&quot;; &quot;</span>),</span>
+<span id="cb17-515"><a href="#cb17-515" aria-hidden="true" tabindex="-1"></a>  <span class="at">origin =</span> d<span class="sc">$</span>origin, <span class="at">where =</span> <span class="st">&quot;explorer dial (R/site.R)&quot;</span>, <span class="at">check.names =</span> <span class="cn">FALSE</span>)))</span>
+<span id="cb17-516"><a href="#cb17-516" aria-hidden="true" tabindex="-1"></a>inp_rows <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">input =</span> inputs<span class="sc">$</span>input_id, <span class="at">what =</span> inputs<span class="sc">$</span>description,</span>
+<span id="cb17-517"><a href="#cb17-517" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">value(s)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(inputs<span class="sc">$</span>value), <span class="st">&quot;1.5% to 4.5%&quot;</span>, <span class="fu">vapply</span>(inputs<span class="sc">$</span>value, <span class="cf">function</span>(v) <span class="fu">format</span>(<span class="fu">signif</span>(v, <span class="dv">6</span>)), <span class="st">&quot;&quot;</span>)),</span>
+<span id="cb17-518"><a href="#cb17-518" aria-hidden="true" tabindex="-1"></a>  <span class="at">origin =</span> inputs<span class="sc">$</span>label, <span class="at">where =</span> inputs<span class="sc">$</span>source, <span class="at">check.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb17-519"><a href="#cb17-519" aria-hidden="true" tabindex="-1"></a>odf <span class="ot">&lt;-</span> <span class="fu">rbind</span>(inp_rows, dial_rows)</span>
+<span id="cb17-520"><a href="#cb17-520" aria-hidden="true" tabindex="-1"></a><span class="fu">scroll</span>(<span class="fu">kable</span>(odf, <span class="at">caption =</span> <span class="st">&quot;Inputs by origin (export/r/inputs.csv, then the explorer&#39;s dials)&quot;</span>))</span>
+<span id="cb17-521"><a href="#cb17-521" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-522"><a href="#cb17-522" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-525"><a href="#cb17-525" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb17-526"><a href="#cb17-526" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: origins-count</span></span>
+<span id="cb17-527"><a href="#cb17-527" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: asis</span></span>
+<span id="cb17-528"><a href="#cb17-528" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: &quot;how many of each kind&quot;</span></span>
+<span id="cb17-529"><a href="#cb17-529" aria-hidden="true" tabindex="-1"></a>cnt <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">table</span>(<span class="fu">factor</span>(odf<span class="sc">$</span>origin, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;data&quot;</span>, <span class="st">&quot;research&quot;</span>, <span class="st">&quot;guesswork&quot;</span>, <span class="st">&quot;scenario&quot;</span>, <span class="st">&quot;derived&quot;</span>))))</span>
+<span id="cb17-530"><a href="#cb17-530" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(cnt) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;origin&quot;</span>, <span class="st">&quot;rows&quot;</span>)</span>
+<span id="cb17-531"><a href="#cb17-531" aria-hidden="true" tabindex="-1"></a>n_guess_dials <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">vapply</span>(dials, <span class="cf">function</span>(d) d<span class="sc">$</span>origin <span class="sc">==</span> <span class="st">&quot;guesswork&quot;</span>, <span class="fu">logical</span>(<span class="dv">1</span>)))</span>
+<span id="cb17-532"><a href="#cb17-532" aria-hidden="true" tabindex="-1"></a><span class="fu">scroll</span>(<span class="fu">kable</span>(cnt))</span>
+<span id="cb17-533"><a href="#cb17-533" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-534"><a href="#cb17-534" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-535"><a href="#cb17-535" aria-hidden="true" tabindex="-1"></a>**The headline:** <span class="in">`r n_guess_dials`</span> of the <span class="in">`r length(dials)`</span> inputs that move the result in the</span>
+<span id="cb17-536"><a href="#cb17-536" aria-hidden="true" tabindex="-1"></a>explorer are guesswork. The one labelled data, the revenue ceiling, rests on a legal judgement</span>
+<span id="cb17-537"><a href="#cb17-537" aria-hidden="true" tabindex="-1"></a>about who counts as having left (disputes row 3). The data and research inputs (the Forbes base,</span>
+<span id="cb17-538"><a href="#cb17-538" aria-hidden="true" tabindex="-1"></a>the FTB brackets, the Pareto fit, the Swiss semi-elasticity) fix the *scale*; whether the NPV is</span>
+<span id="cb17-539"><a href="#cb17-539" aria-hidden="true" tabindex="-1"></a>negative is decided by the guesswork: how wide the revenue draw is, where the income tax range</span>
+<span id="cb17-540"><a href="#cb17-540" aria-hidden="true" tabindex="-1"></a>stops, which rate is used, and whether the lost income tax is permanent.</span>
 <span id="cb17-541"><a href="#cb17-541" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-544"><a href="#cb17-544" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb17-545"><a href="#cb17-545" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: mismatch-summary</span></span>
-<span id="cb17-546"><a href="#cb17-546" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: asis</span></span>
-<span id="cb17-547"><a href="#cb17-547" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: &quot;every exported output against its printed value (export/r/outputs.csv)&quot;</span></span>
-<span id="cb17-548"><a href="#cb17-548" aria-hidden="true" tabindex="-1"></a>o <span class="ot">&lt;-</span> outputs <span class="sc">%&gt;%</span> <span class="fu">transmute</span>(<span class="at">output =</span> output_id, version, <span class="at">reproduced =</span> <span class="fu">signif</span>(value, <span class="dv">6</span>),</span>
-<span id="cb17-549"><a href="#cb17-549" aria-hidden="true" tabindex="-1"></a>  <span class="at">printed =</span> printed_value, <span class="st">`</span><span class="at">abs diff</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">signif</span>(abs_diff, <span class="dv">2</span>),</span>
-<span id="cb17-550"><a href="#cb17-550" aria-hidden="true" tabindex="-1"></a>  <span class="at">page =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(printed_page), <span class="st">&quot;NBER&quot;</span>, printed_page))</span>
-<span id="cb17-551"><a href="#cb17-551" aria-hidden="true" tabindex="-1"></a><span class="fu">scroll</span>(<span class="fu">kable</span>(o))</span>
-<span id="cb17-552"><a href="#cb17-552" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb17-553"><a href="#cb17-553" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-554"><a href="#cb17-554" aria-hidden="true" tabindex="-1"></a>Every figure reproduces from the authors&#39; own code to within the tolerances in</span>
-<span id="cb17-555"><a href="#cb17-555" aria-hidden="true" tabindex="-1"></a><span class="in">`tests/testthat/`</span> (printed rounding for deterministic figures, four Monte Carlo standard errors</span>
-<span id="cb17-556"><a href="#cb17-556" aria-hidden="true" tabindex="-1"></a>for simulated ones). The largest gap is <span class="in">`r outputs$output_id[which.max(outputs$abs_diff)]`</span></span>
-<span id="cb17-557"><a href="#cb17-557" aria-hidden="true" tabindex="-1"></a>(<span class="in">`r num(max(outputs$abs_diff), 2)`</span>), mismatch 9.</span>
-<span id="cb17-558"><a href="#cb17-558" aria-hidden="true" tabindex="-1"></a><span class="in">`r sum(grepl(&quot;^## [0-9]+\\.&quot;, readLines(&quot;../MISMATCHES.md&quot;)))`</span> discrepancies were found between the</span>
-<span id="cb17-559"><a href="#cb17-559" aria-hidden="true" tabindex="-1"></a>papers, their READMEs and their code. We record them rather than fix them:</span>
-<span id="cb17-560"><a href="#cb17-560" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-563"><a href="#cb17-563" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb17-564"><a href="#cb17-564" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: mismatch-list</span></span>
-<span id="cb17-565"><a href="#cb17-565" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: asis</span></span>
-<span id="cb17-566"><a href="#cb17-566" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: &quot;the nine mismatches, parsed from MISMATCHES.md&quot;</span></span>
-<span id="cb17-567"><a href="#cb17-567" aria-hidden="true" tabindex="-1"></a>mm_lines <span class="ot">&lt;-</span> <span class="fu">grep</span>(<span class="st">&quot;^## [0-9]+</span><span class="sc">\\</span><span class="st">.&quot;</span>, <span class="fu">readLines</span>(<span class="st">&quot;../MISMATCHES.md&quot;</span>), <span class="at">value =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb17-568"><a href="#cb17-568" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">paste0</span>(<span class="fu">sub</span>(<span class="st">&quot;^## &quot;</span>, <span class="st">&quot;&quot;</span>, mm_lines), <span class="at">collapse =</span> <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>), <span class="st">&quot;</span><span class="sc">\n\n</span><span class="st">Full text: [the materials page](materials.html#mismatches).</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
-<span id="cb17-569"><a href="#cb17-569" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb17-570"><a href="#cb17-570" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-571"><a href="#cb17-571" aria-hidden="true" tabindex="-1"></a><span class="fu">### Internal identities {#internal-identities}</span></span>
+<span id="cb17-542"><a href="#cb17-542" aria-hidden="true" tabindex="-1"></a><span class="fu">## What reproduces</span></span>
+<span id="cb17-543"><a href="#cb17-543" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-546"><a href="#cb17-546" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb17-547"><a href="#cb17-547" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: mismatch-summary</span></span>
+<span id="cb17-548"><a href="#cb17-548" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: asis</span></span>
+<span id="cb17-549"><a href="#cb17-549" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: &quot;every exported output against its printed value (export/r/outputs.csv)&quot;</span></span>
+<span id="cb17-550"><a href="#cb17-550" aria-hidden="true" tabindex="-1"></a>o <span class="ot">&lt;-</span> outputs <span class="sc">%&gt;%</span> <span class="fu">transmute</span>(<span class="at">output =</span> output_id, version, <span class="at">reproduced =</span> <span class="fu">signif</span>(value, <span class="dv">6</span>),</span>
+<span id="cb17-551"><a href="#cb17-551" aria-hidden="true" tabindex="-1"></a>  <span class="at">printed =</span> printed_value, <span class="st">`</span><span class="at">abs diff</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">signif</span>(abs_diff, <span class="dv">2</span>),</span>
+<span id="cb17-552"><a href="#cb17-552" aria-hidden="true" tabindex="-1"></a>  <span class="at">page =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(printed_page), <span class="st">&quot;NBER&quot;</span>, printed_page))</span>
+<span id="cb17-553"><a href="#cb17-553" aria-hidden="true" tabindex="-1"></a><span class="fu">scroll</span>(<span class="fu">kable</span>(o))</span>
+<span id="cb17-554"><a href="#cb17-554" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-555"><a href="#cb17-555" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-556"><a href="#cb17-556" aria-hidden="true" tabindex="-1"></a>Every figure reproduces from the authors&#39; own code to within the tolerances in</span>
+<span id="cb17-557"><a href="#cb17-557" aria-hidden="true" tabindex="-1"></a><span class="in">`tests/testthat/`</span> (printed rounding for deterministic figures, four Monte Carlo standard errors</span>
+<span id="cb17-558"><a href="#cb17-558" aria-hidden="true" tabindex="-1"></a>for simulated ones). The largest gap is <span class="in">`r outputs$output_id[which.max(outputs$abs_diff)]`</span></span>
+<span id="cb17-559"><a href="#cb17-559" aria-hidden="true" tabindex="-1"></a>(<span class="in">`r num(max(outputs$abs_diff), 2)`</span>), mismatch 9.</span>
+<span id="cb17-560"><a href="#cb17-560" aria-hidden="true" tabindex="-1"></a><span class="in">`r sum(grepl(&quot;^## [0-9]+\\.&quot;, readLines(&quot;../MISMATCHES.md&quot;)))`</span> discrepancies were found between the</span>
+<span id="cb17-561"><a href="#cb17-561" aria-hidden="true" tabindex="-1"></a>papers, their READMEs and their code. We record them rather than fix them:</span>
+<span id="cb17-562"><a href="#cb17-562" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-565"><a href="#cb17-565" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb17-566"><a href="#cb17-566" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: mismatch-list</span></span>
+<span id="cb17-567"><a href="#cb17-567" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: asis</span></span>
+<span id="cb17-568"><a href="#cb17-568" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: &quot;the nine mismatches, parsed from MISMATCHES.md&quot;</span></span>
+<span id="cb17-569"><a href="#cb17-569" aria-hidden="true" tabindex="-1"></a>mm_lines <span class="ot">&lt;-</span> <span class="fu">grep</span>(<span class="st">&quot;^## [0-9]+</span><span class="sc">\\</span><span class="st">.&quot;</span>, <span class="fu">readLines</span>(<span class="st">&quot;../MISMATCHES.md&quot;</span>), <span class="at">value =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb17-570"><a href="#cb17-570" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">paste0</span>(<span class="fu">sub</span>(<span class="st">&quot;^## &quot;</span>, <span class="st">&quot;&quot;</span>, mm_lines), <span class="at">collapse =</span> <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>), <span class="st">&quot;</span><span class="sc">\n\n</span><span class="st">Full text: [the materials page](materials.html#mismatches).</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb17-571"><a href="#cb17-571" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb17-572"><a href="#cb17-572" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-573"><a href="#cb17-573" aria-hidden="true" tabindex="-1"></a>Checks against things that are not inputs to anything:</span>
+<span id="cb17-573"><a href="#cb17-573" aria-hidden="true" tabindex="-1"></a><span class="fu">### Internal identities {#internal-identities}</span></span>
 <span id="cb17-574"><a href="#cb17-574" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-577"><a href="#cb17-577" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb17-578"><a href="#cb17-578" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: identities</span></span>
-<span id="cb17-579"><a href="#cb17-579" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: asis</span></span>
-<span id="cb17-580"><a href="#cb17-580" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: &quot;internal consistency checks&quot;</span></span>
-<span id="cb17-581"><a href="#cb17-581" aria-hidden="true" tabindex="-1"></a>x10 <span class="ot">&lt;-</span> t10 <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(t9 <span class="sc">%&gt;%</span> <span class="fu">select</span>(scenario, r, WT, C), <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;scenario&quot;</span>, <span class="st">&quot;r&quot;</span>, <span class="st">&quot;WT&quot;</span>, <span class="st">&quot;C&quot;</span>))</span>
-<span id="cb17-582"><a href="#cb17-582" aria-hidden="true" tabindex="-1"></a>npv_at_breakeven <span class="ot">&lt;-</span> <span class="fu">with</span>(x10, WT <span class="sc">-</span> break_even_pct <span class="sc">*</span> C <span class="sc">/</span> r)</span>
-<span id="cb17-583"><a href="#cb17-583" aria-hidden="true" tabindex="-1"></a>s_cell <span class="ot">&lt;-</span> <span class="fu">site_grid_cell</span>(grid, <span class="fu">as.list</span>(<span class="fu">site_named</span>()<span class="sc">$</span>ssrn))</span>
-<span id="cb17-584"><a href="#cb17-584" aria-hidden="true" tabindex="-1"></a>n_cell <span class="ot">&lt;-</span> <span class="fu">site_grid_cell</span>(grid, <span class="fu">as.list</span>(<span class="fu">site_named</span>()<span class="sc">$</span>nber))</span>
-<span id="cb17-585"><a href="#cb17-585" aria-hidden="true" tabindex="-1"></a>se_s <span class="ot">&lt;-</span> mcs<span class="sc">$</span>summary<span class="sc">$</span>sd <span class="sc">/</span> <span class="fu">sqrt</span>(mcs<span class="sc">$</span>summary<span class="sc">$</span>n); se_n <span class="ot">&lt;-</span> mcn<span class="sc">$</span>summary<span class="sc">$</span>sd <span class="sc">/</span> <span class="fu">sqrt</span>(mcn<span class="sc">$</span>summary<span class="sc">$</span>n)</span>
-<span id="cb17-586"><a href="#cb17-586" aria-hidden="true" tabindex="-1"></a>checks <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb17-587"><a href="#cb17-587" aria-hidden="true" tabindex="-1"></a>  <span class="at">identity =</span> <span class="fu">c</span>(</span>
-<span id="cb17-588"><a href="#cb17-588" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Table 10&#39;s x* plugged into Table 9&#39;s formula gives NPV = 0 (max |NPV|, $B)&quot;</span>,</span>
-<span id="cb17-589"><a href="#cb17-589" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Grid&#39;s SSRN cell equals the pipeline&#39;s analytic mean (abs diff, $B)&quot;</span>,</span>
-<span id="cb17-590"><a href="#cb17-590" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Grid&#39;s NBER cell equals the pipeline&#39;s analytic mean (abs diff, $B)&quot;</span>,</span>
-<span id="cb17-591"><a href="#cb17-591" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;SSRN seeded MC mean vs exact expectation, in MC standard errors&quot;</span>,</span>
-<span id="cb17-592"><a href="#cb17-592" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;NBER seeded MC mean vs exact expectation, in MC standard errors&quot;</span>,</span>
-<span id="cb17-593"><a href="#cb17-593" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;SSRN share negative: quadrature vs seeded MC (points)&quot;</span>,</span>
-<span id="cb17-594"><a href="#cb17-594" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;NBER share negative: quadrature vs seeded MC (points)&quot;</span>,</span>
-<span id="cb17-595"><a href="#cb17-595" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;NBER ceiling: domestic total minus the 7 departures, recomputed minus the script&#39;s 72 ($B)&quot;</span>),</span>
-<span id="cb17-596"><a href="#cb17-596" aria-hidden="true" tabindex="-1"></a>  <span class="at">value =</span> <span class="fu">c</span>(<span class="fu">max</span>(<span class="fu">abs</span>(npv_at_breakeven)),</span>
-<span id="cb17-597"><a href="#cb17-597" aria-hidden="true" tabindex="-1"></a>    <span class="fu">abs</span>(s_cell<span class="sc">$</span>mean_npv <span class="sc">-</span> <span class="fu">tr</span>(<span class="st">&quot;npv_mc_ssrn_analytic_mean&quot;</span>)),</span>
-<span id="cb17-598"><a href="#cb17-598" aria-hidden="true" tabindex="-1"></a>    <span class="fu">abs</span>(n_cell<span class="sc">$</span>mean_npv <span class="sc">-</span> <span class="fu">tr</span>(<span class="st">&quot;npv_mc_nber_analytic_mean&quot;</span>)),</span>
-<span id="cb17-599"><a href="#cb17-599" aria-hidden="true" tabindex="-1"></a>    (mcs<span class="sc">$</span>summary<span class="sc">$</span>mean <span class="sc">-</span> <span class="fu">tr</span>(<span class="st">&quot;npv_mc_ssrn_analytic_mean&quot;</span>)) <span class="sc">/</span> se_s,</span>
-<span id="cb17-600"><a href="#cb17-600" aria-hidden="true" tabindex="-1"></a>    (mcn<span class="sc">$</span>summary<span class="sc">$</span>mean <span class="sc">-</span> <span class="fu">tr</span>(<span class="st">&quot;npv_mc_nber_analytic_mean&quot;</span>)) <span class="sc">/</span> se_n,</span>
-<span id="cb17-601"><a href="#cb17-601" aria-hidden="true" tabindex="-1"></a>    s_cell<span class="sc">$</span>pct_negative <span class="sc">-</span> mcs<span class="sc">$</span>summary<span class="sc">$</span>pct_negative,</span>
-<span id="cb17-602"><a href="#cb17-602" aria-hidden="true" tabindex="-1"></a>    n_cell<span class="sc">$</span>pct_negative <span class="sc">-</span> mcn<span class="sc">$</span>summary<span class="sc">$</span>pct_negative,</span>
-<span id="cb17-603"><a href="#cb17-603" aria-hidden="true" tabindex="-1"></a>    nc<span class="sc">$</span>ceiling_recomputed <span class="sc">-</span> nb<span class="sc">$</span>wt_max))</span>
-<span id="cb17-604"><a href="#cb17-604" aria-hidden="true" tabindex="-1"></a>checks<span class="sc">$</span>value <span class="ot">&lt;-</span> <span class="fu">vapply</span>(checks<span class="sc">$</span>value, <span class="cf">function</span>(v) <span class="fu">format</span>(<span class="fu">signif</span>(v, <span class="dv">3</span>)), <span class="st">&quot;&quot;</span>)</span>
-<span id="cb17-605"><a href="#cb17-605" aria-hidden="true" tabindex="-1"></a><span class="fu">scroll</span>(<span class="fu">kable</span>(checks))</span>
-<span id="cb17-606"><a href="#cb17-606" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb17-607"><a href="#cb17-607" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-608"><a href="#cb17-608" aria-hidden="true" tabindex="-1"></a>Both seeded means sit within about one Monte Carlo standard error of the exact expectation, on</span>
-<span id="cb17-609"><a href="#cb17-609" aria-hidden="true" tabindex="-1"></a>opposite sides, which is why the SSRN printed mean matches the expectation while the NBER printed</span>
-<span id="cb17-610"><a href="#cb17-610" aria-hidden="true" tabindex="-1"></a>mean matches the seeded run.</span>
-<span id="cb17-611"><a href="#cb17-611" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-612"><a href="#cb17-612" aria-hidden="true" tabindex="-1"></a><span class="fu">## Reproducing this document</span></span>
+<span id="cb17-575"><a href="#cb17-575" aria-hidden="true" tabindex="-1"></a>Checks against things that are not inputs to anything:</span>
+<span id="cb17-576"><a href="#cb17-576" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-579"><a href="#cb17-579" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb17-580"><a href="#cb17-580" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: identities</span></span>
+<span id="cb17-581"><a href="#cb17-581" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: asis</span></span>
+<span id="cb17-582"><a href="#cb17-582" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: &quot;internal consistency checks&quot;</span></span>
+<span id="cb17-583"><a href="#cb17-583" aria-hidden="true" tabindex="-1"></a>x10 <span class="ot">&lt;-</span> t10 <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(t9 <span class="sc">%&gt;%</span> <span class="fu">select</span>(scenario, r, WT, C), <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;scenario&quot;</span>, <span class="st">&quot;r&quot;</span>, <span class="st">&quot;WT&quot;</span>, <span class="st">&quot;C&quot;</span>))</span>
+<span id="cb17-584"><a href="#cb17-584" aria-hidden="true" tabindex="-1"></a>npv_at_breakeven <span class="ot">&lt;-</span> <span class="fu">with</span>(x10, WT <span class="sc">-</span> break_even_pct <span class="sc">*</span> C <span class="sc">/</span> r)</span>
+<span id="cb17-585"><a href="#cb17-585" aria-hidden="true" tabindex="-1"></a>s_cell <span class="ot">&lt;-</span> <span class="fu">site_grid_cell</span>(grid, <span class="fu">as.list</span>(<span class="fu">site_named</span>()<span class="sc">$</span>ssrn))</span>
+<span id="cb17-586"><a href="#cb17-586" aria-hidden="true" tabindex="-1"></a>n_cell <span class="ot">&lt;-</span> <span class="fu">site_grid_cell</span>(grid, <span class="fu">as.list</span>(<span class="fu">site_named</span>()<span class="sc">$</span>nber))</span>
+<span id="cb17-587"><a href="#cb17-587" aria-hidden="true" tabindex="-1"></a>se_s <span class="ot">&lt;-</span> mcs<span class="sc">$</span>summary<span class="sc">$</span>sd <span class="sc">/</span> <span class="fu">sqrt</span>(mcs<span class="sc">$</span>summary<span class="sc">$</span>n); se_n <span class="ot">&lt;-</span> mcn<span class="sc">$</span>summary<span class="sc">$</span>sd <span class="sc">/</span> <span class="fu">sqrt</span>(mcn<span class="sc">$</span>summary<span class="sc">$</span>n)</span>
+<span id="cb17-588"><a href="#cb17-588" aria-hidden="true" tabindex="-1"></a>checks <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb17-589"><a href="#cb17-589" aria-hidden="true" tabindex="-1"></a>  <span class="at">identity =</span> <span class="fu">c</span>(</span>
+<span id="cb17-590"><a href="#cb17-590" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Table 10&#39;s x* plugged into Table 9&#39;s formula gives NPV = 0 (max |NPV|, $B)&quot;</span>,</span>
+<span id="cb17-591"><a href="#cb17-591" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Grid&#39;s SSRN cell equals the pipeline&#39;s analytic mean (abs diff, $B)&quot;</span>,</span>
+<span id="cb17-592"><a href="#cb17-592" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Grid&#39;s NBER cell equals the pipeline&#39;s analytic mean (abs diff, $B)&quot;</span>,</span>
+<span id="cb17-593"><a href="#cb17-593" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;SSRN seeded MC mean vs exact expectation, in MC standard errors&quot;</span>,</span>
+<span id="cb17-594"><a href="#cb17-594" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;NBER seeded MC mean vs exact expectation, in MC standard errors&quot;</span>,</span>
+<span id="cb17-595"><a href="#cb17-595" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;SSRN share negative: quadrature vs seeded MC (points)&quot;</span>,</span>
+<span id="cb17-596"><a href="#cb17-596" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;NBER share negative: quadrature vs seeded MC (points)&quot;</span>,</span>
+<span id="cb17-597"><a href="#cb17-597" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;NBER ceiling: domestic total minus the 7 departures, recomputed minus the script&#39;s 72 ($B)&quot;</span>),</span>
+<span id="cb17-598"><a href="#cb17-598" aria-hidden="true" tabindex="-1"></a>  <span class="at">value =</span> <span class="fu">c</span>(<span class="fu">max</span>(<span class="fu">abs</span>(npv_at_breakeven)),</span>
+<span id="cb17-599"><a href="#cb17-599" aria-hidden="true" tabindex="-1"></a>    <span class="fu">abs</span>(s_cell<span class="sc">$</span>mean_npv <span class="sc">-</span> <span class="fu">tr</span>(<span class="st">&quot;npv_mc_ssrn_analytic_mean&quot;</span>)),</span>
+<span id="cb17-600"><a href="#cb17-600" aria-hidden="true" tabindex="-1"></a>    <span class="fu">abs</span>(n_cell<span class="sc">$</span>mean_npv <span class="sc">-</span> <span class="fu">tr</span>(<span class="st">&quot;npv_mc_nber_analytic_mean&quot;</span>)),</span>
+<span id="cb17-601"><a href="#cb17-601" aria-hidden="true" tabindex="-1"></a>    (mcs<span class="sc">$</span>summary<span class="sc">$</span>mean <span class="sc">-</span> <span class="fu">tr</span>(<span class="st">&quot;npv_mc_ssrn_analytic_mean&quot;</span>)) <span class="sc">/</span> se_s,</span>
+<span id="cb17-602"><a href="#cb17-602" aria-hidden="true" tabindex="-1"></a>    (mcn<span class="sc">$</span>summary<span class="sc">$</span>mean <span class="sc">-</span> <span class="fu">tr</span>(<span class="st">&quot;npv_mc_nber_analytic_mean&quot;</span>)) <span class="sc">/</span> se_n,</span>
+<span id="cb17-603"><a href="#cb17-603" aria-hidden="true" tabindex="-1"></a>    s_cell<span class="sc">$</span>pct_negative <span class="sc">-</span> mcs<span class="sc">$</span>summary<span class="sc">$</span>pct_negative,</span>
+<span id="cb17-604"><a href="#cb17-604" aria-hidden="true" tabindex="-1"></a>    n_cell<span class="sc">$</span>pct_negative <span class="sc">-</span> mcn<span class="sc">$</span>summary<span class="sc">$</span>pct_negative,</span>
+<span id="cb17-605"><a href="#cb17-605" aria-hidden="true" tabindex="-1"></a>    nc<span class="sc">$</span>ceiling_recomputed <span class="sc">-</span> nb<span class="sc">$</span>wt_max))</span>
+<span id="cb17-606"><a href="#cb17-606" aria-hidden="true" tabindex="-1"></a>checks<span class="sc">$</span>value <span class="ot">&lt;-</span> <span class="fu">vapply</span>(checks<span class="sc">$</span>value, <span class="cf">function</span>(v) <span class="fu">format</span>(<span class="fu">signif</span>(v, <span class="dv">3</span>)), <span class="st">&quot;&quot;</span>)</span>
+<span id="cb17-607"><a href="#cb17-607" aria-hidden="true" tabindex="-1"></a><span class="fu">scroll</span>(<span class="fu">kable</span>(checks))</span>
+<span id="cb17-608"><a href="#cb17-608" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-609"><a href="#cb17-609" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-610"><a href="#cb17-610" aria-hidden="true" tabindex="-1"></a>Both seeded means sit within about one Monte Carlo standard error of the exact expectation, on</span>
+<span id="cb17-611"><a href="#cb17-611" aria-hidden="true" tabindex="-1"></a>opposite sides, which is why the SSRN printed mean matches the expectation while the NBER printed</span>
+<span id="cb17-612"><a href="#cb17-612" aria-hidden="true" tabindex="-1"></a>mean matches the seeded run.</span>
 <span id="cb17-613"><a href="#cb17-613" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-614"><a href="#cb17-614" aria-hidden="true" tabindex="-1"></a><span class="in">```sh</span></span>
-<span id="cb17-615"><a href="#cb17-615" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> rjkdc-analysis</span>
-<span id="cb17-616"><a href="#cb17-616" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">RAUH_REPO_DIR</span><span class="op">=</span>/path/to/wealth_tax     <span class="co"># clone of github.com/bjaros20/wealth_tax at 25e84dd</span></span>
-<span id="cb17-617"><a href="#cb17-617" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">-e</span> <span class="st">&#39;targets::tar_make()&#39;</span>             <span class="co"># writes the targets store, export/r/, site/data/, site/explorer/grid.js</span></span>
-<span id="cb17-618"><a href="#cb17-618" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> tests/testthat.R                     <span class="co"># full suite</span></span>
-<span id="cb17-619"><a href="#cb17-619" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render site/repro.qmd</span>
-<span id="cb17-620"><a href="#cb17-620" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb17-621"><a href="#cb17-621" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-622"><a href="#cb17-622" aria-hidden="true" tabindex="-1"></a>The authors&#39; repository is MIT licensed but not redistributed here; the tests that re-run the</span>
-<span id="cb17-623"><a href="#cb17-623" aria-hidden="true" tabindex="-1"></a>authors&#39; own scripts skip cleanly without it, and the rest of the suite does not need it.</span>
-<span id="cb17-624"><a href="#cb17-624" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-625"><a href="#cb17-625" aria-hidden="true" tabindex="-1"></a>::: {.site-nav}</span>
-<span id="cb17-626"><a href="#cb17-626" aria-hidden="true" tabindex="-1"></a>Part of an Open Policy Analysis of Rauh et al. (2026) on California Proposition 40:</span>
-<span id="cb17-627"><a href="#cb17-627" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">Open Output (the explorer)</span><span class="co">](explorer/)</span> <span class="dv">&amp;middot;</span> Open Analysis: Report (here) and</span>
-<span id="cb17-628"><a href="#cb17-628" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">Slides</span><span class="co">](slides/slides.html)</span> <span class="dv">&amp;middot;</span></span>
-<span id="cb17-629"><a href="#cb17-629" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">Open Materials</span><span class="co">](materials.html)</span> <span class="dv">&amp;middot;</span></span>
-<span id="cb17-630"><a href="#cb17-630" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">Overview</span><span class="co">](index.html)</span></span>
-<span id="cb17-631"><a href="#cb17-631" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb17-614"><a href="#cb17-614" aria-hidden="true" tabindex="-1"></a><span class="fu">## Reproducing this document</span></span>
+<span id="cb17-615"><a href="#cb17-615" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-616"><a href="#cb17-616" aria-hidden="true" tabindex="-1"></a><span class="in">```sh</span></span>
+<span id="cb17-617"><a href="#cb17-617" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> rjkdc-analysis</span>
+<span id="cb17-618"><a href="#cb17-618" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">RAUH_REPO_DIR</span><span class="op">=</span>/path/to/wealth_tax     <span class="co"># clone of github.com/bjaros20/wealth_tax at 25e84dd</span></span>
+<span id="cb17-619"><a href="#cb17-619" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">-e</span> <span class="st">&#39;targets::tar_make()&#39;</span>             <span class="co"># writes the targets store, export/r/, site/data/, site/explorer/grid.js</span></span>
+<span id="cb17-620"><a href="#cb17-620" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> tests/testthat.R                     <span class="co"># full suite</span></span>
+<span id="cb17-621"><a href="#cb17-621" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render site/repro.qmd</span>
+<span id="cb17-622"><a href="#cb17-622" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-623"><a href="#cb17-623" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-624"><a href="#cb17-624" aria-hidden="true" tabindex="-1"></a>The authors&#39; repository is MIT licensed but not redistributed here; the tests that re-run the</span>
+<span id="cb17-625"><a href="#cb17-625" aria-hidden="true" tabindex="-1"></a>authors&#39; own scripts skip cleanly without it, and the rest of the suite does not need it.</span>
+<span id="cb17-626"><a href="#cb17-626" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-627"><a href="#cb17-627" aria-hidden="true" tabindex="-1"></a>::: {.site-nav}</span>
+<span id="cb17-628"><a href="#cb17-628" aria-hidden="true" tabindex="-1"></a>Part of an Open Policy Analysis of Rauh et al. (2026) on California Proposition 40:</span>
+<span id="cb17-629"><a href="#cb17-629" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">Open Output (the explorer)</span><span class="co">](explorer/)</span> <span class="dv">&amp;middot;</span> Open Analysis: Report (here) and</span>
+<span id="cb17-630"><a href="#cb17-630" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">Slides</span><span class="co">](slides/slides.html)</span> <span class="dv">&amp;middot;</span></span>
+<span id="cb17-631"><a href="#cb17-631" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">Open Materials</span><span class="co">](materials.html)</span> <span class="dv">&amp;middot;</span></span>
+<span id="cb17-632"><a href="#cb17-632" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">Overview</span><span class="co">](index.html)</span></span>
+<span id="cb17-633"><a href="#cb17-633" aria-hidden="true" tabindex="-1"></a>:::</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

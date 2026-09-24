@@ -193,7 +193,7 @@ by `r pct(100 * rc$migration_share)` and revenue is **\$`r num(rc$literature_cal
 (printed \$`r out("revenue_literature_calibrated","printed_value")`B). Two things to notice. First,
 that is a Swiss estimate for a recurring annual tax, applied here to a one-time tax; the paper
 argues a one-time tax with easy interstate moves could provoke a *larger* response (p.14), and the
-BSZ side disputes exactly this ([disputes row 1](https://github.com/fhoces/opa-prop40/blob/main/comparison/DISPUTES.md)).
+BSZ side (Boll, Saez and Zucman, who support the measure) disputes exactly this ([disputes row 1](https://github.com/fhoces/opa-prop40/blob/main/comparison/DISPUTES.md)).
 Second, a linear 10.32 × 5 = 51.6% loss is steeper than the log form the NBER revision later uses
 (41.1%, NBER PDF p.24).
 
@@ -213,7 +213,7 @@ in this reproduction.
 $$N(y) = A\,y^{-\alpha}, \qquad S(k, n) = \left(\frac{k}{n}\right)^{(\alpha - 1)/\alpha}$$
 
 The state publishes how many tax returns report income above \$1M, \$2M, \$3M, \$4M, \$5M and
-\$10M (FTB PIT Annual Report 2024, Table B-4A). If top incomes follow a Pareto distribution, the log
+\$10M (Franchise Tax Board (FTB) Personal Income Tax (PIT) Annual Report 2024, Table B-4A). If top incomes follow a Pareto distribution, the log
 of those counts falls on a straight line against the log of the thresholds, with slope $-\alpha$.
 The fitted line gives $\hat\alpha$ = **`r num(pf$alpha, 3)`** (printed `r out("pareto_alpha","printed_value")`,
 $R^2$ = `r num(pf$r_squared, 4)`).
@@ -434,7 +434,9 @@ Table 9) and changes the revenue side and the Monte Carlo. Five changes, in the 
    $q$ = `r ncol$q`, the chance the Act survives in court, gives
    $E[R] = q \times R_{\text{recognized}}$ = **\$`r num(ncol$central, 2)`B**
    (printed \$`r h("nber","revenue_headline","printed")`B). Keeping Zuckerberg gives
-   \$`r num(ncol$upper, 2)`B; moving the gray-zone names out gives \$`r num(ncol$lower, 2)`B,
+   \$`r num(ncol$upper, 2)`B; moving the gray-zone names out (the seven
+   billionaires with departure signals short of confirmation, plus Jan Koum, Reed Hastings and
+   Andy Fang, reported as considering a move; NBER PDF p.23) gives \$`r num(ncol$lower, 2)`B,
    the printed range \$`r h("nber","revenue_range_low","printed")`B to \$`r h("nber","revenue_range_high","printed")`B.
    The choice of $q$ = 0.50 comes from an accounting standard for uncertain tax positions
    (ASC 740-10), not from a legal assessment; it is **guesswork**.
