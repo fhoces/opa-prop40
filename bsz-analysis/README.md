@@ -18,7 +18,7 @@ renders the paper's six tables and twelve figures plus a Quarto report.
 |---|---|---|
 | Paper PDF | `original-materials/BSZ26CAbillionaires.pdf` | **Required input. NOT redistributed in this repo** |
 | Authors' supplementary workbook | `original-materials/BSZ_MainTablesFigures.xlsx` (August, default) or `original-materials/may-2026/BSZ_MainTablesFigures.xlsx` (`BSZ_VINTAGE=may`) | **Required input. NOT redistributed in this repo** |
-| Excel extractors | 16 `tar_target`s reading the workbook | Complete |
+| Excel extractors | 14 `tar_target`s reading the workbook, one per sheet | Complete |
 | R re-derivations | 8 `compute_*` functions, ~1,640 Excel formula cells | Complete; all verified within tolerance |
 | Tables | 6 `gt` builders + HTML/LaTeX renders | Complete |
 | Figures | 12 `ggplot` builders + PNG/PDF renders | Complete |
@@ -191,7 +191,7 @@ reads from the layer above and writes new `tar_target`s consumed downstream.
                                   │  xlsx_path  (format = "file")
                                   ▼
    ┌─────────────────────────────────────────────────────────────────┐
-   │ Excel extractors  (R/data_sheets.R, 16 tar_target's)            │
+   │ Excel extractors  (R/data_sheets.R, 14 tar_target's)            │
    │   data_sec_codebook   data_sec_top4   data_sec_all              │
    │   data_sec_agg        rtb_2026_industry   pareto_missing        │
    │   tab2   tab3   longrunseries   shortrunseries                  │
@@ -240,7 +240,7 @@ Helper modules (loaded by `_targets.R` but not part of the DAG):
 
 ## Inputs and outputs (by `tar_target`)
 
-### Excel extractors (16 targets, all read `BSZ_MainTablesFigures.xlsx`)
+### Excel extractors (14 targets, all read `BSZ_MainTablesFigures.xlsx`)
 
 | Target | Sheet | Notes |
 |---|---|---|

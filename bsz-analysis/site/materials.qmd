@@ -99,7 +99,7 @@ role <- c(
   "ingest_excel.R" = "reads the workbook: sheet reader, vintage switch, source directory",
   "excel_cells.R" = "single-cell and row/column readers shared by the compute files",
   "vintage.R" = "everything that differs between the May and August workbooks, in one place",
-  "data_sheets.R" = "16 extractors, one per workbook sheet the pipeline reads",
+  "data_sheets.R" = "14 extractors, one per workbook sheet the pipeline reads",
   "compute_data_sec_agg.R" = "yearly totals from the billionaire list (drops the duplicated rows)",
   "compute_pareto.R" = "Pareto extrapolation of missing billionaires; the Laffer curve",
   "compute_tab5.R" = "Table 5: the scorer the explorer also runs, and the four scoring rows of the one-time tax",
