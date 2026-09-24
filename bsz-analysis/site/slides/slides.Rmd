@@ -353,6 +353,7 @@ class: center, middle, inverse
 # Part 5: What reproduces
 
 ---
+name: repro-checks
 
 # Checked, found, and not checked
 
@@ -365,7 +366,7 @@ Table 5.
 **Found.**
 - a block of 4 rows pasted twice in the workbook's billionaire list (244 counted, 240 real)
 - Table 5 row 4 skips a deduction row 2 applies
-- 10 layout and formula changes between the May and August workbooks
+- 9 layout and formula changes between the May and August workbooks
 ]
 
 .pull-right[
