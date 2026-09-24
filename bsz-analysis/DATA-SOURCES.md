@@ -10,7 +10,7 @@ the gitignored `original-materials/`).
 | `file` | Path relative to this side's directory. |
 | `side` | `bsz` (Boll, Saez and Zucman, who support the measure) or `rjkdc` (Rauh et al., who oppose it). |
 | `provider` | Who produced the file. |
-| `obtained_via` | `public-download` (fetched from a public URL), `author-shared` (given to us directly by a paper's authors, not publicly posted), or `re-pull` (an independent extraction from a primary public data source, e.g. SEC EDGAR, that stands in for a workbook-cached figure). |
+| `obtained_via` | `public-download` (fetched from a public URL), `author-shared` (given to us directly by a paper's authors, not publicly posted), `re-pull` (an independent extraction from a primary public data source, e.g. SEC EDGAR, that stands in for a workbook-cached figure), or `git-clone` (a public code repository cloned at a pinned commit; `sha256` then holds the commit SHA). |
 | `date_obtained` | When we got the file (best available; file mtime where the original download date wasn't otherwise recorded). |
 | `url_or_contact` | Public URL for `public-download`/`re-pull`; a contact/channel description for `author-shared`; "not recorded" where the original download URL is unknown. |
 | `sha256` | SHA-256 of the file we have, so anyone can re-verify their own copy against ours without either file leaving disk. |
@@ -20,10 +20,18 @@ the gitignored `original-materials/`).
 
 ## The `author-shared` convention
 
-Both paper authorship teams (BSZ and Rauh et al.) may later share raw data that never appears
-on a public page: SEC filings extracts, an internal spreadsheet, a data appendix sent by email.
-Nothing has arrived as of phase 1; this section documents the slot so later phases don't have to
-invent the convention under time pressure.
+Either paper's authors (BSZ, or Rauh et al.) may share raw data or code that never appears on a
+public page: SEC filings extracts, an internal spreadsheet, a data appendix sent by email. Two
+items have arrived, both on 2026-09-23 and both recorded in the sides' `DATA-SOURCES.csv`:
+
+- BSZ side: a confidential replication bundle of code and data
+  (`author-shared/2026-09-23_bsz-replication-code-data/`, `obtained_via=author-shared`; re-analysis
+  permitted, no public sharing). Not yet wired into any `tar_target`.
+- RJKDC side: the authors' public GitHub repository `bjaros20/wealth_tax` (MIT licence), cloned at
+  commit `25e84dd` (`author-shared/2026-09-23_wealth_tax-repo/`, `obtained_via=git-clone`). It is
+  public, not author-shared in the sense above; it sits in the author-shared slot only for
+  convenience, because the authors pointed us to it and the pipeline resolves it from there
+  (`RAUH_REPO_DIR`).
 
 - **Where it goes**: `<side>/original-materials/author-shared/<YYYY-MM-DD>_<short-desc>/`, e.g.
   `bsz-analysis/original-materials/author-shared/2026-10-05_bsz-sec-panel/`. This sits
