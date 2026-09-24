@@ -12,7 +12,7 @@ test_that("document inputs carry a kind label, a source and a page", {
 test_that("both sides' contracts have the agreed schema", {
   ins <- c("input_id", "version", "description", "value", "unit", "label", "provenance", "source", "page")
   outs <- c("output_id", "version", "value", "unit", "printed_value", "printed_page", "abs_diff")
-  for (s in c("supporting", "opposing")) {
+  for (s in c("bsz", "rjkdc")) {
     expect_identical(names(k[[s]]$inputs), ins, label = paste(s, "inputs"))
     expect_identical(names(k[[s]]$outputs), outs, label = paste(s, "outputs"))
   }
@@ -31,7 +31,7 @@ test_that("Hoopes Figure 2 as digitized is a closed waterfall ending near Rauh's
 
 test_that("GGSS non-citizen figure is consistent with BSZ's January count grown to July", {
   d <- k$docs
-  grown <- pick(d, "bsz_noncitizen_wealth_jan") * pick(k$supporting$inputs, "baseline_net_worth") /
+  grown <- pick(d, "bsz_noncitizen_wealth_jan") * pick(k$bsz$inputs, "baseline_net_worth") /
     pick(d, "bsz_wealth_jan")
   expect_lt(abs(grown - pick(d, "ggss_noncitizen_wealth")), 5)
 })

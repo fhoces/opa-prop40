@@ -27,7 +27,7 @@ def repo_root() -> str:
     d = os.path.abspath(os.getcwd())
     while True:
         if all(os.path.isdir(os.path.join(d, x)) for x in
-               ("comparison", "supporting-analysis", "opposing-analysis")):
+               ("comparison", "bsz-analysis", "rjkdc-analysis")):
             return d
         parent = os.path.dirname(d)
         if parent == d:
@@ -57,8 +57,8 @@ def pick(rows: list[dict], key_value: str, col: str = "value") -> float:
 def read_contracts(root: str) -> dict:
     side = lambda s: {"inputs": read_rows(os.path.join(root, s, "export", "r", "inputs.csv")),
                       "outputs": read_rows(os.path.join(root, s, "export", "r", "outputs.csv"))}
-    return {"supporting": side("supporting-analysis"),
-            "opposing": side("opposing-analysis"),
+    return {"bsz": side("bsz-analysis"),
+            "rjkdc": side("rjkdc-analysis"),
             "docs": read_rows(os.path.join(root, "comparison", "data", "document-inputs.csv")),
             "hoopes": read_rows(os.path.join(root, "comparison", "data", "hoopes-fig2.csv"))}
 
@@ -161,8 +161,8 @@ def rauh_nber_expectation(wt_min, wt_max, f_min, f_max, c_min, c_max, r_min, r_m
 
 # ---- build ---------------------------------------------------------------------
 def bridge_inputs(k):
-    si, so = k["supporting"]["inputs"], k["supporting"]["outputs"]
-    oi, oo = k["opposing"]["inputs"], k["opposing"]["outputs"]
+    si, so = k["bsz"]["inputs"], k["bsz"]["outputs"]
+    oi, oo = k["rjkdc"]["inputs"], k["rjkdc"]["outputs"]
     d = k["docs"]
     W0 = pick(si, "baseline_net_worth")
     noncit = pick(d, "ggss_noncitizen_wealth")
@@ -180,7 +180,7 @@ def bridge_inputs(k):
     sup = dict(shared, W_noncit=noncit, W_core=W0 - noncit, re=0.0, d_conf=0.0,
                alpha=pick(si, "avoidance_rate"), dtau=0.0,
                eps=pick(si, "semi_elasticity_permanent"), kappa=kappa_s, C=C_sup,
-               H=pick(d, "supporting_loss_horizon"), s=pick(si, "sell_share"))
+               H=pick(d, "bsz_loss_horizon"), s=pick(si, "sell_share"))
     rauh = dict(shared, W_noncit=0.0, W_core=base_r, re=1 - R0_r / (tau * base_r),
                 d_conf=1 - conf6 / R0_r, alpha=0.0, dtau=tau, eps=(1 - wt_min / R0_r) / tau,
                 kappa=1.0, C=(pick(oi, "rauh_mc_c_min") + pick(oi, "rauh_mc_c_max")) / 2,
@@ -190,14 +190,14 @@ def bridge_inputs(k):
 
 def build_all(k):
     sup, rauh = bridge_inputs(k)
-    so, oo, d = k["supporting"]["outputs"], k["opposing"]["outputs"], k["docs"]
-    oi = k["opposing"]["inputs"]
+    so, oo, d = k["bsz"]["outputs"], k["rjkdc"]["outputs"], k["docs"]
+    oi = k["rjkdc"]["inputs"]
     ggss_printed = pick(so, "ggss_headline", "printed_value")
     ra = dict(wt_min=pick(oi, "rauh_mc_wt_min"), wt_max=pick(oo, "revenue_confirmed6", "printed_value"),
               baseline=pick(oo, "revenue_baseline", "printed_value"),
               c_min=pick(oi, "rauh_mc_c_min"), c_max=pick(oi, "rauh_mc_c_max"),
               r_min=pick(oi, "rauh_mc_r_min"), r_max=pick(oi, "rauh_mc_r_max"))
-    na = dict(wt_min=0.0, wt_max=pick(k["opposing"]["inputs"], "nber_ceiling_hardcoded"),
+    na = dict(wt_min=0.0, wt_max=pick(k["rjkdc"]["inputs"], "nber_ceiling_hardcoded"),
               f_min=pick(oi, "nber_mc_f_min"), f_max=pick(oi, "nber_mc_f_max"),
               c_min=ra["c_min"], c_max=ra["c_max"], r_min=ra["r_min"], r_max=ra["r_max"])
 
@@ -221,7 +221,7 @@ def build_all(k):
                                "sequential_rank": SEQUENTIAL.index(sid) + 1,
                                "disputes_row": row, "title": title, "kind": kind})
             ends.append({"horizon_setting": st, "output": out,
-                         "supporting_model": v_sup[out], "rauh_model": v_rauh[out],
+                         "bsz_model": v_sup[out], "rauh_model": v_rauh[out],
                          "rauh_own": own_r[out], "rauh_residual": own_r[out] - v_rauh[out],
                          "nber_own": own_n[out], "nber_step": own_n[out] - own_r[out]})
     bridge.sort(key=lambda r: (r["horizon_setting"], r["output"], IDS.index(r["step_id"])))
@@ -230,9 +230,9 @@ def build_all(k):
 
     endpoints = []
     vals = [("ggss_headline", ggss_printed, pick(so, "ggss_headline", "printed_value")),
-            ("ggss_scoring", ea["supporting_model"], pick(so, "ggss_scoring", "printed_value")),
-            ("bsz_tab5_row1", ea["supporting_model"], pick(so, "tab5_row1_wealth_tax_revenue", "printed_value")),
-            ("bsz_net_constructed", eb["supporting_model"], math.nan),
+            ("ggss_scoring", ea["bsz_model"], pick(so, "ggss_scoring", "printed_value")),
+            ("bsz_tab5_row1", ea["bsz_model"], pick(so, "tab5_row1_wealth_tax_revenue", "printed_value")),
+            ("bsz_net_constructed", eb["bsz_model"], math.nan),
             ("rauh_ssrn_revenue_mc", ea["rauh_own"], math.nan),
             ("rauh_ssrn_npv", eb["rauh_own"], pick(oo, "npv_mc_ssrn_mean", "printed_value")),
             ("rauh_nber_revenue_mc", ea["nber_own"], math.nan),
@@ -244,7 +244,7 @@ def build_all(k):
     anchors = [{"anchor_id": a, "value": v, "residual_vs_model": v - ea["rauh_model"]} for a, v in [
         ("mc_expected", ea["rauh_own"]),
         ("literature_calibrated", pick(oo, "revenue_literature_calibrated", "printed_value")),
-        ("table9_central", pick(k["opposing"]["inputs"], "wt_central_scenario")),
+        ("table9_central", pick(k["rjkdc"]["inputs"], "wt_central_scenario")),
         ("preferred_about_40", pick(d, "rauh_headline_revenue"))]]
 
     A5 = expected_annuity(5, sup["r_min"], sup["r_max"])
@@ -266,7 +266,7 @@ def build_all(k):
     sqa = {r["step_id"]: r["sequential"] for r in bridge
            if r["horizon_setting"] == "own" and r["output"] == "a"}
     ours = [("galle_estimate", ggss_printed),
-            ("ggss_rounding", ea["supporting_model"] - ggss_printed),
+            ("ggss_rounding", ea["bsz_model"] - ggss_printed),
             ("residency_correction", sqa["noncitizens"] + sqa["base_list"]),
             ("confirmed_departures", sqa["confirmed_departures"]),
             ("additional_movers", math.nan),
@@ -282,10 +282,10 @@ def build_all(k):
 
     s_r = score_common(rauh)
     meta = [{"key": "A_5", "value": A5}, {"key": "A_inf", "value": Ainf},
-            {"key": "kappa_supporting", "value": sup["kappa"]},
+            {"key": "kappa_bsz", "value": sup["kappa"]},
             {"key": "R0_rauh", "value": s_r["R0"]}, {"key": "S_rauh", "value": s_r["S"]},
-            {"key": "X_supporting", "value": score_common(sup)["X"]},
-            {"key": "PV_supporting_own", "value": score_common(sup)["PV"]},
+            {"key": "X_bsz", "value": score_common(sup)["X"]},
+            {"key": "PV_bsz_own", "value": score_common(sup)["PV"]},
             {"key": "f_rauh", "value": s_r["f"]}, {"key": "C_rauh", "value": rauh["C"]}]
     return {"bridge": bridge, "ends": ends, "endpoints": endpoints, "anchors": anchors,
             "loss": loss, "hoopes": hoopes, "meta": meta}

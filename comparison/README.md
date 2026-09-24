@@ -1,13 +1,13 @@
 # comparison
 
-The reconciliation layer: puts the supporting side (GGSS July 2026, BSZ August 2026) and the
-opposing side (Rauh et al. SSRN March 2026, Jaros and Rauh NBER September 2026) on one common
+The reconciliation layer: puts the BSZ side (GGSS July 2026, BSZ August 2026) and the
+RJKDC side (Rauh et al. SSRN March 2026, Jaros and Rauh NBER September 2026) on one common
 output and one input-by-input bridge. It renders the site-root page, `../index.html`.
 
 ## What it reads (and nothing else)
 
-- `../supporting-analysis/export/r/{inputs,outputs}.csv` and
-  `../opposing-analysis/export/r/{inputs,outputs}.csv`: each side's export contract.
+- `../bsz-analysis/export/r/{inputs,outputs}.csv` and
+  `../rjkdc-analysis/export/r/{inputs,outputs}.csv`: each side's export contract.
 - `data/document-inputs.csv`: values neither contract carries, transcribed from the PDFs with
   their page (Rauh's Monte Carlo ranges, the NBER departure range, GGSS's non-citizen wealth,
   BSZ's 5-year horizon, Walczak, LAO, Hoopes's text figures).
@@ -44,4 +44,4 @@ with every internal link resolving.
   consistent with the -24.7 headline. The literature-calibrated 45.59, Table 9's 42 and the
   abstract's "about $40 billion" are exported as alternatives (`export/r/anchors.csv`).
 - The Monte Carlo ranges (WT floor 35, C in [3.3, 5.8], r in [1.5%, 4.5%], NBER f in
-  [0.30, 0.60]) are read from the opposing contract (`rauh_mc_*`, `nber_mc_*` rows).
+  [0.30, 0.60]) are read from the RJKDC contract (`rauh_mc_*`, `nber_mc_*` rows).

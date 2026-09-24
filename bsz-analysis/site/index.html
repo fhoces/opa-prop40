@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prop 40, BSZ side</title>
+<meta name="description" content="An Open Policy Analysis of the BSZ side of California Proposition 40: the $104 billion score, reproduced, with its guesswork marked.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@400;600&display=swap">
+<style>
+  :root {
+    --paper:  #fbfcfd;
+    --panel:  #ffffff;
+    --ink:    #101519;
+    --ink-2:  #5b6873;
+    --ink-3:  #6b7682;
+    --rule:   #e2e7ec;
+    --accent: #1f6fce;
+    --accent-2: #eb6834;
+    --chip:   #f1f4f7;
+    --serif: "IBM Plex Serif", Georgia, "Times New Roman", serif;
+    --sans:  "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --mono:  "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #14171a; --panel: #1a1e22; --ink: #eef1f4; --ink-2: #9aa6b2;
+      --ink-3: #6f7b87; --rule: #262c33; --accent: #4e9bf0; --accent-2: #f07b4a;
+      --chip: #232930;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #14171a; --panel: #1a1e22; --ink: #eef1f4; --ink-2: #9aa6b2;
+    --ink-3: #6f7b87; --rule: #262c33; --accent: #4e9bf0; --accent-2: #f07b4a;
+    --chip: #232930;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    /* overflow-x:clip (not hidden) so it never establishes a scroll container,
+       which would break position:sticky on a descendant if this template is
+       later reused for a scrollytelling page. */
+    overflow-x: clip;
+  }
+  html { overflow-x: clip; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 48px 16px 72px; }
+
+  header { border-bottom: 1px solid var(--rule); padding-bottom: 24px; }
+  .eyebrow {
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--ink-3); margin: 0 0 10px;
+  }
+  h1 {
+    font-family: var(--serif); font-weight: 600;
+    font-size: clamp(28px, 5vw, 40px); line-height: 1.12;
+    letter-spacing: -0.015em; margin: 0 0 12px;
+  }
+  .byline { color: var(--ink-2); font-size: 15px; margin: 0; }
+  .byline cite { font-style: normal; }
+
+  h2 {
+    font-family: var(--serif); font-weight: 600; font-size: 21px;
+    margin: 44px 0 14px; letter-spacing: -0.01em;
+  }
+  p { margin: 0 0 14px; }
+  a { color: var(--accent); }
+
+  .section-title { position: relative; margin: 44px 0 14px; text-align: center; }
+  .section-title h2 { position: relative; z-index: 1; margin: 0; }
+  .section-title-icon {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    height: 60px; width: auto; opacity: 0.14; z-index: 0; pointer-events: none;
+  }
+
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 22px 0 0; }
+  .card {
+    display: block; padding: 20px 22px; border: 1px solid var(--rule);
+    border-radius: 10px; background: var(--panel); color: inherit;
+    text-decoration: none; transition: border-color .15s, transform .15s;
+    /* Stacking-context fix for the watermark icon: position:relative alone does
+       NOT create one, so a negative z-index child would otherwise escape past
+       this element and paint behind the PAGE background instead of just behind
+       this card's own text. z-index:0 here is load-bearing, not decorative. */
+    position: relative; z-index: 0; overflow: hidden;
+  }
+  .card.wide { grid-column: 1 / -1; }
+  .card:hover, .card:focus-visible {
+    border-color: var(--accent); transform: translateY(-1px);
+  }
+  .card .kicker {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+  .card h3 {
+    font-family: var(--serif); font-size: 20px; font-weight: 600;
+    margin: 4px 0 6px; color: var(--accent);
+  }
+  .card p { color: var(--ink-2); font-size: 15px; margin: 0; }
+
+  .card-icon-box {
+    position: absolute; top: 14px; right: 14px; height: 110px; width: 130px;
+    z-index: -1; pointer-events: none;
+  }
+  .card-icon-box img {
+    position: absolute; top: 0; right: 0; height: 110px; width: auto; opacity: 0.218;
+  }
+
+  .card p.lead { margin: 2px 0 14px; }
+  .card-subgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .subcard {
+    display: block; padding: 12px 14px; border: 1px solid var(--rule);
+    border-radius: 8px; text-decoration: none; color: inherit;
+    transition: border-color .15s, transform .15s;
+  }
+  .subcard:hover, .subcard:focus-visible {
+    border-color: var(--accent); transform: translateY(-1px);
+  }
+
+  @media (max-width: 560px) {
+    .cards { grid-template-columns: 1fr; }
+    .card-subgrid { grid-template-columns: 1fr; }
+  }
+
+  .note {
+    border-left: 3px solid var(--accent-2); background: var(--chip);
+    padding: 14px 18px; border-radius: 0 8px 8px 0; font-size: 15px;
+    color: var(--ink-2); margin: 18px 0 0;
+  }
+  .note strong { color: var(--ink); font-weight: 600; }
+
+  table { border-collapse: collapse; width: 100%; font-size: 15px; margin: 4px 0 0; }
+  /* table-layout:auto still lets a table grow past width:100% when its content's
+     min-content width (an unbreakable header word) exceeds the container at
+     narrow viewports. Scroll the table itself rather than the page. */
+  .table-scroll { overflow-x: auto; margin: 4px 0 0; }
+  .table-scroll table { margin: 0; }
+  th, td { text-align: left; padding: 8px 12px 8px 0; border-bottom: 1px solid var(--rule); }
+  th { font-size: 12px; font-family: var(--mono); letter-spacing: 0.06em;
+       text-transform: uppercase; color: var(--ink-3); font-weight: 500; }
+  .table-subhead { font-family: var(--sans, inherit); text-transform: none;
+       letter-spacing: normal; font-weight: 400; font-size: 11px; }
+  td:last-child { color: var(--ink-2); }
+  /* The AI-use table's cells are all results, including the last column. */
+  table.ai-use td { color: var(--ink); }
+  /* CRediT cells: one square per role, coloured by who led it; verification as a 2-pip meter. */
+  .sq { display: inline-block; width: 11px; height: 11px; margin-right: 3px; border-radius: 2px;
+        vertical-align: -1px; }
+  .sq.h { background: var(--accent-2); }
+  .sq.ai { background: var(--accent); }
+  .sq.eq { background: linear-gradient(135deg, var(--accent-2) 50%, var(--accent) 50%); }
+  .sqs { display: block; white-space: nowrap; }
+  .meter { display: inline-block; margin-right: 6px; white-space: nowrap; }
+  .pip { display: inline-block; width: 8px; height: 8px; margin-right: 2px; border-radius: 50%;
+         border: 1.5px solid var(--ink-3); vertical-align: 0; }
+  .pip.on { background: var(--ink); border-color: var(--ink); }
+  .pip.half { background: linear-gradient(90deg, var(--ink) 50%, transparent 50%); border-color: var(--ink); }
+  .ai-key { font-size: 13px; color: var(--ink-2); margin: 8px 0 0; line-height: 1.8; }
+  .ai-key span { margin-right: 14px; white-space: nowrap; }
+  /* A results table's last column is a result, not a gloss: keep it full strength. */
+  table.scen td { color: var(--ink); }
+  table.scen td, table.scen th { text-align: right; }
+  table.scen td:first-child, table.scen th:first-child { text-align: left; }
+
+  footer {
+    margin-top: 52px; padding-top: 20px; border-top: 1px solid var(--rule);
+    font-size: 14px; color: var(--ink-3);
+  }
+  code { font-family: var(--mono); font-size: 0.9em; background: var(--chip);
+         padding: 1px 5px; border-radius: 4px; }
+
+  @media (max-width: 390px) {
+    .wrap { padding-left: 16px; padding-right: 16px; }
+  }
+  tr.pref td { background: color-mix(in srgb, var(--accent-2) 10%, transparent); }
+  .placeholder {
+    border: 2px dashed var(--accent-2); border-radius: 8px; padding: 16px 18px;
+    font-size: 15px; color: var(--ink-2); background: var(--chip);
+  }
+  .placeholder strong { color: var(--accent-2); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">Open Policy Analysis for:</p>
+  <h1>California Proposition 40, the BSZ side</h1>
+  <p class="byline">
+    Proposition 40, the Billionaire Tax Act, would tax California's billionaires once, at 5%
+    of their net worth, paid over five years. Its supporters score it at about $100 billion.
+    This site reproduces that score from its two sources, the
+    <cite>Boll, Saez and Zucman</cite> working paper (NBER WP 35218, August 2026) and the
+    <cite>Galle, Gamage, Saez and Shanske</cite> expert report (July 2026), and marks which of
+    its inputs are data and which are guesses.
+    This site follows the
+    <a href="https://tinyurl.com/1qypbihb">Open
+    Policy Analysis</a> (OPA) framework, so what the analysis
+    concludes, how it gets there, and what to run yourself stay in separate,
+    checkable places.
+  </p>
+</header>
+
+<div class="section-title">
+  <img class="section-title-icon" src="assets/opa/opa-all.png" alt="" aria-hidden="true">
+  <h2>Three layers to understand the analysis</h2>
+</div>
+
+<div class="cards">
+  <a class="card wide" href="explorer/">
+    <div class="card-row">
+      <div class="card-text">
+        <span class="kicker">Open Output</span>
+        <h3>Move the guesses, watch the revenue &rarr;</h3>
+        <p>The one-time revenue, the extra income tax from asset sales and the yearly income
+        tax lost to leavers, for every combination of six inputs: the four rows of the
+        paper's Table 5 plus 1,916 settings the authors did not publish. The preferred
+        estimate is marked.</p>
+      </div>
+      <div class="card-icon-box" aria-hidden="true">
+        <img src="assets/opa/opa-assumptions-solo.png" alt="">
+      </div>
+    </div>
+  </a>
+
+  <div class="card wide">
+    <div class="card-row">
+      <div class="card-text">
+        <span class="kicker">Open Analysis</span>
+        <p class="lead">One reproduction, told two ways. Both read the same pipeline outputs.</p>
+        <div class="card-subgrid">
+          <a class="subcard" href="repro.html">
+            <h3>The reproduction report &rarr;</h3>
+            <p>The paper's tables and figures in its own order, rebuilt from the authors'
+            workbook, with Table 5 derived step by step and every input sorted by origin.</p>
+          </a>
+          <a class="subcard" href="slides/slides.html">
+            <h3>Teaching materials &rarr;</h3>
+            <p>A short deck: how a one-time tax gets scored at $104 billion, and which parts
+            of that are guesswork.</p>
+          </a>
+        </div>
+      </div>
+      <div class="card-icon-box" aria-hidden="true">
+        <img src="assets/opa/opa-details.png" alt="">
+      </div>
+    </div>
+  </div>
+
+  <a class="card wide" href="materials.html">
+    <div class="card-row">
+      <div class="card-text">
+        <span class="kicker">Open Materials</span>
+        <h3>Every script, test and CSV &rarr;</h3>
+        <p>The R pipeline, its test results, the data files behind every page, the source
+        manifest with checksums, and what the checks found.</p>
+      </div>
+      <div class="card-icon-box" aria-hidden="true">
+        <img src="assets/opa/opa-materials.png" alt="">
+      </div>
+    </div>
+  </a>
+</div>
+
+<h2>What the model says</h2>
+
+<p>The BSZ side's preferred estimate is the benchmark row of Table 5 in Boll, Saez and
+Zucman (2026): 5% of the $2,307 billion that Forbes lists for 250 California billionaires on
+1 July 2026, less 10% for avoidance and evasion, is <strong>$103.8 billion</strong>, collected
+once. The GGSS expert report makes the same computation and rounds it to $100 billion (p.4).
+The other rows are the authors' own sensitivity checks.</p>
+
+<div class="table-scroll">
+<table class="scen">
+  <thead><tr><th>Table 5 row</th><th>Revenue, one time</th><th>Extra income tax from sales</th><th>Income tax lost, per year</th></tr></thead>
+  <tbody>
+    <tr class="pref"><td><strong>1. Benchmark (preferred)</strong></td><td><strong>$103.8B</strong></td><td>$3.7B</td><td>$0.15B</td></tr>
+    <tr><td>2. + billionaires Forbes misses</td><td>$127.9B</td><td>$4.5B</td><td>$0.20B</td></tr>
+    <tr><td>3. + aggressive assumption on leavers</td><td>$88.8B</td><td>$3.1B</td><td>$0.52B</td></tr>
+    <tr><td>4. Rows 2 and 3 together</td><td>$114.8B</td><td>$4.1B</td><td>$0.56B</td></tr>
+    <tr><td>GGSS expert report (cited)</td><td>$100B</td><td>&ndash;</td><td>&ndash;</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p style="margin-top:14px;">The yearly income tax loss has no end date in Table 5. The authors
+argue it should last about as long as the five payment years; the RJKDC side counts it
+forever, which BSZ call the main driver of the gap between the two sides (PDF p.22, fn.29). The revenue itself moves with only
+two guesses: the avoidance rate, and whether anyone left California before 1 January 2026.
+See <a href="repro.html#every-input-by-origin">every input, by origin</a>.</p>
+
+<h2>What reproduces</h2>
+
+<div class="table-scroll">
+<table>
+  <thead><tr><th>Published object</th><th>Result</th></tr></thead>
+  <tbody>
+    <tr><td>Table 5, scoring the one-time tax (PDF p.39)</td>
+        <td>All 28 cells match the workbook's cached values. 26 round to the digit the paper
+        prints; the other 2, the income tax loss in rows 2 and 3, are printed as $0.19B and
+        $0.51B where the workbook gives $0.20B and $0.52B</td></tr>
+    <tr><td>Tables 1 to 4 and A1, Figures 1 to 7, 9 and A2 to A4</td>
+        <td>Every formula cell the pipeline re-derives matches the workbook's cached value
+        within a stated tolerance. Figures are checked for structure and anchor values</td></tr>
+    <tr><td>The August workbook itself</td>
+        <td>Four rows of the billionaire list pasted twice (rows 1342 to 1345 repeat 1338 to
+        1341), giving 244 billionaires instead of 240; the pipeline drops the repeat</td></tr>
+    <tr><td>Not reproduced</td>
+        <td>August's new Figure 8 and Appendix Figure A1; the raw data behind the workbook
+        (Forbes, tax statistics, SEC filings), which is taken as given</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p style="margin-top:14px;">Moving the code from the May to the August workbook broke 184 test
+expectations; each was traced to one of ten root causes before any fix
+(<a href="repro.html#what-reproduces">report</a>). Test counts, scripts and the source
+manifest are on the <a href="materials.html">materials page</a>.</p>
+
+<h2>How AI was used in this exercise, and what has been verified</h2>
+
+<div class="placeholder">
+  <strong>PLACEHOLDER: not yet filled.</strong> This section will hold the CRediT
+  contributor-roles table (one row each for the Explorer, Report, Slides, Repository,
+  Materials page and this Overview page) and the human-verification level of each, as the
+  author answers them in the <code>credit</code> questionnaire. It is deliberately left
+  empty: who conceived and checked what cannot be read from the commit history, and nothing
+  here should be guessed. Until it is filled, read every page on this site as built with
+  substantial AI assistance and not yet independently reviewed.
+</div>
+
+<div class="note">
+  <strong>Third-party sources.</strong> The paper, the workbook and the expert report belong to
+  their authors and are not redistributed here; the <a href="materials.html#sources">source
+  manifest</a> gives where to get each and its SHA-256. Quotations are for commentary.
+</div>
+
+<footer>
+  Source, tests and build instructions:
+  <a href="https://github.com/fhoces/opa-prop40">github.com/fhoces/opa-prop40</a>
+  (<code>bsz-analysis/</code>).
+  Part of an Open Policy Analysis of both sides of Proposition 40; the RJKDC side and the
+  reconciliation page are in progress.
+</footer>
+
+</div>
+</body>
+</html>

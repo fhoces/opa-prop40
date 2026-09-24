@@ -1,4 +1,4 @@
-"horizon_setting","output","supporting_model","rauh_model","rauh_own","rauh_residual","nber_own","nber_step"
+"horizon_setting","output","bsz_model","rauh_model","rauh_own","rauh_residual","nber_own","nber_step"
 "own","a",103.815,51.2553248447385,51.255,-0.000324844738493368,36,-15.255
 "own","b",106.795627680481,-24.8063190811583,-24.7069839181446,0.0993351630137695,-38.9802887015985,-14.2733047834539
 "common_5","a",103.815,51.2553248447385,51.255,-0.000324844738493368,36,-15.255

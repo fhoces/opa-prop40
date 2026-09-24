@@ -1,19 +1,19 @@
 input_id,side,version,description,value,unit,label,provenance,source,page
-rauh_loss_horizon,opposing,both,Years the lost income tax is counted (perpetuity),Inf,years,scenario,public,Rauh et al. SSRN 6340778 eq.17-18 (perpetuity),18
-rauh_headline_revenue,opposing,ssrn,Preferred revenue estimate (abstract and Sec 4.5),40,$B,guesswork,public,Rauh et al. SSRN 6340778 abstract p.1 and Sec 4.5 p.14 (range 35-46),1
-nber_headline_revenue,opposing,nber,NBER preferred revenue estimate (range 28-36),30,$B,guesswork,public,Jaros and Rauh NBER c15504 abstract,1
-nber_headline_npv,opposing,nber,NBER mean NPV (printed),-38.9,$B,derived,public,Jaros and Rauh NBER c15504 abstract and Sec 5.4,1
-ggss_noncitizen_wealth,supporting,ggss,Non-US-citizen CA billionaires added since the February draft (24 people),150,$B,data,public,"GGSS 20 Jul 2026 p.2 fn.1 (""about $150 billion"", 1 Jul 2026 values)",2
-bsz_noncitizen_wealth_jan,supporting,bsz,Non-US-citizen CA billionaires at 1 Jan 2026 (25 people; cross-check only),132,$B,data,public,BSZ Aug 2026 Methodological Appendix A,54
-bsz_wealth_jan,supporting,bsz,Taxable CA billionaire wealth at 1 Jan 2026 (240 people; cross-check only),2055,$B,data,public,BSZ Aug 2026 p.22 folio (PDF p.24) and Appendix A,24
-supporting_loss_horizon,supporting,bsz,Years the lost income tax is counted (losses 'annual temporary'),5,years,scenario,public,"BSZ Aug 2026 PDF p.27 (""If they last say only 5 years"") and Table 5 header p.39",27
-walczak_loss_low,opposing,walczak,Ongoing annual state tax loss incl. spillovers: low (credited alternative dial),3.53,$B/yr,guesswork,public,"Walczak, California Tax Foundation, 22 Apr 2026, p.1",1
-walczak_loss_high,opposing,walczak,Ongoing annual state tax loss incl. spillovers: high (credited alternative dial),4.49,$B/yr,guesswork,public,"Walczak, California Tax Foundation, 22 Apr 2026, p.1",1
+rauh_loss_horizon,rjkdc,both,Years the lost income tax is counted (perpetuity),Inf,years,scenario,public,Rauh et al. SSRN 6340778 eq.17-18 (perpetuity),18
+rauh_headline_revenue,rjkdc,ssrn,Preferred revenue estimate (abstract and Sec 4.5),40,$B,guesswork,public,Rauh et al. SSRN 6340778 abstract p.1 and Sec 4.5 p.14 (range 35-46),1
+nber_headline_revenue,rjkdc,nber,NBER preferred revenue estimate (range 28-36),30,$B,guesswork,public,Jaros and Rauh NBER c15504 abstract,1
+nber_headline_npv,rjkdc,nber,NBER mean NPV (printed),-38.9,$B,derived,public,Jaros and Rauh NBER c15504 abstract and Sec 5.4,1
+ggss_noncitizen_wealth,bsz,ggss,Non-US-citizen CA billionaires added since the February draft (24 people),150,$B,data,public,"GGSS 20 Jul 2026 p.2 fn.1 (""about $150 billion"", 1 Jul 2026 values)",2
+bsz_noncitizen_wealth_jan,bsz,bsz,Non-US-citizen CA billionaires at 1 Jan 2026 (25 people; cross-check only),132,$B,data,public,BSZ Aug 2026 Methodological Appendix A,54
+bsz_wealth_jan,bsz,bsz,Taxable CA billionaire wealth at 1 Jan 2026 (240 people; cross-check only),2055,$B,data,public,BSZ Aug 2026 p.22 folio (PDF p.24) and Appendix A,24
+bsz_loss_horizon,bsz,bsz,Years the lost income tax is counted (losses 'annual temporary'),5,years,scenario,public,"BSZ Aug 2026 PDF p.27 (""If they last say only 5 years"") and Table 5 header p.39",27
+walczak_loss_low,rjkdc,walczak,Ongoing annual state tax loss incl. spillovers: low (credited alternative dial),3.53,$B/yr,guesswork,public,"Walczak, California Tax Foundation, 22 Apr 2026, p.1",1
+walczak_loss_high,rjkdc,walczak,Ongoing annual state tax loss incl. spillovers: high (credited alternative dial),4.49,$B/yr,guesswork,public,"Walczak, California Tax Foundation, 22 Apr 2026, p.1",1
 lao_loss_upper,neutral,lao,LAO: possible ongoing income tax decrease 'of less than $1 billion per year' (upper bound),1,$B/yr,guesswork,public,"LAO Prop 40 ballot analysis, Fiscal Effects",2
-hoopes_n_billionaires,neutral,hoopes,Billionaires in the GGSS text Hoopes scores (February 2026 GGSS),213,count,data,public,"Hoopes SSRN 6428578 p.3 and fn.1",3
+hoopes_n_billionaires,neutral,hoopes,Billionaires in the GGSS text Hoopes scores (February 2026 GGSS),213,count,data,public,Hoopes SSRN 6428578 p.3 and fn.1,3
 hoopes_wealth,neutral,hoopes,Wealth in the GGSS text Hoopes scores,2182,$B,data,public,"Hoopes SSRN 6428578 p.3 fn.1 (""$2.182 trillion"")",3
 hoopes_gross,neutral,hoopes,GGSS (February) gross revenue before avoidance,109,$B,derived,public,Hoopes SSRN 6428578 p.3 fn.1,3
 hoopes_net,neutral,hoopes,GGSS (February) revenue after 10% avoidance,99,$B,derived,public,Hoopes SSRN 6428578 p.3 fn.1,3
 hoopes_real_estate_base,neutral,hoopes,Real-estate exclusion as Hoopes states it (a reduction of the taxable BASE),8,$B,data,public,Hoopes SSRN 6428578 p.4,4
 hoopes_rauh_revenue,neutral,hoopes,Rauh revenue as Hoopes states it,40,$B,derived,public,Hoopes SSRN 6428578 p.4 and Figure 1 (p.2),4
-rauh_residency_correction,opposing,ssrn,"Revenue effect of the Rauh et al. residency corrections (Ellison, Houston, Snyder out; Sacks in)",12.84,$B,data,public,Rauh et al. SSRN 6340778 Sec 2.2,5
+rauh_residency_correction,rjkdc,ssrn,"Revenue effect of the Rauh et al. residency corrections (Ellison, Houston, Snyder out; Sacks in)",12.84,$B,data,public,Rauh et al. SSRN 6340778 Sec 2.2,5

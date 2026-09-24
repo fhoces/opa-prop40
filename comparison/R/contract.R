@@ -13,8 +13,8 @@ comparison_root <- function() {
   dir <- getwd()
   repeat {
     if (dir.exists(file.path(dir, "comparison")) &&
-        dir.exists(file.path(dir, "supporting-analysis")) &&
-        dir.exists(file.path(dir, "opposing-analysis"))) return(dir)
+        dir.exists(file.path(dir, "bsz-analysis")) &&
+        dir.exists(file.path(dir, "rjkdc-analysis"))) return(dir)
     parent <- dirname(dir)
     if (parent == dir) stop("cannot find the opa-prop40 root; set OPA_PROP40_ROOT")
     dir <- parent
@@ -32,8 +32,8 @@ read_contracts <- function(root = comparison_root()) {
     outputs = read_csv_plain(file.path(root, s, "export", "r", "outputs.csv")))
   docs <- read_csv_plain(file.path(root, "comparison", "data", "document-inputs.csv"))
   docs$value <- as.numeric(docs$value)          # "Inf" parses to Inf
-  list(supporting = side("supporting-analysis"),
-       opposing   = side("opposing-analysis"),
+  list(bsz = side("bsz-analysis"),
+       rjkdc = side("rjkdc-analysis"),
        docs       = docs,
        hoopes     = read_csv_plain(file.path(root, "comparison", "data", "hoopes-fig2.csv")))
 }

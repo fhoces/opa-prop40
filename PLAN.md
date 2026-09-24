@@ -3,9 +3,9 @@
 Project: an Open Policy Analysis (OPA) of the two rival revenue analyses of California's 2026
 Proposition 40 (the Billionaire Tax Act, a one-time 5% tax on net worth above $1bn).
 
-- Supporting: Boll, Saez & Zucman (BSZ), NBER WP 35218, May 2026 revised August 2026, with
+- BSZ, supporting the measure: Boll, Saez & Zucman, NBER WP 35218, May 2026 revised August 2026, with
   an Excel workbook `BSZ_MainTablesFigures.xlsx`.
-- Opposing: Rauh, Jaros, Kearney, Doran & Cosso, Hoover Institution, 17 March 2026
+- RJKDC, opposing it: Rauh, Jaros, Kearney, Doran & Cosso, Hoover Institution, 17 March 2026
   (SSRN 6340778). PDF only.
 
 The end state is one private repo: a full OPA for each side, plus a comparison layer that puts
@@ -22,14 +22,14 @@ latest estimate, plus their own later documents, with any correction they conced
 not strengthen either side ourselves; our own improvements appear only on the reconciliation page,
 credited to us.
 
-- **Supporting side** reports **two estimates side by side**:
+- **BSZ side** reports **two estimates side by side**:
   1. GGSS expert report (updated 20 July 2026): $100B from static scoring with 10% avoidance, the
      number the campaign cites.
   2. BSZ NBER WP 35218 (August 2026, workbook): the $104B benchmark and the other rows of its
      Table 5.
   The conceded fix is already in both: the non-US-citizen residents are included (see
   `comparison/DISPUTES.md`, row 8).
-- **Opposing side** reports **two estimates side by side**, mirroring the supporting side (decided
+- **RJKDC side** reports **two estimates side by side**, mirroring the BSZ side (decided
   2026-09-23):
   1. Rauh et al., SSRN 6340778 (17 March 2026): European-elasticity approach, about $40B in revenue,
      mean NPV −$24.7B. This is the anchor that `comparison/DISPUTES.md` is verified against.
@@ -40,7 +40,7 @@ credited to us.
   August 2026 brief repeats the SSRN numbers.
 - **Other same-side work** enters as **credited alternative dials** on specific inputs, never merged
   into a side's headline. Current candidates: Walczak / California Tax Foundation (2026-04-22),
-  opposing side.
+  RJKDC side.
 - **Neutral material** feeds the reconciliation page only: LAO ballot analysis, and Hoopes, "Galle v
   Rauh" (SSRN 6428578).
 
@@ -82,21 +82,25 @@ credited to us.
      here misread it as an inconsistency). His stated
      priors (p.2) and the acknowledgement to Gamage (p.1) are disclosed.
    - Layout: the reconciliation page is the **site root** (`index.html`, the kit's multi-OPA
-     overview variant), linking to `supporting-analysis/site/` and `opposing-analysis/site/`.
+     overview variant), linking to `bsz-analysis/site/` and `rjkdc-analysis/site/`.
 
 **Decisions after the first build (user, 2026-09-23; no published number changed):**
 1. Rauh output (a) defaults to the expected WT of each Monte Carlo: SSRN 51.26 (U[35, 67.51]),
    NBER 36 (U[0, 72]). These are the only choices consistent with the NPVs the bridge decomposes
    (residual 0). 45.59, 42 and "about 40" (SSRN) and "about 30" (NBER) stay visible as alternatives.
-2. Opposing explorer: q defaults to 1 (the code as shipped, MISMATCHES #5). The g dial keeps its
+2. RJKDC explorer: q defaults to 1 (the code as shipped, MISMATCHES #5). The g dial keeps its
    non-zero levels 0.5% and 1%, labelled "(illustrative)" on the dial: they are this reproduction's,
    not the authors'.
 3. Comparison-model calls accepted as disclosed: shared r range; non-citizens $150B (GGSS p.2 fn.1);
-   the DISPUTES row 7 split; 10% avoidance as its own bridge step with no DISPUTES row; supporting
+   the DISPUTES row 7 split; 10% avoidance as its own bridge step with no DISPUTES row; BSZ
    output (b) = 106.8 is our construction and labelled so.
-4. The Rauh Monte Carlo input ranges (`rauh_mc_*`, `nber_mc_*`) live in the opposing export contract
-   (`opposing-analysis/export/{r,py}/inputs.csv`, taken from the simulation functions' defaults),
+4. The Rauh Monte Carlo input ranges (`rauh_mc_*`, `nber_mc_*`) live in the RJKDC export contract
+   (`rjkdc-analysis/export/{r,py}/inputs.csv`, taken from the simulation functions' defaults),
    not in `comparison/data/document-inputs.csv`.
+5. Naming (user, 2026-09-23): the two sides are called by their authors' initials, BSZ and
+   RJKDC, in directory names (`bsz-analysis/`, `rjkdc-analysis/`), workflow names, CSV side keys
+   (`bsz`, `rjkdc`, `neutral`), identifiers and prose. The words supporting and opposing appear
+   only where a page explains which side is which.
 
 **Same format as the previous OPA (user requirement 2026-09-23).** Every public surface (overview
 page, interactive explorer, Quarto reproduction report, teaching deck, reproduction-materials links,
@@ -106,7 +110,7 @@ shared kit at `~/Desktop/sandbox/opa-framework/template/`, which is extracted fr
 Pages are not hand-built from scratch, and any departure from the kit goes back into the kit.
 
 **Site layout (confirmed 2026-09-23):** the reconciliation page is the site root, linking to
-`/supporting-analysis/` and `/opposing-analysis/`. **Blocker:** the root `.gitignore` ignores
+`/bsz-analysis/` and `/rjkdc-analysis/`. **Blocker:** the root `.gitignore` ignores
 `*.html` (only `README.html` is allowed back). This must be narrowed, for example to render
 by-products only, before any site page is committed.
 
@@ -137,8 +141,8 @@ opa-prop40/
 ├── README.md                  short: what the project is, layout, status, sources policy
 ├── PLAN.md                    this file
 ├── .gitignore                 root-level; see step 2
-├── .github/workflows/ci.yml   R job: download the workbook, check SHA, tar_make, testthat
-├── supporting-analysis/
+├── .github/workflows/bsz-ci.yml   R job: download the workbook, check SHA, tar_make, testthat
+├── bsz-analysis/
 │   ├── README.md, DESCRIPTION, _targets.R, report.qmd, R/, tests/, data-raw/, tools/
 │   │                          (all from CAWT-BSZ, with history)
 │   ├── sql/  py/  export/     empty placeholders with a one-line README each
@@ -148,7 +152,7 @@ opa-prop40/
 │       ├── BSZ_MainTablesFigures.xlsx       (August)
 │       ├── additional-documentation/        (the six PDFs now in "additional documentation/")
 │       └── may-2026/BSZ_MainTablesFigures.xlsx, BSZ26CAbillionaires.pdf   (from CAWT-BSZ)
-├── opposing-analysis/
+├── rjkdc-analysis/
 │   ├── README.md              placeholder: citation, SSRN URL, SHA-256, "phase 2"
 │   └── original-materials/ssrn-6340778.pdf  GITIGNORED
 └── comparison/README.md       placeholder
@@ -156,10 +160,10 @@ opa-prop40/
 
 ## Steps
 
-1. **Stage the source files.** Move the files currently in `supporting-analysis/` and
-   `opposing-analysis/` into the `original-materials/` folders above, renaming
+1. **Stage the source files.** Move the files currently in `bsz-analysis/` and
+   `rjkdc-analysis/` into the `original-materials/` folders above, renaming
    `additional documentation` to `additional-documentation`. Copy the May workbook and PDF from
-   `~/Desktop/sandbox/CAWT-BSZ/original-materials/` into `supporting-analysis/original-materials/may-2026/`.
+   `~/Desktop/sandbox/CAWT-BSZ/original-materials/` into `bsz-analysis/original-materials/may-2026/`.
    Record the SHA-256 of every source file; they go in the READMEs.
    - May workbook: `cffe04bd...b7b1a`
    - August workbook: `c236cc94...cb6ce`
@@ -180,26 +184,26 @@ opa-prop40/
      or use `git filter-repo` if it is installed.
    - Check with `git log --all --name-only | grep -iE '\.(pdf|xlsx)$'` that nothing is left.
    - Make an initial commit in opa-prop40 containing only `.gitignore` and `PLAN.md`. Then run
-     `git subtree add --prefix=supporting-analysis <filtered-clone> main`. This needs
-     `supporting-analysis/` to hold no TRACKED files; the gitignored `original-materials/` is fine.
+     `git subtree add --prefix=bsz-analysis <filtered-clone> main`. This needs
+     `bsz-analysis/` to hold no TRACKED files; the gitignored `original-materials/` is fine.
      If subtree refuses because the directory exists, move `original-materials` out temporarily
      and back afterwards.
-   - Confirm that `git log --oneline -- supporting-analysis | wc -l` shows the CAWT-BSZ commits.
+   - Confirm that `git log --oneline -- bsz-analysis | wc -l` shows the CAWT-BSZ commits.
 
 4. **Make the workbook vintage selectable.**
    - The default path is `original-materials/BSZ_MainTablesFigures.xlsx` (August).
    - Setting the environment variable `BSZ_VINTAGE=may` points at `original-materials/may-2026/...`.
    - Implement this in the one place that defines the path (`_targets.R`'s `xlsx_path` and
      `R/`'s `xlsx_path_default()`). Keep it minimal, and make sure tests use the same helper.
-   - Update the supporting README:
+   - Update the BSZ README:
      - Replace the "NOT redistributed" section with both vintages' SHA-256 and the fetch URL
        `https://eml.berkeley.edu/~saez/BSZ_MainTablesFigures.xlsx`.
      - Fix any wording that assumed the files were tracked.
    - Download that URL to the scratchpad and hash it, to confirm it now serves the August
      file. Report what it serves.
-   - Add the three placeholder dirs and root/opposing/comparison READMEs. Commit.
+   - Add the three placeholder dirs and root/rjkdc/comparison READMEs. Commit.
 
-5. **May baseline.** From `supporting-analysis/`, run
+5. **May baseline.** From `bsz-analysis/`, run
    `BSZ_VINTAGE=may Rscript -e 'targets::tar_make()'`, then the testthat suite.
    - It must be green, as it was in CAWT-BSZ. If it is not, the failure comes from the move
      (paths, working directory): fix it and commit.
@@ -207,7 +211,7 @@ opa-prop40/
    - Report pass/fail counts.
 
 6. **August re-verification: report only, no fixes.** Run `tar_make` and the tests with the
-   August default. Write `supporting-analysis/VERIFY-AUGUST.md` containing:
+   August default. Write `bsz-analysis/VERIFY-AUGUST.md` containing:
    - Pipeline status: did every target build? Which errored, and with what message?
    - Per-derivation verification: for each `compute_*` / verify check, the number of cells
      compared, the number mismatched, and the largest absolute and relative error.
@@ -226,9 +230,9 @@ opa-prop40/
 
    Commit the report.
 
-7. **CI stub.** Add `.github/workflows/ci.yml`:
+7. **CI stub.** Add `.github/workflows/bsz-ci.yml`:
    - One job: ubuntu, `r-lib/actions/setup-r`, install the DESCRIPTION Imports, curl the
-     workbook, check the August SHA-256, then run tar_make and testthat in `supporting-analysis/`.
+     workbook, check the August SHA-256, then run tar_make and testthat in `bsz-analysis/`.
    - Mark it clearly as expected to fail until the August fixes land, or skip snapshot tests
      under an env flag. Pick whichever is simpler and say which.
    - Nothing is pushed in phase 1; CI runs only after the main session creates the remote.
@@ -247,7 +251,7 @@ arrived as of phase 1; phase 1 only prepares the slot.
   `*.sqlite`) are never committed. Every source file, whether public-downloaded, author-shared,
   or re-pulled, gets one row in the tracked `<side>/DATA-SOURCES.csv` manifest (columns: `file,
   side, provider, obtained_via, date_obtained, url_or_contact, sha256, terms, feeds, status`).
-  See `supporting-analysis/DATA-SOURCES.md` for the full column definitions.
+  See `bsz-analysis/DATA-SOURCES.md` for the full column definitions.
 - **(b) One path-resolver per side.** A later pipeline reads every input through a single
   resolver function per side (the same role `xlsx_path_default()` plays now for `BSZ_VINTAGE`),
   so an author-shared file can replace a workbook-cached input at the exact stage it feeds

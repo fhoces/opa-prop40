@@ -7,9 +7,9 @@ test_that("Shapley steps sum exactly to the total gap, every setting and output"
   for (st in unique(en$horizon_setting)) for (o in c("a", "b")) {
     e <- en[en$horizon_setting == st & en$output == o, ]
     b <- br[br$horizon_setting == st & br$output == o, ]
-    expect_equal(sum(b$shapley), e$rauh_model - e$supporting_model, tolerance = 1e-10,
+    expect_equal(sum(b$shapley), e$rauh_model - e$bsz_model, tolerance = 1e-10,
                  label = paste(st, o, "Shapley"))
-    expect_equal(sum(b$sequential), e$rauh_model - e$supporting_model, tolerance = 1e-10,
+    expect_equal(sum(b$sequential), e$rauh_model - e$bsz_model, tolerance = 1e-10,
                  label = paste(st, o, "sequential"))
   }
 })
@@ -18,7 +18,7 @@ test_that("the full chain closes: GGSS printed -> ... -> Rauh SSRN -> NBER", {
   e <- en[en$horizon_setting == "own" & en$output == "a", ]
   ggss <- res$endpoints$value[res$endpoints$endpoint_id == "ggss_headline"]
   b <- br[br$horizon_setting == "own" & br$output == "a", ]
-  chain <- ggss + (e$supporting_model - ggss) + sum(b$shapley) + e$rauh_residual
+  chain <- ggss + (e$bsz_model - ggss) + sum(b$shapley) + e$rauh_residual
   expect_equal(chain, e$rauh_own, tolerance = 1e-12)
   expect_equal(chain + e$nber_step, e$nber_own, tolerance = 1e-12)
 })

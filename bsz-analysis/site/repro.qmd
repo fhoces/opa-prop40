@@ -1,0 +1,736 @@
+---
+title: "Prop 40, BSZ side: the reproduction"
+subtitle: "Boll, Saez and Zucman (2026) and the GGSS expert report, reproduced step by step from the authors' August 2026 workbook"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    toc-location: left
+    code-fold: true
+    code-summary: "code"
+    embed-resources: true
+    fig-align: center
+    tbl-cap-location: top
+    theme: cosmo
+    css: repro.css
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+::: {.site-nav}
+BSZ side of California Proposition 40:
+[Open Output (the explorer)](explorer/) &middot; Open Analysis: Report (here) and
+[Slides](slides/slides.html) &middot;
+[Open Materials](materials.html) &middot;
+[Overview](index.html)
+:::
+
+```{r}
+#| label: setup
+#| code-summary: "setup: every number below is read from the targets store"
+library(targets)
+library(gt)
+library(ggplot2)
+# The report never recomputes or retypes a result: it reads the targets that
+# the pipeline built (bsz-analysis/_targets.R). The R/ functions are
+# sourced only to compare against the workbook's cached cells below.
+invisible(lapply(list.files("../R", pattern = "[.]R$", full.names = TRUE), source))
+STORE <- normalizePath("../_targets")
+tr <- function(name) targets::tar_read_raw(name, store = STORE)
+
+t5   <- tr("tab5_r")
+inp  <- tr("site_scoring_inputs")
+grid <- tr("site_grid")
+par  <- tr("pareto_summary")
+agg  <- tr("data_sec_agg_r")
+laf  <- tr("fig8_laffer_r")
+ins  <- tr("site_inputs")
+stopifnot(identical(inp$vintage, "august"))
+
+bn  <- function(x, d = 1) formatC(x, format = "f", digits = d, big.mark = ",")
+usd <- function(x, d = 1) paste0("\\$", bn(x, d), " billion")
+pct <- function(x, d = 1) paste0(formatC(100 * x, format = "f", digits = d), "%")
+show <- function(df) knitr::kable(df, format = "html", escape = TRUE,
+                                  table.attr = 'class="table table-sm"')
+```
+
+## Introduction
+
+::: {.report-intro}
+![](assets/opa/opa-details.png){.opa-figure}
+
+California's Proposition 40, the Billionaire Tax Act, would levy a one-time 5% tax on
+the net worth of California's billionaires, paid 1% a year over five years. Two
+documents carry the BSZ side's revenue estimate, and this report reproduces
+both:
+
+1. **Boll, Saez and Zucman (BSZ)**, *California Billionaires: Wealth, Taxes, and Wealth
+   Tax Revenue Estimates*, NBER Working Paper 35218, August 2026 revision, and its
+   supplementary Excel workbook. Table 5, row 1 scores the tax at
+   **`r usd(t5$wealth_tax_revenue[1])`**.
+2. **Galle, Gamage, Saez and Shanske (GGSS)**, *Expert Report on Proposition 40*, updated
+   20 July 2026. It cites **\$100 billion**, and says on p.4 where that comes from:
+   "Factoring in 10% of tax avoidance and evasion leads to a scoring of \$104 billion that
+   we round to \$100 billion for simplicity." So the GGSS number is the BSZ row-1
+   computation, rounded. Reproducing one reproduces the other.
+
+This report is part of an Open Policy Analysis of the BSZ side:
+
+- **Open Output**: [the explorer](explorer/), where the assumptions move and the revenue follows
+- **Open Analysis**: this document, and [the slide deck](slides/slides.html)
+- **Open Materials**: [the materials page](materials.html), every script, test and data file
+:::
+
+**The preferred estimate** is Table 5, row 1: `r usd(t5$wealth_tax_revenue[1])` of one-time
+wealth tax revenue, with `r usd(t5$extra_ca_inctax_sales[1])` of extra state income tax
+from asset sales and an income tax loss of `r usd(-t5$annual_ca_inctax_loss[1], 2)` a year.
+It is the benchmark both documents lead with, and the one the campaign cites. Rows 2 to 4
+of Table 5 are the authors' own sensitivity checks; this report reproduces them and the
+explorer shows them next to the preferred row, but none of them replaces it. That follows
+the project's pre-specified output (`PLAN.md`, "Pre-specified output"), fixed before any
+result was seen: the strongest version of each side, its two documents side by side.
+
+**What "reproduced" means here.** The pipeline re-derives every formula cell of the
+authors' workbook in R and checks each against the workbook's own cached value. It does
+not re-collect the raw data: the Forbes wealth figures, the tax statistics and the SEC
+filings enter as the workbook records them. So the reproduction shows that the arithmetic
+from those inputs to the published tables is what the paper says it is. It does not show
+that the inputs are right.
+
+### How to read this report
+
+Text in blockquotes is quoted from the paper. Everything else is ours. Page numbers are
+**PDF pages** of the August 2026 working paper; the printed folio runs two lower in the main
+text. Every number in running text is computed when this page is rendered, from the
+pipeline's stored results (open any "code" fold to see which one). Tables and figures are
+the pipeline's own `gt` and `ggplot2` objects. The figures keep the May 2026 numbering the
+pipeline was first built against; where August renumbered, the text says so.
+
+### Notation, in one place
+
+| Symbol | Meaning | Value in row 1 |
+|---|---|---|
+| $\tau$ | wealth tax rate (one time) | 5% |
+| $W_0$ | wealth of California billionaires on 1 July 2026 | `r usd(inp$W0, 0)` |
+| $n_0$ | number of those billionaires | `r inp$n0` |
+| $\alpha$ | share of wealth lost to avoidance and evasion | 10% |
+| $m$ | share of that avoidance that is people leaving the state | 50% |
+| $s$ | share of the tax paid by selling assets | 1/3 |
+| $g$ | share of a sale's price that is a taxable gain | 80% |
+| $t_{cg}$ | top California tax rate on gains | 13.3% |
+| $C$ | California income tax billionaires pay per year, 2019-2025 average | `r usd(inp$C, 2)` |
+
+# II. The wealth of California billionaires
+
+## A. Short-run growth: Table 1 Panel A and Figure 1
+
+> Table 1 Panel A provides basic statistics on California billionaires in recent years.
+> (BSZ PDF p.5)
+
+**What is computed.** For each year, total billionaire wealth is the sum of the Forbes
+wealth of every California resident on the list,
+$$W_t = \sum_{i \in \text{CA}_t} w_{i,t},$$
+with Larry Ellison excluded throughout, because he left California before 2026. Growth is
+$g_t = W_t / W_{t-1} - 1$, and the "2023-2025" row is the cumulative $W_{2025}/W_{2022} - 1$.
+In plain words: add up the list, then compare years. The top-4 column adds Page, Brin,
+Zuckerberg and Huang from the workbook's SEC-based panel. August added a "1 July 2026" row,
+and replaced the paper's old denominator (California GDP) with California's total
+adjusted gross income (AGI), the income reported on tax returns.
+
+The 2025 count is `r agg$n[agg$year == 2025]` billionaires holding
+`r usd(agg$forbes_worth[agg$year == 2025], 0)`, which is the paper's own figure
+("240 billionaires with total wealth of \$2055 billion", Appendix A). Getting there needed
+one correction to the workbook, described under [What reproduces](#what-reproduces): four
+rows of the raw list were pasted twice.
+
+::: {.table-scroll}
+```{r}
+#| label: tab1
+#| code-summary: "Table 1: tar_read(tab1_gt)"
+tr("tab1_gt")
+```
+:::
+
+The values in this table match the August workbook cell for cell, but some of the
+pipeline's display labels still carry the May wording: the denominator column is headed
+"CA GDP" though it now holds AGI, Panel B's ratio row says "2025" though the endpoint is
+2026, and the note still says ".0002%" and "2025 dollars". Appendix Table A1 has the same
+label drift. Listed under [What reproduces](#what-reproduces).
+
+> Figure 1 plots the trajectory of California's billionaires' total wealth (in nominal
+> current dollars) at the end of years 2019 to 2025 and for July 1st, 2026. (BSZ PDF p.5)
+
+```{r}
+#| label: fig1
+#| fig-width: 7
+#| fig-height: 5
+#| code-summary: "Figure 1: tar_read(fig1)"
+tr("fig1")
+```
+
+In the August paper Figure 1 gains a Panel B, wealth by industry. The pipeline builds that
+chart as its "Appendix Figure A1", the May numbering:
+
+```{r}
+#| label: industry
+#| fig-width: 8
+#| fig-height: 6
+#| code-summary: "industry chart: tar_read(fig_a1)"
+tr("fig_a1")
+```
+
+## B. The long run: Table 1 Panel B and Figure 2
+
+> Figure 2 depicts the longer time series. Panel A depicts the trajectory of top .001%
+> wealth. (BSZ PDF p.8)
+
+**What is computed.** Over forty years the number of billionaires grows with the
+population, so the paper follows a fixed *share* of families instead: in August, the top
+.001% (May used the top .0002%). Wealth is in real 2026 dollars. The comparison is with
+average income per family. The "annualized growth" row is the constant yearly rate that
+turns the 1982 value into the 2026 value:
+$$\bar g = \left(\frac{X_{2026}}{X_{1982}}\right)^{1/44} - 1.$$
+
+```{r}
+#| label: fig2
+#| fig-width: 11
+#| fig-height: 5
+#| code-summary: "Figure 2: tar_read(fig2)"
+tr("fig2")
+```
+
+# III. Taxes paid by California billionaires
+
+## A. California income tax: Table 2, Figure 3 and Table 3
+
+> For all California billionaires, we estimate the California income tax they pay using
+> Franchise Tax Board (the California tax administration) tabulated statistics, a Pareto
+> extrapolation, and an adjustment based on Federal tax data. (BSZ PDF p.10)
+
+**Why an extrapolation.** Tax statistics are published by income bracket, not by name, and
+the top bracket holds thousands of filers, not the 240 billionaires. The paper assumes the
+top of the income distribution follows a Pareto law: above any cutoff $t$, average income
+is a constant multiple $b$ of $t$. From the top bracket's filer count $n_t$ and total income
+$A_t$,
+$$b = \frac{A_t / n_t}{t}, \qquad \hat t_N = t \left(\frac{n_t}{N}\right)^{1 - 1/b},$$
+where $\hat t_N$ is the cutoff above which exactly $N$ filers sit ($N$ = the number of
+billionaires). Their average income is $b\,\hat t_N$, and applying the bracket's average
+tax rate gives the tax the top $N$ *earners* pay.
+
+**From top earners to top wealth holders.** Billionaires are not the top earners: the
+paper cites Balkir et al. (2025) and the Survey of Consumer Finances for top wealth holders'
+income being about half of top earners' income ($\theta = 0.5$), plus a small correction
+for the extrapolation overshooting on US data where the answer is known. The result is
+the "all California billionaires" column of Table 2. Its 2019-2025 average,
+`r usd(inp$C, 2)` a year, is the $C$ that Table 5 uses below.
+
+The top-4 columns need no extrapolation: the workbook computes each person's income tax
+from their SEC filings (stock sales, dividends, option exercises).
+
+::: {.table-scroll}
+```{r}
+#| label: tab2
+#| code-summary: "Table 2: tar_read(tab2_gt)"
+tr("tab2_gt")
+```
+:::
+
+```{r}
+#| label: fig3
+#| fig-width: 11
+#| fig-height: 5
+#| code-summary: "Figure 3: tar_read(fig3)"
+tr("fig3")
+```
+
+::: {.table-scroll}
+```{r}
+#| label: tab3
+#| code-summary: "Table 3: tar_read(tab3_gt)"
+tr("tab3_gt")
+```
+:::
+
+## B. All taxes paid by billionaires: Figure 4
+
+**What is computed.** Figure 4 adds federal income tax, corporate tax and property and
+sales tax to the state income tax, each as a share of wealth. Corporate tax is attributed to
+billionaires in proportion to what they own. For private businesses, which file no public
+accounts, the workbook scales the public-company tax rate by the split of private wealth
+between pass-through and private C-corporations. August changed two of those weights and
+the gross-up for diversified holdings (11% in May, 9.5% in August); see RC2 below.
+
+```{r}
+#| label: fig4
+#| fig-width: 7
+#| fig-height: 5
+#| code-summary: "Figure 4: tar_read(fig4)"
+tr("fig4")
+```
+
+## C. All taxes paid by the top 4: Table 4 and Figures 5 to 7
+
+> Table 4 provides detailed numbers of wealth, income earned, and taxes paid by type of tax
+> for the top 4 over the full 2019-2025 period. (BSZ PDF p.15)
+
+**What is computed.** For the four largest fortunes the workbook builds taxes bottom up from
+company filings: each person's share $s_{i,t}$ of company profits and corporate taxes,
+$$\Pi_{i,t} = s_{i,t}\,\Pi_{\text{firm},t},$$
+plus imputed property tax (1% of property, plant and equipment) and sales tax. "Economic
+income" adds retained company profits to the income that shows up on a tax return, because
+a founder's share of profits the company keeps is income to them even though it is never
+taxed as such. Figure 5 compares taxes with fiscal income, economic income and wealth gains;
+Figure 6 runs the tax rates back to 2004; Figure 7 compares them with economy-wide averages.
+
+::: {.table-scroll}
+```{r}
+#| label: tab4
+#| code-summary: "Table 4: tar_read(tab4_gt)"
+tr("tab4_gt")
+```
+:::
+
+```{r}
+#| label: fig5
+#| fig-width: 7
+#| fig-height: 5
+#| code-summary: "Figure 5: tar_read(fig5)"
+tr("fig5")
+```
+
+```{r}
+#| label: fig6
+#| fig-width: 11
+#| fig-height: 5
+#| code-summary: "Figure 6: tar_read(fig6)"
+tr("fig6")
+```
+
+```{r}
+#| label: fig7
+#| fig-width: 11
+#| fig-height: 5
+#| code-summary: "Figure 7: tar_read(fig7)"
+tr("fig7")
+```
+
+# IV. The economics of taxing billionaires' wealth
+
+## A. The one-time 5% tax: Table 5, step by step {#table-5}
+
+This is the section the BSZ side's headline rests on. Table 5 has four rows. Row 1
+is the benchmark; rows 2 to 4 change one assumption at a time. We build row 1 in five steps,
+then each other row as a change to it.
+
+### Step 1: the tax base
+
+> Using the July 1st wealth value of \$2.3 trillion, the wealth tax scores at \$104 billion
+> (=90%\*5%\*\$2307 billion). (BSZ PDF p.24)
+
+The base is Forbes' real-time list on 1 July 2026: $n_0$ = `r inp$n0` billionaires with
+$W_0$ = `r usd(inp$W0, 0)`. These two numbers are typed into the workbook
+(`Tab5!B6:C6`); they are data, but data the authors read off Forbes on that day, not
+something the pipeline recomputes. The Act itself values wealth on 31 December 2026, so
+the real base will differ; GGSS note that the daily score ranged from \$87 billion to
+\$107 billion between January and mid-July 2026 (GGSS p.4, fn.8).
+
+### Step 2: avoidance and evasion
+
+Some wealth will escape the tax, through under-valuation, hiding, or leaving the state in
+time. The authors assume a share $\alpha$ = 10% of all of these together:
+$$W^{\text{tax}} = (1 - \alpha)\,W_0 = 0.9 \times `r bn(inp$W0, 0)` = `r bn(t5$taxable_wealth[1])`.$$
+In words: the tax is charged on 90% of listed wealth. The 10% is not estimated. GGSS argue
+it is small because most of the wealth is listed stock that is easy to value, and each of
+some 250 taxpayers can be audited individually (GGSS p.4). It is **guesswork**, and the
+single most important one for the headline: it is the only guess the revenue number itself
+depends on (see [Every input, by origin](#every-input-by-origin)).
+
+### Step 3: wealth tax revenue
+
+$$T = \tau\,W^{\text{tax}} = 0.05 \times `r bn(t5$taxable_wealth[1])` = `r bn(t5$wealth_tax_revenue[1])`.$$
+That is the preferred estimate: `r usd(t5$wealth_tax_revenue[1])`, collected once (in five
+annual installments). Before avoidance, 5% of the base would be
+`r usd(0.05 * inp$W0)`; avoidance costs `r usd(0.05 * inp$W0 - t5$wealth_tax_revenue[1])`.
+
+### Step 4: extra state income tax from selling assets
+
+> Table 5 reports a column of this extra CA income tax generated assuming that wealth taxes
+> will be paid one-third by selling assets triggering taxable realized capital gains (with
+> a basis of 20% of selling price ...) and two-thirds with liquidities or debt.
+> (BSZ PDF p.24)
+
+To pay the tax, some billionaires sell shares, and selling realises capital gains that the
+state taxes. With a share $s$ of the tax paid by selling, a share $g$ of each sale being
+gain, and the top state rate $t_{cg}$ on gains:
+$$E = s \cdot g \cdot t_{cg} \cdot T = \tfrac13 \times 0.80 \times 0.133 \times `r bn(t5$wealth_tax_revenue[1])` = `r bn(t5$extra_ca_inctax_sales[1], 2)`.$$
+So the tax pays back about `r pct(t5$extra_ca_inctax_sales[1] / t5$wealth_tax_revenue[1])`
+of itself in income tax, spread over the five payment years. The one-third is guesswork;
+the 80% gain share is the paper's own estimate of how much of billionaire wealth is
+unrealised gains.
+
+### Step 5: income tax lost to billionaires who leave
+
+> If we assume that half of the 10% avoidance takes the form of mobility: i.e. 5% of
+> billionaires were able to successfully relocate outside California in the narrow time
+> window before January 1st, 2026, then we estimate that a corresponding 5% of the total
+> California individual income tax paid by billionaires will be lost. (BSZ PDF p.24)
+
+A billionaire who leaves stops paying California income tax. The authors assume half of the
+avoidance ($m$ = 50%) is people leaving, so $\alpha m$ = 5% of the income tax billionaires
+pay is lost:
+$$L = -\alpha\,m\,C = -0.10 \times 0.5 \times `r bn(inp$C, 2)` = -`r bn(-t5$annual_ca_inctax_loss[1], 3)` \text{ per year}.$$
+This is a *yearly* loss, and Table 5 does not say for how many years. The paper argues that,
+for a genuinely one-time tax, departures should be temporary, "say only 5 years" (PDF p.27).
+The RJKDC side counts the loss forever. That difference in horizon is the largest single
+dispute between the two sides (`comparison/DISPUTES.md`, row 2) and is outside this side's
+output.
+
+### Row 2: adding the billionaires Forbes misses
+
+> If we assume that the tail is Pareto with constant b=4.48 between \$1 billion and \$4.5
+> billion, then this means that there should be around 617 California billionaires (instead
+> of the 249 listed by Forbes). (BSZ PDF p.25)
+
+Above \$4.5 billion, average wealth over any threshold is a steady multiple of the threshold,
+$b$ = `r bn(par$pareto_b, 2)`: the signature of a Pareto distribution. Below \$4.5 billion the
+Forbes list's $b$ climbs towards 9, which is what a list missing many small fortunes looks
+like. Holding $b$ at `r bn(par$pareto_b, 2)` down to \$1 billion adds
+`r bn(inp$pareto_extra_n, 0)` billionaires and `r usd(inp$pareto_extra_wealth, 0)`
+to the 15 April 2026 list the workbook used, that is `r pct(inp$pct_count_increase, 0)` more
+people but only `r pct(inp$pct_wealth_increase)` more wealth. Row 2 applies those two
+percentages to the 1 July base, with a higher avoidance rate $\alpha_s$ = 20% for these less
+visible fortunes, and subtracts a deduction for those in the \$1 to \$1.1 billion band, where
+the Act phases the rate in:
+$$T_2 = \tau\left[(1-\alpha)W_0 + (1-\alpha_s)\,\Delta W\right] - 0.025\,f_{ph}\,\Delta W, \qquad \Delta W = `r bn(100 * inp$pct_wealth_increase)`\% \times W_0,$$
+with $f_{ph}$ = `r pct(inp$fraction_in_phasein)` the share of the added wealth in the phase-in
+band. The result is `r usd(t5$wealth_tax_revenue[2])`.
+
+```{r}
+#| label: appfig-a4
+#| fig-width: 11
+#| fig-height: 5
+#| code-summary: "Appendix Figure A4: tar_read(fig_a4)"
+tr("fig_a4")
+```
+
+### Row 3: an aggressive assumption on who has left
+
+> The third row in Table 5 scores the wealth tax assuming that Page, Thiel, Hankey, Kalanick
+> successfully moved before January 1, 2026 which is an aggressive assumption. (BSZ PDF p.26)
+
+Two groups are treated differently. Four people are assumed to have left *before*
+1 January 2026, so they escape the tax altogether and stop paying income tax. Three more
+(Brin, Zuckerberg, Fang) pay the tax but are assumed to leave later, so only their income
+tax is lost. For the top three, lost income tax on company wealth is their SEC-based average
+from Table 3; on everything else it is proportional to wealth, at the rate billionaires pay
+outside the top four's company wealth,
+`r pct(inp$resid_rate, 3)` of wealth a year (`Tab5!F18/B18`):
+
+```{r}
+#| label: leavers
+#| code-summary: "the seven named leavers: tar_read(site_scoring_inputs)$leavers"
+lv <- inp$leavers
+lv$name <- tools::toTitleCase(lv$name)
+lv$wealth <- bn(lv$wealth)
+lv$annual_inctax_loss <- bn(lv$annual_inctax_loss, 3)
+names(lv) <- c("Person", "Assumed timing", "Wealth, $B", "Income tax lost, $B/yr")
+show(lv)
+```
+
+Taxable wealth falls to $0.9\,(W_0 - W_{pre})$ with $W_{pre}$ = `r usd(inp$W_pre)`, and revenue
+to `r usd(t5$wealth_tax_revenue[3])`. The yearly income tax loss grows to
+`r usd(-t5$annual_ca_inctax_loss[3], 2)`, still small, because the SEC data show the top three
+pay little income tax relative to their wealth. Whether any of these people has actually
+changed legal residence is a legal judgment, and the most important guesswork in the whole
+dispute (`comparison/DISPUTES.md`, row 3).
+
+### Row 4: rows 2 and 3 together
+
+Row 4 adds the Pareto billionaires to row 3: `r usd(t5$wealth_tax_revenue[4])`, with a yearly
+income tax loss of `r usd(-t5$annual_ca_inctax_loss[4], 2)`. One detail: row 4 does **not**
+subtract the phase-in deduction that row 2 subtracts for the same added billionaires
+(`Tab5!F9` against `Tab5!F7`). We reproduce the workbook as it is; a consistent treatment
+would lower row 4 by `r usd(inp$row4_phasein_gap)`. We list this under
+[What reproduces](#what-reproduces).
+
+### Table 5, reproduced
+
+::: {.table-scroll}
+```{r}
+#| label: tab5
+#| code-summary: "Table 5: tar_read(tab5_gt)"
+tr("tab5_gt")
+```
+:::
+
+```{r}
+#| label: tab5-vs-excel
+#| code-summary: "every Table 5 cell against the workbook's cached value"
+xl <- read_sheet("Tab5", range = "B6:H9")
+cols <- c("n_billionaires", "wealth", "taxable_wealth", "avoidance_rate",
+          "wealth_tax_revenue", "extra_ca_inctax_sales", "annual_ca_inctax_loss")
+dev <- abs(as.matrix(t5[, cols]) - as.matrix(xl))
+t5_cells <- length(dev); t5_maxdev <- max(dev)
+```
+
+All `r t5_cells` cells match the workbook's cached values; the largest absolute difference is
+`r formatC(t5_maxdev, format = "e", digits = 1)`.
+
+```{r}
+#| label: tab5-vs-printed
+#| code-summary: "every Table 5 cell against the digit printed in the paper: tar_read(site_tab5_printed)"
+pr <- tr("site_tab5_printed")
+miss <- pr[!pr$matches_printed, ]
+miss_txt <- paste0("row ", miss$row, " (printed ", formatC(miss$printed, format = "f", digits = 2),
+                   ", workbook ", formatC(miss$reproduced, format = "f", digits = 3), ")")
+```
+
+Matching the *printed* table is a stricter test, because the paper rounds. Of the
+`r nrow(pr)` printed cells, `r sum(pr$matches_printed)` are what the reproduced value rounds
+to. The other `r nrow(miss)` are both in the income tax loss column:
+`r paste(miss_txt, collapse = " and ")`. The workbook's own cached values agree with ours, and
+the paper's text quotes the printed figures (\$0.19 billion on PDF p.25, \$0.51 billion on
+p.26), so the paper rounds these two cells differently from its own workbook. Both are a
+cent of a billion; neither changes an argument.
+
+### How far the guesses move the result
+
+The explorer holds every combination of the six assumptions. Here each one moves on its own,
+with the others at row 1:
+
+```{r}
+#| label: one-at-a-time
+#| code-summary: "one-at-a-time ranges from tar_read(site_grid)"
+dials <- site_dials()
+keys  <- vapply(dials, `[[`, "", "key")
+base  <- stats::setNames(mapply(function(d, j) d$levels[j], dials, site_named_rows()[[1]]), keys)
+lvl   <- function(d, v) switch(d$fmt, pct = paste0(round(100 * v), "%"),
+                               bool = if (v == 1) "yes" else "no",
+                               frac3 = c("none", "1/3", "2/3", "all")[round(3 * v) + 1])
+alone <- function(key) {   # grid cells where only `key` differs from row 1
+  Reduce(`&`, lapply(setdiff(keys, key), function(k) abs(grid[[k]] - base[[k]]) < 1e-9))
+}
+rng <- do.call(rbind, lapply(dials, function(d) {
+  g <- grid[alone(d$key), ]
+  data.frame(
+    input = d$label, origin = d$origin,
+    tried = paste(lvl(d, min(d$levels)), "to", lvl(d, max(d$levels))),
+    `revenue, $B` = paste(bn(min(g$wealth_tax_revenue)), "to", bn(max(g$wealth_tax_revenue))),
+    `income tax lost, $B/yr` = paste(bn(-max(g$annual_ca_inctax_loss), 2), "to",
+                                     bn(-min(g$annual_ca_inctax_loss), 2)),
+    check.names = FALSE)
+}))
+show(rng)
+```
+
+### Two documents, one number
+
+```{r}
+#| label: ggss
+#| code-summary: "the GGSS figure is row 1, rounded"
+ggss_cited <- 100   # GGSS p.1 and p.4 (cited, not computed)
+stopifnot(round(t5$wealth_tax_revenue[1]) == 104)
+```
+
+GGSS start from the same 250 people and `r usd(inp$W0, 0)`, take 5%
+(`r usd(0.05 * inp$W0, 0)`), apply the same 10% avoidance and get
+`r usd(round(t5$wealth_tax_revenue[1]), 0)`, which they round to \$`r ggss_cited` billion. The
+expert report's other figures also come from BSZ Table 5: the \$128 billion with missing
+billionaires (row 2, reproduced as `r usd(t5$wealth_tax_revenue[2])`) and "about
+\$20 billion/year" (one fifth of the rounded total, the annual installment).
+
+## B. A permanent annual wealth tax: the Laffer curve
+
+This part scores a different policy, a wealth tax charged every year, which is not what
+Proposition 40 proposes. The paper uses it to answer the argument that billionaires will
+leave for fear of future taxes. The pipeline's "Figure 8" is the August paper's Figure 9
+(August inserted a new Figure 8 on venture capital, which the pipeline does not build).
+
+> With a semi-elasticity e, the wealth tax rate that maximizes tax revenue while taking into
+> account mobility responses is τ=1/e. (BSZ PDF p.28)
+
+**What is computed.** A semi-elasticity $e$ says each extra percentage point of tax shrinks
+the base by about $e$ percent through people moving away. With a base of $Z_0$ = \$2,000
+billion at today's tax (the workbook's rounded input) and $\tau_0$ = 0.2% of wealth, the
+income tax billionaires already pay,
+$$Z(\tau) = Z_0\, e^{-e(\tau - \tau_0)}, \qquad T(\tau) = \tau\, Z(\tau).$$
+Revenue peaks where the next point of tax loses as much base as it gains in rate, at
+$\tau = 1/e$. With $e$ = 10 (Brülhart et al. 2022, the same value Rauh et al. use) that is
+`r pct(laf$tax_rate[which.max(laf$actual_tax_revenue)], 0)`. The long-run curve also erodes
+wealth itself: $d$ = 15 years of paying the tax shrinks fortunes by $(1-\tau)^d$, and revenue
+then peaks at `r pct(laf$tax_rate[which.max(laf$long_run_tax_revenue)])`, close to the paper's
+$1/(1+d+e) = 3.8\%$.
+
+```{r}
+#| label: fig8
+#| fig-width: 7
+#| fig-height: 5
+#| code-summary: "the Laffer curve (August Figure 9): tar_read(fig8)"
+tr("fig8")
+```
+
+# Appendix exhibits
+
+## Appendix Table A1: US billionaires
+
+::: {.table-scroll}
+```{r}
+#| label: tab-a1
+#| code-summary: "Appendix Table A1: tar_read(tab_a1_gt)"
+tr("tab_a1_gt")
+```
+:::
+
+## Appendix Figures A2 and A3
+
+```{r}
+#| label: appfig-a2
+#| fig-width: 7
+#| fig-height: 5
+#| code-summary: "Appendix Figure A2: tar_read(fig_a2)"
+tr("fig_a2")
+```
+
+```{r}
+#| label: appfig-a3
+#| fig-width: 11
+#| fig-height: 5
+#| code-summary: "Appendix Figure A3: tar_read(fig_a3)"
+tr("fig_a3")
+```
+
+# Every input, by origin {#every-input-by-origin}
+
+This section is not in the paper. It sorts every input of the one-time scoring by how much
+evidence stands behind it, which is the first question a reader who wants to argue with the
+result has to answer.
+
+- **data**: read off a public source, and in principle re-collectable from it.
+- **research**: an estimate from a published study, including the authors' own.
+- **guesswork**: set by assumption; argued for, but not measured.
+- **scenario**: a choice about which policy is being scored.
+- **derived**: implied by other rows. **convention**: a date.
+
+```{r}
+#| label: origins
+#| code-summary: "every input: tar_read(site_inputs)"
+show(ins)
+```
+
+```{r}
+#| label: origins-count
+#| code-summary: "how many of each kind"
+cnt <- as.data.frame(table(factor(ins$origin,
+  levels = c("data", "research", "guesswork", "scenario", "derived", "convention"))))
+names(cnt) <- c("origin", "inputs")
+show(cnt)
+# Which guesses move the headline revenue? Vary each dial alone around row 1.
+moves_rev <- vapply(dials, function(d) diff(range(grid$wealth_tax_revenue[alone(d$key)])) > 1e-9, TRUE)
+is_guess  <- vapply(dials, `[[`, "", "origin") == "guesswork"
+guess_moving_rev <- vapply(dials[moves_rev & is_guess], `[[`, "", "label")
+n_guess_dials <- sum(is_guess)
+stopifnot(sum(ins$origin == "guesswork") == n_guess_dials)
+```
+
+**The headline.** Of the `r nrow(ins)` inputs, `r sum(ins$origin == "guesswork")` are
+guesswork, and they are exactly the explorer's `r n_guess_dials` guesswork dials. Only
+`r length(guess_moving_rev)` of them move the revenue number when varied on their own
+(`r tolower(paste(guess_moving_rev, collapse = "; "))`); the others move only the smaller
+income tax columns, or matter only in the scenario rows. So the preferred
+`r usd(t5$wealth_tax_revenue[1])` is Forbes' list, times 5%, times one minus a single guessed
+avoidance rate; the only other guess that moves it is who has already left. The disputes with the RJKDC side are mostly about inputs this
+table labels guesswork or scenario: who has left (row 3), how long losses last, and whether a
+one-time tax triggers permanent departures.
+
+# What reproduces {#what-reproduces}
+
+```{r}
+#| label: tests
+#| code-summary: "test results, from site/data/test-results.csv"
+tests <- read.csv("data/test-results.csv", stringsAsFactors = FALSE)
+by_file <- aggregate(cbind(blocks = 1, passed, failed) ~ file, data = tests, FUN = sum)
+show(rbind(by_file, data.frame(file = "total", blocks = sum(by_file$blocks),
+                               passed = sum(by_file$passed), failed = sum(by_file$failed))))
+```
+
+The suite ran on `r tests$run_date[1]` against the `r tests$vintage[1]` workbook:
+`r sum(tests$passed)` expectations passed and `r sum(tests$failed)` failed. The
+`compute`, `tables` and `data_sheets` files compare R against the workbook's own cached
+cells, formula by formula, at a stated tolerance; `snapshots` pins every output so any
+change fails; `site` pins the explorer to the reproduction. Figures are checked for
+structure and a few anchor values, not pixel by pixel.
+
+## Mismatches found, and how each was resolved
+
+The August workbook was first run through code written for the May version, and 184
+expectations failed. Every failure was traced to one of ten root causes before anything was
+fixed (`VERIFY-AUGUST.md`):
+
+| Cause | What it was | Resolution |
+|---|---|---|
+| RC1 | `shortrunseries`: August moved most columns and dropped one | column map per vintage (`R/vintage.R`) |
+| RC2 | `billionairesCAinctax`: two rows inserted; the diversified-holdings gross-up changed from 11% to 9.5% and two private-wealth weights changed | row map per vintage; new parameters ported |
+| RC3 | Table 5's typed-in base and leaver wealth moved to the 1 July 2026 Forbes values | constants per vintage |
+| RC4 | Table 1 and A1 denominators changed from GDP to AGI | ported from the formulas |
+| RC5 | a "2026 (July 1st)" row inserted in Tables 1 and A1 | ported |
+| RC6 | Panel B redefined from the top .0002% to the top .001%, endpoint 2025 to 2026 | ported |
+| RC7 | Table 2 gained two columns; its average row changed formula | ported |
+| RC8 | the Laffer sheet moved from `Fig8` to `Fig9` | sheet name per vintage |
+| RC9 | four smaller literals (row counts, a sheet count, one cell) | updated |
+| RC10 | a genuine data error in the workbook, below | de-duplicated |
+
+**A data-entry error in the workbook.** In August's `data_sec_all` sheet, rows 1338 to 1341
+(four 2025 entries: Sijbrandij, Rihanna, Preston-Werner, Stephens) appear a second time at
+rows 1342 to 1345. Counting both copies gives 244 billionaires; dropping the repeat gives
+240, which matches the workbook's own aggregate sheet and the paper's text. The pipeline
+drops rows that repeat year, person and wealth exactly (`R/compute_data_sec_agg.R`).
+
+**Two printed cells that differ from the workbook.** Table 5's income tax loss in rows 2
+and 3 is printed as \$0.19 and \$0.51 billion; the workbook, and this reproduction, give
+values that round to \$0.20 and \$0.52 (see [Table 5, reproduced](#table-5-reproduced)).
+
+**Readings the workbook leaves implicit.** Both are kept at the workbook's behaviour and
+disclosed on the explorer:
+
+- `Tab5!H6` types the income tax loss share as a literal 0.05. We read it as avoidance
+  times the leaving share (0.10 × 0.5), as the row label says. It matters only when the
+  explorer moves those inputs.
+- Row 4 omits row 2's phase-in deduction (`Tab5!F9`), worth `r usd(inp$row4_phasein_gap)`.
+
+**Display labels that lag the data.** Tables 1 and A1 hold August values under some May
+labels (GDP for AGI, 2025 for 2026, .0002% for .001%, 2025 dollars for 2026 dollars), and a
+few summary cells render as rounded zeros. The numbers are tested; the labels are not.
+Fixing them changes the pinned table snapshots, so it is left for a separate change.
+
+**What is not reproduced.**
+
+- August's new Figure 8 (venture capital deals) and new Appendix Figure A1 (wealth relative to
+  AGI) have no builder yet.
+- The raw inputs are not re-collected (Forbes, Franchise Tax Board, SEC, IRS, national
+  accounts), except a one-person SEC proof of concept. An error in the workbook's inputs
+  would pass straight through.
+- The GGSS July report has no workbook of its own. Its \$100 billion is reproduced only in
+  the sense above: it is BSZ row 1, rounded.
+
+## Reproducing this document
+
+```sh
+cd bsz-analysis
+Rscript -e 'targets::tar_make(names = !tidyselect::any_of(c("report_html","report_pdf")))'
+Rscript tools/site-test-results.R      # writes site/data/test-results.csv
+cd site && quarto render repro.qmd
+```
+
+The workbook is not redistributed; `DATA-SOURCES.csv` gives its URL and SHA-256. Set
+`CAWTBSZ_MATERIALS` if it lives outside `bsz-analysis/original-materials/`.
+
+::: {.site-nav}
+BSZ side of California Proposition 40:
+[Open Output (the explorer)](explorer/) &middot; Open Analysis: Report (here) and
+[Slides](slides/slides.html) &middot;
+[Open Materials](materials.html) &middot;
+[Overview](index.html)
+:::

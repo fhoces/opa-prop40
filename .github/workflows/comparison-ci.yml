@@ -1,7 +1,7 @@
 name: comparison CI
 
 # Rebuilds the comparison layer from the two sides' committed export contracts
-# (supporting-analysis/export/r/, opposing-analysis/export/r/) plus
+# (bsz-analysis/export/r/, rjkdc-analysis/export/r/) plus
 # comparison/data/, with both the R build and its Python twin, then runs the
 # comparison test suite (endpoints vs printed numbers, Shapley identities,
 # R vs Python parity, the page being exactly the generator's output). Finally
@@ -15,16 +15,16 @@ on:
   push:
     paths:
       - "comparison/**"
-      - "supporting-analysis/export/**"
-      - "opposing-analysis/export/**"
+      - "bsz-analysis/export/**"
+      - "rjkdc-analysis/export/**"
       - "index.html"
       - "assets/comparison-data.js"
       - ".github/workflows/comparison-ci.yml"
   pull_request:
     paths:
       - "comparison/**"
-      - "supporting-analysis/export/**"
-      - "opposing-analysis/export/**"
+      - "bsz-analysis/export/**"
+      - "rjkdc-analysis/export/**"
       - "index.html"
       - "assets/comparison-data.js"
       - ".github/workflows/comparison-ci.yml"

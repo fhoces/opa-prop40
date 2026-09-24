@@ -1,0 +1,78 @@
+name: rjkdc-analysis CI
+
+# Clones the authors' public MIT-licensed repo (bjaros20/wealth_tax) at the
+# pinned SHA used throughout this replication, points RAUH_REPO_DIR at it,
+# then rebuilds both the R pipeline and its Python twin and runs both test
+# suites. The workbook, MC scripts and final.csv this pipeline reads all
+# live inside that cloned repo - nothing else needs to be fetched. See
+# rjkdc-analysis/README.md and MISMATCHES.md.
+
+on:
+  push:
+    paths:
+      - "rjkdc-analysis/**"
+      - ".github/workflows/rjkdc-ci.yml"
+  pull_request:
+    paths:
+      - "rjkdc-analysis/**"
+      - ".github/workflows/rjkdc-ci.yml"
+  workflow_dispatch: {}
+
+env:
+  RAUH_SHA: 25e84ddbb67fe0293a64cd9108ed4d35d8ae37ab
+
+jobs:
+  reproduce:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: rjkdc-analysis
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: "release"
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          working-directory: rjkdc-analysis
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install the Python twin's dependencies
+        run: pip install numpy pandas openpyxl
+
+      - name: Clone the authors' repo at the pinned SHA
+        run: |
+          git clone https://github.com/bjaros20/wealth_tax.git /tmp/wealth_tax
+          cd /tmp/wealth_tax
+          git checkout "$RAUH_SHA"
+          actual_sha=$(git rev-parse HEAD)
+          if [ "$actual_sha" != "$RAUH_SHA" ]; then
+            echo "HEAD is $actual_sha, expected $RAUH_SHA" >&2
+            exit 1
+          fi
+
+      - name: Run the R pipeline (tar_make)
+        env:
+          RAUH_REPO_DIR: /tmp/wealth_tax
+        run: Rscript -e 'targets::tar_make()'
+
+      - name: Run the R test suite
+        env:
+          RAUH_REPO_DIR: /tmp/wealth_tax
+        run: Rscript tests/testthat.R
+
+      - name: Run the Python twin
+        env:
+          RAUH_REPO_DIR: /tmp/wealth_tax
+        run: python py/run_export.py
+
+      - name: Re-run the R test suite (now with export/py present, for the parity tests)
+        env:
+          RAUH_REPO_DIR: /tmp/wealth_tax
+        run: Rscript tests/testthat.R

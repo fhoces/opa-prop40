@@ -67,11 +67,11 @@ build_series <- function(ex, resid_label) {
                                      short = unname(short_labels[id]), kind = kind)
         if (o == "a") {
           add("ggss", "total", ggss, "GGSS headline, as printed (GGSS p.4)")
-          add("ggss_rounding", "model", e$supporting_model - ggss,
+          add("ggss_rounding", "model", e$bsz_model - ggss,
               "GGSS round their scoring to the nearest $100B 'for simplicity' (p.4)", "rounding")
-          add("bsz", "total", e$supporting_model, "BSZ Table 5 row 1 = the model at all-supporting inputs (checkpoint)")
+          add("bsz", "total", e$bsz_model, "BSZ Table 5 row 1 = the model at all-BSZ inputs (checkpoint)")
         } else {
-          add("bsz_net", "total", e$supporting_model,
+          add("bsz_net", "total", e$bsz_model,
               paste0("BSZ row 1 net of its own asset-sale tax and income tax losses", Hlab, " (constructed)"))
         }
         for (i in seq_len(nrow(b))) {
@@ -107,9 +107,9 @@ render_site <- function(root = comparison_root(),
   inp <- ex$inputs
   steps <- bridge_steps()
   tok <- list()
-  opp <- function(id) pick(k$opposing$outputs, id, "printed_value")
-  n_sup <- pick(k$supporting$inputs, "n_billionaires")
-  n_rauh <- pick(k$opposing$inputs, "n_billionaires")
+  opp <- function(id) pick(k$rjkdc$outputs, id, "printed_value")
+  n_sup <- pick(k$bsz$inputs, "n_billionaires")
+  n_rauh <- pick(k$rjkdc$inputs, "n_billionaires")
 
   tok$ggss_headline <- money(epv("ggss_headline"), 0)
   tok$ggss_scoring <- money(epv("ggss_scoring"), 1)
@@ -118,10 +118,10 @@ render_site <- function(root = comparison_root(),
   tok$rauh_npv <- money(epv("rauh_ssrn_npv"), 1)
   tok$nber_npv <- money(ep$printed_value[ep$endpoint_id == "rauh_nber_npv"], 1)
   tok$rauh_a <- money(epv("rauh_ssrn_revenue_mc"), 2)
-  tok$r_min <- pct(pick(k$opposing$inputs, "rauh_mc_r_min"), 1)
-  tok$r_max <- pct(pick(k$opposing$inputs, "rauh_mc_r_max"), 1)
-  tok$x_sup <- money(mv("X_supporting"), 2)
-  tok$pv_sup <- money(mv("PV_supporting_own"), 2)
+  tok$r_min <- pct(pick(k$rjkdc$inputs, "rauh_mc_r_min"), 1)
+  tok$r_max <- pct(pick(k$rjkdc$inputs, "rauh_mc_r_max"), 1)
+  tok$x_sup <- money(mv("X_bsz"), 2)
+  tok$pv_sup <- money(mv("PV_bsz_own"), 2)
   tok$loss_sup <- money(ex$loss$annual_loss[ex$loss$source_id == "bsz_row1"], 2)
   tok$rauh_resid_b <- money(eb$rauh_residual, 2)
   tok$n_orders <- format(factorial(nrow(steps)), big.mark = ",")
@@ -133,7 +133,7 @@ render_site <- function(root = comparison_root(),
   tok$headline_rows <- paste(c(
     hr("GGSS expert report (20 Jul 2026)", money(epv("ggss_headline"), 0), "not computed",
        sprintf("%s scoring, rounded to %s (p.4)", money(epv("ggss_scoring"), 0), money(epv("ggss_headline"), 0))),
-    hr("BSZ NBER WP 35218, Table 5 row 1 (Aug 2026)", money(epv("bsz_tab5_row1"), 1), money(eb$supporting_model, 1),
+    hr("BSZ NBER WP 35218, Table 5 row 1 (Aug 2026)", money(epv("bsz_tab5_row1"), 1), money(eb$bsz_model, 1),
        sprintf("%s revenue (PDF p.39); no net figure", money(ep$printed_value[ep$endpoint_id == "bsz_tab5_row1"], 0))),
     hr("Rauh et al., SSRN 6340778 (17 Mar 2026)", money(ea$rauh_own, 2), money(eb$rauh_own, 2),
        sprintf("mean NPV %s (p.20); revenue 'about %s' (p.14)", money(ep$printed_value[ep$endpoint_id == "rauh_ssrn_npv"], 1),
@@ -149,13 +149,13 @@ render_site <- function(root = comparison_root(),
   tok$horizon_buttons <- paste(sprintf('    <button type="button" data-h="%s" aria-pressed="false">%s</button>', hs,
                                        vapply(hs, hlab, "")), collapse = "\n")
   notes <- list(own = sprintf(
-    "Each side's own horizon: the supporting side counts the losses for %s (BSZ PDF p.27), Rauh in perpetuity; the horizon is then one of the bridge steps. Output (a) does not depend on the horizon.",
+    "Each side's own horizon: the BSZ side counts the losses for %s (BSZ PDF p.27), Rauh in perpetuity; the horizon is then one of the bridge steps. Output (a) does not depend on the horizon.",
     fmt_input("H", inp$supporting_value[inp$input == "H"])))
   for (st in hs) {
     e <- en[en$horizon_setting == st & en$output == "b", ]
     notes[[st]] <- sprintf(
-      "Both sides at a common %s horizon, so the horizon is no longer a step. Supporting net %s; Rauh's inputs give %s at this horizon (his own printed number assumes a perpetuity).",
-      tolower(hlab(st)), money(e$supporting_model, 1), money(e$rauh_own, 1))
+      "Both sides at a common %s horizon, so the horizon is no longer a step. BSZ net %s; Rauh's inputs give %s at this horizon (his own printed number assumes a perpetuity).",
+      tolower(hlab(st)), money(e$bsz_model, 1), money(e$rauh_own, 1))
   }
   tok$horizon_note_own <- notes$own
 
@@ -163,8 +163,8 @@ render_site <- function(root = comparison_root(),
   resid_label <- sprintf(
     "Model difference: Rauh's Monte Carlo uses the rounded literals %s and %s where the model uses the workbook's own %s and %s",
     opp("revenue_baseline"), opp("revenue_confirmed6"),
-    formatC(pick(k$opposing$outputs, "revenue_baseline"), format = "f", digits = 3),
-    formatC(pick(k$opposing$outputs, "revenue_confirmed6"), format = "f", digits = 3))
+    formatC(pick(k$rjkdc$outputs, "revenue_baseline"), format = "f", digits = 3),
+    formatC(pick(k$rjkdc$outputs, "revenue_confirmed6"), format = "f", digits = 3))
   series <- build_series(ex, resid_label)
   def <- series$own$a$shapley
   all_ids <- c("ggss", "ggss_rounding", "bsz", "bsz_net", steps$step_id, "rauh_resid", "rauh", "nber_step", "nber")
@@ -198,9 +198,9 @@ render_site <- function(root = comparison_root(),
   top3 <- ba[order(ba$shapley), ][1:3, ]
   tok$bridge_findings <- paste(sprintf("  <li>%s</li>", c(
     sprintf("Output (a) falls from %s to %s. The three largest Shapley steps are %s.",
-            money(ea$supporting_model, 1), money(ea$rauh_own, 1),
+            money(ea$bsz_model, 1), money(ea$rauh_own, 1),
             paste(sprintf("%s (%s, %s)", tolower(top3$title), money(top3$shapley, 1, TRUE), top3$kind), collapse = "; ")),
-    sprintf("One step favours the supporting side's number going up: Rauh applies no avoidance or evasion allowance beyond migration (his semi-elasticity is the migration share of Brulhart et al.'s response, Rauh pp.13-14), so dropping GGSS's 10%% adds %s (Shapley). DISPUTES.md does not list this as a row.",
+    sprintf("One step favours the BSZ side's number going up: Rauh applies no avoidance or evasion allowance beyond migration (his semi-elasticity is the migration share of Brulhart et al.'s response, Rauh pp.13-14), so dropping GGSS's 10%% adds %s (Shapley). DISPUTES.md does not list this as a row.",
             money(v(ba, "avoidance"), 1, TRUE)),
     sprintf("Order matters most for scoring the one-time tax as a permanent 5 pp rate: %s averaged over all orders, %s in the one order shown. Rauh's revenue is uniform between a confirmed-departures ceiling and an elasticity floor, so the elasticity bites only on top of whatever departures are already in: the step is large when switched early and smaller when switched after the departures.",
             money(v(ba, "one_time_as_permanent"), 1, TRUE), money(v(ba, "one_time_as_permanent", "sequential"), 1, TRUE)),
@@ -208,7 +208,7 @@ render_site <- function(root = comparison_root(),
             money(v(bb, "horizon", "sequential"), 1, TRUE), money(v(bb, "horizon"), 1, TRUE),
             money(ex$loss$annual_loss[ex$loss$source_id == "bsz_row1"], 2),
             money(ex$loss$annual_loss[ex$loss$source_id == "rauh_ssrn"], 2)),
-    sprintf("Model differences are small and shown, not hidden: %s on (a) and %s on (b), from Rauh's rounded literals (MISMATCHES #6 in opposing-analysis). Rauh's printed %s is the expectation of his Monte Carlo (%s); his seed-2026 run gives %s.",
+    sprintf("Model differences are small and shown, not hidden: %s on (a) and %s on (b), from Rauh's rounded literals (MISMATCHES #6 in rjkdc-analysis). Rauh's printed %s is the expectation of his Monte Carlo (%s); his seed-2026 run gives %s.",
             money(ea$rauh_residual, 4, TRUE), money(eb$rauh_residual, 2, TRUE),
             money(ep$printed_value[ep$endpoint_id == "rauh_ssrn_npv"], 1), money(eb$rauh_own, 3),
             money(ep$contract_value[ep$endpoint_id == "rauh_ssrn_npv"], 2)),
@@ -253,7 +253,7 @@ render_site <- function(root = comparison_root(),
             n_sup, money(inp$supporting_value[inp$input == "W_core"] + inp$supporting_value[inp$input == "W_noncit"], 0),
             money(epv("ggss_scoring"), 1), tok$ggss_headline,
             money(epv("ggss_headline") - dv("hoopes_net"), 0, TRUE), money(-ho("ggss_rounding"), 1, TRUE)),
-    sprintf("<b>Residency.</b> His bar is %s, close to Rauh's own %s for dropping Ellison, Houston and Snyder and adding Sacks (Rauh p.5). By July the supporting side has itself dropped Ellison, so our step is a different quantity: the %s of non-US-citizen residents Rauh omits plus the list and valuation-date difference, %s in one order.",
+    sprintf("<b>Residency.</b> His bar is %s, close to Rauh's own %s for dropping Ellison, Houston and Snyder and adding Sacks (Rauh p.5). By July the BSZ side has itself dropped Ellison, so our step is a different quantity: the %s of non-US-citizen residents Rauh omits plus the list and valuation-date difference, %s in one order.",
             hfmt(hs_("residency_correction"), NA), money(-dv("rauh_residency_correction"), 2), money(inp$supporting_value[inp$input == "W_noncit"], 0), money(ho("residency_correction"), 1, TRUE)),
     sprintf("<b>Confirmed departures.</b> His bar is %s; Rauh's own step is %s before avoidance (%s to %s, p.11), and ours is %s at that point of the order. We could not trace his figure to a number in Rauh et al.",
             hfmt(hs_("confirmed_departures"), NA), money(opp("revenue_confirmed6") - opp("revenue_baseline"), 2, TRUE),
@@ -276,7 +276,7 @@ render_site <- function(root = comparison_root(),
     sprintf("<b>Income tax.</b> His single bar, %s, ends at %s, close to Rauh's %s. Rauh's own expected present value of lost income tax is %s against %s of revenue, so with a different starting level his bar works as a plug. We split it into four labelled steps (proportionality, the income tax level, the horizon, asset-sale tax), which interact with the base steps.",
             hfmt(hs_("income_tax_loss"), NA), money(hz_end, 1), tok$rauh_npv, money(ho("income_tax_loss"), 2, TRUE), money(ea$rauh_own, 2)),
     "<b>Order and labels.</b> His is one sequential order, with no provenance labels; ours shows Shapley averages over all orders as well as one order, with each step labelled data, research, guesswork or scenario.",
-    "<b>Steps he does not have.</b> The non-US-citizen residents, the supporting side's avoidance allowance being dropped, the asset-sale income tax, and the NBER revision (which postdates his note)."
+    "<b>Steps he does not have.</b> The non-US-citizen residents, the BSZ side's avoidance allowance being dropped, the asset-sale income tax, and the NBER revision (which postdates his note)."
   )), collapse = "\n")
   tok$hoopes_fit <- money(as.numeric(hraw$tick_fit_max_resid[1]), 1)
   tok$hoopes_unc <- money(as.numeric(hraw$uncertainty[hraw$step_id == "confirmed_departures"]), 1)
@@ -291,7 +291,7 @@ render_site <- function(root = comparison_root(),
     sprintf('    <tr><td>GGSS expert report</td><td>updated 20 Jul 2026</td><td>%s billionaires, %s at 1 Jul 2026, non-citizens included, Ellison excluded</td></tr>',
             n_sup, money(inp$supporting_value[inp$input == "W_core"] + inp$supporting_value[inp$input == "W_noncit"], 0)),
     '    <tr><td>Boll, Saez, Zucman, NBER WP 35218</td><td>Aug 2026 revision</td><td>same 1 Jul 2026 base; Table 5 adds missing billionaires and leaver scenarios</td></tr>',
-    sprintf('    <tr><td>Jaros and Rauh, NBER c15504</td><td>Sep 2026</td><td>Rauh\'s base grown %s to 31 Dec 2026, seven departures, litigation weight</td></tr>', pct(pick(k$opposing$inputs, "nber_growth_rate"))),
+    sprintf('    <tr><td>Jaros and Rauh, NBER c15504</td><td>Sep 2026</td><td>Rauh\'s base grown %s to 31 Dec 2026, seven departures, litigation weight</td></tr>', pct(pick(k$rjkdc$inputs, "nber_growth_rate"))),
     '    <tr><td>LAO ballot analysis</td><td>for the 3 Nov 2026 ballot</td><td>no point estimate</td></tr>'), collapse = "\n")
 
   # ---- disputes table ----

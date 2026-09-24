@@ -1,8 +1,8 @@
 # The common scoring function and its decomposition.
 #
 # ONE function scores both sides. Every disputed input is an argument that takes
-# either the supporting side's value (GGSS July 2026 / BSZ August 2026, which share
-# their benchmark) or Rauh et al.'s (SSRN, March 2026). At the all-supporting
+# either the BSZ side's value (GGSS July 2026 / BSZ August 2026, which share
+# their benchmark) or Rauh et al.'s (SSRN, March 2026). At the all-BSZ
 # setting it must return BSZ Table 5 row 1; at the all-Rauh setting it must return
 # the expectation of Rauh's own Monte Carlo (its inputs are independent uniforms,
 # so the expectation has a closed form and needs no random draws).
@@ -19,7 +19,7 @@
 #
 # annuity(r, H) = (1 - (1 + r)^-H) / r, the value of 1 per year for H years; H = Inf
 # gives Rauh's perpetuity 1/r and r -> 0 gives H. r ~ U[r_min, r_max] as in Rauh
-# eq.24; the supporting side takes no position on r (it disputes the horizon), so r
+# eq.24; the BSZ side takes no position on r (it disputes the horizon), so r
 # is a shared input, not a bridge step.
 
 expected_annuity <- function(H, r_min, r_max) {
@@ -44,7 +44,7 @@ score_common <- function(x) {
 # The bridge steps (Shapley players). One per row of comparison/DISPUTES.md, row 7
 # split into its two parts, plus the two inputs DISPUTES.md does not list as rows
 # (the 10% avoidance allowance and the asset-sale income tax). `inputs` are the
-# score_common() arguments the step switches from the supporting to the Rauh value.
+# score_common() arguments the step switches from the BSZ to the Rauh value.
 bridge_steps <- function() {
   data.frame(
     step_id = c("noncitizens", "base_list", "real_estate", "confirmed_departures",

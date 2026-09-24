@@ -4,8 +4,8 @@ HORIZONS <- c(5, 10, 20, 30, 50, Inf)
 
 # The two input vectors, each value traced to a contract row or a document page.
 bridge_inputs <- function(k) {
-  si <- k$supporting$inputs; so <- k$supporting$outputs
-  oi <- k$opposing$inputs;   oo <- k$opposing$outputs
+  si <- k$bsz$inputs; so <- k$bsz$outputs
+  oi <- k$rjkdc$inputs;   oo <- k$rjkdc$outputs
   d  <- k$docs
   W0      <- pick(si, "baseline_net_worth")
   noncit  <- pick(d, "ggss_noncitizen_wealth")
@@ -23,7 +23,7 @@ bridge_inputs <- function(k) {
   sup <- c(shared, list(
     W_noncit = noncit, W_core = W0 - noncit, re = 0, d_conf = 0,
     alpha = pick(si, "avoidance_rate"), dtau = 0, eps = pick(si, "semi_elasticity_permanent"),
-    kappa = kappa_s, C = C_sup, H = pick(d, "supporting_loss_horizon"),
+    kappa = kappa_s, C = C_sup, H = pick(d, "bsz_loss_horizon"),
     s = pick(si, "sell_share")))
   rauh <- c(shared, list(
     W_noncit = 0, W_core = base_r, re = 1 - R0_r / (tau * base_r),
@@ -50,21 +50,21 @@ bridge_input_table <- function(bi) {
              "$B/yr", "years", "share"),
     supporting_source = c(
       "GGSS 20 Jul 2026 p.2 fn.1 (24 people, about $150B); BSZ PDF p.54 ($132B at 1 Jan)",
-      "supporting export baseline_net_worth ($2,307B, 1 Jul 2026; BSZ PDF p.24, GGSS p.4) minus the non-citizens",
+      "BSZ export baseline_net_worth ($2,307B, 1 Jul 2026; BSZ PDF p.24, GGSS p.4) minus the non-citizens",
       "no separate deduction (BSZ PDF p.24: 90% x 5% x $2,307B)",
       "benchmark taxes all 1 Jan 2026 residents (BSZ PDF p.23); aggressive row 3 is a checkpoint",
-      "supporting export avoidance_rate (GGSS p.4; BSZ PDF p.24)",
+      "BSZ export avoidance_rate (GGSS p.4; BSZ PDF p.24)",
       "one-time tax, responses temporary: no elasticity applied (BSZ PDF p.22 fn.29; Resp pp.1-3)",
-      "supporting export semi_elasticity_permanent (BSZ PDF p.28; Fig8!B8), used only for a permanent tax",
-      "leavers' tax per $ of wealth / average, from supporting export leavers_annual_inctax, leavers_wealth, ca_inctax_billionaires (SEC data, BSZ PDF p.26, Table 4 p.38)",
-      "supporting export ca_inctax_billionaires (Tab2!C14; BSZ PDF p.11)",
+      "BSZ export semi_elasticity_permanent (BSZ PDF p.28; Fig8!B8), used only for a permanent tax",
+      "leavers' tax per $ of wealth / average, from BSZ export leavers_annual_inctax, leavers_wealth, ca_inctax_billionaires (SEC data, BSZ PDF p.26, Table 4 p.38)",
+      "BSZ export ca_inctax_billionaires (Tab2!C14; BSZ PDF p.11)",
       "BSZ PDF p.27 ('If they last say only 5 years')",
-      "supporting export sell_share (BSZ PDF p.24)"),
+      "BSZ export sell_share (BSZ PDF p.24)"),
     rauh_source = c(
       "omitted: Forbes CA-residence field (Rauh p.4; DISPUTES row 8)",
-      "opposing export baseline_net_worth (212 billionaires, 2025 Forbes list; Rauh pp.4-5)",
-      "1 - revenue_baseline / (5% x base) from the opposing export (Rauh p.8 Table 5, $8.19B among stayers)",
-      "1 - revenue_confirmed6 / revenue_baseline from the opposing export (Rauh p.11, 6 departures)",
+      "RJKDC export baseline_net_worth (212 billionaires, 2025 Forbes list; Rauh pp.4-5)",
+      "1 - revenue_baseline / (5% x base) from the RJKDC export (Rauh p.8 Table 5, $8.19B among stayers)",
+      "1 - revenue_confirmed6 / revenue_baseline from the RJKDC export (Rauh p.11, 6 departures)",
       "none: the elasticity replaces any avoidance allowance (Rauh pp.13-14)",
       "semi-elasticity applied to a 5.00 pp rate change (Rauh p.11 eq.7-8, p.14 eq.13)",
       "the Monte Carlo floor of $35B (Rauh p.20 eq.22; 'approximately 12.6', p.19)",
@@ -77,8 +77,8 @@ bridge_input_table <- function(bi) {
 
 build_all <- function(k = read_contracts()) {
   bi <- bridge_inputs(k); sup <- bi$sup; rauh <- bi$rauh
-  so <- k$supporting$outputs; oo <- k$opposing$outputs; d <- k$docs
-  oi <- k$opposing$inputs
+  so <- k$bsz$outputs; oo <- k$rjkdc$outputs; d <- k$docs
+  oi <- k$rjkdc$inputs
   steps <- bridge_steps()
   ids <- steps$step_id
 
@@ -90,7 +90,7 @@ build_all <- function(k = read_contracts()) {
                     baseline = pick(oo, "revenue_baseline", "printed_value"),  # 94.2
                     c_min = pick(oi, "rauh_mc_c_min"), c_max = pick(oi, "rauh_mc_c_max"),
                     r_min = pick(oi, "rauh_mc_r_min"), r_max = pick(oi, "rauh_mc_r_max"))
-  nber_args <- list(wt_min = 0, wt_max = pick(k$opposing$inputs, "nber_ceiling_hardcoded"),
+  nber_args <- list(wt_min = 0, wt_max = pick(k$rjkdc$inputs, "nber_ceiling_hardcoded"),
                     f_min = pick(oi, "nber_mc_f_min"), f_max = pick(oi, "nber_mc_f_max"),
                     c_min = rauh_args$c_min, c_max = rauh_args$c_max,
                     r_min = rauh_args$r_min, r_max = rauh_args$r_max)
@@ -122,7 +122,7 @@ build_all <- function(k = read_contracts()) {
         sequential_rank = match(ids, sequential_order()), stringsAsFactors = FALSE)
       ends[[length(ends) + 1]] <- data.frame(
         horizon_setting = st, output = out,
-        supporting_model = v_sup[[out]], rauh_model = v_rauh[[out]],
+        bsz_model = v_sup[[out]], rauh_model = v_rauh[[out]],
         rauh_own = own_r[[out]], rauh_residual = own_r[[out]] - v_rauh[[out]],
         nber_own = own_n[[out]], nber_step = own_n[[out]] - own_r[[out]],
         stringsAsFactors = FALSE)
@@ -140,16 +140,16 @@ build_all <- function(k = read_contracts()) {
     endpoint_id = c("ggss_headline", "ggss_scoring", "bsz_tab5_row1", "bsz_net_constructed",
                     "rauh_ssrn_revenue_mc", "rauh_ssrn_npv", "rauh_nber_revenue_mc", "rauh_nber_npv"),
     description = c(
-      "GGSS headline: supporting model + their rounding step",
+      "GGSS headline: BSZ model + their rounding step",
       "GGSS scoring before rounding (p.4, '$104 billion')",
-      "BSZ Table 5 row 1 wealth tax revenue = model at all-supporting inputs",
+      "BSZ Table 5 row 1 wealth tax revenue = model at all-BSZ inputs",
       "BSZ row 1 net of its own extra income tax and 5 years of losses (not printed by BSZ; constructed here)",
       "Rauh SSRN expected revenue in the Monte Carlo, E[WT] = (35 + 67.51)/2",
       "Rauh SSRN mean NPV, analytic expectation of the Monte Carlo",
       "Rauh NBER expected revenue in the Monte Carlo, E[WT] = (0 + 72)/2",
       "Rauh NBER mean NPV, analytic expectation of the Monte Carlo"),
-    value = c(ea$supporting_model + (ggss_printed - ea$supporting_model),
-              ea$supporting_model, ea$supporting_model, eb$supporting_model,
+    value = c(ea$bsz_model + (ggss_printed - ea$bsz_model),
+              ea$bsz_model, ea$bsz_model, eb$bsz_model,
               ea$rauh_own, eb$rauh_own, ea$nber_own, eb$nber_own),
     printed_value = c(ggss_printed, pick(so, "ggss_scoring", "printed_value"),
                       pick(so, "tab5_row1_wealth_tax_revenue", "printed_value"), NA,
@@ -168,11 +168,11 @@ build_all <- function(k = read_contracts()) {
     label = c(sprintf("Expected WT in the Monte Carlo behind the %s mean NPV",
                       formatC(pick(oo, "npv_mc_ssrn_mean", "printed_value"), format = "f", digits = 1)),
               sprintf("Literature-calibrated (semi-elasticity %s)",
-                      formatC(pick(k$opposing$inputs, "brulhart_semi_elasticity"), format = "f", digits = 2)),
+                      formatC(pick(k$rjkdc$inputs, "brulhart_semi_elasticity"), format = "f", digits = 2)),
               "Table 9 central scenario",
               "Preferred estimate, 'about $40 billion'"),
     value = c(ea$rauh_own, pick(oo, "revenue_literature_calibrated", "printed_value"),
-              pick(k$opposing$inputs, "wt_central_scenario"), pick(d, "rauh_headline_revenue")),
+              pick(k$rjkdc$inputs, "wt_central_scenario"), pick(d, "rauh_headline_revenue")),
     where = c("Rauh p.20 eq.22 (with the code's 67.51 ceiling)", "Rauh p.14 eq.13",
               "Rauh p.19 Table 9", "Rauh p.1 abstract, p.14"),
     default = c(TRUE, FALSE, FALSE, FALSE), stringsAsFactors = FALSE)
@@ -186,7 +186,7 @@ build_all <- function(k = read_contracts()) {
               "LAO ballot analysis (upper bound, 'less than $1 billion')",
               "Rauh SSRN: E[f] x E[C]", "Rauh NBER: E[f] x E[C]",
               "Walczak / CalTax, low (incl. spillovers)", "Walczak / CalTax, high (incl. spillovers)"),
-    side = c("supporting", "supporting", "neutral", "opposing", "opposing", "opposing (credited dial)", "opposing (credited dial)"),
+    side = c("bsz", "bsz", "neutral", "rjkdc", "rjkdc", "rjkdc (credited dial)", "rjkdc (credited dial)"),
     annual_loss = c(-pick(so, "tab5_row1_annual_ca_inctax_loss"), -pick(so, "tab5_row3_annual_ca_inctax_loss"),
                     pick(d, "lao_loss_upper"),
                     (1 - ea$rauh_own / rauh_args$baseline) * (rauh_args$c_min + rauh_args$c_max) / 2,
@@ -204,7 +204,7 @@ build_all <- function(k = read_contracts()) {
   seqa <- bridge[bridge$horizon_setting == "own" & bridge$output == "a", ]
   sq <- function(ids) sum(seqa$sequential[seqa$step_id %in% ids])
   ours <- c(galle_estimate = ggss_printed,
-            ggss_rounding = ea$supporting_model - ggss_printed,
+            ggss_rounding = ea$bsz_model - ggss_printed,
             residency_correction = sq(c("noncitizens", "base_list")),
             confirmed_departures = sq("confirmed_departures"),
             additional_movers = NA,
@@ -225,8 +225,8 @@ build_all <- function(k = read_contracts()) {
 
   list(inputs = bridge_input_table(bi), bridge = bridge, ends = ends, endpoints = endpoints,
        anchors = anchors, loss = loss, hoopes = hoopes,
-       meta = data.frame(key = c("A_5", "A_inf", "kappa_supporting", "R0_rauh", "S_rauh",
-                                 "X_supporting", "PV_supporting_own", "f_rauh", "C_rauh"),
+       meta = data.frame(key = c("A_5", "A_inf", "kappa_bsz", "R0_rauh", "S_rauh",
+                                 "X_bsz", "PV_bsz_own", "f_rauh", "C_rauh"),
                          value = c(A5, Ainf, sup$kappa, score_common(rauh)[["R0"]],
                                    score_common(rauh)[["S"]], score_common(sup)[["X"]],
                                    score_common(sup)[["PV"]], score_common(rauh)[["f"]], rauh$C)))

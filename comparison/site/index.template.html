@@ -189,7 +189,7 @@
   <p class="eyebrow">Open Policy Analysis: reconciliation of two rival analyses</p>
   <h1>California's Billionaire Tax (Proposition 40): why the two revenue estimates differ</h1>
   <p class="byline">
-    Supporters score the one-time 5% tax at about {{ggss_headline}}; the opposing report finds
+    Supporters score the one-time 5% tax at about {{ggss_headline}}; the RJKDC report finds
     {{rauh_npv}} once lost income tax is netted out. This page puts both on one common output
     and walks from one number to the other, one disputed input at a time. Each side is also a
     full, independent Open Policy Analysis of its own; this page adds a reconciliation layer on
@@ -202,18 +202,18 @@
   <h2>A common output definition</h2>
 </div>
 
-<p>The two headlines answer different questions. The supporting side reports how much the
-one-time tax collects; the opposing side reports a net present value that subtracts income tax
+<p>The two headlines answer different questions. The BSZ side reports how much the
+one-time tax collects; the RJKDC side reports a net present value that subtracts income tax
 lost for ever. Before any step of a bridge means anything, both are put on the same two outputs:</p>
 
 <div class="formula">(a) gross revenue    = one-time wealth tax collected
 (b) net fiscal effect = (a) + extra income tax from assets sold to pay
                         - present value of income tax lost to departures, over a horizon of H years</div>
 
-<p>The horizon H is itself disputed (DISPUTES row 2): the supporting side counts the losses for
-about the 5 payment years, the opposing side for ever. It is therefore a dial on the bridge
-below, not a fixed choice. Discounting uses the opposing report's own range for the discount
-rate, r uniform between {{r_min}} and {{r_max}} (Rauh p.20 eq.24); the supporting side takes no
+<p>The horizon H is itself disputed (DISPUTES row 2): the BSZ side counts the losses for
+about the 5 payment years, the RJKDC side for ever. It is therefore a dial on the bridge
+below, not a fixed choice. Discounting uses the RJKDC report's own range for the discount
+rate, r uniform between {{r_min}} and {{r_max}} (Rauh p.20 eq.24); the BSZ side takes no
 position on r.</p>
 
 <div class="section-title">
@@ -222,16 +222,16 @@ position on r.</p>
 </div>
 
 <div class="subopa-cards">
-  <a class="subopa-card" href="supporting-analysis/site/">
-    <span class="kicker">Supporting side</span>
+  <a class="subopa-card" href="bsz-analysis/site/">
+    <span class="kicker">BSZ side (supports the measure)</span>
     <h3>Galle, Gamage, Saez, Shanske; Boll, Saez, Zucman &rarr;</h3>
     <p>Static scoring of the Forbes list with a 10% avoidance allowance.</p>
     <span class="headline">GGSS (20 Jul 2026): {{ggss_headline}} (scored {{ggss_scoring}}, rounded)</span>
     <span class="headline">BSZ (Aug 2026), Table 5 row 1: {{bsz_row1}}</span>
     <div class="card-icon-box" aria-hidden="true"><img src="assets/opa/opa-assumptions-solo.png" alt=""></div>
   </a>
-  <a class="subopa-card" href="opposing-analysis/site/">
-    <span class="kicker">Opposing side</span>
+  <a class="subopa-card" href="rjkdc-analysis/site/">
+    <span class="kicker">RJKDC side (opposes it)</span>
     <h3>Rauh, Jaros, Kearney, Doran, Cosso &rarr;</h3>
     <p>Person-by-person base, observed departures, literature elasticities, lost income tax.</p>
     <span class="headline">SSRN (17 Mar 2026): mean NPV {{rauh_npv}}</span>
@@ -248,7 +248,7 @@ position on r.</p>
   </tbody>
 </table>
 </div>
-<p class="small">(b) for the supporting side is not printed by either paper: it is BSZ Table 5 row 1's
+<p class="small">(b) for the BSZ side is not printed by either paper: it is BSZ Table 5 row 1's
 own three columns combined here, the {{bsz_row1}} revenue plus {{x_sup}} of extra income tax from
 asset sales minus {{pv_sup}}, the present value of five years of its {{loss_sup}} annual income tax
 loss. Rauh's (a) is the expected revenue in the Monte Carlo that produces his {{rauh_npv}}; the
@@ -261,7 +261,7 @@ other revenue numbers he prints are listed under the bridge.</p>
 
 <p>One scoring function, <code>score_common()</code> (<code>comparison/R/model.R</code>, with a
 Python twin), scores both sides. Every disputed input is an argument that takes either the
-supporting value or Rauh's. With every input at the supporting value it returns BSZ Table 5 row
+BSZ value or Rauh's. With every input at the BSZ value it returns BSZ Table 5 row
 1 exactly ({{bsz_row1_exact}}); with every input at Rauh's value it returns the expectation of
 Rauh's own Monte Carlo up to a {{rauh_resid_b}} model difference that is shown as its own step.
 The bridge runs in the direction of Hoopes (2026) Figure 2, from GGSS to Rauh; BSZ row 1 is the
@@ -293,7 +293,7 @@ the one Hoopes reads in.</p>
 <div class="chart-box" id="chart-box">
   <div class="chart-scroll">
   <svg class="waterfall" id="waterfall" viewBox="0 0 900 420" role="img" aria-labelledby="wf-title wf-desc">
-    <title id="wf-title">Waterfall from the supporting estimate to the opposing estimate</title>
+    <title id="wf-title">Waterfall from the BSZ estimate to the RJKDC estimate</title>
     <desc id="wf-desc">Each bar is one step of the bridge; grey bars are the estimates themselves, light grey bars are model differences, blue bars raise and orange bars lower the estimate. The same numbers are in the table below.</desc>
   </svg>
   </div>
@@ -308,7 +308,7 @@ the one Hoopes reads in.</p>
 
 <div class="table-scroll">
 <table id="bridge-table">
-  <thead><tr><th>Step</th><th>DISPUTES row</th><th>Kind</th><th class="num">Supporting value</th><th class="num">Rauh value</th><th class="num" id="bt-col">Step, $B</th><th class="num">Running total</th></tr></thead>
+  <thead><tr><th>Step</th><th>DISPUTES row</th><th>Kind</th><th class="num">BSZ value</th><th class="num">Rauh value</th><th class="num" id="bt-col">Step, $B</th><th class="num">Running total</th></tr></thead>
   <tbody>
 {{bridge_rows}}
   </tbody>
@@ -373,8 +373,8 @@ me to read both of these analyses carefully and compare the two" (p.1); Gamage i
   <img class="section-title-icon" src="assets/opa/opa-materials.png" alt="" aria-hidden="true">
   <h2>The vintage gap</h2>
 </div>
-<p>The documents were written months apart, and the supporting side has moved twice since the
-opposing report. Some of the March disputes are settled on the supporting side by August (Larry
+<p>The documents were written months apart, and the BSZ side has moved twice since the
+RJKDC report. Some of the March disputes are settled on the BSZ side by August (Larry
 Ellison's exclusion, the non-citizen residents); others are not.</p>
 <div class="table-scroll">
 <table>
@@ -394,7 +394,7 @@ every page reference was checked against the PDFs; row 7 is split into its two p
 steps cover inputs the crosswalk does not list as rows.</p>
 <div class="table-scroll">
 <table>
-  <thead><tr><th>Row</th><th>Dispute</th><th>Kind</th><th>Supporting value and source</th><th>Rauh value and source</th></tr></thead>
+  <thead><tr><th>Row</th><th>Dispute</th><th>Kind</th><th>BSZ value and source</th><th>Rauh value and source</th></tr></thead>
   <tbody>
 {{disputes_rows}}
   </tbody>
@@ -408,7 +408,7 @@ steps cover inputs the crosswalk does not list as rows.</p>
 <p><b>LAO (neutral context).</b> The Legislative Analyst's ballot analysis gives no point estimate:
 the tax "probably would collect tens of billions of dollars", and responses "probably would reduce
 state revenues by less than $1 billion per year" (LAO p.2). It enters here only as context.
-<b>Walczak / California Tax Foundation (22 Apr 2026)</b> is same-side work on the opposing side,
+<b>Walczak / California Tax Foundation (22 Apr 2026)</b> is same-side work on the RJKDC side,
 credited as an alternative dial on the annual loss, never merged into Rauh's headline: his
 {{walczak_range}} per year includes spillovers to sales and other taxes (p.1). On one scale:</p>
 <div class="table-scroll">
@@ -428,14 +428,14 @@ credited dial, the others are for scale.</p>
   <h2>The two full analyses</h2>
 </div>
 <ul>
-  <li><a href="supporting-analysis/site/">Supporting side</a>: GGSS and BSZ reproduced from the BSZ workbook, with an explorer over Table 5's guesswork inputs, a report, slides and materials.</li>
-  <li><a href="opposing-analysis/site/">Opposing side</a>: Rauh et al. (SSRN) and Jaros and Rauh (NBER) reproduced from the authors' public code.</li>
+  <li><a href="bsz-analysis/site/">BSZ side</a>: GGSS and BSZ reproduced from the BSZ workbook, with an explorer over Table 5's guesswork inputs, a report, slides and materials.</li>
+  <li><a href="rjkdc-analysis/site/">RJKDC side</a>: Rauh et al. (SSRN) and Jaros and Rauh (NBER) reproduced from the authors' public code.</li>
   <li><a href="comparison/DISPUTES.md">The disputes crosswalk</a> and the reconciliation's code, tests and exports in <code>comparison/</code>.</li>
 </ul>
 
 <footer>
   Every number on this page is computed by <code>comparison/R/</code> from the two sides' export
-  contracts (<code>supporting-analysis/export/r/</code>, <code>opposing-analysis/export/r/</code>)
+  contracts (<code>bsz-analysis/export/r/</code>, <code>rjkdc-analysis/export/r/</code>)
   and the page-referenced transcriptions in <code>comparison/data/</code>; a Python twin
   reproduces them ({{parity_note}}). Source and materials:
   <a href="https://github.com/fhoces/opa-prop40">github.com/fhoces/opa-prop40</a>.

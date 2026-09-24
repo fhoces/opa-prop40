@@ -1,7 +1,7 @@
 "endpoint_id","description","value","printed_value","printed_where","contract_value","abs_diff_printed"
-"ggss_headline","GGSS headline: supporting model + their rounding step",100,100,"GGSS p.4",103.815,0
+"ggss_headline","GGSS headline: BSZ model + their rounding step",100,100,"GGSS p.4",103.815,0
 "ggss_scoring","GGSS scoring before rounding (p.4, '$104 billion')",103.815,104,"GGSS p.4",103.815,0.184999999999988
-"bsz_tab5_row1","BSZ Table 5 row 1 wealth tax revenue = model at all-supporting inputs",103.815,104,"BSZ Table 5, PDF p.39",103.815,0.184999999999988
+"bsz_tab5_row1","BSZ Table 5 row 1 wealth tax revenue = model at all-BSZ inputs",103.815,104,"BSZ Table 5, PDF p.39",103.815,0.184999999999988
 "bsz_net_constructed","BSZ row 1 net of its own extra income tax and 5 years of losses (not printed by BSZ; constructed here)",106.795627680481,NA,"",NA,NA
 "rauh_ssrn_revenue_mc","Rauh SSRN expected revenue in the Monte Carlo, E[WT] = (35 + 67.51)/2",51.255,NA,"",NA,NA
 "rauh_ssrn_npv","Rauh SSRN mean NPV, analytic expectation of the Monte Carlo",-24.7069839181446,-24.7,"Rauh SSRN p.20",-24.7680753739627,0.00698391814455235

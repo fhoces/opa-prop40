@@ -27,7 +27,7 @@ test_that("every relative link on the page resolves to a file in the repo (sub-s
   refs <- regmatches(html, gregexpr('(href|src)="[^"#]+"', html))[[1]]
   refs <- unique(sub('^(href|src)="', "", sub('"$', "", refs)))
   refs <- refs[!grepl("^(https?:|mailto:)", refs)]
-  pending <- "opposing-analysis/site/"   # built in parallel on another branch
+  pending <- "rjkdc-analysis/site/"   # built in parallel on another branch
   for (r in setdiff(refs, pending)) {
     p <- file.path(root, r)
     if (grepl("/$", r)) p <- file.path(p, "index.html")
