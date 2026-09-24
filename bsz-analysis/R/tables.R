@@ -242,7 +242,7 @@ build_tab_a1 <- function(shortrunseries, longrunseries, vintage = bsz_vintage())
     gt::fmt_number(columns = c(col1, col2, col4, col5, col6),
                    decimals = 0, use_seps = TRUE) |>
     gt::fmt_percent(columns = col3, decimals = 1) |>
-    gt::sub_missing(missing_text = "—") |>
+    gt::sub_missing(missing_text = "–") |>
     gt::tab_source_note(source_note = gt::md(paste(
       "**Notes:** Repeats Tab 1 for US billionaires instead of CA. Panel A:",
       "nominal wealth of all US citizen billionaires (Forbes). Panel B: 1982",
@@ -375,7 +375,7 @@ build_tab4 <- function(data_sec_top4) {
     ) |>
     gt::fmt_number(rows = fmt_rows, decimals = 2) |>
     gt::fmt_percent(rows = ratio_rows, decimals = 1) |>
-    gt::sub_missing(missing_text = "—") |>
+    gt::sub_missing(missing_text = "–") |>
     gt::tab_source_note(source_note = gt::md(paste(
       "**Notes:** All amounts in nominal $B. Source: per-billionaire SEC Form 4",
       "filings aggregated as `data_sec_top4`'s \"Total (excluding Ellison)\" rows."
@@ -638,7 +638,7 @@ build_tab1 <- function(data_sec_agg_r, shortrunseries_r, longrunseries,
     gt::fmt_number(columns = c(col1, col2, col5, col6),
                    decimals = 0, use_seps = TRUE) |>
     gt::fmt_percent(columns = c(col3, col4, col7), decimals = 1) |>
-    gt::sub_missing(missing_text = "—") |>
+    gt::sub_missing(missing_text = "–") |>
     gt::tab_source_note(source_note = gt::md(paste(
       "**Notes:** Panel A illustrates the wealth growth of CA billionaires in 2022-2025.",
       "Panel B compares the top .0002% wealthiest CA families' wealth in 1982 vs 2025,",
