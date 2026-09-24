@@ -355,7 +355,7 @@ verify:         7
 total:        561       # August vintage, 2026-09-23, 100 test blocks
 ```
 
-The snapshot tests load `tests/snapshots/*.rds` (committed golden masters of
+The snapshot tests load `tests/snapshots/<vintage>/*.rds` (`august/` or `may/`; committed golden masters of
 every Phase-2 R output and every Phase-3 exhibit) and assert byte-level
 equality against the current pipeline. They catch any refactor that changes
 a numeric value, even within Excel-rounding tolerance. Re-baseline only when
