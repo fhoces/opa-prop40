@@ -13,7 +13,7 @@
  ],
  "answers": {
   "Reconciliation page": {
-   "Conceptualization": "Equal",
+   "Conceptualization": "Human lead",
    "Data curation": "AI only",
    "Formal analysis": "AI only",
    "Funding acquisition": "N/A",
@@ -30,7 +30,7 @@
    "Human verification": "Lightly checked"
   },
   "Bridge analysis code": {
-   "Conceptualization": "Equal",
+   "Conceptualization": "Human lead",
    "Data curation": "AI only",
    "Formal analysis": "AI only",
    "Funding acquisition": "N/A",
@@ -47,7 +47,7 @@
    "Human verification": "No human review"
   },
   "Disputes table": {
-   "Conceptualization": "Equal",
+   "Conceptualization": "Human lead",
    "Data curation": "AI only",
    "Formal analysis": "AI only",
    "Funding acquisition": "N/A",
@@ -64,7 +64,7 @@
    "Human verification": "No human review"
   },
   "Hoopes comparison": {
-   "Conceptualization": "Equal",
+   "Conceptualization": "Human lead",
    "Data curation": "AI only",
    "Formal analysis": "AI only",
    "Funding acquisition": "N/A",
@@ -83,6 +83,7 @@
  },
  "notes": {
   "all/applied-from": "The author answered the 14 roles once, for the BSZ Explorer, and asked for the same answers to be applied to every object on all three pages; the human-verification question was answered separately for each object.",
-  "all/AI lead": "For Software, Supervision, Validation, Visualization and both Writing roles the answer was \"the AI led\"; the follow-up question that separates *AI only* from *AI (lead)* was not asked, so these cells read *AI (lead)*: the AI led, with Fernando Hoces de la Guardia supporting (directing, reviewing) or not involved."
+  "all/AI lead": "For Software, Supervision, Validation, Visualization and both Writing roles the answer was \"the AI led\"; the follow-up question that separates *AI only* from *AI (lead)* was not asked, so these cells read *AI (lead)*: the AI led, with Fernando Hoces de la Guardia supporting (directing, reviewing) or not involved.",
+  "all/Conceptualization": "Amended 2026-10-01 at the author's request: Conceptualization changed from Equal to Human (lead) on every object (the idea for each object was the author's)."
  }
 }

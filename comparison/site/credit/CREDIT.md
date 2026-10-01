@@ -14,7 +14,7 @@ The raw answers are in `credit-answers.json`, the file this page and the landing
 
 | Role | Reconciliation page | Bridge analysis code | Disputes table | Hoopes comparison |
 |---|---|---|---|---|
-| Conceptualization | Equal | Equal | Equal | Equal |
+| Conceptualization | Human (lead) | Human (lead) | Human (lead) | Human (lead) |
 | Data curation | AI only | AI only | AI only | AI only |
 | Formal analysis | AI only | AI only | AI only | AI only |
 | Funding acquisition | N/A | N/A | N/A | N/A |
@@ -34,15 +34,17 @@ Human only / AI only: one side did the role and the other was not involved. Huma
 
 For Software, Supervision, Validation, Visualization and both Writing roles the answer was "the AI led"; the follow-up question that separates *AI only* from *AI (lead)* was not asked, so these cells read *AI (lead)*: the AI led, with Fernando Hoces de la Guardia supporting (directing, reviewing) or not involved.
 
+Amended 2026-10-01 at the author's request: Conceptualization changed from Equal to Human (lead) on every object (the idea for each object was the author's).
+
 ## Statements by object
 
-**Reconciliation page.** Fernando Hoces de la Guardia: Conceptualization (equal), Software (supporting), Supervision (supporting), Validation (supporting), Visualization (supporting), Writing – original draft (supporting), Writing – review & editing (supporting). Claude Code (Opus, Sonnet): Conceptualization (equal), Data curation (only), Formal analysis (only), Investigation (only), Methodology (only), Software (lead), Supervision (lead), Validation (lead), Visualization (lead), Writing – original draft (lead), Writing – review & editing (lead). Human verification: lightly checked.
+**Reconciliation page.** Fernando Hoces de la Guardia: Conceptualization (lead), Software (supporting), Supervision (supporting), Validation (supporting), Visualization (supporting), Writing – original draft (supporting), Writing – review & editing (supporting). Claude Code (Opus, Sonnet): Conceptualization (supporting), Data curation (only), Formal analysis (only), Investigation (only), Methodology (only), Software (lead), Supervision (lead), Validation (lead), Visualization (lead), Writing – original draft (lead), Writing – review & editing (lead). Human verification: lightly checked.
 
-**Bridge analysis code.** Fernando Hoces de la Guardia: Conceptualization (equal), Software (supporting), Supervision (supporting), Validation (supporting), Visualization (supporting), Writing – original draft (supporting), Writing – review & editing (supporting). Claude Code (Opus, Sonnet): Conceptualization (equal), Data curation (only), Formal analysis (only), Investigation (only), Methodology (only), Software (lead), Supervision (lead), Validation (lead), Visualization (lead), Writing – original draft (lead), Writing – review & editing (lead). Human verification: no human review.
+**Bridge analysis code.** Fernando Hoces de la Guardia: Conceptualization (lead), Software (supporting), Supervision (supporting), Validation (supporting), Visualization (supporting), Writing – original draft (supporting), Writing – review & editing (supporting). Claude Code (Opus, Sonnet): Conceptualization (supporting), Data curation (only), Formal analysis (only), Investigation (only), Methodology (only), Software (lead), Supervision (lead), Validation (lead), Visualization (lead), Writing – original draft (lead), Writing – review & editing (lead). Human verification: no human review.
 
-**Disputes table.** Fernando Hoces de la Guardia: Conceptualization (equal), Software (supporting), Supervision (supporting), Validation (supporting), Visualization (supporting), Writing – original draft (supporting), Writing – review & editing (supporting). Claude Code (Opus, Sonnet): Conceptualization (equal), Data curation (only), Formal analysis (only), Investigation (only), Methodology (only), Software (lead), Supervision (lead), Validation (lead), Visualization (lead), Writing – original draft (lead), Writing – review & editing (lead). Human verification: no human review.
+**Disputes table.** Fernando Hoces de la Guardia: Conceptualization (lead), Software (supporting), Supervision (supporting), Validation (supporting), Visualization (supporting), Writing – original draft (supporting), Writing – review & editing (supporting). Claude Code (Opus, Sonnet): Conceptualization (supporting), Data curation (only), Formal analysis (only), Investigation (only), Methodology (only), Software (lead), Supervision (lead), Validation (lead), Visualization (lead), Writing – original draft (lead), Writing – review & editing (lead). Human verification: no human review.
 
-**Hoopes comparison.** Fernando Hoces de la Guardia: Conceptualization (equal), Software (supporting), Supervision (supporting), Validation (supporting), Visualization (supporting), Writing – original draft (supporting), Writing – review & editing (supporting). Claude Code (Opus, Sonnet): Conceptualization (equal), Data curation (only), Formal analysis (only), Investigation (only), Methodology (only), Software (lead), Supervision (lead), Validation (lead), Visualization (lead), Writing – original draft (lead), Writing – review & editing (lead). Human verification: no human review.
+**Hoopes comparison.** Fernando Hoces de la Guardia: Conceptualization (lead), Software (supporting), Supervision (supporting), Validation (supporting), Visualization (supporting), Writing – original draft (supporting), Writing – review & editing (supporting). Claude Code (Opus, Sonnet): Conceptualization (supporting), Data curation (only), Formal analysis (only), Investigation (only), Methodology (only), Software (lead), Supervision (lead), Validation (lead), Visualization (lead), Writing – original draft (lead), Writing – review & editing (lead). Human verification: no human review.
 
 ## How to read this
 
