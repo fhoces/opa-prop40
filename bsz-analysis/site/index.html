@@ -191,6 +191,23 @@
     color: var(--accent-2); font: 600 .72rem/1.3 var(--sans);
     letter-spacing: .06em; text-transform: uppercase; white-space: nowrap;
   }
+  /* The sections after the cards fold, closed by default, so the page stays short.
+     The chevron is drawn in CSS; the h2 keeps its own style inside the summary. */
+  details.fold > summary { list-style: none; cursor: pointer; display: flex; align-items: center;
+    gap: 12px; margin: 30px 0 0; }
+  details.fold > summary::-webkit-details-marker { display: none; }
+  details.fold > summary h2 { margin: 0; }
+  details.fold > summary::before {
+    content: ""; flex: none; width: 9px; height: 9px; margin-left: 2px;
+    border-right: 2px solid var(--ink-3); border-bottom: 2px solid var(--ink-3);
+    transform: rotate(-45deg); transition: transform .15s;
+  }
+  details.fold[open] > summary::before { transform: rotate(45deg); }
+  details.fold > summary:hover h2, details.fold > summary:focus-visible h2 { color: var(--accent); }
+  details.fold > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 4px; }
+  details.fold > .fold-body { margin-top: 14px; }
+  details.fold:not([open]) > .fold-body { display: none; }
+  details.fold > .fold-body > h2 { margin-top: 24px; }
 </style>
 </head>
 <body>
@@ -275,8 +292,9 @@
   </a>
 </div>
 
-<h2>What the model says</h2>
-
+<details class="fold" id="what-the-model-says">
+  <summary><h2>What the model says</h2></summary>
+  <div class="fold-body">
 <p>The BSZ side's preferred estimate is the benchmark row of Table 5 in Boll, Saez and
 Zucman (2026): 5% of the $2,307 billion that Forbes lists for 250 California billionaires on
 1 July 2026, less 10% for avoidance and evasion, is <strong>$103.8 billion</strong>, collected
@@ -301,9 +319,12 @@ argue it should last about as long as the five payment years; the RJKDC side (Ra
 measure) counts it forever, which BSZ call the main driver of the gap between the two sides (PDF p.22, fn.29). The revenue itself moves with only
 two guesses: the avoidance rate, and whether anyone left California before 1 January 2026.
 See <a href="repro.html#every-input-by-origin">every input, by origin</a>.</p>
+  </div>
+</details>
 
-<h2>What reproduces</h2>
-
+<details class="fold" id="what-reproduces">
+  <summary><h2>What reproduces</h2></summary>
+  <div class="fold-body">
 <div class="table-scroll">
 <table>
   <thead><tr><th>Published object</th><th>Result</th></tr></thead>
@@ -329,9 +350,12 @@ See <a href="repro.html#every-input-by-origin">every input, by origin</a>.</p>
 expectations; each was traced to one of ten root causes before any fix
 (<a href="repro.html#what-reproduces">report</a>). Test counts, scripts and the source
 manifest are on the <a href="materials.html">materials page</a>.</p>
+  </div>
+</details>
 
-<h2>How AI was used in this exercise, and what has been verified</h2>
-
+<details class="fold" id="how-ai-was-used">
+  <summary><h2>How AI was used in this exercise, and what has been verified</h2></summary>
+  <div class="fold-body">
 <p>This work was a collaboration between the author and Claude Code (Opus and Sonnet
 models) across many sessions, not an AI working alone. The table records who led the work on
 each public object of the BSZ side, using the <a href="https://credit.niso.org/">CRediT</a>
@@ -380,6 +404,8 @@ original authors have not reviewed it.</p>
   their authors and are not redistributed here; the <a href="materials.html#sources">source
   manifest</a> gives where to get each and its SHA-256. Quotations are for commentary.
 </div>
+  </div>
+</details>
 
 <footer>
   Source, tests and build instructions:
@@ -391,5 +417,21 @@ original authors have not reviewed it.</p>
 </footer>
 
 </div>
+<script>
+  // A link into a folded section (index.html#difference, or an anchor inside one) opens it.
+  (function () {
+    function reveal() {
+      var id = location.hash.slice(1);
+      if (!id) return;
+      var el = document.getElementById(id);
+      if (!el) return;
+      var d = el.closest ? el.closest("details.fold") : null;
+      if (d) d.open = true;
+      el.scrollIntoView();
+    }
+    window.addEventListener("hashchange", reveal);
+    reveal();
+  })();
+</script>
 </body>
 </html>
