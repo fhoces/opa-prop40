@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-09-23">
+<meta name="dcterms.date" content="2026-10-01">
 
 <title>Open Materials: every script, test and CSV</title>
 <style>
@@ -2253,6 +2253,10 @@ min-width: 0 !important;
 .table-scroll table { margin: 0; }
 
 p code, li code, td code, h3 code { overflow-wrap: anywhere !important; word-break: break-all !important; white-space: pre-wrap !important; }
+
+.credit { font-size: 0.8em; color: #8994a0; margin-top: -1rem; }
+.credit a { color: #2a78d6; text-decoration: none; }
+.credit a:hover { text-decoration: underline; }
 </style>
 </head>
 
@@ -2291,7 +2295,7 @@ p code, li code, td code, h3 code { overflow-wrap: anywhere !important; word-bre
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 23, 2026</p>
+      <p class="date">October 1, 2026</p>
     </div>
   </div>
   
@@ -2833,6 +2837,9 @@ p code, li code, td code, h3 code { overflow-wrap: anywhere !important; word-bre
 <p>Running the authors’ own unmodified <code>NPV_data/NPV_dist.R</code> from a scratch copy (seed 2026, n=100,000, <code>wt_max &lt;- 67.51</code> as shipped) gives <strong>mean -$24.8B, median -$19.1B, sd $38.6B, 71.0% negative</strong> on this machine/R version - matching our R port to 1e-9 (<code>tests/testthat/test-npv-mc.R</code>) but off by ~$0.1-0.2B from the paper’s printed mean/sd (median and %negative match exactly). We checked whether the eq. 22 typo (mismatch #1, 67.1 vs 67.51) explains the gap by re-running with <code>wt_max &lt;- 67.1</code>: it does not - that moves the mean <em>further</em> from the printed value (to -$25.3B). The gap is within Monte Carlo error for one run (our tolerance: <code>4 * sd / sqrt(n)</code> =~ $0.5B). A fixed seed gives the same draw on every run, so repeated runs cannot show whether the gap is systematic. What does explain the printed mean: the draws are independent uniforms, so the expectation has a closed form, E[WT] - (1 - E[WT]/94.2) x E[C] x E[1/r], with E[1/r] = ln(0.045/0.015)/0.03. That gives <strong>-$24.707B</strong>, which rounds to the printed -$24.7B (re-verified by the main session, 2026-09-23). So the printed mean matches the model’s exact expectation, while the shipped seed-2026 run gives -$24.77B. The printed sd ($38.4B vs $38.6B) remains unexplained; a different run or code state is the likeliest source. The NBER version’s printed summary (mean -$38.9B, median -$35.3B, 85.2% negative), by contrast, reproduces from <code>NPV_dist_v8.R</code> to within Monte Carlo noise with no directional gap.</p>
 <div class="site-nav">
 <p>Part of an Open Policy Analysis of Rauh et al. (2026) on California Proposition 40: <a href="explorer/">Open Output (the explorer)</a> · Open Analysis: <a href="repro.html">Report</a> and <a href="slides/slides.html">Slides</a> · Open Materials (here) · <a href="index.html">Overview</a></p>
+</div>
+<div class="credit">
+<p>OPA done by <a href="https://fhoces.github.io">Fernando Hoces de la Guardia</a>, using <a href="index.html#how-ai-was-used">agentic coding tools</a></p>
 </div>
 </section>
 </section>

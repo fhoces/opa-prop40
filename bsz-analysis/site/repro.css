@@ -66,3 +66,8 @@ mjx-container[jax="CHTML"][display="true"] {
    table in a .table-scroll div rather than fighting table-layout. */
 .table-scroll { overflow-x: auto; margin: 0.4rem 0; }
 .table-scroll table { margin: 0; }
+
+/* Author credit under the bottom site-nav, as on the other OPA sites. */
+.credit { font-size: 0.8em; color: #8994a0; margin-top: -1rem; }
+.credit a { color: #2a78d6; text-decoration: none; }
+.credit a:hover { text-decoration: underline; }

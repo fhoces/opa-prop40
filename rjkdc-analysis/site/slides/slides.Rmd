@@ -61,6 +61,8 @@ code and data and taught step by step, following the
 the pipeline, its tests and every exported CSV
 ]
 
+.credit[OPA done by [Fernando Hoces de la Guardia](https://fhoces.github.io), using [agentic coding tools](../index.html#how-ai-was-used)]
+
 ---
 
 ```{css, echo=FALSE}
@@ -97,6 +99,12 @@ a.reflink:hover { color: #1a237e; border-bottom-color: #1a237e; }
 .site-nav a:hover { text-decoration: underline; }
 
 .remark-slide-content.opa-slide { position: relative; z-index: 0; overflow: hidden; }
+/* Author credit, pinned to the slide's lower-left corner, clear of the legend above
+   it and of the slide number at the lower right. */
+.opa-slide .credit {
+  position: absolute; left: 2em; bottom: 14px; font-size: 65%; color: #5b6873;
+}
+.opa-slide .credit a { color: #1a237e; }
 .opa-intro { font-size: 92%; max-width: 30em; margin: 0 auto 1.1em; }
 .opa-legend { font-size: 85%; line-height: 1.75; max-width: 34em; margin: 0 auto;
               text-align: left; }

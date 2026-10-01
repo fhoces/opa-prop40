@@ -149,6 +149,11 @@
   .note { margin-top: 32px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 12.5px; color: var(--ink-2); }
   .note code { font-family: var(--mono); font-size: 11.5px; background: var(--chip); padding: 1px 4px; }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+  footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--ink-3); }
+  footer a { color: var(--series-1); }
+  .credit { margin: 14px 0 0; font-size: 11.5px; color: var(--ink-2); }
+  .credit a { color: var(--series-1); text-decoration: none; }
+  .credit a:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
@@ -228,6 +233,9 @@
       </details>
     </section>
   </div>
+  <footer>
+    <p class="credit">OPA done by <a href="https://fhoces.github.io">Fernando Hoces de la Guardia</a>, using <a href="../index.html#how-ai-was-used">agentic coding tools</a></p>
+  </footer>
 </div>
 
 <script src="grid.js"></script>

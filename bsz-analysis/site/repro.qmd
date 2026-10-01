@@ -739,3 +739,7 @@ BSZ side of California Proposition 40:
 [Open Materials](materials.html) &middot;
 [Overview](index.html)
 :::
+
+::: {.credit}
+OPA done by [Fernando Hoces de la Guardia](https://fhoces.github.io), using [agentic coding tools](index.html#how-ai-was-used)
+:::

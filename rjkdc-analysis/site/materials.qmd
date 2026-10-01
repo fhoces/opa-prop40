@@ -193,3 +193,7 @@ Part of an Open Policy Analysis of Rauh et al. (2026) on California Proposition 
 Open Materials (here) &middot;
 [Overview](index.html)
 :::
+
+::: {.credit}
+OPA done by [Fernando Hoces de la Guardia](https://fhoces.github.io), using [agentic coding tools](index.html#how-ai-was-used)
+:::
