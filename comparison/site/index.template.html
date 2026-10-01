@@ -205,6 +205,21 @@
   .ai-key { font-size: 13px; color: var(--ink-2); margin: 8px 0 0; line-height: 1.8; }
   .ai-key span { margin-right: 14px; white-space: nowrap; }
   footer .credit { margin: 10px 0 0; font-size: 85%; color: var(--ink-3); }
+  /* Sections after the layer cards fold, closed by default (as on the per-side overviews).
+     The summary holds the centred section title; the chevron sits to its left. */
+  details.fold > summary { list-style: none; cursor: pointer; display: flex; align-items: center;
+    justify-content: center; gap: 12px; margin: 44px 0 14px; }
+  details.fold > summary::-webkit-details-marker { display: none; }
+  details.fold > summary .section-title { margin: 0; }
+  details.fold > summary::before {
+    content: ""; flex: none; width: 9px; height: 9px;
+    border-right: 2px solid var(--ink-3); border-bottom: 2px solid var(--ink-3);
+    transform: rotate(-45deg); transition: transform .15s;
+  }
+  details.fold[open] > summary::before { transform: rotate(45deg); }
+  details.fold > summary:hover h2, details.fold > summary:focus-visible h2 { color: var(--accent); }
+  details.fold > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 4px; }
+  details.fold:not([open]) > .fold-body { display: none; }
 </style>
 </head>
 <body>
@@ -282,11 +297,12 @@ asset sales minus {{pv_sup}}, the present value of five years of its {{loss_sup}
 loss. Rauh's (a) is the expected revenue in the Monte Carlo that produces his {{rauh_npv}}; the
 other revenue numbers he prints are listed under the bridge.</p>
 
-<div class="section-title">
+<details class="fold" id="bridge">
+  <summary><div class="section-title">
   <img class="section-title-icon" src="assets/opa/opa-details.png" alt="" aria-hidden="true">
   <h2>The bridge, one disputed input at a time</h2>
-</div>
-
+</div></summary>
+  <div class="fold-body">
 <p>One scoring function, <code>score_common()</code> (<code>comparison/R/model.R</code>, with a
 Python twin), scores both sides. Every disputed input is an argument that takes either the
 BSZ value or Rauh's. With every input at the BSZ value it returns BSZ Table 5 row
@@ -368,12 +384,15 @@ tax revenue.</p>
   </tbody>
 </table>
 </div>
+  </div>
+</details>
 
-<div class="section-title">
+<details class="fold">
+  <summary><div class="section-title">
   <img class="section-title-icon" src="assets/opa/opa-details.png" alt="" aria-hidden="true">
   <h2 id="hoopes">The existing comparison: Hoopes (2026)</h2>
-</div>
-
+</div></summary>
+  <div class="fold-body">
 <p>Jeffrey Hoopes, "Galle v Rauh: Comparing Two Revenue Estimates for California Billionaire
 Taxation" (SSRN 6428578, 7 pages), is the one published side-by-side of the two estimates. His
 Figure 2 (p.6) is a waterfall from the "Galle estimate" to "Rauh net fiscal effect". It prints no
@@ -399,11 +418,15 @@ me to read both of these analyses carefully and compare the two" (p.1); Gamage i
 <ul>
 {{hoopes_differences}}
 </ul>
+  </div>
+</details>
 
-<div class="section-title">
+<details class="fold" id="vintage-gap">
+  <summary><div class="section-title">
   <img class="section-title-icon" src="assets/opa/opa-materials.png" alt="" aria-hidden="true">
   <h2>The vintage gap</h2>
-</div>
+</div></summary>
+  <div class="fold-body">
 <p>The documents were written months apart, and the BSZ side has moved twice since the
 RJKDC report. Some of the March disputes are settled on the BSZ side by August (Larry
 Ellison's exclusion, the non-citizen residents); others are not.</p>
@@ -415,11 +438,15 @@ Ellison's exclusion, the non-citizen residents); others are not.</p>
   </tbody>
 </table>
 </div>
+  </div>
+</details>
 
-<div class="section-title">
+<details class="fold" id="disputed-inputs">
+  <summary><div class="section-title">
   <img class="section-title-icon" src="assets/opa/opa-assumptions-solo.png" alt="" aria-hidden="true">
   <h2>The disputed inputs</h2>
-</div>
+</div></summary>
+  <div class="fold-body">
 <p>One bridge step per row of <a href="comparison/DISPUTES.md">comparison/DISPUTES.md</a>, where
 every page reference was checked against the PDFs; row 7 is split into its two parts, and two
 steps cover inputs the crosswalk does not list as rows.</p>
@@ -434,11 +461,15 @@ steps cover inputs the crosswalk does not list as rows.</p>
 <p class="small">Row 3: the {{dconf_page}} already departed is 1 &minus; {{conf6_value}} / {{baseline_value}}, from
 the RJKDC workbook values. DISPUTES row 3 and the RJKDC f dial show {{dconf_printed}}: they divide by the
 rounded {{baseline_printed}} rather than {{baseline_value}}.</p>
+  </div>
+</details>
 
-<div class="section-title">
+<details class="fold" id="neutral-material">
+  <summary><div class="section-title">
   <img class="section-title-icon" src="assets/opa/opa-all.png" alt="" aria-hidden="true">
   <h2>Neutral material and credited alternative dials</h2>
-</div>
+</div></summary>
+  <div class="fold-body">
 <p><b>LAO (neutral context).</b> The Legislative Analyst's ballot analysis gives no point estimate:
 the tax "probably would collect tens of billions of dollars", and responses "probably would reduce
 state revenues by less than $1 billion per year" (LAO p.2). It enters here only as context.
@@ -458,21 +489,29 @@ the share of the income tax base that leaves and C the annual income tax it pays
 <p class="small">Present values use the same r range as the bridge. The last column puts each
 loss against Rauh's own expected revenue, {{rauh_a}}, in perpetuity: the Walczak rows are the
 credited dial, the others are for scale.</p>
+  </div>
+</details>
 
-<div class="section-title">
+<details class="fold" id="full-analyses">
+  <summary><div class="section-title">
   <img class="section-title-icon" src="assets/opa/opa-all.png" alt="" aria-hidden="true">
   <h2>The two full analyses</h2>
-</div>
+</div></summary>
+  <div class="fold-body">
 <ul>
   <li><a href="bsz-analysis/site/">BSZ side</a>: GGSS and BSZ reproduced from the BSZ workbook, with an explorer over Table 5's guesswork inputs, a report, slides and materials.</li>
   <li><a href="rjkdc-analysis/site/">RJKDC side</a>: Rauh et al. (SSRN) and Jaros and Rauh (NBER) reproduced from the authors' public code.</li>
   <li><a href="comparison/DISPUTES.md">The disputes crosswalk</a> and the reconciliation's code, tests and exports in <code>comparison/</code>.</li>
 </ul>
+  </div>
+</details>
 
-<div class="section-title" id="how-ai-was-used">
+<details class="fold">
+  <summary><div class="section-title" id="how-ai-was-used">
   <img class="section-title-icon" src="assets/opa/opa-all.png" alt="" aria-hidden="true">
   <h2>How AI was used in this exercise, and what has been verified</h2>
-</div>
+</div></summary>
+  <div class="fold-body">
 <p>This work was a collaboration between the author and Claude Code (Opus and Sonnet
 models) across many sessions, not an AI working alone. The table records who led the work on
 each public object of the reconciliation, using the <a href="https://credit.niso.org/">CRediT</a>
@@ -514,6 +553,8 @@ in <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/site/credi
 <em>understood</em> (the author can explain it to others). The automated test suites are
 mechanical checks, not an outside review. No other person has verified this work, and the
 original authors have not reviewed it.</p>
+  </div>
+</details>
 
 <footer>
   Every number on this page is computed by <code>comparison/R/</code> from the two sides' export
@@ -645,6 +686,22 @@ original authors have not reviewed it.</p>
   });
   render();
 })();
+</script>
+<script>
+  // A link into a folded section (index.html#difference, or an anchor inside one) opens it.
+  (function () {
+    function reveal() {
+      var id = location.hash.slice(1);
+      if (!id) return;
+      var el = document.getElementById(id);
+      if (!el) return;
+      var d = el.closest ? el.closest("details.fold") : null;
+      if (d) d.open = true;
+      el.scrollIntoView();
+    }
+    window.addEventListener("hashchange", reveal);
+    reveal();
+  })();
 </script>
 </body>
 </html>
