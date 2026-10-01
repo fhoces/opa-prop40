@@ -6,14 +6,13 @@
  "version": "full",
  "date": "2026-10-01",
  "objects": [
-  "Explorer",
-  "Report",
-  "Slides",
-  "Repository",
-  "Overview page"
+  "Reconciliation page",
+  "Bridge analysis code",
+  "Disputes table",
+  "Hoopes comparison"
  ],
  "answers": {
-  "Explorer": {
+  "Reconciliation page": {
    "Conceptualization": "Equal",
    "Data curation": "AI only",
    "Formal analysis": "AI only",
@@ -30,7 +29,7 @@
    "Writing – review & editing": "AI lead",
    "Human verification": "Lightly checked"
   },
-  "Report": {
+  "Bridge analysis code": {
    "Conceptualization": "Equal",
    "Data curation": "AI only",
    "Formal analysis": "AI only",
@@ -47,7 +46,7 @@
    "Writing – review & editing": "AI lead",
    "Human verification": "No human review"
   },
-  "Slides": {
+  "Disputes table": {
    "Conceptualization": "Equal",
    "Data curation": "AI only",
    "Formal analysis": "AI only",
@@ -64,24 +63,7 @@
    "Writing – review & editing": "AI lead",
    "Human verification": "No human review"
   },
-  "Repository": {
-   "Conceptualization": "Equal",
-   "Data curation": "AI only",
-   "Formal analysis": "AI only",
-   "Funding acquisition": "N/A",
-   "Investigation": "AI only",
-   "Methodology": "AI only",
-   "Project administration": "N/A",
-   "Resources": "N/A",
-   "Software": "AI lead",
-   "Supervision": "AI lead",
-   "Validation": "AI lead",
-   "Visualization": "AI lead",
-   "Writing – original draft": "AI lead",
-   "Writing – review & editing": "AI lead",
-   "Human verification": "No human review"
-  },
-  "Overview page": {
+  "Hoopes comparison": {
    "Conceptualization": "Equal",
    "Data curation": "AI only",
    "Formal analysis": "AI only",

@@ -1,9 +1,10 @@
 {
- "_comment": "Skeleton only. Generate this file with the `credit` skill; do not hand-fill it. Structure shown here matches what the skill writes, so index.html's placeholder cells (e.g. {{EXPLORER_IDEAS_SQUARES}}) can be filled by reading this file's answers.",
  "contributors": {
   "human": "Fernando Hoces de la Guardia",
-  "ai": "Claude (Anthropic)"
+  "ai": "Claude Code (Opus, Sonnet)"
  },
+ "version": "full",
+ "date": "2026-10-01",
  "objects": [
   "Explorer",
   "Report",
@@ -11,31 +12,95 @@
   "Repository",
   "Overview page"
  ],
- "version": "full",
- "option_set": "",
- "date": "NOT YET RUN (placeholder; the credit questionnaire has not been answered)",
  "answers": {
   "Explorer": {
-   "Conceptualization": "",
-   "Data curation": "",
-   "Formal analysis": "",
-   "Funding acquisition": "",
-   "Investigation": "",
-   "Methodology": "",
-   "Project administration": "",
-   "Resources": "",
-   "Software": "",
-   "Supervision": "",
-   "Validation": "",
-   "Visualization": "",
-   "Writing – original draft": "",
-   "Writing – review & editing": "",
-   "Human verification": ""
+   "Conceptualization": "Equal",
+   "Data curation": "AI only",
+   "Formal analysis": "AI only",
+   "Funding acquisition": "N/A",
+   "Investigation": "AI only",
+   "Methodology": "AI only",
+   "Project administration": "N/A",
+   "Resources": "N/A",
+   "Software": "AI lead",
+   "Supervision": "AI lead",
+   "Validation": "AI lead",
+   "Visualization": "AI lead",
+   "Writing – original draft": "AI lead",
+   "Writing – review & editing": "AI lead",
+   "Human verification": "Lightly checked"
   },
-  "Report": {},
-  "Slides": {},
-  "Repository": {},
-  "Overview page": {}
+  "Report": {
+   "Conceptualization": "Equal",
+   "Data curation": "AI only",
+   "Formal analysis": "AI only",
+   "Funding acquisition": "N/A",
+   "Investigation": "AI only",
+   "Methodology": "AI only",
+   "Project administration": "N/A",
+   "Resources": "N/A",
+   "Software": "AI lead",
+   "Supervision": "AI lead",
+   "Validation": "AI lead",
+   "Visualization": "AI lead",
+   "Writing – original draft": "AI lead",
+   "Writing – review & editing": "AI lead",
+   "Human verification": "Lightly checked"
+  },
+  "Slides": {
+   "Conceptualization": "Equal",
+   "Data curation": "AI only",
+   "Formal analysis": "AI only",
+   "Funding acquisition": "N/A",
+   "Investigation": "AI only",
+   "Methodology": "AI only",
+   "Project administration": "N/A",
+   "Resources": "N/A",
+   "Software": "AI lead",
+   "Supervision": "AI lead",
+   "Validation": "AI lead",
+   "Visualization": "AI lead",
+   "Writing – original draft": "AI lead",
+   "Writing – review & editing": "AI lead",
+   "Human verification": "No human review"
+  },
+  "Repository": {
+   "Conceptualization": "Equal",
+   "Data curation": "AI only",
+   "Formal analysis": "AI only",
+   "Funding acquisition": "N/A",
+   "Investigation": "AI only",
+   "Methodology": "AI only",
+   "Project administration": "N/A",
+   "Resources": "N/A",
+   "Software": "AI lead",
+   "Supervision": "AI lead",
+   "Validation": "AI lead",
+   "Visualization": "AI lead",
+   "Writing – original draft": "AI lead",
+   "Writing – review & editing": "AI lead",
+   "Human verification": "No human review"
+  },
+  "Overview page": {
+   "Conceptualization": "Equal",
+   "Data curation": "AI only",
+   "Formal analysis": "AI only",
+   "Funding acquisition": "N/A",
+   "Investigation": "AI only",
+   "Methodology": "AI only",
+   "Project administration": "N/A",
+   "Resources": "N/A",
+   "Software": "AI lead",
+   "Supervision": "AI lead",
+   "Validation": "AI lead",
+   "Visualization": "AI lead",
+   "Writing – original draft": "AI lead",
+   "Writing – review & editing": "AI lead",
+   "Human verification": "Lightly checked"
+  }
  },
- "notes": {}
+ "notes": {
+  "all/applied-from": "The author answered the 14 roles once, for the BSZ Explorer, and asked for the same answers to be applied to every object on all three pages; the human-verification question was answered separately for each object.",
+  "all/AI lead": "For Software, Supervision, Validation, Visualization and both Writing roles the answer was \"the AI led\"; the follow-up question that separates *AI only* from *AI (lead)* was not asked, so these cells read *AI (lead)*: the AI led, with Fernando Hoces de la Guardia supporting (directing, reviewing) or not involved."
+ }
 }

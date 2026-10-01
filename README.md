@@ -42,10 +42,10 @@ Each side publishes an export contract (`<side>/export/r/{inputs,outputs}.csv`),
 | `rjkdc-analysis/` | SSRN and NBER reproduced from the authors' code, R and Python; 9 documented mismatches (`MISMATCHES.md`); OPA site | 159 expectations, 0 failed | `rjkdc-ci.yml`, green |
 | `comparison/` | Reconciliation page at the site root; 8 disputed inputs (`DISPUTES.md`) | 172 expectations, 0 failed | `comparison-ci.yml`, green |
 
-Each part's README gives its rebuild and test commands. The repository is private
-and the site is not yet served (see `AUDIT.md`). Still to do: the CRediT / AI-use tables (the
-`site/credit/` pages are placeholders), and the Python twin and
-SQL layer on the BSZ side (`bsz-analysis/py/`, `sql/` hold only a README).
+Each part's README gives its rebuild and test commands. The site is served at
+<https://fhoces.github.io/opa-prop40/> as work in progress. The CRediT / AI-use answers are in
+each `site/credit/CREDIT.md` (`comparison/site/credit/` for the reconciliation page). Still to do:
+the Python twin and SQL layer on the BSZ side (`bsz-analysis/py/`, `sql/` hold only a README).
 
 ## Sources policy
 

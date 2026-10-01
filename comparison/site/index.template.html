@@ -186,6 +186,24 @@
     color: var(--accent-2); font: 600 .72rem/1.3 var(--sans);
     letter-spacing: .06em; text-transform: uppercase; white-space: nowrap;
   }
+  .table-subhead { font-family: var(--sans, inherit); text-transform: none;
+       letter-spacing: normal; font-weight: 400; font-size: 11px; }
+  /* The AI-use table's cells are all results, including the last column. */
+  table.ai-use td { color: var(--ink); }
+  /* CRediT cells: one square per role, coloured by who led it; verification as a 2-pip meter. */
+  .sq { display: inline-block; width: 11px; height: 11px; margin-right: 3px; border-radius: 2px;
+        vertical-align: -1px; }
+  .sq.h { background: var(--accent-2); }
+  .sq.ai { background: var(--accent); }
+  .sq.eq { background: linear-gradient(135deg, var(--accent-2) 50%, var(--accent) 50%); }
+  .sqs { display: block; white-space: nowrap; }
+  .meter { display: inline-block; margin-right: 6px; white-space: nowrap; }
+  .pip { display: inline-block; width: 8px; height: 8px; margin-right: 2px; border-radius: 50%;
+         border: 1.5px solid var(--ink-3); vertical-align: 0; }
+  .pip.on { background: var(--ink); border-color: var(--ink); }
+  .pip.half { background: linear-gradient(90deg, var(--ink) 50%, transparent 50%); border-color: var(--ink); }
+  .ai-key { font-size: 13px; color: var(--ink-2); margin: 8px 0 0; line-height: 1.8; }
+  .ai-key span { margin-right: 14px; white-space: nowrap; }
 </style>
 </head>
 <body>
@@ -449,6 +467,52 @@ credited dial, the others are for scale.</p>
   <li><a href="rjkdc-analysis/site/">RJKDC side</a>: Rauh et al. (SSRN) and Jaros and Rauh (NBER) reproduced from the authors' public code.</li>
   <li><a href="comparison/DISPUTES.md">The disputes crosswalk</a> and the reconciliation's code, tests and exports in <code>comparison/</code>.</li>
 </ul>
+
+<div class="section-title">
+  <img class="section-title-icon" src="assets/opa/opa-all.png" alt="" aria-hidden="true">
+  <h2>How AI was used in this exercise, and what has been verified</h2>
+</div>
+<p>This work was a collaboration between the author and Claude Code (Opus and Sonnet
+models) across many sessions, not an AI working alone. The table records who led the work on
+each public object of the reconciliation, using the <a href="https://credit.niso.org/">CRediT</a>
+contributor roles. The author gave these answers in a questionnaire on 2026-10-01; they were not
+inferred from commit history. The author answered the roles once and applied the same answers
+to every object on all three pages, and answered the verification question object by object.
+The table groups the 14 roles into three: <em>ideas and direction</em> (conceptualization,
+methodology, supervision, project administration), <em>doing the work</em> (data curation,
+formal analysis, investigation, software, validation, visualization) and <em>writing</em>
+(original draft, review and editing). Funding and resources do not apply. Each square in a cell
+is one role, coloured by who led it (key below the table). The last column is not part of
+CRediT. It records how closely the author has checked the object. The role-by-role answers are
+in <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/site/credit/CREDIT.md">CREDIT.md</a>.</p>
+
+<div class="table-scroll">
+<table class="ai-use">
+  <thead><tr><th>Object</th><th>Ideas and<br>direction</th><th>Doing<br>the work</th><th>Writing</th><th>Human<br>verification</th></tr></thead>
+  <tbody>
+    <tr><td>Reconciliation page<br><span class="table-subhead">this page</span></td><td><span class="sqs" role="img" aria-label="Ideas and direction: Claude led methodology, supervision; shared conceptualization; not applicable: project administration" title="Ideas and direction: Claude led methodology, supervision; shared conceptualization; not applicable: project administration"><i class="sq eq"></i><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="sqs" role="img" aria-label="Doing the work: Claude led data curation, formal analysis, investigation, software, validation, visualization" title="Doing the work: Claude led data curation, formal analysis, investigation, software, validation, visualization"><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="sqs" role="img" aria-label="Writing: Claude led original draft, review &amp; editing" title="Writing: Claude led original draft, review &amp; editing"><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="meter" aria-hidden="true"><i class="pip on"></i><i class="pip"></i></span>Lightly checked</td></tr>
+    <tr><td>Bridge analysis code<br><span class="table-subhead">Open Materials</span></td><td><span class="sqs" role="img" aria-label="Ideas and direction: Claude led methodology, supervision; shared conceptualization; not applicable: project administration" title="Ideas and direction: Claude led methodology, supervision; shared conceptualization; not applicable: project administration"><i class="sq eq"></i><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="sqs" role="img" aria-label="Doing the work: Claude led data curation, formal analysis, investigation, software, validation, visualization" title="Doing the work: Claude led data curation, formal analysis, investigation, software, validation, visualization"><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="sqs" role="img" aria-label="Writing: Claude led original draft, review &amp; editing" title="Writing: Claude led original draft, review &amp; editing"><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="meter" aria-hidden="true"><i class="pip"></i><i class="pip"></i></span>No human review</td></tr>
+    <tr><td>Disputes table<br><span class="table-subhead">Open Materials</span></td><td><span class="sqs" role="img" aria-label="Ideas and direction: Claude led methodology, supervision; shared conceptualization; not applicable: project administration" title="Ideas and direction: Claude led methodology, supervision; shared conceptualization; not applicable: project administration"><i class="sq eq"></i><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="sqs" role="img" aria-label="Doing the work: Claude led data curation, formal analysis, investigation, software, validation, visualization" title="Doing the work: Claude led data curation, formal analysis, investigation, software, validation, visualization"><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="sqs" role="img" aria-label="Writing: Claude led original draft, review &amp; editing" title="Writing: Claude led original draft, review &amp; editing"><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="meter" aria-hidden="true"><i class="pip"></i><i class="pip"></i></span>No human review</td></tr>
+    <tr><td>Hoopes comparison<br><span class="table-subhead">this page</span></td><td><span class="sqs" role="img" aria-label="Ideas and direction: Claude led methodology, supervision; shared conceptualization; not applicable: project administration" title="Ideas and direction: Claude led methodology, supervision; shared conceptualization; not applicable: project administration"><i class="sq eq"></i><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="sqs" role="img" aria-label="Doing the work: Claude led data curation, formal analysis, investigation, software, validation, visualization" title="Doing the work: Claude led data curation, formal analysis, investigation, software, validation, visualization"><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="sqs" role="img" aria-label="Writing: Claude led original draft, review &amp; editing" title="Writing: Claude led original draft, review &amp; editing"><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="meter" aria-hidden="true"><i class="pip"></i><i class="pip"></i></span>No human review</td></tr>
+  </tbody>
+</table>
+</div>
+<div class="ai-key">
+  <div><span><i class="sq h"></i> led by the author</span>
+  <span><i class="sq ai"></i> led by Claude</span>
+  <span><i class="sq eq"></i> shared equally</span></div>
+  <div>One square per CRediT role in the group; roles that do not apply to an object are left out.</div>
+  <div>Human verification:
+  <span><span class="meter"><i class="pip"></i><i class="pip"></i></span>no human review</span>
+  <span><span class="meter"><i class="pip on"></i><i class="pip"></i></span>lightly checked</span>
+  <span><span class="meter"><i class="pip on"></i><i class="pip on"></i></span>understood</span></div>
+</div>
+
+<p style="margin-top:14px;">Human verification uses three levels: <em>no human review</em>,
+<em>lightly checked</em> (checked, but the author cannot yet explain it clearly) and
+<em>understood</em> (the author can explain it to others). The automated test suites are
+mechanical checks, not an outside review. No other person has verified this work, and the
+original authors have not reviewed it.</p>
 
 <footer>
   Every number on this page is computed by <code>comparison/R/</code> from the two sides' export
