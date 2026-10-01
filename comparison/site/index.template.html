@@ -206,11 +206,11 @@
   .ai-key span { margin-right: 14px; white-space: nowrap; }
   footer .credit { margin: 10px 0 0; font-size: 85%; color: var(--ink-3); }
   /* Sections after the layer cards fold, closed by default (as on the per-side overviews).
-     The summary holds the centred section title; the chevron sits to its left. */
+     The summary holds the section title, left-aligned; the chevron sits to its left. */
   details.fold > summary { list-style: none; cursor: pointer; display: flex; align-items: center;
-    justify-content: center; gap: 12px; margin: 44px 0 14px; }
+    justify-content: flex-start; gap: 12px; margin: 44px 0 14px; }
   details.fold > summary::-webkit-details-marker { display: none; }
-  details.fold > summary .section-title { margin: 0; }
+  details.fold > summary .section-title { margin: 0; text-align: left; }
   details.fold > summary::before {
     content: ""; flex: none; width: 9px; height: 9px;
     border-right: 2px solid var(--ink-3); border-bottom: 2px solid var(--ink-3);
