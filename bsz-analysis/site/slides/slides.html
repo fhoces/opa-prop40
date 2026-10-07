@@ -221,25 +221,54 @@ class: center, middle, inverse, title-slide
 
 
 
+name: study-brief
+
+# The study in brief
+
+Boll, Saez and Zucman (NBER WP 35218, May 2026, revised August 2026) document the wealth of
+California&#39;s billionaires, the taxes they pay, and what a one-time tax on them would raise.
+
+- **Wealth.** California billionaires held **$2.3 trillion** by mid-2026, as much as all the
+  income on all Californians&#39; tax returns. Up 144% from 2023 to 2025, driven by the AI boom.
+  Since 1982 the real wealth of the top 0.001% has multiplied by 25; average real family income
+  has doubled.
+- **Taxes.** They pay about **0.2% of their wealth** a year in California income tax
+  ($3.2 billion a year), 2.4% of the state&#39;s income tax revenue over 2023 to 2025.
+- **The top four.** SEC filings for Page, Brin, Zuckerberg and Huang (Ellison through 2020)
+  show nearly $1 trillion in business wealth, about 40% of the total, taxed at 0.04% of wealth
+  a year.
+- **The proposal.** A one-off 5% tax, payable over five years, is small next to recent wealth
+  gains and large next to taxes now paid. The authors estimate **about $100 billion**
+  (Table 5: $103.8 billion), with minor effects on income tax.
+
+.small[The figures above are the paper&#39;s own, from its abstract. Every number from the Deck Map
+onward is recomputed by the reproduction pipeline.]
+
+---
 name: opa-frame
 class: center, middle, opa-slide
 
-# An Open Reproduction
+# What is an Open Policy Analysis?
 
 .opa-intro[
-Of the BSZ side&#39;s revenue estimate for California&#39;s Proposition 40,
-Boll, Saez and Zucman (BSZ, 2026) and the Galle, Gamage, Saez and Shanske (GGSS)
-expert report, following the
-[Open Policy Analysis](https://tinyurl.com/1qypbihb) framework.
+A policy analysis is **open** when a reader can see the one estimate it recommends, follow
+every step from the inputs to that estimate, and rerun it. The
+[Open Policy Analysis](https://tinyurl.com/1qypbihb) framework asks for three layers.
 ]
 
 &lt;img src=&quot;../assets/opa/opa-details.png&quot; class=&quot;opa-mark&quot; alt=&quot;&quot;&gt;
 
 .opa-legend[
-**Open Output**: [the explorer](../explorer/), the assumptions as dials, the revenue as output&lt;br&gt;
-**Open Analysis**: [the report](../repro.html), and this deck&lt;br&gt;
-**Open Materials**: [the materials page](../materials.html),
+**1. Open Output**: [the explorer](../explorer/), one preferred estimate, the assumptions as dials&lt;br&gt;
+**2. Open Analysis**: [the report](../repro.html) and **this deck**, the chain from the Forbes
+list to the revenue, step by step, with the guesswork marked&lt;br&gt;
+**3. Open Materials**: [the materials page](../materials.html),
 the pipeline, its tests and every exported CSV
+]
+
+.highlight-box[
+These slides are the **second layer**. They do not add new estimates; they make the authors&#39;
+own computation legible.
 ]
 
 .credit[OPA done by [Fernando Hoces de la Guardia](https://fhoces.github.io), using [agentic coding tools](../index.html#how-ai-was-used)]
@@ -289,6 +318,7 @@ a.reflink:hover { color: #1a237e; border-bottom-color: #1a237e; }
 .opa-legend { font-size: 85%; line-height: 1.75; max-width: 34em; margin: 0 auto;
               text-align: left; }
 .opa-intro a, .opa-legend a { color: #1a237e; }
+.opa-slide .highlight-box { max-width: 34em; margin: 1em auto 0; text-align: left; }
 .opa-mark {
   position: absolute; top: 26px; right: 34px; height: 190px; width: auto;
   opacity: 0.218; z-index: -1; pointer-events: none;
@@ -319,7 +349,7 @@ BSZ side of California Proposition 40:
 &lt;/table&gt;
 
 .blue-box[
-Every number in this deck comes from the R pipeline that reproduces the authors&#39; August 2026
+Every number from here on comes from the R pipeline that reproduces the authors&#39; August 2026
 workbook cell by cell. The deck reads that pipeline&#39;s exported CSVs; nothing is retyped.
 ]
 
