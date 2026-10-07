@@ -36,3 +36,7 @@ data-raw/irs/cache/
 
 /.quarto/
 **/*.quarto_ipynb
+
+# phase 2: SQL results built from the confidential author bundle (never committed)
+data-raw/sql-out/
+data-raw/bundle.sqlite
