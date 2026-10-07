@@ -11,7 +11,7 @@ MathJax.Hub.Config({
      element remark repositions/relabels on each transition. A real <a> can't be done
      that way (remark owns that element), so this attaches one plain, position:fixed
      link straight to <body>, outside every .remark-slide-container. It used to sit at
-     a fixed viewport offset (top:8px/left:10px), which put it in the grey letterboxing
+     a fixed viewport offset (top:8px/left:10px) and later at the slide's top-left, which put it in the grey letterboxing
      outside the slide's own box whenever the browser window wasn't exactly the deck's
      aspect ratio: this reads the currently VISIBLE slide's own .remark-slide-scaler
      rect and offsets from it instead, landing the link inside the slide regardless of
@@ -51,7 +51,9 @@ document.addEventListener("DOMContentLoaded", function () {
     var scaler = visible || document.querySelector(".remark-slide-scaler");
     if (!scaler) return;
     var rect = scaler.getBoundingClientRect();
-    a.style.top = (rect.top + 8) + "px";
+    // Bottom-left corner of the visible slide, clear of the slide number at the
+    // bottom right and of the author credit, which the OPA slide raises above it.
+    a.style.top = (rect.bottom - a.offsetHeight - 10) + "px";
     a.style.left = (rect.left + 10) + "px";
   }
   positionLink();
