@@ -213,7 +213,7 @@ class: center, middle, inverse
 
 ---
 
-# Step 1 and 2: the base, and what escapes it
+# Steps 1 and 2: Taxable base and evasion
 
 **Step 1.** Forbes' real-time list on 1 July 2026: $n_0$ = `r n0` California billionaires
 holding $W_0$ = $`r bn(W0, 0)` billion. **Data**, read off Forbes that day.
