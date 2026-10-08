@@ -233,7 +233,7 @@
     <section>
       <h2>Outcomes</h2>
       <svg class="bars" id="bars" viewBox="0 0 640 200" role="img" aria-labelledby="bars-title">
-        <title id="bars-title">Main estimate, this setting against the four Table 5 scenarios</title>
+        <title id="bars-title">Main estimate, this setting against the base scenario</title>
       </svg>
       <div class="table-scroll">
         <table id="cmp">
@@ -398,11 +398,12 @@
   function drawBars(i) {
     var svg = document.getElementById("bars");
     while (svg.childNodes.length > 1) svg.removeChild(svg.lastChild);
-    var rows = [["This setting", G.snap[i][K.main_estimate], "cur"]];
-    names.forEach(function (n) { rows.push([n, G.snap[namedIdx[n]][K.main_estimate], n === PREF ? "pref" : ""]); });
+    var rows = [["This setting", G.snap[i][K.main_estimate], "cur"],
+                [PREF, G.snap[namedIdx[PREF]][K.main_estimate], "pref"]];
     var max = 0;
     G.snap.forEach(function (s) { if (s[K.main_estimate] > max) max = s[K.main_estimate]; });
     var x0 = 190, w = 380, h = 26, gap = 8;
+    svg.setAttribute("viewBox", "0 0 640 " + (20 + rows.length * (h + gap)));
     rows.forEach(function (r, k) {
       var y = 10 + k * (h + gap);
       svg.appendChild(el("text", { x: 0, y: y + 17 }, r[0]));
