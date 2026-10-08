@@ -489,8 +489,7 @@
       name ? (name === PREF ? "The main estimate\u00B9: base scenario" : name + " scenario (Table 5)")
            : ext || "A setting the authors did not publish";
     document.getElementById("cell-meta").textContent =
-      "main estimate\u00B9 " + fmtOut("$B", snap[K.main_estimate]) +
-      " · cell " + (i + 1) + " of " + G.snap.length.toLocaleString("en-US");
+      "main estimate\u00B9 " + fmtOut("$B", snap[K.main_estimate]);
 
     tbody.textContent = "";
     G.outcomes.forEach(function (label, oi) {
