@@ -169,7 +169,7 @@ BSZ side of California Proposition 40:
 <tr><td style="padding:6px;"><b><a href="#part-policy">1. What is being estimated</a></b></td><td style="padding:6px;">The tax, and the two documents that make the BSZ side's case</td></tr>
 <tr><td style="padding:6px;"><b><a href="#part-steps">2. Five steps to $`r round(t5$wealth_tax_revenue[1])` billion</a></b></td><td style="padding:6px;">The base scenario, built one line at a time</td></tr>
 <tr><td style="padding:6px;"><b><a href="#part-rows">3. Alternative scenarios</a></b></td><td style="padding:6px;">The missing billionaires, leavers and combined scenarios</td></tr>
-<tr><td style="padding:6px;"><b><a href="#part-guess">4. What is guesswork</a></b></td><td style="padding:6px;">Every input by origin, and how far each guess moves the result</td></tr>
+<tr><td style="padding:6px;"><b><a href="#part-guess">4. What is guesswork</a></b></td><td style="padding:6px;">How far each guess moves the result</td></tr>
 <tr><td style="padding:6px;"><b><a href="#part-repro">5. What reproduces</a></b></td><td style="padding:6px;">Tests, mismatches found, and what is not checked</td></tr>
 <tr><td style="padding:6px;"><b><a href="#bottom-line">6. The bottom line</a></b></td><td style="padding:6px;">Wealth tax collected, extra income tax, and income tax lost, for every scenario</td></tr>
 </table>
@@ -427,24 +427,6 @@ class: center, middle, inverse
 
 ---
 
-# Every input, by origin
-
-```{r origins, fig.height=3.6}
-lev <- c("data", "research", "guesswork", "scenario", "derived", "convention")
-cnt <- as.data.frame(table(factor(ins$origin, levels = lev)))
-ggplot(cnt, aes(x = Var1, y = Freq, fill = Var1 == "guesswork")) +
-  geom_col(width = 0.6) + geom_text(aes(label = Freq), vjust = -0.3, size = 5) +
-  scale_y_continuous(expand = expansion(mult = c(0, 0.2))) +
-  scale_fill_manual(values = c("#9aa6b2", "#e65100"), guide = "none") +
-  labs(x = NULL, y = "inputs", title = paste(nrow(ins), "inputs of the one-time estimate"))
-```
-
-.small[The `r sum(ins$origin == "guesswork")` guesswork inputs are exactly the dials of the
-[explorer](../explorer/). Full table with sources:
-[report](../repro.html#every-input-by-origin).]
-
----
-
 # How far does each guess move the revenue?
 
 ```{r tornado, fig.height=3.8}
@@ -469,7 +451,8 @@ ggplot(rows, aes(y = input)) +
 
 .small[Orange line: the preferred $`r bn(base$wealth_tax_revenue)` billion. Of the five
 guesses, only `r length(movers)` move it on their own: `r tolower(paste(movers, collapse = " and "))`.
-Counting the missing billionaires is research, and only raises it.]
+Counting the missing billionaires is research, and only raises it. Every input and its origin:
+[report](../repro.html#every-input-by-origin).]
 
 ---
 name: part-repro
