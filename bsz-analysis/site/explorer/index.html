@@ -122,6 +122,8 @@
   .dial .tip b { color: var(--ink); font-weight: 600; }
   .dial .label:hover .tip, .dial .info:focus + .tip, .dial .tip.open { display: block; }
   details.fold { margin-top: 14px; }
+  .presets-h { font-size: 12px; color: var(--ink-3); margin: 14px 0 6px; }
+  details.fold.notes { margin-top: 28px; border-top: 1px solid var(--rule); padding-top: 10px; }
   details.fold > summary { cursor: pointer; font-size: 13.5px; font-weight: 500; padding: 6px 0; }
   details.fold[open] > summary { margin-bottom: 8px; }
   .dial .hint { font-size: 12px; color: var(--pref); margin-top: 4px; display: none; }
@@ -196,19 +198,10 @@
     <img class="header-layer" src="../assets/opa/opa-assumptions-solo.png" alt="" aria-hidden="true">
     <h1>How much would the one-time billionaire tax raise, net?</h1>
     <p class="standfirst">
-      The BSZ side estimates that Proposition 40 would raise about $100 billion in wealth tax.
-      Net of the income tax it changes, that is the <strong>main estimate</strong> below. It is
-      simple arithmetic on the Forbes list of California billionaires plus a handful of
-      assumptions, and most of those assumptions are guesswork: nobody has measured them.
-      The inputs below are the five guesses among them, plus one research-based switch (counting the
-      billionaires Forbes misses, from a Pareto extrapolation). The two switches, that one and
-      the aggressive assumption on who has left, reproduce rows 2 to 4 of Table 5 of Boll, Saez and
-      Zucman (BSZ, 2026).
-    </p>
-    <p class="standfirst">
-      This page is the <strong>open output</strong> of the BSZ side. Every
-      combination of the inputs is precomputed by the same R pipeline that reproduces the
-      authors' workbook, so the numbers update as you click.
+      Boll, Saez and Zucman (BSZ, 2026) estimate about $100 billion in wealth tax. Net of the income
+      tax it changes, that is the <strong>main estimate</strong> below. Most of its inputs are guesswork.
+      Move them and the estimate updates: every setting is precomputed by the pipeline that reproduces
+      the authors' workbook.
     </p>
   </header>
 
@@ -218,38 +211,25 @@
     <p id="pref-text"></p>
   </div>
 
-  <div class="identity">
-    <span class="name" id="cell-name"></span>
-    <span class="meta" id="cell-meta"></span>
-  </div>
-
   <div class="cols">
     <section>
       <h2>The inputs</h2>
       <div class="rack" id="rack"></div>
       <p class="legend-default"><i></i>the value the authors use</p>
-      <div class="presets" id="presets"></div>
 
-      <div class="note">
-        <p><strong>Where this tool departs from the workbook.</strong> Two readings the
-        workbook leaves implicit, both kept at the workbook's own behaviour.</p>
-        <p>(1) The income tax lost to leavers is typed as a literal 5% in
-        <code>Tab5!H6</code>. The row label says "10% evasion/avoidance (half due to
-        mobility)", so the explorer reads that 5% as avoidance times the share that is
-        leaving. At the authors' values the two are identical; elsewhere this is our reading.</p>
-        <p>(2) Table 5's row 2 subtracts a deduction for billionaires in the $1B to $1.1B
-        phase-in band, but row 4, which adds the same billionaires, does not
-        (<code>Tab5!F9</code>). The explorer copies this, so whenever both switches
-        are on, revenue is <span id="gap"></span> higher than a consistent treatment
-        would give.</p>
-      </div>
     </section>
 
     <section>
       <h2>Outcomes</h2>
+      <div class="identity">
+        <span class="name" id="cell-name"></span>
+        <span class="meta" id="cell-meta"></span>
+      </div>
       <svg class="bars" id="bars" viewBox="0 0 640 200" role="img" aria-labelledby="bars-title">
         <title id="bars-title">Main estimate, this setting against the base scenario</title>
       </svg>
+      <p class="presets-h">Jump to a scenario</p>
+      <div class="presets" id="presets"></div>
       <details class="fold">
         <summary>Every outcome, for this setting and the four Table 5 scenarios</summary>
       <div class="table-scroll">
@@ -262,21 +242,27 @@
         </table>
       </div>
       </details>
-      <div class="note">
-        <p>The income tax loss recurs every year the leavers stay away. Table 5 does not say for
-        how long; the authors argue about 5 years (BSZ PDF p.27). The main estimate counts it for
-        5 years, discounted at 3% a year, the middle of the 1.5% to 4.5% range the
-        <a href="../../../rjkdc-analysis/site/">RJKDC report</a> uses (BSZ give no rate). The RJKDC report
-        counts it forever. That horizon is the main dispute between the two reports; see the
-        <a href="../../../index.html">comparison OPA</a>.</p>
-        <p>Data: <a href="../data/grid.csv">grid.csv</a> (every cell),
-        <a href="../data/inputs.csv">inputs.csv</a> (every input with its origin),
-        <a href="grid.js">grid.js</a> (what this page reads). All three are written by
-        the targets pipeline; a test fails if <code>grid.js</code> is anything but the
-        exporter's own output.</p>
-      </div>
     </section>
   </div>
+
+  <details class="fold notes">
+    <summary>Notes and data</summary>
+    <div class="note">
+      <p><strong>Horizon.</strong> The income tax lost to leavers recurs every year they stay away.
+      BSZ argue about 5 years (PDF p.27). The main estimate counts 5 years at 3% a year, the middle of
+      the <a href="../../../rjkdc-analysis/site/">RJKDC report</a>'s 1.5% to 4.5% range (BSZ give no
+      rate). The RJKDC report counts it forever: see the <a href="../../../index.html">comparison OPA</a>.</p>
+      <p><strong>Two departures from the workbook.</strong> (1) Its income tax loss is a literal 5%
+      (<code>Tab5!H6</code>); the explorer reads it as avoidance times the share leaving, identical at
+      the authors' values. (2) Table 5 deducts the $1B to $1.1B phase-in in row 2 but not row 4
+      (<code>Tab5!F9</code>). The explorer copies this, so with both switches on the estimate is
+      <span id="gap"></span> higher than a consistent treatment.</p>
+      <p><strong>Data.</strong> <a href="../data/grid.csv">grid.csv</a> (every setting),
+      <a href="../data/inputs.csv">inputs.csv</a> (every input and its origin),
+      <a href="grid.js">grid.js</a> (what this page reads). The pipeline writes all three; a test
+      fails if <code>grid.js</code> differs from its output.</p>
+    </div>
+  </details>
 
   <footer>
     Part of <a href="https://github.com/fhoces/opa-prop40">opa-prop40</a>, an Open Policy
@@ -327,15 +313,12 @@
   document.getElementById("pref-big").textContent =
     "$" + pref[K.main_estimate].toFixed(1) + " billion (base scenario, Table 5 row 1)";
   document.getElementById("pref-text").textContent =
-    "The wealth tax raises $" + rev.toFixed(1) + " billion once: 5% of the $" +
-    G.facts.W0.toLocaleString("en-US") + " billion held by " + G.facts.n0 +
-    " California billionaires on 1 July 2026, less 10% avoidance. Selling assets to pay it adds $" +
-    pref[K.extra_ca_inctax_sales].toFixed(2) + " billion of income tax, once. Leavers take $" +
-    Math.abs(pref[K.annual_ca_inctax_loss]).toFixed(2) + " billion of income tax a year with them, worth $" +
-    Math.abs(pref[K.income_tax_loss_pv]).toFixed(2) + " billion over " + G.facts.pv_years +
-    " years at " + Math.round(100 * G.facts.pv_rate) + "%. The expert report by Galle, Gamage, " +
-    "Saez and Shanske (GGSS, 20 July 2026, p.4) rounds the wealth tax to $100 billion. " +
-    "The main estimate sits on the orange-marked value of every input below.";
+    "Wealth tax $" + rev.toFixed(1) + "B + extra income tax from selling assets $" +
+    pref[K.extra_ca_inctax_sales].toFixed(2) + "B \u2212 income tax lost to leavers $" +
+    Math.abs(pref[K.income_tax_loss_pv]).toFixed(2) + "B (" + G.facts.pv_years + " years at " +
+    Math.round(100 * G.facts.pv_rate) + "%). The wealth tax is 5% of the $" +
+    G.facts.W0.toLocaleString("en-US") + "B held by " + G.facts.n0 +
+    " California billionaires on 1 July 2026, less 10% avoidance. GGSS round it to $100B.";
   document.getElementById("gap").textContent = "$" + G.facts.row4_phasein_gap.toFixed(1) + " billion";
 
   // ---- dial rack --------------------------------------------------------
