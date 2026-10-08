@@ -35,20 +35,15 @@
   AG = "economic_income"
 )
 
-# FTB row indices per year + per top-bracket position. 2022 sits at top of
-# sheet; 2018 at bottom. Fields:
-#   whole_year: (first, last) row of the year's 59-60 AGI brackets.
-#   top_10m: single row for the $10M+ bracket (2021 / 2022 only).
-#   top_5m_9m: single row for the $5M-$9.999M bracket (2021 / 2022 only).
-#   top_5m: single row for the $5M+ aggregate (2018-2020 only; later
-#                years split this into two rows).
-.BCI_FTB_ROWS <- list(
-  "2018" = list(whole_year = c(242, 300), top_5m  = 300),
-  "2019" = list(whole_year = c(183, 241), top_5m  = 241),
-  "2020" = list(whole_year = c(124, 182), top_5m  = 182),
-  "2021" = list(whole_year = c(64,  123), top_10m = 123, top_5m_9m = 122),
-  "2022" = list(whole_year = c(4,   63),  top_10m = 63,  top_5m_9m = 62)
-)
+# The FTB table 2023-b-4a (sheet "2023-b-4a__adjusted_gross_incom") is read
+# through the shared query sql/03_ftb_b4a.sql: yearly sums over all AGI
+# brackets (ftb_b4a_year) and the top-bracket rows (ftb_b4a_top), selected
+# by the sheet's own taxable-year and bracket-label columns. Sheet columns:
+# D = all returns, H = California AGI, J = taxable income, K = total tax.
+# The R code used to address the same cells by sheet row (2022 at the top of
+# the sheet, rows 4-63; 2018 at rows 242-300); test-sql-workbook.R checks
+# that the query picks exactly those rows.
+.BCI_FTB_COLS <- c(D = "all_returns", H = "ca_agi", J = "taxable_income", K = "total_tax")
 
 # FTB published statistics for 2023 that the workbook hand-enters because
 # ftb_b4a only goes through 2022. All from FTB's annual personal-income-tax-
@@ -73,21 +68,23 @@
 }
 
 .bci_make_ftb <- function(ftb_b4a) {
-  # Wrap ftb_b4a's four numeric-coerced columns plus the row-range lookup.
-  ftb_cols <- list(
-    D = suppressWarnings(as.numeric(ftb_b4a$D)),
-    H = suppressWarnings(as.numeric(ftb_b4a$H)),
-    J = suppressWarnings(as.numeric(ftb_b4a$J)),
-    K = suppressWarnings(as.numeric(ftb_b4a$K))
-  )
-  ftb_sum <- function(col, row_lo, row_hi, scale = 1) {
-    sum(ftb_cols[[col]][row_lo:row_hi], na.rm = TRUE) * scale
-  }
+  # `ftb_b4a` is either the result of query 3 (read_ftb_b4a(), the pipeline)
+  # or the raw positional sheet (extract_ftb_b4a(), as the tests pass it),
+  # which goes through the same query in memory (query_ftb_b4a()).
+  q <- if (inherits(ftb_b4a, "ftb_b4a_sql")) ftb_b4a else query_ftb_b4a(ftb_b4a)
+  # Sum of one sheet column over all of a year's AGI brackets.
   ftb_sum_year <- function(col, yr, scale = 1) {
-    rng <- .BCI_FTB_ROWS[[as.character(yr)]]$whole_year
-    ftb_sum(col, rng[1], rng[2], scale)
+    v <- q$year[[.BCI_FTB_COLS[[col]]]][q$year$taxable_year == yr]
+    if (length(v) != 1L) stop("ftb_b4a: no single row for taxable year ", yr)
+    v * scale
   }
-  list(cols = ftb_cols, sum_year = ftb_sum_year, rows = .BCI_FTB_ROWS)
+  # One sheet column of one top-bracket row ("5m_plus", "5m_to_10m", "10m_plus").
+  ftb_top <- function(bracket, yr, col) {
+    v <- q$top[[.BCI_FTB_COLS[[col]]]][q$top$taxable_year == yr & q$top$bracket == bracket]
+    if (length(v) != 1L) stop("ftb_b4a: no single ", bracket, " row for taxable year ", yr)
+    v
+  }
+  list(sum_year = ftb_sum_year, top = ftb_top)
 }
 
 # ---------------------------------------------------------------------------
@@ -297,9 +294,7 @@
   # and $5M+ brackets, then project AGI / tax for the top CA-billionaire-sized
   # taxpayer using a Pareto extrapolation. Years 2018..2023 only (panel B..G).
   cell <- function(addr) bci_cell(bci, addr)
-  ftb_D <- ftb$cols$D; ftb_H <- ftb$cols$H
-  ftb_J <- ftb$cols$J; ftb_K <- ftb$cols$K
-  rows  <- ftb$rows
+  top <- ftb$top      # top(bracket, year, sheet column letter)
   scale_b <- 1e-9     # FTB columns are in $; outputs are $B
 
   # --- $10M+ bracket (rows 26-31) ---
@@ -310,12 +305,11 @@
   taxable_10m_b <- rep(NA_real_, 6)
   tax_10m_b     <- rep(NA_real_, 6)
   for (i_year in c(4, 5)) {
-    yr <- as.character(2017 + i_year)         # i_year=4 -> 2021, =5 -> 2022
-    r <- rows[[yr]]$top_10m
-    n_ret_10m[i_year]     <- ftb_D[r]
-    agi_10m_b[i_year]     <- ftb_H[r] * scale_b
-    taxable_10m_b[i_year] <- ftb_J[r] * scale_b
-    tax_10m_b[i_year]     <- ftb_K[r] * scale_b
+    yr <- 2017 + i_year                        # i_year=4 -> 2021, =5 -> 2022
+    n_ret_10m[i_year]     <- top("10m_plus", yr, "D")
+    agi_10m_b[i_year]     <- top("10m_plus", yr, "H") * scale_b
+    taxable_10m_b[i_year] <- top("10m_plus", yr, "J") * scale_b
+    tax_10m_b[i_year]     <- top("10m_plus", yr, "K") * scale_b
   }
   n_ret_10m[6]     <- cell("G26")
   agi_10m_b[6]     <- cell("G27")
@@ -329,32 +323,23 @@
   # 2018-2020: single FTB row gives the whole $5M+ aggregate.
   # 2021-2022: must sum the $5M-$9.999M row with the $10M+ row.
   # 2023: 2023 literals (TOP_5M_9M_*) added to the $10M+ value.
-  ftb_top5m <- function(col, yr) {
-    r <- rows[[as.character(yr)]]$top_5m
-    col[r] * scale_b
-  }
-  ftb_top5m_9m <- function(col, yr) {
-    r <- rows[[as.character(yr)]]$top_5m_9m
-    col[r] * scale_b
-  }
   n_ret_5m     <- numeric(6)
   agi_5m_b     <- numeric(6)
   taxable_5m_b <- numeric(6)
   tax_5m_b     <- numeric(6)
   for (i_year in 1:3) {
     yr <- 2017 + i_year
-    n_ret_5m[i_year]     <- ftb_D[rows[[as.character(yr)]]$top_5m]
-    agi_5m_b[i_year]     <- ftb_top5m(ftb_H, yr)
-    taxable_5m_b[i_year] <- ftb_top5m(ftb_J, yr)
-    tax_5m_b[i_year]     <- ftb_top5m(ftb_K, yr)
+    n_ret_5m[i_year]     <- top("5m_plus", yr, "D")
+    agi_5m_b[i_year]     <- top("5m_plus", yr, "H") * scale_b
+    taxable_5m_b[i_year] <- top("5m_plus", yr, "J") * scale_b
+    tax_5m_b[i_year]     <- top("5m_plus", yr, "K") * scale_b
   }
   for (i_year in c(4, 5)) {
     yr <- 2017 + i_year
-    n_ret_5m[i_year]     <- ftb_D[rows[[as.character(yr)]]$top_5m_9m] +
-                              ftb_D[rows[[as.character(yr)]]$top_10m]
-    agi_5m_b[i_year]     <- agi_10m_b[i_year]     + ftb_top5m_9m(ftb_H, yr)
-    taxable_5m_b[i_year] <- taxable_10m_b[i_year] + ftb_top5m_9m(ftb_J, yr)
-    tax_5m_b[i_year]     <- tax_10m_b[i_year]     + ftb_top5m_9m(ftb_K, yr)
+    n_ret_5m[i_year]     <- top("5m_to_10m", yr, "D") + top("10m_plus", yr, "D")
+    agi_5m_b[i_year]     <- agi_10m_b[i_year]     + top("5m_to_10m", yr, "H") * scale_b
+    taxable_5m_b[i_year] <- taxable_10m_b[i_year] + top("5m_to_10m", yr, "J") * scale_b
+    tax_5m_b[i_year]     <- tax_10m_b[i_year]     + top("5m_to_10m", yr, "K") * scale_b
   }
   n_ret_5m[6]     <- .BCI_FTB_2023$top_5m_9m_returns + n_ret_10m[6]
   agi_5m_b[6]     <- agi_10m_b[6] + .BCI_FTB_2023$top_5m_9m_agi_b

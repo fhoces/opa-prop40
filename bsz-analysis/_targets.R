@@ -2,7 +2,7 @@ library(targets)
 
 tar_option_set(
   packages = c("tibble", "dplyr", "readxl", "cellranger", "gt", "ggplot2",
-               "patchwork", "scales"),
+               "patchwork", "scales", "DBI", "RSQLite"),
   format = "rds"
 )
 
@@ -34,8 +34,20 @@ list(
   tar_target(billionaires_ca_inctax, extract_billionaires_ca_inctax(xlsx_path)),
   tar_target(ftb_b4a,                extract_ftb_b4a(xlsx_path)),
 
+  # The two large inputs (data_sec_all, the FTB table) go through the shared
+  # SQL queries in sql/, which py/ runs verbatim too (R/workbook_db.R).
+  # workbook_db writes data-raw/workbook.sqlite (gitignored) and runs both
+  # queries there; the two targets after it only read the result tables.
+  tar_target(sql_data_sec_agg_file, workbook_sql_file("02_data_sec_agg.sql"), format = "file"),
+  tar_target(sql_ftb_b4a_file,      workbook_sql_file("03_ftb_b4a.sql"),      format = "file"),
+  tar_target(workbook_db,
+             build_workbook_db(data_sec_all, ftb_b4a,
+                               sql_files = c(sql_data_sec_agg_file, sql_ftb_b4a_file)),
+             format = "file"),
+  tar_target(ftb_b4a_sql,           read_ftb_b4a(workbook_db)),
+
   # Phase 2 - re-derived from upstream inputs
-  tar_target(data_sec_agg_r,        compute_data_sec_agg(data_sec_all)),
+  tar_target(data_sec_agg_r,        read_data_sec_agg(workbook_db)),
   tar_target(pareto_missing_r,      compute_pareto_missing(pareto_missing)),
   tar_target(pareto_summary,        compute_pareto_summary(pareto_missing_r)),
   tar_target(tab5_r,                compute_tab5(pareto_missing_r, tab2, tab3)),
@@ -43,7 +55,7 @@ list(
   tar_target(billionaires_ca_inctax_r,
              compute_billionaires_ca_inctax(data_sec_agg_r,
                                             billionaires_ca_inctax,
-                                            ftb_b4a)),
+                                            ftb_b4a_sql)),
   tar_target(shortrunseries_r,
              compute_shortrunseries(data_sec_agg_r,
                                     data_sec_top4,

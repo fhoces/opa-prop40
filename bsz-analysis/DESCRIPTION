@@ -10,12 +10,14 @@ Description: Reproduces the tables and figures of Boll, Saez, and Zucman
 Encoding: UTF-8
 Imports:
     cellranger,
+    DBI,
     dplyr,
     ggplot2,
     gt,
     jsonlite,
     patchwork,
     readxl,
+    RSQLite,
     scales,
     targets,
     tarchetypes,
