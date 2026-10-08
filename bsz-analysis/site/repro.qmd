@@ -24,7 +24,7 @@ execute:
 BSZ side of California Proposition 40:
 [Open Output (the explorer)](explorer/) &middot; Open Analysis: Report (here) and
 [Slides](slides/slides.html) &middot;
-[Open Materials](materials.html) &middot;
+[Open Materials](https://github.com/fhoces/opa-prop40/tree/main/bsz-analysis) &middot;
 [Overview](index.html)
 :::
 
@@ -101,7 +101,7 @@ This report is part of an Open Policy Analysis of the BSZ side:
 
 - **Open Output**: [the explorer](explorer/), where the assumptions move and the revenue follows
 - **Open Analysis**: this document, and [the slide deck](slides/slides.html)
-- **Open Materials**: [the materials page](materials.html), every script, test and data file
+- **Open Materials**: [the repository](https://github.com/fhoces/opa-prop40/tree/main/bsz-analysis), every script, test and data file (guide: [the materials page](materials.html))
 :::
 
 **The main estimate** is the base scenario (Table 5, row 1) net of its income tax effects:
@@ -845,7 +845,7 @@ The workbook is not redistributed; `DATA-SOURCES.csv` gives its URL and SHA-256.
 BSZ side of California Proposition 40:
 [Open Output (the explorer)](explorer/) &middot; Open Analysis: Report (here) and
 [Slides](slides/slides.html) &middot;
-[Open Materials](materials.html) &middot;
+[Open Materials](https://github.com/fhoces/opa-prop40/tree/main/bsz-analysis) &middot;
 [Overview](index.html)
 :::
 

@@ -20,7 +20,7 @@ execute:
 BSZ side of California Proposition 40:
 [Open Output (the explorer)](explorer/) &middot; Open Analysis: [Report](repro.html) and
 [Slides](slides/slides.html) &middot;
-Open Materials (here) &middot;
+[Open Materials](https://github.com/fhoces/opa-prop40/tree/main/bsz-analysis) (this page is its guide) &middot;
 [Overview](index.html)
 :::
 
@@ -43,7 +43,7 @@ tests <- read.csv("data/test-results.csv", stringsAsFactors = FALSE)
 ::: {.report-intro}
 ![](assets/opa/opa-materials.png){.opa-figure}
 
-This page is the **open materials** layer of the BSZ side (Boll, Saez and Zucman, BSZ, plus the
+This page is a guide to the **Open Materials** layer (the repository) of the BSZ side (Boll, Saez and Zucman, BSZ, plus the
 Galle, Gamage, Saez and Shanske (GGSS) expert report): what to download, what
 to run, and what the checks found. Everything lives in one repository,
 [fhoces/opa-prop40](https://github.com/fhoces/opa-prop40), under `bsz-analysis/`.
@@ -191,7 +191,7 @@ used by anything published here.
 BSZ side of California Proposition 40:
 [Open Output (the explorer)](explorer/) &middot; Open Analysis: [Report](repro.html) and
 [Slides](slides/slides.html) &middot;
-Open Materials (here) &middot;
+[Open Materials](https://github.com/fhoces/opa-prop40/tree/main/bsz-analysis) (this page is its guide) &middot;
 [Overview](index.html)
 :::
 

@@ -23,7 +23,7 @@ execute:
 Part of an Open Policy Analysis of Rauh et al. (2026) on California Proposition 40:
 [Open Output (the explorer)](explorer/) &middot; Open Analysis: [Report](repro.html) and
 [Slides](slides/slides.html) &middot;
-Open Materials (here) &middot;
+[Open Materials](https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis) (this page is its guide) &middot;
 [Overview](index.html)
 :::
 
@@ -58,7 +58,7 @@ ts <- read.csv("data/test-summary.csv")
 ::: {.report-intro}
 ![](assets/opa/opa-materials.png){.opa-figure}
 
-This page is the **Open Materials** layer of the side of Rauh, Jaros, Kearney, Doran and Cosso
+This page is a guide to the **Open Materials** layer (the repository) of the side of Rauh, Jaros, Kearney, Doran and Cosso
 (RJKDC): everything needed to rebuild every number on this
 site, in the repository [github.com/fhoces/opa-prop40](https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis),
 folder `rjkdc-analysis/`. The analysis is an R [`{targets}`](https://docs.ropensci.org/targets/)
@@ -190,7 +190,7 @@ cat(mm, sep = "\n")
 Part of an Open Policy Analysis of Rauh et al. (2026) on California Proposition 40:
 [Open Output (the explorer)](explorer/) &middot; Open Analysis: [Report](repro.html) and
 [Slides](slides/slides.html) &middot;
-Open Materials (here) &middot;
+[Open Materials](https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis) (this page is its guide) &middot;
 [Overview](index.html)
 :::
 

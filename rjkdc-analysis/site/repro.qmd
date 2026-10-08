@@ -26,7 +26,7 @@ execute:
 Part of an Open Policy Analysis of Rauh et al. (2026) on California Proposition 40:
 [Open Output (the explorer)](explorer/) &middot; Open Analysis: Report (here) and
 [Slides](slides/slides.html) &middot;
-[Open Materials](materials.html) &middot;
+[Open Materials](https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis) &middot;
 [Overview](index.html)
 :::
 
@@ -89,8 +89,8 @@ ever, so the state ends up poorer. Following the
 - **Open Output**: [the explorer](explorer/), the mean net present value and share of
   negative outcomes for every combination of seven inputs
 - **Open Analysis**: this document, and [the slide deck](slides/slides.html)
-- **Open Materials**: [the materials page](materials.html), every script, test, CSV and
-  source, with all nine mismatches found along the way
+- **Open Materials**: [the repository](https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis), every script, test, CSV and
+  source (guide, with all nine mismatches found along the way: [the materials page](materials.html))
 :::
 
 **What is reproduced.** Two versions of one analysis, side by side, as fixed in the project's
@@ -603,7 +603,7 @@ authors' own scripts skip cleanly without it, and the rest of the suite does not
 Part of an Open Policy Analysis of Rauh et al. (2026) on California Proposition 40:
 [Open Output (the explorer)](explorer/) &middot; Open Analysis: Report (here) and
 [Slides](slides/slides.html) &middot;
-[Open Materials](materials.html) &middot;
+[Open Materials](https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis) &middot;
 [Overview](index.html)
 :::
 
