@@ -3,6 +3,8 @@
 # are skipped. Keys used by the code:
 #   private_sheets            the authors' private workbook of data sheets
 #   private_aggregate_export  the authors' own export of the daily CA aggregate
+#   rtb_all_combined_file     the Forbes real-time daily lists (CSV), input of query 1
+#   rtb_ca_cik_file           forbes_id to SEC CIK for the 2026-01-01 list (xlsx), input of query 1
 #   form4_raw                 the raw Form 4 scrape (CSV), input of query 4
 #   form4_forbes_cik          forbes_id to filer CIK crosswalk (xlsx), input of query 4
 #   form4_clean_key           the authors' clean Form 4 file (CSV), answer key of query 4

@@ -68,8 +68,8 @@ Inputs for query 1 (both inside the bundle; the loader finds them by file name):
 
 | Input | Rows | Notes |
 |---|---:|---|
-| Forbes real-time billionaire snapshots (`rtb_all_combined.csv`) | 5,933,481 + header | Daily snapshots, 2020-07-22 to mid-2026 plus some 2019 dates. Columns: `date, forbes_id, forbes_name, state, country_citizenship, source, industries, forbes_worth, forbes_public_worth, forbes_private_worth`. Worth columns are $ million. Missing values are **empty strings**, not `NA`. `state` is empty for roughly half the rows (non-US). |
-| `forbes_id` to SEC CIK crosswalk (`rtb_ca_cik_2026_01_01.xlsx`) | 237 | `cik` is a float column with some blanks. Joined onto the 2026-01-01 list only. |
+| Forbes real-time billionaire snapshots | 5,933,481 + header | Daily snapshots, 2020-07-22 to mid-2026 plus some 2019 dates. Columns: `date, forbes_id, forbes_name, state, country_citizenship, source, industries, forbes_worth, forbes_public_worth, forbes_private_worth`. Worth columns are $ million. Missing values are **empty strings**, not `NA`. `state` is empty for roughly half the rows (non-US). |
+| `forbes_id` to SEC CIK crosswalk | 237 | `cik` is a float column with some blanks. Joined onto the 2026-01-01 list only. |
 
 Code to reproduce: the first part of the authors' build code for the Forbes data
 (confidential bundle), up to the daily aggregate. Later parts are out of scope.

@@ -53,7 +53,8 @@ def _real(v):
 
 # ---------------------------------------------------------------------------
 # Forbes real-time billionaires, one row per (date, forbes_id)
-# Source: rtb_all_combined.csv in the bundle (about 5.9M rows)
+# Source: the Forbes real-time file in the bundle, key rtb_all_combined_file in
+# data-raw/private-paths.csv (about 5.9M rows)
 # ---------------------------------------------------------------------------
 RTB_COLUMNS = [
     ("date", "TEXT", _text),
@@ -70,7 +71,7 @@ RTB_COLUMNS = [
 
 
 def load_rtb_all_combined(con, root):
-    path = find_in_bundle("rtb_all_combined.csv", root)
+    path = private_file("rtb_all_combined_file")
     names = [c[0] for c in RTB_COLUMNS]
     casts = [c[2] for c in RTB_COLUMNS]
     con.execute("DROP TABLE IF EXISTS rtb_all_combined")
@@ -107,12 +108,13 @@ def load_rtb_all_combined(con, root):
 
 # ---------------------------------------------------------------------------
 # forbes_id to SEC CIK, for the 2026-01-01 California list
-# Source: rtb_ca_cik_2026_01_01.xlsx in the bundle (237 rows)
+# Source: the CIK crosswalk in the bundle, key rtb_ca_cik_file in
+# data-raw/private-paths.csv (237 rows)
 # ---------------------------------------------------------------------------
 def load_rtb_ca_cik(con, root):
     import openpyxl
 
-    path = find_in_bundle("rtb_ca_cik_2026_01_01.xlsx", root)
+    path = private_file("rtb_ca_cik_file")
     wb = openpyxl.load_workbook(path, read_only=True, data_only=True)
     rows = wb[wb.sheetnames[0]].iter_rows(values_only=True)
     header = list(next(rows))
