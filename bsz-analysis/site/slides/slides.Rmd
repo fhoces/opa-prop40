@@ -348,9 +348,11 @@ lab_b <- paste0("$", head(cuts, -1), "-", tail(cuts, -1))
 bands <- data.frame(b = factor(lab_b, levels = lab_b),
                     forbes = band(par$n_above_threshold_emp), pareto = band(par$n_above_threshold_proj))
 stopifnot(abs(sum(bands$pareto) - (ps$total_count_proj - par$n_above_threshold_emp[par$threshold_b == 5])) < 1e-6)
-# Shares of all billionaires above $1B in each list (Forbes 249, Pareto tail 617)
-bands$forbes_sh <- bands$forbes / ps$total_count_emp
+# Shares of the 617 billionaires a Pareto tail puts above $1B, in both panels, so the left
+# panel can stack what Forbes lists (solid) and what it misses (transparent) up to the Pareto bar.
+bands$forbes_sh <- bands$forbes / ps$total_count_proj
 bands$pareto_sh <- bands$pareto / ps$total_count_proj
+bands$miss_sh   <- pmax(bands$pareto_sh - bands$forbes_sh, 0)
 ymax <- max(bands$pareto_sh) * 1.15
 hfig <- function(y, col, ttl) {
   ggplot(data.frame(b = bands$b, y = y), aes(b, y)) +
@@ -366,7 +368,23 @@ hfig <- function(y, col, ttl) {
 
 .pull-left[
 ```{r pareto-fig-forbes, fig.width=5, fig.height=2.9}
-hfig(bands$forbes_sh, "#d62728", "What the Forbes list shows")
+st <- rbind(data.frame(b = bands$b, y = bands$forbes_sh, part = "listed by Forbes"),
+            data.frame(b = bands$b, y = bands$miss_sh,   part = "missing"))
+st$part <- factor(st$part, levels = c("missing", "listed by Forbes"))
+ggplot(st, aes(b, y, fill = part, alpha = part)) +
+  geom_col(width = 0.8, fill = "#d62728") +
+  geom_text(data = subset(bands, miss_sh > 0.005), inherit.aes = FALSE,
+            aes(b, pareto_sh, label = paste0("+", pct(miss_sh))), vjust = -0.3, size = 3.4, colour = "#d62728") +
+  scale_alpha_manual(values = c("missing" = 0.25, "listed by Forbes" = 1), name = NULL,
+                     guide = guide_legend(override.aes = list(fill = "#d62728"), reverse = TRUE)) +
+  scale_y_continuous(limits = c(0, ymax), expand = expansion(mult = c(0, 0)),
+                     labels = function(x) paste0(round(100 * x), "%")) +
+  labs(x = "wealth band, $ billion", y = "share of billionaires", title = "What the Forbes list shows") +
+  guides(fill = "none") +
+  theme_minimal(base_size = 13) +
+  theme(panel.grid.minor = element_blank(), panel.grid.major.x = element_blank(),
+        axis.text.x = element_text(size = 9), legend.position = "inside",
+        legend.position.inside = c(0.72, 0.78))
 ```
 ]
 
@@ -376,9 +394,10 @@ hfig(bands$pareto_sh, "#1f77b4", "What wealth data usually show")
 ```
 ]
 
-Each bar is the share of all billionaires above $1 billion. **Left:** Forbes puts `r pct(bands$forbes_sh[1])` of its
-billionaires in the lowest band, $1 to 1.5 billion. **Right:** in wealth and tax data, top fortunes usually
-follow a Pareto tail, where each step down holds many more people: `r pct(bands$pareto_sh[1])` in that band. Fitted to the Forbes list above $4.5 billion, that shape implies
+Bars are shares of the `r bn(ps$total_count_proj, 0)` billionaires a Pareto tail puts above $1 billion. **Right:** in wealth and tax
+data, top fortunes usually follow a Pareto tail, where each step down holds many more people.
+**Left:** Forbes lists only part of each band below $4.5 billion. The pale red is what it misses
+(`r pct(bands$miss_sh[1])` of all billionaires in the lowest band alone). Fitted to the Forbes list above $4.5 billion, that shape implies
 **`r bn(ps$total_count_proj, 0)`** billionaires above $1 billion, not `r ps$total_count_emp`.
 
 .small[Method: Pareto extrapolation (BSZ pp.24 to 25, Appendix Figure A4). How it works, in the backup:
