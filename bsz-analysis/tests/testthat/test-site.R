@@ -1,6 +1,6 @@
 # Tests for the public OPA site (site/) and the exports behind it
 # (R/site_exports.R). Three kinds:
-#   1. the explorer and the reproduction run ONE scorer, score_tab5_cell() in
+#   1. the explorer and the reproduction run ONE estimating function, score_tab5_cell() in
 #      R/compute_tab5.R, and its defaults are the workbook's own inputs (so the
 #      tool cannot drift from the analysis, which test-compute.R pins to Excel);
 #   2. the committed site/explorer/grid.js is exactly the exporter's output;
@@ -39,7 +39,7 @@ test_that("the reproduction and the explorer grid both call score_tab5_cell()", 
   # OPA Guidelines step 2 Level 3: the tool shares the analysis's key code.
   expect_true("score_tab5_cell" %in% all.names(body(compute_tab5)))
   expect_true("score_tab5_cell" %in% all.names(body(build_site_grid)))
-  # and no second implementation of the scoring arithmetic is left in the site layer
+  # and no second implementation of the estimating arithmetic is left in the site layer
   site_src <- readLines(testthat::test_path("..", "..", "R", "site_exports.R"))
   expect_false(any(grepl("score_tab5_cell\\s*<-\\s*function", site_src)))
 })

@@ -20,7 +20,7 @@ are served**. Nothing else needs to change for them to hold.
 | # | Step | Level | Evidence | What the next level needs |
 |---|---|---|---|---|
 | 1 | Unified output | 1 | "One table or graph is highlighted as the best reflection": the preferred-estimate box (Table 5 row 1, benchmark) in `site/explorer/index.html`, generated from `G.preferred` in `site/explorer/grid.js` | Level 2 needs "a sample output published pre-release". The output was fixed in `PLAN.md` (`0b07ce7`, "Pre-specified output") and pushed in `9adcd2f` before any RJKDC result, but only to a private repo, and after this side's own reproduction (imported from May). Publish the spec before the next round's results |
-| 2 | Input-output link | 3 | "An interactive tool allowing for adjusted inputs is provided, and its underlying code shares the same key sections of code behind the analysis section": the 6-dial explorer's grid is scored by `score_tab5_cell()` in `R/compute_tab5.R`, the function `compute_tab5()` itself uses for the reproduction (commit `6219268`; `test-site.R` asserts both call it) | None (top level) |
+| 2 | Input-output link | 3 | "An interactive tool allowing for adjusted inputs is provided, and its underlying code shares the same key sections of code behind the analysis section": the 6-dial explorer's grid is computed by `score_tab5_cell()` in `R/compute_tab5.R`, the function `compute_tab5()` itself uses for the reproduction (commit `6219268`; `test-site.R` asserts both call it) | None (top level) |
 | 3 | Methodological accounts | 3 | "Code is clearly documented into a dynamic document": `site/repro.qmd` (knitr, folded code, every number computed) | None (top level) |
 | 4 | Data | 3 | Analytic data in the repo (`site/data/*.csv`, `export/r/*.csv`; `outputs/` is generated and gitignored). The raw workbook is not redistributed, but `DATA-SOURCES.csv` gives the URL, date and SHA-256, and `site/materials.qmd` gives the download command | None. Note that the author-shared bundle is confidential and not used by anything published |
 | 5 | Open report | 3 | "A dynamic document ... and include version control tracking": `site/repro.qmd` in git | None |
@@ -34,7 +34,7 @@ are served**. Nothing else needs to change for them to hold.
 | # | Step | Level | Evidence | What the next level needs |
 |---|---|---|---|---|
 | 1 | Unified output | 1 | Two preferred-estimate cards (SSRN Mar 2026, NBER Sept 2026) in `site/explorer/`, from `G.preferred`. The strongest-version policy fixes two estimates per side, so two cards is by design | Level 2: as for BSZ. The spec reached origin in `9adcd2f` (14:55), before the first Rauh result commit (`59964ca`, 15:52), but only in a private repo |
-| 2 | Input-output link | 3 | 7-dial explorer, 2,187 cells, scored by `npv_expectation()` and `npv_share_negative_exact()` in `R/npv_mc.R`, the functions behind the reproduction's `npv_mc_analytic_mean()` (`test-site.R` asserts both paths call them) | None (top level) |
+| 2 | Input-output link | 3 | 7-dial explorer, 2,187 cells, computed by `npv_expectation()` and `npv_share_negative_exact()` in `R/npv_mc.R`, the functions behind the reproduction's `npv_mc_analytic_mean()` (`test-site.R` asserts both paths call them) | None (top level) |
 | 3 | Methodological accounts | 3 | `site/repro.qmd`, dynamic document | None |
 | 4 | Data | 3 | Analytic data: `export/{r,py}/*.csv`. Raw: the authors' public repo, pinned at `bjaros20/wealth_tax@25e84dd` and cloned by `.github/workflows/rjkdc-ci.yml` | None |
 | 5 | Open report | 3 | `site/repro.qmd` in git; `MISMATCHES.md` (9 items) linked from the materials page | None |
@@ -80,7 +80,7 @@ on the comparison layer itself.
    own garbage collection, but both claim links are already used: checked 2026-09-24, each one
    redirects to its claimed document (1436128 in the BITSS RPubs account, 1436129 in `fhoces`), so
    a leftover copy of a token cannot claim anything.
-2. **One scorer per side (step 2 to Level 3).** Done 2026-09-23: each explorer grid now calls the
+2. **One estimating function per side (step 2 to Level 3).** Done 2026-09-23: each explorer grid now calls the
    analysis's own functions (BSZ `6219268`; RJKDC `e899ae9`), with grids and
    exports byte-identical before and after.
 3. **Step 1 to Level 2 for the next round.** It cannot be met retroactively for this round. For

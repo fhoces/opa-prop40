@@ -10,8 +10,8 @@ bsz_loss_horizon,bsz,bsz,Years the lost income tax is counted (losses 'annual te
 walczak_loss_low,rjkdc,walczak,Ongoing annual state tax loss incl. spillovers: low (credited alternative dial),3.53,$B/yr,guesswork,public,"Walczak, California Tax Foundation, 22 Apr 2026, p.1",1
 walczak_loss_high,rjkdc,walczak,Ongoing annual state tax loss incl. spillovers: high (credited alternative dial),4.49,$B/yr,guesswork,public,"Walczak, California Tax Foundation, 22 Apr 2026, p.1",1
 lao_loss_upper,neutral,lao,LAO: possible ongoing income tax decrease 'of less than $1 billion per year' (upper bound),1,$B/yr,guesswork,public,"LAO Prop 40 ballot analysis, Fiscal Effects",2
-hoopes_n_billionaires,neutral,hoopes,Billionaires in the GGSS text Hoopes scores (February 2026 GGSS),213,count,data,public,Hoopes SSRN 6428578 p.3 and fn.1,3
-hoopes_wealth,neutral,hoopes,Wealth in the GGSS text Hoopes scores,2182,$B,data,public,"Hoopes SSRN 6428578 p.3 fn.1 (""$2.182 trillion"")",3
+hoopes_n_billionaires,neutral,hoopes,Billionaires in the GGSS text Hoopes's estimate uses (February 2026 GGSS),213,count,data,public,Hoopes SSRN 6428578 p.3 and fn.1,3
+hoopes_wealth,neutral,hoopes,Wealth in the GGSS text Hoopes's estimate uses,2182,$B,data,public,"Hoopes SSRN 6428578 p.3 fn.1 (""$2.182 trillion"")",3
 hoopes_gross,neutral,hoopes,GGSS (February) gross revenue before avoidance,109,$B,derived,public,Hoopes SSRN 6428578 p.3 fn.1,3
 hoopes_net,neutral,hoopes,GGSS (February) revenue after 10% avoidance,99,$B,derived,public,Hoopes SSRN 6428578 p.3 fn.1,3
 hoopes_real_estate_base,neutral,hoopes,Real-estate exclusion as Hoopes states it (a reduction of the taxable BASE),8,$B,data,public,Hoopes SSRN 6428578 p.4,4

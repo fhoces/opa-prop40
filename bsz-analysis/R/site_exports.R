@@ -1,6 +1,6 @@
 # Site exports: the data files behind the public OPA pages in site/.
 #
-# Nothing here changes a reproduced number. The explorer's grid is scored by
+# Nothing here changes a reproduced number. The explorer's grid is computed by
 # score_tab5_cell() in R/compute_tab5.R, the SAME function compute_tab5() uses
 # to reproduce the workbook's Tab5 sheet: this file only chooses which input
 # values to feed it (the dials) and writes the results out. The two implicit
@@ -78,7 +78,7 @@ build_site_grid <- function(inp) {
   tibble::as_tibble(as.data.frame(do.call(rbind, rows)))
 }
 
-# Every input of the one-time scoring, with its value and origin label.
+# Every input of the one-time estimate, with its value and origin label.
 build_site_inputs <- function(inp) {
   lv <- inp$leavers
   tibble::tribble(
@@ -125,7 +125,7 @@ build_site_inputs <- function(inp) {
       sprintf("$%.2f B/yr", inp$leaver_loss), "derived",
       "Top-3 company income tax from SEC data (Tab3 row 13) plus a wealth-proportional rate on the rest (Tab5!F19+F24).",
     "date", "Valuation date", "1 Jul 2026", "convention",
-      "The Act values wealth at 31 Dec 2026; BSZ and GGSS score on the latest Forbes snapshot."
+      "The Act values wealth at 31 Dec 2026; BSZ and GGSS estimate on the latest Forbes snapshot."
   )
 }
 

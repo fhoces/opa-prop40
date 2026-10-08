@@ -141,7 +141,7 @@ build_all <- function(k = read_contracts()) {
                     "rauh_ssrn_revenue_mc", "rauh_ssrn_npv", "rauh_nber_revenue_mc", "rauh_nber_npv"),
     description = c(
       "GGSS headline: BSZ model + their rounding step",
-      "GGSS scoring before rounding (p.4, '$104 billion')",
+      "GGSS estimate before rounding (p.4, '$104 billion')",
       "BSZ Table 5 row 1 wealth tax revenue = model at all-BSZ inputs",
       "BSZ row 1 net of its own extra income tax and 5 years of losses (not printed by BSZ; constructed here)",
       "Rauh SSRN expected revenue in the Monte Carlo, E[WT] = (35 + 67.51)/2",
@@ -215,7 +215,7 @@ build_all <- function(k = read_contracts()) {
   hoopes <- data.frame(step_id = names(ours), ours = unname(ours), stringsAsFactors = FALSE)
   hoopes$hoopes <- hz$delta[match(hoopes$step_id, hz$step_id)]
   hoopes$hoopes_uncertainty <- hz$uncertainty[match(hoopes$step_id, hz$step_id)]
-  hoopes$our_steps <- c("GGSS printed headline", "GGSS's own rounding of their scoring",
+  hoopes$our_steps <- c("GGSS printed headline", "GGSS's own rounding of their estimate",
                         "Non-US-citizen residents + base list and valuation date",
                         "Billionaires already departed",
                         "(none: Rauh's Monte Carlo headline does not use the ten 'expanded' departures)",

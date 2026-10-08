@@ -598,7 +598,7 @@ tar_read(fig7)
 
 # 3. The Economics of Taxing California Billionaires' Wealth
 
-Section 3 scores two policy options: a one-time 5% wealth tax payable over
+Section 3 estimates two policy options: a one-time 5% wealth tax payable over
 five years, and a permanent annual wealth tax.
 
 ## 3.1 One-time wealth tax
@@ -610,7 +610,7 @@ five years, and a permanent annual wealth tax.
 > is 80% unrealized gains) and two-thirds with liquidities or debt.
 > (BSZ 2026, p. 22)
 
-**Methodology.** Four scoring scenarios for the proposed 5% one-time wealth
+**Methodology.** Four estimation scenarios for the proposed 5% one-time wealth
 tax. Each row has the same five-column structure: number of taxable
 billionaires, gross wealth $W$, taxable wealth $W^{\text{tax}}$ after
 avoidance, total avoidance/evasion rate $\alpha$, wealth-tax revenue
@@ -648,7 +648,7 @@ Zuckerberg, Fang) from the benchmark; scenario 4 stacks 2 + 3.
 ::: {.callout-note collapse="true" appearance="simple" title="Code"}
 
 Table 5 is rendered by [`build_tab5()`](#sec-build_tab5) from the
-scoring tibble produced by [`compute_tab5()`](#sec-compute_tab5), which in
+estimate tibble produced by [`compute_tab5()`](#sec-compute_tab5), which in
 turn pulls Pareto summary stats from
 [`compute_pareto_missing()`](#sec-compute_pareto_missing) plus the averages
 rows of [`extract_tab2()`](#sec-extract_tab2) and
@@ -895,7 +895,7 @@ n^{\text{Pareto}}(t) \;=\; n_{4.5} \cdot \left(\frac{t}{4.5}\right)^{-b/(b-1)}
 $$
 implying about 368 extra "missing" billionaires (Forbes counts 249, the
 extrapolation says 617) with about \$615B in extra wealth. These figures
-flow into the Table 5 scenario-2 / 4 scoring.
+flow into the Table 5 scenario-2 / 4 estimates.
 
 ::: {.callout-note collapse="true" appearance="simple" title="Code"}
 

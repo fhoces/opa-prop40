@@ -1,4 +1,4 @@
-# Endpoints: the common scoring function must reproduce each side's own number.
+# Endpoints: the common estimating function must reproduce each side's own number.
 k   <- read_contracts()
 res <- build_all(k)
 ep  <- res$endpoints
@@ -12,7 +12,7 @@ test_that("all-BSZ inputs reproduce BSZ Table 5 row 1 exactly", {
   expect_equal(round(val("bsz_tab5_row1"), 1), 103.8)
 })
 
-test_that("GGSS: the scoring rounds to the printed $104B and the headline is their $100B rounding", {
+test_that("GGSS: the estimate rounds to the printed $104B and the headline is their $100B rounding", {
   expect_equal(round(val("ggss_scoring")), val("ggss_scoring", "printed_value"))
   expect_equal(val("ggss_headline"), val("ggss_headline", "printed_value"))
   expect_equal(val("ggss_headline"), 100)

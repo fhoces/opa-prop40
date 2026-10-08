@@ -8,7 +8,7 @@
 # the function that target runs (compute_tab5(), compute_fig8_laffer()), so the
 # export cannot drift from the reproduction. `version` is "ggss" (Galle, Gamage,
 # Saez, Shanske expert report, updated 20 Jul 2026), "bsz" (NBER WP 35218, Aug
-# 2026) or "both": GGSS's scoring (p.4) is the same 90% x 5% x $2,307B
+# 2026) or "both": GGSS's estimate (p.4) is the same 90% x 5% x $2,307B
 # computation as BSZ Table 5 row 1, so the benchmark inputs are shared.
 # Pages are PDF pages (BSZ's printed folio runs two behind in the main text).
 

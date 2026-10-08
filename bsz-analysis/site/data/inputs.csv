@@ -16,4 +16,4 @@
 "f_ph","Share of added wealth in the $1B-1.1B phase-in","12.1%","derived","Pareto-missing!I24, derived from b."
 "W_pre","Wealth of pre-2026 leavers (Page, Thiel, Hankey, Kalanick)","$333.6 B","data","Forbes 7/1/2026 values typed into Tab5!B20:B23."
 "L_lv","Annual CA income tax of all seven named leavers","$0.36 B/yr","derived","Top-3 company income tax from SEC data (Tab3 row 13) plus a wealth-proportional rate on the rest (Tab5!F19+F24)."
-"date","Valuation date","1 Jul 2026","convention","The Act values wealth at 31 Dec 2026; BSZ and GGSS score on the latest Forbes snapshot."
+"date","Valuation date","1 Jul 2026","convention","The Act values wealth at 31 Dec 2026; BSZ and GGSS estimate on the latest Forbes snapshot."

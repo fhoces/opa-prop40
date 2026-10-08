@@ -1,6 +1,6 @@
-# The common scoring function and its decomposition.
+# The common estimating function and its decomposition.
 #
-# ONE function scores both sides. Every disputed input is an argument that takes
+# ONE function estimates both sides. Every disputed input is an argument that takes
 # either the BSZ side's value (GGSS July 2026 / BSZ August 2026, which share
 # their benchmark) or Rauh et al.'s (SSRN, March 2026). At the all-BSZ
 # setting it must return BSZ Table 5 row 1; at the all-Rauh setting it must return
@@ -58,7 +58,7 @@ bridge_steps <- function() {
       "Real-estate deduction",
       "Billionaires already departed",
       "Avoidance and evasion allowance",
-      "One-time tax scored as a permanent 5 pp rate",
+      "One-time tax estimated as a permanent 5 pp rate",
       "Size of the mobility semi-elasticity",
       "Lost income tax proportional to lost wealth",
       "Billionaires' annual CA income tax",

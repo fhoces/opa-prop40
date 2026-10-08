@@ -26,7 +26,7 @@ fmt_input <- function(input, v) {
   switch(input,
     W_noncit = , W_core = money(v, if (v %% 1 == 0) 0 else 1),
     re = , d_conf = , alpha = pct(v, 1),
-    dtau = if (v == 0) "none scored" else paste0(formatC(100 * v, format = "f", digits = 0), " pp"),
+    dtau = if (v == 0) "none applied" else paste0(formatC(100 * v, format = "f", digits = 0), " pp"),
     eps = formatC(v, format = "f", digits = 2),
     kappa = formatC(v, format = "f", digits = 2),
     C = paste0(money(v, 2), "/yr"),
@@ -68,7 +68,7 @@ build_series <- function(ex, resid_label) {
         if (o == "a") {
           add("ggss", "total", ggss, "GGSS headline, as printed (GGSS p.4)")
           add("ggss_rounding", "model", e$bsz_model - ggss,
-              "GGSS round their scoring to the nearest $100B 'for simplicity' (p.4)", "rounding")
+              "GGSS round their estimate to the nearest $100B 'for simplicity' (p.4)", "rounding")
           add("bsz", "total", e$bsz_model, "BSZ Table 5 row 1 = the model at all-BSZ inputs (checkpoint)")
         } else {
           add("bsz_net", "total", e$bsz_model,
@@ -132,7 +132,7 @@ render_site <- function(root = comparison_root(),
     name, a, b, printed)
   tok$headline_rows <- paste(c(
     hr("GGSS expert report (20 Jul 2026)", money(epv("ggss_headline"), 0), "not computed",
-       sprintf("%s scoring, rounded to %s (p.4)", money(epv("ggss_scoring"), 0), money(epv("ggss_headline"), 0))),
+       sprintf("%s estimate, rounded to %s (p.4)", money(epv("ggss_scoring"), 0), money(epv("ggss_headline"), 0))),
     hr("BSZ NBER WP 35218, Table 5 row 1 (Aug 2026)", money(epv("bsz_tab5_row1"), 1), money(eb$bsz_model, 1),
        sprintf("%s revenue (PDF p.39); no net figure", money(ep$printed_value[ep$endpoint_id == "bsz_tab5_row1"], 0))),
     hr("Rauh et al., SSRN 6340778 (17 Mar 2026)", money(ea$rauh_own, 2), money(eb$rauh_own, 2),
@@ -202,7 +202,7 @@ render_site <- function(root = comparison_root(),
             paste(sprintf("%s (%s, %s)", tolower(top3$title), money(top3$shapley, 1, TRUE), top3$kind), collapse = "; ")),
     sprintf("One step favours the BSZ side's number going up: Rauh applies no avoidance or evasion allowance beyond migration (his semi-elasticity is the migration share of Brulhart et al.'s response, Rauh pp.13-14), so dropping GGSS's 10%% adds %s (Shapley). DISPUTES.md does not list this as a row.",
             money(v(ba, "avoidance"), 1, TRUE)),
-    sprintf("Order matters most for scoring the one-time tax as a permanent 5-percentage-point rate: %s averaged over all orders, %s in the one order shown. Rauh's revenue is uniform between a confirmed-departures ceiling and an elasticity floor, so the elasticity bites only on top of whatever departures are already in: the step is large when switched early and smaller when switched after the departures.",
+    sprintf("Order matters most for estimating the one-time tax as a permanent 5-percentage-point rate: %s averaged over all orders, %s in the one order shown. Rauh's revenue is uniform between a confirmed-departures ceiling and an elasticity floor, so the elasticity bites only on top of whatever departures are already in: the step is large when switched early and smaller when switched after the departures.",
             money(v(ba, "one_time_as_permanent"), 1, TRUE), money(v(ba, "one_time_as_permanent", "sequential"), 1, TRUE)),
     sprintf("For output (b) the horizon is the single largest step read in Hoopes's order (%s, the last switch, when the loss is already Rauh-sized) but only %s averaged over orders, because a perpetuity multiplies whatever annual loss the other inputs imply. The annual loss runs from %s (BSZ) to %s (Rauh).",
             money(v(bb, "horizon", "sequential"), 1, TRUE), money(v(bb, "horizon"), 1, TRUE),
@@ -247,7 +247,7 @@ render_site <- function(root = comparison_root(),
   dv <- function(id) as.numeric(d$value[d$input_id == id])
   hs_ <- function(id) hz$hoopes[hz$step_id == id]; ho <- function(id) hz$ours[hz$step_id == id]
   tok$hoopes_differences <- paste(sprintf("  <li>%s</li>", c(
-    sprintf("<b>Vintage.</b> Hoopes scores the February GGSS text: %s billionaires, %s of wealth, %s gross, %s after 10%% avoidance, rounded up to %s (p.3 fn.1). The July GGSS text scores %s billionaires and %s: %s after avoidance, rounded down to %s. The same printed headline hides a rounding of %s in one vintage and of %s in the other.",
+    sprintf("<b>Vintage.</b> Hoopes's estimate uses the February GGSS text: %s billionaires, %s of wealth, %s gross, %s after 10%% avoidance, rounded up to %s (p.3 fn.1). The July GGSS text covers %s billionaires and %s: %s after avoidance, rounded down to %s. The same printed headline hides a rounding of %s in one vintage and of %s in the other.",
             dv("hoopes_n_billionaires"), money(dv("hoopes_wealth"), 0),
             money(dv("hoopes_gross"), 0), money(dv("hoopes_net"), 0), tok$ggss_headline,
             n_sup, money(inp$supporting_value[inp$input == "W_core"] + inp$supporting_value[inp$input == "W_noncit"], 0),
@@ -261,7 +261,7 @@ render_site <- function(root = comparison_root(),
     sprintf("<b>Additional movers.</b> His %s matches Rauh's expanded ten-departure estimate (%s to %s, a step of %s, pp.12-13). Rauh's own %s headline does not use that estimate, so our bridge has no such step.",
             hfmt(hs_("additional_movers"), NA), opp("revenue_confirmed6"), opp("revenue_expanded10"),
             money(opp("revenue_expanded10") - opp("revenue_confirmed6"), 2, TRUE), tok$rauh_npv),
-    sprintf("<b>Behaviour.</b> His %s is close to Rauh's step from the expanded estimate to the literature calibration (%s to %s, %s, p.14). Ours, %s in one order, nets three labelled steps: dropping the %s avoidance allowance (up), scoring the one-time tax as a permanent rate (down) and the elasticity from %s to %s (down).",
+    sprintf("<b>Behaviour.</b> His %s is close to Rauh's step from the expanded estimate to the literature calibration (%s to %s, %s, p.14). Ours, %s in one order, nets three labelled steps: dropping the %s avoidance allowance (up), estimating the one-time tax as a permanent rate (down) and the elasticity from %s to %s (down).",
             hfmt(hs_("additional_behavioral_response"), NA), opp("revenue_expanded10"), opp("revenue_literature_calibrated"),
             money(opp("revenue_literature_calibrated") - opp("revenue_expanded10"), 2, TRUE),
             money(ho("additional_behavioral_response"), 1, TRUE),
@@ -293,7 +293,7 @@ render_site <- function(root = comparison_root(),
     sprintf('    <tr><td>Rauh et al., SSRN 6340778</td><td>17 Mar 2026</td><td>%s billionaires, %s, 2025 Forbes list</td></tr>',
             n_rauh, money(inp$rauh_value[inp$input == "W_core"], 1)),
     '    <tr><td>Galle, Gamage, Saez, Shanske, response to Rauh</td><td>17 Mar 2026</td><td>answers Rauh\'s 4 Mar version, not the 17 Mar copy used here</td></tr>',
-    sprintf('    <tr><td>Hoopes, SSRN 6428578</td><td>2026 (scores the February GGSS text)</td><td>%s billionaires, %s (p.3 fn.1)</td></tr>',
+    sprintf('    <tr><td>Hoopes, SSRN 6428578</td><td>2026 (uses the February GGSS text)</td><td>%s billionaires, %s (p.3 fn.1)</td></tr>',
             dv("hoopes_n_billionaires"), money(dv("hoopes_wealth"), 0)),
     sprintf('    <tr><td>GGSS expert report</td><td>updated 20 Jul 2026</td><td>%s billionaires, %s at 1 Jul 2026, non-citizens included, Ellison excluded</td></tr>',
             n_sup, money(inp$supporting_value[inp$input == "W_core"] + inp$supporting_value[inp$input == "W_noncit"], 0)),

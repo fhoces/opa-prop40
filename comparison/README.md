@@ -24,7 +24,7 @@ assets sold to pay - present value of income tax lost to departures, over a hori
 | File | What |
 |---|---|
 | `R/contract.R` | read the contracts and document inputs |
-| `R/model.R` | `score_common()`, the one scoring function; exact Shapley over all orders; one sequential order; Rauh's analytic Monte Carlo expectations |
+| `R/model.R` | `score_common()`, the one estimating function; exact Shapley over all orders; one sequential order; Rauh's analytic Monte Carlo expectations |
 | `R/build.R` | every number the page shows, written to `export/r/*.csv` |
 | `R/site.R` | renders `../index.html` and `../assets/comparison-data.js` from `site/index.template.html` |
 | `py/bridge.py` | Python twin of contract/model/build, writes `export/py/*.csv` |

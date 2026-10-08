@@ -4,8 +4,8 @@
 # scenarios) from its upstream inputs; the test suite asserts the output
 # matches the Excel extraction within a documented tolerance.
 #
-# One scorer, two users. score_tab5_cell() scores ONE setting of every
-# guesswork input. compute_tab5() is the reproduction: the workbook's four rows
+# One estimating function, two users. score_tab5_cell() estimates revenue at
+# ONE setting of every guesswork input. compute_tab5() is the reproduction: the workbook's four rows
 # are score_tab5_cell() at the workbook's own values. The explorer
 # (R/site_exports.R) calls the same function at other values, so the published
 # tool cannot drift from the reproduction.
@@ -14,14 +14,14 @@
 #  1. Mobility share. Tab5!H6 is the literal "-0.05 * Tab2!C14". The row label
 #     reads "10% evasion/avoidance (half due to mobility)" and the paper says
 #     "half of the 10% avoidance takes the form of mobility" (PDF p.24), so the
-#     scorer reads 0.05 as avoidance x mobility share (0.10 x 0.5). At the
+#     function reads 0.05 as avoidance x mobility share (0.10 x 0.5). At the
 #     workbook's own values this equals the literal 0.05 (which also equals the
 #     tax rate; an earlier version of this file used the tax rate there).
 #  2. Row 4 phase-in. Tab5!F7 (row 2) subtracts the $1B-1.1B phase-in
-#     deduction; Tab5!F9 (row 4, rows 2+3 combined) does not. The scorer keeps
+#     deduction; Tab5!F9 (row 4, rows 2+3 combined) does not. The function keeps
 #     the workbook's literal behaviour; the site reports the size of the gap.
 
-# ---- the fixed inputs the scorer needs, taken from the pipeline ----------
+# ---- the fixed inputs the estimate needs, taken from the pipeline --------
 
 tab5_scoring_inputs <- function(pareto_missing_r, tab2, tab3) {
   pareto   <- compute_pareto_summary(pareto_missing_r)
@@ -75,7 +75,7 @@ tab5_scoring_inputs <- function(pareto_missing_r, tab2, tab3) {
   )
 }
 
-# ---- the generalised Table 5 scorer --------------------------------------
+# ---- the generalised Table 5 estimating function ------------------------
 
 score_tab5_cell <- function(inp,
                             avoidance      = 0.10,  # alpha: benchmark avoidance/evasion

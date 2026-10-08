@@ -69,7 +69,7 @@ both:
 
 1. **Boll, Saez and Zucman (BSZ)**, *California Billionaires: Wealth, Taxes, and Wealth
    Tax Revenue Estimates*, NBER Working Paper 35218, August 2026 revision, and its
-   supplementary Excel workbook. Table 5, row 1 scores the tax at
+   supplementary Excel workbook. Table 5, row 1 estimates the tax at
    **`r usd(t5$wealth_tax_revenue[1])`**.
 2. **Galle, Gamage, Saez and Shanske (GGSS)**, *Expert Report on Proposition 40*, updated
    20 July 2026. It cites **\$100 billion**, and says on p.4 where that comes from:
@@ -338,7 +338,7 @@ The base is Forbes' real-time list on 1 July 2026: $n_0$ = `r inp$n0` billionair
 $W_0$ = `r usd(inp$W0, 0)`. These two numbers are typed into the workbook
 (`Tab5!B6:C6`); they are data, but data the authors read off Forbes on that day, not
 something the pipeline recomputes. The Act itself values wealth on 31 December 2026, so
-the real base will differ; GGSS note that the daily score ranged from \$87 billion to
+the real base will differ; GGSS note that the daily estimate ranged from \$87 billion to
 \$107 billion between January and mid-July 2026 (GGSS p.4, fn.8).
 
 ### Step 2: avoidance and evasion
@@ -549,7 +549,7 @@ billionaires (row 2, reproduced as `r usd(t5$wealth_tax_revenue[2])`) and "about
 
 ## B. A permanent annual wealth tax: the Laffer curve
 
-This part scores a different policy, a wealth tax charged every year, which is not what
+This part estimates a different policy, a wealth tax charged every year, which is not what
 Proposition 40 proposes. The paper uses it to answer the argument that billionaires will
 leave for fear of future taxes. The pipeline's "Figure 8" is the August paper's Figure 9
 (August inserted a new Figure 8 on venture capital, which the pipeline does not build).
@@ -609,14 +609,14 @@ tr("fig_a3")
 
 # Every input, by origin {#every-input-by-origin}
 
-This section is not in the paper. It sorts every input of the one-time scoring by how much
+This section is not in the paper. It sorts every input of the one-time estimate by how much
 evidence stands behind it, which is the first question a reader who wants to argue with the
 result has to answer.
 
 - **data**: read off a public source, and in principle re-collectable from it.
 - **research**: an estimate from a published study, including the authors' own.
 - **guesswork**: set by assumption; argued for, but not measured.
-- **scenario**: a choice about which policy is being scored.
+- **scenario**: a choice about which policy is being estimated.
 - **derived**: implied by other rows. **convention**: a date.
 
 ```{r}

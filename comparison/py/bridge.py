@@ -1,7 +1,7 @@
 """Python twin of comparison/R/{contract,model,build}.R.
 
 Reads the same three kinds of file (each side's export/r contract, comparison/data/
-document-inputs.csv, comparison/data/hoopes-fig2.csv), scores both sides with the same
+document-inputs.csv, comparison/data/hoopes-fig2.csv), estimates both sides with the same
 common function, and writes comparison/export/py/*.csv in the same layout as the R side.
 comparison/tests/testthat/test-parity.R compares the two export directories.
 
@@ -91,7 +91,7 @@ STEPS = [
     ("real_estate", "7", "Real-estate deduction", "data"),
     ("confirmed_departures", "3", "Billionaires already departed", "guesswork on data"),
     ("avoidance", "(not a row)", "Avoidance and evasion allowance", "guesswork"),
-    ("one_time_as_permanent", "1", "One-time tax scored as a permanent 5 pp rate", "scenario + guesswork"),
+    ("one_time_as_permanent", "1", "One-time tax estimated as a permanent 5 pp rate", "scenario + guesswork"),
     ("elasticity_size", "4", "Size of the mobility semi-elasticity", "research + guesswork"),
     ("income_proportional", "6", "Lost income tax proportional to lost wealth", "data vs guesswork"),
     ("income_level", "5", "Billionaires' annual CA income tax", "research vs guesswork"),

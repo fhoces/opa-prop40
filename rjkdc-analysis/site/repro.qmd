@@ -79,7 +79,7 @@ scroll <- function(x) cat("\n\n```{=html}\n<div class=\"table-scroll\">\n",
 ::: {.report-intro}
 ![](assets/opa/opa-details.png){.opa-figure}
 
-This report rebuilds, step by step, the RJKDC side's fiscal score of California's
+This report rebuilds, step by step, the RJKDC side's fiscal estimate of California's
 Proposition 40 (the Billionaire Tax Act): a one-time 5% tax on the net worth of billionaires
 resident in California on 1 January 2026. The authors argue that the tax would collect far less
 than its proponents expect, and that billionaires who leave take their income tax with them for
@@ -294,7 +294,7 @@ Two things are worth knowing before reading the tables:
   interval is used whatever it is called; conceptually, the interval is asked to stand for two
   different things. The explorer's growth dial shows what the ambiguity is worth.
 - **The horizon.** Treating the loss as permanent is itself one of the disputed choices: the
-  BSZ side scores the loss as lasting about the five payment years
+  BSZ side estimates the loss as lasting about the five payment years
   ([disputes row 2](https://github.com/fhoces/opa-prop40/blob/main/comparison/DISPUTES.md)).
 
 ## Section 5.3: NPV by departure scenario (Table 9)
@@ -482,7 +482,7 @@ it*, the question a reader who wants to argue with the result has to answer firs
 - **research**: an estimate taken from a published paper.
 - **guesswork**: set by assumption. Some are bounded by evidence, but no dataset or estimate pins
   the value itself.
-- **scenario**: a choice about which policy or counterfactual is being scored.
+- **scenario**: a choice about which policy or counterfactual is being estimated.
 - **derived**: a value another row implies.
 
 ```{r}

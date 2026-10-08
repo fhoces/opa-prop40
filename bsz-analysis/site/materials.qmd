@@ -103,7 +103,7 @@ role <- c(
   "data_sheets.R" = "14 extractors, one per workbook sheet the pipeline reads",
   "compute_data_sec_agg.R" = "yearly totals from the billionaire list (drops the duplicated rows)",
   "compute_pareto.R" = "Pareto extrapolation of missing billionaires; the Laffer curve",
-  "compute_tab5.R" = "Table 5: the scorer the explorer also runs, and the four scoring rows of the one-time tax",
+  "compute_tab5.R" = "Table 5: the estimating function the explorer also runs, and the four estimate rows of the one-time tax",
   "compute_billionaires_ca_inctax.R" = "CA income tax of all billionaires (FTB + Pareto), and all taxes",
   "compute_shortrunseries.R" = "wealth growth panel and the 2025 snapshot",
   "compute_top4taxes.R" = "taxes of the top 4 by year, 2004-2025",
@@ -112,7 +112,7 @@ role <- c(
   "render.R" = "writes tables and figures to outputs/",
   "verify.R" = "the test helper that compares R with the workbook's cached cells",
   "code_listing.R" = "helper for code listings in the original report",
-  "site_exports.R" = "this site's data: the dials, the grid (scored by compute_tab5.R), input origins")
+  "site_exports.R" = "this site's data: the dials, the grid (computed by compute_tab5.R), input origins")
 fs <- sort(list.files(file.path(SA, "R"), pattern = "[.]R$"))
 show(data.frame(
   file = vapply(fs, function(f) link(paste0("R/", f)), ""),
@@ -132,8 +132,8 @@ Also: `r link("_targets.R")` (the pipeline: which function builds which result),
 #| label: data
 desc <- c(
   "grid.csv" = "every cell of the explorer: six inputs and seven outcomes",
-  "inputs.csv" = "every input of the one-time scoring, with value, origin label and source",
-  "tab5.csv" = "Table 5, the four scoring rows, as the pipeline computes them",
+  "inputs.csv" = "every input of the one-time estimate, with value, origin label and source",
+  "tab5.csv" = "Table 5, the four estimate rows, as the pipeline computes them",
   "tab5-vs-printed.csv" = "every Table 5 cell against the digit printed in the paper",
   "leavers.csv" = "the seven named leavers of Table 5 rows 3 and 4",
   "test-results.csv" = "one row per test block from the last full run")

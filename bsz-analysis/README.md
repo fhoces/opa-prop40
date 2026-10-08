@@ -151,7 +151,7 @@ bsz-analysis/
 │   ├── data_sheets.R                     # 14 extract_* functions (read Excel)
 │   ├── compute_data_sec_agg.R            # group-by aggregator (excludes Ellison)
 │   ├── compute_pareto.R                  # Pareto extrapolation + Laffer sweep
-│   ├── compute_tab5.R                    # one-time wealth-tax scorer (the explorer runs it too) + 4 scenarios
+│   ├── compute_tab5.R                    # one-time wealth-tax estimate (the explorer runs it too) + 4 scenarios
 │   ├── compute_billionaires_ca_inctax.R  # 727-formula sheet (Method I + memos + all-taxes)
 │   ├── compute_shortrunseries.R          # wealth-growth panel + 2025 snapshot
 │   ├── compute_top4taxes.R               # 22-year per-billionaire tax-rate panel
@@ -348,7 +348,7 @@ compute:      215
 data_sheets:   45
 figures:       76
 ingest_excel:  20
-site:          43       # the explorer runs compute_tab5.R's scorer; grid.js is the exporter's output
+site:          43       # the explorer runs compute_tab5.R's estimating function; grid.js is the exporter's output
 snapshots:     34       # pin exact output of every exhibit + compute_* fn
 tables:       121
 verify:         7

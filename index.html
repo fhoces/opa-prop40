@@ -229,7 +229,7 @@
   <p class="eyebrow">Open Policy Analysis: reconciliation of two rival analyses</p>
   <h1>California's Billionaire Tax (Proposition 40): why the two revenue estimates differ <span class="wip">Work in progress</span></h1>
   <p class="byline">
-    Supporters score the one-time 5% tax on the net worth of California's billionaires at about
+    Supporters estimate the one-time 5% tax on the net worth of California's billionaires at about
     $100B; the RJKDC report (Rauh, Jaros, Kearney, Doran and Cosso) finds
     −$24.7B once lost income tax is netted out. This page puts both on one common output
     and walks from one number to the other, one disputed input at a time. Each side is also a
@@ -268,8 +268,8 @@ position on r.</p>
   <a class="subopa-card" href="bsz-analysis/site/">
     <span class="kicker">BSZ side (supports the measure)</span>
     <h3>Galle, Gamage, Saez, Shanske; Boll, Saez, Zucman &rarr;</h3>
-    <p>Static scoring of the Forbes list with a 10% avoidance allowance.</p>
-    <span class="headline">GGSS (20 Jul 2026): $100B (scored $103.8B, rounded)</span>
+    <p>Static estimation on the Forbes list with a 10% avoidance allowance.</p>
+    <span class="headline">GGSS (20 Jul 2026): $100B (estimated at $103.8B, rounded)</span>
     <span class="headline">BSZ (Aug 2026), Table 5 row 1: $103.8B</span>
     <div class="card-icon-box" aria-hidden="true"><img src="assets/opa/opa-assumptions-solo.png" alt=""></div>
   </a>
@@ -287,7 +287,7 @@ position on r.</p>
 <table>
   <thead><tr><th>Estimate</th><th class="num">(a) gross revenue</th><th class="num">(b) net fiscal effect</th><th>What the authors print</th></tr></thead>
   <tbody>
-    <tr><td>GGSS expert report (20 Jul 2026)</td><td class="num">$100B</td><td class="num">not computed</td><td>$104B scoring, rounded to $100B (p.4)</td></tr>
+    <tr><td>GGSS expert report (20 Jul 2026)</td><td class="num">$100B</td><td class="num">not computed</td><td>$104B estimate, rounded to $100B (p.4)</td></tr>
     <tr><td>BSZ NBER WP 35218, Table 5 row 1 (Aug 2026)</td><td class="num">$103.8B</td><td class="num">$106.8B</td><td>$104B revenue (PDF p.39); no net figure</td></tr>
     <tr><td>Rauh et al., SSRN 6340778 (17 Mar 2026)</td><td class="num">$51.26B</td><td class="num">−$24.71B</td><td>mean NPV −$24.7B (p.20); revenue 'about $40B' (p.14)</td></tr>
     <tr><td>Jaros and Rauh, NBER c15504 (Sep 2026)</td><td class="num">$36.0B</td><td class="num">−$38.98B</td><td>mean NPV −$38.9B; revenue 'approximately $30B' (p.1)</td></tr>
@@ -306,8 +306,8 @@ other revenue numbers he prints are listed under the bridge.</p>
   <h2>The bridge, one disputed input at a time</h2>
 </div></summary>
   <div class="fold-body">
-<p>One scoring function, <code>score_common()</code> (<code>comparison/R/model.R</code>, with a
-Python twin), scores both sides. Every disputed input is an argument that takes either the
+<p>One estimating function, <code>score_common()</code> (<code>comparison/R/model.R</code>, with a
+Python twin), estimates both sides. Every disputed input is an argument that takes either the
 BSZ value or Rauh's. With every input at the BSZ value it returns BSZ Table 5 row
 1 exactly ($103.815B); with every input at Rauh's value it returns the expectation of
 Rauh's own Monte Carlo up to a $0.10B model difference that is shown as its own step.
@@ -365,7 +365,7 @@ the one Hoopes reads in.</p>
   <thead><tr><th>Step</th><th>DISPUTES row</th><th>Kind</th><th class="num">BSZ value</th><th class="num">Rauh value</th><th class="num" id="bt-col">Step, $B</th><th class="num">Running total</th></tr></thead>
   <tbody>
     <tr data-id="ggss" class="total"><td>GGSS headline, as printed (GGSS p.4)</td><td></td><td></td><td class="num"></td><td class="num"></td><td class="num"></td><td class="num">$100.0B</td></tr>
-    <tr data-id="ggss_rounding" class="model"><td>GGSS round their scoring to the nearest $100B 'for simplicity' (p.4)</td><td></td><td></td><td class="num"></td><td class="num"></td><td class="num">+$3.8B</td><td class="num">$103.8B</td></tr>
+    <tr data-id="ggss_rounding" class="model"><td>GGSS round their estimate to the nearest $100B 'for simplicity' (p.4)</td><td></td><td></td><td class="num"></td><td class="num"></td><td class="num">+$3.8B</td><td class="num">$103.8B</td></tr>
     <tr data-id="bsz" class="total"><td>BSZ Table 5 row 1 = the model at all-BSZ inputs (checkpoint)</td><td></td><td></td><td class="num"></td><td class="num"></td><td class="num"></td><td class="num">$103.8B</td></tr>
     <tr data-id="bsz_net" class="total" style="display:none"><td>bsz_net</td><td></td><td></td><td class="num"></td><td class="num"></td><td class="num"></td><td class="num"></td></tr>
     <tr data-id="noncitizens"><td>Non-US-citizen residents</td><td>8</td><td><span class="kind">data</span></td><td class="num">$150B</td><td class="num">$0B</td><td class="num step-neg">−$5.4B</td><td class="num">$98.4B</td></tr>
@@ -373,7 +373,7 @@ the one Hoopes reads in.</p>
     <tr data-id="real_estate"><td>Real-estate deduction</td><td>7</td><td><span class="kind">data</span></td><td class="num">0.0%</td><td class="num">0.5%</td><td class="num step-neg">−$0.3B</td><td class="num">$88.7B</td></tr>
     <tr data-id="confirmed_departures"><td>Billionaires already departed</td><td>3</td><td><span class="kind">guesswork on data</span></td><td class="num">0.0%</td><td class="num">28.4%</td><td class="num step-neg">−$21.3B</td><td class="num">$67.4B</td></tr>
     <tr data-id="avoidance"><td>Avoidance and evasion allowance</td><td>(not a row)</td><td><span class="kind">guesswork</span></td><td class="num">10.0%</td><td class="num">0.0%</td><td class="num step-pos">+$8.0B</td><td class="num">$75.5B</td></tr>
-    <tr data-id="one_time_as_permanent"><td>One-time tax scored as a permanent 5 pp rate</td><td>1</td><td><span class="kind">scenario + guesswork</span></td><td class="num">none scored</td><td class="num">5 pp</td><td class="num step-neg">−$21.1B</td><td class="num">$54.4B</td></tr>
+    <tr data-id="one_time_as_permanent"><td>One-time tax estimated as a permanent 5 pp rate</td><td>1</td><td><span class="kind">scenario + guesswork</span></td><td class="num">none applied</td><td class="num">5 pp</td><td class="num step-neg">−$21.1B</td><td class="num">$54.4B</td></tr>
     <tr data-id="elasticity_size"><td>Size of the mobility semi-elasticity</td><td>4</td><td><span class="kind">research + guesswork</span></td><td class="num">10.00</td><td class="num">12.58</td><td class="num step-neg">−$3.2B</td><td class="num">$51.3B</td></tr>
     <tr data-id="income_proportional" style="display:none"><td>Lost income tax proportional to lost wealth</td><td>6</td><td><span class="kind">data vs guesswork</span></td><td class="num">0.33</td><td class="num">1.00</td><td class="num"></td><td class="num"></td></tr>
     <tr data-id="income_level" style="display:none"><td>Billionaires' annual CA income tax</td><td>5</td><td><span class="kind">research vs guesswork</span></td><td class="num">$3.06B/yr</td><td class="num">$4.55B/yr</td><td class="num"></td><td class="num"></td></tr>
@@ -389,14 +389,14 @@ the one Hoopes reads in.</p>
 <p class="small">Step values in this table follow the controls above; with JavaScript off they show
 (a), Shapley, each side's own horizon. Kinds follow the OPA input taxonomy: <b>data</b> (settled
 by observable facts), <b>research</b> (a published estimate), <b>guesswork</b> (asserted without
-data or a study behind it) and <b>scenario</b> (a choice of which world is scored). The
+data or a study behind it) and <b>scenario</b> (a choice of which world is estimated). The
 inputs and every page reference are in <code>comparison/export/r/inputs.csv</code>.</p>
 
 <h3>What the Shapley and one-order steps say</h3>
 <ul>
-  <li>Output (a) falls from $103.8B to $51.3B. The three largest Shapley steps are billionaires already departed (−$21.3B, guesswork on data); one-time tax scored as a permanent 5 pp rate (−$21.1B, scenario + guesswork); base list and valuation date (−$9.4B, data).</li>
+  <li>Output (a) falls from $103.8B to $51.3B. The three largest Shapley steps are billionaires already departed (−$21.3B, guesswork on data); one-time tax estimated as a permanent 5 pp rate (−$21.1B, scenario + guesswork); base list and valuation date (−$9.4B, data).</li>
   <li>One step favours the BSZ side's number going up: Rauh applies no avoidance or evasion allowance beyond migration (his semi-elasticity is the migration share of Brulhart et al.'s response, Rauh pp.13-14), so dropping GGSS's 10% adds +$8.0B (Shapley). DISPUTES.md does not list this as a row.</li>
-  <li>Order matters most for scoring the one-time tax as a permanent 5-percentage-point rate: −$21.1B averaged over all orders, −$10.2B in the one order shown. Rauh's revenue is uniform between a confirmed-departures ceiling and an elasticity floor, so the elasticity bites only on top of whatever departures are already in: the step is large when switched early and smaller when switched after the departures.</li>
+  <li>Order matters most for estimating the one-time tax as a permanent 5-percentage-point rate: −$21.1B averaged over all orders, −$10.2B in the one order shown. Rauh's revenue is uniform between a confirmed-departures ceiling and an elasticity floor, so the elasticity bites only on top of whatever departures are already in: the step is large when switched early and smaller when switched after the departures.</li>
   <li>For output (b) the horizon is the single largest step read in Hoopes's order (−$66.5B, the last switch, when the loss is already Rauh-sized) but only −$27.1B averaged over orders, because a perpetuity multiplies whatever annual loss the other inputs imply. The annual loss runs from $0.15B (BSZ) to $2.07B (Rauh).</li>
   <li>Model differences are small and shown, not hidden: −$0.0003B on (a) and +$0.10B on (b), from Rauh's rounded literals (MISMATCHES #6 in rjkdc-analysis). Rauh's printed −$24.7B is the expectation of his Monte Carlo (−$24.707B); his seed-2026 run gives −$24.77B.</li>
   <li>The NBER revision is one further step: −$15.3B on (a) and −$14.3B on (b). Its printed −$38.9B is one Monte Carlo run; the expectation is −$38.98B.</li>
@@ -444,7 +444,7 @@ me to read both of these analyses carefully and compare the two" (p.1); Gamage i
   <thead><tr><th>Hoopes Figure 2 bar</th><th class="num">Hoopes (read off the chart)</th><th class="num">Ours, one order</th><th>Our steps</th></tr></thead>
   <tbody>
     <tr><td>Galle estimate</td><td class="num">$100B</td><td class="num">$100B</td><td class="small">GGSS printed headline</td></tr>
-    <tr><td>(no bar)</td><td class="num">none</td><td class="num">+$3.8B</td><td class="small">GGSS's own rounding of their scoring</td></tr>
+    <tr><td>(no bar)</td><td class="num">none</td><td class="num">+$3.8B</td><td class="small">GGSS's own rounding of their estimate</td></tr>
     <tr><td>Residency correction</td><td class="num">−$12.6B &plusmn; 0.6</td><td class="num">−$18.5B</td><td class="small">Non-US-citizen residents + base list and valuation date</td></tr>
     <tr><td>Confirmed departures</td><td class="num">−$17.0B &plusmn; 0.6</td><td class="num">−$24.2B</td><td class="small">Billionaires already departed</td></tr>
     <tr><td>Additional movers</td><td class="num">−$12.5B &plusmn; 0.6</td><td class="num">none</td><td class="small">(none: Rauh's Monte Carlo headline does not use the ten 'expanded' departures)</td></tr>
@@ -459,11 +459,11 @@ me to read both of these analyses carefully and compare the two" (p.1); Gamage i
 
 <h3>Every difference</h3>
 <ul>
-  <li><b>Vintage.</b> Hoopes scores the February GGSS text: 213 billionaires, $2,182B of wealth, $109B gross, $99B after 10% avoidance, rounded up to $100B (p.3 fn.1). The July GGSS text scores 250 billionaires and $2,307B: $103.8B after avoidance, rounded down to $100B. The same printed headline hides a rounding of +$1B in one vintage and of −$3.8B in the other.</li>
+  <li><b>Vintage.</b> Hoopes's estimate uses the February GGSS text: 213 billionaires, $2,182B of wealth, $109B gross, $99B after 10% avoidance, rounded up to $100B (p.3 fn.1). The July GGSS text covers 250 billionaires and $2,307B: $103.8B after avoidance, rounded down to $100B. The same printed headline hides a rounding of +$1B in one vintage and of −$3.8B in the other.</li>
   <li><b>Residency.</b> His bar is −$12.6B, close to Rauh's own −$12.84B for dropping Ellison, Houston and Snyder and adding Sacks (Rauh p.5). By July the BSZ side has itself dropped Ellison, so our step is a different quantity: the $150B of non-US-citizen residents Rauh omits plus the list and valuation-date difference, −$18.5B in one order.</li>
   <li><b>Confirmed departures.</b> His bar is −$17.0B; Rauh's own step is −$26.69B before avoidance (94.2 to 67.51, p.11), and ours is −$24.2B at that point of the order. We could not trace his figure to a number in Rauh et al.</li>
   <li><b>Additional movers.</b> His −$12.5B matches Rauh's expanded ten-departure estimate (67.51 to 55.1, a step of −$12.41B, pp.12-13). Rauh's own −$24.7B headline does not use that estimate, so our bridge has no such step.</li>
-  <li><b>Behaviour.</b> His −$9.2B is close to Rauh's step from the expanded estimate to the literature calibration (55.1 to 45.59, −$9.51B, p.14). Ours, −$9.5B in one order, nets three labelled steps: dropping the 10.0% avoidance allowance (up), scoring the one-time tax as a permanent rate (down) and the elasticity from 10.00 to 12.58 (down).</li>
+  <li><b>Behaviour.</b> His −$9.2B is close to Rauh's step from the expanded estimate to the literature calibration (55.1 to 45.59, −$9.51B, p.14). Ours, −$9.5B in one order, nets three labelled steps: dropping the 10.0% avoidance allowance (up), estimating the one-time tax as a permanent rate (down) and the elasticity from 10.00 to 12.58 (down).</li>
   <li><b>Real estate.</b> His bar is drawn near zero (−$1.1B &plusmn; 0.8 read off the chart), while his text says the exclusion reduces the base by about $8B (p.4). The two are consistent: $8B of base is about $0.4B of revenue at 5%. Ours is −$0.24B.</li>
   <li><b>Level before income tax.</b> His revenue level before the income-tax bar is about $47.2B; Rauh's preferred estimate is 'about $40B' (p.14) and the expected revenue in the Monte Carlo behind the headline is $51.26B. Our bridge uses the last, $51.26B.</li>
   <li><b>Income tax.</b> His single bar, −$71.5B, ends at −$24.3B, close to Rauh's −$24.7B. Rauh's own expected present value of lost income tax is −$75.96B against $51.26B of revenue, so with a different starting level his bar works as a plug. We split it into four labelled steps (proportionality, the income tax level, the horizon, asset-sale tax), which interact with the base steps.</li>
@@ -484,11 +484,11 @@ RJKDC report. Some of the March disputes are settled on the BSZ side by August (
 Ellison's exclusion, the non-citizen residents); others are not.</p>
 <div class="table-scroll">
 <table>
-  <thead><tr><th>Document</th><th>Date</th><th>Base it scores</th></tr></thead>
+  <thead><tr><th>Document</th><th>Date</th><th>Base it uses</th></tr></thead>
   <tbody>
     <tr><td>Rauh et al., SSRN 6340778</td><td>17 Mar 2026</td><td>212 billionaires, $1,894.8B, 2025 Forbes list</td></tr>
     <tr><td>Galle, Gamage, Saez, Shanske, response to Rauh</td><td>17 Mar 2026</td><td>answers Rauh's 4 Mar version, not the 17 Mar copy used here</td></tr>
-    <tr><td>Hoopes, SSRN 6428578</td><td>2026 (scores the February GGSS text)</td><td>213 billionaires, $2,182B (p.3 fn.1)</td></tr>
+    <tr><td>Hoopes, SSRN 6428578</td><td>2026 (uses the February GGSS text)</td><td>213 billionaires, $2,182B (p.3 fn.1)</td></tr>
     <tr><td>GGSS expert report</td><td>updated 20 Jul 2026</td><td>250 billionaires, $2,307B at 1 Jul 2026, non-citizens included, Ellison excluded</td></tr>
     <tr><td>Boll, Saez, Zucman, NBER WP 35218</td><td>Aug 2026 revision</td><td>same 1 Jul 2026 base; Table 5 adds missing billionaires and leaver scenarios</td></tr>
     <tr><td>Jaros and Rauh, NBER c15504</td><td>Sep 2026</td><td>Rauh's base grown 7% to 31 Dec 2026, seven departures, litigation weight</td></tr>
@@ -517,7 +517,7 @@ steps cover inputs the crosswalk does not list as rows.</p>
     <tr><td>7</td><td>Real-estate deduction</td><td><span class="kind">data</span></td><td class="small"><b>0.0%</b>. no separate deduction (BSZ PDF p.24: 90% x 5% x $2,307B)</td><td class="small"><b>0.5%</b>. 1 - revenue_baseline / (5% x base) from the RJKDC export (Rauh p.8 Table 5, $8.19B among stayers)</td></tr>
     <tr><td>3</td><td>Billionaires already departed</td><td><span class="kind">guesswork on data</span></td><td class="small"><b>0.0%</b>. benchmark taxes all 1 Jan 2026 residents (BSZ PDF p.23); aggressive row 3 is a checkpoint</td><td class="small"><b>28.4%</b>. 1 - revenue_confirmed6 / revenue_baseline from the RJKDC export (Rauh p.11, 6 departures)</td></tr>
     <tr><td>(not a row)</td><td>Avoidance and evasion allowance</td><td><span class="kind">guesswork</span></td><td class="small"><b>10.0%</b>. BSZ export avoidance_rate (GGSS p.4; BSZ PDF p.24)</td><td class="small"><b>0.0%</b>. none: the elasticity replaces any avoidance allowance (Rauh pp.13-14)</td></tr>
-    <tr><td>1</td><td>One-time tax scored as a permanent 5 pp rate</td><td><span class="kind">scenario + guesswork</span></td><td class="small"><b>none scored</b>. one-time tax, responses temporary: no elasticity applied (BSZ PDF p.22 fn.29; GGSS response to Rauh, 17 Mar 2026, pp.1-3)</td><td class="small"><b>5 pp</b>. semi-elasticity applied to a 5.00 pp rate change (Rauh p.11 eq.7-8, p.14 eq.13)</td></tr>
+    <tr><td>1</td><td>One-time tax estimated as a permanent 5 pp rate</td><td><span class="kind">scenario + guesswork</span></td><td class="small"><b>none applied</b>. one-time tax, responses temporary: no elasticity applied (BSZ PDF p.22 fn.29; GGSS response to Rauh, 17 Mar 2026, pp.1-3)</td><td class="small"><b>5 pp</b>. semi-elasticity applied to a 5.00 pp rate change (Rauh p.11 eq.7-8, p.14 eq.13)</td></tr>
     <tr><td>4</td><td>Size of the mobility semi-elasticity</td><td><span class="kind">research + guesswork</span></td><td class="small"><b>10.00</b>. BSZ export semi_elasticity_permanent (BSZ PDF p.28; Fig8!B8), used only for a permanent tax</td><td class="small"><b>12.58</b>. the Monte Carlo floor of $35B (Rauh p.20 eq.22; 'approximately 12.6', p.19)</td></tr>
     <tr><td>6</td><td>Lost income tax proportional to lost wealth</td><td><span class="kind">data vs guesswork</span></td><td class="small"><b>0.33</b>. leavers' tax per $ of wealth / average, from BSZ export leavers_annual_inctax, leavers_wealth, ca_inctax_billionaires (SEC data, BSZ PDF p.26, Table 4 p.38)</td><td class="small"><b>1.00</b>. f = 1 - WT/94.20 (Rauh p.19, p.20)</td></tr>
     <tr><td>5</td><td>Billionaires' annual CA income tax</td><td><span class="kind">research vs guesswork</span></td><td class="small"><b>$3.06B/yr</b>. BSZ export ca_inctax_billionaires (Tab2!C14; BSZ PDF p.11)</td><td class="small"><b>$4.55B/yr</b>. midpoint of C ~ U[3.3, 5.8] (Rauh p.20 eq.23)</td></tr>

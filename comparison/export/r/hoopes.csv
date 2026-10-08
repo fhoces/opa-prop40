@@ -1,6 +1,6 @@
 "step_id","ours","hoopes","hoopes_uncertainty","our_steps"
 "galle_estimate",100,100,0.6,"GGSS printed headline"
-"ggss_rounding",3.81500000000001,NA,NA,"GGSS's own rounding of their scoring"
+"ggss_rounding",3.81500000000001,NA,NA,"GGSS's own rounding of their estimate"
 "residency_correction",-18.549,-12.6,0.6,"Non-US-citizen residents + base list and valuation date"
 "confirmed_departures",-24.2256723338713,-17.02,0.6,"Billionaires already departed"
 "additional_movers",NA,-12.5,0.6,"(none: Rauh's Monte Carlo headline does not use the ten 'expanded' departures)"

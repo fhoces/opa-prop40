@@ -229,7 +229,7 @@
   <p class="eyebrow">Open Policy Analysis: reconciliation of two rival analyses</p>
   <h1>California's Billionaire Tax (Proposition 40): why the two revenue estimates differ <span class="wip">Work in progress</span></h1>
   <p class="byline">
-    Supporters score the one-time 5% tax on the net worth of California's billionaires at about
+    Supporters estimate the one-time 5% tax on the net worth of California's billionaires at about
     {{ggss_headline}}; the RJKDC report (Rauh, Jaros, Kearney, Doran and Cosso) finds
     {{rauh_npv}} once lost income tax is netted out. This page puts both on one common output
     and walks from one number to the other, one disputed input at a time. Each side is also a
@@ -268,8 +268,8 @@ position on r.</p>
   <a class="subopa-card" href="bsz-analysis/site/">
     <span class="kicker">BSZ side (supports the measure)</span>
     <h3>Galle, Gamage, Saez, Shanske; Boll, Saez, Zucman &rarr;</h3>
-    <p>Static scoring of the Forbes list with a 10% avoidance allowance.</p>
-    <span class="headline">GGSS (20 Jul 2026): {{ggss_headline}} (scored {{ggss_scoring}}, rounded)</span>
+    <p>Static estimation on the Forbes list with a 10% avoidance allowance.</p>
+    <span class="headline">GGSS (20 Jul 2026): {{ggss_headline}} (estimated at {{ggss_scoring}}, rounded)</span>
     <span class="headline">BSZ (Aug 2026), Table 5 row 1: {{bsz_row1}}</span>
     <div class="card-icon-box" aria-hidden="true"><img src="assets/opa/opa-assumptions-solo.png" alt=""></div>
   </a>
@@ -303,8 +303,8 @@ other revenue numbers he prints are listed under the bridge.</p>
   <h2>The bridge, one disputed input at a time</h2>
 </div></summary>
   <div class="fold-body">
-<p>One scoring function, <code>score_common()</code> (<code>comparison/R/model.R</code>, with a
-Python twin), scores both sides. Every disputed input is an argument that takes either the
+<p>One estimating function, <code>score_common()</code> (<code>comparison/R/model.R</code>, with a
+Python twin), estimates both sides. Every disputed input is an argument that takes either the
 BSZ value or Rauh's. With every input at the BSZ value it returns BSZ Table 5 row
 1 exactly ({{bsz_row1_exact}}); with every input at Rauh's value it returns the expectation of
 Rauh's own Monte Carlo up to a {{rauh_resid_b}} model difference that is shown as its own step.
@@ -363,7 +363,7 @@ the one Hoopes reads in.</p>
 <p class="small">Step values in this table follow the controls above; with JavaScript off they show
 (a), Shapley, each side's own horizon. Kinds follow the OPA input taxonomy: <b>data</b> (settled
 by observable facts), <b>research</b> (a published estimate), <b>guesswork</b> (asserted without
-data or a study behind it) and <b>scenario</b> (a choice of which world is scored). The
+data or a study behind it) and <b>scenario</b> (a choice of which world is estimated). The
 inputs and every page reference are in <code>comparison/export/r/inputs.csv</code>.</p>
 
 <h3>What the Shapley and one-order steps say</h3>
@@ -432,7 +432,7 @@ RJKDC report. Some of the March disputes are settled on the BSZ side by August (
 Ellison's exclusion, the non-citizen residents); others are not.</p>
 <div class="table-scroll">
 <table>
-  <thead><tr><th>Document</th><th>Date</th><th>Base it scores</th></tr></thead>
+  <thead><tr><th>Document</th><th>Date</th><th>Base it uses</th></tr></thead>
   <tbody>
 {{vintage_rows}}
   </tbody>
