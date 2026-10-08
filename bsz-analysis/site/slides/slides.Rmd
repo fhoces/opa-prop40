@@ -485,7 +485,7 @@ stopifnot(abs(t5$wealth_tax_revenue[1] + t5$extra_ca_inctax_sales[1] - loss[1] *
 d[1, ] <- paste0("<b>", d[1, ], "</b>")
 d$tot[1] <- paste0('<span style="display:inline-block; background:#fff3e0; border:2px solid #e65100; ',
                    'padding:1px 6px; font-weight:700;">$', bn(t5$wealth_tax_revenue[1] + t5$extra_ca_inctax_sales[1] - loss[1] * f5, 1),
-                   'B<br><span style="font-size:70%; color:#e65100;">MAIN ESTIMATE</span></span>')
+                   'B<br><span style="font-size:70%; color:#e65100;">MAIN ESTIMATE<sup>1</sup></span></span>')
 knitr::kable(d, format = "html", escape = FALSE, align = "lrrrr",
   col.names = c("Scenario", "Wealth tax collected<br>(once)",
                 "Extra income tax<br>from selling assets<br>(once)",
@@ -494,16 +494,15 @@ knitr::kable(d, format = "html", escape = FALSE, align = "lrrrr",
 ```
 
 .highlight-box[
-The income tax loss recurs every year the leavers stay away, so it is shown as a **present value**
-over BSZ's horizon of about 5 years, discounted at **3% a year**: the middle of the 1.5% to 4.5% range
-the [RJKDC report](../../../rjkdc-analysis/site/) uses (BSZ give no rate). Any rate in that range
-changes the base loss by less than $`r bn(loss[1] * (ann(0.015) - ann(0.03)), 2)` billion.
+The income tax loss recurs every year the leavers stay away, so it is a **present value** over BSZ's
+horizon of about 5 years at **3% a year**, the middle of the [RJKDC report](../../../rjkdc-analysis/site/)'s 1.5% to 4.5% range (BSZ give no rate).
 ]
 
 **Change any assumption and watch the main estimate move: [the explorer](../explorer/).**
 
-.small[Wealth tax: [Steps 1 to 3](#part-steps). Extra income tax: [Step 4](#step-4). Income tax
-lost: [Step 5](#step-5-who). The RJKDC report counts the loss forever: [the comparison OPA](../../../index.html).]
+.small[<sup>1</sup> Not the authors' choice: BSZ's headline is the wealth tax alone, $`r bn(t5$wealth_tax_revenue[1])` billion.
+This OPA uses the total as its main estimate because it compares more directly with
+[other analyses](../../../index.html), such as the [RJKDC report](../../../rjkdc-analysis/site/)'s net present value.]
 
 ---
 name: part-guess

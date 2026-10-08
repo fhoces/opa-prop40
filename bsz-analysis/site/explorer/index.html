@@ -85,6 +85,7 @@
     text-transform: uppercase; color: var(--pref); }
   .preferred .big { font-family: var(--serif); font-size: 22px; font-weight: 600; margin: 2px 0 4px; }
   .preferred p { margin: 0; font-size: 14px; color: var(--ink-2); max-width: 60em; }
+  .preferred p.fn { font-size: 12px; color: var(--ink-3); margin-top: 8px; }
 
   .identity {
     display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 18px;
@@ -206,9 +207,13 @@
   </header>
 
   <div class="preferred" id="preferred">
-    <span class="kicker">Main estimate</span>
+    <span class="kicker">Main estimate<sup>1</sup></span>
     <div class="big" id="pref-big"></div>
     <p id="pref-text"></p>
+    <p class="fn"><sup>1</sup> Not the authors' choice: BSZ's headline is the wealth tax alone,
+    <span id="pref-wt"></span>. This OPA uses the total as its main estimate because it compares
+    more directly with <a href="../../../index.html">other analyses</a>, such as the
+    <a href="../../../rjkdc-analysis/site/">RJKDC report</a>'s net present value.</p>
   </div>
 
   <div class="cols">
@@ -319,6 +324,7 @@
     Math.round(100 * G.facts.pv_rate) + "%). The wealth tax is 5% of the $" +
     G.facts.W0.toLocaleString("en-US") + "B held by " + G.facts.n0 +
     " California billionaires on 1 July 2026, less 10% avoidance. GGSS round it to $100B.";
+  document.getElementById("pref-wt").textContent = "$" + rev.toFixed(1) + " billion";
   document.getElementById("gap").textContent = "$" + G.facts.row4_phasein_gap.toFixed(1) + " billion";
 
   // ---- dial rack --------------------------------------------------------
