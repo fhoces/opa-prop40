@@ -411,9 +411,10 @@ tr("fig7")
 
 ## A. The one-time 5% tax: Table 5, step by step {#table-5}
 
-This is the section the BSZ side's headline rests on. Table 5 has four rows. Row 1
-is the benchmark; rows 2 to 4 change one assumption at a time. We build row 1 in five steps,
-then each other row as a change to it.
+This is the section the BSZ side's headline rests on. Table 5 has four scenarios: the **base**
+scenario (row 1), the **missing billionaires** scenario (row 2), the **leavers** scenario (row 3),
+and **missing + leavers** (row 4). We build the base scenario in five steps, then each other
+scenario as a change to it.
 
 ### Step 1: the tax base
 
@@ -453,8 +454,10 @@ annual installments). Before avoidance, 5% of the base would be
 > (BSZ PDF p.24)
 
 To pay the tax, some billionaires sell shares, and selling realises capital gains that the
-state taxes. With a share $s$ of the tax paid by selling, a share $g$ of each sale being
-gain, and the top state rate $t_{cg}$ on gains:
+state taxes. Only the **gain** is taxed: the sale price minus what the stock originally cost (its
+**basis**). The authors put the basis at 20% of the sale price, so the gain is $g$ = 80% of each
+dollar sold. Example: selling \$100 of stock bought for \$20 gives an \$80 taxable gain. With a
+share $s$ of the tax paid by selling and the top state rate $t_{cg}$ on gains:
 $$E = s \cdot g \cdot t_{cg} \cdot T = \tfrac13 \times 0.80 \times 0.133 \times `r bn(t5$wealth_tax_revenue[1])` = `r bn(t5$extra_ca_inctax_sales[1], 2)`.$$
 So the tax pays back about `r pct(t5$extra_ca_inctax_sales[1] / t5$wealth_tax_revenue[1])`
 of itself in income tax, spread over the five payment years. The one-third is guesswork;
@@ -472,6 +475,19 @@ A billionaire who leaves stops paying California income tax. The authors assume 
 avoidance ($m$ = 50%) is people leaving, so $\alpha m$ = 5% of the income tax billionaires
 pay is lost:
 $$L = -\alpha\,m\,C = -0.10 \times 0.5 \times `r bn(inp$C, 2)` = -`r bn(-t5$annual_ca_inctax_loss[1], 3)` \text{ per year}.$$
+
+In dollars: Step 2 took 10% of the wealth, `r usd(0.10 * inp$W0, 2)`, out of the wealth tax. Half of it
+is under-valued or hidden, and its owners still live in California and keep paying income tax.
+The other half, `r usd(0.05 * inp$W0, 2)`, belongs to people who move out. Step 2 already removed
+their wealth from the *wealth* tax. Step 5 is about a different tax, the *income* tax, so nothing
+is counted twice. Billionaires pay about \$`r bn(1000 * inp$C / inp$W0, 2)` of California income tax for
+every \$1,000 of wealth, and the authors assume the movers pay at that same rate:
+
+| | Wealth, \$B | Income tax, \$B a year |
+|---|---:|---:|
+| All California billionaires | `r bn(inp$W0, 0)` | `r bn(inp$C, 3)` |
+| The movers ($\alpha m$ = 5% of the wealth) | `r bn(0.05 * inp$W0, 2)` | `r bn(0.05 * inp$C, 3)` |
+
 This is a *yearly* loss, and Table 5 does not say for how many years. The paper argues that,
 for a genuinely one-time tax, departures should be temporary, "say only 5 years" (PDF p.27).
 The [RJKDC report](../../rjkdc-analysis/site/) (Rauh, Jaros, Kearney, Doran and Cosso) counts the loss
@@ -487,7 +503,7 @@ $$M = T + E + L \times \frac{1 - 1.03^{-5}}{0.03} = `r bn(t5$wealth_tax_revenue[
 It is not the authors' choice (see the [introduction](#introduction)): BSZ's headline is $T$ alone.
 The [explorer](explorer/) shows $M$ for every setting of the guesses.
 
-### Row 2: adding the billionaires Forbes misses
+### Missing billionaires scenario (Table 5, row 2) {#row-2-adding-the-billionaires-forbes-misses}
 
 > If we assume that the tail is Pareto with constant b=4.48 between \$1 billion and \$4.5
 > billion, then this means that there should be around 617 California billionaires (instead
@@ -499,13 +515,48 @@ Forbes list's $b$ climbs towards 9, which is what a list missing many small fort
 like. Holding $b$ at `r bn(par$pareto_b, 2)` down to \$1 billion adds
 `r bn(inp$pareto_extra_n, 0)` billionaires and `r usd(inp$pareto_extra_wealth, 0)`
 to the 15 April 2026 list the workbook used, that is `r pct(inp$pct_count_increase, 0)` more
-people but only `r pct(inp$pct_wealth_increase)` more wealth. Row 2 applies those two
+people but only `r pct(inp$pct_wealth_increase)` more wealth. The scenario applies those two
 percentages to the 1 July base, with a higher avoidance rate $\alpha_s$ = 20% for these less
 visible fortunes, and subtracts a deduction for those in the \$1 to \$1.1 billion band, where
 the Act phases the rate in:
 $$T_2 = \tau\left[(1-\alpha)W_0 + (1-\alpha_s)\,\Delta W\right] - 0.025\,f_{ph}\,\Delta W, \qquad \Delta W = `r bn(100 * inp$pct_wealth_increase)`\% \times W_0,$$
 with $f_{ph}$ = `r pct(inp$fraction_in_phasein)` the share of the added wealth in the phase-in
 band. The result is `r usd(t5$wealth_tax_revenue[2])`.
+
+The figure compares the two distributions. Each bar is a share of the
+`r bn(par$total_count_proj, 0)` billionaires a Pareto tail puts above \$1 billion. On the left,
+solid red is what Forbes lists and pale red is what it misses. On the right is the Pareto tail
+itself, the shape top wealth usually takes in wealth and tax data.
+
+```{r}
+#| label: fig-forbes-vs-pareto
+#| fig-width: 11
+#| fig-height: 4.2
+#| code-summary: "R code for the Forbes vs Pareto figure"
+pm   <- tr("pareto_missing_r")
+cuts <- seq(1, 5, by = 0.5)
+band <- function(n) { v <- n[match(cuts, pm$threshold_b)]; head(v, -1) - tail(v, -1) }
+labs_b <- paste0("$", head(cuts, -1), "-", tail(cuts, -1))
+fb <- band(pm$n_above_threshold_emp) / par$total_count_proj
+pb <- band(pm$n_above_threshold_proj) / par$total_count_proj
+d <- rbind(
+  data.frame(panel = "What the Forbes list shows", b = labs_b, part = "listed by Forbes", y = fb),
+  data.frame(panel = "What the Forbes list shows", b = labs_b, part = "missing", y = pmax(pb - fb, 0)),
+  data.frame(panel = "What wealth data usually show", b = labs_b, part = "Pareto tail", y = pb))
+d$b <- factor(d$b, levels = labs_b)
+d$part <- factor(d$part, levels = c("missing", "listed by Forbes", "Pareto tail"))
+ggplot(d, aes(b, y, fill = part)) +
+  geom_col(width = 0.8) + facet_wrap(~panel) +
+  scale_fill_manual(values = c("missing" = "#d6272840", "listed by Forbes" = "#d62728",
+                               "Pareto tail" = "#1f77b4"), name = NULL) +
+  scale_y_continuous(labels = function(x) paste0(round(100 * x), "%")) +
+  labs(x = "wealth band, $ billion", y = "share of billionaires") +
+  theme_minimal(base_size = 13) +
+  theme(legend.position = "bottom", panel.grid.minor = element_blank(),
+        panel.grid.major.x = element_blank(), axis.text.x = element_text(size = 9))
+```
+
+The paper's own figure plots the ratio $b$ at each cutoff (Appendix Figure A4):
 
 ```{r}
 #| eval: false
@@ -520,7 +571,7 @@ band. The result is `r usd(t5$wealth_tax_revenue[2])`.
 tr("fig_a4")
 ```
 
-### Row 3: an aggressive assumption on who has left
+### Leavers scenario (Table 5, row 3) {#row-3-an-aggressive-assumption-on-who-has-left}
 
 > The third row in Table 5 scores the wealth tax assuming that Page, Thiel, Hankey, Kalanick
 > successfully moved before January 1, 2026 which is an aggressive assumption. (BSZ PDF p.26)
@@ -551,13 +602,13 @@ pay little income tax relative to their wealth. Whether any of these people has 
 changed legal residence is a legal judgment, and the most important guesswork in the whole
 dispute (`comparison/DISPUTES.md`, row 3).
 
-### Row 4: rows 2 and 3 together
+### Missing + leavers scenario (Table 5, row 4) {#row-4-rows-2-and-3-together}
 
-Row 4 adds the Pareto billionaires to row 3: `r usd(t5$wealth_tax_revenue[4])`, with a yearly
-income tax loss of `r usd(-t5$annual_ca_inctax_loss[4], 2)`. One detail: row 4 does **not**
-subtract the phase-in deduction that row 2 subtracts for the same added billionaires
-(`Tab5!F9` against `Tab5!F7`). We reproduce the workbook as it is; a consistent treatment
-would lower row 4 by `r usd(inp$row4_phasein_gap)`. We list this under
+This scenario adds the missing billionaires to the leavers scenario: `r usd(t5$wealth_tax_revenue[4])`,
+with a yearly income tax loss of `r usd(-t5$annual_ca_inctax_loss[4], 2)`. One detail: it does **not**
+subtract the phase-in deduction that the missing billionaires scenario subtracts for the same
+added billionaires (`Tab5!F9` against `Tab5!F7`). We reproduce the workbook as it is. A consistent
+treatment would lower it by `r usd(inp$row4_phasein_gap)`. We list this under
 [What reproduces](#what-reproduces).
 
 ### Table 5, reproduced
@@ -605,10 +656,29 @@ the paper's text quotes the printed figures (\$0.19 billion on PDF p.25, \$0.51 
 p.26), so the paper rounds these two cells differently from its own workbook. Both are a
 cent of a billion; neither changes an argument.
 
+### What the tax collects, and what it costs
+
+```{r}
+#| label: bottom-line
+#| code-summary: "R code for the scenario totals"
+tot <- t5$wealth_tax_revenue + t5$extra_ca_inctax_sales + t5$annual_ca_inctax_loss * pvf
+bl <- data.frame(
+  Scenario = c("Base (main estimate)", "Missing billionaires", "Leavers", "Missing + leavers"),
+  `Wealth tax (once)` = paste0("$", bn(t5$wealth_tax_revenue), "B"),
+  `Extra income tax (once)` = paste0("+$", bn(t5$extra_ca_inctax_sales, 2), "B"),
+  `Income tax lost (present value, 5 years at 3%)` = paste0("-$", bn(-t5$annual_ca_inctax_loss * pvf, 2), "B"),
+  Total = paste0("$", bn(tot), "B"), check.names = FALSE)
+stopifnot(abs(tot[1] - main1) < 1e-12)
+show(bl)
+```
+
+The total of the base scenario is the main estimate, `r usd(main1)`. It is not the authors' choice:
+see the [introduction](#introduction).
+
 ### How far the guesses move the result
 
 The explorer holds every combination of the six assumptions. Here each one moves on its own,
-with the others at row 1:
+with the others at the base scenario:
 
 ```{r}
 #| label: one-at-a-time
@@ -619,7 +689,7 @@ base  <- stats::setNames(mapply(function(d, j) d$levels[j], dials, site_named_ro
 lvl   <- function(d, v) switch(d$fmt, pct = paste0(round(100 * v), "%"),
                                bool = if (v == 1) "yes" else "no",
                                frac3 = c("none", "1/3", "2/3", "all")[round(3 * v) + 1])
-alone <- function(key) {   # grid cells where only `key` differs from row 1
+alone <- function(key) {   # grid cells where only `key` differs from the base scenario
   Reduce(`&`, lapply(setdiff(keys, key), function(k) abs(grid[[k]] - base[[k]]) < 1e-9))
 }
 rng <- do.call(rbind, lapply(dials, function(d) {
@@ -627,7 +697,8 @@ rng <- do.call(rbind, lapply(dials, function(d) {
   data.frame(
     input = d$label, origin = d$origin,
     tried = paste(lvl(d, min(d$levels)), "to", lvl(d, max(d$levels))),
-    `revenue, $B` = paste(bn(min(g$wealth_tax_revenue)), "to", bn(max(g$wealth_tax_revenue))),
+    `main estimate, $B` = paste(bn(min(g$main_estimate)), "to", bn(max(g$main_estimate))),
+    `wealth tax, $B` = paste(bn(min(g$wealth_tax_revenue)), "to", bn(max(g$wealth_tax_revenue))),
     `income tax lost, $B/yr` = paste(bn(-max(g$annual_ca_inctax_loss), 2), "to",
                                      bn(-min(g$annual_ca_inctax_loss), 2)),
     check.names = FALSE)
