@@ -37,7 +37,25 @@ library(ggplot2)
 # The report never recomputes or retypes a result: it reads the targets that
 # the pipeline built (bsz-analysis/_targets.R). The R/ functions are
 # sourced only to compare against the workbook's cached cells below.
+options(keep.source = TRUE)   # so the code listings below show each function as written
 invisible(lapply(list.files("../R", pattern = "[.]R$", full.names = TRUE), source))
+# The code a reader sees when unfolding a table or figure: the pipeline command that builds
+# the target, the commands of the targets it reads, and the source of the function it calls.
+# Pulled from _targets.R and R/ at render time, so it cannot drift; the output itself is
+# still read from the store, never recomputed.
+MAN <- withr::with_dir("..", targets::tar_manifest())
+tcode <- function(name) {
+  one  <- function(x) gsub("\\s*\n\\s*", " ", x)
+  cmd  <- MAN$command[MAN$name == name]; ex <- str2lang(cmd)
+  fns  <- Filter(function(f) exists(f, envir = globalenv()) && is.function(get(f, envir = globalenv())),
+                 setdiff(all.names(ex), all.vars(ex)))
+  ups  <- intersect(all.vars(ex), MAN$name)
+  c("# How the pipeline builds this result (bsz-analysis/_targets.R):",
+    paste0(name, " <- ", one(cmd)), "",
+    if (length(ups)) c("# reading these targets:",
+                       paste0(ups, " <- ", vapply(ups, function(u) one(MAN$command[MAN$name == u]), "")), ""),
+    unlist(lapply(fns, function(f) { l <- deparse_function(f); l[1] <- paste0(f, " <- ", l[1]); c(l, "") })))
+}
 STORE <- normalizePath("../_targets")
 tr <- function(name) targets::tar_read_raw(name, store = STORE)
 
@@ -160,8 +178,13 @@ rows of the raw list were pasted twice.
 
 ::: {.table-scroll}
 ```{r}
+#| eval: false
+#| code-summary: "Table 1: the code that builds it"
+#| code: !expr tcode("tab1_gt")
+```
+```{r}
 #| label: tab1
-#| code-summary: "Table 1: tar_read(tab1_gt)"
+#| echo: false
 tr("tab1_gt")
 ```
 :::
@@ -176,10 +199,15 @@ label drift. Listed under [What reproduces](#what-reproduces).
 > current dollars) at the end of years 2019 to 2025 and for July 1st, 2026. (BSZ PDF p.5)
 
 ```{r}
+#| eval: false
+#| code-summary: "Figure 1: the code that builds it"
+#| code: !expr tcode("fig1")
+```
+```{r}
 #| label: fig1
 #| fig-width: 7
 #| fig-height: 5
-#| code-summary: "Figure 1: tar_read(fig1)"
+#| echo: false
 tr("fig1")
 ```
 
@@ -187,10 +215,15 @@ In the August paper Figure 1 gains a Panel B, wealth by industry. The pipeline b
 chart as its "Appendix Figure A1", the May numbering:
 
 ```{r}
+#| eval: false
+#| code-summary: "industry chart: the code that builds it"
+#| code: !expr tcode("fig_a1")
+```
+```{r}
 #| label: industry
 #| fig-width: 8
 #| fig-height: 6
-#| code-summary: "industry chart: tar_read(fig_a1)"
+#| echo: false
 tr("fig_a1")
 ```
 
@@ -207,10 +240,15 @@ turns the 1982 value into the 2026 value:
 $$\bar g = \left(\frac{X_{2026}}{X_{1982}}\right)^{1/44} - 1.$$
 
 ```{r}
+#| eval: false
+#| code-summary: "Figure 2: the code that builds it"
+#| code: !expr tcode("fig2")
+```
+```{r}
 #| label: fig2
 #| fig-width: 11
 #| fig-height: 5
-#| code-summary: "Figure 2: tar_read(fig2)"
+#| echo: false
 tr("fig2")
 ```
 
@@ -244,24 +282,39 @@ from their SEC filings (stock sales, dividends, option exercises).
 
 ::: {.table-scroll}
 ```{r}
+#| eval: false
+#| code-summary: "Table 2: the code that builds it"
+#| code: !expr tcode("tab2_gt")
+```
+```{r}
 #| label: tab2
-#| code-summary: "Table 2: tar_read(tab2_gt)"
+#| echo: false
 tr("tab2_gt")
 ```
 :::
 
 ```{r}
+#| eval: false
+#| code-summary: "Figure 3: the code that builds it"
+#| code: !expr tcode("fig3")
+```
+```{r}
 #| label: fig3
 #| fig-width: 11
 #| fig-height: 5
-#| code-summary: "Figure 3: tar_read(fig3)"
+#| echo: false
 tr("fig3")
 ```
 
 ::: {.table-scroll}
 ```{r}
+#| eval: false
+#| code-summary: "Table 3: the code that builds it"
+#| code: !expr tcode("tab3_gt")
+```
+```{r}
 #| label: tab3
-#| code-summary: "Table 3: tar_read(tab3_gt)"
+#| echo: false
 tr("tab3_gt")
 ```
 :::
@@ -276,10 +329,15 @@ between pass-through and private C-corporations. August changed two of those wei
 the gross-up for diversified holdings (11% in May, 9.5% in August); see RC2 below.
 
 ```{r}
+#| eval: false
+#| code-summary: "Figure 4: the code that builds it"
+#| code: !expr tcode("fig4")
+```
+```{r}
 #| label: fig4
 #| fig-width: 7
 #| fig-height: 5
-#| code-summary: "Figure 4: tar_read(fig4)"
+#| echo: false
 tr("fig4")
 ```
 
@@ -299,33 +357,53 @@ Figure 6 runs the tax rates back to 2004; Figure 7 compares them with economy-wi
 
 ::: {.table-scroll}
 ```{r}
+#| eval: false
+#| code-summary: "Table 4: the code that builds it"
+#| code: !expr tcode("tab4_gt")
+```
+```{r}
 #| label: tab4
-#| code-summary: "Table 4: tar_read(tab4_gt)"
+#| echo: false
 tr("tab4_gt")
 ```
 :::
 
 ```{r}
+#| eval: false
+#| code-summary: "Figure 5: the code that builds it"
+#| code: !expr tcode("fig5")
+```
+```{r}
 #| label: fig5
 #| fig-width: 7
 #| fig-height: 5
-#| code-summary: "Figure 5: tar_read(fig5)"
+#| echo: false
 tr("fig5")
 ```
 
 ```{r}
+#| eval: false
+#| code-summary: "Figure 6: the code that builds it"
+#| code: !expr tcode("fig6")
+```
+```{r}
 #| label: fig6
 #| fig-width: 11
 #| fig-height: 5
-#| code-summary: "Figure 6: tar_read(fig6)"
+#| echo: false
 tr("fig6")
 ```
 
 ```{r}
+#| eval: false
+#| code-summary: "Figure 7: the code that builds it"
+#| code: !expr tcode("fig7")
+```
+```{r}
 #| label: fig7
 #| fig-width: 11
 #| fig-height: 5
-#| code-summary: "Figure 7: tar_read(fig7)"
+#| echo: false
 tr("fig7")
 ```
 
@@ -430,10 +508,15 @@ with $f_{ph}$ = `r pct(inp$fraction_in_phasein)` the share of the added wealth i
 band. The result is `r usd(t5$wealth_tax_revenue[2])`.
 
 ```{r}
+#| eval: false
+#| code-summary: "Appendix Figure A4: the code that builds it"
+#| code: !expr tcode("fig_a4")
+```
+```{r}
 #| label: appfig-a4
 #| fig-width: 11
 #| fig-height: 5
-#| code-summary: "Appendix Figure A4: tar_read(fig_a4)"
+#| echo: false
 tr("fig_a4")
 ```
 
@@ -481,8 +564,13 @@ would lower row 4 by `r usd(inp$row4_phasein_gap)`. We list this under
 
 ::: {.table-scroll}
 ```{r}
+#| eval: false
+#| code-summary: "Table 5: the code that builds it"
+#| code: !expr tcode("tab5_gt")
+```
+```{r}
 #| label: tab5
-#| code-summary: "Table 5: tar_read(tab5_gt)"
+#| echo: false
 tr("tab5_gt")
 ```
 :::
@@ -586,10 +674,15 @@ then peaks at `r pct(laf$tax_rate[which.max(laf$long_run_tax_revenue)])`, close 
 $1/(1+d+e) = 3.8\%$.
 
 ```{r}
+#| eval: false
+#| code-summary: "the Laffer curve (August Figure 9): the code that builds it"
+#| code: !expr tcode("fig8")
+```
+```{r}
 #| label: fig8
 #| fig-width: 7
 #| fig-height: 5
-#| code-summary: "the Laffer curve (August Figure 9): tar_read(fig8)"
+#| echo: false
 tr("fig8")
 ```
 
@@ -599,8 +692,13 @@ tr("fig8")
 
 ::: {.table-scroll}
 ```{r}
+#| eval: false
+#| code-summary: "Appendix Table A1: the code that builds it"
+#| code: !expr tcode("tab_a1_gt")
+```
+```{r}
 #| label: tab-a1
-#| code-summary: "Appendix Table A1: tar_read(tab_a1_gt)"
+#| echo: false
 tr("tab_a1_gt")
 ```
 :::
@@ -608,18 +706,28 @@ tr("tab_a1_gt")
 ## Appendix Figures A2 and A3
 
 ```{r}
+#| eval: false
+#| code-summary: "Appendix Figure A2: the code that builds it"
+#| code: !expr tcode("fig_a2")
+```
+```{r}
 #| label: appfig-a2
 #| fig-width: 7
 #| fig-height: 5
-#| code-summary: "Appendix Figure A2: tar_read(fig_a2)"
+#| echo: false
 tr("fig_a2")
 ```
 
 ```{r}
+#| eval: false
+#| code-summary: "Appendix Figure A3: the code that builds it"
+#| code: !expr tcode("fig_a3")
+```
+```{r}
 #| label: appfig-a3
 #| fig-width: 11
 #| fig-height: 5
-#| code-summary: "Appendix Figure A3: tar_read(fig_a3)"
+#| echo: false
 tr("fig_a3")
 ```
 
