@@ -417,6 +417,26 @@
     presets.appendChild(b);
   });
 
+  // Highest and lowest main estimate across every precomputed setting, found from the grid.
+  function levelsOf(i) {
+    var l = [];
+    for (var k = SIZES.length - 1; k >= 0; k--) { l[k] = i % SIZES[k]; i = Math.floor(i / SIZES[k]); }
+    return l;
+  }
+  var iMax = 0, iMin = 0;
+  G.snap.forEach(function (s, i) {
+    if (s[K.main_estimate] > G.snap[iMax][K.main_estimate]) iMax = i;
+    if (s[K.main_estimate] < G.snap[iMin][K.main_estimate]) iMin = i;
+  });
+  var EXT = [["Highest total", iMax], ["Lowest total", iMin]];
+  EXT.forEach(function (e) {
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "ext";
+    b.textContent = e[0] + " (" + fmtOut("$B", G.snap[e[1]][K.main_estimate]) + ")";
+    b.addEventListener("click", function () { state = levelsOf(e[1]); render(); });
+    presets.appendChild(b);
+  });
+
   var headRow = document.getElementById("cmp-head");
   names.forEach(function (name) {
     var th = document.createElement("th");
@@ -465,9 +485,11 @@
     });
     var name = null;
     for (var k in namedIdx) if (namedIdx[k] === i) name = k;
+    var ext = i === iMax ? "The highest total across all settings"
+            : i === iMin ? "The lowest total across all settings" : null;
     document.getElementById("cell-name").textContent =
       name ? (name === PREF ? "The main estimate: base scenario" : name + " scenario (Table 5)")
-           : "A setting the authors did not publish";
+           : ext || "A setting the authors did not publish";
     document.getElementById("cell-meta").textContent =
       "main estimate " + fmtOut("$B", snap[K.main_estimate]) +
       " · cell " + (i + 1) + " of " + G.snap.length.toLocaleString("en-US");
