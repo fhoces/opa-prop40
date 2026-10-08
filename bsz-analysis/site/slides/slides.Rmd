@@ -303,15 +303,17 @@ name: step-5-loss
 # Step 5, part 2: the income tax they take with them
 
 Today California billionaires pay $C$ = $`r bn(C, 2)` billion a year in California income tax.
+That is about $`r bn(1000 * C / W0, 2)` of income tax for every $1,000 of wealth they hold.
 
-The movers hold `r pct(a * m)` of the wealth. The authors assume they also pay `r pct(a * m)` of
-that income tax (income tax in proportion to wealth). So, one factor at a time:
+The movers from the previous slide hold $`r bn(a * m * W0, 2)` billion. The authors assume they pay
+income tax at that same rate, so their income tax is the same `r pct(a * m)` share:
 
-| | $ billion a year |
-|---|---:|
-| Income tax all billionaires pay, $C$ | `r bn(C, 3)` |
-| of which by the `r pct(a)` whose wealth escapes, $\alpha \, C$ | `r bn(a * C, 3)` |
-| of which by those who moved out, $\alpha \, m \, C$ | `r bn(a * m * C, 3)` |
+| | Wealth, $B | Income tax, $B a year |
+|---|---:|---:|
+| All California billionaires | `r bn(W0, 0)` | `r bn(C, 3)` |
+| The movers (`r pct(a * m)` of the wealth, $\alpha \, m$) | `r bn(a * m * W0, 2)` | `r bn(a * m * C, 3)` |
+
+Once they leave, California loses that income tax every year:
 
 $$L = -\alpha \, m \, C = -`r bn(a, 2)` \times `r m` \times `r bn(C, 2)` = -`r bn(-t5$annual_ca_inctax_loss[1], 3)` \text{ per year}$$
 
