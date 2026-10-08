@@ -30,7 +30,7 @@ BSZ side of California Proposition 40:
 
 ```{r}
 #| label: setup
-#| code-summary: "R code for the setup"
+#| echo: false
 library(targets)
 library(gt)
 library(ggplot2)
@@ -78,8 +78,11 @@ twin_fold <- function(exhibit, name) {
   if (is.null(py)) { cat("\n```{.r .cell-code}\n", paste(tcode(name), collapse = "\n"), "\n```\n", sep = ""); return(invisible()) }
   py <- c("# The Python twin (bsz-analysis/py/); py/run_export.py runs it.",
           if (length(upfn)) paste0("# reads the output of: ", paste0(upfn, "()", collapse = ", ")), "", py)
-  cat(sprintf('\n<details class="twin code-fold"><summary><a href="#" class="lang on" data-lang="r">R</a> or <a href="#" class="lang" data-lang="py">Python</a> code for %s</summary>\n\n', exhibit),
-      "::: {.lang-r}\n```r\n", paste(tcode(name), collapse = "\n"), "\n```\n:::\n\n",
+  twin_html(exhibit, tcode(name), py)
+}
+twin_html <- function(what, r, py) {
+  cat(sprintf('\n<details class="twin code-fold"><summary><a href="#" class="lang on" data-lang="r">R</a> or <a href="#" class="lang" data-lang="py">Python</a> code for %s</summary>\n\n', what),
+      "::: {.lang-r}\n```r\n", paste(r, collapse = "\n"), "\n```\n:::\n\n",
       "::: {.lang-py}\n```python\n", paste(py, collapse = "\n"), "\n```\n:::\n\n</details>\n\n", sep = "")
 }
 STORE <- normalizePath("../_targets")
@@ -101,6 +104,24 @@ main1 <- t5$wealth_tax_revenue[1] + t5$extra_ca_inctax_sales[1] + t5$annual_ca_i
 pct <- function(x, d = 1) paste0(formatC(100 * x, format = "f", digits = d), "%")
 show <- function(df) knitr::kable(df, format = "html", escape = TRUE,
                                   table.attr = 'class="table table-sm"')
+```
+
+```{r}
+#| echo: false
+#| results: asis
+# The setup chunk above, shown in a fold beside what a Python reader runs instead.
+twin_html("the setup",
+  grep("^#\\|", knitr::knit_code$get("setup"), value = TRUE, invert = TRUE),
+  c("# The page is built with R, so the Python twin has no setup here: it runs on its own.",
+    "# From bsz-analysis/, with the August workbook in original-materials/ (see the README):",
+    "#",
+    "#   pip install -r requirements.txt   # numpy, openpyxl, pandas, pinned (Python 3.11)",
+    "#   python py/run_export.py           # about 2 s; writes export/py/",
+    "#",
+    "# export/py/ holds the same results the R setup reads from the targets store, and",
+    "# tests/testthat/test-py-parity.R checks every file against R's.",
+    "import pandas as pd",
+    "outputs = pd.read_csv(\"export/py/outputs.csv\")   # every exported number, beside the paper's printed value"))
 ```
 
 ## Introduction

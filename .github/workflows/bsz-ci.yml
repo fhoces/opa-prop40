@@ -57,7 +57,7 @@ jobs:
           python-version: "3.11"
       - name: Run the Python twin
         run: |
-          pip install pandas numpy openpyxl
+          pip install -r requirements.txt
           python py/run_export.py
 
       - name: Run the test suite

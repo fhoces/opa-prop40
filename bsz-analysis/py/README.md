@@ -47,6 +47,7 @@ ggplot styling. `R/run_sql.R` already has its twin, `run_sql.py`.
 From `bsz-analysis/`, with the public workbook in `original-materials/`:
 
 ```sh
+pip install -r requirements.txt   # numpy, openpyxl, pandas, pinned (Python 3.11)
 python py/run_export.py        # about 2 s; writes export/py/ and data-raw/workbook-py.sqlite
 Rscript tools/py-parity.R      # per-output max differences -> export/py/parity.csv
 Rscript tests/testthat.R       # includes test-py-parity.R

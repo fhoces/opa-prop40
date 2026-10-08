@@ -1,7 +1,7 @@
 """Run the BSZ step 2 in Python (the public workbook to every number the R
 pipeline exports) and write export/py/.
 
-Run from bsz-analysis/ (about 10 s):
+Run from bsz-analysis/ (about 2 s):
 
     python py/run_export.py
 
