@@ -340,36 +340,45 @@ name: row-2
 # Missing billionaires scenario, part 1: Forbes misses small fortunes
 
 ```{r pareto-figs-setup, include=FALSE}
-pfig <- function(y, col, ttl) {
-  ggplot(data.frame(cut = par$threshold_b, b = y), aes(cut, b)) +
-    geom_vline(xintercept = 4.5, linetype = "dashed", colour = "grey55") +
-    geom_line(colour = col, linewidth = 1) + geom_point(colour = col, size = 1.8) +
-    scale_x_log10(breaks = c(1, 2, 4.5, 10, 30), labels = function(x) paste0("$", x, "B")) +
-    scale_y_continuous(limits = c(4, 9)) +
-    labs(x = "wealth cutoff", y = "b", title = ttl) +
-    theme_minimal(base_size = 13) + theme(panel.grid.minor = element_blank())
+# Billionaires in each $0.5B wealth band from $1B to $5B: the Forbes list (15 April 2026) and the
+# Pareto tail fitted above $4.5B. Counts are differences of "number above the cutoff".
+cuts <- seq(1, 5, by = 0.5)
+band <- function(n) { v <- n[match(cuts, par$threshold_b)]; head(v, -1) - tail(v, -1) }
+lab_b <- paste0("$", head(cuts, -1), "-", tail(cuts, -1))
+bands <- data.frame(b = factor(lab_b, levels = lab_b),
+                    forbes = band(par$n_above_threshold_emp), pareto = band(par$n_above_threshold_proj))
+stopifnot(abs(sum(bands$pareto) - (ps$total_count_proj - par$n_above_threshold_emp[par$threshold_b == 5])) < 1e-6)
+ymax <- max(bands$pareto) * 1.12
+hfig <- function(y, col, ttl) {
+  ggplot(data.frame(b = bands$b, y = y), aes(b, y)) +
+    geom_col(fill = col, width = 0.8) + geom_text(aes(label = round(y)), vjust = -0.3, size = 3.6) +
+    scale_y_continuous(limits = c(0, ymax), expand = expansion(mult = c(0, 0))) +
+    labs(x = "wealth band, $ billion", y = "billionaires", title = ttl) +
+    theme_minimal(base_size = 13) +
+    theme(panel.grid.minor = element_blank(), panel.grid.major.x = element_blank(),
+          axis.text.x = element_text(size = 9))
 }
 ```
 
 .pull-left[
-```{r pareto-fig-forbes, fig.width=5, fig.height=2.8}
-pfig(par$pareto_b_emp, "#d62728", "What the Forbes list shows")
+```{r pareto-fig-forbes, fig.width=5, fig.height=2.9}
+hfig(bands$forbes, "#d62728", "What the Forbes list shows")
 ```
 ]
 
 .pull-right[
-```{r pareto-fig-typical, fig.width=5, fig.height=2.8}
-pfig(par$pareto_b_proj, "#1f77b4", "What wealth data usually show")
+```{r pareto-fig-typical, fig.width=5, fig.height=2.9}
+hfig(bands$pareto, "#1f77b4", "What wealth data usually show")
 ```
 ]
 
-b is the average fortune above a cutoff divided by the cutoff. **Left:** on Forbes, b climbs below
-$4.5 billion. **Right:** top wealth usually follows a Pareto tail, where b is the same at every cutoff.
-The gap means Forbes misses small fortunes: holding b at `r bn(ps$pareto_b, 2)` gives
+**Left:** Forbes lists only `r bands$forbes[1]` billionaires worth $1 to 1.5 billion, against `r bands$forbes[3]` worth $2 to 2.5 billion.
+**Right:** in wealth and tax data, top fortunes usually follow a Pareto tail, where each step down holds
+many more people (`r round(bands$pareto[1])` in the lowest band). Fitted to the Forbes list above $4.5 billion, that shape implies
 **`r bn(ps$total_count_proj, 0)`** billionaires above $1 billion, not `r ps$total_count_emp`.
 
-.small[Method: Pareto extrapolation (BSZ pp.24 to 25, Appendix Figure A4). Backup:
-[the test in numbers](#pareto-detail) &middot; [from b to `r bn(ps$total_count_proj, 0)`](#pareto-extrapolation).]
+.small[Method: Pareto extrapolation (BSZ pp.24 to 25, Appendix Figure A4). How it works, in the backup:
+[how BSZ detect the gap](#pareto-detail) &middot; [from the gap to `r bn(ps$total_count_proj, 0)`](#pareto-extrapolation).]
 
 ---
 name: row-2-revenue
