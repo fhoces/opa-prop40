@@ -2492,7 +2492,7 @@ min-width: 0 !important;
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><a href="https://github.com/fhoces/opa-prop40/blob/main/bsz-analysis/R/site_exports.R"><code>R/site_exports.R</code></a></td>
-<td style="text-align: right;">203</td>
+<td style="text-align: right;">217</td>
 <td style="text-align: left;">this site&#39;s data: the dials, the grid (computed by compute_tab5.R), input origins</td>
 </tr>
 <tr class="even">
@@ -2533,7 +2533,7 @@ min-width: 0 !important;
 <tr class="odd">
 <td style="text-align: left;"><a href="data/grid.csv"><code>grid.csv</code></a></td>
 <td style="text-align: right;">1920</td>
-<td style="text-align: right;">14</td>
+<td style="text-align: right;">16</td>
 <td style="text-align: left;">every cell of the explorer: six inputs and seven outcomes</td>
 </tr>
 <tr class="even">
@@ -2674,13 +2674,12 @@ min-width: 0 !important;
 <section id="what-the-checks-found" class="level2">
 <h2 class="anchored" data-anchor-id="what-the-checks-found">What the checks found</h2>
 <ul>
-<li><strong>Ten root causes</strong> of the 184 failures when the May code met the August workbook, each traced before fixing: <a href="https://github.com/fhoces/opa-prop40/blob/main/bsz-analysis/VERIFY-AUGUST.md"><code>VERIFY-AUGUST.md</code></a>, summarised in the report’s <a href="repro.html#what-reproduces">What reproduces</a>.</li>
 <li><strong>A data-entry error in the workbook</strong>: rows 1338 to 1341 of <code>data_sec_all</code> repeated at rows 1342 to 1345 (244 billionaires counted instead of 240); handled in <a href="https://github.com/fhoces/opa-prop40/blob/main/bsz-analysis/R/compute_data_sec_agg.R"><code>R/compute_data_sec_agg.R</code></a>.</li>
 <li><strong>Two implicit readings</strong> in Table 5 (the literal 5% income tax loss share; row 4 omitting row 2’s phase-in deduction), kept at the workbook’s behaviour and disclosed on the <a href="explorer/">explorer</a>.</li>
 <li><strong>Two printed cells</strong> of Table 5 (the income tax loss in rows 2 and 3) that the paper rounds differently from its own workbook.</li>
-<li><strong>Display labels</strong> in Tables 1 and A1 that still carry May wording over August values.</li>
+<li><strong>Display labels</strong> in this reproduction’s Tables 1 and A1 that do not match their values (GDP for AGI, 2025 for 2026).</li>
 <li><strong>A malformed row in our own source manifest</strong>: two <code>provider</code> fields contained an unquoted comma, which shifted every later column for any CSV reader; quoted on 2026-09-23.</li>
-<li><strong>Not reproduced</strong>: August’s new Figure 8 and Appendix Figure A1, and the raw data behind the workbook, which the pipeline takes as given.</li>
+<li><strong>Not reproduced</strong>: the paper’s Figure 8 and Appendix Figure A1, and the raw data behind the workbook, which the pipeline takes as given.</li>
 </ul>
 <div class="site-nav">
 <p>BSZ side of California Proposition 40: <a href="explorer/">Open Output (the explorer)</a> · Open Analysis: <a href="repro.html">Report</a> and <a href="slides/slides.html">Slides</a> · Open Materials (here) · <a href="index.html">Overview</a></p>

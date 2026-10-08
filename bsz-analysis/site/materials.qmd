@@ -173,9 +173,6 @@ used by anything published here.
 
 ## What the checks found
 
-- **Ten root causes** of the 184 failures when the May code met the August workbook, each
-  traced before fixing: `r link("VERIFY-AUGUST.md")`, summarised in the report's
-  [What reproduces](repro.html#what-reproduces).
 - **A data-entry error in the workbook**: rows 1338 to 1341 of `data_sec_all` repeated at
   rows 1342 to 1345 (244 billionaires counted instead of 240); handled in
   `r link("R/compute_data_sec_agg.R")`.
@@ -184,10 +181,10 @@ used by anything published here.
   [explorer](explorer/).
 - **Two printed cells** of Table 5 (the income tax loss in rows 2 and 3) that the paper rounds
   differently from its own workbook.
-- **Display labels** in Tables 1 and A1 that still carry May wording over August values.
+- **Display labels** in this reproduction's Tables 1 and A1 that do not match their values (GDP for AGI, 2025 for 2026).
 - **A malformed row in our own source manifest**: two `provider` fields contained an
   unquoted comma, which shifted every later column for any CSV reader; quoted on 2026-09-23.
-- **Not reproduced**: August's new Figure 8 and Appendix Figure A1, and the raw data behind
+- **Not reproduced**: the paper's Figure 8 and Appendix Figure A1, and the raw data behind
   the workbook, which the pipeline takes as given.
 
 ::: {.site-nav}

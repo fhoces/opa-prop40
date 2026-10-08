@@ -132,8 +132,8 @@ Text in blockquotes is quoted from the paper. Everything else is ours. Page numb
 **PDF pages** of the August 2026 working paper; the printed folio runs two lower in the main
 text. Every number in running text is computed when this page is rendered, from the
 pipeline's stored results (open any "code" fold to see which one). Tables and figures are
-the pipeline's own `gt` and `ggplot2` objects. The figures keep the May 2026 numbering the
-pipeline was first built against; where August renumbered, the text says so.
+the pipeline's own `gt` and `ggplot2` objects. Where the pipeline numbers a figure differently
+from the paper, the text says so.
 
 ### Notation, in one place
 
@@ -166,9 +166,9 @@ $$W_t = \sum_{i \in \text{CA}_t} w_{i,t},$$
 with Larry Ellison excluded throughout, because he left California before 2026. Growth is
 $g_t = W_t / W_{t-1} - 1$, and the "2023-2025" row is the cumulative $W_{2025}/W_{2022} - 1$.
 In plain words: add up the list, then compare years. The top-4 column adds Page, Brin,
-Zuckerberg and Huang from the workbook's SEC-based panel. August added a "1 July 2026" row,
-and replaced the paper's old denominator (California GDP) with California's total
-adjusted gross income (AGI), the income reported on tax returns.
+Zuckerberg and Huang from the workbook's SEC-based panel. The table ends with a "1 July 2026"
+row, and its denominator is California's total adjusted gross income (AGI), the income
+reported on tax returns.
 
 The 2025 count is `r agg$n[agg$year == 2025]` billionaires holding
 `r usd(agg$forbes_worth[agg$year == 2025], 0)`, which is the paper's own figure
@@ -189,8 +189,8 @@ tr("tab1_gt")
 ```
 :::
 
-The values in this table match the August workbook cell for cell, but some of the
-pipeline's display labels still carry the May wording: the denominator column is headed
+The values in this table match the workbook cell for cell, but some of the pipeline's
+display labels are wrong: the denominator column is headed
 "CA GDP" though it now holds AGI, Panel B's ratio row says "2025" though the endpoint is
 2026, and the note still says ".0002%" and "2025 dollars". Appendix Table A1 has the same
 label drift. Listed under [What reproduces](#what-reproduces).
@@ -211,8 +211,8 @@ label drift. Listed under [What reproduces](#what-reproduces).
 tr("fig1")
 ```
 
-In the August paper Figure 1 gains a Panel B, wealth by industry. The pipeline builds that
-chart as its "Appendix Figure A1", the May numbering:
+The paper's Figure 1 has a Panel B, wealth by industry. The pipeline builds that
+chart as its "Appendix Figure A1":
 
 ```{r}
 #| eval: false
@@ -233,8 +233,8 @@ tr("fig_a1")
 > wealth. (BSZ PDF p.8)
 
 **What is computed.** Over forty years the number of billionaires grows with the
-population, so the paper follows a fixed *share* of families instead: in August, the top
-.001% (May used the top .0002%). Wealth is in real 2026 dollars. The comparison is with
+population, so the paper follows a fixed *share* of families instead: the top .001%.
+Wealth is in real 2026 dollars. The comparison is with
 average income per family. The "annualized growth" row is the constant yearly rate that
 turns the 1982 value into the 2026 value:
 $$\bar g = \left(\frac{X_{2026}}{X_{1982}}\right)^{1/44} - 1.$$
@@ -325,8 +325,8 @@ tr("tab3_gt")
 sales tax to the state income tax, each as a share of wealth. Corporate tax is attributed to
 billionaires in proportion to what they own. For private businesses, which file no public
 accounts, the workbook scales the public-company tax rate by the split of private wealth
-between pass-through and private C-corporations. August changed two of those weights and
-the gross-up for diversified holdings (11% in May, 9.5% in August); see RC2 below.
+between pass-through and private C-corporations, with a 9.5% gross-up for diversified
+holdings.
 
 ```{r}
 #| eval: false
@@ -655,8 +655,8 @@ billionaires (row 2, reproduced as `r usd(t5$wealth_tax_revenue[2])`) and "about
 
 This part estimates a different policy, a wealth tax charged every year, which is not what
 Proposition 40 proposes. The paper uses it to answer the argument that billionaires will
-leave for fear of future taxes. The pipeline's "Figure 8" is the August paper's Figure 9
-(August inserted a new Figure 8 on venture capital, which the pipeline does not build).
+leave for fear of future taxes. The pipeline's "Figure 8" is the paper's Figure 9 (the
+paper's Figure 8, on venture capital, is not built here).
 
 > With a semi-elasticity e, the wealth tax rate that maximizes tax revenue while taking into
 > account mobility responses is τ=1/e. (BSZ PDF p.28)
@@ -675,7 +675,7 @@ $1/(1+d+e) = 3.8\%$.
 
 ```{r}
 #| eval: false
-#| code-summary: "the Laffer curve (August Figure 9): the code that builds it"
+#| code-summary: "the Laffer curve (the paper's Figure 9): the code that builds it"
 #| code: !expr tcode("fig8")
 ```
 ```{r}
@@ -794,24 +794,9 @@ structure and a few anchor values, not pixel by pixel.
 
 ## Mismatches found, and how each was resolved
 
-The August workbook was first run through code written for the May version, and 184
-expectations failed. Every failure was traced to one of ten root causes before anything was
-fixed (`VERIFY-AUGUST.md`):
+Checking the paper and its workbook found the following.
 
-| Cause | What it was | Resolution |
-|---|---|---|
-| RC1 | `shortrunseries`: August moved most columns and dropped one | column map per vintage (`R/vintage.R`) |
-| RC2 | `billionairesCAinctax`: two rows inserted; the diversified-holdings gross-up changed from 11% to 9.5% and two private-wealth weights changed | row map per vintage; new parameters ported |
-| RC3 | Table 5's typed-in base and leaver wealth moved to the 1 July 2026 Forbes values | constants per vintage |
-| RC4 | Table 1 and A1 denominators changed from GDP to AGI | ported from the formulas |
-| RC5 | a "2026 (July 1st)" row inserted in Tables 1 and A1 | ported |
-| RC6 | Panel B redefined from the top .0002% to the top .001%, endpoint 2025 to 2026 | ported |
-| RC7 | Table 2 gained two columns; its average row changed formula | ported |
-| RC8 | the Laffer sheet moved from `Fig8` to `Fig9` | sheet name per vintage |
-| RC9 | four smaller literals (row counts, a sheet count, one cell) | updated |
-| RC10 | a genuine data error in the workbook, below | de-duplicated |
-
-**A data-entry error in the workbook.** In August's `data_sec_all` sheet, rows 1338 to 1341
+**A data-entry error in the workbook.** In the `data_sec_all` sheet, rows 1338 to 1341
 (four 2025 entries: Sijbrandij, Rihanna, Preston-Werner, Stephens) appear a second time at
 rows 1342 to 1345. Counting both copies gives 244 billionaires; dropping the repeat gives
 240, which matches the workbook's own aggregate sheet and the paper's text. The pipeline
@@ -829,14 +814,14 @@ disclosed on the explorer:
   explorer moves those inputs.
 - Row 4 omits row 2's phase-in deduction (`Tab5!F9`), worth `r usd(inp$row4_phasein_gap)`.
 
-**Display labels that lag the data.** Tables 1 and A1 hold August values under some May
-labels (GDP for AGI, 2025 for 2026, .0002% for .001%, 2025 dollars for 2026 dollars), and a
-few summary cells render as rounded zeros. The numbers are tested; the labels are not.
+**Display labels that do not match the data (ours).** Tables 1 and A1 hold the right values
+under some wrong labels in this reproduction (GDP for AGI, 2025 for 2026, .0002% for .001%,
+2025 dollars for 2026 dollars), and a few summary cells render as rounded zeros. The numbers are tested; the labels are not.
 Fixing them changes the pinned table snapshots, so it is left for a separate change.
 
 **What is not reproduced.**
 
-- August's new Figure 8 (venture capital deals) and new Appendix Figure A1 (wealth relative to
+- The paper's Figure 8 (venture capital deals) and Appendix Figure A1 (wealth relative to
   AGI) have no builder yet.
 - The raw inputs are not re-collected (Forbes, Franchise Tax Board, SEC, IRS, national
   accounts), except a one-person SEC proof of concept. An error in the workbook's inputs
