@@ -110,12 +110,24 @@
             border: 1px solid var(--rule); color: var(--ink-2); vertical-align: 1px; }
   .origin.guesswork { border-color: var(--pref); color: var(--pref); }
   .dial .desc { font-size: 12.5px; color: var(--ink-2); line-height: 1.4; margin-top: 2px; }
+  .dial .label { position: relative; }
+  .dial .info { border: 0; background: none; color: var(--ink-3); cursor: help; font-size: 13px;
+                margin-left: 6px; padding: 0 3px; line-height: 1; vertical-align: 1px; }
+  .dial .info:hover, .dial .info:focus-visible { color: var(--ink); }
+  .dial .tip { display: none; position: absolute; z-index: 30; left: 0; top: calc(100% + 6px);
+               width: min(26em, 86vw); background: var(--panel); color: var(--ink-2);
+               border: 1px solid var(--rule); border-radius: 4px; padding: 9px 11px;
+               box-shadow: 0 6px 18px rgba(16, 21, 25, .14); font-size: 12.5px; font-weight: 400;
+               line-height: 1.45; }
+  .dial .tip b { color: var(--ink); font-weight: 600; }
+  .dial .label:hover .tip, .dial .info:focus + .tip, .dial .tip.open { display: block; }
   details.fold { margin-top: 14px; }
   details.fold > summary { cursor: pointer; font-size: 13.5px; font-weight: 500; padding: 6px 0; }
   details.fold[open] > summary { margin-bottom: 8px; }
   .dial .hint { font-size: 12px; color: var(--pref); margin-top: 4px; display: none; }
   .dial.is-off .hint { display: block; }
-  .dial.is-off .label, .dial.is-off .desc, .dial.is-off .levels { opacity: .45; }
+  .dial.is-off .levels { opacity: .45; }
+  .dial.is-off .label > :not(.tip) { opacity: .45; }
   .dial.is-off .levels button { cursor: not-allowed; }
   .levels { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 8px; }
   .levels button {
@@ -345,8 +357,27 @@
     var org = document.createElement("span");
     org.className = "origin " + dial.origin; org.textContent = dial.origin;
     label.appendChild(org);
-    var desc = document.createElement("div");
-    desc.className = "desc"; desc.textContent = dial.desc;
+    // Details live in a hover box on the label (tap or keyboard focus on the info button
+    // also opens it), so the rack shows only the label and the levels.
+    var info = document.createElement("button");
+    info.type = "button"; info.className = "info"; info.textContent = "\u24D8";
+    info.setAttribute("aria-label", "Details: " + dial.label);
+    var tip = document.createElement("div");
+    tip.className = "tip"; tip.setAttribute("role", "tooltip");
+    tip.id = "tip-" + dial.key; info.setAttribute("aria-describedby", tip.id);
+    var tipDesc = document.createElement("div"); tipDesc.textContent = dial.desc;
+    var tipDef = document.createElement("div"); tipDef.style.marginTop = "6px";
+    var bDef = document.createElement("b"); bDef.textContent = "The authors use: ";
+    tipDef.appendChild(bDef);
+    tipDef.appendChild(document.createTextNode(fmtLevel(dial, dial.levels[DEFAULT[di]]) +
+      " (" + dial.origin + ")"));
+    tip.appendChild(tipDesc); tip.appendChild(tipDef);
+    info.addEventListener("click", function (e) {
+      e.stopPropagation();
+      document.querySelectorAll(".dial .tip.open").forEach(function (t) { if (t !== tip) t.classList.remove("open"); });
+      tip.classList.toggle("open");
+    });
+    label.appendChild(info); label.appendChild(tip);
     var levels = document.createElement("div");
     levels.className = "levels";
     dial.levels.forEach(function (value, li) {
@@ -362,7 +393,7 @@
       });
       levels.appendChild(b);
     });
-    row.appendChild(label); row.appendChild(desc); row.appendChild(levels);
+    row.appendChild(label); row.appendChild(levels);
     if (dial.key === "avoidance_small") {
       var hint = document.createElement("div");
       hint.className = "hint";
@@ -370,6 +401,9 @@
       row.appendChild(hint);
     }
     rowEl[di] = row;
+  });
+  document.addEventListener("click", function () {
+    document.querySelectorAll(".dial .tip.open").forEach(function (t) { t.classList.remove("open"); });
   });
   ["avoidance", "mobility_share", "sell_share", "pareto", "avoidance_small", "leavers"]
     .forEach(function (k) { rack.appendChild(rowEl[DI[k]]); });
