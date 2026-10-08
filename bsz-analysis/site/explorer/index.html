@@ -110,6 +110,10 @@
             border: 1px solid var(--rule); color: var(--ink-2); vertical-align: 1px; }
   .origin.guesswork { border-color: var(--pref); color: var(--pref); }
   .dial .desc { font-size: 12.5px; color: var(--ink-2); line-height: 1.4; margin-top: 2px; }
+  .dial .hint { font-size: 12px; color: var(--pref); margin-top: 4px; display: none; }
+  .dial.is-off .hint { display: block; }
+  .dial.is-off .label, .dial.is-off .desc, .dial.is-off .levels { opacity: .45; }
+  .dial.is-off .levels button { cursor: not-allowed; }
   .levels { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 8px; }
   .levels button {
     font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 13px;
@@ -317,7 +321,12 @@
   document.getElementById("gap").textContent = "$" + G.facts.row4_phasein_gap.toFixed(1) + " billion";
 
   // ---- dial rack --------------------------------------------------------
+  // The avoidance rate of the less visible billionaires only applies to the billionaires
+  // Forbes misses, so it is shown under that switch and greyed out while the switch is off.
+  // Display order only: the grid keeps the pipeline's dial order.
   var rack = document.getElementById("rack");
+  var DI = {}; G.dials.forEach(function (d, i) { DI[d.key] = i; });
+  var rowEl = [];
   G.dials.forEach(function (dial, di) {
     var row = document.createElement("div");
     row.className = "dial";
@@ -341,12 +350,23 @@
       b.textContent = fmtLevel(dial, value);
       if (li === DEFAULT[di]) b.className = "is-default";
       b.setAttribute("aria-label", dial.label + ", " + fmtLevel(dial, value));
-      b.addEventListener("click", function () { state[di] = li; render(); });
+      b.addEventListener("click", function () {
+        if (dial.key === "avoidance_small" && state[DI.pareto] === 0) return;
+        state[di] = li; render();
+      });
       levels.appendChild(b);
     });
     row.appendChild(label); row.appendChild(desc); row.appendChild(levels);
-    rack.appendChild(row);
+    if (dial.key === "avoidance_small") {
+      var hint = document.createElement("div");
+      hint.className = "hint";
+      hint.textContent = "Switch on \u201cCount billionaires Forbes misses\u201d above to use this.";
+      row.appendChild(hint);
+    }
+    rowEl[di] = row;
   });
+  ["avoidance", "mobility_share", "sell_share", "pareto", "avoidance_small", "leavers"]
+    .forEach(function (k) { rack.appendChild(rowEl[DI[k]]); });
 
   var presets = document.getElementById("presets");
   names.forEach(function (name) {
@@ -395,6 +415,9 @@
     var i = idx(state);
     var snap = G.snap[i];
     document.querySelectorAll(".levels button").forEach(function (b) { b.setAttribute("aria-pressed", "false"); });
+    var off = state[DI.pareto] === 0;
+    rowEl[DI.avoidance_small].classList.toggle("is-off", off);
+    rowEl[DI.avoidance_small].querySelectorAll("button").forEach(function (b) { b.disabled = off; });
     G.dials.forEach(function (dial, di) {
       var b = document.getElementById("dial-" + dial.key + "-" + state[di]);
       if (b) b.setAttribute("aria-pressed", "true");
