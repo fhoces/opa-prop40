@@ -175,9 +175,10 @@
   </p>
   <header>
     <img class="header-layer" src="../assets/opa/opa-assumptions-solo.png" alt="" aria-hidden="true">
-    <h1>How much would the one-time billionaire tax raise?</h1>
+    <h1>How much would the one-time billionaire tax raise, net?</h1>
     <p class="standfirst">
-      The BSZ side estimates that Proposition 40 would raise about $100 billion. That number is
+      The BSZ side estimates that Proposition 40 would raise about $100 billion in wealth tax.
+      Net of the income tax it changes, that is the <strong>main estimate</strong> below. It is
       simple arithmetic on the Forbes list of California billionaires plus a handful of
       assumptions, and most of those assumptions are guesswork: nobody has measured them.
       The inputs below are the five guesses among them, plus one research-based switch (counting the
@@ -193,7 +194,7 @@
   </header>
 
   <div class="preferred" id="preferred">
-    <span class="kicker">Preferred estimate</span>
+    <span class="kicker">Main estimate</span>
     <div class="big" id="pref-big"></div>
     <p id="pref-text"></p>
   </div>
@@ -228,23 +229,24 @@
     <section>
       <h2>Outcomes</h2>
       <svg class="bars" id="bars" viewBox="0 0 640 200" role="img" aria-labelledby="bars-title">
-        <title id="bars-title">One-time wealth tax revenue, this setting against the four Table 5 rows</title>
+        <title id="bars-title">Main estimate, this setting against the four Table 5 scenarios</title>
       </svg>
       <div class="table-scroll">
         <table id="cmp">
           <caption style="caption-side:top; text-align:left; font-size:12px; color:var(--ink-3); padding-bottom:8px;">
-            Nominal dollars, 1 July 2026 Forbes wealth. The orange column is the preferred estimate.
+            Nominal dollars, 1 July 2026 Forbes wealth. The orange column is the main estimate.
           </caption>
           <thead><tr id="cmp-head"><th>Outcome</th><th>This setting</th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
       <div class="note">
-        <p>The income tax loss is per year. How many years it lasts is not part of Table 5:
-        the authors argue about 5 (BSZ PDF p.27), the <a href="../../../rjkdc-analysis/site/">RJKDC report</a> (Rauh, Jaros, Kearney, Doran and
-        Cosso) treats it as permanent.
-        That horizon is the main dispute between the two sides; it belongs to the
-        project's <a href="../../../index.html">reconciliation page</a>, not to this side's output.</p>
+        <p>The income tax loss recurs every year the leavers stay away. Table 5 does not say for
+        how long; the authors argue about 5 years (BSZ PDF p.27). The main estimate counts it for
+        5 years, discounted at 3% a year, the middle of the 1.5% to 4.5% range the
+        <a href="../../../rjkdc-analysis/site/">RJKDC report</a> uses (BSZ give no rate). The RJKDC report
+        counts it forever. That horizon is the main dispute between the two reports; see the
+        <a href="../../../index.html">comparison OPA</a>.</p>
         <p>Data: <a href="../data/grid.csv">grid.csv</a> (every cell),
         <a href="../data/inputs.csv">inputs.csv</a> (every input with its origin),
         <a href="grid.js">grid.js</a> (what this page reads). All three are written by
@@ -289,7 +291,8 @@
     return String(v);
   }
   function fmtOut(unit, v) {
-    if (unit === "$B") return "$" + v.toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + "B";
+    if (unit === "$B") { var dg = Math.abs(v) < 10 ? 2 : 1;
+      return (v < 0 ? "−$" : "$") + Math.abs(v).toLocaleString("en-US", { minimumFractionDigits: dg, maximumFractionDigits: dg }) + "B"; }
     if (unit === "$B/yr") return (v < 0 ? "−$" : "$") + Math.abs(v).toFixed(2) + "B";
     if (unit === "count") return Math.round(v).toLocaleString("en-US");
     if (unit === "share") return (v * 100).toFixed(1) + "%";
@@ -300,14 +303,17 @@
   var pref = G.snap[namedIdx[PREF]];
   var rev = pref[K.wealth_tax_revenue];
   document.getElementById("pref-big").textContent =
-    "$" + rev.toFixed(1) + " billion, one time (Table 5, row 1)";
+    "$" + pref[K.main_estimate].toFixed(1) + " billion (base scenario, Table 5 row 1)";
   document.getElementById("pref-text").textContent =
-    "Boll, Saez and Zucman's benchmark: 5% of the $" + G.facts.W0.toLocaleString("en-US") +
-    " billion held by " + G.facts.n0 + " California billionaires on 1 July 2026 is $" +
-    (0.05 * G.facts.W0).toFixed(0) + " billion, less 10% avoidance. The expert report by Galle, Gamage, " +
-    "Saez and Shanske (GGSS, 20 July 2026, p.4) makes the same computation and rounds it " +
-    "to $100 billion \"for simplicity\", so the two BSZ-side estimates are one number. " +
-    "It sits on the orange-marked value of every input below.";
+    "The wealth tax raises $" + rev.toFixed(1) + " billion once: 5% of the $" +
+    G.facts.W0.toLocaleString("en-US") + " billion held by " + G.facts.n0 +
+    " California billionaires on 1 July 2026, less 10% avoidance. Selling assets to pay it adds $" +
+    pref[K.extra_ca_inctax_sales].toFixed(2) + " billion of income tax, once. Leavers take $" +
+    Math.abs(pref[K.annual_ca_inctax_loss]).toFixed(2) + " billion of income tax a year with them, worth $" +
+    Math.abs(pref[K.income_tax_loss_pv]).toFixed(2) + " billion over " + G.facts.pv_years +
+    " years at " + Math.round(100 * G.facts.pv_rate) + "%. The expert report by Galle, Gamage, " +
+    "Saez and Shanske (GGSS, 20 July 2026, p.4) rounds the wealth tax to $100 billion. " +
+    "The main estimate sits on the orange-marked value of every input below.";
   document.getElementById("gap").textContent = "$" + G.facts.row4_phasein_gap.toFixed(1) + " billion";
 
   // ---- dial rack --------------------------------------------------------
@@ -354,7 +360,7 @@
   var headRow = document.getElementById("cmp-head");
   names.forEach(function (name) {
     var th = document.createElement("th");
-    th.textContent = name.split(":")[0];
+    th.textContent = name;
     th.title = name;
     if (name === PREF) th.className = "pref";
     headRow.appendChild(th);
@@ -372,20 +378,17 @@
   function drawBars(i) {
     var svg = document.getElementById("bars");
     while (svg.childNodes.length > 1) svg.removeChild(svg.lastChild);
-    var rows = [["This setting", G.snap[i][K.wealth_tax_revenue], "cur"]];
-    names.forEach(function (n) { rows.push([n, G.snap[namedIdx[n]][K.wealth_tax_revenue], n === PREF ? "pref" : ""]); });
+    var rows = [["This setting", G.snap[i][K.main_estimate], "cur"]];
+    names.forEach(function (n) { rows.push([n, G.snap[namedIdx[n]][K.main_estimate], n === PREF ? "pref" : ""]); });
     var max = 0;
-    G.snap.forEach(function (s) { if (s[K.wealth_tax_revenue] > max) max = s[K.wealth_tax_revenue]; });
+    G.snap.forEach(function (s) { if (s[K.main_estimate] > max) max = s[K.main_estimate]; });
     var x0 = 190, w = 380, h = 26, gap = 8;
-    var gx = x0 + w * 100 / max;
-    svg.appendChild(el("line", { x1: gx, x2: gx, y1: 4, y2: 10 + rows.length * (h + gap) - gap + 4, "class": "ggss" }));
     rows.forEach(function (r, k) {
       var y = 10 + k * (h + gap);
       svg.appendChild(el("text", { x: 0, y: y + 17 }, r[0]));
       svg.appendChild(el("rect", { x: x0, y: y, width: Math.max(1, w * r[1] / max), height: h, "class": "bar " + r[2] }));
       svg.appendChild(el("text", { x: x0 + w * r[1] / max + 6, y: y + 17, "class": "val" }, "$" + r[1].toFixed(1) + "B"));
     });
-    svg.appendChild(el("text", { x: gx + 4, y: 196 }, "GGSS $100B (cited, rounded)"));
   }
 
   function render() {
@@ -399,10 +402,10 @@
     var name = null;
     for (var k in namedIdx) if (namedIdx[k] === i) name = k;
     document.getElementById("cell-name").textContent =
-      name ? (name === PREF ? "The preferred estimate: " : "Table 5 ") + name
+      name ? (name === PREF ? "The main estimate: base scenario" : name + " scenario (Table 5)")
            : "A setting the authors did not publish";
     document.getElementById("cell-meta").textContent =
-      "revenue " + fmtOut("$B", snap[K.wealth_tax_revenue]) +
+      "main estimate " + fmtOut("$B", snap[K.main_estimate]) +
       " · cell " + (i + 1) + " of " + G.snap.length.toLocaleString("en-US");
 
     tbody.textContent = "";

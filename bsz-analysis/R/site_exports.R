@@ -42,19 +42,29 @@ site_dials <- function() {
 # The four Table 5 rows as dial settings (1-based level indices).
 site_named_rows <- function() {
   list(
-    "Row 1: benchmark"             = c(3L, 3L, 2L, 2L, 1L, 1L),
-    "Row 2: + missing billionaires" = c(3L, 3L, 2L, 2L, 2L, 1L),
-    "Row 3: + aggressive leavers"  = c(3L, 3L, 2L, 2L, 1L, 2L),
-    "Row 4: rows 2 and 3"          = c(3L, 3L, 2L, 2L, 2L, 2L)
+    "Base"                 = c(3L, 3L, 2L, 2L, 1L, 1L),   # Table 5 row 1
+    "Missing billionaires" = c(3L, 3L, 2L, 2L, 2L, 1L),   # Table 5 row 2
+    "Leavers"              = c(3L, 3L, 2L, 2L, 1L, 2L),   # Table 5 row 3
+    "Missing + leavers"    = c(3L, 3L, 2L, 2L, 2L, 2L)    # Table 5 row 4
   )
 }
+
+# The main estimate: the one-time wealth tax, plus the one-time extra income tax from
+# selling assets, minus the present value of the yearly income tax lost to leavers over
+# BSZ's horizon of about 5 years (PDF p.27), discounted at 3% a year (the middle of the
+# 1.5%-4.5% range the RJKDC report uses; BSZ give no rate). Same definition as the deck.
+site_pv_rate  <- 0.03
+site_pv_years <- 5
+site_pv_factor <- function(r = site_pv_rate, H = site_pv_years) (1 - (1 + r)^(-H)) / r
 
 site_outcomes <- function() {
   tibble::tribble(
     ~key,                    ~label,                                   ~unit,
+    "main_estimate",         "Main estimate (net)",                    "$B",
     "wealth_tax_revenue",    "Wealth tax revenue (one-time)",          "$B",
     "extra_ca_inctax_sales", "Extra CA income tax from asset sales",   "$B",
-    "annual_ca_inctax_loss", "Annual CA income tax lost to leavers",   "$B/yr",
+    "income_tax_loss_pv",    "Income tax lost to leavers, present value (5 years at 3%)", "$B",
+    "annual_ca_inctax_loss", "Income tax lost to leavers, per year",   "$B/yr",
     "taxable_wealth",        "Taxable wealth after avoidance",         "$B",
     "wealth",                "Wealth of CA billionaires",              "$B",
     "n_billionaires",        "Number of billionaires",                 "count",
@@ -73,7 +83,10 @@ build_site_grid <- function(inp) {
                            avoidance = v[[1]], mobility_share = v[[2]],
                            avoidance_small = v[[3]], sell_share = v[[4]],
                            pareto = v[[5]] == 1, leavers = v[[6]] == 1)
-    c(cell = i, stats::setNames(v, names(idx)), out)
+    loss_pv <- out[["annual_ca_inctax_loss"]] * site_pv_factor()
+    c(cell = i, stats::setNames(v, names(idx)), out,
+      income_tax_loss_pv = loss_pv,
+      main_estimate = out[["wealth_tax_revenue"]] + out[["extra_ca_inctax_sales"]] + loss_pv)
   })
   tibble::as_tibble(as.data.frame(do.call(rbind, rows)))
 }
@@ -157,8 +170,9 @@ site_grid_js_text <- function(grid, inp) {
     keys     = outs$key,
     units    = outs$unit,
     named    = named,
-    preferred = "Row 1: benchmark",
+    preferred = "Base",
     facts    = list(W0 = inp$W0, n0 = inp$n0, C = round(inp$C, 6),
+                    pv_rate = site_pv_rate, pv_years = site_pv_years,
                     row4_phasein_gap = round(inp$row4_phasein_gap, 6)),
     snap     = snap
   )
