@@ -161,7 +161,7 @@ class: center, middle, inverse
 # What is being estimated
 
 **Proposition 40** taxes, once, 5% of the net worth of billionaires who lived in California on
-1 January 2026 (payable over five years). The [BSZ side](../../../bsz-analysis/site/) estimates it at about 100 bn. (Amounts in this deck are in billions of dollars, "bn".)
+1 January 2026 (payable over five years). The [BSZ report](../../../bsz-analysis/site/) estimates it at about 100 bn. (Amounts in this deck are in billions of dollars, "bn".)
 
 The RJKDC analysis asks a different question: **is the state better off, counting what it loses?**
 
@@ -337,7 +337,7 @@ ggplot(data.frame(r, m = 1 / r), aes(100 * r, m)) + geom_line(linewidth = 1, col
 The paper's text says the lost stream grows, so the rate should be $r - g$, and anchors it at 1.5%
 (the S&P dividend yield). The Monte Carlo then draws its rate r from 1.5% to 4.5% and divides by it
 directly. Same numbers, two meanings ([mismatches 2 and 3](../materials.html#mismatches)).
-Whether the loss lasts **for ever** or about five years is the main objection of the [BSZ side](../../../bsz-analysis/site/) (Boll, Saez
+Whether the loss lasts **for ever** or about five years is the main objection of the [BSZ report](../../../bsz-analysis/site/) (Boll, Saez
 and Zucman).
 ]
 
