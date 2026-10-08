@@ -348,12 +348,16 @@ lab_b <- paste0("$", head(cuts, -1), "-", tail(cuts, -1))
 bands <- data.frame(b = factor(lab_b, levels = lab_b),
                     forbes = band(par$n_above_threshold_emp), pareto = band(par$n_above_threshold_proj))
 stopifnot(abs(sum(bands$pareto) - (ps$total_count_proj - par$n_above_threshold_emp[par$threshold_b == 5])) < 1e-6)
-ymax <- max(bands$pareto) * 1.12
+# Shares of all billionaires above $1B in each list (Forbes 249, Pareto tail 617)
+bands$forbes_sh <- bands$forbes / ps$total_count_emp
+bands$pareto_sh <- bands$pareto / ps$total_count_proj
+ymax <- max(bands$pareto_sh) * 1.15
 hfig <- function(y, col, ttl) {
   ggplot(data.frame(b = bands$b, y = y), aes(b, y)) +
-    geom_col(fill = col, width = 0.8) + geom_text(aes(label = round(y)), vjust = -0.3, size = 3.6) +
-    scale_y_continuous(limits = c(0, ymax), expand = expansion(mult = c(0, 0))) +
-    labs(x = "wealth band, $ billion", y = "billionaires", title = ttl) +
+    geom_col(fill = col, width = 0.8) + geom_text(aes(label = pct(y)), vjust = -0.3, size = 3.6) +
+    scale_y_continuous(limits = c(0, ymax), expand = expansion(mult = c(0, 0)),
+                       labels = function(x) paste0(round(100 * x), "%")) +
+    labs(x = "wealth band, $ billion", y = "share of billionaires", title = ttl) +
     theme_minimal(base_size = 13) +
     theme(panel.grid.minor = element_blank(), panel.grid.major.x = element_blank(),
           axis.text.x = element_text(size = 9))
@@ -362,19 +366,19 @@ hfig <- function(y, col, ttl) {
 
 .pull-left[
 ```{r pareto-fig-forbes, fig.width=5, fig.height=2.9}
-hfig(bands$forbes, "#d62728", "What the Forbes list shows")
+hfig(bands$forbes_sh, "#d62728", "What the Forbes list shows")
 ```
 ]
 
 .pull-right[
 ```{r pareto-fig-typical, fig.width=5, fig.height=2.9}
-hfig(bands$pareto, "#1f77b4", "What wealth data usually show")
+hfig(bands$pareto_sh, "#1f77b4", "What wealth data usually show")
 ```
 ]
 
-**Left:** Forbes lists only `r bands$forbes[1]` billionaires worth $1 to 1.5 billion, against `r bands$forbes[3]` worth $2 to 2.5 billion.
-**Right:** in wealth and tax data, top fortunes usually follow a Pareto tail, where each step down holds
-many more people (`r round(bands$pareto[1])` in the lowest band). Fitted to the Forbes list above $4.5 billion, that shape implies
+Each bar is the share of all billionaires above $1 billion. **Left:** Forbes puts `r pct(bands$forbes_sh[1])` of its
+billionaires in the lowest band, $1 to 1.5 billion. **Right:** in wealth and tax data, top fortunes usually
+follow a Pareto tail, where each step down holds many more people: `r pct(bands$pareto_sh[1])` in that band. Fitted to the Forbes list above $4.5 billion, that shape implies
 **`r bn(ps$total_count_proj, 0)`** billionaires above $1 billion, not `r ps$total_count_emp`.
 
 .small[Method: Pareto extrapolation (BSZ pp.24 to 25, Appendix Figure A4). How it works, in the backup:
