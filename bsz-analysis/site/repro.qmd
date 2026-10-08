@@ -920,9 +920,12 @@ Fixing them changes the pinned table snapshots, so it is left for a separate cha
 
 - The paper's Figure 8 (venture capital deals) and Appendix Figure A1 (wealth relative to
   AGI) have no builder yet.
-- Most raw inputs are not re-collected (Franchise Tax Board, SEC, IRS, national accounts).
-  An error in those would pass straight through. The Forbes real-time lists are rebuilt from
-  the authors' raw data in shared SQL ([`sql/`](https://github.com/fhoces/opa-prop40/tree/main/bsz-analysis/sql)), and match the workbook.
+- The tax statistics (Franchise Tax Board, IRS, national accounts) and the authors' hand-filled
+  SEC ownership shares and adjusted fundamentals are not re-collected. An error in those would
+  pass straight through. The Forbes real-time lists, the Forbes 2004 to 2025 panel, the SEC
+  Form 4 filings (through their income items, joined to Compustat prices) and the venture
+  capital panels are rebuilt from the authors' raw data in shared SQL
+  ([`sql/`](https://github.com/fhoces/opa-prop40/tree/main/bsz-analysis/sql)), and match the authors' own intermediate files and the workbook.
 - The GGSS July report has no workbook of its own. Its \$100 billion is reproduced only in
   the sense above: it is BSZ row 1, rounded.
 

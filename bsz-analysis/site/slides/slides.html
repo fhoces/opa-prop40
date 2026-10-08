@@ -704,7 +704,7 @@ name: repro-checks
 # Checked, found, and not checked
 
 .pull-left[
-**Checked.** 701 test expectations pass, 0 fail
+**Checked.** 719 test expectations pass, 0 fail
 (August workbook, run 2026-10-07). They compare every formula cell the
 pipeline re-derives against the workbook&#39;s own cached value, check the Python twin and
 the SQL queries against R, and pin the explorer to Table 5.
@@ -717,9 +717,10 @@ the SQL queries against R, and pin the explorer to Table 5.
 
 .pull-right[
 **Not checked.**
-- most raw inputs (tax statistics, SEC filings), taken as the workbook
-  records them. The Forbes lists are rebuilt from the authors&#39; raw data in
-  [SQL](https://github.com/fhoces/opa-prop40/tree/main/bsz-analysis/sql)
+- the tax statistics and the authors&#39; hand-filled ownership
+  shares, taken as the workbook records them. The Forbes lists,
+  SEC Form 4 filings and venture capital panels are rebuilt from
+  the authors&#39; raw data in [SQL](https://github.com/fhoces/opa-prop40/tree/main/bsz-analysis/sql)
 - GGSS has no workbook; its $100 billion is BSZ&#39;s base scenario, rounded
 
 .blue-box[
