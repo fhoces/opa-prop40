@@ -337,7 +337,7 @@ class: center, middle, inverse
 ---
 name: row-2
 
-# Row 2, part 1: how BSZ spot missing billionaires
+# Missing billionaires scenario, part 1: how BSZ spot them
 
 Forbes may miss smaller fortunes. BSZ test this with one ratio, **b** = the average fortune above
 a cutoff ÷ the cutoff. For a Pareto distribution, the usual shape of top wealth, **b** is the same at every cutoff.
@@ -367,27 +367,27 @@ not `r ps$total_count_emp`.
 ---
 name: row-2-revenue
 
-# Row 2, part 2: from missing billionaires to revenue
+# Missing billionaires scenario, part 2: the revenue
 
 Filling the gap adds `r bn(ps$total_count_proj - ps$total_count_emp, 0)` people but only
 $`r bn(ps$total_wealth_proj - ps$total_wealth_emp, 0)` billion: **`r pct(ps$pct_count_increase)`
 more people, `r pct(ps$pct_wealth_increase, 1)` more wealth**. The added fortunes are small,
 about $`r bn((ps$total_wealth_proj - ps$total_wealth_emp) / (ps$total_count_proj - ps$total_count_emp), 1)` billion each.
 
-Row 2 applies those percentages to the 1 July list: `r n0` become `r bn(t5$n_billionaires[2], 0)`
+The scenario applies those percentages to the 1 July list: `r n0` become `r bn(t5$n_billionaires[2], 0)`
 billionaires, and the added wealth is `r pct(ps$pct_wealth_increase, 1)` of $`r bn(W0, 0)` billion
 = **$`r bn(dW, 2)` billion**.
 
 | | $ billion |
 |---|---:|
-| Row 1 revenue (Steps 1 to 3) | `r bn(t5$wealth_tax_revenue[1], 2)` |
+| Benchmark revenue (Steps 1 to 3) | `r bn(t5$wealth_tax_revenue[1], 2)` |
 | + 5% of the added wealth, after a higher `r pct(a_s)` avoidance: 0.05 × `r 1 - a_s` × `r bn(dW, 2)` | + `r bn(add_tax, 2)` |
 | − phase-in: the rate rises from 0 to 5% between $1.0 and $1.1 billion; `r pct(ps$fraction_in_phasein, 1)` of the added wealth is in that band | − `r bn(phase, 2)` |
-| **= Row 2 revenue** | **`r bn(t5$wealth_tax_revenue[2], 2)`** |
+| **= Missing billionaires scenario** | **`r bn(t5$wealth_tax_revenue[2], 2)`** |
 
 .small[The ratio b is **research** (estimated from the list). The `r pct(a_s)` avoidance for these less
 visible fortunes is <span class="guess">guesswork</span>.
-[Report, row 2](../repro.html#row-2-adding-the-billionaires-forbes-misses).]
+[Report: the missing billionaires scenario](../repro.html#row-2-adding-the-billionaires-forbes-misses).]
 
 ---
 
@@ -488,7 +488,7 @@ Table 5.
 
 **Found.**
 - a block of 4 rows pasted twice in the workbook's billionaire list (244 counted, 240 real)
-- Table 5 row 4 skips a deduction row 2 applies
+- Table 5's combined scenario (row 4) skips a deduction the missing billionaires scenario applies
 - 9 layout and formula changes between the May and August workbooks
 ]
 
