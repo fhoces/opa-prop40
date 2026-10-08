@@ -68,6 +68,12 @@ default workbook vintage is August 2026; `BSZ_VINTAGE=may` switches every
 vintage-dependent path, column and constant to May. `CAWTBSZ_MATERIALS` points the
 pipeline at the sources if they are not in `original-materials/`.
 
+Every computation also has a Python twin in `r link("py/")`, with the same function names
+as in `R/`. After `pip install -r requirements.txt`, the command `python py/run_export.py`
+(about 2 seconds) writes the same results to `export/py/`, and
+`r link("tests/testthat/test-py-parity.R")` checks each file against R's. The report's
+code folds show both languages.
+
 ## Tests
 
 ```{r}

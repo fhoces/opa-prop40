@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-10-07">
+<meta name="dcterms.date" content="2026-10-08">
 
 <title>Prop 40, BSZ side: the materials</title>
 <style>
@@ -2293,7 +2293,7 @@ min-width: 0 !important;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 7, 2026</p>
+      <p class="date">October 8, 2026</p>
     </div>
   </div>
   
@@ -2322,6 +2322,7 @@ min-width: 0 !important;
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> site <span class="kw">&amp;&amp;</span> <span class="ex">quarto</span> render repro.qmd <span class="kw">&amp;&amp;</span> <span class="ex">quarto</span> render materials.qmd</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> slides <span class="kw">&amp;&amp;</span> <span class="ex">Rscript</span> <span class="at">-e</span> <span class="st">&#39;rmarkdown::render(&quot;slides.Rmd&quot;)&#39;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The pipeline is an R <a href="https://docs.ropensci.org/targets/"><code>{targets}</code></a> project. The default workbook vintage is August 2026; <code>BSZ_VINTAGE=may</code> switches every vintage-dependent path, column and constant to May. <code>CAWTBSZ_MATERIALS</code> points the pipeline at the sources if they are not in <code>original-materials/</code>.</p>
+<p>Every computation also has a Python twin in <a href="https://github.com/fhoces/opa-prop40/blob/main/bsz-analysis/py/"><code>py/</code></a>, with the same function names as in <code>R/</code>. After <code>pip install -r requirements.txt</code>, the command <code>python py/run_export.py</code> (about 2 seconds) writes the same results to <code>export/py/</code>, and <a href="https://github.com/fhoces/opa-prop40/blob/main/bsz-analysis/tests/testthat/test-py-parity.R"><code>tests/testthat/test-py-parity.R</code></a> checks each file against R’s. The report’s code folds show both languages.</p>
 </section>
 <section id="tests" class="level2">
 <h2 class="anchored" data-anchor-id="tests">Tests</h2>
