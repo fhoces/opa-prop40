@@ -8,7 +8,7 @@ course module it exercises, so the files double as worked examples.
 
 ## Where this fits: two steps from raw data to the paper
 
-1. **Raw data to spreadsheet (step 1, query 1 so far).** The confidential
+1. **Raw data to spreadsheet (step 1, queries 1 and 4 onward).** The confidential
    inputs the authors shared (Forbes real-time billionaire snapshots, Form 4
    filings, Compustat extracts and so on) to the data sheets behind the public
    workbook `BSZ_MainTablesFigures.xlsx`. The code is public; the data are not.
@@ -161,8 +161,34 @@ Check (`tests/testthat/test-sql-workbook.R`): for 2018 to 2022 the query
 groups exactly the sheet rows the old row map used (59 or 60 per year, sums
 identical) and picks the same top-bracket rows.
 
+## Query 4: `04_form4_clean.sql`, Form 4 filings raw to clean
+
+The first query of the Form 4 chain. SEC Form 4 is the form on which company
+insiders report their trades. The authors scraped every Form 4 filed by the
+California billionaires on their list and clean the transactions into one row
+each, with the dollar amount of open-market sales and purchases and the
+filer's Forbes id. Later steps join these rows to daily share prices and sum
+them by person and year (the sale and purchase columns of `data_sec_all`).
+
+Private inputs: one per-filing correction table,
+`data-raw/form4-price-corrections.csv` (gitignored; schema in
+`form4-price-corrections.example.csv`), for the few filings whose reported
+price per share is off by a power of ten.
+
+| Block | What it does | Course module | Beyond the course |
+|---|---|---|---|
+| Q1 `form4_dedup` | Keeps single-owner filings, then drops a transaction that repeats an earlier one on every column but the accession number | 1 (WHERE), 4 (CTE), 5 (`ROW_NUMBER() OVER (PARTITION BY ... ORDER BY ...)`) | a partition over 89 columns; `CREATE TABLE AS` |
+| Q2 `form4_clean` | Drops foundation and advocacy holdings, computes sale and purchase amounts, applies the price corrections, adds the year and the Forbes id | 1 (`LIKE`, `IS NULL`, `CASE WHEN`), 2 (LEFT JOIN), 4 (CTE chain, `IN (SELECT ...)`) | `printf('%.15g', x)` to match a number written as text; `CAST(substr(...))` for the year |
+
+Check (`py/check_form4_clean.py`, 2026-10-07): 198,719 rows, as in the
+authors' clean file; every number and text cell equal (max relative
+difference 0). The Forbes id differs on 34 rows of one filer, a vintage gap:
+the CIK crosswalk in the bundle no longer maps that filer, so the query
+leaves the id NULL where the authors' file still has one. R and Python
+exports are identical.
+
 ## Later queries (planned)
 
-Form 4 raw to clean, Forbes 400 and global lists to the CA panel, the
-Pitchbook venture monitor, and the Compustat-based steps. See
-`PLAN-2-raw-to-workbook.md` at the repo root.
+The Forbes 400 and global lists to the CA panel, the Pitchbook venture
+monitor, and the Compustat-based steps. See `PLAN-2-raw-to-workbook.md` at
+the repo root.

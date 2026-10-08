@@ -44,3 +44,5 @@ data-raw/bundle.sqlite
 data-raw/residency-overrides.csv
 data-raw/private-paths.csv
 data-raw/NOTES-private.md
+# per-filing corrections and other private config read by py/load_bundle.py
+data-raw/form4-price-corrections.csv

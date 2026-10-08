@@ -1,6 +1,9 @@
-# Schema of data-raw/private-paths.csv, which is gitignored: paths of the
-# answer-key files inside the confidential bundle, relative to its root.
-# Lines starting with # are skipped. Keys used by py/check_rtb_ca.py:
+# Schema of data-raw/private-paths.csv, which is gitignored: paths of files
+# inside the confidential bundle, relative to its root. Lines starting with #
+# are skipped. Keys used by the code:
 #   private_sheets            the authors' private workbook of data sheets
 #   private_aggregate_export  the authors' own export of the daily CA aggregate
+#   form4_raw                 the raw Form 4 scrape (CSV), input of query 4
+#   form4_forbes_cik          forbes_id to filer CIK crosswalk (xlsx), input of query 4
+#   form4_clean_key           the authors' clean Form 4 file (CSV), answer key of query 4
 key,path

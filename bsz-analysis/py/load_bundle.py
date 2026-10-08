@@ -6,7 +6,10 @@ Run from bsz-analysis/:
     python py/load_bundle.py rtb_ca_cik      # only the named tables
 
 Idempotent: each loader drops and recreates the one table it owns, so the
-script can be re-run after the bundle changes. To add an input for a later
+script can be re-run after the bundle changes. The inputs of query 4 onward
+are located through the gitignored data-raw/private-paths.csv (one key per
+input, schema in private-paths.example.csv), so no bundle file name appears
+in this file for them. To add an input for a later
 query, write one function `load_<table>(con, root)` and register it in
 LOADERS at the bottom; nothing else changes.
 
@@ -27,7 +30,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from bundle_paths import (  # noqa: E402
-    bundle_dir, find_in_bundle, read_commented_csv, residency_overrides_path, sqlite_path,
+    bundle_dir, find_in_bundle, private_file, read_commented_csv, read_private_config,
+    residency_overrides_path, sqlite_path,
 )
 
 BATCH = 100_000
@@ -158,11 +162,143 @@ def load_rtb_residency_overrides(con, root):
     return len(out)
 
 
+def _int(v):
+    # An id or a 0/1 flag. A value that is not a whole number is kept as a
+    # float rather than silently truncated.
+    v = v.strip(" \t")
+    if v == "":
+        return None
+    x = float(v)
+    return int(x) if x.is_integer() else x
+
+
+def _create_and_insert(con, table, columns, rows):
+    """Drop and recreate `table` with (name, type) columns; insert in batches."""
+    con.execute(f"DROP TABLE IF EXISTS {table}")
+    con.execute(f"CREATE TABLE {table} (" + ", ".join(f"{n} {t}" for n, t in columns) + ")")
+    insert = (f"INSERT INTO {table} ({', '.join(n for n, _ in columns)}) "
+              f"VALUES ({', '.join('?' * len(columns))})")
+    n, batch = 0, []
+    for r in rows:
+        batch.append(r)
+        if len(batch) >= BATCH:
+            con.executemany(insert, batch)
+            n += len(batch)
+            batch = []
+    con.executemany(insert, batch)
+    return n + len(batch)
+
+
+def _xlsx_rows(path, sheet=None):
+    """Header and data rows of an xlsx sheet (the first one by default)."""
+    import openpyxl
+
+    wb = openpyxl.load_workbook(path, read_only=True, data_only=True)
+    ws = wb[sheet] if sheet else wb[wb.sheetnames[0]]
+    rows = ws.iter_rows(values_only=True)
+    header = list(next(rows))
+    data = [list(r) for r in rows if any(v not in (None, "") for v in r)]
+    wb.close()
+    return header, data
+
+
+# ---------------------------------------------------------------------------
+# Form 4 filings as scraped from SEC EDGAR, one row per reported transaction
+# Source: the authors' raw scrape, key form4_raw in data-raw/private-paths.csv
+# (about 222k rows, 90 columns; some quoted fields hold line breaks, so the
+# file has more lines than rows)
+#
+# Column types follow what readr::read_csv guesses for this file: the ids,
+# flags and quantities listed below are numbers, the transaction date is an
+# ISO date, everything else is text. Two renames, because the source names
+# clash with SQL: Folder (the filing's accession number) becomes folder, and
+# table (1 = non-derivative table, 2 = derivative table of the form) becomes
+# table_num. row_num keeps the file order, which the de-duplication in
+# sql/04_form4_clean.sql needs ("keep the first copy").
+#
+# Five multi-owner title columns (owner_title_6 to owner_title_10) are read by
+# readr as logical, which turns their few text values into NA. They are
+# loaded as text here; the difference cannot matter, because every one of
+# them is empty on the single-owner filings the query keeps.
+# ---------------------------------------------------------------------------
+FORM4_INT = {
+    "filer_cik", "document_type", "table", "num_owners", "single_owner",
+} | {f"owner_{k}_{i}" for k in ("director", "officer", "ten_percent", "other")
+     for i in range(1, 11)}
+FORM4_REAL = {
+    "shares_traded", "price_per_share", "shares_owned_after_transaction",
+    "conversion_price",
+}
+FORM4_RENAME = {"Folder": "folder", "table": "table_num"}
+
+
+def load_form4_raw(con, root):
+    path = private_file("form4_raw")
+    with open(path, newline="", encoding="utf-8") as f:
+        reader = csv.reader(f)
+        header = next(reader)
+        if len(header) != 90 or header[:3] != ["filer_cik", "document_type", "Folder"]:
+            raise ValueError(f"Unexpected header in {path.name}")
+        casts, columns = [], [("row_num", "INTEGER")]
+        for h in header:
+            if h in FORM4_INT:
+                casts.append(_int)
+                columns.append((FORM4_RENAME.get(h, h), "INTEGER"))
+            elif h in FORM4_REAL:
+                casts.append(_real)
+                columns.append((h, "REAL"))
+            else:
+                casts.append(_text)
+                columns.append((FORM4_RENAME.get(h, h), "TEXT"))
+        rows = ([i] + [c(v) for c, v in zip(casts, row)]
+                for i, row in enumerate(reader, start=1))
+        n = _create_and_insert(con, "form4_raw", columns, rows)
+    return n
+
+
+# ---------------------------------------------------------------------------
+# forbes_id to SEC filer CIK for the California list the Form 4 scrape
+# started from. Source: key form4_forbes_cik in data-raw/private-paths.csv
+# (375 rows; the cik column is text, blank for ids without a filer CIK).
+# ---------------------------------------------------------------------------
+def load_form4_forbes_cik(con, root):
+    header, data = _xlsx_rows(private_file("form4_forbes_cik"))
+    i_id, i_cik = header.index("forbes_id"), header.index("cik")
+    out = [(r[i_id], _int(str(r[i_cik])) if r[i_cik] not in (None, "") else None)
+           for r in data if r[i_id] not in (None, "")]
+    return _create_and_insert(con, "form4_forbes_cik",
+                              [("forbes_id", "TEXT"), ("cik", "INTEGER")], out)
+
+
+# ---------------------------------------------------------------------------
+# Per-filing price corrections: filings whose reported price per share is off
+# by a power of ten. Source: data-raw/form4-price-corrections.csv, gitignored
+# because its rows come from the confidential bundle; schema in
+# form4-price-corrections.example.csv.
+# ---------------------------------------------------------------------------
+def load_form4_price_corrections(con, root):
+    out = []
+    for r in read_private_config("form4-price-corrections.csv"):
+        folder, sale = (r.get("folder") or "").strip(), (r.get("sale_text") or "").strip()
+        price = (r.get("price_per_share") or "").strip()
+        if not (folder and sale and price):
+            raise ValueError("form4-price-corrections.csv: folder, sale_text and "
+                             "price_per_share are all required")
+        out.append((folder, sale, float(price), (r.get("note") or "").strip() or None))
+    return _create_and_insert(
+        con, "form4_price_corrections",
+        [("folder", "TEXT"), ("sale_text", "TEXT"), ("price_per_share", "REAL"), ("note", "TEXT")],
+        out)
+
+
 # One entry per table. Later queries add their inputs here.
 LOADERS = {
     "rtb_all_combined": load_rtb_all_combined,
     "rtb_ca_cik": load_rtb_ca_cik,
     "rtb_residency_overrides": load_rtb_residency_overrides,
+    "form4_raw": load_form4_raw,
+    "form4_forbes_cik": load_form4_forbes_cik,
+    "form4_price_corrections": load_form4_price_corrections,
 }
 
 

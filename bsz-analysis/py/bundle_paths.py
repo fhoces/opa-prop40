@@ -68,6 +68,22 @@ def residency_overrides_path():
     return BSZ_DIR / "data-raw" / "residency-overrides.csv"
 
 
+def private_config_path(name):
+    """A small gitignored config file in data-raw/ (schema in <name>.example.csv)."""
+    return BSZ_DIR / "data-raw" / name
+
+
+def read_private_config(name):
+    """Rows of a gitignored data-raw/ config CSV, with a clear error when absent."""
+    path = private_config_path(name)
+    if not path.exists():
+        example = name.replace(".csv", ".example.csv")
+        raise FileNotFoundError(
+            f"{path} not found. It is gitignored; see data-raw/{example} for the schema."
+        )
+    return read_commented_csv(path)
+
+
 def read_commented_csv(path):
     """Rows of a small CSV as dicts, skipping lines that start with '#'."""
     with open(path, newline="", encoding="utf-8") as f:

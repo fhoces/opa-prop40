@@ -1,0 +1,11 @@
+# Schema of data-raw/form4-price-corrections.csv, which is gitignored: the
+# real rows come from the authors' build code in the confidential bundle.
+# Lines starting with # are skipped by py/load_bundle.py.
+#   folder           SEC accession number of the filing (18 digits, as text)
+#   sale_text        the sale amount (price x shares) computed from the
+#                    reported price, written with 15 significant digits as R's
+#                    as.character() writes a number; only the row with this
+#                    amount gets the corrected price
+#   price_per_share  the corrected price per share
+#   note             free text: why the reported price is wrong
+folder,sale_text,price_per_share,note

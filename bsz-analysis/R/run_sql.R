@@ -29,7 +29,8 @@
 .EXPORT_ORDER <- c(
   rtb_ca_eoy = "date, forbes_worth DESC, forbes_id",
   rtb_ca_2026_01_01_industry = "(industries = 'Total'), fraction_forbes_worth DESC, industries",
-  rtb_ca_aggregate = "date"
+  rtb_ca_aggregate = "date",
+  form4_clean = "row_num"
 )
 
 # Split SQL text into statements at each `;` that is real code.

@@ -7,7 +7,8 @@ here:
    shared, through the shared `.sql` files, to the data sheets behind the
    public workbook. Python loads the bundle, runs the queries and checks the
    results (`bundle_paths.py`, `load_bundle.py`, `run_sql.py`,
-   `check_rtb_ca.py`, `test_sql.py`).
+   `check_common.py`, one `check_*.py` per query, `test_sql.py` for query 1
+   and `test_sql_steps.py` for the later ones).
 2. **Spreadsheet to results (step 2).** The public workbook
    `BSZ_MainTablesFigures.xlsx` to every number the R pipeline exports: the
    computations, the data behind each table and figure, the site data and the
@@ -64,6 +65,13 @@ python py/run_sql.py sql/01_rtb_ca.sql --export rtb_ca_eoy rtb_ca_2026_01_01_ind
 Rscript R/run_sql.R sql/01_rtb_ca.sql --export rtb_ca_eoy rtb_ca_2026_01_01_industry rtb_ca_aggregate
 python py/check_rtb_ca.py
 python -m pytest py/test_sql.py                # or: python py/test_sql.py
+
+# Query 4, Form 4 raw to clean (same pattern for the later queries; the
+# export list and the checker of each are in sql/README.md)
+python py/run_sql.py sql/04_form4_clean.sql --export form4_clean
+Rscript R/run_sql.R sql/04_form4_clean.sql --export form4_clean
+python py/check_form4_clean.py
+python -m pytest py/test_sql_steps.py          # or: python py/test_sql_steps.py
 ```
 
 Needs Python 3.11 with `pandas`, `numpy` and `openpyxl`; the step-1 files
