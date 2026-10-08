@@ -1,0 +1,14 @@
+# Schema of data-raw/forbes-name-ids.csv, which is gitignored: the real rows
+# come from the authors' build code in the confidential bundle. Lines starting
+# with # are skipped by py/load_bundle.py. Read by sql/05_forbes_ca_panel.sql.
+#   stage      where the row applies:
+#                forbes400_2004_2009  a Forbes 400 name (2004 to 2009, before
+#                                     Forbes published ids) and its Forbes id
+#                global_foreign       a global-list name of a non-US citizen
+#                global_2004_us       a global-list name of a US citizen, 2004
+#                rename_id            an old Forbes id (in match) and the id it
+#                                     became (in forbes_id)
+#   match      the name as written on the list (or the old id)
+#   forbes_id  Forbes id, lowercase and hyphenated, for example jensen-huang
+# One row per (stage, match).
+stage,match,forbes_id

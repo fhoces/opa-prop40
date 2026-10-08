@@ -291,6 +291,100 @@ def load_form4_price_corrections(con, root):
         out)
 
 
+def _load_csv(con, table, path, numeric, ints=(), rename=None):
+    """Load a whole CSV: columns in `numeric` are REAL, in `ints` INTEGER,
+    the rest TEXT (trimmed, empty to NULL); row_num keeps the file order."""
+    rename = rename or {}
+    with open(path, newline="", encoding="utf-8") as f:
+        reader = csv.reader(f)
+        header = next(reader)
+        casts, columns = [], [("row_num", "INTEGER")]
+        for h in header:
+            name = rename.get(h, h)
+            if h in ints:
+                casts.append(_int)
+                columns.append((name, "INTEGER"))
+            elif h in numeric:
+                casts.append(_real)
+                columns.append((name, "REAL"))
+            else:
+                casts.append(_text)
+                columns.append((name, "TEXT"))
+        rows = ([i] + [c(v) for c, v in zip(casts, row)]
+                for i, row in enumerate(reader, start=1))
+        return _create_and_insert(con, table, columns, rows)
+
+
+# ---------------------------------------------------------------------------
+# Forbes 400 lists, 1982 to 2025, one row per person and year
+# Source: key forbes400 in data-raw/private-paths.csv (about 17k rows).
+# Wealth is in $ million, except two years noted in sql/05_forbes_ca_panel.sql.
+# forbes_id is filled from 2010 on.
+# ---------------------------------------------------------------------------
+def load_forbes400_raw(con, root):
+    return _load_csv(
+        con, "forbes400_raw", private_file("forbes400"),
+        numeric={"id", "birthday_day", "birthday_month", "birthday_year", "wealth",
+                 "imputed_birth_year_0", "imputed_birth_year_1"},
+        ints={"year"})
+
+
+# ---------------------------------------------------------------------------
+# Forbes global billionaire lists, 1997 to 2024 (the March list each year)
+# Source: key forbes_global_1997_2024 in data-raw/private-paths.csv (about
+# 35k rows). net_worth is text such as "2.5 B" ($ billion).
+# ---------------------------------------------------------------------------
+def load_forbes_global_9724(con, root):
+    return _load_csv(
+        con, "forbes_global_9724", private_file("forbes_global_1997_2024"),
+        numeric={"rank", "age"}, ints={"year", "month"})
+
+
+# ---------------------------------------------------------------------------
+# Forbes global billionaire lists, 1988 to 2010, a Stata file
+# Source: key forbes_global_1988_2010 in data-raw/private-paths.csv (about
+# 11k rows). Only the four columns the queries use are loaded: year, name,
+# ccitiz (country of citizenship) and worth ($ billion). Stata has no missing
+# string, so text is kept as stored (haven::read_dta does not trim or turn
+# "" into NA either); the file has no empty or padded values in these columns.
+# ---------------------------------------------------------------------------
+def load_forbes_global_8810(con, root):
+    import pandas as pd
+
+    d = pd.read_stata(private_file("forbes_global_1988_2010"), convert_categoricals=False)
+    rows = ((i, int(r.year), r.name, r.ccitiz, None if pd.isna(r.worth) else float(r.worth))
+            for i, r in enumerate(d[["year", "name", "ccitiz", "worth"]].itertuples(index=False),
+                                  start=1))
+    return _create_and_insert(
+        con, "forbes_global_8810",
+        [("row_num", "INTEGER"), ("year", "INTEGER"), ("name", "TEXT"), ("ccitiz", "TEXT"),
+         ("worth", "REAL")], rows)
+
+
+# ---------------------------------------------------------------------------
+# Name and id fixes for the Forbes panel: which Forbes id a list name belongs
+# to (by stage of the merge), and ids that Forbes renamed over time.
+# Source: data-raw/forbes-name-ids.csv, gitignored because its rows come from
+# the confidential bundle; schema in forbes-name-ids.example.csv.
+# ---------------------------------------------------------------------------
+FORBES_NAME_STAGES = {"forbes400_2004_2009", "global_foreign", "global_2004_us", "rename_id"}
+
+
+def load_forbes_name_ids(con, root):
+    out, seen = [], set()
+    for r in read_private_config("forbes-name-ids.csv"):
+        stage, match, fid = (r.get(k) or "" for k in ("stage", "match", "forbes_id"))
+        if stage not in FORBES_NAME_STAGES or not match or not fid:
+            raise ValueError(f"forbes-name-ids.csv: bad row {r}")
+        if (stage, match) in seen:
+            # One id per name and stage, so the LEFT JOIN cannot duplicate rows.
+            raise ValueError(f"forbes-name-ids.csv: {stage} lists {match!r} twice")
+        seen.add((stage, match))
+        out.append((stage, match, fid))
+    return _create_and_insert(
+        con, "forbes_name_ids", [("stage", "TEXT"), ("match", "TEXT"), ("forbes_id", "TEXT")], out)
+
+
 # One entry per table. Later queries add their inputs here.
 LOADERS = {
     "rtb_all_combined": load_rtb_all_combined,
@@ -299,6 +393,10 @@ LOADERS = {
     "form4_raw": load_form4_raw,
     "form4_forbes_cik": load_form4_forbes_cik,
     "form4_price_corrections": load_form4_price_corrections,
+    "forbes400_raw": load_forbes400_raw,
+    "forbes_global_9724": load_forbes_global_9724,
+    "forbes_global_8810": load_forbes_global_8810,
+    "forbes_name_ids": load_forbes_name_ids,
 }
 
 

@@ -187,8 +187,35 @@ the CIK crosswalk in the bundle no longer maps that filer, so the query
 leaves the id NULL where the authors' file still has one. R and Python
 exports are identical.
 
+## Query 5: `05_forbes_ca_panel.sql`, Forbes lists to the California panel 2004-2025
+
+One row per California billionaire and year. 2019 to 2025 come from query
+1's year-end real-time lists (so run `01_rtb_ca.sql` first); 2005 to 2018
+from the Forbes 400 filtered to California; non-US citizens (2004 to 2018)
+and the 2004 US list from the Forbes global lists, kept when the name matches
+a California Forbes id. Before 2010 the Forbes 400 has no ids, so names are
+matched to ids through the pairs seen elsewhere, then through a table of
+hand-made fixes, `data-raw/forbes-name-ids.csv` (gitignored; schema in
+`forbes-name-ids.example.csv`), which also maps ids Forbes renamed.
+
+| Block | What it does | Course module | Beyond the course |
+|---|---|---|---|
+| Q1 `forbes_rtb_panel` | The 2019 to 2025 rows from query 1, the 2026-01-01 list as 2025 | 1 (`CASE WHEN`) | `CAST(substr(...))`; `ROW_NUMBER() OVER (ORDER BY ...)` as a row counter |
+| Q2 `forbes400_ca` | Forbes 400 California rows, two years rescaled, 2005 to 2009 matched to ids by name, a fix overriding a match | 1 (WHERE, `CASE WHEN`), 2 (LEFT JOIN), 4 (CTE chain, `UNION`, `UNION ALL`) | `COALESCE` over two joins ("the fix wins, else the match") |
+| Q3 `forbes_name_id_pairs` | Distinct name-id pairs for matching the global lists | 4 (`UNION`), 1 (`IS NOT NULL`) | |
+| Q4 `forbes_ca_2004_2025` | Global-list rows that match a CA id, plus the Forbes 400 and real-time rows, renamed ids mapped, sorted by year and worth | 1 (`ROUND`, `CASE WHEN`), 2 (LEFT JOIN), 4 (CTE chain, `UNION ALL`) | `REPLACE` and `CAST` to read "2.5 B" as a number; `CAST(NULL AS ...)` to type a column in a `UNION ALL`; a tie-break column for a stable sort |
+
+Check (`py/check_forbes_ca_panel.py`, 2026-10-07): 2,726 rows. Against the
+authors' panel (file and private sheet), 2004 to 2018 are equal row for row
+(max relative difference 4e-15) and so are 2019 to 2025 except one vintage
+gap: the authors' panel was built from year-end lists written before
+larry-ellison joined the residency exclude list, so it has his 7 rows for
+2019 to 2025 and ours does not. The (year, worth) order is the same. The 2019
+to 2025 rows equal the public `data_sec_all` (year, `forbes_id`,
+`forbes_worth`; 1,336 id-years, max difference 0), which follows the current
+rule. R and Python exports are identical.
+
 ## Later queries (planned)
 
-The Forbes 400 and global lists to the CA panel, the Pitchbook venture
-monitor, and the Compustat-based steps. See `PLAN-2-raw-to-workbook.md` at
+The Pitchbook venture monitor and the Compustat-based steps. See `PLAN-2-raw-to-workbook.md` at
 the repo root.

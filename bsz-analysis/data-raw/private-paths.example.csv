@@ -6,4 +6,8 @@
 #   form4_raw                 the raw Form 4 scrape (CSV), input of query 4
 #   form4_forbes_cik          forbes_id to filer CIK crosswalk (xlsx), input of query 4
 #   form4_clean_key           the authors' clean Form 4 file (CSV), answer key of query 4
+#   forbes400                 Forbes 400 lists 1982-2025 (CSV), input of query 5
+#   forbes_global_1997_2024   Forbes global lists 1997-2024 (CSV), input of query 5
+#   forbes_global_1988_2010   Forbes global lists 1988-2010 (Stata), input of query 5
+#   forbes_panel_key          the authors' 2004-2025 CA panel (xlsx), answer key of query 5
 key,path

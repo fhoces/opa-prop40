@@ -30,7 +30,8 @@
   rtb_ca_eoy = "date, forbes_worth DESC, forbes_id",
   rtb_ca_2026_01_01_industry = "(industries = 'Total'), fraction_forbes_worth DESC, industries",
   rtb_ca_aggregate = "date",
-  form4_clean = "row_num"
+  form4_clean = "row_num",
+  forbes_ca_2004_2025 = "year, forbes_worth DESC, src, src_row, forbes_id"
 )
 
 # Split SQL text into statements at each `;` that is real code.

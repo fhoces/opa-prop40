@@ -7,7 +7,7 @@
 
 .steps_bsz_dir <- function() normalizePath(testthat::test_path("..", ".."), mustWork = FALSE)
 
-.steps_connect <- function(sql_name, needs) {
+.steps_connect <- function(sql_names, needs) {
   root <- .steps_bsz_dir()
   db <- file.path(root, "data-raw", "bundle.sqlite")
   testthat::skip_if_not(file.exists(db), "data-raw/bundle.sqlite absent (built from the confidential bundle)")
@@ -22,7 +22,7 @@
     DBI::dbDisconnect(con)
     testthat::skip(paste("input tables not loaded:", paste(lacking, collapse = ", ")))
   }
-  run_sql_file(con, file.path(root, "sql", sql_name))
+  for (f in sql_names) run_sql_file(con, file.path(root, "sql", f))
   con
 }
 
@@ -36,4 +36,19 @@ test_that("query 4 cleans the Form 4 filings to the authors' row count", {
   expect_equal(.steps_one(con, "SELECT COUNT(*) FROM form4_clean WHERE ownership_nature LIKE '%foundation%'"), 0)
   expect_equal(.steps_one(con, "SELECT COUNT(*) FROM form4_clean WHERE sale IS NOT NULL AND code <> 'S'"), 0)
   expect_length(DBI::dbListFields(con, "form4_clean"), 19)
+})
+
+test_that("query 5 builds the 2004-2025 California panel", {
+  con <- .steps_connect(c("01_rtb_ca.sql", "05_forbes_ca_panel.sql"),
+                        c("rtb_all_combined", "rtb_ca_cik", "rtb_residency_overrides",
+                          "forbes400_raw", "forbes_global_9724", "forbes_global_8810",
+                          "forbes_name_ids"))
+  on.exit(DBI::dbDisconnect(con), add = TRUE)
+  per_year <- DBI::dbGetQuery(con, "SELECT year, COUNT(*) AS n FROM forbes_ca_2004_2025 GROUP BY year ORDER BY year")
+  eoy <- DBI::dbGetQuery(con, "SELECT COUNT(*) AS n FROM rtb_ca_eoy GROUP BY date ORDER BY date")$n
+  expect_equal(per_year$year, 2004:2025)
+  # Rows per year of the authors' panel, 2004 to 2018.
+  expect_equal(per_year$n[per_year$year <= 2018],
+               c(66, 98, 94, 93, 86, 88, 87, 93, 92, 97, 96, 98, 97, 102, 102))
+  expect_equal(per_year$n[per_year$year >= 2019], eoy)
 })

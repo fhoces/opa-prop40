@@ -32,7 +32,10 @@ def _skip(reason):
     raise _Skipped(reason)
 
 
-def _connect(sql_name, needs):
+def _connect(sql_names, needs):
+    """Run the named .sql files in order (a string for one file)."""
+    if isinstance(sql_names, str):
+        sql_names = [sql_names]
     db = sqlite_path()
     if not db.exists():
         _skip("data-raw/bundle.sqlite absent (built from the confidential bundle)")
@@ -42,7 +45,8 @@ def _connect(sql_name, needs):
     if lacking:
         con.close()
         _skip(f"input tables not loaded: {', '.join(lacking)} (python py/load_bundle.py)")
-    run_sql_file(con, BSZ_DIR / "sql" / sql_name)
+    for name in sql_names:
+        run_sql_file(con, BSZ_DIR / "sql" / name)
     return con
 
 
@@ -60,6 +64,25 @@ def test_form4_clean():
     assert n_found == 0
     assert n_sale_not_s == 0
     assert len(cols) == 19       # 18 output columns plus row_num
+
+
+# Rows per year of the authors' panel, 2004 to 2018.
+PANEL_0418 = [66, 98, 94, 93, 86, 88, 87, 93, 92, 97, 96, 98, 97, 102, 102]
+
+
+def test_forbes_ca_panel():
+    con = _connect(["01_rtb_ca.sql", "05_forbes_ca_panel.sql"],
+                   ["rtb_all_combined", "rtb_ca_cik", "rtb_residency_overrides",
+                    "forbes400_raw", "forbes_global_9724", "forbes_global_8810",
+                    "forbes_name_ids"])
+    per_year = dict(con.execute(
+        "SELECT year, COUNT(*) FROM forbes_ca_2004_2025 GROUP BY year ORDER BY year"))
+    eoy = [n for (n,) in con.execute(
+        "SELECT COUNT(*) FROM rtb_ca_eoy GROUP BY date ORDER BY date")]
+    con.close()
+    assert list(per_year) == list(range(2004, 2026))
+    assert [per_year[y] for y in range(2004, 2019)] == PANEL_0418
+    assert [per_year[y] for y in range(2019, 2026)] == eoy
 
 
 if __name__ == "__main__":
