@@ -10,4 +10,10 @@
 #   forbes_global_1997_2024   Forbes global lists 1997-2024 (CSV), input of query 5
 #   forbes_global_1988_2010   Forbes global lists 1988-2010 (Stata), input of query 5
 #   forbes_panel_key          the authors' 2004-2025 CA panel (xlsx), answer key of query 5
+#   venture_monitor_files     path template of the quarterly Venture Monitor workbooks,
+#                             with {year} and {quarter} placeholders, input of query 6
+#   vm_annual_state_key       the authors' four venture monitor outputs (xlsx),
+#   vm_annual_key               answer keys of query 6
+#   vm_quarterly_state_key
+#   vm_quarterly_key
 key,path

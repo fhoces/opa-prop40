@@ -215,7 +215,35 @@ to 2025 rows equal the public `data_sec_all` (year, `forbes_id`,
 `forbes_worth`; 1,336 id-years, max difference 0), which follows the current
 rule. R and Python exports are identical.
 
+## Query 6: `06_venture_monitor.sql`, PitchBook venture monitor to annual and quarterly panels
+
+Venture capital deals (count and $ value) per US state from the quarterly
+PitchBook-NVCA Venture Monitor workbooks, to per-state tables and to US,
+California and rest-of-US sums per year (2006 to 2026) and per quarter (2018
+Q1 to 2026 Q2). The sums are the public sheets `data_venturemonitor_annual`
+and `data_venturemonitor_quarterly`.
+
+The loader is the lesson here. Over 35 workbooks the sheet is renamed, the
+header row moves, the years shown change, and the count and value blocks
+swap places. `load_vm_state_cells()` in `py/load_bundle.py` finds the sheet,
+the header row, the two blocks and which block is which (from the title above
+it), and writes one row per cell; the reshaping is SQL. Quarterly figures are
+year-to-date in the source, so a quarter is a `LAG` difference.
+
+| Block | What it does | Course module | Beyond the course |
+|---|---|---|---|
+| Q1 `vm_cells_paired` | Puts each cell's count and value side by side (a pivot by self-join) and keeps pairs with both numbers | 2 (INNER JOIN), 1 (`IS NOT NULL`) | joining a table to itself |
+| Q2 `vm_annual_state` | Deals per state and year from two workbooks | 1 (WHERE, `NOT IN`), 4 (`UNION ALL`) | |
+| Q3 `vm_annual` | Per year: all states, California, rest of US; values in $ billion | 3 (GROUP BY, `SUM`), 1 (`SUM(CASE WHEN ...)`, `COALESCE`) | |
+| Q4 `vm_quarterly_state` | Each workbook's own-year column, then this quarter minus the previous one within state and year | 4 (CTE), 5 (`LAG ... OVER (PARTITION BY ... ORDER BY ...)`) | `LAG`'s default argument (0 for the first quarter) |
+| Q5 `vm_quarterly` | Per quarter sums, as Q3 | 3 (GROUP BY two columns), 1 (`SUM(CASE WHEN ...)`) | |
+
+Check (`py/check_venture_monitor.py`, 2026-10-07): 1,098, 21, 1,830 and 34
+rows, as in the authors' four outputs; max relative difference 4.1e-15.
+The annual and quarterly sums and the California shares equal the public
+sheets (21 and 34 rows, 3e-15). R and Python exports are identical.
+
 ## Later queries (planned)
 
-The Pitchbook venture monitor and the Compustat-based steps. See `PLAN-2-raw-to-workbook.md` at
+The Compustat-based steps. See `PLAN-2-raw-to-workbook.md` at
 the repo root.

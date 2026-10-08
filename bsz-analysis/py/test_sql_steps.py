@@ -85,6 +85,21 @@ def test_forbes_ca_panel():
     assert [per_year[y] for y in range(2019, 2026)] == eoy
 
 
+def test_venture_monitor():
+    con = _connect("06_venture_monitor.sql", ["vm_state_cells"])
+    n = {t: con.execute(f"SELECT COUNT(*) FROM {t}").fetchone()[0]
+         for t in ("vm_annual_state", "vm_annual", "vm_quarterly_state", "vm_quarterly")}
+    years = [y for (y,) in con.execute("SELECT year FROM vm_annual ORDER BY year")]
+    (first,) = con.execute("SELECT MIN(year * 10 + quarter) FROM vm_quarterly").fetchone()
+    (last,) = con.execute("SELECT MAX(year * 10 + quarter) FROM vm_quarterly").fetchone()
+    con.close()
+    # Row counts of the authors' four output files.
+    assert n == {"vm_annual_state": 1098, "vm_annual": 21,
+                 "vm_quarterly_state": 1830, "vm_quarterly": 34}
+    assert years == list(range(2006, 2027))
+    assert (first, last) == (20181, 20262)
+
+
 if __name__ == "__main__":
     pytest = None  # plain run: report skips here instead of raising pytest's
     failed = 0

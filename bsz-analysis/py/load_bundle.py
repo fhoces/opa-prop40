@@ -23,6 +23,7 @@ Conventions shared by every loader:
   * the database is a local build artifact and is gitignored (*.sqlite).
 """
 import csv
+import re
 import sqlite3
 import sys
 import time
@@ -385,6 +386,131 @@ def load_forbes_name_ids(con, root):
         con, "forbes_name_ids", [("stage", "TEXT"), ("match", "TEXT"), ("forbes_id", "TEXT")], out)
 
 
+# ---------------------------------------------------------------------------
+# PitchBook-NVCA Venture Monitor, one workbook per quarter, sheet "Deals by
+# State" (later "Deals x State" or "Deals x state"): venture deals per US
+# state and year, year to date as of the quarter, as two side-by-side blocks,
+# deal count (#) and deal value ($ million).
+# Source: key venture_monitor_files in data-raw/private-paths.csv, a path
+# template with {year} and {quarter} placeholders.
+#
+# This loader is the lesson of query 6: the workbooks drift. The sheet name
+# changes, the header row moves (row 6, then row 7), the first year shown
+# moves (2006, later a rolling 11 years), the current year's header can be a
+# number or text with a star ("2019*"), and the two blocks swap places (value
+# first until 2019, count first from 2020). Instead of one reader per layout,
+# the loader finds each piece:
+#   * the sheet: the one whose name, lowercased with " x " read as " by ",
+#     is "deals by state";
+#   * the header row: the first row with a year in it;
+#   * the blocks: runs of adjacent year columns (there must be two, of equal
+#     length);
+#   * which block is which: the title above it says "($M)" or "value" for
+#     dollars, "(#)" or "count" for deals;
+#   * the state: the column just left of the first block.
+# Every cell of the two blocks becomes one row (state, measure, year, value),
+# so the reshaping happens in SQL. An Excel error cell (such as #REF!) is
+# loaded as NULL, as readxl reads it as NA. Workbooks without such a sheet
+# (the earliest ones, which the query does not use) are skipped and counted.
+# ---------------------------------------------------------------------------
+_YEAR_HDR = re.compile(r"^\s*(\d{4})")
+
+
+def _year_of(v):
+    if isinstance(v, (int, float)) and not isinstance(v, bool) and 1990 < v < 2100:
+        return int(v)
+    if isinstance(v, str):
+        m = _YEAR_HDR.match(v)
+        return int(m.group(1)) if m else None
+    return None
+
+
+def _measure_of(title):
+    t = (title or "").lower()
+    if "($m)" in t or "value" in t or "capital" in t:
+        return "value"
+    if "(#)" in t or "count" in t:
+        return "count"
+    raise ValueError(f"Cannot tell count from value in block title {title!r}")
+
+
+def _vm_cells(path):
+    import openpyxl
+
+    wb = openpyxl.load_workbook(path, read_only=True, data_only=True)
+    sheets = [s for s in wb.sheetnames if s.lower().replace(" x ", " by ") == "deals by state"]
+    if len(sheets) != 1:
+        wb.close()
+        return None
+    rows = [list(r) for r in wb[sheets[0]].iter_rows(values_only=True)]
+    wb.close()
+    hr = next(i for i, r in enumerate(rows) if any(_year_of(v) for v in r))
+    header = rows[hr]
+    cols = [j for j, v in enumerate(header) if _year_of(v)]
+    blocks = []
+    for j in cols:
+        if blocks and j == blocks[-1][-1] + 1:
+            blocks[-1].append(j)
+        else:
+            blocks.append([j])
+    if len(blocks) != 2 or len(blocks[0]) != len(blocks[1]):
+        raise ValueError(f"{path.name}: expected two equal blocks of year columns")
+    titles = rows[hr - 1]
+    measures = []
+    for b in blocks:
+        t = [titles[j] for j in range(0, b[0] + 1) if j < len(titles) and titles[j] is not None]
+        measures.append(_measure_of(t[-1] if t else None))
+    if sorted(measures) != ["count", "value"]:
+        raise ValueError(f"{path.name}: block titles give {measures}")
+    state_col = blocks[0][0] - 1
+    out, n_err = [], 0
+    for i, r in enumerate(rows[hr + 1:], start=hr + 2):
+        if all(v in (None, "") for v in r):
+            continue
+        state = r[state_col] if state_col < len(r) else None
+        state = state.strip() if isinstance(state, str) else state
+        for b, m in zip(blocks, measures):
+            for j in b:
+                v = r[j] if j < len(r) else None
+                if isinstance(v, str):
+                    if v.startswith("#"):
+                        n_err += 1
+                        v = None
+                    else:
+                        raise ValueError(f"{path.name}: text {v!r} in a number cell")
+                out.append((i, state, m, str(header[j]).strip(), _year_of(header[j]),
+                            None if v is None else float(v)))
+    return out, n_err
+
+
+def load_vm_state_cells(con, root):
+    template = str(private_file("venture_monitor_files"))
+    pattern = re.compile(re.escape(template).replace(r"\{year\}", r"(\d{4})")
+                         .replace(r"\{quarter\}", r"(\d)") + "$")
+    folder = Path(template).parent
+    found = []
+    for p in sorted(folder.iterdir()):
+        m = pattern.match(str(p))
+        if m:
+            found.append((int(m.group(1)), int(m.group(2)), p))
+    rows, skipped, errors = [], 0, 0
+    for year, quarter, p in found:
+        got = _vm_cells(p)
+        if got is None:
+            skipped += 1
+            continue
+        cells, n_err = got
+        errors += n_err
+        rows += [(year, quarter) + c for c in cells]
+    print(f"  venture monitor: {len(found)} workbooks, {skipped} without a state sheet, "
+          f"{errors} error cell(s) read as NULL")
+    return _create_and_insert(
+        con, "vm_state_cells",
+        [("file_year", "INTEGER"), ("file_quarter", "INTEGER"), ("sheet_row", "INTEGER"),
+         ("state", "TEXT"), ("measure", "TEXT"), ("header", "TEXT"), ("year", "INTEGER"),
+         ("value", "REAL")], rows)
+
+
 # One entry per table. Later queries add their inputs here.
 LOADERS = {
     "rtb_all_combined": load_rtb_all_combined,
@@ -397,6 +523,7 @@ LOADERS = {
     "forbes_global_9724": load_forbes_global_9724,
     "forbes_global_8810": load_forbes_global_8810,
     "forbes_name_ids": load_forbes_name_ids,
+    "vm_state_cells": load_vm_state_cells,
 }
 
 

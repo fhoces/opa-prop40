@@ -30,6 +30,10 @@ EXPORT_ORDER = {
     "rtb_ca_aggregate": "date",
     "form4_clean": "row_num",
     "forbes_ca_2004_2025": "year, forbes_worth DESC, src, src_row, forbes_id",
+    "vm_annual_state": "state, year, deal_count, deal_value",
+    "vm_annual": "year",
+    "vm_quarterly_state": "state, year, quarter, deal_count, deal_value",
+    "vm_quarterly": "year, quarter",
 }
 
 

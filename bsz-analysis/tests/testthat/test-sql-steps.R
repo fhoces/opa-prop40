@@ -52,3 +52,15 @@ test_that("query 5 builds the 2004-2025 California panel", {
                c(66, 98, 94, 93, 86, 88, 87, 93, 92, 97, 96, 98, 97, 102, 102))
   expect_equal(per_year$n[per_year$year >= 2019], eoy)
 })
+
+test_that("query 6 builds the venture monitor panels", {
+  con <- .steps_connect("06_venture_monitor.sql", "vm_state_cells")
+  on.exit(DBI::dbDisconnect(con), add = TRUE)
+  n <- vapply(c("vm_annual_state", "vm_annual", "vm_quarterly_state", "vm_quarterly"),
+              function(t) .steps_one(con, paste("SELECT COUNT(*) FROM", t)), numeric(1))
+  # Row counts of the authors' four output files.
+  expect_equal(unname(n), c(1098, 21, 1830, 34))
+  expect_equal(DBI::dbGetQuery(con, "SELECT year FROM vm_annual ORDER BY year")$year, 2006:2026)
+  expect_equal(.steps_one(con, "SELECT MIN(year * 10 + quarter) FROM vm_quarterly"), 20181)
+  expect_equal(.steps_one(con, "SELECT MAX(year * 10 + quarter) FROM vm_quarterly"), 20262)
+})
