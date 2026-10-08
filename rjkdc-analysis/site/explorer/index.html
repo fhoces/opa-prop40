@@ -188,7 +188,6 @@
 
   <div class="identity">
     <span class="name" id="cell-name">Preferred estimate: SSRN, Mar 2026</span>
-    <span class="meta" id="cell-meta"></span>
   </div>
 
   <div class="cols">
@@ -368,7 +367,6 @@
       var el = document.getElementById("pref-" + p.key);
       if (el) el.className = "pref-card" + (p.key === name ? " on" : "");
     });
-    document.getElementById("cell-meta").textContent = "cell " + (i + 1) + " of " + G.snap.length;
 
     tbody.textContent = "";
     G.outcomes.forEach(function (label, oi) {
