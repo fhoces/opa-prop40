@@ -124,6 +124,7 @@
   .dial .label:hover .tip, .dial .info:focus + .tip, .dial .tip.open { display: block; }
   details.fold { margin-top: 14px; }
   .presets-h { font-size: 12px; color: var(--ink-3); margin: 14px 0 6px; }
+  p.fn { font-size: 12px; color: var(--ink-3); line-height: 1.45; margin: 4px 0 0; }
   details.fold.notes { margin-top: 28px; border-top: 1px solid var(--rule); padding-top: 10px; }
   details.fold > summary { cursor: pointer; font-size: 13.5px; font-weight: 500; padding: 6px 0; }
   details.fold[open] > summary { margin-bottom: 8px; }
@@ -206,16 +207,6 @@
     </p>
   </header>
 
-  <div class="preferred" id="preferred">
-    <span class="kicker">Main estimate<sup>1</sup></span>
-    <div class="big" id="pref-big"></div>
-    <p id="pref-text"></p>
-    <p class="fn"><sup>1</sup> Not the authors' choice: BSZ's headline is the wealth tax alone,
-    <span id="pref-wt"></span>. This OPA uses the total as its main estimate because it compares
-    more directly with <a href="../../../index.html">other analyses</a>, such as the
-    <a href="../../../rjkdc-analysis/site/">RJKDC report</a>'s net present value.</p>
-  </div>
-
   <div class="cols">
     <section>
       <h2>The inputs</h2>
@@ -233,6 +224,11 @@
       <svg class="bars" id="bars" viewBox="0 0 640 200" role="img" aria-labelledby="bars-title">
         <title id="bars-title">Main estimate, this setting against the base scenario</title>
       </svg>
+      <p class="fn"><sup>1</sup> Main estimate = wealth tax + extra income tax from selling assets &minus;
+      income tax lost to leavers (present value, 5 years at 3%). Not the authors' choice: BSZ's headline is
+      the wealth tax alone, <span id="pref-wt"></span>. This OPA uses the total because it compares more
+      directly with <a href="../../../index.html">other analyses</a>, such as the
+      <a href="../../../rjkdc-analysis/site/">RJKDC report</a>'s net present value.</p>
       <p class="presets-h">Jump to a scenario</p>
       <div class="presets" id="presets"></div>
       <details class="fold">
@@ -315,15 +311,6 @@
   // ---- preferred estimate box, computed from the grid, not typed --------
   var pref = G.snap[namedIdx[PREF]];
   var rev = pref[K.wealth_tax_revenue];
-  document.getElementById("pref-big").textContent =
-    "$" + pref[K.main_estimate].toFixed(1) + " billion (base scenario, Table 5 row 1)";
-  document.getElementById("pref-text").textContent =
-    "Wealth tax $" + rev.toFixed(1) + "B + extra income tax from selling assets $" +
-    pref[K.extra_ca_inctax_sales].toFixed(2) + "B \u2212 income tax lost to leavers $" +
-    Math.abs(pref[K.income_tax_loss_pv]).toFixed(2) + "B (" + G.facts.pv_years + " years at " +
-    Math.round(100 * G.facts.pv_rate) + "%). The wealth tax is 5% of the $" +
-    G.facts.W0.toLocaleString("en-US") + "B held by " + G.facts.n0 +
-    " California billionaires on 1 July 2026, less 10% avoidance. GGSS round it to $100B.";
   document.getElementById("pref-wt").textContent = "$" + rev.toFixed(1) + " billion";
   document.getElementById("gap").textContent = "$" + G.facts.row4_phasein_gap.toFixed(1) + " billion";
 
@@ -477,10 +464,10 @@
     var ext = i === iMax ? "The highest total across all settings"
             : i === iMin ? "The lowest total across all settings" : null;
     document.getElementById("cell-name").textContent =
-      name ? (name === PREF ? "The main estimate: base scenario" : name + " scenario (Table 5)")
+      name ? (name === PREF ? "The main estimate\u00B9: base scenario" : name + " scenario (Table 5)")
            : ext || "A setting the authors did not publish";
     document.getElementById("cell-meta").textContent =
-      "main estimate " + fmtOut("$B", snap[K.main_estimate]) +
+      "main estimate\u00B9 " + fmtOut("$B", snap[K.main_estimate]) +
       " · cell " + (i + 1) + " of " + G.snap.length.toLocaleString("en-US");
 
     tbody.textContent = "";
