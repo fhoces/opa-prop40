@@ -52,6 +52,8 @@ stopifnot(identical(inp$vintage, "august"))
 
 bn  <- function(x, d = 1) formatC(x, format = "f", digits = d, big.mark = ",")
 usd <- function(x, d = 1) paste0("\\$", bn(x, d), " billion")
+pvf   <- site_pv_factor()   # 5 years at 3% (R/site_exports.R); same definition as the deck and explorer
+main1 <- t5$wealth_tax_revenue[1] + t5$extra_ca_inctax_sales[1] + t5$annual_ca_inctax_loss[1] * pvf
 pct <- function(x, d = 1) paste0(formatC(100 * x, format = "f", digits = d), "%")
 show <- function(df) knitr::kable(df, format = "html", escape = TRUE,
                                   table.attr = 'class="table table-sm"')
@@ -84,14 +86,20 @@ This report is part of an Open Policy Analysis of the BSZ side:
 - **Open Materials**: [the materials page](materials.html), every script, test and data file
 :::
 
-**The preferred estimate** is Table 5, row 1: `r usd(t5$wealth_tax_revenue[1])` of one-time
-wealth tax revenue, with `r usd(t5$extra_ca_inctax_sales[1])` of extra state income tax
-from asset sales and an income tax loss of `r usd(-t5$annual_ca_inctax_loss[1], 2)` a year.
-It is the benchmark both documents lead with, and the one the campaign cites. Rows 2 to 4
-of Table 5 are the authors' own sensitivity checks; this report reproduces them and the
-explorer shows them next to the preferred row, but none of them replaces it. That follows
-the project's pre-specified output (`PLAN.md`, "Pre-specified output"), fixed before any
-result was seen: the strongest version of each side, its two documents side by side.
+**The main estimate** is the base scenario (Table 5, row 1) net of its income tax effects:
+`r usd(t5$wealth_tax_revenue[1])` of one-time wealth tax, plus `r usd(t5$extra_ca_inctax_sales[1], 2)` of extra state
+income tax from asset sales, minus `r usd(-t5$annual_ca_inctax_loss[1] * pvf, 2)` of income tax lost to
+leavers (`r usd(-t5$annual_ca_inctax_loss[1], 2)` a year, over 5 years at 3%): **`r usd(main1)`**. The
+arithmetic is in [The main estimate](#the-main-estimate).
+
+**Not the authors' choice.** BSZ's own headline, the number both documents lead with, is the wealth
+tax alone, `r usd(t5$wealth_tax_revenue[1])`, which GGSS round to \$100 billion. This OPA uses the total
+because it compares more directly with other analyses, such as the
+[RJKDC report](../../rjkdc-analysis/site/)’s net present value. The project's pre-specified output
+(`PLAN.md`, "Pre-specified output"), fixed before any result was seen, named the wealth tax. The
+switch to the total was made on 7 October 2026 for comparability, and the wealth tax is still
+reported throughout. Rows 2 to 4 of Table 5 are the authors' own sensitivity checks: this report
+reproduces them and the explorer shows them next to the base scenario.
 
 **What "reproduced" means here.** The pipeline re-derives every formula cell of the
 authors' workbook in R and checks each against the workbook's own cached value. It does
@@ -355,7 +363,7 @@ depends on (see [Every input, by origin](#every-input-by-origin)).
 ### Step 3: wealth tax revenue
 
 $$T = \tau\,W^{\text{tax}} = 0.05 \times `r bn(t5$taxable_wealth[1])` = `r bn(t5$wealth_tax_revenue[1])`.$$
-That is the preferred estimate: `r usd(t5$wealth_tax_revenue[1])`, collected once (in five
+That is BSZ's headline: `r usd(t5$wealth_tax_revenue[1])`, collected once (in five
 annual installments). Before avoidance, 5% of the base would be
 `r usd(0.05 * inp$W0)`; avoidance costs `r usd(0.05 * inp$W0 - t5$wealth_tax_revenue[1])`.
 
@@ -390,8 +398,16 @@ This is a *yearly* loss, and Table 5 does not say for how many years. The paper 
 for a genuinely one-time tax, departures should be temporary, "say only 5 years" (PDF p.27).
 The [RJKDC report](../../rjkdc-analysis/site/) (Rauh, Jaros, Kearney, Doran and Cosso) counts the loss
 forever. That difference in horizon is the largest single
-dispute between the two sides (`comparison/DISPUTES.md`, row 2) and is outside this side's
-output.
+dispute between the two reports (`comparison/DISPUTES.md`, row 2).
+
+### The main estimate {#the-main-estimate}
+
+The main estimate adds the three pieces. It counts the yearly loss for BSZ's 5 years, discounted at
+3% a year, the middle of the 1.5% to 4.5% range the [RJKDC report](../../rjkdc-analysis/site/) uses
+(BSZ give no rate):
+$$M = T + E + L \times \frac{1 - 1.03^{-5}}{0.03} = `r bn(t5$wealth_tax_revenue[1], 2)` + `r bn(t5$extra_ca_inctax_sales[1], 2)` - `r bn(-t5$annual_ca_inctax_loss[1], 3)` \times `r bn(pvf, 2)` = `r bn(main1, 2)`.$$
+It is not the authors' choice (see the [introduction](#introduction)): BSZ's headline is $T$ alone.
+The [explorer](explorer/) shows $M$ for every setting of the guesses.
 
 ### Row 2: adding the billionaires Forbes misses
 
@@ -644,7 +660,7 @@ stopifnot(sum(ins$origin == "guesswork") == n_guess_dials)
 guesswork, and they are exactly the explorer's `r n_guess_dials` guesswork dials. Only
 `r length(guess_moving_rev)` of them move the revenue number when varied on their own
 (`r tolower(paste(guess_moving_rev, collapse = "; "))`); the others move only the smaller
-income tax columns, or matter only in the scenario rows. So the preferred
+income tax columns, or matter only in the scenario rows. So BSZ's headline
 `r usd(t5$wealth_tax_revenue[1])` is Forbes' list, times 5%, times one minus a single guessed
 avoidance rate; the only other guess that moves it is who has already left. The disputes with the [RJKDC report](../../rjkdc-analysis/site/) are mostly about inputs this
 table labels guesswork or scenario: who has left (disputes row 3), how long losses last, and whether a

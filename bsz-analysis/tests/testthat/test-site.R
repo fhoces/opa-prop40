@@ -103,7 +103,11 @@ test_that("every number typed into the landing page matches the pipeline", {
     sprintf("%d round to the digit", sum(p$matches_printed)),
     sprintf("the other %d, the income tax loss in rows 2 and 3", nrow(miss)),
     sprintf("printed as $%.2fB and $%.2fB", -miss$printed[1], -miss$printed[2]),
-    sprintf("workbook gives $%.2fB and $%.2fB", -miss$reproduced[1], -miss$reproduced[2])
+    sprintf("workbook gives $%.2fB and $%.2fB", -miss$reproduced[1], -miss$reproduced[2]),
+    # the main estimate: wealth tax + extra income tax - present value of the loss (5 years at 3%)
+    sprintf("<strong>$%.1f billion</strong>", t5$wealth_tax_revenue[1] + t5$extra_ca_inctax_sales[1] +
+              t5$annual_ca_inctax_loss[1] * site_pv_factor()),
+    b1(t5$wealth_tax_revenue + t5$extra_ca_inctax_sales + t5$annual_ca_inctax_loss * site_pv_factor())
   )
   for (e in expected) expect_true(grepl(e, html, fixed = TRUE), info = e)
 })
