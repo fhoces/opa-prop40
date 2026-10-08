@@ -193,7 +193,7 @@ by `r pct(100 * rc$migration_share)` and revenue is **\$`r num(rc$literature_cal
 (printed \$`r out("revenue_literature_calibrated","printed_value")`B). Two things to notice. First,
 that is a Swiss estimate for a recurring annual tax, applied here to a one-time tax; the paper
 argues a one-time tax with easy interstate moves could provoke a *larger* response (p.14), and the
-BSZ side (Boll, Saez and Zucman, who support the measure) disputes exactly this ([disputes row 1](https://github.com/fhoces/opa-prop40/blob/main/comparison/DISPUTES.md)).
+[BSZ side](../../bsz-analysis/site/) (Boll, Saez and Zucman, who support the measure) disputes exactly this ([disputes row 1](https://github.com/fhoces/opa-prop40/blob/main/comparison/DISPUTES.md)).
 Second, a linear 10.32 × 5 = 51.6% loss is steeper than the log form the NBER revision later uses
 (41.1%, NBER PDF p.24).
 
@@ -294,7 +294,7 @@ Two things are worth knowing before reading the tables:
   interval is used whatever it is called; conceptually, the interval is asked to stand for two
   different things. The explorer's growth dial shows what the ambiguity is worth.
 - **The horizon.** Treating the loss as permanent is itself one of the disputed choices: the
-  BSZ side estimates the loss as lasting about the five payment years
+  [BSZ side](../../bsz-analysis/site/) estimates the loss as lasting about the five payment years
   ([disputes row 2](https://github.com/fhoces/opa-prop40/blob/main/comparison/DISPUTES.md)).
 
 ## Section 5.3: NPV by departure scenario (Table 9)
