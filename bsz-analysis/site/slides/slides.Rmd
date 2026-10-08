@@ -168,9 +168,8 @@ BSZ side of California Proposition 40:
 <tr style="background:#e8eaf6;"><th style="text-align:left; padding:6px;">Part</th><th style="text-align:left; padding:6px;">What it covers</th></tr>
 <tr><td style="padding:6px;"><b><a href="#part-policy">1. What is being estimated</a></b></td><td style="padding:6px;">The tax, and the two documents that make the BSZ side's case</td></tr>
 <tr><td style="padding:6px;"><b><a href="#part-steps">2. Five steps to $`r round(t5$wealth_tax_revenue[1])` billion</a></b></td><td style="padding:6px;">The base scenario, built one line at a time</td></tr>
-<tr><td style="padding:6px;"><b><a href="#part-rows">3. Alternative scenarios</a></b></td><td style="padding:6px;">The missing billionaires, leavers and combined scenarios, and the bottom line for all four</td></tr>
-<tr><td style="padding:6px;"><b><a href="#part-guess">4. What is guesswork</a></b></td><td style="padding:6px;">How far each guess moves the result</td></tr>
-<tr><td style="padding:6px;"><b><a href="#part-repro">5. What reproduces</a></b></td><td style="padding:6px;">Tests, mismatches found, and what is not checked</td></tr>
+<tr><td style="padding:6px;"><b><a href="#part-rows">3. Alternative scenarios</a></b></td><td style="padding:6px;">Three more scenarios, the bottom line, and how far each guess moves it</td></tr>
+<tr><td style="padding:6px;"><b><a href="#part-repro">4. What reproduces</a></b></td><td style="padding:6px;">Tests, mismatches found, and what is not checked</td></tr>
 <tr><td style="padding:6px;"><b><a href="#backup">Backup</a></b></td><td style="padding:6px;">How the Pareto extrapolation finds the missing billionaires</td></tr>
 </table>
 
@@ -341,35 +340,33 @@ name: row-2
 # Missing billionaires scenario, part 1: Forbes misses small fortunes
 
 ```{r pareto-figs-setup, include=FALSE}
-pcol <- c("Forbes list" = "#d62728", "Pareto tail" = "#1f77b4")
-pbase <- function(g) g + geom_vline(xintercept = 4.5, linetype = "dashed", colour = "grey55") +
-  geom_line(linewidth = 0.9) + geom_point(size = 1.8) +
-  scale_x_log10(breaks = c(1, 2, 4.5, 10, 30), labels = function(x) paste0("$", x, "B")) +
-  scale_colour_manual(values = pcol) + labs(colour = NULL, x = "wealth cutoff") +
-  theme_minimal(base_size = 13) + theme(legend.position = "inside", legend.position.inside = c(0.72, 0.82),
-        legend.background = element_rect(fill = "white", colour = NA), panel.grid.minor = element_blank())
-pl <- function(y1, y2) data.frame(cut = rep(par$threshold_b, 2), y = c(y1, y2),
-  src = factor(rep(names(pcol), each = nrow(par)), levels = names(pcol)))
+pfig <- function(y, col, ttl) {
+  ggplot(data.frame(cut = par$threshold_b, b = y), aes(cut, b)) +
+    geom_vline(xintercept = 4.5, linetype = "dashed", colour = "grey55") +
+    geom_line(colour = col, linewidth = 1) + geom_point(colour = col, size = 1.8) +
+    scale_x_log10(breaks = c(1, 2, 4.5, 10, 30), labels = function(x) paste0("$", x, "B")) +
+    scale_y_continuous(limits = c(4, 9)) +
+    labs(x = "wealth cutoff", y = "b", title = ttl) +
+    theme_minimal(base_size = 13) + theme(panel.grid.minor = element_blank())
+}
 ```
 
 .pull-left[
-```{r pareto-fig-b, fig.width=5, fig.height=3.0}
-pbase(ggplot(pl(par$pareto_b_emp, par$pareto_b_proj), aes(cut, y, colour = src))) +
-  labs(y = "b", title = "b at each cutoff")
+```{r pareto-fig-forbes, fig.width=5, fig.height=2.8}
+pfig(par$pareto_b_emp, "#d62728", "What the Forbes list shows")
 ```
 ]
 
 .pull-right[
-```{r pareto-fig-n, fig.width=5, fig.height=3.0}
-pbase(ggplot(pl(par$n_above_threshold_emp, par$n_above_threshold_proj), aes(cut, y, colour = src))) +
-  labs(y = "billionaires above the cutoff", title = "How many billionaires")
+```{r pareto-fig-typical, fig.width=5, fig.height=2.8}
+pfig(par$pareto_b_proj, "#1f77b4", "What wealth data usually show")
 ```
 ]
 
-**Left:** b is the average fortune above a cutoff divided by the cutoff. A Pareto tail, the usual
-shape of top wealth, keeps b constant. On Forbes, b is flat above $4.5 billion and climbs below.
-**Right:** holding b at `r bn(ps$pareto_b, 2)` implies **`r bn(ps$total_count_proj, 0)`** billionaires
-above $1 billion, not `r ps$total_count_emp`.
+b is the average fortune above a cutoff divided by the cutoff. **Left:** on Forbes, b climbs below
+$4.5 billion. **Right:** top wealth usually follows a Pareto tail, where b is the same at every cutoff.
+The gap means Forbes misses small fortunes: holding b at `r bn(ps$pareto_b, 2)` gives
+**`r bn(ps$total_count_proj, 0)`** billionaires above $1 billion, not `r ps$total_count_emp`.
 
 .small[Method: Pareto extrapolation (BSZ pp.24 to 25, Appendix Figure A4). Backup:
 [the test in numbers](#pareto-detail) &middot; [from b to `r bn(ps$total_count_proj, 0)`](#pareto-extrapolation).]
@@ -471,22 +468,17 @@ the [RJKDC report](../../../rjkdc-analysis/site/) uses (BSZ give no rate). Any r
 changes the base loss by less than $`r bn(loss[1] * (ann(0.015) - ann(0.03)), 2)` billion.
 ]
 
-.small[Wealth tax: [Steps 1 to 3](#part-steps). Extra income tax: [Step 4](#step-4). Income tax
-lost: [Step 5](#step-5-who).]
+**Change any assumption and watch the main estimate move: [the explorer](../explorer/).**
 
-**How this compares with the RJKDC report, which counts the loss forever: [the comparison OPA](../../../index.html).**
+.small[Wealth tax: [Steps 1 to 3](#part-steps). Extra income tax: [Step 4](#step-4). Income tax
+lost: [Step 5](#step-5-who). The RJKDC report counts the loss forever: [the comparison OPA](../../../index.html).]
 
 ---
 name: part-guess
-class: center, middle, inverse
-
-# Part 4: What is guesswork
-
----
 
 # How far does each guess move the main estimate?
 
-```{r tornado, fig.height=3.3}
+```{r tornado, fig.height=3.0}
 keys <- c(avoidance = "Avoidance and evasion", mobility_share = "Share that is leaving",
           avoidance_small = "Avoidance, less visible", sell_share = "Share paid by selling",
           pareto = "Count missing billionaires", leavers = "Aggressive leavers")
@@ -517,11 +509,13 @@ income tax lost). Of the five guesses, `r length(movers)` move it on their own:
 Counting the missing billionaires is research, and only raises it. Every input and its origin:
 [report](../repro.html#every-input-by-origin).]
 
+**Try any combination of the guesses: [the explorer](../explorer/).**
+
 ---
 name: part-repro
 class: center, middle, inverse
 
-# Part 5: What reproduces
+# Part 4: What reproduces
 
 ---
 name: repro-checks
