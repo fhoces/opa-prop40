@@ -56,6 +56,32 @@ tcode <- function(name) {
                        paste0(ups, " <- ", vapply(ups, function(u) one(MAN$command[MAN$name == u]), "")), ""),
     unlist(lapply(fns, function(f) { l <- deparse_function(f); l[1] <- paste0(f, " <- ", l[1]); c(l, "") })))
 }
+# The Python twin (py/, same function names): the source of a top-level def, read from disk.
+pydef <- function(fn) {
+  for (f in list.files("../py", pattern = "[.]py$", full.names = TRUE)) {
+    l <- readLines(f, warn = FALSE); i <- grep(paste0("^def ", fn, "\\("), l)
+    if (length(i) != 1) next
+    nxt <- which(seq_along(l) > i & grepl("^[^[:space:]#]", l))
+    j <- if (length(nxt)) nxt[1] - 1 else length(l)
+    while (j > i && !nzchar(trimws(l[j]))) j <- j - 1
+    return(c(l[i:j], "", paste0("# Read-only display. Edit py/", basename(f), ":", i, "-", j, ".")))
+  }
+  NULL
+}
+# One fold, one line: "R or Python code for <exhibit>"; clicking a language opens it.
+twin_fold <- function(exhibit, name) {
+  ex   <- str2lang(MAN$command[MAN$name == name])
+  fns  <- setdiff(all.names(ex), all.vars(ex))
+  ups  <- intersect(all.vars(ex), MAN$name)
+  upfn <- unique(unlist(lapply(ups, function(u) { e <- str2lang(MAN$command[MAN$name == u]); setdiff(all.names(e), all.vars(e)) })))
+  py   <- unlist(lapply(fns, pydef))
+  if (is.null(py)) { cat("\n```{.r .cell-code}\n", paste(tcode(name), collapse = "\n"), "\n```\n", sep = ""); return(invisible()) }
+  py <- c("# The Python twin (bsz-analysis/py/); py/run_export.py runs it.",
+          if (length(upfn)) paste0("# reads the output of: ", paste0(upfn, "()", collapse = ", ")), "", py)
+  cat(sprintf('\n<details class="twin code-fold"><summary><a href="#" class="lang on" data-lang="r">R</a> or <a href="#" class="lang" data-lang="py">Python</a> code for %s</summary>\n\n', exhibit),
+      "::: {.lang-r}\n```r\n", paste(tcode(name), collapse = "\n"), "\n```\n:::\n\n",
+      "::: {.lang-py}\n```python\n", paste(py, collapse = "\n"), "\n```\n:::\n\n</details>\n\n", sep = "")
+}
 STORE <- normalizePath("../_targets")
 tr <- function(name) targets::tar_read_raw(name, store = STORE)
 
@@ -178,9 +204,9 @@ rows of the raw list were pasted twice.
 
 ::: {.table-scroll}
 ```{r}
-#| eval: false
-#| code-summary: "R code for Table 1"
-#| code: !expr tcode("tab1_gt")
+#| echo: false
+#| results: asis
+twin_fold("Table 1", "tab1_gt")
 ```
 ```{r}
 #| label: tab1
@@ -199,9 +225,9 @@ label drift. Listed under [What reproduces](#what-reproduces).
 > current dollars) at the end of years 2019 to 2025 and for July 1st, 2026. (BSZ PDF p.5)
 
 ```{r}
-#| eval: false
-#| code-summary: "R code for Figure 1"
-#| code: !expr tcode("fig1")
+#| echo: false
+#| results: asis
+twin_fold("Figure 1", "fig1")
 ```
 ```{r}
 #| label: fig1
@@ -215,9 +241,9 @@ The paper's Figure 1 has a Panel B, wealth by industry. The pipeline builds that
 chart as its "Appendix Figure A1":
 
 ```{r}
-#| eval: false
-#| code-summary: "R code for Figure 1, Panel B"
-#| code: !expr tcode("fig_a1")
+#| echo: false
+#| results: asis
+twin_fold("Figure 1, Panel B", "fig_a1")
 ```
 ```{r}
 #| label: industry
@@ -240,9 +266,9 @@ turns the 1982 value into the 2026 value:
 $$\bar g = \left(\frac{X_{2026}}{X_{1982}}\right)^{1/44} - 1.$$
 
 ```{r}
-#| eval: false
-#| code-summary: "R code for Figure 2"
-#| code: !expr tcode("fig2")
+#| echo: false
+#| results: asis
+twin_fold("Figure 2", "fig2")
 ```
 ```{r}
 #| label: fig2
@@ -282,9 +308,9 @@ from their SEC filings (stock sales, dividends, option exercises).
 
 ::: {.table-scroll}
 ```{r}
-#| eval: false
-#| code-summary: "R code for Table 2"
-#| code: !expr tcode("tab2_gt")
+#| echo: false
+#| results: asis
+twin_fold("Table 2", "tab2_gt")
 ```
 ```{r}
 #| label: tab2
@@ -294,9 +320,9 @@ tr("tab2_gt")
 :::
 
 ```{r}
-#| eval: false
-#| code-summary: "R code for Figure 3"
-#| code: !expr tcode("fig3")
+#| echo: false
+#| results: asis
+twin_fold("Figure 3", "fig3")
 ```
 ```{r}
 #| label: fig3
@@ -308,9 +334,9 @@ tr("fig3")
 
 ::: {.table-scroll}
 ```{r}
-#| eval: false
-#| code-summary: "R code for Table 3"
-#| code: !expr tcode("tab3_gt")
+#| echo: false
+#| results: asis
+twin_fold("Table 3", "tab3_gt")
 ```
 ```{r}
 #| label: tab3
@@ -329,9 +355,9 @@ between pass-through and private C-corporations, with a 9.5% gross-up for divers
 holdings.
 
 ```{r}
-#| eval: false
-#| code-summary: "R code for Figure 4"
-#| code: !expr tcode("fig4")
+#| echo: false
+#| results: asis
+twin_fold("Figure 4", "fig4")
 ```
 ```{r}
 #| label: fig4
@@ -357,9 +383,9 @@ Figure 6 runs the tax rates back to 2004; Figure 7 compares them with economy-wi
 
 ::: {.table-scroll}
 ```{r}
-#| eval: false
-#| code-summary: "R code for Table 4"
-#| code: !expr tcode("tab4_gt")
+#| echo: false
+#| results: asis
+twin_fold("Table 4", "tab4_gt")
 ```
 ```{r}
 #| label: tab4
@@ -369,9 +395,9 @@ tr("tab4_gt")
 :::
 
 ```{r}
-#| eval: false
-#| code-summary: "R code for Figure 5"
-#| code: !expr tcode("fig5")
+#| echo: false
+#| results: asis
+twin_fold("Figure 5", "fig5")
 ```
 ```{r}
 #| label: fig5
@@ -382,9 +408,9 @@ tr("fig5")
 ```
 
 ```{r}
-#| eval: false
-#| code-summary: "R code for Figure 6"
-#| code: !expr tcode("fig6")
+#| echo: false
+#| results: asis
+twin_fold("Figure 6", "fig6")
 ```
 ```{r}
 #| label: fig6
@@ -395,9 +421,9 @@ tr("fig6")
 ```
 
 ```{r}
-#| eval: false
-#| code-summary: "R code for Figure 7"
-#| code: !expr tcode("fig7")
+#| echo: false
+#| results: asis
+twin_fold("Figure 7", "fig7")
 ```
 ```{r}
 #| label: fig7
@@ -559,9 +585,9 @@ ggplot(d, aes(b, y, fill = part)) +
 The paper's own figure plots the ratio $b$ at each cutoff (Appendix Figure A4):
 
 ```{r}
-#| eval: false
-#| code-summary: "R code for Appendix Figure A4"
-#| code: !expr tcode("fig_a4")
+#| echo: false
+#| results: asis
+twin_fold("Appendix Figure A4", "fig_a4")
 ```
 ```{r}
 #| label: appfig-a4
@@ -615,9 +641,9 @@ treatment would lower it by `r usd(inp$row4_phasein_gap)`. We list this under
 
 ::: {.table-scroll}
 ```{r}
-#| eval: false
-#| code-summary: "R code for Table 5"
-#| code: !expr tcode("tab5_gt")
+#| echo: false
+#| results: asis
+twin_fold("Table 5", "tab5_gt")
 ```
 ```{r}
 #| label: tab5
@@ -745,9 +771,9 @@ then peaks at `r pct(laf$tax_rate[which.max(laf$long_run_tax_revenue)])`, close 
 $1/(1+d+e) = 3.8\%$.
 
 ```{r}
-#| eval: false
-#| code-summary: "R code for Figure 9"
-#| code: !expr tcode("fig8")
+#| echo: false
+#| results: asis
+twin_fold("Figure 9", "fig8")
 ```
 ```{r}
 #| label: fig8
@@ -763,9 +789,9 @@ tr("fig8")
 
 ::: {.table-scroll}
 ```{r}
-#| eval: false
-#| code-summary: "R code for Appendix Table A1"
-#| code: !expr tcode("tab_a1_gt")
+#| echo: false
+#| results: asis
+twin_fold("Appendix Table A1", "tab_a1_gt")
 ```
 ```{r}
 #| label: tab-a1
@@ -777,9 +803,9 @@ tr("tab_a1_gt")
 ## Appendix Figures A2 and A3
 
 ```{r}
-#| eval: false
-#| code-summary: "R code for Appendix Figure A2"
-#| code: !expr tcode("fig_a2")
+#| echo: false
+#| results: asis
+twin_fold("Appendix Figure A2", "fig_a2")
 ```
 ```{r}
 #| label: appfig-a2
@@ -790,9 +816,9 @@ tr("fig_a2")
 ```
 
 ```{r}
-#| eval: false
-#| code-summary: "R code for Appendix Figure A3"
-#| code: !expr tcode("fig_a3")
+#| echo: false
+#| results: asis
+twin_fold("Appendix Figure A3", "fig_a3")
 ```
 ```{r}
 #| label: appfig-a3
@@ -923,3 +949,25 @@ BSZ side of California Proposition 40:
 ::: {.credit}
 OPA done by [Fernando Hoces de la Guardia](https://fhoces.github.io), using [agentic coding tools](index.html#how-ai-was-used)
 :::
+
+```{=html}
+<style>
+details.twin > summary { cursor: pointer; }
+details.twin > summary a.lang { text-decoration: none; border-bottom: 1px dotted currentColor; }
+details.twin > summary a.lang.on { font-weight: 600; border-bottom-style: solid; }
+details.twin .lang-py { display: none; }
+details.twin.show-py .lang-py { display: block; }
+details.twin.show-py .lang-r { display: none; }
+</style>
+<script>
+document.querySelectorAll("details.twin > summary a.lang").forEach(function (a) {
+  a.addEventListener("click", function (e) {
+    e.preventDefault(); e.stopPropagation();
+    var d = a.closest("details"); var py = a.dataset.lang === "py";
+    if (d.open && d.classList.contains("show-py") === py) { d.open = false; return; }
+    d.open = true; d.classList.toggle("show-py", py);
+    d.querySelectorAll("summary a.lang").forEach(function (x) { x.classList.toggle("on", x === a); });
+  });
+});
+</script>
+```
