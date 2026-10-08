@@ -171,6 +171,7 @@ BSZ side of California Proposition 40:
 <tr><td style="padding:6px;"><b><a href="#part-rows">3. Alternative scenarios</a></b></td><td style="padding:6px;">Missing billionaires, and who may have left</td></tr>
 <tr><td style="padding:6px;"><b><a href="#part-guess">4. What is guesswork</a></b></td><td style="padding:6px;">Every input by origin, and how far each guess moves the result</td></tr>
 <tr><td style="padding:6px;"><b><a href="#part-repro">5. What reproduces</a></b></td><td style="padding:6px;">Tests, mismatches found, and what is not checked</td></tr>
+<tr><td style="padding:6px;"><b><a href="#bottom-line">6. The bottom line</a></b></td><td style="padding:6px;">Wealth tax collected, extra income tax, and income tax lost, for every scenario</td></tr>
 </table>
 
 .blue-box[
@@ -505,3 +506,32 @@ paper says. It cannot show the inputs are right, and it cannot settle the guesse
 
 .small[[Materials page](../materials.html) &middot; [report, what reproduces](../repro.html#what-reproduces)]
 ]
+
+---
+name: bottom-line
+
+# What the tax collects, and what it costs
+
+```{r bottom-line-tab}
+lab <- c("Benchmark", "Missing billionaires", "Leavers", "Missing billionaires + leavers")
+d <- data.frame(
+  Scenario = paste0(lab, " (row ", 1:4, ")"),
+  wt = paste0("$", bn(t5$wealth_tax_revenue, 1), "B"),
+  it = paste0("+$", bn(t5$extra_ca_inctax_sales, 2), "B"),
+  lo = paste0("&minus;$", bn(-t5$annual_ca_inctax_loss, 2), "B"))
+d[1, ] <- paste0("<b>", d[1, ], "</b>")
+knitr::kable(d, format = "html", escape = FALSE, align = "lrrr",
+  col.names = c("Table 5 scenario", "Wealth tax collected<br>(once)",
+                "Extra income tax from selling assets<br>(once)",
+                "Income tax lost<br>(every year)"))
+```
+
+.highlight-box[
+The first two columns are collected **once** (the wealth tax in five yearly installments). The
+loss recurs **every year** the leavers stay away. At BSZ's horizon of about 5 years the benchmark
+loses $`r bn(-5 * t5$annual_ca_inctax_loss[1], 2)` billion in total; the
+[RJKDC report](../../../rjkdc-analysis/site/) counts it forever.
+]
+
+.small[Wealth tax: [Steps 1 to 3](#part-steps). Extra income tax: [Step 4](#step-4). Income tax
+lost: [Step 5](#step-5-who).]
