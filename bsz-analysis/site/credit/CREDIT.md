@@ -23,12 +23,12 @@ The raw answers are in `credit-answers.json`, the file this page and the landing
 | Project administration | N/A | N/A | N/A | N/A | N/A |
 | Resources | N/A | N/A | N/A | N/A | N/A |
 | Software | AI (lead) | AI (lead) | AI (lead) | AI (lead) | AI (lead) |
-| Supervision | AI (lead) | AI (lead) | Human (lead) | AI (lead) | AI (lead) |
+| Supervision | Human (lead) | AI (lead) | Human (lead) | AI (lead) | AI (lead) |
 | Validation | AI (lead) | AI (lead) | AI (lead) | AI (lead) | AI (lead) |
 | Visualization | AI (lead) | AI (lead) | Human (lead) | AI (lead) | AI (lead) |
 | Writing – original draft | AI (lead) | AI (lead) | AI (lead) | AI (lead) | AI (lead) |
-| Writing – review & editing | AI (lead) | AI (lead) | Equal | AI (lead) | AI (lead) |
-| **Human verification** | Lightly checked | Lightly checked | Understood | No human review | Lightly checked |
+| Writing – review & editing | Human (lead) | AI (lead) | Equal | AI (lead) | AI (lead) |
+| **Human verification** | Understood | Lightly checked | Understood | No human review | Lightly checked |
 
 Human only / AI only: one side did the role and the other was not involved. Human (lead) / AI (lead): that side led and the other supported. Equal: both contributed equally. N/A: no one did this for the object.
 
@@ -38,9 +38,11 @@ Amended 2026-10-01 at the author's request: Conceptualization changed from Equal
 
 Amended 2026-10-07 at the author's request, Slides only: Visualization and Supervision changed to Human (lead), Writing – review & editing to Equal, and Human verification to Understood. The author directed the deck's figures, scenario names, wording and order, and reviewed it slide by slide.
 
+Amended 2026-10-07 at the author's request, Explorer only: Supervision and Writing – review & editing changed to Human (lead), and Human verification to Understood; Visualization stays AI (lead). The author directed the switch to the main estimate as the output and the page's wording, and reviewed it.
+
 ## Statements by object
 
-**Explorer.** Fernando Hoces de la Guardia: Conceptualization (lead), Software (supporting), Supervision (supporting), Validation (supporting), Visualization (supporting), Writing – original draft (supporting), Writing – review & editing (supporting). Claude Code (Opus, Sonnet): Conceptualization (supporting), Data curation (only), Formal analysis (only), Investigation (only), Methodology (only), Software (lead), Supervision (lead), Validation (lead), Visualization (lead), Writing – original draft (lead), Writing – review & editing (lead). Human verification: lightly checked.
+**Explorer.** Fernando Hoces de la Guardia: Conceptualization (lead), Software (supporting), Supervision (lead), Validation (supporting), Visualization (supporting), Writing – original draft (supporting), Writing – review & editing (lead). Claude Code (Opus, Sonnet): Conceptualization (supporting), Data curation (only), Formal analysis (only), Investigation (only), Methodology (only), Software (lead), Supervision (supporting), Validation (lead), Visualization (lead), Writing – original draft (lead), Writing – review & editing (supporting). Human verification: understood.
 
 **Report.** Fernando Hoces de la Guardia: Conceptualization (lead), Software (supporting), Supervision (supporting), Validation (supporting), Visualization (supporting), Writing – original draft (supporting), Writing – review & editing (supporting). Claude Code (Opus, Sonnet): Conceptualization (supporting), Data curation (only), Formal analysis (only), Investigation (only), Methodology (only), Software (lead), Supervision (lead), Validation (lead), Visualization (lead), Writing – original draft (lead), Writing – review & editing (lead). Human verification: lightly checked.
 
