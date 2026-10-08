@@ -734,8 +734,9 @@ name: bottom-line
   &lt;tr&gt;
    &lt;th style=&quot;text-align:left;&quot;&gt; Table 5 scenario &lt;/th&gt;
    &lt;th style=&quot;text-align:right;&quot;&gt; Wealth tax collected&lt;br&gt;(once) &lt;/th&gt;
-   &lt;th style=&quot;text-align:right;&quot;&gt; Extra income tax from selling assets&lt;br&gt;(once) &lt;/th&gt;
-   &lt;th style=&quot;text-align:right;&quot;&gt; Income tax lost&lt;br&gt;(every year) &lt;/th&gt;
+   &lt;th style=&quot;text-align:right;&quot;&gt; Extra income tax from selling assets (once) &lt;/th&gt;
+   &lt;th style=&quot;text-align:right;&quot;&gt; Income tax lost, present value&lt;br&gt;if it lasts 5 years (BSZ) &lt;/th&gt;
+   &lt;th style=&quot;text-align:right;&quot;&gt; Income tax lost, present value&lt;br&gt;if it lasts forever (RJKDC report) &lt;/th&gt;
   &lt;/tr&gt;
  &lt;/thead&gt;
 &lt;tbody&gt;
@@ -743,34 +744,38 @@ name: bottom-line
    &lt;td style=&quot;text-align:left;&quot;&gt; &lt;b&gt;Benchmark (row 1)&lt;/b&gt; &lt;/td&gt;
    &lt;td style=&quot;text-align:right;&quot;&gt; &lt;b&gt;$103.8B&lt;/b&gt; &lt;/td&gt;
    &lt;td style=&quot;text-align:right;&quot;&gt; &lt;b&gt;+$3.68B&lt;/b&gt; &lt;/td&gt;
-   &lt;td style=&quot;text-align:right;&quot;&gt; &lt;b&gt;&amp;minus;$0.15B&lt;/b&gt; &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; &lt;b&gt;&amp;minus;$0.70B&lt;/b&gt; &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; &lt;b&gt;&amp;minus;$5.61B&lt;/b&gt; &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style=&quot;text-align:left;&quot;&gt; Missing billionaires (row 2) &lt;/td&gt;
    &lt;td style=&quot;text-align:right;&quot;&gt; $127.9B &lt;/td&gt;
    &lt;td style=&quot;text-align:right;&quot;&gt; +$4.53B &lt;/td&gt;
-   &lt;td style=&quot;text-align:right;&quot;&gt; &amp;minus;$0.20B &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; &amp;minus;$0.90B &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; &amp;minus;$7.19B &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style=&quot;text-align:left;&quot;&gt; Leavers (row 3) &lt;/td&gt;
    &lt;td style=&quot;text-align:right;&quot;&gt; $88.8B &lt;/td&gt;
    &lt;td style=&quot;text-align:right;&quot;&gt; +$3.15B &lt;/td&gt;
-   &lt;td style=&quot;text-align:right;&quot;&gt; &amp;minus;$0.52B &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; &amp;minus;$2.36B &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; &amp;minus;$18.88B &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style=&quot;text-align:left;&quot;&gt; Missing billionaires + leavers (row 4) &lt;/td&gt;
    &lt;td style=&quot;text-align:right;&quot;&gt; $114.8B &lt;/td&gt;
    &lt;td style=&quot;text-align:right;&quot;&gt; +$4.07B &lt;/td&gt;
-   &lt;td style=&quot;text-align:right;&quot;&gt; &amp;minus;$0.56B &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; &amp;minus;$2.56B &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; &amp;minus;$20.46B &lt;/td&gt;
   &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 
 .highlight-box[
-The first two columns are collected **once** (the wealth tax in five yearly installments). The
-loss recurs **every year** the leavers stay away. At BSZ&#39;s horizon of about 5 years the benchmark
-loses $0.77 billion in total; the
-[RJKDC report](../../../rjkdc-analysis/site/) counts it forever.
+The income tax loss recurs every year the leavers stay away, so it is shown as a **present value**:
+each year&#39;s loss ($0.153B for the benchmark) discounted at 1.5% to 4.5% a year,
+the [RJKDC report](../../../rjkdc-analysis/site/)&#39;s range (BSZ give no rate), as on the
+[reconciliation page](../../../index.html).
 ]
 
 .small[Wealth tax: [Steps 1 to 3](#part-steps). Extra income tax: [Step 4](#step-4). Income tax

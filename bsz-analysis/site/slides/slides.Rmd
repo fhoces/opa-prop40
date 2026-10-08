@@ -513,24 +513,35 @@ name: bottom-line
 # What the tax collects, and what it costs
 
 ```{r bottom-line-tab}
+# Present value of the yearly loss, as on the reconciliation page (comparison/R/model.R):
+# loss x E_r[annuity(r, H)], r ~ U[1.5%, 4.5%]. The annuity factors are read from the
+# comparison export and checked against its own present values for rows 1 and 3.
+ls_ <- read.csv("../../../comparison/export/r/loss.csv")
+f5  <- with(ls_[ls_$source_id == "lao_upper", ], pv_5yr / annual_loss)
+fin <- with(ls_[ls_$source_id == "lao_upper", ], pv_perpetuity / annual_loss)
+loss <- -t5$annual_ca_inctax_loss
+stopifnot(abs(loss[1] * f5  - ls_$pv_5yr[ls_$source_id == "bsz_row1"]) < 1e-9,
+          abs(loss[3] * fin - ls_$pv_perpetuity[ls_$source_id == "bsz_row3"]) < 1e-9)
 lab <- c("Benchmark", "Missing billionaires", "Leavers", "Missing billionaires + leavers")
 d <- data.frame(
   Scenario = paste0(lab, " (row ", 1:4, ")"),
   wt = paste0("$", bn(t5$wealth_tax_revenue, 1), "B"),
   it = paste0("+$", bn(t5$extra_ca_inctax_sales, 2), "B"),
-  lo = paste0("&minus;$", bn(-t5$annual_ca_inctax_loss, 2), "B"))
+  l5 = paste0("&minus;$", bn(loss * f5, 2), "B"),
+  li = paste0("&minus;$", bn(loss * fin, 2), "B"))
 d[1, ] <- paste0("<b>", d[1, ], "</b>")
-knitr::kable(d, format = "html", escape = FALSE, align = "lrrr",
+knitr::kable(d, format = "html", escape = FALSE, align = "lrrrr",
   col.names = c("Table 5 scenario", "Wealth tax collected<br>(once)",
-                "Extra income tax from selling assets<br>(once)",
-                "Income tax lost<br>(every year)"))
+                "Extra income tax from selling assets (once)",
+                "Income tax lost, present value<br>if it lasts 5 years (BSZ)",
+                "Income tax lost, present value<br>if it lasts forever (RJKDC report)"))
 ```
 
 .highlight-box[
-The first two columns are collected **once** (the wealth tax in five yearly installments). The
-loss recurs **every year** the leavers stay away. At BSZ's horizon of about 5 years the benchmark
-loses $`r bn(-5 * t5$annual_ca_inctax_loss[1], 2)` billion in total; the
-[RJKDC report](../../../rjkdc-analysis/site/) counts it forever.
+The income tax loss recurs every year the leavers stay away, so it is shown as a **present value**:
+each year's loss (`r paste0("$", bn(loss[1], 3), "B")` for the benchmark) discounted at 1.5% to 4.5% a year,
+the [RJKDC report](../../../rjkdc-analysis/site/)'s range (BSZ give no rate), as on the
+[reconciliation page](../../../index.html).
 ]
 
 .small[Wealth tax: [Steps 1 to 3](#part-steps). Extra income tax: [Step 4](#step-4). Income tax
