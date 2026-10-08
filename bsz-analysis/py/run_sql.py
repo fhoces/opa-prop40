@@ -34,6 +34,8 @@ EXPORT_ORDER = {
     "vm_annual": "year",
     "vm_quarterly_state": "state, year, quarter, deal_count, deal_value",
     "vm_quarterly": "year, quarter",
+    "form4_gvkey_link": "issuer_cik, gvkey, iid",
+    "form4_compustat": "out_order",
 }
 
 

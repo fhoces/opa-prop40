@@ -511,6 +511,138 @@ def load_vm_state_cells(con, root):
          ("value", "REAL")], rows)
 
 
+def _template_files(key, field, digits):
+    """Files matching a private-paths template with one {field} placeholder."""
+    template = str(private_file(key))
+    pattern = re.compile(re.escape(template).replace(r"\{" + field + r"\}", rf"(\d{{{digits}}})") + "$")
+    hits = []
+    for p in sorted(Path(template).parent.iterdir()):
+        m = pattern.match(str(p))
+        if m:
+            hits.append((m.group(1), p))
+    return hits
+
+
+def _text_asis(v):
+    # base R's read.csv() keeps text as written (no trimming); empty to NULL.
+    return v if v != "" else None
+
+
+# ---------------------------------------------------------------------------
+# Compustat North America daily securities, one snapshot file per year (one
+# trading day in January, 2004 to 2026), every listed security that day.
+# Source: key comp_daily_snapshots in data-raw/private-paths.csv, a path
+# template with a {date} placeholder (8 digits). Only the columns the link
+# step uses are loaded. snap_order numbers the files from the newest (1) to
+# the oldest, the order in which the authors stack them; the link step keeps
+# the values of the last row in that order, i.e. the oldest snapshot.
+# ---------------------------------------------------------------------------
+SNAP_COLS = [("tic", "TEXT"), ("datadate", "TEXT"), ("conm", "TEXT"), ("cik", "INTEGER"),
+             ("cusip", "TEXT"), ("gvkey", "INTEGER"), ("iid", "TEXT"), ("curcdd", "TEXT")]
+
+
+def load_comp_daily_snapshots(con, root):
+    files = sorted(_template_files("comp_daily_snapshots", "date", 8), reverse=True)
+    if not files:
+        raise FileNotFoundError("no Compustat snapshot files matched the template")
+
+    def rows():
+        for order, (_, p) in enumerate(files, start=1):
+            with open(p, newline="", encoding="utf-8", errors="replace") as f:
+                reader = csv.reader(f)
+                header = next(reader)
+                idx = [header.index(c) for c, _ in SNAP_COLS]
+                for i, r in enumerate(reader, start=1):
+                    yield [order, i] + [
+                        (_int(r[j]) if t == "INTEGER" else _text_asis(r[j]))
+                        for j, (_, t) in zip(idx, SNAP_COLS)]
+
+    print(f"  Compustat snapshots: {len(files)} files")
+    return _create_and_insert(con, "comp_daily_snapshots",
+                              [("snap_order", "INTEGER"), ("row_num", "INTEGER")] + SNAP_COLS,
+                              rows())
+
+
+# ---------------------------------------------------------------------------
+# Issuer to Compustat security fixes for the Form 4 link step.
+# Source: data-raw/form4-gvkey-fixes.csv, gitignored because its rows come
+# from the confidential bundle; schema in form4-gvkey-fixes.example.csv.
+# ---------------------------------------------------------------------------
+def load_form4_gvkey_fixes(con, root):
+    out, seen = [], set()
+    for r in read_private_config("form4-gvkey-fixes.csv"):
+        stage = r.get("stage") or ""
+        if stage not in ("cik_match", "manual"):
+            raise ValueError(f"form4-gvkey-fixes.csv: bad stage {stage!r}")
+        key = (stage, int(r["issuer_cik"]))
+        if key in seen:
+            raise ValueError(f"form4-gvkey-fixes.csv: {key} listed twice")
+        seen.add(key)
+        out.append((stage, int(r["issuer_cik"]), int(r["gvkey"]), r["iid"], r.get("note") or None))
+    return _create_and_insert(
+        con, "form4_gvkey_fixes",
+        [("stage", "TEXT"), ("issuer_cik", "INTEGER"), ("gvkey", "INTEGER"), ("iid", "TEXT"),
+         ("note", "TEXT")], out)
+
+
+# ---------------------------------------------------------------------------
+# Compustat North America daily securities, every trading day since mid-2003
+# Source: key comp_daily_prices in data-raw/private-paths.csv. The file holds
+# about 11 GB of text (it may be a zip archive with one CSV inside; both are
+# read as a stream). Loading it whole would make a database of several GB, so
+# this loader keeps only the securities the Form 4 link step found: the
+# gvkeys in table form4_gvkey_list, which sql/07_form4_gvkey_link.sql writes.
+# Run that query first. This is the same filter the authors apply right after
+# reading the file. The gvkey is the last field of each line and never quoted,
+# so a line is parsed in full only when its gvkey is on the list.
+# ---------------------------------------------------------------------------
+DAILY_TYPES = {"cik": "TEXT", "exchg": "REAL", "adrrc": "REAL", "ajexdi": "REAL",
+               "cshoc": "REAL", "dvi": "REAL", "prccd": "REAL", "gvkey": "INTEGER"}
+
+
+def load_comp_daily_form4(con, root):
+    import io
+    import zipfile
+
+    try:
+        wanted = {g for (g,) in con.execute("SELECT gvkey_text FROM form4_gvkey_list")}
+    except sqlite3.OperationalError:
+        raise RuntimeError("table form4_gvkey_list missing: run "
+                           "py/run_sql.py sql/07_form4_gvkey_link.sql first") from None
+    path = private_file("comp_daily_prices")
+    if zipfile.is_zipfile(path):
+        z = zipfile.ZipFile(path)
+        members = z.infolist()
+        if len(members) != 1:
+            raise ValueError(f"{path.name}: expected one file in the archive")
+        stream = io.TextIOWrapper(z.open(members[0]), encoding="utf-8", errors="replace",
+                                  newline="")
+    else:
+        stream = open(path, newline="", encoding="utf-8", errors="replace")
+    with stream:
+        header = next(csv.reader([stream.readline()]))
+        if header[-1] != "gvkey":
+            raise ValueError(f"{path.name}: gvkey is not the last column")
+        columns = [("row_num", "INTEGER")] + [(c, DAILY_TYPES.get(c, "TEXT")) for c in header]
+        casts = [(_int if t == "INTEGER" else _real if t == "REAL" else _text)
+                 for _, t in columns[1:]]
+
+        def rows():
+            seen = 0
+            for i, line in enumerate(stream, start=1):
+                g = line.rstrip("\r\n").rsplit(",", 1)[-1]
+                if g not in wanted:
+                    continue
+                r = next(csv.reader([line]))
+                seen += 1
+                yield [i] + [c(v) for c, v in zip(casts, r)]
+            print(f"  Compustat daily: {i:,} lines read, {seen:,} kept")
+
+        n = _create_and_insert(con, "comp_daily_form4", columns, rows())
+    con.execute("CREATE INDEX idx_comp_daily_form4 ON comp_daily_form4 (gvkey, iid, datadate)")
+    return n
+
+
 # One entry per table. Later queries add their inputs here.
 LOADERS = {
     "rtb_all_combined": load_rtb_all_combined,
@@ -524,11 +656,20 @@ LOADERS = {
     "forbes_global_8810": load_forbes_global_8810,
     "forbes_name_ids": load_forbes_name_ids,
     "vm_state_cells": load_vm_state_cells,
+    "comp_daily_snapshots": load_comp_daily_snapshots,
+    "form4_gvkey_fixes": load_form4_gvkey_fixes,
+    # Needs table form4_gvkey_list (sql/07_form4_gvkey_link.sql), so it is
+    # loaded only when named: python py/load_bundle.py comp_daily_form4
+    "comp_daily_form4": load_comp_daily_form4,
 }
+
+# Loaded by a bare `python py/load_bundle.py` (every table but the ones that
+# depend on a query's output).
+DEFAULT_TABLES = [t for t in LOADERS if t != "comp_daily_form4"]
 
 
 def main(argv):
-    wanted = argv or list(LOADERS)
+    wanted = argv or DEFAULT_TABLES
     unknown = [t for t in wanted if t not in LOADERS]
     if unknown:
         sys.exit(f"Unknown table(s): {', '.join(unknown)}. Known: {', '.join(LOADERS)}")

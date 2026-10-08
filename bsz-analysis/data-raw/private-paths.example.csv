@@ -16,4 +16,10 @@
 #   vm_annual_key               answer keys of query 6
 #   vm_quarterly_state_key
 #   vm_quarterly_key
+#   comp_daily_snapshots      path template of the yearly Compustat daily snapshots,
+#                             with a {date} placeholder (8 digits), input of query 7
+#   comp_daily_prices         the Compustat daily file (CSV or a zip with one CSV),
+#                             loaded after query 7, input of query 8
+#   form4_gvkey_list_key      the authors' list of gvkeys (text), answer key of query 7
+#   form4_compustat_key       the authors' Form 4 file with prices (xlsx), answer key of query 8
 key,path

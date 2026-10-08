@@ -1,0 +1,13 @@
+# Schema of data-raw/form4-gvkey-fixes.csv, which is gitignored: the real rows
+# come from the authors' build code in the confidential bundle. Lines starting
+# with # are skipped by py/load_bundle.py. Read by sql/07_form4_gvkey_link.sql.
+#   stage       cik_match  replaces a security found by CIK alone (a wrong
+#                          match, typically the issuer's successor company)
+#               manual     gives a security to an issuer that no rule matched
+#                          (typically an old CIK of a renamed or merged issuer)
+#   issuer_cik  the issuer's SEC CIK, as a number without leading zeros
+#   gvkey       Compustat company key, as a number
+#   iid         Compustat issue id within the company, two characters ("01")
+#   note        free text: why
+# One row per (stage, issuer_cik).
+stage,issuer_cik,gvkey,iid,note

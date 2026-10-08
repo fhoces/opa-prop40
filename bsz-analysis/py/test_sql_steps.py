@@ -100,6 +100,24 @@ def test_venture_monitor():
     assert (first, last) == (20181, 20262)
 
 
+FORM4_INPUTS = ["form4_raw", "form4_forbes_cik", "form4_price_corrections"]
+
+
+def test_form4_compustat():
+    con = _connect(["04_form4_clean.sql", "07_form4_gvkey_link.sql", "08_form4_compustat.sql"],
+                   FORM4_INPUTS + ["comp_daily_snapshots", "form4_gvkey_fixes",
+                                   "comp_daily_form4"])
+    (n_link, n_linked) = con.execute(
+        "SELECT COUNT(*), COUNT(gvkey) FROM form4_gvkey_link").fetchone()
+    (n_list,) = con.execute("SELECT COUNT(*) FROM form4_gvkey_list").fetchone()
+    (n, no_price, no_sec) = con.execute(
+        "SELECT COUNT(*), SUM(prccd IS NULL), SUM(gvkey IS NULL) FROM form4_compustat").fetchone()
+    con.close()
+    assert (n_link, n_linked, n_list) == (276, 270, 262)
+    # The authors' file: 198,654 trades, 165 without a price, 23 without a security.
+    assert (n, no_price, no_sec) == (198_654, 165, 23)
+
+
 if __name__ == "__main__":
     pytest = None  # plain run: report skips here instead of raising pytest's
     failed = 0

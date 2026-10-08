@@ -64,3 +64,16 @@ test_that("query 6 builds the venture monitor panels", {
   expect_equal(.steps_one(con, "SELECT MIN(year * 10 + quarter) FROM vm_quarterly"), 20181)
   expect_equal(.steps_one(con, "SELECT MAX(year * 10 + quarter) FROM vm_quarterly"), 20262)
 })
+
+test_that("queries 7 and 8 join the Form 4 trades to daily prices", {
+  con <- .steps_connect(c("04_form4_clean.sql", "07_form4_gvkey_link.sql", "08_form4_compustat.sql"),
+                        c("form4_raw", "form4_forbes_cik", "form4_price_corrections",
+                          "comp_daily_snapshots", "form4_gvkey_fixes", "comp_daily_form4"))
+  on.exit(DBI::dbDisconnect(con), add = TRUE)
+  link <- DBI::dbGetQuery(con, "SELECT COUNT(*) AS n, COUNT(gvkey) AS linked FROM form4_gvkey_link")
+  expect_equal(c(link$n, link$linked), c(276, 270))
+  expect_equal(.steps_one(con, "SELECT COUNT(*) FROM form4_gvkey_list"), 262)
+  got <- DBI::dbGetQuery(con, "SELECT COUNT(*) AS n, SUM(prccd IS NULL) AS no_price, SUM(gvkey IS NULL) AS no_sec FROM form4_compustat")
+  # The authors' file: 198,654 trades, 165 without a price, 23 without a security.
+  expect_equal(unname(unlist(got)), c(198654, 165, 23))
+})

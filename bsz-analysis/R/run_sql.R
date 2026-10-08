@@ -35,7 +35,9 @@
   vm_annual_state = "state, year, deal_count, deal_value",
   vm_annual = "year",
   vm_quarterly_state = "state, year, quarter, deal_count, deal_value",
-  vm_quarterly = "year, quarter"
+  vm_quarterly = "year, quarter",
+  form4_gvkey_link = "issuer_cik, gvkey, iid",
+  form4_compustat = "out_order"
 )
 
 # Split SQL text into statements at each `;` that is real code.

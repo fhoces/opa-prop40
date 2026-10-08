@@ -243,6 +243,38 @@ rows, as in the authors' four outputs; max relative difference 4.1e-15.
 The annual and quarterly sums and the California shares equal the public
 sheets (21 and 34 rows, 3e-15). R and Python exports are identical.
 
+## Queries 7 and 8: Form 4 trades to Compustat daily prices
+
+`07_form4_gvkey_link.sql` links each Form 4 issuer (SEC CIK and ticker) to a
+Compustat security (gvkey and iid): by CIK and ticker, then by CIK alone
+(preferring a security whose Compustat years overlap the issuer's Form 4
+years), then through a gitignored table of hand-checked fixes,
+`data-raw/form4-gvkey-fixes.csv` (schema in the `.example.csv`). Its last
+table lists the linked gvkeys. The daily price file is 11 GB of text, so
+`python py/load_bundle.py comp_daily_form4` streams it and keeps only those
+securities (about 1 million of 108 million rows, in under a minute).
+`08_form4_compustat.sql` then gives each trade the closing price, shares
+outstanding and split factor of its security on the trade date, or on the
+next trading day with a row when the date has none.
+
+Order: `04_form4_clean.sql`, `07_form4_gvkey_link.sql`, the
+`comp_daily_form4` loader, `08_form4_compustat.sql`.
+
+| Block | What it does | Course module | Beyond the course |
+|---|---|---|---|
+| 07 Q1 `form4_sec_issuers` | One row per issuer: last name and ticker in file order, first and last year | 3 (GROUP BY, `MIN`, `MAX`), 4 (CTE), 5 (`ROW_NUMBER ... ORDER BY ... DESC` for "last") | `UPPER`; `CAST` of text with leading zeros |
+| 07 Q2 `form4_comp_secs` | One row per USD Compustat security, with the values of its oldest snapshot | 1 (WHERE), 3 (GROUP BY), 4 (CTE), 5 (`ROW_NUMBER`) | |
+| 07 Q3 `form4_gvkey_link` | CIK and ticker match, then CIK-only with the overlap preference, then the fixes | 2 (JOIN, LEFT JOIN), 4 (CTE chain, `UNION ALL`, `NOT IN (SELECT ...)`), 5 (`ROW_NUMBER` to pick one row), 1 (`CASE WHEN`, `COALESCE`) | ORDER BY a true/false expression to put NULLs last |
+| 07 Q4 `form4_gvkey_list` | The distinct linked gvkeys, as 6-digit text | 1 (`DISTINCT`) | `printf('%06d', x)` |
+| 08 Q1 `form4_sec_gvkey` | Trades with their security, from 2003-06-30 | 2 (LEFT JOIN), 5 (`ROW_NUMBER` as a row id) | comparing ISO dates as text |
+| 08 Q2 `form4_compustat` | Price on the trade date, else on the next date with a row; unpriced trades kept | 2 (LEFT JOIN on three keys), 3 (GROUP BY with `MIN`), 4 (CTE chain, `UNION ALL`), 5 (`ROW_NUMBER`) | a `>=` join condition ("first date on or after"); `CAST(NULL AS ...)` |
+
+Check (`py/check_form4_compustat.py`, 2026-10-07): the 262 gvkeys equal the
+authors' own list. 198,654 trades, as in the authors' file; 165 without a
+price and 23 without a security, as there; every cell equal (max relative
+difference 6e-16) except the Forbes id of query 4's 34 vintage-gap rows. R
+and Python exports are identical.
+
 ## Later queries (planned)
 
 The Compustat-based steps. See `PLAN-2-raw-to-workbook.md` at
