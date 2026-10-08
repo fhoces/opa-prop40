@@ -1,25 +1,24 @@
 # OPA audit baseline, 2026-09-23
 
 Scored against the BITSS OPA Guidelines (2019), nine steps, levels 0 to 3, baseline
-`8c904f5`, updated through `15b08d5`. Level wording is quoted from the Guidelines. One vector per page, then the fixes
+`8c904f5`, updated through `15b08d5`; the publication status and the BSZ step 1 evidence were updated
+on 2026-10-08. Level wording is quoted from the Guidelines. One vector per page, then the fixes
 with the most credibility per unit of effort.
 
-## The condition that governs every row: nothing is published yet
+## Publication
 
-The repository `fhoces/opa-prop40` is **private** and GitHub Pages is **not enabled**
-(`gh api repos/fhoces/opa-prop40/pages` returns 404). As things stand, no reader can see the
-explorer, the reports, the code or the data. **Every step that requires sharing (1 to 5, and 8
-at level 1 "through a trusted repository") is therefore Level 0 today**, and so is the headline
-level. Step 9 alone holds (git plus a shared GitHub repository).
+The repository `fhoces/opa-prop40` has been **public** since 2026-10-01, and GitHub Pages serves
+the sites at https://fhoces.github.io/opa-prop40/. Readers can see the explorers, the reports,
+the code and the data. The vectors below are the levels the pages earn today.
 
-The vectors below are the levels the pages earn **once the repository is public and the sites
-are served**. Nothing else needs to change for them to hold.
+When this audit was first written, the repository was private and Pages was not enabled. Every
+step that requires sharing (1 to 5, and 8 at level 1) was then Level 0, and so was the headline.
 
 ## BSZ OPA (`bsz-analysis/`)
 
 | # | Step | Level | Evidence | What the next level needs |
 |---|---|---|---|---|
-| 1 | Unified output | 1 | "One table or graph is highlighted as the best reflection": the preferred-estimate box (Table 5 row 1, benchmark) in `site/explorer/index.html`, generated from `G.preferred` in `site/explorer/grid.js` | Level 2 needs "a sample output published pre-release". The output was fixed in `PLAN.md` (`0b07ce7`, "Pre-specified output") and pushed in `9adcd2f` before any RJKDC result, but only to a private repo, and after this side's own reproduction (imported from May). Publish the spec before the next round's results |
+| 1 | Unified output | 1 | "One table or graph is highlighted as the best reflection": the main estimate in `site/explorer/index.html` (Table 5 row 1, base scenario: wealth tax plus extra income tax from sales minus income tax lost to leavers, present value over 5 years at 3%), drawn under the bars with its definition and a footnote that it is not the authors' choice (lines 231-232). It replaced a preferred-estimate box (`c1c411c`, `b646791`) | Level 2 needs "a sample output published pre-release". The output was fixed in `PLAN.md` (`0b07ce7`, "Pre-specified output") and pushed in `9adcd2f` before any RJKDC result, but only to a private repo, and after this side's own reproduction (imported from May). Publish the spec before the next round's results |
 | 2 | Input-output link | 3 | "An interactive tool allowing for adjusted inputs is provided, and its underlying code shares the same key sections of code behind the analysis section": the 6-dial explorer's grid is computed by `score_tab5_cell()` in `R/compute_tab5.R`, the function `compute_tab5()` itself uses for the reproduction (commit `6219268`; `test-site.R` asserts both call it) | None (top level) |
 | 3 | Methodological accounts | 3 | "Code is clearly documented into a dynamic document": `site/repro.qmd` (knitr, folded code, every number computed) | None (top level) |
 | 4 | Data | 3 | Analytic data in the repo (`site/data/*.csv`, `export/r/*.csv`; `outputs/` is generated and gitignored). The raw workbook is not redistributed, but `DATA-SOURCES.csv` gives the URL, date and SHA-256, and `site/materials.qmd` gives the download command | None. Note that the author-shared bundle is confidential and not used by anything published |
@@ -62,15 +61,14 @@ on the comparison layer itself.
 
 ## Headline
 
-- **Today: Level 0** on every page, because nothing is public.
-- **On publication: Level 1** for all three pages (the minimum across steps; step 1 sets it
-  everywhere). Vectors: BSZ `1-3-3-3-3-3-3-2-3`, RJKDC `1-3-3-3-3-3-3-2-3`,
+- **Level 1** for all three pages (the minimum across steps; step 1 sets it everywhere).
+  Before the repository went public on 2026-10-01, every page was Level 0. Vectors: BSZ `1-3-3-3-3-3-3-2-3`, RJKDC `1-3-3-3-3-3-3-2-3`,
   reconciliation `1-3-2-2-2-3-3-2-3`.
 
 ## Best credibility per unit of effort
 
-1. **Make the repository public and turn on Pages.** One setting takes every page from 0 to its
-   vector above. The pre-publication sweep (2026-09-23) of the tree and the full history found no
+1. **Make the repository public and turn on Pages.** Done 2026-10-01, which took every page from
+   Level 0 to its vector above. The pre-publication sweep (2026-09-23) of the tree and the full history found no
    paper, workbook or author-shared file ever committed (`original-materials/` is ignored), no
    credentials, and no author email. The one blocker it found, two RPubs claim URLs with tokens in
    `rsconnect/*.dcf` (untracked in `7cceb73`), was cleared on 2026-09-24 by removing those files

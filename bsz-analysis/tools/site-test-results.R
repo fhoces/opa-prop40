@@ -4,7 +4,8 @@
 #   Rscript tools/site-test-results.R      (from bsz-analysis/)
 #
 # The CSV records the vintage, the date and the per-block expectation counts,
-# so the counts published on the site are the output of a run, not typed.
+# so the counts published on the site are the output of a run, not typed. It then
+# rewrites the count block in README.md from the same CSV (tools/readme-test-counts.R).
 
 suppressMessages(library(testthat))
 if (!dir.exists("R")) stop("Run from bsz-analysis/ (the directory containing R/).")
@@ -33,3 +34,7 @@ utils::write.csv(out, path, row.names = FALSE)
 cat(sprintf("%s: %d passed, %d failed, %d skipped, %d test blocks -> %s\n",
             bsz_vintage(), sum(out$passed), sum(out$failed), sum(out$skipped),
             nrow(out), path))
+
+# The README's count block, from the CSV just written.
+source(file.path("tools", "readme-test-counts.R"))
+readme_test_counts(path)

@@ -167,7 +167,7 @@ bsz-analysis/
 │   ├── testthat.R                        # entry point
 │   ├── snapshots/{august,may}/*.rds      # 34 golden-master outputs per vintage (committed)
 │   ├── snapshot_regenerate.R             # re-baseline script (run on intentional change)
-│   └── testthat/                         # 701 expectations across 11 files (August)
+│   └── testthat/                         # the test files (counts: see Verification approach)
 ├── tools/site-test-results.R             # runs the suite, writes site/data/test-results.csv
 ├── tools/py-parity.R                     # R vs Python parity report, export/py/parity.csv
 ├── site/                                 # the OPA site: explorer/, repro.qmd, slides/, materials.qmd
@@ -352,7 +352,7 @@ Rscript -e 'install.packages(c(
 # 4. Build the pipeline (all targets + Quarto report):
 Rscript -e 'targets::tar_make()'
 
-# 5. Run the test suite (701 expectations on the August vintage):
+# 5. Run the test suite (counts: see Verification approach below):
 Rscript tests/testthat.R
 #    or, to also write site/data/test-results.csv for the materials page:
 Rscript tools/site-test-results.R
@@ -374,20 +374,27 @@ Rscript -e 'targets::tar_make(names = -c(report_html, report_pdf))'
 Every `compute_*` R function is paired with a `testthat` block that reads the
 corresponding Excel sheet's cached values via `read_sheet()` (a thin
 `readxl` wrapper) and asserts element-wise equality within a documented
-tolerance. The test count is reported by `Rscript tests/testthat.R`:
+tolerance. The counts below are from the last recorded run (`site/data/test-results.csv`,
+written by `Rscript tools/site-test-results.R`, which also rewrites this block):
 
+<!-- test-counts:start -->
 ```
 compute:      215
 data_sheets:   45
 figures:       76
 ingest_excel:  20
-site:          43       # the explorer runs compute_tab5.R's estimating function; grid.js is the exporter's output
+py-parity:     56
+site:          48       # the explorer runs compute_tab5.R's estimating function; grid.js is the exporter's output
 snapshots:     34       # pin exact output of every exhibit + compute_* fn
+sql:           38
+sql-steps:     18
+sql-workbook:  41
 tables:       121
 verify:         7
               ---
-total:        561       # August vintage, 2026-09-23, 100 test blocks
+total:        719       # August vintage, 2026-10-07, 114 test blocks across 12 files, 0 failed, 0 skipped
 ```
+<!-- test-counts:end -->
 
 The snapshot tests load `tests/snapshots/<vintage>/*.rds` (`august/` or `may/`; committed golden masters of
 every Phase-2 R output and every Phase-3 exhibit) and assert byte-level
