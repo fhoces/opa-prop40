@@ -1,6 +1,6 @@
 ---
 title: "The Net Present Value of the Billionaire Tax Act"
-subtitle: "Teaching deck: the RJKDC side's fiscal score of California Proposition 40 (Rauh et al., SSRN March 2026; Jaros and Rauh, NBER September 2026)"
+subtitle: "Teaching deck: the RJKDC side's fiscal estimate of California Proposition 40 (Rauh et al., SSRN March 2026; Jaros and Rauh, NBER September 2026)"
 output:
   xaringan::moon_reader:
     self_contained: true
@@ -46,7 +46,7 @@ class: center, middle, opa-slide
 # An Open Reproduction
 
 .opa-intro[
-The score of California's Billionaire Tax Act by Rauh, Jaros, Kearney, Doran and Cosso
+The estimate of California's Billionaire Tax Act by Rauh, Jaros, Kearney, Doran and Cosso
 (RJKDC), rebuilt from the authors' own
 code and data and taught step by step, following the
 [Open Policy Analysis](https://tinyurl.com/1qypbihb) framework.
@@ -135,7 +135,7 @@ Part of an Open Policy Analysis of Rauh et al. (2026) on California Proposition 
 
 <table style="width:100%; font-size:85%; border-collapse:collapse;">
 <tr style="background:#e8eaf6;"><th style="text-align:left; padding:6px;">Part</th><th style="text-align:left; padding:6px;">What it covers</th><th style="padding:6px;">Starts at</th></tr>
-<tr><td style="padding:6px;"><b>1. The claim</b></td><td style="padding:6px;">What is being scored, the one equation, the two headline numbers</td><td style="text-align:center;"><a href="#part-claim">go</a></td></tr>
+<tr><td style="padding:6px;"><b>1. The claim</b></td><td style="padding:6px;">What is being estimated, the one equation, the two headline numbers</td><td style="text-align:center;"><a href="#part-claim">go</a></td></tr>
 <tr><td style="padding:6px;"><b>2. The revenue</b></td><td style="padding:6px;">From $94B before anyone leaves to "about $40B" (Sec 4)</td><td style="text-align:center;"><a href="#part-revenue">go</a></td></tr>
 <tr><td style="padding:6px;"><b>3. The income tax</b></td><td style="padding:6px;">How much billionaires pay each year, and why it is a range (Sec 5.1)</td><td style="text-align:center;"><a href="#part-income">go</a></td></tr>
 <tr><td style="padding:6px;"><b>4. For ever</b></td><td style="padding:6px;">The perpetuity, Table 9 and the break-even share (Secs 5.2-5.4)</td><td style="text-align:center;"><a href="#part-forever">go</a></td></tr>
@@ -158,10 +158,10 @@ class: center, middle, inverse
 
 ---
 
-# What is being scored
+# What is being estimated
 
 **Proposition 40** taxes, once, 5% of the net worth of billionaires who lived in California on
-1 January 2026 (payable over five years). Its proponents score it at about 100 bn. (Amounts in this deck are in billions of dollars, "bn".)
+1 January 2026 (payable over five years). Its proponents estimate it at about 100 bn. (Amounts in this deck are in billions of dollars, "bn".)
 
 The RJKDC analysis asks a different question: **is the state better off, counting what it loses?**
 

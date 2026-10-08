@@ -158,7 +158,7 @@ BSZ side of California Proposition 40:
 
 <table style="width:100%; font-size:85%; border-collapse:collapse;">
 <tr style="background:#e8eaf6;"><th style="text-align:left; padding:6px;">Part</th><th style="text-align:left; padding:6px;">What it covers</th></tr>
-<tr><td style="padding:6px;"><b><a href="#part-policy">1. What is being scored</a></b></td><td style="padding:6px;">The tax, and the two documents that make the BSZ side's case</td></tr>
+<tr><td style="padding:6px;"><b><a href="#part-policy">1. What is being estimated</a></b></td><td style="padding:6px;">The tax, and the two documents that make the BSZ side's case</td></tr>
 <tr><td style="padding:6px;"><b><a href="#part-steps">2. Five steps to $`r round(t5$wealth_tax_revenue[1])` billion</a></b></td><td style="padding:6px;">Table 5, row 1, built one line at a time</td></tr>
 <tr><td style="padding:6px;"><b><a href="#part-rows">3. The other rows</a></b></td><td style="padding:6px;">Missing billionaires, and who may have left</td></tr>
 <tr><td style="padding:6px;"><b><a href="#part-guess">4. What is guesswork</a></b></td><td style="padding:6px;">Every input by origin, and how far each guess moves the result</td></tr>
@@ -174,7 +174,7 @@ workbook cell by cell. The deck reads that pipeline's exported CSVs; nothing is 
 name: part-policy
 class: center, middle, inverse
 
-# Part 1: What is being scored
+# Part 1: What is being estimated
 
 ---
 
@@ -352,7 +352,7 @@ ggplot(cnt, aes(x = Var1, y = Freq, fill = Var1 == "guesswork")) +
   geom_col(width = 0.6) + geom_text(aes(label = Freq), vjust = -0.3, size = 5) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.2))) +
   scale_fill_manual(values = c("#9aa6b2", "#e65100"), guide = "none") +
-  labs(x = NULL, y = "inputs", title = paste(nrow(ins), "inputs of the one-time scoring"))
+  labs(x = NULL, y = "inputs", title = paste(nrow(ins), "inputs of the one-time estimate"))
 ```
 
 .small[The `r sum(ins$origin == "guesswork")` guesswork inputs are exactly the dials of the
