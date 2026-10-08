@@ -40,3 +40,7 @@ data-raw/irs/cache/
 # phase 2: SQL results built from the confidential author bundle (never committed)
 data-raw/sql-out/
 data-raw/bundle.sqlite
+# residency overrides and private notes derived from the confidential bundle
+data-raw/residency-overrides.csv
+data-raw/private-paths.csv
+data-raw/NOTES-private.md

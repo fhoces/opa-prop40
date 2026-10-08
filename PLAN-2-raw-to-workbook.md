@@ -35,14 +35,14 @@ working reproduction before writing the next query themselves.
      `bsz-analysis/data-raw/sql-out/` and add that directory to
      `bsz-analysis/.gitignore`.
    - Never copy the authors' code into the repo. Describe its logic in your own words
-     in SQL comments. Citing a script by file name and line is fine.
+     and in general terms in SQL comments. Do not cite bundle file names, paths, line
+     numbers or the authors' comments in tracked files.
    - A check report that prints counts, row totals and max absolute differences is
-     fine to commit. A report that prints individual rows from `MainData.xlsx` is
-     not. Rows from the public workbook may be printed.
-   - The SQL will necessarily name individual billionaires (the authors' residency
-     overrides). Those names already appear in the public workbook's `rtb_ca_*`
-     sheets, so this is acceptable, but flag it in your final report so the user can
-     confirm before the commit is pushed.
+     fine to commit. A report that prints individual rows from the authors' private
+     sheets is not. Rows from the public workbook may be printed.
+   - No private information that is not publicly available goes into tracked files.
+     The authors' residency overrides name individual billionaires, so they live in
+     a gitignored override file (see rule 2 below), not in the SQL.
 2. **Commit, never push.** Commit in small steps with messages in the repo's style
    (see `git log`). The push is the user's decision.
 3. **Repo is public.** No em-dash characters in anything you write (prose, comments,
@@ -64,48 +64,50 @@ Bundle root (set `BSZ_BUNDLE_DIR` to override; this is the default):
 bsz-analysis/original-materials/author-shared/2026-09-23_bsz-replication-code-data/
 ```
 
-Inputs for query 1:
+Inputs for query 1 (both inside the bundle; the loader finds them by file name):
 
-| File (relative to bundle root) | Rows | Notes |
+| Input | Rows | Notes |
 |---|---:|---|
-| `Forbes_RTB/03_outdata/rtb_all_combined.csv` | 5,933,481 + header | Daily Forbes real-time billionaire snapshots, 2020-07-22 to mid-2026 plus some 2019 dates. Columns: `date, forbes_id, forbes_name, state, country_citizenship, source, industries, forbes_worth, forbes_public_worth, forbes_private_worth`. Worth columns are $ million. Missing values are **empty strings**, not `NA`. `state` is empty for roughly half the rows (non-US). |
-| `Forms4/02_indata/rtb_ca_cik_2026_01_01.xlsx` | 237 | `forbes_id` to SEC `cik` (float column; some blank). Joined onto the 2026-01-01 list only. |
+| Forbes real-time billionaire snapshots (`rtb_all_combined.csv`) | 5,933,481 + header | Daily snapshots, 2020-07-22 to mid-2026 plus some 2019 dates. Columns: `date, forbes_id, forbes_name, state, country_citizenship, source, industries, forbes_worth, forbes_public_worth, forbes_private_worth`. Worth columns are $ million. Missing values are **empty strings**, not `NA`. `state` is empty for roughly half the rows (non-US). |
+| `forbes_id` to SEC CIK crosswalk (`rtb_ca_cik_2026_01_01.xlsx`) | 237 | `cik` is a float column with some blanks. Joined onto the 2026-01-01 list only. |
 
-Author script to reproduce: `Forbes_RTB/01_code/build/02_export_rtb.R`, sections 01
-to 03 (lines 11 to 135). Section 04 onward (mobility, NYT snapshot) is out of scope.
+Code to reproduce: the first part of the authors' build code for the Forbes data
+(confidential bundle), up to the daily aggregate. Later parts are out of scope.
 
 Answer keys:
 
 | Target | Answer key (private) | Public landing |
 |---|---|---|
-| Seven year-end CA lists | `MainData.xlsx` sheets `rtb_ca_2019_12_31` ... `rtb_ca_2024_12_31`, `rtb_ca_2026_01_01` | Not published as lists; they feed `shortrunseries` and the SEC panel. |
-| Industry decomposition | `MainData.xlsx` sheet `rtb_ca_2026_01_01_industry` (14 rows incl. Total, 8 columns; the last two are Excel-side extras) | `BSZ_MainTablesFigures.xlsx` sheet `rtb_2026_industry`, header on row 4. Same numbers, with "Finance & Investments" renamed "Finance" and a hand-added subtotal row "Other" (every industry except Technology and Finance: 68 people). Also a second block from row 22 that splits the top 4; out of scope. |
-| Daily CA aggregate | `MainData.xlsx` sheet `rtb_ca_aggregate` (2,213 rows, 4 columns: `date, n_billionaires, forbes_worth_total, forbes_worth_top4`) | `shortrunseries` (phase 1 already reads it; identify which columns come from this aggregate and compare those). |
+| Seven year-end CA lists | the authors' private sheets `rtb_ca_2019_12_31` ... `rtb_ca_2024_12_31`, `rtb_ca_2026_01_01` | Not published as lists; their counts and totals appear in `data_sec_agg`, which feeds `shortrunseries`. |
+| Industry decomposition | private sheet `rtb_ca_2026_01_01_industry` (14 rows incl. Total; the first six columns) | `BSZ_MainTablesFigures.xlsx` sheet `rtb_2026_industry`, header on row 4. Same numbers, with "Finance & Investments" renamed "Finance" and a hand-added subtotal row "Other". A second block that splits the top 4 is out of scope. |
+| Daily CA aggregate | private sheet `rtb_ca_aggregate` (4 columns: `date, n_billionaires, forbes_worth_total, forbes_worth_top4`) and the authors' own export of it | `shortrunseries` (through `data_sec_agg`). |
 
-Known vintage gaps to document, not "fix": the script computes a fifth aggregate
-column `forbes_private_worth` that the sheet does not have; the bundle's
-`Forbes_RTB/03_outdata/rtb_ca_aggregate.xlsx` has 2,209 rows while the sheet has
-2,213; the CSV may extend past the sheet's last date (2026-06-08). Compare on the
-intersection of dates and report what is extra on each side.
+The answer-key files are located through the gitignored `data-raw/private-paths.csv`
+(schema in `private-paths.example.csv`). Details of how the private files differ from
+one another are kept in the gitignored `data-raw/NOTES-private.md`. Compare the
+aggregate on the intersection of dates and report what is extra on each side.
 
 ## The rules of query 1, in plain words (verify against the script)
 
 1. Keep rows with `forbes_worth >= 1000` ($1 billion).
-2. California residency: `state = 'California'`, OR `forbes_id` in a list of ten named
-   inclusions (people the authors treat as CA residents despite the Forbes state
-   field), AND NOT in a list of three named exclusions (two people the authors judge
-   not includible, plus one id). Take both lists verbatim from the script's section 02.
+2. California residency: `state = 'California'`, OR `forbes_id` on the include list of
+   the residency override table, AND NOT on its exclude list. The lists live in the
+   gitignored `data-raw/residency-overrides.csv` (columns `forbes_id, rule, note`;
+   schema in the committed `residency-overrides.example.csv`), which the loader reads
+   into the table `rtb_residency_overrides`. The SQL uses subqueries on that table and
+   names no one. The override file follows the public workbook's counts.
 3. Year-end lists: one snapshot per year on these exact dates: 2019-12-31, 2020-12-31,
    2021-12-31, 2022-12-31, 2023-12-31, 2024-12-31, and 2026-01-01 (the "2025" list).
    Sorted by `forbes_worth` descending. The 2026-01-01 list gets `sec_cik` by a left
-   join on `forbes_id` to the cik file.
+   join on `forbes_id` to the CIK crosswalk.
 4. Industry table (2026-01-01 list only): per `industries`, count, sum of public worth
    / 1000, sum of worth / 1000, `fraction_public_worth = public / worth`,
    `fraction_forbes_worth = worth / grand total`; plus a `Total` row; sorted by
    `fraction_forbes_worth` descending with Total last.
 5. Daily aggregate: per `date`, count, sum of worth / 1000, sum of worth / 1000 over
-   the four ids `mark-zuckerberg, jensen-huang, larry-page, sergey-brin`; drop three
-   dates listed in the script (`2022-07-18, 2026-03-29, 2026-03-30`).
+   the four ids `mark-zuckerberg, jensen-huang, larry-page, sergey-brin` (named in the
+   paper's abstract); leave out three snapshot dates (`2022-07-18, 2026-03-29,
+   2026-03-30`), as the authors do.
 
 Sums ignore NULLs (SQL `SUM` does this; R used `na.rm = TRUE`).
 
@@ -153,15 +155,15 @@ Output tables:
   of this table by `date`. Note in a comment why one long table is the SQL-native
   shape where R wrote seven data frames.
 - `rtb_ca_2026_01_01_industry`: same columns as the authors' sheet, first six only.
-- `rtb_ca_aggregate`: the four sheet columns plus `forbes_private_worth` (the script's
-  fifth column), in that order.
+- `rtb_ca_aggregate`: the four sheet columns plus `forbes_private_worth` (which the
+  authors' current code computes), in that order.
 
 Tag every block with the course module it exercises (`-- Course: module 1 (WHERE,
 CASE)`, `module 3 (GROUP BY with a total row)`, `module 5 (window)` if you use one for
 the ranking), and add a `-- Beyond the course:` comment wherever you use something
 the five modules do not cover (e.g. `CREATE TABLE AS`, `UNION ALL` for the total row,
-`NULLIF`). Comment each block with the R idiom it replaces, in your own words, with a
-pointer to the script line. Do not paste the R.
+`NULLIF`). Comment each block with the R idiom it replaces, in your own words and in
+general terms (no bundle file names or line numbers). Do not paste the R.
 
 ### 4. `py/run_sql.py`
 
@@ -229,8 +231,10 @@ stdout. Exit code 1 on any failure.
    say so in the final report rather than lowering a tolerance.
 3. `git status` shows no file from `original-materials/` or `data-raw/sql-out/`, and
    no `.sqlite`.
-4. `grep -rn $'—'` over the new and edited files prints nothing.
-5. Phase 1 still passes: `cd bsz-analysis && Rscript -e 'testthat::test_dir("tests/testthat")'`
+4. `grep -rn $'\u2014'` (the em-dash character) over the new and edited files prints
+   nothing.
+5. Phase 1 still passes: `cd bsz-analysis && Rscript tests/testthat.R` (it sources
+   `R/` first; a bare `testthat::test_dir()` call does not and fails)
    (the existing snapshot tests must be untouched).
 
 ## Final report (keep it under 300 words)
@@ -242,16 +246,15 @@ commit SHAs. No file dumps.
 
 ## Later queries (outline only, not for this session)
 
-2. **Form 4 raw to clean**: `Forms4/03_outdata/form4_raw.csv` (223k rows) to
-   `form4_clean.csv` (199k), script `Forms4/01_code/build/03_clean_form4.R`. Dedupe on
-   all columns but `Folder`, text filters, `CASE WHEN` for sale and purchase, four
+2. **Form 4 raw to clean**: the raw Form 4 extract (about 223k rows) to the clean
+   one (about 199k). Dedupe, text filters, `CASE WHEN` for sale and purchase, a few
    per-filing price corrections, join to `forbes_id` via CIK.
-3. **Forbes 400 and global lists to the CA panel 2004 to 2025**:
-   `Forbes/01_code/merge_forbes_rtb.R`; name matching may need Python.
+3. **Forbes 400 and global lists to the CA panel 2004 to 2025**; name matching may
+   need Python.
 4. **Pitchbook venture monitor**: 34 quarterly workbooks with drifting sheet names to
    annual and quarterly panels; the loader is the lesson, `LAG` for within-year
    differences.
 5. **Compustat-based steps** (now possible, extracts are in the bundle): Form 4 to
    daily prices, donation values, the `wrds_*` sheets, then `main_annual_*` to
-   `data_sec_*`. The capital-gains basis loop in `Forms4/01_code/analysis/01_main_form4.R`
-   is sequential and becomes an R and Python twin with SQL on either side.
+   `data_sec_*`. The capital-gains basis loop is sequential and becomes an R and
+   Python twin with SQL on either side.

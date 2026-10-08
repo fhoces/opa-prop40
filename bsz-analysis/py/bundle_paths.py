@@ -3,11 +3,18 @@
 The author bundle is confidential (re-analysis permitted, no public sharing),
 so it sits under the gitignored original-materials/ directory and never
 reaches git. Everything built from it (the SQLite database, the CSV exports
-under data-raw/sql-out/) is gitignored too.
+under data-raw/sql-out/) is gitignored too, and so are the two small private
+files the code reads next to it:
+
+  data-raw/residency-overrides.csv  the residency override table
+  data-raw/private-paths.csv        where the answer-key files sit in the bundle
+
+Their schemas are documented in the committed *.example.csv files.
 
 Set BSZ_BUNDLE_DIR to point at a bundle somewhere else (for example the main
 checkout's copy, from a git worktree).
 """
+import csv
 import os
 from pathlib import Path
 
@@ -34,6 +41,17 @@ def bundle_dir(must_exist=True):
     return path
 
 
+def find_in_bundle(basename, root=None):
+    """The one file in the bundle with this name, wherever it sits."""
+    root = root or bundle_dir()
+    hits = sorted(root.rglob(basename))
+    if len(hits) != 1:
+        raise FileNotFoundError(
+            f"Expected exactly one {basename} under {root}, found {len(hits)}."
+        )
+    return hits[0]
+
+
 def sqlite_path():
     """The SQLite database that py/load_bundle.py builds (gitignored)."""
     return BSZ_DIR / "data-raw" / "bundle.sqlite"
@@ -43,6 +61,31 @@ def sql_out_dir(lang=None):
     """data-raw/sql-out/ (gitignored), or its py/ or r/ subdirectory."""
     out = BSZ_DIR / "data-raw" / "sql-out"
     return out / lang if lang else out
+
+
+def residency_overrides_path():
+    """The residency override table (gitignored; see the .example.csv)."""
+    return BSZ_DIR / "data-raw" / "residency-overrides.csv"
+
+
+def read_commented_csv(path):
+    """Rows of a small CSV as dicts, skipping lines that start with '#'."""
+    with open(path, newline="", encoding="utf-8") as f:
+        lines = [ln for ln in f if not ln.lstrip().startswith("#")]
+    return list(csv.DictReader(lines))
+
+
+def private_file(key):
+    """An answer-key file in the bundle, by its key in data-raw/private-paths.csv."""
+    cfg = BSZ_DIR / "data-raw" / "private-paths.csv"
+    if not cfg.exists():
+        raise FileNotFoundError(
+            f"{cfg} not found. It is gitignored; see data-raw/private-paths.example.csv."
+        )
+    paths = {r["key"]: r["path"] for r in read_commented_csv(cfg)}
+    if key not in paths:
+        raise KeyError(f"No '{key}' entry in {cfg}")
+    return bundle_dir() / paths[key]
 
 
 def public_workbook_path():

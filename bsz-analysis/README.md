@@ -111,9 +111,9 @@ cached values) are an ongoing strand of this project. Status:
 | California FTB Personal Income Tax Statistics (B4A bracket detail) | `ftb_b4a` | **Not pulled** (workbook ships its own copy; data.ca.gov may have newer release) |
 | Saez-Zucman DINA tables (US-wide + CA-wide effective tax rates) | `data_dina` (cols K, S) | **Not pulled** |
 | IRS SOI Top .001% income statistics | `billionairesCAinctax` rows 59-72 | **Not pulled** (literal pass-through from authors' compilation) |
-| Forbes Real-Time Billionaires snapshots | `shortrunseries` cols B, K, Q | **Not pulled** (no public historical archive) |
+| Forbes Real-Time Billionaires snapshots | `shortrunseries` cols B, K, Q | **Author-shared** daily snapshots; query 1 (`sql/01_rtb_ca.sql`) reproduces the CA lists and aggregate |
 | ProPublica IRS leak | `data_sec_propublica` | **Cannot be re-pulled**: restricted-access data |
-| Compustat (corporate financials feeding SEC top-4 columns) | parts of `data_sec_top4` | **Cannot be re-pulled here**: paywalled |
+| Compustat (corporate financials feeding SEC top-4 columns) | parts of `data_sec_top4` | **Shared by the authors** under confidential terms; the extracts are not redistributable |
 
 **Interpretation.** The R pipeline verifies that R reproduces the Excel
 cells. The cross-validation work (in progress) verifies that the Excel

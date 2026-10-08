@@ -1,0 +1,6 @@
+# Schema of data-raw/private-paths.csv, which is gitignored: paths of the
+# answer-key files inside the confidential bundle, relative to its root.
+# Lines starting with # are skipped. Keys used by py/check_rtb_ca.py:
+#   private_sheets            the authors' private workbook of data sheets
+#   private_aggregate_export  the authors' own export of the daily CA aggregate
+key,path

@@ -1,0 +1,9 @@
+# Schema of data-raw/residency-overrides.csv, which is gitignored: the real
+# rows come from the authors' build code in the confidential bundle.
+# Lines starting with # are skipped by py/load_bundle.py.
+#   forbes_id  Forbes real-time id, lowercase and hyphenated, for example
+#              mark-zuckerberg, jensen-huang, larry-page, sergey-brin
+#   rule       include (count as a CA resident whatever the Forbes state field
+#              says) or exclude (never count as a CA resident)
+#   note       free text: where the override comes from
+forbes_id,rule,note

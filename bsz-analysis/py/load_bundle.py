@@ -12,6 +12,8 @@ LOADERS at the bottom; nothing else changes.
 
 Conventions shared by every loader:
   * strings and ISO dates are TEXT, money is REAL, ids are INTEGER;
+  * leading and trailing spaces and tabs are trimmed, as readr::read_csv
+    does by default (trim_ws = TRUE);
   * an empty cell becomes NULL (the bundle's CSVs write missing values as
     empty strings, not NA), so SQL aggregates skip it the way R's
     na.rm = TRUE does;
@@ -24,22 +26,29 @@ import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from bundle_paths import bundle_dir, sqlite_path  # noqa: E402
+from bundle_paths import (  # noqa: E402
+    bundle_dir, find_in_bundle, read_commented_csv, residency_overrides_path, sqlite_path,
+)
 
 BATCH = 100_000
 
 
 def _text(v):
+    # readr::read_csv trims leading and trailing spaces and tabs from every
+    # field by default (trim_ws = TRUE); the RTB CSV has many source values
+    # with a trailing space, so trimming here keeps text equal to R's.
+    v = v.strip(" \t")
     return v if v != "" else None
 
 
 def _real(v):
+    v = v.strip(" \t")
     return float(v) if v != "" else None
 
 
 # ---------------------------------------------------------------------------
 # Forbes real-time billionaires, one row per (date, forbes_id)
-# Source: Forbes_RTB/03_outdata/rtb_all_combined.csv (about 5.9M rows)
+# Source: rtb_all_combined.csv in the bundle (about 5.9M rows)
 # ---------------------------------------------------------------------------
 RTB_COLUMNS = [
     ("date", "TEXT", _text),
@@ -56,7 +65,7 @@ RTB_COLUMNS = [
 
 
 def load_rtb_all_combined(con, root):
-    path = root / "Forbes_RTB" / "03_outdata" / "rtb_all_combined.csv"
+    path = find_in_bundle("rtb_all_combined.csv", root)
     names = [c[0] for c in RTB_COLUMNS]
     casts = [c[2] for c in RTB_COLUMNS]
     con.execute("DROP TABLE IF EXISTS rtb_all_combined")
@@ -93,12 +102,12 @@ def load_rtb_all_combined(con, root):
 
 # ---------------------------------------------------------------------------
 # forbes_id to SEC CIK, for the 2026-01-01 California list
-# Source: Forms4/02_indata/rtb_ca_cik_2026_01_01.xlsx (237 rows)
+# Source: rtb_ca_cik_2026_01_01.xlsx in the bundle (237 rows)
 # ---------------------------------------------------------------------------
 def load_rtb_ca_cik(con, root):
     import openpyxl
 
-    path = root / "Forms4" / "02_indata" / "rtb_ca_cik_2026_01_01.xlsx"
+    path = find_in_bundle("rtb_ca_cik_2026_01_01.xlsx", root)
     wb = openpyxl.load_workbook(path, read_only=True, data_only=True)
     rows = wb[wb.sheetnames[0]].iter_rows(values_only=True)
     header = list(next(rows))
@@ -121,10 +130,39 @@ def load_rtb_ca_cik(con, root):
     return len(out)
 
 
+# ---------------------------------------------------------------------------
+# Residency overrides: ids counted as CA residents whatever the Forbes state
+# field says (rule = include), or never counted (rule = exclude).
+# Source: data-raw/residency-overrides.csv, gitignored because its rows come
+# from the confidential bundle; the schema is in residency-overrides.example.csv.
+# ---------------------------------------------------------------------------
+def load_rtb_residency_overrides(con, root):
+    path = residency_overrides_path()
+    if not path.exists():
+        raise FileNotFoundError(
+            f"{path} not found. It is gitignored; see "
+            "data-raw/residency-overrides.example.csv for the schema."
+        )
+    out = []
+    for r in read_commented_csv(path):
+        fid, rule = (r.get("forbes_id") or "").strip(), (r.get("rule") or "").strip()
+        if not fid:
+            # A NULL id would make NOT IN (SELECT ...) exclude every row.
+            raise ValueError(f"{path.name}: a row has no forbes_id")
+        if rule not in ("include", "exclude"):
+            raise ValueError(f"{path.name}: rule must be include or exclude, got {rule!r}")
+        out.append((fid, rule, (r.get("note") or "").strip() or None))
+    con.execute("DROP TABLE IF EXISTS rtb_residency_overrides")
+    con.execute("CREATE TABLE rtb_residency_overrides (forbes_id TEXT, rule TEXT, note TEXT)")
+    con.executemany("INSERT INTO rtb_residency_overrides VALUES (?, ?, ?)", out)
+    return len(out)
+
+
 # One entry per table. Later queries add their inputs here.
 LOADERS = {
     "rtb_all_combined": load_rtb_all_combined,
     "rtb_ca_cik": load_rtb_ca_cik,
+    "rtb_residency_overrides": load_rtb_residency_overrides,
 }
 
 
