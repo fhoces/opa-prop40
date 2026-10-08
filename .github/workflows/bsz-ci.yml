@@ -50,5 +50,15 @@ jobs:
       - name: Run the pipeline (tar_make, without the report)
         run: Rscript -e 'targets::tar_make(names = !tidyselect::any_of(c("report_html", "report_pdf")))'
 
+      # The Python twin of the pipeline, rebuilt here so the R vs Python parity test
+      # compares freshly computed numbers, not the committed export/py.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run the Python twin
+        run: |
+          pip install pandas numpy openpyxl
+          python py/run_export.py
+
       - name: Run the test suite
         run: Rscript tests/testthat.R
