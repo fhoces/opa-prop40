@@ -79,7 +79,7 @@ show(rbind(by_file, data.frame(file = "<b>total</b>", blocks = sum(by_file$block
                                skipped = sum(by_file$skipped))))
 ```
 
-Last run: `r tests$run_date[1]`, `r tests$vintage[1]` vintage: **`r sum(tests$passed)`
+Last run: `r tests$run_date[1]`, `r tools::toTitleCase(tests$vintage[1])` vintage: **`r sum(tests$passed)`
 expectations passed, `r sum(tests$failed)` failed**, in `r nrow(tests)` test blocks. Of
 these, `r sum(tests$passed[tests$file != "test-site.R"])` belong to the reproduction itself
 and `r sum(tests$passed[tests$file == "test-site.R"])` to this site: they check that the

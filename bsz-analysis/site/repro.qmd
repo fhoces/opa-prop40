@@ -856,7 +856,7 @@ show(rbind(by_file, data.frame(file = "total", blocks = sum(by_file$blocks),
                                passed = sum(by_file$passed), failed = sum(by_file$failed))))
 ```
 
-The suite ran on `r tests$run_date[1]` against the `r tests$vintage[1]` workbook:
+The suite ran on `r tests$run_date[1]` against the `r tools::toTitleCase(tests$vintage[1])` workbook:
 `r sum(tests$passed)` expectations passed and `r sum(tests$failed)` failed. The
 `compute`, `tables` and `data_sheets` files compare R against the workbook's own cached
 cells, formula by formula, at a stated tolerance; `snapshots` pins every output so any
@@ -894,9 +894,9 @@ Fixing them changes the pinned table snapshots, so it is left for a separate cha
 
 - The paper's Figure 8 (venture capital deals) and Appendix Figure A1 (wealth relative to
   AGI) have no builder yet.
-- The raw inputs are not re-collected (Forbes, Franchise Tax Board, SEC, IRS, national
-  accounts), except a one-person SEC proof of concept. An error in the workbook's inputs
-  would pass straight through.
+- Most raw inputs are not re-collected (Franchise Tax Board, SEC, IRS, national accounts).
+  An error in those would pass straight through. The Forbes real-time lists are rebuilt from
+  the authors' raw data in shared SQL ([`sql/`](https://github.com/fhoces/opa-prop40/tree/main/bsz-analysis/sql)), and match the workbook.
 - The GGSS July report has no workbook of its own. Its \$100 billion is reproduced only in
   the sense above: it is BSZ row 1, rounded.
 
