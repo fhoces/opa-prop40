@@ -30,7 +30,7 @@ BSZ side of California Proposition 40:
 
 ```{r}
 #| label: setup
-#| code-summary: "setup: every number below is read from the targets store"
+#| code-summary: "R code for the setup"
 library(targets)
 library(gt)
 library(ggplot2)
@@ -179,7 +179,7 @@ rows of the raw list were pasted twice.
 ::: {.table-scroll}
 ```{r}
 #| eval: false
-#| code-summary: "Table 1: the code that builds it"
+#| code-summary: "R code for Table 1"
 #| code: !expr tcode("tab1_gt")
 ```
 ```{r}
@@ -200,7 +200,7 @@ label drift. Listed under [What reproduces](#what-reproduces).
 
 ```{r}
 #| eval: false
-#| code-summary: "Figure 1: the code that builds it"
+#| code-summary: "R code for Figure 1"
 #| code: !expr tcode("fig1")
 ```
 ```{r}
@@ -216,7 +216,7 @@ chart as its "Appendix Figure A1":
 
 ```{r}
 #| eval: false
-#| code-summary: "industry chart: the code that builds it"
+#| code-summary: "R code for Figure 1, Panel B"
 #| code: !expr tcode("fig_a1")
 ```
 ```{r}
@@ -241,7 +241,7 @@ $$\bar g = \left(\frac{X_{2026}}{X_{1982}}\right)^{1/44} - 1.$$
 
 ```{r}
 #| eval: false
-#| code-summary: "Figure 2: the code that builds it"
+#| code-summary: "R code for Figure 2"
 #| code: !expr tcode("fig2")
 ```
 ```{r}
@@ -283,7 +283,7 @@ from their SEC filings (stock sales, dividends, option exercises).
 ::: {.table-scroll}
 ```{r}
 #| eval: false
-#| code-summary: "Table 2: the code that builds it"
+#| code-summary: "R code for Table 2"
 #| code: !expr tcode("tab2_gt")
 ```
 ```{r}
@@ -295,7 +295,7 @@ tr("tab2_gt")
 
 ```{r}
 #| eval: false
-#| code-summary: "Figure 3: the code that builds it"
+#| code-summary: "R code for Figure 3"
 #| code: !expr tcode("fig3")
 ```
 ```{r}
@@ -309,7 +309,7 @@ tr("fig3")
 ::: {.table-scroll}
 ```{r}
 #| eval: false
-#| code-summary: "Table 3: the code that builds it"
+#| code-summary: "R code for Table 3"
 #| code: !expr tcode("tab3_gt")
 ```
 ```{r}
@@ -330,7 +330,7 @@ holdings.
 
 ```{r}
 #| eval: false
-#| code-summary: "Figure 4: the code that builds it"
+#| code-summary: "R code for Figure 4"
 #| code: !expr tcode("fig4")
 ```
 ```{r}
@@ -358,7 +358,7 @@ Figure 6 runs the tax rates back to 2004; Figure 7 compares them with economy-wi
 ::: {.table-scroll}
 ```{r}
 #| eval: false
-#| code-summary: "Table 4: the code that builds it"
+#| code-summary: "R code for Table 4"
 #| code: !expr tcode("tab4_gt")
 ```
 ```{r}
@@ -370,7 +370,7 @@ tr("tab4_gt")
 
 ```{r}
 #| eval: false
-#| code-summary: "Figure 5: the code that builds it"
+#| code-summary: "R code for Figure 5"
 #| code: !expr tcode("fig5")
 ```
 ```{r}
@@ -383,7 +383,7 @@ tr("fig5")
 
 ```{r}
 #| eval: false
-#| code-summary: "Figure 6: the code that builds it"
+#| code-summary: "R code for Figure 6"
 #| code: !expr tcode("fig6")
 ```
 ```{r}
@@ -396,7 +396,7 @@ tr("fig6")
 
 ```{r}
 #| eval: false
-#| code-summary: "Figure 7: the code that builds it"
+#| code-summary: "R code for Figure 7"
 #| code: !expr tcode("fig7")
 ```
 ```{r}
@@ -509,7 +509,7 @@ band. The result is `r usd(t5$wealth_tax_revenue[2])`.
 
 ```{r}
 #| eval: false
-#| code-summary: "Appendix Figure A4: the code that builds it"
+#| code-summary: "R code for Appendix Figure A4"
 #| code: !expr tcode("fig_a4")
 ```
 ```{r}
@@ -535,7 +535,7 @@ outside the top four's company wealth,
 
 ```{r}
 #| label: leavers
-#| code-summary: "the seven named leavers: tar_read(site_scoring_inputs)$leavers"
+#| code-summary: "R code for the leavers table"
 lv <- inp$leavers
 lv$name <- tools::toTitleCase(lv$name)
 lv$wealth <- bn(lv$wealth)
@@ -565,7 +565,7 @@ would lower row 4 by `r usd(inp$row4_phasein_gap)`. We list this under
 ::: {.table-scroll}
 ```{r}
 #| eval: false
-#| code-summary: "Table 5: the code that builds it"
+#| code-summary: "R code for Table 5"
 #| code: !expr tcode("tab5_gt")
 ```
 ```{r}
@@ -577,7 +577,7 @@ tr("tab5_gt")
 
 ```{r}
 #| label: tab5-vs-excel
-#| code-summary: "every Table 5 cell against the workbook's cached value"
+#| code-summary: "R code for the Table 5 check against the workbook"
 xl <- read_sheet("Tab5", range = "B6:H9")
 cols <- c("n_billionaires", "wealth", "taxable_wealth", "avoidance_rate",
           "wealth_tax_revenue", "extra_ca_inctax_sales", "annual_ca_inctax_loss")
@@ -590,7 +590,7 @@ All `r t5_cells` cells match the workbook's cached values; the largest absolute 
 
 ```{r}
 #| label: tab5-vs-printed
-#| code-summary: "every Table 5 cell against the digit printed in the paper: tar_read(site_tab5_printed)"
+#| code-summary: "R code for the Table 5 check against the paper"
 pr <- tr("site_tab5_printed")
 miss <- pr[!pr$matches_printed, ]
 miss_txt <- paste0("row ", miss$row, " (printed ", formatC(miss$printed, format = "f", digits = 2),
@@ -612,7 +612,7 @@ with the others at row 1:
 
 ```{r}
 #| label: one-at-a-time
-#| code-summary: "one-at-a-time ranges from tar_read(site_grid)"
+#| code-summary: "R code for the guesswork ranges"
 dials <- site_dials()
 keys  <- vapply(dials, `[[`, "", "key")
 base  <- stats::setNames(mapply(function(d, j) d$levels[j], dials, site_named_rows()[[1]]), keys)
@@ -639,7 +639,7 @@ show(rng)
 
 ```{r}
 #| label: ggss
-#| code-summary: "the GGSS figure is row 1, rounded"
+#| code-summary: "R code for the GGSS comparison"
 ggss_cited <- 100   # GGSS p.1 and p.4 (cited, not computed)
 stopifnot(round(t5$wealth_tax_revenue[1]) == 104)
 ```
@@ -675,7 +675,7 @@ $1/(1+d+e) = 3.8\%$.
 
 ```{r}
 #| eval: false
-#| code-summary: "the Laffer curve (the paper's Figure 9): the code that builds it"
+#| code-summary: "R code for Figure 9"
 #| code: !expr tcode("fig8")
 ```
 ```{r}
@@ -693,7 +693,7 @@ tr("fig8")
 ::: {.table-scroll}
 ```{r}
 #| eval: false
-#| code-summary: "Appendix Table A1: the code that builds it"
+#| code-summary: "R code for Appendix Table A1"
 #| code: !expr tcode("tab_a1_gt")
 ```
 ```{r}
@@ -707,7 +707,7 @@ tr("tab_a1_gt")
 
 ```{r}
 #| eval: false
-#| code-summary: "Appendix Figure A2: the code that builds it"
+#| code-summary: "R code for Appendix Figure A2"
 #| code: !expr tcode("fig_a2")
 ```
 ```{r}
@@ -720,7 +720,7 @@ tr("fig_a2")
 
 ```{r}
 #| eval: false
-#| code-summary: "Appendix Figure A3: the code that builds it"
+#| code-summary: "R code for Appendix Figure A3"
 #| code: !expr tcode("fig_a3")
 ```
 ```{r}
@@ -745,13 +745,13 @@ result has to answer.
 
 ```{r}
 #| label: origins
-#| code-summary: "every input: tar_read(site_inputs)"
+#| code-summary: "R code for the input table"
 show(ins)
 ```
 
 ```{r}
 #| label: origins-count
-#| code-summary: "how many of each kind"
+#| code-summary: "R code for the input counts"
 cnt <- as.data.frame(table(factor(ins$origin,
   levels = c("data", "research", "guesswork", "scenario", "derived", "convention"))))
 names(cnt) <- c("origin", "inputs")
@@ -778,7 +778,7 @@ one-time tax triggers permanent departures.
 
 ```{r}
 #| label: tests
-#| code-summary: "test results, from site/data/test-results.csv"
+#| code-summary: "R code for the test results table"
 tests <- read.csv("data/test-results.csv", stringsAsFactors = FALSE)
 by_file <- aggregate(cbind(blocks = 1, passed, failed) ~ file, data = tests, FUN = sum)
 show(rbind(by_file, data.frame(file = "total", blocks = sum(by_file$blocks),

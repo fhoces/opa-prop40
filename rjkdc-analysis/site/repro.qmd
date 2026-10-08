@@ -32,7 +32,7 @@ Part of an Open Policy Analysis of Rauh et al. (2026) on California Proposition 
 
 ```{r}
 #| label: setup
-#| code-summary: "setup: every number below is read from the {targets} store"
+#| code-summary: "R code for the setup"
 suppressPackageStartupMessages({
   library(targets); library(dplyr); library(knitr); library(ggplot2)
 })
@@ -163,7 +163,7 @@ $$\varepsilon = \frac{\%\Delta \text{TaxBase}}{\Delta \text{TaxRate (p.p.)}}
 
 ```{r}
 #| label: semi-elasticity
-#| code-summary: "the implied semi-elasticities, recomputed"
+#| code-summary: "R code for the implied semi-elasticities"
 eps6  <- 100 * (1 - rc$confirmed6_ceiling / rc$baseline_literal) / (100 * inp("tax_rate"))
 eps10 <- 100 * (1 - rc$expanded10_estimate / rc$baseline_literal) / (100 * inp("tax_rate"))
 c(confirmed_6 = eps6, expanded_10 = eps10)
@@ -220,6 +220,7 @@ $R^2$ = `r num(pf$r_squared, 4)`).
 
 ```{r}
 #| label: f-pareto
+#| code-summary: "R code for the Pareto fit figure"
 #| fig-cap: "The six published filer counts against their AGI thresholds, log-log, with the fitted Pareto line (paper Figure 1)."
 #| fig-width: 6
 #| fig-height: 3.6
@@ -255,7 +256,7 @@ judgement, not an estimate, so the range $C \in [3.3, 5.8]$ is labelled **guessw
 ```{r}
 #| label: t-table8
 #| results: asis
-#| code-summary: "Table 8: reproduced (seed 42, the authors' RNG stream replayed) vs printed"
+#| code-summary: "R code for Table 8"
 p8 <- printed[printed$table == "table8", ]
 pv <- function(k, col) p8$printed[p8$row == k & p8$column == col]
 tab8 <- t8 %>% transmute(
@@ -307,7 +308,7 @@ questions that proportionality).
 ```{r}
 #| label: t-table9
 #| results: asis
-#| code-summary: "Table 9 from compute_npv_table9() (NPV_calculations_5.2.xlsx ported) vs printed"
+#| code-summary: "R code for Table 9"
 p9 <- printed[printed$table == "table9", ]
 t9p <- t9 %>% mutate(key = paste0(scenario, "@", r)) %>% rowwise() %>% mutate(
   pv_printed = p9$printed[p9$row == key & p9$column == "pv_lost"],
@@ -336,7 +337,7 @@ $x^*$ of the income tax base leaves. The script computes $WT \cdot r / C$ with t
 ```{r}
 #| label: t-table10
 #| results: asis
-#| code-summary: "Table 10 from compute_npv_table10() vs printed"
+#| code-summary: "R code for Table 10"
 p10 <- printed[printed$table == "table10", ]
 tab10 <- t10 %>% mutate(key = paste0(scenario, "@", r)) %>% rowwise() %>%
   mutate(printed = p10$printed[p10$row == key]) %>% ungroup() %>%
@@ -370,7 +371,7 @@ details matter:
 ```{r}
 #| label: t-mc
 #| results: asis
-#| code-summary: "Sec 5.5: seeded reproduction vs printed, both versions"
+#| code-summary: "R code for Section 5.5"
 mk <- function(v, lab) {
   s <- if (v == "ssrn") tr("npv_mc_ssrn_summary") else tr("npv_mc_nber_summary")
   data.frame(Version = lab,
@@ -401,6 +402,7 @@ while the shipped seed gives `r num(mcs$summary$mean, 2)`. The printed SD stays 
 
 ```{r}
 #| label: f-npv
+#| code-summary: "R code for the NPV distribution figure"
 #| fig-cap: "The distribution of simulated NPV, both versions (paper Figure 3). Draws below zero in orange; the dashed line is the mean."
 #| fig-width: 8
 #| fig-height: 3.4
@@ -457,7 +459,7 @@ The NBER break-even table, from the same `compute_npv_table10()` at the paper's 
 ```{r}
 #| label: t-nber-table10
 #| results: asis
-#| code-summary: "NBER Table 10 (PDF p.34): same function, NBER central inputs"
+#| code-summary: "R code for NBER Table 10"
 wt36 <- 0.5 * nb$wt_max
 n10 <- compute_npv_table10(scenarios = list(central = list(label = "Central", WT = wt36, C = 4.55)))
 pn <- printed[printed$table == "nber_table10", ]
@@ -488,7 +490,7 @@ it*, the question a reader who wants to argue with the result has to answer firs
 ```{r}
 #| label: origins
 #| results: asis
-#| code-summary: "every input: the pipeline's inputs.csv plus the explorer's seven dials"
+#| code-summary: "R code for the input table"
 dials <- site_dials(rc)
 dial_rows <- do.call(rbind, lapply(dials, function(d) data.frame(
   input = d$key, what = d$label, `value(s)` = paste(d$labels, collapse = "; "),
@@ -503,7 +505,7 @@ scroll(kable(odf, caption = "Inputs by origin (export/r/inputs.csv, then the exp
 ```{r}
 #| label: origins-count
 #| results: asis
-#| code-summary: "how many of each kind"
+#| code-summary: "R code for the input counts"
 cnt <- as.data.frame(table(factor(odf$origin, levels = c("data", "research", "guesswork", "scenario", "derived"))))
 names(cnt) <- c("origin", "rows")
 n_guess_dials <- sum(vapply(dials, function(d) d$origin == "guesswork", logical(1)))
@@ -522,7 +524,7 @@ stops, which rate is used, and whether the lost income tax is permanent.
 ```{r}
 #| label: mismatch-summary
 #| results: asis
-#| code-summary: "every exported output against its printed value (export/r/outputs.csv)"
+#| code-summary: "R code for the output checks"
 o <- outputs %>% transmute(output = output_id, version, reproduced = signif(value, 6),
   printed = printed_value, `abs diff` = signif(abs_diff, 2),
   page = ifelse(is.na(printed_page), "NBER", printed_page))
@@ -539,7 +541,7 @@ papers, their READMEs and their code. We record them rather than fix them:
 ```{r}
 #| label: mismatch-list
 #| results: asis
-#| code-summary: "the nine mismatches, parsed from MISMATCHES.md"
+#| code-summary: "R code for the mismatch list"
 mm_lines <- grep("^## [0-9]+\\.", readLines("../MISMATCHES.md"), value = TRUE)
 cat(paste0(sub("^## ", "", mm_lines), collapse = "\n"), "\n\nFull text: [the materials page](materials.html#mismatches).\n")
 ```
@@ -551,7 +553,7 @@ Checks against things that are not inputs to anything:
 ```{r}
 #| label: identities
 #| results: asis
-#| code-summary: "internal consistency checks"
+#| code-summary: "R code for the consistency checks"
 x10 <- t10 %>% left_join(t9 %>% select(scenario, r, WT, C), by = c("scenario", "r", "WT", "C"))
 npv_at_breakeven <- with(x10, WT - break_even_pct * C / r)
 s_cell <- site_grid_cell(grid, as.list(site_named()$ssrn))
