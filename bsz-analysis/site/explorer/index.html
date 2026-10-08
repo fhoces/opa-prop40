@@ -125,6 +125,10 @@
   details.fold { margin-top: 14px; }
   .presets-h { font-size: 12px; color: var(--ink-3); margin: 14px 0 6px; }
   p.fn { font-size: 12px; color: var(--ink-3); line-height: 1.45; margin: 4px 0 0; }
+  dl.scen-key { margin: 10px 0 0; font-size: 12.5px; color: var(--ink-2); line-height: 1.45; }
+  dl.scen-key dt { display: inline; font-weight: 600; color: var(--ink); }
+  dl.scen-key dd { display: inline; margin: 0; }
+  dl.scen-key dd::after { content: ""; display: block; margin-bottom: 4px; }
   details.fold.notes { margin-top: 28px; border-top: 1px solid var(--rule); padding-top: 10px; }
   details.fold > summary { cursor: pointer; font-size: 13.5px; font-weight: 500; padding: 6px 0; }
   details.fold[open] > summary { margin-bottom: 8px; }
@@ -231,6 +235,7 @@
       <a href="../../../rjkdc-analysis/site/">RJKDC report</a>'s net present value.</p>
       <p class="presets-h">Jump to a scenario</p>
       <div class="presets" id="presets"></div>
+      <dl class="scen-key" id="scen-key"></dl>
       <details class="fold">
         <summary>Every outcome, for this setting and the four Table 5 scenarios</summary>
       <div class="table-scroll">
@@ -384,10 +389,27 @@
   ["avoidance", "mobility_share", "sell_share", "pareto", "avoidance_small", "leavers"]
     .forEach(function (k) { rack.appendChild(rowEl[DI[k]]); });
 
+  // What each scenario means, with the added count read from the grid (not typed).
+  var nAdd = G.snap[namedIdx["Missing billionaires"]][K.n_billionaires] - G.snap[namedIdx[PREF]][K.n_billionaires];
+  var KEY = {
+    "Base": "Table 5 row 1: the Forbes list, every input at the authors' value.",
+    "Missing billionaires": "adds about " + Math.round(nAdd) + " smaller fortunes ($1B to $4.5B) that Forbes " +
+      "misses, estimated with a Pareto extrapolation and taxed with 20% avoidance (Table 5 row 2).",
+    "Leavers": "assumes Page, Thiel, Hankey and Kalanick left before 1 January 2026 and escape the tax, " +
+      "and that Brin, Zuckerberg and Fang leave later, taking their income tax (Table 5 row 3).",
+    "Missing + leavers": "both changes together (Table 5 row 4)."
+  };
+  var keyEl = document.getElementById("scen-key");
+  names.forEach(function (n) {
+    if (n === PREF) return;
+    var dt = document.createElement("dt"); dt.textContent = n + ": ";
+    var dd = document.createElement("dd"); dd.textContent = KEY[n];
+    keyEl.appendChild(dt); keyEl.appendChild(dd);
+  });
   var presets = document.getElementById("presets");
   names.forEach(function (name) {
     var b = document.createElement("button");
-    b.type = "button"; b.textContent = name;
+    b.type = "button"; b.textContent = name; b.title = KEY[name] || "";
     if (name === PREF) b.className = "pref";
     b.addEventListener("click", function () { state = G.named[name].slice(); render(); });
     presets.appendChild(b);
