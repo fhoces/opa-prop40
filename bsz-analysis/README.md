@@ -149,7 +149,8 @@ bsz-analysis/
 │   ├── excel_cells.R                     # xls_cell, xls_cells_row, xls_cells_col
 │   ├── verify.R                          # expect_matches_excel testthat helper
 │   ├── data_sheets.R                     # 14 extract_* functions (read Excel)
-│   ├── compute_data_sec_agg.R            # group-by aggregator (excludes Ellison)
+│   ├── workbook_db.R                     # data_sec_all + FTB table into SQLite, runs sql/02, sql/03
+│   ├── compute_data_sec_agg.R            # yearly aggregates via sql/02 (excludes Ellison)
 │   ├── compute_pareto.R                  # Pareto extrapolation + Laffer sweep
 │   ├── compute_tab5.R                    # one-time wealth-tax estimate (the explorer runs it too) + 4 scenarios
 │   ├── compute_billionaires_ca_inctax.R  # 727-formula sheet (Method I + memos + all-taxes)
@@ -166,11 +167,14 @@ bsz-analysis/
 │   ├── testthat.R                        # entry point
 │   ├── snapshots/{august,may}/*.rds      # 34 golden-master outputs per vintage (committed)
 │   ├── snapshot_regenerate.R             # re-baseline script (run on intentional change)
-│   └── testthat/                         # 561 expectations across 8 files (August)
+│   └── testthat/                         # 701 expectations across 11 files (August)
 ├── tools/site-test-results.R             # runs the suite, writes site/data/test-results.csv
+├── tools/py-parity.R                     # R vs Python parity report, export/py/parity.csv
 ├── site/                                 # the OPA site: explorer/, repro.qmd, slides/, materials.qmd
 ├── export/r/                             # export contract read by ../comparison/
-├── py/, sql/                             # placeholders (README only)
+├── export/py/                            # the Python twin's outputs (py/run_export.py), for parity
+├── sql/                                  # shared SQLite queries, run verbatim by R and Python
+├── py/                                   # Python twin of step 2 + the step-1 query runners
 ├── data-raw/
 │   └── sec/
 │       ├── fetch_huang_2025.R            # SEC cross-validation script
@@ -201,8 +205,14 @@ reads from the layer above and writes new `tar_target`s consumed downstream.
    └────────────────────────────────┬────────────────────────────────┘
                                     ▼
    ┌─────────────────────────────────────────────────────────────────┐
-   │ R re-derivations  (R/compute_*.R, 8 tar_target's, _r suffix)    │
-   │   data_sec_agg_r        ← compute_data_sec_agg.R                │
+   │ Shared SQL  (R/workbook_db.R, sql/02 + sql/03)                  │
+   │   workbook_db  →  data-raw/workbook.sqlite (gitignored)         │
+   │   data_sec_agg_r  ← sql/02_data_sec_agg.sql (data_sec_all)      │
+   │   ftb_b4a_sql     ← sql/03_ftb_b4a.sql (the FTB table)          │
+   └────────────────────────────────┬────────────────────────────────┘
+                                    ▼
+   ┌─────────────────────────────────────────────────────────────────┐
+   │ R re-derivations  (R/compute_*.R, 7 tar_target's, _r suffix)    │
    │   pareto_missing_r,                                             │
    │   pareto_summary,                                               │
    │   fig8_laffer_r         ← compute_pareto.R                      │
@@ -239,6 +249,24 @@ Helper modules (loaded by `_targets.R` but not part of the DAG):
   shared by the larger `compute_*` functions.
 - `R/verify.R`: `expect_matches_excel()` testthat helper.
 
+### The two large inputs go through SQL, and the whole step has a Python twin
+
+The two inputs of more than 1,000 rows, `data_sec_all` (1,341 rows) and the
+FTB table `2023-b-4a` (1,657 rows), are summarised by shared SQLite queries,
+`sql/02_data_sec_agg.sql` and `sql/03_ftb_b4a.sql`, which R and Python run
+verbatim. In the pipeline, target `workbook_db` loads both sheets into
+`data-raw/workbook.sqlite` (gitignored) and runs the queries there;
+`compute_data_sec_agg()` and `compute_billionaires_ca_inctax()` run the same
+queries in memory when called directly, as the tests do.
+
+`py/` holds a Python twin of every R file that computes something (same
+function names; pandas, numpy, openpyxl). `python py/run_export.py` writes
+`export/py/`: the export contract, the site data and one CSV per R snapshot.
+`tests/testthat/test-py-parity.R` compares all of it with the R side at 1e-9
+relative; the largest gap is about 5e-15 (`export/py/parity.csv`, written by
+`Rscript tools/py-parity.R`). `site/explorer/grid.js` comes out byte-identical
+from both languages. See `py/README.md` and `sql/README.md`.
+
 ## Inputs and outputs (by `tar_target`)
 
 ### Excel extractors (14 targets, all read `BSZ_MainTablesFigures.xlsx`)
@@ -259,7 +287,7 @@ Helper modules (loaded by `_targets.R` but not part of the DAG):
 | `billionaires_ca_inctax` | `billionairesCAinctax` | positional dump |
 | `ftb_b4a` | `2023-b-4a__adjusted_gross_incom` | FTB AGI brackets |
 
-### R re-derivations (8 targets, `_r` suffix)
+### R re-derivations (8 targets, `_r` suffix; `data_sec_agg_r` is read from the SQL step)
 
 | Target | Verifies against | Tolerance |
 |---|---|---|
@@ -315,7 +343,7 @@ Rscript -e 'install.packages(c(
   "targets", "tibble", "dplyr", "readxl", "cellranger",
   "gt", "ggplot2", "patchwork", "scales",
   "testthat", "xml2", "curl", "jsonlite",
-  "pdftools"
+  "pdftools", "DBI", "RSQLite"
 ))'
 
 # 3. Install Quarto CLI (https://quarto.org/docs/get-started/).
@@ -324,10 +352,15 @@ Rscript -e 'install.packages(c(
 # 4. Build the pipeline (all targets + Quarto report):
 Rscript -e 'targets::tar_make()'
 
-# 5. Run the test suite (561 expectations on the August vintage):
+# 5. Run the test suite (701 expectations on the August vintage):
 Rscript tests/testthat.R
 #    or, to also write site/data/test-results.csv for the materials page:
 Rscript tools/site-test-results.R
+
+# 6. The Python twin (Python 3.11 with pandas, numpy, openpyxl) and the
+#    parity report; step 5 already runs the parity test on export/py/:
+python py/run_export.py
+Rscript tools/py-parity.R
 ```
 
 To rebuild the data + tables + figures without rendering the (slow) Quarto report:

@@ -1,4 +1,4 @@
-# sql/: shared SQLite queries (phase 2)
+# sql/: shared SQLite queries
 
 These `.sql` files are the single source of truth for every step that touches
 more than 1,000 rows. R and Python run the same file verbatim, so the two
@@ -8,14 +8,17 @@ course module it exercises, so the files double as worked examples.
 
 ## Where this fits: two steps from raw data to the paper
 
-1. **Raw data to spreadsheet (phase 2, these files).** The confidential
+1. **Raw data to spreadsheet (step 1, query 1 so far).** The confidential
    inputs the authors shared (Forbes real-time billionaire snapshots, Form 4
    filings, Compustat extracts and so on) to the data sheets behind the public
    workbook `BSZ_MainTablesFigures.xlsx`. The code is public; the data are not.
    What can be published is the comparison of our recomputed sheets with the
    public ones.
-2. **Spreadsheet to results (phase 1, done in R).** The public workbook's data
-   sheets to the paper's tables and figures (`_targets.R`, `R/`).
+2. **Spreadsheet to results (step 2, queries 2 and 3).** The public workbook's
+   data sheets to the paper's tables and figures, in R (`_targets.R`, `R/`)
+   and in Python (`py/run_export.py`). Two inputs have more than 1,000 rows,
+   `data_sec_all` and the FTB table `2023-b-4a`; queries 2 and 3 summarise
+   them, and the rest of step 2 works on the results.
 
 ## Running a query
 
@@ -43,9 +46,16 @@ You can also open the database in the sqlite3 CLI and run any block by hand:
 `sqlite3 data-raw/bundle.sqlite`, then `.headers on`, `.mode column`, and
 `SELECT * FROM rtb_ca_aggregate LIMIT 5;`.
 
-R needs `DBI` and `RSQLite` (not in `DESCRIPTION`: phase 1 and CI do not use
-them). `R/run_sql.R` only defines functions when sourced, so `_targets.R` and
+R needs `DBI` and `RSQLite`, which are in `DESCRIPTION` (step 2 uses them).
+`R/run_sql.R` only defines functions when sourced, so `_targets.R` and
 `tests/testthat.R` are unaffected.
+
+Queries 2 and 3 need only the public workbook and run as part of step 2:
+`Rscript -e 'targets::tar_make()'` (target `workbook_db`, file
+`data-raw/workbook.sqlite`) and `python py/run_export.py`
+(`data-raw/workbook-py.sqlite`). Both databases are gitignored. The loaders
+are `write_workbook_tables()` in `R/workbook_db.R` and its twin in
+`py/workbook_db.py`.
 
 ## Conventions
 
@@ -113,6 +123,43 @@ Every target matches. `py/check_rtb_ca.py` exits 0.
 The SQL has 25 more aggregate dates than the private sheet, which the check
 reports without counting them as failures. `forbes_private_worth` is in
 neither answer key, so only R vs Python parity checks it.
+
+## Query 2: `02_data_sec_agg.sql`, `data_sec_all` to the yearly aggregates
+
+Recomputes the public sheet `data_sec_agg` from `data_sec_all` (1,341 rows
+with a year and an id, August vintage): per year, the number of California
+billionaires and 27 sums in $ billion. Before the sums, the ids on the
+exclusion table (Ellison) are dropped, and so are exact re-pastes: August's
+sheet repeats four 2025 rows at its tail, and a row counts as a copy when an
+earlier row has the same year, id and worth.
+
+| Block | What it does | Course module | Beyond the course |
+|---|---|---|---|
+| Q1 `data_sec_all_kept` | Drops the excluded ids, then numbers the copies of each (year, id, worth) in sheet order and keeps the first | 4 (CTE chain, `NOT IN (SELECT ...)`), 5 (`ROW_NUMBER() OVER (PARTITION BY ... ORDER BY ...)`) | `DROP TABLE IF EXISTS`; `CREATE TABLE AS` |
+| Q2 `data_sec_agg` | Count and 27 sums per year, $ million to $ billion | 3 (GROUP BY with `COUNT` and `SUM`), 1 (`COALESCE`) | |
+
+Check (`tests/testthat/test-sql-workbook.R`): the query reproduces the dplyr
+code it replaced, counts identical and sums to 1e-12 (SQLite adds doubles
+with a compensated sum, R one by one), also with an empty exclusion list.
+
+## Query 3: `03_ftb_b4a.sql`, the FTB table to yearly totals and top brackets
+
+The workbook copies FTB table B-4A (California resident returns by AGI
+bracket, 59 or 60 brackets per year, 1995 to 2022) into sheet
+`2023-b-4a__adjusted_gross_incom`. The billionairesCAinctax estimate needs
+each year's totals (returns, CA AGI, taxable income, tax) and the rows of the
+top brackets ($5M and over; from 2021 split at $10M). The R code used to
+address both by sheet row numbers; the query selects them by the sheet's own
+year and bracket-label columns.
+
+| Block | What it does | Course module | Beyond the course |
+|---|---|---|---|
+| Q1 `ftb_b4a_year` | Totals of the four columns over all brackets, per taxable year, with the bracket count | 3 (GROUP BY with `COUNT` and `SUM`), 1 (`WHERE ... IS NOT NULL`, `COALESCE`) | |
+| Q2 `ftb_b4a_top` | The top-bracket rows with a short key (`5m_plus`, `5m_to_10m`, `10m_plus`) | 4 (CTE), 1 (`CASE WHEN`, `IN (...)` list) | `REPLACE` to normalise the labels' double spaces |
+
+Check (`tests/testthat/test-sql-workbook.R`): for 2018 to 2022 the query
+groups exactly the sheet rows the old row map used (59 or 60 per year, sums
+identical) and picks the same top-bracket rows.
 
 ## Later queries (planned)
 
