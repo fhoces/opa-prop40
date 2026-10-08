@@ -36,6 +36,11 @@ C  <- -t5$annual_ca_inctax_loss[1] / 0.05
 a  <- t5$avoidance_rate[1]; m <- 0.5   # alpha and the movers' share of it (inputs.csv)
 stopifnot(abs(a - 0.10) < 1e-9, abs(-a * m * C - t5$annual_ca_inctax_loss[1]) < 1e-9)
 pct <- function(x, d = 0) paste0(formatC(100 * x, format = "f", digits = d), "%")
+par <- read.csv("../data/pareto.csv"); ps <- read.csv("../data/pareto-summary.csv")
+a_s <- 0.20                       # avoidance for the added, less visible fortunes (inputs.csv)
+dW  <- t5$wealth[2] - W0          # wealth row 2 adds to the 1 July base
+add_tax <- 0.05 * (1 - a_s) * dW; phase <- 0.025 * ps$fraction_in_phasein * dW
+stopifnot(abs(t5$wealth_tax_revenue[1] + add_tax - phase - t5$wealth_tax_revenue[2]) < 1e-6)
 bn <- function(x, d = 1) formatC(x, format = "f", digits = d, big.mark = ",")
 row1 <- with(grd, avoidance == 0.10 & mobility_share == 0.5 & avoidance_small == 0.2 &
                   abs(sell_share - 1/3) < 1e-9 & pareto == 0 & leavers == 0)
@@ -332,27 +337,57 @@ class: center, middle, inverse
 ---
 name: row-2
 
-# Row 2: the billionaires Forbes misses
+# Row 2, part 1: how BSZ spot missing billionaires
 
-Above $4.5 billion, Forbes' list looks like a Pareto distribution. Below it, the list thins
-out far faster than the pattern predicts, which is what missing small fortunes look like.
+Forbes may miss smaller fortunes. BSZ test this with one ratio, **b** = the average fortune above
+a cutoff ÷ the cutoff. For a Pareto distribution, the usual shape of top wealth, **b** is the same at every cutoff.
+The Forbes list the workbook used (15 April 2026):
 
-Filling the gap adds **`r bn(100 * (t5$n_billionaires[2] / n0 - 1), 0)`%** more billionaires
-but only **`r bn(100 * (t5$wealth[2] / W0 - 1))`%** more wealth. Taxing them at a higher
-20% avoidance rate gives:
+```{r pareto-tab}
+x <- par[par$threshold_b %in% c(10, 4.5, 3, 2, 1), ]
+x <- x[order(-x$threshold_b), ]
+knitr::kable(data.frame(
+  Cutoff = paste0("$", x$threshold_b, "B"),
+  People = x$n_above_threshold_emp,
+  Wealth = bn(x$wealth_above_threshold, 0),
+  Average = paste0("$", bn(x$wealth_above_threshold / x$n_above_threshold_emp, 2), "B"),
+  b = bn(x$pareto_b_emp, 2)),
+  format = "html", align = "lrrrr", table.attr = 'style="font-size:80%"',
+  col.names = c("Cutoff", "People above it", "Their wealth, $B", "Average fortune", "b"))
+```
 
-.pull-left[
-| Row | Revenue, $B |
+.highlight-box[
+Above $4.5 billion, b stays near `r bn(ps$pareto_b, 2)`. Below it, b climbs to
+`r bn(par$pareto_b_emp[par$threshold_b == 1], 1)`: too few people for the wealth above them,
+the sign of missing small fortunes. If b stayed at `r bn(ps$pareto_b, 2)` all
+the way down, there would be **`r bn(ps$total_count_proj, 0)`** billionaires above $1 billion,
+not `r ps$total_count_emp`.
+]
+
+---
+name: row-2-revenue
+
+# Row 2, part 2: from missing billionaires to revenue
+
+Filling the gap adds `r bn(ps$total_count_proj - ps$total_count_emp, 0)` people but only
+$`r bn(ps$total_wealth_proj - ps$total_wealth_emp, 0)` billion: **`r pct(ps$pct_count_increase)`
+more people, `r pct(ps$pct_wealth_increase, 1)` more wealth**. The added fortunes are small,
+about $`r bn((ps$total_wealth_proj - ps$total_wealth_emp) / (ps$total_count_proj - ps$total_count_emp), 1)` billion each.
+
+Row 2 applies those percentages to the 1 July list: `r n0` become `r bn(t5$n_billionaires[2], 0)`
+billionaires, and the added wealth is `r pct(ps$pct_wealth_increase, 1)` of $`r bn(W0, 0)` billion
+= **$`r bn(dW, 2)` billion**.
+
+| | $ billion |
 |---|---:|
-| 1. Benchmark | `r bn(t5$wealth_tax_revenue[1])` |
-| 2. + missing billionaires | `r bn(t5$wealth_tax_revenue[2])` |
-]
+| Row 1 revenue (Steps 1 to 3) | `r bn(t5$wealth_tax_revenue[1], 2)` |
+| + 5% of the added wealth, after a higher `r pct(a_s)` avoidance: 0.05 × `r 1 - a_s` × `r bn(dW, 2)` | + `r bn(add_tax, 2)` |
+| − phase-in: the rate rises from 0 to 5% between $1.0 and $1.1 billion; `r pct(ps$fraction_in_phasein, 1)` of the added wealth is in that band | − `r bn(phase, 2)` |
+| **= Row 2 revenue** | **`r bn(t5$wealth_tax_revenue[2], 2)`** |
 
-.pull-right[
-.small[The Pareto coefficient is **research** (estimated from the data), so counting these
-people is a research-based switch; the 20% is <span class="guess">guesswork</span>.
+.small[The ratio b is **research** (estimated from the list). The `r pct(a_s)` avoidance for these less
+visible fortunes is <span class="guess">guesswork</span>.
 [Report, row 2](../repro.html#row-2-adding-the-billionaires-forbes-misses).]
-]
 
 ---
 

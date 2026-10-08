@@ -499,27 +499,93 @@ class: center, middle, inverse
 ---
 name: row-2
 
-# Row 2: the billionaires Forbes misses
+# Row 2, part 1: how BSZ spot missing billionaires
 
-Above $4.5 billion, Forbes&#39; list looks like a Pareto distribution. Below it, the list thins
-out far faster than the pattern predicts, which is what missing small fortunes look like.
+Forbes may miss smaller fortunes. BSZ test this with one ratio, **b** = the average fortune above
+a cutoff ÷ the cutoff. For a Pareto distribution, the usual shape of top wealth, **b** is the same at every cutoff.
+The Forbes list the workbook used (15 April 2026):
 
-Filling the gap adds **148%** more billionaires
-but only **28.2%** more wealth. Taxing them at a higher
-20% avoidance rate gives:
+&lt;table style=&quot;font-size:80%&quot;&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style=&quot;text-align:left;&quot;&gt; Cutoff &lt;/th&gt;
+   &lt;th style=&quot;text-align:right;&quot;&gt; People above it &lt;/th&gt;
+   &lt;th style=&quot;text-align:right;&quot;&gt; Their wealth, $B &lt;/th&gt;
+   &lt;th style=&quot;text-align:right;&quot;&gt; Average fortune &lt;/th&gt;
+   &lt;th style=&quot;text-align:right;&quot;&gt; b &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style=&quot;text-align:left;&quot;&gt; $10B &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 33 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 1,469 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; $44.52B &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 4.45 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style=&quot;text-align:left;&quot;&gt; $4.5B &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 89 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 1,827 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; $20.53B &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 4.56 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style=&quot;text-align:left;&quot;&gt; $3B &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 125 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 1,957 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; $15.65B &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 5.22 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style=&quot;text-align:left;&quot;&gt; $2B &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 172 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 2,068 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; $12.02B &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 6.01 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style=&quot;text-align:left;&quot;&gt; $1B &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 249 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 2,182 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; $8.76B &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 8.76 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
 
-.pull-left[
-| Row | Revenue, $B |
+.highlight-box[
+Above $4.5 billion, b stays near 4.48. Below it, b climbs to
+8.8: too few people for the wealth above them,
+the sign of missing small fortunes. If b stayed at 4.48 all
+the way down, there would be **617** billionaires above $1 billion,
+not 249.
+]
+
+---
+name: row-2-revenue
+
+# Row 2, part 2: from missing billionaires to revenue
+
+Filling the gap adds 368 people but only
+$615 billion: **148%
+more people, 28.2% more wealth**. The added fortunes are small,
+about $1.7 billion each.
+
+Row 2 applies those percentages to the 1 July list: 250 become 620
+billionaires, and the added wealth is 28.2% of $2,307 billion
+= **$650.35 billion**.
+
+| | $ billion |
 |---|---:|
-| 1. Benchmark | 103.8 |
-| 2. + missing billionaires | 127.9 |
-]
+| Row 1 revenue (Steps 1 to 3) | 103.81 |
+| + 5% of the added wealth, after a higher 20% avoidance: 0.05 × 0.8 × 650.35 | + 26.01 |
+| − phase-in: the rate rises from 0 to 5% between $1.0 and $1.1 billion; 12.1% of the added wealth is in that band | − 1.97 |
+| **= Row 2 revenue** | **127.85** |
 
-.pull-right[
-.small[The Pareto coefficient is **research** (estimated from the data), so counting these
-people is a research-based switch; the 20% is &lt;span class=&quot;guess&quot;&gt;guesswork&lt;/span&gt;.
+.small[The ratio b is **research** (estimated from the list). The 20% avoidance for these less
+visible fortunes is &lt;span class=&quot;guess&quot;&gt;guesswork&lt;/span&gt;.
 [Report, row 2](../repro.html#row-2-adding-the-billionaires-forbes-misses).]
-]
 
 ---
 

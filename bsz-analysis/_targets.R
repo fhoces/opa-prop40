@@ -140,6 +140,16 @@ list(
   tar_target(site_tab5_printed_csv,
              write_site_csv(site_tab5_printed, "data/tab5-vs-printed.csv"), format = "file"),
   tar_target(site_grid_js,    write_site_grid_js(site_grid, site_scoring_inputs), format = "file"),
+  # The Pareto test behind Table 5 row 2, for the deck (cutoffs, counts, wealth, b)
+  tar_target(site_pareto_csv,
+             write_site_csv(pareto_missing_r[, c("threshold_b", "n_above_threshold_emp",
+                                                 "wealth_above_threshold", "pareto_b_emp",
+                                                 "n_above_threshold_proj")], "data/pareto.csv"),
+             format = "file"),
+  tar_target(site_pareto_summary_csv,
+             write_site_csv(as.data.frame(compute_pareto_summary(pareto_missing_r)),
+                            "data/pareto-summary.csv"),
+             format = "file"),
 
   # Export contract for the comparison layer (R/export_contract.R): read off
   # existing targets only, same schema as rjkdc-analysis/export/r/.
