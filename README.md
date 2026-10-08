@@ -4,10 +4,10 @@ An [Open Policy Analysis (OPA)](https://www.bitss.org/) of the two rival revenue
 California's 2026 Proposition 40 (the Billionaire Tax Act, a one-time 5% tax on net worth above
 $1bn).
 
-- **BSZ**, supporting the measure: Boll, Saez & Zucman, NBER WP 35218, May 2026, revised August 2026, with
+- **BSZ**, a revenue estimate of about $100 billion: Boll, Saez & Zucman, NBER WP 35218, May 2026, revised August 2026, with
   an Excel workbook `BSZ_MainTablesFigures.xlsx`; and the Galle, Gamage, Saez and Shanske (GGSS)
   expert report of 20 July 2026, the side's first estimate. Each side's pages say who the authors are.
-- **RJKDC**, opposing it: Rauh, Jaros, Kearney, Doran & Cosso, Hoover Institution, 17 March 2026
+- **RJKDC**, a negative net present value for the state: Rauh, Jaros, Kearney, Doran & Cosso, Hoover Institution, 17 March 2026
   (SSRN 6340778), and its September revision, Jaros & Rauh, NBER c15504 (litigation-risk
   weighted). Reproduced from the authors' public MIT-licensed repository,
   [bjaros20/wealth_tax](https://github.com/bjaros20/wealth_tax), pinned at `25e84dd`.

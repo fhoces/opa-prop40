@@ -59,7 +59,7 @@ ts <- read.csv("data/test-summary.csv")
 ![](assets/opa/opa-materials.png){.opa-figure}
 
 This page is the **Open Materials** layer of the side of Rauh, Jaros, Kearney, Doran and Cosso
-(RJKDC), who oppose the measure: everything needed to rebuild every number on this
+(RJKDC): everything needed to rebuild every number on this
 site, in the repository [github.com/fhoces/opa-prop40](https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis),
 folder `rjkdc-analysis/`. The analysis is an R [`{targets}`](https://docs.ropensci.org/targets/)
 pipeline with a Python twin; the site's explorer grid, report and deck read that pipeline's store and

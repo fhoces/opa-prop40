@@ -8,7 +8,7 @@ the gitignored `original-materials/`).
 | Column | Meaning |
 |---|---|
 | `file` | Path relative to this side's directory. |
-| `side` | `bsz` (Boll, Saez and Zucman, who support the measure) or `rjkdc` (Rauh et al., who oppose it). |
+| `side` | `bsz` (Boll, Saez and Zucman) or `rjkdc` (Rauh et al.). |
 | `provider` | Who produced the file. |
 | `obtained_via` | `public-download` (fetched from a public URL), `author-shared` (given to us directly by a paper's authors, not publicly posted), `re-pull` (an independent extraction from a primary public data source, e.g. SEC EDGAR, that stands in for a workbook-cached figure), or `git-clone` (a public code repository cloned at a pinned commit; `sha256` then holds the commit SHA). |
 | `date_obtained` | When we got the file (best available; file mtime where the original download date wasn't otherwise recorded). |

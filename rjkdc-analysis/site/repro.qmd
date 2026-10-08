@@ -82,7 +82,7 @@ scroll <- function(x) cat("\n\n```{=html}\n<div class=\"table-scroll\">\n",
 This report rebuilds, step by step, the RJKDC side's fiscal estimate of California's
 Proposition 40 (the Billionaire Tax Act): a one-time 5% tax on the net worth of billionaires
 resident in California on 1 January 2026. The authors argue that the tax would collect far less
-than its proponents expect, and that billionaires who leave take their income tax with them for
+than the [BSZ side](../../bsz-analysis/site/) estimates, and that billionaires who leave take their income tax with them for
 ever, so the state ends up poorer. Following the
 [Open Policy Analysis](https://tinyurl.com/1qypbihb) framework:
 
@@ -193,7 +193,7 @@ by `r pct(100 * rc$migration_share)` and revenue is **\$`r num(rc$literature_cal
 (printed \$`r out("revenue_literature_calibrated","printed_value")`B). Two things to notice. First,
 that is a Swiss estimate for a recurring annual tax, applied here to a one-time tax; the paper
 argues a one-time tax with easy interstate moves could provoke a *larger* response (p.14), and the
-[BSZ side](../../bsz-analysis/site/) (Boll, Saez and Zucman, who support the measure) disputes exactly this ([disputes row 1](https://github.com/fhoces/opa-prop40/blob/main/comparison/DISPUTES.md)).
+[BSZ side](../../bsz-analysis/site/) (Boll, Saez and Zucman) disputes exactly this ([disputes row 1](https://github.com/fhoces/opa-prop40/blob/main/comparison/DISPUTES.md)).
 Second, a linear 10.32 × 5 = 51.6% loss is steeper than the log form the NBER revision later uses
 (41.1%, NBER PDF p.24).
 

@@ -388,7 +388,7 @@ pay is lost:
 $$L = -\alpha\,m\,C = -0.10 \times 0.5 \times `r bn(inp$C, 2)` = -`r bn(-t5$annual_ca_inctax_loss[1], 3)` \text{ per year}.$$
 This is a *yearly* loss, and Table 5 does not say for how many years. The paper argues that,
 for a genuinely one-time tax, departures should be temporary, "say only 5 years" (PDF p.27).
-The [RJKDC side](../../rjkdc-analysis/site/) (Rauh, Jaros, Kearney, Doran and Cosso, who oppose the measure) counts the loss
+The [RJKDC side](../../rjkdc-analysis/site/) (Rauh, Jaros, Kearney, Doran and Cosso) counts the loss
 forever. That difference in horizon is the largest single
 dispute between the two sides (`comparison/DISPUTES.md`, row 2) and is outside this side's
 output.

@@ -273,7 +273,7 @@ $$L = -\alpha \, m \, C = -0.10 \times 0.5 \times `r bn(C, 2)` = -`r bn(-t5$annu
 
 .highlight-box[
 $L$ is **per year**, and Table 5 does not say for how many years. BSZ argue about 5; the
-[RJKDC side](../../../rjkdc-analysis/site/) (Rauh, Jaros, Kearney, Doran and Cosso, who oppose the measure) counts it forever. That horizon is the biggest dispute between the sides.
+[RJKDC side](../../../rjkdc-analysis/site/) (Rauh, Jaros, Kearney, Doran and Cosso) counts it forever. That horizon is the biggest dispute between the sides.
 ]
 
 ---

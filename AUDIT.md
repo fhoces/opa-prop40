@@ -15,7 +15,7 @@ level. Step 9 alone holds (git plus a shared GitHub repository).
 The vectors below are the levels the pages earn **once the repository is public and the sites
 are served**. Nothing else needs to change for them to hold.
 
-## BSZ OPA, the side supporting the measure (`bsz-analysis/`)
+## BSZ OPA (`bsz-analysis/`)
 
 | # | Step | Level | Evidence | What the next level needs |
 |---|---|---|---|---|
@@ -29,7 +29,7 @@ are served**. Nothing else needs to change for them to hold.
 | 8 | Reproducible code | 2 | "Possible to run regardless of software dependencies": `.github/workflows/bsz-ci.yml` rebuilds the pipeline from `DESCRIPTION` on a clean runner and runs the suite (green on `9dc34f9`) | Level 3 needs "just one click": a Binder or Codespaces devcontainer. A lockfile (none exists) would also stop runner-vs-local package drift |
 | 9 | Version control | 3 | Git plus the shared GitHub repository, all work committed | None |
 
-## RJKDC OPA, the side opposing it (`rjkdc-analysis/`)
+## RJKDC OPA (`rjkdc-analysis/`)
 
 | # | Step | Level | Evidence | What the next level needs |
 |---|---|---|---|---|
