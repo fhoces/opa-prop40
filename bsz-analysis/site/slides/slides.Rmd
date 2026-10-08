@@ -528,13 +528,19 @@ d <- data.frame(
   wt = paste0("$", bn(t5$wealth_tax_revenue, 1), "B"),
   it = paste0("+$", bn(t5$extra_ca_inctax_sales, 2), "B"),
   l5 = paste0("&minus;$", bn(loss * f5, 2), "B"),
-  li = paste0("&minus;$", bn(loss * fin, 2), "B"))
+  li = paste0("&minus;$", bn(loss * fin, 2), "B"),
+  tot = paste0("$", bn(t5$wealth_tax_revenue + t5$extra_ca_inctax_sales - loss * f5, 1), "B<br>",
+               "$", bn(t5$wealth_tax_revenue + t5$extra_ca_inctax_sales - loss * fin, 1), "B"))
+en <- read.csv("../../../comparison/export/r/ends.csv")
+stopifnot(abs(t5$wealth_tax_revenue[1] + t5$extra_ca_inctax_sales[1] - loss[1] * f5 -
+              en$bsz_model[en$horizon_setting == "own" & en$output == "b"]) < 1e-9)
 d[1, ] <- paste0("<b>", d[1, ], "</b>")
-knitr::kable(d, format = "html", escape = FALSE, align = "lrrrr",
+knitr::kable(d, format = "html", escape = FALSE, align = "lrrrrr", table.attr = 'style="font-size:85%"',
   col.names = c("Table 5 scenario", "Wealth tax collected<br>(once)",
                 "Extra income tax from selling assets (once)",
                 "Income tax lost, present value<br>if it lasts 5 years (BSZ)",
-                "Income tax lost, present value<br>if it lasts forever (RJKDC report)"))
+                "Income tax lost, present value<br>if it lasts forever (RJKDC report)",
+                "<b>Total</b><br>5 years<br>forever"))
 ```
 
 .highlight-box[
