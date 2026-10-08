@@ -447,8 +447,8 @@ knitr::kable(x, format = "html", align = "llrr")
 .pull-right[
 Assume the four who left **before** 1 January escape the tax, and three more leave later.
 Revenue falls to **$`r bn(t5$wealth_tax_revenue[3])` billion**; the yearly income tax loss
-rises to **$`r bn(-t5$annual_ca_inctax_loss[3], 2)` billion**. The **combined scenario** applies this
-and the missing billionaires scenario together.
+rises to **$`r bn(-t5$annual_ca_inctax_loss[3], 2)` billion**. The **missing + leavers** scenario applies
+this and the missing billionaires scenario together.
 
 .highlight-box[
 Why so little income tax? SEC filings show the top three pay very little state income tax
@@ -561,7 +561,7 @@ Table 5.
 
 **Found.**
 - a block of 4 rows pasted twice in the workbook's billionaire list (244 counted, 240 real)
-- the combined scenario skips a deduction the missing billionaires scenario applies
+- the missing + leavers scenario skips a deduction the missing billionaires scenario applies
 - two printed Table 5 cells round differently from the workbook
 ]
 
