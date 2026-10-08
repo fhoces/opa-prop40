@@ -343,7 +343,7 @@ BSZ side of California Proposition 40:
 &lt;tr style=&quot;background:#e8eaf6;&quot;&gt;&lt;th style=&quot;text-align:left; padding:6px;&quot;&gt;Part&lt;/th&gt;&lt;th style=&quot;text-align:left; padding:6px;&quot;&gt;What it covers&lt;/th&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td style=&quot;padding:6px;&quot;&gt;&lt;b&gt;&lt;a href=&quot;#part-policy&quot;&gt;1. What is being estimated&lt;/a&gt;&lt;/b&gt;&lt;/td&gt;&lt;td style=&quot;padding:6px;&quot;&gt;The tax, and the two documents that make the BSZ side&#39;s case&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td style=&quot;padding:6px;&quot;&gt;&lt;b&gt;&lt;a href=&quot;#part-steps&quot;&gt;2. Five steps to $104 billion&lt;/a&gt;&lt;/b&gt;&lt;/td&gt;&lt;td style=&quot;padding:6px;&quot;&gt;Table 5, row 1, built one line at a time&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td style=&quot;padding:6px;&quot;&gt;&lt;b&gt;&lt;a href=&quot;#part-rows&quot;&gt;3. The other rows&lt;/a&gt;&lt;/b&gt;&lt;/td&gt;&lt;td style=&quot;padding:6px;&quot;&gt;Missing billionaires, and who may have left&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td style=&quot;padding:6px;&quot;&gt;&lt;b&gt;&lt;a href=&quot;#part-rows&quot;&gt;3. Alternative scenarios&lt;/a&gt;&lt;/b&gt;&lt;/td&gt;&lt;td style=&quot;padding:6px;&quot;&gt;Missing billionaires, and who may have left&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td style=&quot;padding:6px;&quot;&gt;&lt;b&gt;&lt;a href=&quot;#part-guess&quot;&gt;4. What is guesswork&lt;/a&gt;&lt;/b&gt;&lt;/td&gt;&lt;td style=&quot;padding:6px;&quot;&gt;Every input by origin, and how far each guess moves the result&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td style=&quot;padding:6px;&quot;&gt;&lt;b&gt;&lt;a href=&quot;#part-repro&quot;&gt;5. What reproduces&lt;/a&gt;&lt;/b&gt;&lt;/td&gt;&lt;td style=&quot;padding:6px;&quot;&gt;Tests, mismatches found, and what is not checked&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
@@ -426,31 +426,73 @@ yearly installments of about $20.8 billion.
 &lt;img src=&quot;data:image/png;base64,#slides_files/figure-html/fig-waterfall-1.png&quot; style=&quot;display: block; margin: auto;&quot; /&gt;
 
 ---
-name: steps-4-5
+name: step-4
 
-# Steps 4 and 5: two income tax effects
+# Step 4: selling assets to pay raises income tax
 
-**Step 4. Selling assets to pay raises income tax.** If a share `\(s\)` = 1/3 of the tax is paid
-by selling, and `\(g\)` = 80% of a sale is taxable gain, taxed at the top California rate on
-gains `\(t_{cg}\)` = 13.3%:
+Some billionaires will sell stock to pay the tax. The authors assume a share `\(s\)` = 1/3 of the
+tax is paid by selling.
+
+Not all of a sale is income. Only the **gain** is taxed: the sale price minus what the stock
+originally cost (its **basis**). The authors put the gain at `\(g\)` = 80% of each dollar sold, so the
+basis is the other 20%. Example: selling $100 of stock bought for $20 gives an $80 taxable gain.
+
+That gain is taxed at the top California rate on gains, `\(t_{cg}\)` = 13.3%:
 
 `$$E = s \cdot g \cdot t_{cg} \cdot T = \tfrac13 \times 0.8 \times 0.133 \times 103.8 = 3.68$$`
 
-**Step 5. Leavers stop paying income tax.** Half the avoidance, *m* = 50%, is people leaving,
-so 5% of the $3.06 billion (*C*) billionaires pay each year is lost:
+.small[*E* is extra income tax, collected **once**, while the wealth tax is being paid.]
 
-`$$L = -\alpha \, m \, C = -0.10 \times 0.5 \times 3.06 = -0.153 \text{ per year (negative: revenue lost)}$$`
+---
+name: step-5-who
+
+# Step 5, part 1: who leaves
+
+Step 2 took a share `\(\alpha\)` = 10% of the wealth out of the wealth tax. In dollars:
+10% of $2,307 billion is **$230.70 billion**.
+
+That 10% mixes two behaviours. The authors split it in half, `\(m\)` = 50%:
+
+| Part of the escaped wealth | Share of all wealth | Wealth, $B | Still a CA resident? |
+|---|---:|---:|---|
+| Under-valued or hidden | `\(\alpha (1-m)\)` = 5% | 115.35 | yes |
+| Owner **moves out** of California | `\(\alpha \, m\)` = 5% | 115.35 | **no** |
 
 .highlight-box[
-`\(L\)` is **per year**, and Table 5 does not say for how many years. BSZ argue about 5; the
-[RJKDC side](../../../rjkdc-analysis/site/) (Rauh, Jaros, Kearney, Doran and Cosso) counts it forever. That horizon is the biggest dispute between the sides.
+Step 2 already removed **both** rows from the **wealth tax**. Step 5 asks about a different tax,
+the **income tax**. Only the second row matters for it: people who still live in California keep
+paying California income tax; people who moved out stop.
+]
+
+---
+name: step-5-loss
+
+# Step 5, part 2: the income tax they take with them
+
+Today California billionaires pay `\(C\)` = $3.06 billion a year in California income tax.
+
+The movers hold 5% of the wealth. The authors assume they also pay 5% of
+that income tax (income tax in proportion to wealth). So, one factor at a time:
+
+| | $ billion a year |
+|---|---:|
+| Income tax all billionaires pay, `\(C\)` | 3.061 |
+| of which by the 10% whose wealth escapes, `\(\alpha \, C\)` | 0.306 |
+| of which by those who moved out, `\(\alpha \, m \, C\)` | 0.153 |
+
+`$$L = -\alpha \, m \, C = -0.10 \times 0.5 \times 3.06 = -0.153 \text{ per year}$$`
+
+.highlight-box[
+The minus sign means revenue lost. `\(L\)` is **per year**, and Table 5 does not say for how many
+years. BSZ argue about 5; the [RJKDC report](../../../rjkdc-analysis/site/) (Rauh, Jaros,
+Kearney, Doran and Cosso) counts it forever. That horizon is the biggest dispute between the two.
 ]
 
 ---
 name: part-rows
 class: center, middle, inverse
 
-# Part 3: The other rows
+# Part 3: Alternative scenarios
 
 ---
 name: row-2

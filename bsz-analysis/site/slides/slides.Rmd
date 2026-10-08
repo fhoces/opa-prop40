@@ -33,6 +33,9 @@ lv  <- read.csv("../data/leavers.csv", stringsAsFactors = FALSE)
 tst <- read.csv("../data/test-results.csv", stringsAsFactors = FALSE)
 W0 <- t5$wealth[1]; n0 <- t5$n_billionaires[1]
 C  <- -t5$annual_ca_inctax_loss[1] / 0.05
+a  <- t5$avoidance_rate[1]; m <- 0.5   # alpha and the movers' share of it (inputs.csv)
+stopifnot(abs(a - 0.10) < 1e-9, abs(-a * m * C - t5$annual_ca_inctax_loss[1]) < 1e-9)
+pct <- function(x, d = 0) paste0(formatC(100 * x, format = "f", digits = d), "%")
 bn <- function(x, d = 1) formatC(x, format = "f", digits = d, big.mark = ",")
 row1 <- with(grd, avoidance == 0.10 & mobility_share == 0.5 & avoidance_small == 0.2 &
                   abs(sell_share - 1/3) < 1e-9 & pareto == 0 & leavers == 0)
@@ -160,7 +163,7 @@ BSZ side of California Proposition 40:
 <tr style="background:#e8eaf6;"><th style="text-align:left; padding:6px;">Part</th><th style="text-align:left; padding:6px;">What it covers</th></tr>
 <tr><td style="padding:6px;"><b><a href="#part-policy">1. What is being estimated</a></b></td><td style="padding:6px;">The tax, and the two documents that make the BSZ side's case</td></tr>
 <tr><td style="padding:6px;"><b><a href="#part-steps">2. Five steps to $`r round(t5$wealth_tax_revenue[1])` billion</a></b></td><td style="padding:6px;">Table 5, row 1, built one line at a time</td></tr>
-<tr><td style="padding:6px;"><b><a href="#part-rows">3. The other rows</a></b></td><td style="padding:6px;">Missing billionaires, and who may have left</td></tr>
+<tr><td style="padding:6px;"><b><a href="#part-rows">3. Alternative scenarios</a></b></td><td style="padding:6px;">Missing billionaires, and who may have left</td></tr>
 <tr><td style="padding:6px;"><b><a href="#part-guess">4. What is guesswork</a></b></td><td style="padding:6px;">Every input by origin, and how far each guess moves the result</td></tr>
 <tr><td style="padding:6px;"><b><a href="#part-repro">5. What reproduces</a></b></td><td style="padding:6px;">Tests, mismatches found, and what is not checked</td></tr>
 </table>
@@ -256,31 +259,73 @@ ggplot(d, aes(x = step, xmin = as.numeric(step) - 0.35, xmax = as.numeric(step) 
 ```
 
 ---
-name: steps-4-5
+name: step-4
 
-# Steps 4 and 5: two income tax effects
+# Step 4: selling assets to pay raises income tax
 
-**Step 4. Selling assets to pay raises income tax.** If a share $s$ = 1/3 of the tax is paid
-by selling, and $g$ = 80% of a sale is taxable gain, taxed at the top California rate on
-gains $t_{cg}$ = 13.3%:
+Some billionaires will sell stock to pay the tax. The authors assume a share $s$ = 1/3 of the
+tax is paid by selling.
+
+Not all of a sale is income. Only the **gain** is taxed: the sale price minus what the stock
+originally cost (its **basis**). The authors put the gain at $g$ = 80% of each dollar sold, so the
+basis is the other 20%. Example: selling $100 of stock bought for $20 gives an $80 taxable gain.
+
+That gain is taxed at the top California rate on gains, $t_{cg}$ = 13.3%:
 
 $$E = s \cdot g \cdot t_{cg} \cdot T = \tfrac13 \times 0.8 \times 0.133 \times `r bn(t5$wealth_tax_revenue[1])` = `r bn(t5$extra_ca_inctax_sales[1], 2)`$$
 
-**Step 5. Leavers stop paying income tax.** Half the avoidance, *m* = 50%, is people leaving,
-so 5% of the $`r bn(C, 2)` billion (*C*) billionaires pay each year is lost:
+.small[*E* is extra income tax, collected **once**, while the wealth tax is being paid.]
 
-$$L = -\alpha \, m \, C = -0.10 \times 0.5 \times `r bn(C, 2)` = -`r bn(-t5$annual_ca_inctax_loss[1], 3)` \text{ per year (negative: revenue lost)}$$
+---
+name: step-5-who
+
+# Step 5, part 1: who leaves
+
+Step 2 took a share $\alpha$ = `r pct(a)` of the wealth out of the wealth tax. In dollars:
+`r pct(a)` of $`r bn(W0, 0)` billion is **$`r bn(a * W0, 2)` billion**.
+
+That `r pct(a)` mixes two behaviours. The authors split it in half, $m$ = `r pct(m)`:
+
+| Part of the escaped wealth | Share of all wealth | Wealth, $B | Still a CA resident? |
+|---|---:|---:|---|
+| Under-valued or hidden | $\alpha (1-m)$ = `r pct(a * (1 - m))` | `r bn(a * (1 - m) * W0, 2)` | yes |
+| Owner **moves out** of California | $\alpha \, m$ = `r pct(a * m)` | `r bn(a * m * W0, 2)` | **no** |
 
 .highlight-box[
-$L$ is **per year**, and Table 5 does not say for how many years. BSZ argue about 5; the
-[RJKDC side](../../../rjkdc-analysis/site/) (Rauh, Jaros, Kearney, Doran and Cosso) counts it forever. That horizon is the biggest dispute between the sides.
+Step 2 already removed **both** rows from the **wealth tax**. Step 5 asks about a different tax,
+the **income tax**. Only the second row matters for it: people who still live in California keep
+paying California income tax; people who moved out stop.
+]
+
+---
+name: step-5-loss
+
+# Step 5, part 2: the income tax they take with them
+
+Today California billionaires pay $C$ = $`r bn(C, 2)` billion a year in California income tax.
+
+The movers hold `r pct(a * m)` of the wealth. The authors assume they also pay `r pct(a * m)` of
+that income tax (income tax in proportion to wealth). So, one factor at a time:
+
+| | $ billion a year |
+|---|---:|
+| Income tax all billionaires pay, $C$ | `r bn(C, 3)` |
+| of which by the `r pct(a)` whose wealth escapes, $\alpha \, C$ | `r bn(a * C, 3)` |
+| of which by those who moved out, $\alpha \, m \, C$ | `r bn(a * m * C, 3)` |
+
+$$L = -\alpha \, m \, C = -`r bn(a, 2)` \times `r m` \times `r bn(C, 2)` = -`r bn(-t5$annual_ca_inctax_loss[1], 3)` \text{ per year}$$
+
+.highlight-box[
+The minus sign means revenue lost. $L$ is **per year**, and Table 5 does not say for how many
+years. BSZ argue about 5; the [RJKDC report](../../../rjkdc-analysis/site/) (Rauh, Jaros,
+Kearney, Doran and Cosso) counts it forever. That horizon is the biggest dispute between the two.
 ]
 
 ---
 name: part-rows
 class: center, middle, inverse
 
-# Part 3: The other rows
+# Part 3: Alternative scenarios
 
 ---
 name: row-2
