@@ -1,0 +1,9 @@
+# Schema of data-raw/asset-residency-overrides.csv, which is gitignored: the
+# real rows come from the authors' asset-level code in the confidential
+# bundle. Same schema as residency-overrides.example.csv; a separate file
+# because the authors' asset code uses its own list. Read by
+# sql/11_rtb_ca_assets.sql.
+#   forbes_id  Forbes real-time id, lowercase and hyphenated
+#   rule       include or exclude
+#   note       free text
+forbes_id,rule,note

@@ -660,6 +660,115 @@ def load_form4_excluded_filings(con, root):
                               [("folder", "TEXT"), ("note", "TEXT")], out)
 
 
+# ---------------------------------------------------------------------------
+# Forbes real-time asset files: one row per person and holding (a listed
+# stock, a private stake, an option grant) on a snapshot date.
+# Source: key rtb_asset_files in data-raw/private-paths.csv, a path template
+# with a {date} placeholder (YYYY_MM_DD). Only the seven year-end snapshots
+# of query 1 are loaded. Types follow readr::read_csv's guesses for these
+# files: the numbers are REAL, "interactive" is a True/False flag kept as
+# text, the rest is text; spaces are trimmed and empty cells are NULL.
+# ---------------------------------------------------------------------------
+ASSET_DATES = ["2019_12_31", "2020_12_31", "2021_12_31", "2022_12_31",
+               "2023_12_31", "2024_12_31", "2026_01_01"]
+ASSET_REAL = {"numberOfShares", "sharePrice", "exchangeRate", "exerciseOptionPrice",
+              "stockOption", "currentPrice", "currentValue", "shareValue"}
+
+
+def load_rtb_assets(con, root):
+    template = str(private_file("rtb_asset_files"))
+    out_cols, rows = None, []
+    for d in ASSET_DATES:
+        path = Path(template.replace("{date}", d))
+        with open(path, newline="", encoding="utf-8") as f:
+            reader = csv.reader(f)
+            header = next(reader)
+            if out_cols is None:
+                # The files hold the same columns, not always in the same
+                # order; the first file's order is the table's.
+                names = header
+                out_cols = [("snapshot", "TEXT"), ("row_num", "INTEGER")] + [
+                    (h, "REAL" if h in ASSET_REAL else "TEXT") for h in names]
+            if sorted(header) != sorted(names):
+                raise ValueError(f"{path.name}: columns differ from the first asset file")
+            idx = [header.index(h) for h in names]
+            casts = [_real if h in ASSET_REAL else _text for h in names]
+            for i, r in enumerate(reader, start=1):
+                rows.append([d.replace("_", "-"), i] + [c(r[j]) for c, j in zip(casts, idx)])
+    return _create_and_insert(con, "rtb_assets", out_cols, rows)
+
+
+# ---------------------------------------------------------------------------
+# Compustat North America daily securities on the last trading day of each
+# year, 2019 to 2025 (one file per year). Only the columns the ticker
+# crosswalk uses are loaded; gvkey stays text with its leading zeros, as
+# readr reads it. snap_order 1 is 2019.
+# Source: key comp_na_yearend_files in data-raw/private-paths.csv, a path
+# template with a {date} placeholder (8 digits).
+# ---------------------------------------------------------------------------
+def load_comp_na_yearend(con, root):
+    files = _template_files("comp_na_yearend_files", "date", 8)
+    files = [(d, p) for d, p in files if "20191231" <= d <= "20251231"]
+
+    def rows():
+        for order, (_, p) in enumerate(sorted(files), start=1):
+            with open(p, newline="", encoding="utf-8", errors="replace") as f:
+                reader = csv.reader(f)
+                header = next(reader)
+                idx = [header.index(c) for c in ("gvkey", "iid", "tic", "conm", "datadate")]
+                for i, r in enumerate(reader, start=1):
+                    yield [order, i] + [_text(r[j]) for j in idx]
+
+    print(f"  Compustat NA year-end files: {len(files)}")
+    return _create_and_insert(
+        con, "comp_na_yearend",
+        [("snap_order", "INTEGER"), ("row_num", "INTEGER"), ("gvkey", "TEXT"), ("iid", "TEXT"),
+         ("tic", "TEXT"), ("conm", "TEXT"), ("datadate", "TEXT")], rows())
+
+
+# ---------------------------------------------------------------------------
+# The three fix tables of the asset step (sql/11_rtb_ca_assets.sql), all
+# gitignored because their rows come from the confidential bundle; schemas in
+# the matching .example.csv files:
+#   asset-residency-overrides.csv  the residency rule of the asset step, same
+#                                  schema as residency-overrides.csv
+#   rtb-asset-ticker-fixes.csv     tickers missing from the asset files
+#   rtb-ticker-gvkey-fixes.csv     tickers matched to a Compustat security by
+#                                  hand
+# ---------------------------------------------------------------------------
+def load_asset_residency_overrides(con, root):
+    out = []
+    for r in read_private_config("asset-residency-overrides.csv"):
+        fid, rule = (r.get("forbes_id") or "").strip(), (r.get("rule") or "").strip()
+        if not fid or rule not in ("include", "exclude"):
+            raise ValueError(f"asset-residency-overrides.csv: bad row {r}")
+        out.append((fid, rule, (r.get("note") or "").strip() or None))
+    return _create_and_insert(con, "asset_residency_overrides",
+                              [("forbes_id", "TEXT"), ("rule", "TEXT"), ("note", "TEXT")], out)
+
+
+def load_rtb_asset_ticker_fixes(con, root):
+    out = [(int(r["year"]), r["forbes_id"], r["company_name"], r["ticker"], r["exchange"])
+           for r in read_private_config("rtb-asset-ticker-fixes.csv")]
+    return _create_and_insert(
+        con, "rtb_asset_ticker_fixes",
+        [("year", "INTEGER"), ("forbes_id", "TEXT"), ("company_name", "TEXT"),
+         ("ticker", "TEXT"), ("exchange", "TEXT")], out)
+
+
+def load_rtb_ticker_gvkey_fixes(con, root):
+    out, seen = [], set()
+    for r in read_private_config("rtb-ticker-gvkey-fixes.csv"):
+        key = (r["region"], r["ticker_clean"])
+        if r["region"] not in ("na", "int") or key in seen:
+            raise ValueError(f"rtb-ticker-gvkey-fixes.csv: bad or repeated row {r}")
+        seen.add(key)
+        out.append((r["region"], r["ticker_clean"], r["gvkey"], r["iid"]))
+    return _create_and_insert(
+        con, "rtb_ticker_gvkey_fixes",
+        [("region", "TEXT"), ("ticker_clean", "TEXT"), ("gvkey", "TEXT"), ("iid", "TEXT")], out)
+
+
 # One entry per table. Later queries add their inputs here.
 LOADERS = {
     "rtb_all_combined": load_rtb_all_combined,
@@ -676,6 +785,11 @@ LOADERS = {
     "comp_daily_snapshots": load_comp_daily_snapshots,
     "form4_gvkey_fixes": load_form4_gvkey_fixes,
     "form4_excluded_filings": load_form4_excluded_filings,
+    "rtb_assets": load_rtb_assets,
+    "comp_na_yearend": load_comp_na_yearend,
+    "asset_residency_overrides": load_asset_residency_overrides,
+    "rtb_asset_ticker_fixes": load_rtb_asset_ticker_fixes,
+    "rtb_ticker_gvkey_fixes": load_rtb_ticker_gvkey_fixes,
     # Needs table form4_gvkey_list (sql/07_form4_gvkey_link.sql), so it is
     # loaded only when named: python py/load_bundle.py comp_daily_form4
     "comp_daily_form4": load_comp_daily_form4,

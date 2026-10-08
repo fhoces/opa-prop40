@@ -1,0 +1,9 @@
+# Schema of data-raw/rtb-ticker-gvkey-fixes.csv, which is gitignored: the real
+# rows come from the authors' asset-level code in the confidential bundle.
+# Lines starting with # are skipped. Read by sql/11_rtb_ca_assets.sql.
+#   region        na (North American ticker) or int (international ticker)
+#   ticker_clean  the ticker without its market suffix
+#   gvkey         Compustat company key, as text (written as in the source)
+#   iid           Compustat issue id, for example 01 or 01W
+# One row per (region, ticker_clean).
+region,ticker_clean,gvkey,iid

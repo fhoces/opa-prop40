@@ -42,6 +42,10 @@ EXPORT_ORDER = {
     "form4_annual_individual": "owner_cik_1, year",
     "form4_annual": "sort_key, year",
     "form4_annual_top5": "block, owner_cik_1, year",
+    "rtb_ca_assets": ("snapshot, forbes_currentvalue DESC, forbes_id, (forbes_exchange IS NULL), "
+                      "forbes_exchange, (forbes_ticker IS NULL), forbes_ticker, forbes_companyname"),
+    "rtb_ticker_gvkey_na": "forbes_ticker, gvkey, iid",
+    "rtb_ticker_gvkey_int": "forbes_ticker, gvkey, iid",
 }
 
 

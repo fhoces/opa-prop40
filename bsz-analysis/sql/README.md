@@ -322,10 +322,35 @@ kg, kg_long, kg_short, option_profit, kg_taxable, donation; 1,337 rows,
 2019 to 2025) equal ours exactly. The R and Python basis steps and all
 exports are identical.
 
+## Query 11: `11_rtb_ca_assets.sql`, Forbes asset files to CA holdings and a ticker crosswalk
+
+The first step of the Compustat chain for public equity wealth and
+dividends. With each real-time snapshot Forbes lists the holdings behind
+every fortune. For the seven year-end lists of query 1 this keeps the listed
+holdings of California billionaires, one row per person and security
+(private wealth and unexercised options left out), and matches each ticker to
+a Compustat security. Three gitignored tables hold what the authors decided
+by hand: this step's residency rule, a few missing tickers, and the tickers
+matched to a security by hand (schemas in the `.example.csv` files).
+
+| Block | What it does | Course module | Beyond the course |
+|---|---|---|---|
+| Q1 `rtb_ca_assets` | CA residents' listed holdings, summed per person and security, missing tickers filled | 1 (WHERE, `IN` / `NOT IN (SELECT ...)`), 3 (GROUP BY), 2 (LEFT JOIN), 4 (CTE chain), 5 (`ROW_NUMBER` for "first") | `IS` as a NULL-safe equality in a join |
+| Q2 `rtb_tickers` | Splits a ticker such as "ABC-US" into code and market suffix; North America or international | 1 (`CASE WHEN`), 4 (CTE) | `rtrim`, `substr` and `GLOB` in place of a regular expression |
+| Q3 `comp_na_tickers` | One row per Compustat security, ticker from its first year-end file | 4, 5 (`ROW_NUMBER`) | |
+| Q4, Q5 | Ticker code to security, then the hand matches | 2 (LEFT JOIN), 1 (`COALESCE`) | |
+| Q6 `rtb_gvkey_na_list` | The distinct North American gvkeys | 1 (`DISTINCT`) | |
+
+Check (`py/check_rtb_ca_assets.py`, 2026-10-07): the seven holdings tables
+equal the authors' files row by row (273 to 338 rows; max relative
+difference 2e-16); both crosswalks (268 and 18 rows) and the gvkey list (252)
+are identical. R and Python exports are identical.
+
 ## Later queries (planned)
 
-The rest of the Compustat-based chain: the `wrds_*` summaries (public equity
-wealth, dividends and fundamentals from Compustat), and `main_annual_*`,
+The rest of the Compustat-based chain: the `wrds_*` summaries (holdings of
+query 11 valued with Compustat prices, dividends, ownership shares and
+fundamentals), and `main_annual_*`,
 which combine them with the Form 4 sums into the remaining columns of the
 public `data_sec_*` sheets (taxes, economic income). See
 `PLAN-2-raw-to-workbook.md` at the repo root.

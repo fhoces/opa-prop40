@@ -140,6 +140,20 @@ def test_form4_annual():
     assert last == "Total"
 
 
+def test_rtb_ca_assets():
+    con = _connect("11_rtb_ca_assets.sql",
+                   ["rtb_assets", "comp_na_yearend", "asset_residency_overrides",
+                    "rtb_asset_ticker_fixes", "rtb_ticker_gvkey_fixes"])
+    per = [n for (n,) in con.execute(
+        "SELECT COUNT(*) FROM rtb_ca_assets GROUP BY snapshot ORDER BY snapshot")]
+    n = [con.execute(f"SELECT COUNT(*), COUNT(gvkey) FROM {t}").fetchone()
+         for t in ("rtb_ticker_gvkey_na", "rtb_ticker_gvkey_int")]
+    con.close()
+    # Row counts of the authors' seven holdings files and two crosswalks.
+    assert per == [273, 292, 322, 306, 327, 316, 338]
+    assert n == [(268, 262), (18, 17)]
+
+
 if __name__ == "__main__":
     pytest = None  # plain run: report skips here instead of raising pytest's
     failed = 0

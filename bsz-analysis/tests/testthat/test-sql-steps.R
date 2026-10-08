@@ -100,3 +100,15 @@ test_that("queries 9 and 10 and the basis step build the yearly Form 4 sums", {
   # Row counts of the authors' four yearly files.
   expect_equal(unname(n), c(156378, 2110, 1619, 24, 118))
 })
+
+test_that("query 11 builds the CA holdings and the ticker crosswalks", {
+  con <- .steps_connect("11_rtb_ca_assets.sql",
+                        c("rtb_assets", "comp_na_yearend", "asset_residency_overrides",
+                          "rtb_asset_ticker_fixes", "rtb_ticker_gvkey_fixes"))
+  on.exit(DBI::dbDisconnect(con), add = TRUE)
+  per <- DBI::dbGetQuery(con, "SELECT COUNT(*) AS n FROM rtb_ca_assets GROUP BY snapshot ORDER BY snapshot")$n
+  # Row counts of the authors' seven holdings files and two crosswalks.
+  expect_equal(per, c(273, 292, 322, 306, 327, 316, 338))
+  expect_equal(.steps_one(con, "SELECT COUNT(*) FROM rtb_ticker_gvkey_na"), 268)
+  expect_equal(.steps_one(con, "SELECT COUNT(*) FROM rtb_ticker_gvkey_int"), 18)
+})

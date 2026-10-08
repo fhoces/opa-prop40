@@ -43,7 +43,11 @@
   form4_annual_firm_individual = "owner_cik_1, issuer_cik, year",
   form4_annual_individual = "owner_cik_1, year",
   form4_annual = "sort_key, year",
-  form4_annual_top5 = "block, owner_cik_1, year"
+  form4_annual_top5 = "block, owner_cik_1, year",
+  rtb_ca_assets = paste("snapshot, forbes_currentvalue DESC, forbes_id, (forbes_exchange IS NULL),",
+                        "forbes_exchange, (forbes_ticker IS NULL), forbes_ticker, forbes_companyname"),
+  rtb_ticker_gvkey_na = "forbes_ticker, gvkey, iid",
+  rtb_ticker_gvkey_int = "forbes_ticker, gvkey, iid"
 )
 
 # Split SQL text into statements at each `;` that is real code.

@@ -26,4 +26,12 @@
 #   form4_annual_individual_key         answer keys of query 10
 #   form4_annual_key
 #   form4_annual_top5_key
+#   rtb_asset_files           path template of the Forbes real-time asset files,
+#                             with a {date} placeholder (YYYY_MM_DD), input of query 11
+#   comp_na_yearend_files     path template of the Compustat NA year-end files,
+#                             with a {date} placeholder (8 digits), input of query 11
+#   rtb_ca_asset_key_files    path template of the authors' CA holdings files, answer key
+#   rtb_ticker_gvkey_na_key   the authors' two ticker crosswalks (CSV) and their
+#   rtb_ticker_gvkey_int_key    gvkey list (text), answer keys of query 11
+#   rtb_gvkey_na_key
 key,path

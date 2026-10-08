@@ -1,0 +1,10 @@
+# Schema of data-raw/rtb-asset-ticker-fixes.csv, which is gitignored: the real
+# rows come from the authors' asset-level code in the confidential bundle.
+# Lines starting with # are skipped. Read by sql/11_rtb_ca_assets.sql.
+#   year          list year (2019 to 2025; 2025 is the 2026-01-01 list)
+#   forbes_id     the holder
+#   company_name  the holding's company name as in the asset file
+#   ticker        Forbes-style ticker with market suffix, for example AAPL-US
+#   exchange      exchange name
+# One row per (year, forbes_id, company_name).
+year,forbes_id,company_name,ticker,exchange
