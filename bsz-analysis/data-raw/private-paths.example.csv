@@ -22,4 +22,8 @@
 #                             loaded after query 7, input of query 8
 #   form4_gvkey_list_key      the authors' list of gvkeys (text), answer key of query 7
 #   form4_compustat_key       the authors' Form 4 file with prices (xlsx), answer key of query 8
+#   form4_annual_firm_individual_key  the authors' four yearly Form 4 files (xlsx),
+#   form4_annual_individual_key         answer keys of query 10
+#   form4_annual_key
+#   form4_annual_top5_key
 key,path

@@ -48,3 +48,4 @@ data-raw/NOTES-private.md
 data-raw/form4-price-corrections.csv
 data-raw/forbes-name-ids.csv
 data-raw/form4-gvkey-fixes.csv
+data-raw/form4-excluded-filings.csv

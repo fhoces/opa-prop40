@@ -8,7 +8,9 @@ here:
    public workbook. Python loads the bundle, runs the queries and checks the
    results (`bundle_paths.py`, `load_bundle.py`, `run_sql.py`,
    `check_common.py`, one `check_*.py` per query, `test_sql.py` for query 1
-   and `test_sql_steps.py` for the later ones).
+   and `test_sql_steps.py` for the later ones). One step of the Form 4 chain
+   is a loop rather than SQL, with an R twin: `form4_basis.py` (and
+   `R/form4_basis.R`), the capital-gains cost basis.
 2. **Spreadsheet to results (step 2).** The public workbook
    `BSZ_MainTablesFigures.xlsx` to every number the R pipeline exports: the
    computations, the data behind each table and figure, the site data and the

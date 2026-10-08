@@ -1,0 +1,8 @@
+# Schema of data-raw/form4-excluded-filings.csv, which is gitignored: the real
+# rows come from the authors' analysis code in the confidential bundle. Lines
+# starting with # are skipped by py/load_bundle.py. Read by
+# sql/09_form4_income.sql.
+#   folder  SEC accession number of a filing (18 digits, as text) whose trades
+#           are left out of every income item
+#   note    free text: why
+folder,note

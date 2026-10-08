@@ -275,7 +275,57 @@ price and 23 without a security, as there; every cell equal (max relative
 difference 6e-16) except the Forbes id of query 4's 34 vintage-gap rows. R
 and Python exports are identical.
 
+## Queries 9 and 10, and the basis step: Form 4 income items to yearly sums
+
+`09_form4_income.sql` turns each priced trade into income items: open-market
+sales and purchases, gifts of stock valued at the day's close (the
+charitable contributions), and profits from option exercises and RSU
+vestings, which look at the whole filing (MAX over a 0/1 flag per filing is
+SQL's "any row"). One filing is left out through a gitignored list,
+`data-raw/form4-excluded-filings.csv` (schema in the `.example.csv`).
+
+Capital gains need a loop: each sale uses up the shares bought before it,
+highest cost first, with share counts put on the sale's stock-split basis,
+and the holding period decides short or long term. That is state carried
+from row to row, so it is an R and Python twin, `py/form4_basis.py` and
+`R/form4_basis.R`, reading `form4_basis_input` (written by query 9) and
+writing `form4_kg` and `form4_basis_held` back. The rules are listed at the
+top of `py/form4_basis.py`.
+
+`10_form4_annual.sql` sums by person, stock and year; by person and year;
+by year; and for the five largest fortunes. Losses carried forward against
+later long-term gains (`kg_taxable`) are a year-to-year state too, written
+here as a recursive CTE. Values are rounded to cents the way R's `round()`
+does, which SQLite's `ROUND()` does not (16.395 is 16.4 in R and 16.39 in
+SQLite); the rule is spelled out once per table, after an unpivot.
+
+Order: `09_form4_income.sql`, then `python py/form4_basis.py` (or
+`Rscript R/form4_basis.R`), then `10_form4_annual.sql`.
+
+| Block | What it does | Course module | Beyond the course |
+|---|---|---|---|
+| 09 Q1 `form4_income` | Per trade: sales, purchases, gifts, option and RSU profits from filing-level flags | 1 (`CASE WHEN`), 4 (CTE chain, `NOT IN (SELECT ...)`), 5 (`MAX(...) OVER (PARTITION BY ...)`) | MAX of a 0/1 flag as "any" |
+| 09 Q2 `form4_basis_input` | The trades that build or draw down a holding, numbered in processing order | 1 (WHERE with AND / OR), 5 (`ROW_NUMBER() OVER (PARTITION BY ... ORDER BY ...)`) | |
+| basis step (R and Python) | Lots, sales against the highest-cost lots, short and long term, year-end basis | not SQL: a loop with state | |
+| 10 Q1 `form4_trades_kg` | Trades with their capital gains | 2 (LEFT JOIN) | |
+| 10 Q2 `form4_firm_individual_raw` | Sums per person, stock and year; year-end basis carried down to years without one | 3 (GROUP BY), 2 (LEFT JOIN), 4 (CTE chain), 5 (running `COUNT`, `FIRST_VALUE`, `ROW_NUMBER`) | filling a column down (tidyr's `fill()`) |
+| 10 Q3 `form4_individual_raw` | Sums per person and year, the loss carry-forward year by year | 3, 4, 5, 2 | `WITH RECURSIVE`; two-argument `MAX` / `MIN` |
+| 10 Q4, Q5 | Per year with a Total row; the top 5 with yearly and overall totals | 3 (GROUP BY), 4 (`UNION ALL`, `IN (SELECT ...)`) | `printf('%010d', x)` |
+| 10 Q2b to Q5b | The four output tables, rounded to cents as R rounds | 4 (`UNION ALL`), 3 (`MAX(CASE WHEN ...)` per column) | unpivot and pivot; `FLOOR`, `CEIL`, `SIGN` |
+
+Check (`py/check_form4_annual.py`, 2026-10-07): the four tables equal the
+authors' files (2,110, 1,619, 24 and 118 rows; max difference 0) and the same
+tables in their private workbook (one sheet keeps a stale row after the
+file's rows, set aside); the Forbes id differs only on query 4's vintage-gap
+rows. The eight Form 4 columns of the public `data_sec_all` (purchase, sale,
+kg, kg_long, kg_short, option_profit, kg_taxable, donation; 1,337 rows,
+2019 to 2025) equal ours exactly. The R and Python basis steps and all
+exports are identical.
+
 ## Later queries (planned)
 
-The Compustat-based steps. See `PLAN-2-raw-to-workbook.md` at
-the repo root.
+The rest of the Compustat-based chain: the `wrds_*` summaries (public equity
+wealth, dividends and fundamentals from Compustat), and `main_annual_*`,
+which combine them with the Form 4 sums into the remaining columns of the
+public `data_sec_*` sheets (taxes, economic income). See
+`PLAN-2-raw-to-workbook.md` at the repo root.

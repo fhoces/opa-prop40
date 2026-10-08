@@ -77,3 +77,26 @@ test_that("queries 7 and 8 join the Form 4 trades to daily prices", {
   # The authors' file: 198,654 trades, 165 without a price, 23 without a security.
   expect_equal(unname(unlist(got)), c(198654, 165, 23))
 })
+
+test_that("queries 9 and 10 and the basis step build the yearly Form 4 sums", {
+  con <- .steps_connect(c("04_form4_clean.sql", "07_form4_gvkey_link.sql", "08_form4_compustat.sql",
+                          "09_form4_income.sql"),
+                        c("form4_raw", "form4_forbes_cik", "form4_price_corrections",
+                          "comp_daily_snapshots", "form4_gvkey_fixes", "comp_daily_form4",
+                          "form4_excluded_filings"))
+  on.exit(DBI::dbDisconnect(con), add = TRUE)
+  root <- .steps_bsz_dir()
+  if (!exists("form4_basis_run", mode = "function")) {
+    source(file.path(root, "R", "form4_basis.R"), local = globalenv())
+  }
+  rows <- DBI::dbGetQuery(con, "SELECT * FROM form4_basis_input ORDER BY owner_cik_1, issuer_cik, seq")
+  out <- form4_basis_run(rows)
+  DBI::dbWriteTable(con, "form4_kg", out$kg[c("row_id", "total_basis", "kg", "kg_short", "kg_long")], overwrite = TRUE)
+  DBI::dbWriteTable(con, "form4_basis_held", out$basis_held, overwrite = TRUE)
+  run_sql_file(con, file.path(root, "sql", "10_form4_annual.sql"))
+  n <- vapply(c("form4_kg", "form4_annual_firm_individual", "form4_annual_individual",
+                "form4_annual", "form4_annual_top5"),
+              function(t) .steps_one(con, paste("SELECT COUNT(*) FROM", t)), numeric(1))
+  # Row counts of the authors' four yearly files.
+  expect_equal(unname(n), c(156378, 2110, 1619, 24, 118))
+})

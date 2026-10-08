@@ -36,6 +36,12 @@ EXPORT_ORDER = {
     "vm_quarterly": "year, quarter",
     "form4_gvkey_link": "issuer_cik, gvkey, iid",
     "form4_compustat": "out_order",
+    "form4_kg": "row_id",
+    "form4_basis_held": "owner_cik_1, issuer_cik, year",
+    "form4_annual_firm_individual": "owner_cik_1, issuer_cik, year",
+    "form4_annual_individual": "owner_cik_1, year",
+    "form4_annual": "sort_key, year",
+    "form4_annual_top5": "block, owner_cik_1, year",
 }
 
 

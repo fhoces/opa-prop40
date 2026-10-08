@@ -643,6 +643,23 @@ def load_comp_daily_form4(con, root):
     return n
 
 
+# ---------------------------------------------------------------------------
+# Filings left out of the Form 4 income items (sql/09_form4_income.sql).
+# Source: data-raw/form4-excluded-filings.csv, gitignored because its rows
+# come from the confidential bundle; schema in the .example.csv.
+# ---------------------------------------------------------------------------
+def load_form4_excluded_filings(con, root):
+    out = []
+    for r in read_private_config("form4-excluded-filings.csv"):
+        folder = (r.get("folder") or "").strip()
+        if not folder:
+            # A NULL folder would make NOT IN (SELECT ...) drop every row.
+            raise ValueError("form4-excluded-filings.csv: a row has no folder")
+        out.append((folder, (r.get("note") or "").strip() or None))
+    return _create_and_insert(con, "form4_excluded_filings",
+                              [("folder", "TEXT"), ("note", "TEXT")], out)
+
+
 # One entry per table. Later queries add their inputs here.
 LOADERS = {
     "rtb_all_combined": load_rtb_all_combined,
@@ -658,6 +675,7 @@ LOADERS = {
     "vm_state_cells": load_vm_state_cells,
     "comp_daily_snapshots": load_comp_daily_snapshots,
     "form4_gvkey_fixes": load_form4_gvkey_fixes,
+    "form4_excluded_filings": load_form4_excluded_filings,
     # Needs table form4_gvkey_list (sql/07_form4_gvkey_link.sql), so it is
     # loaded only when named: python py/load_bundle.py comp_daily_form4
     "comp_daily_form4": load_comp_daily_form4,

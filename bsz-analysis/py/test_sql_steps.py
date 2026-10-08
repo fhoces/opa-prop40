@@ -118,6 +118,28 @@ def test_form4_compustat():
     assert (n, no_price, no_sec) == (198_654, 165, 23)
 
 
+def test_form4_annual():
+    import form4_basis
+
+    con = _connect(["04_form4_clean.sql", "07_form4_gvkey_link.sql", "08_form4_compustat.sql",
+                    "09_form4_income.sql"],
+                   FORM4_INPUTS + ["comp_daily_snapshots", "form4_gvkey_fixes",
+                                   "comp_daily_form4", "form4_excluded_filings"])
+    con.close()
+    form4_basis.main()
+    con = _connect("10_form4_annual.sql", [])
+    n = {t: con.execute(f"SELECT COUNT(*) FROM {t}").fetchone()[0]
+         for t in ("form4_kg", "form4_annual_firm_individual", "form4_annual_individual",
+                   "form4_annual", "form4_annual_top5")}
+    (last,) = con.execute("SELECT year FROM form4_annual ORDER BY sort_key DESC, year DESC "
+                          "LIMIT 1").fetchone()
+    con.close()
+    # Row counts of the authors' four yearly files.
+    assert n == {"form4_kg": 156_378, "form4_annual_firm_individual": 2110,
+                 "form4_annual_individual": 1619, "form4_annual": 24, "form4_annual_top5": 118}
+    assert last == "Total"
+
+
 if __name__ == "__main__":
     pytest = None  # plain run: report skips here instead of raising pytest's
     failed = 0
