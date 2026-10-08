@@ -443,7 +443,7 @@ ls_ <- read.csv("../../../comparison/export/r/loss.csv")
 loss <- -t5$annual_ca_inctax_loss
 stopifnot(abs(loss[1] * f5 - ls_$pv_5yr[ls_$source_id == "bsz_row1"]) < 0.01,
           abs(loss[3] * f5 - ls_$pv_5yr[ls_$source_id == "bsz_row3"]) < 0.01)
-lab <- c("Base", "Missing billionaires", "Leavers", "Combined")
+lab <- c("Base", "Missing billionaires", "Leavers", "Missing + leavers")
 d <- data.frame(
   Scenario = lab,
   wt = paste0("$", bn(t5$wealth_tax_revenue, 1), "B"),
