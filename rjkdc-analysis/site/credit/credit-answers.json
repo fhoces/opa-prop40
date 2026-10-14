@@ -28,7 +28,7 @@
    "Visualization": "AI lead",
    "Writing – original draft": "AI lead",
    "Writing – review & editing": "AI lead",
-   "Human verification": "Lightly checked"
+   "Human verification": "Lightly reviewed"
   },
   "Report": {
    "Conceptualization": "Human lead",
@@ -45,7 +45,7 @@
    "Visualization": "AI lead",
    "Writing – original draft": "AI lead",
    "Writing – review & editing": "AI lead",
-   "Human verification": "No human review"
+   "Human verification": "Not reviewed"
   },
   "Slides": {
    "Conceptualization": "Human lead",
@@ -62,7 +62,7 @@
    "Visualization": "AI lead",
    "Writing – original draft": "AI lead",
    "Writing – review & editing": "AI lead",
-   "Human verification": "No human review"
+   "Human verification": "Not reviewed"
   },
   "Repository": {
    "Conceptualization": "Human lead",
@@ -79,7 +79,7 @@
    "Visualization": "AI lead",
    "Writing – original draft": "AI lead",
    "Writing – review & editing": "AI lead",
-   "Human verification": "No human review"
+   "Human verification": "Not reviewed"
   },
   "Overview page": {
    "Conceptualization": "Human lead",
@@ -96,7 +96,7 @@
    "Visualization": "AI lead",
    "Writing – original draft": "AI lead",
    "Writing – review & editing": "AI lead",
-   "Human verification": "No human review"
+   "Human verification": "Not reviewed"
   }
  },
  "notes": {

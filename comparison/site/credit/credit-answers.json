@@ -27,7 +27,7 @@
    "Visualization": "AI lead",
    "Writing – original draft": "AI lead",
    "Writing – review & editing": "AI lead",
-   "Human verification": "Lightly checked"
+   "Human verification": "Lightly reviewed"
   },
   "Bridge analysis code": {
    "Conceptualization": "Human lead",
@@ -44,7 +44,7 @@
    "Visualization": "AI lead",
    "Writing – original draft": "AI lead",
    "Writing – review & editing": "AI lead",
-   "Human verification": "No human review"
+   "Human verification": "Not reviewed"
   },
   "Disputes table": {
    "Conceptualization": "Human lead",
@@ -61,7 +61,7 @@
    "Visualization": "AI lead",
    "Writing – original draft": "AI lead",
    "Writing – review & editing": "AI lead",
-   "Human verification": "No human review"
+   "Human verification": "Not reviewed"
   },
   "Hoopes comparison": {
    "Conceptualization": "Human lead",
@@ -78,7 +78,7 @@
    "Visualization": "AI lead",
    "Writing – original draft": "AI lead",
    "Writing – review & editing": "AI lead",
-   "Human verification": "No human review"
+   "Human verification": "Not reviewed"
   }
  },
  "notes": {
