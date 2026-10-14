@@ -1,7 +1,43 @@
-# bsz-analysis
+# BSZ side of California Proposition 40: Open Materials
 
-The BSZ side of [opa-prop40](../README.md). It began as the standalone CAWT-BSZ repository,
-imported with its history.
+This folder is the BSZ side of [opa-prop40](../README.md), an Open Policy Analysis of California's
+2026 Proposition 40 (the Billionaire Tax Act). It reproduces the revenue estimate of Boll, Saez and
+Zucman (2026) and opens every input, every line of code and every number behind it. The aim is a
+transparent and reproducible analysis that anyone can check, and a shared basis for discussing the
+policy.
+
+### [Review the code behind the $106.8 billion main estimate](https://claude.ai/artifact/6VZEezoAsCNACjmgPLEvah)
+
+A layer-by-layer walk from the number on the page down to the authors' workbook. Each layer is
+marked understood, partly understood or not reviewed. Work in progress; the record is also kept in
+[`review/`](../review/README.md).
+
+<img align="right" width="340" src="site/assets/opa/opa-materials-wordmark.png" alt="Open Policy Analysis, Materials layer">
+
+1 - **Open Output.** [An interactive explorer](https://fhoces.github.io/opa-prop40/bsz-analysis/site/explorer/) that shows the main estimate and
+lets you move the six inputs behind it. Materials can be found in [`site/explorer/`](site/explorer/).
+
+2 - **Open Analysis.** An open policy report in the form of a [dynamic document](https://fhoces.github.io/opa-prop40/bsz-analysis/site/repro.html),
+which details all data, code and assumptions in the analysis, and [slides](https://fhoces.github.io/opa-prop40/bsz-analysis/site/slides/slides.html)
+that present the estimate step by step. Materials can be found in [`site/repro.qmd`](site/repro.qmd)
+and [`site/slides/`](site/slides/).
+
+3 - **Open Materials.** This folder, which stores all the code needed to replicate the analysis in
+full. The authors' paper and workbook are not redistributed: see
+[what is and is not in the repo](#what-is-and-is-not-in-the-repo).
+
+The [BSZ overview page](https://fhoces.github.io/opa-prop40/bsz-analysis/site/) links all three. The [project overview](https://fhoces.github.io/opa-prop40/)
+compares this side with the RJKDC side.
+
+This project follows the [Open Policy Analysis (OPA) Guidelines](https://www.bitss.org/opa/) of the
+Berkeley Initiative for Transparency in the Social Sciences (BITSS). [`AUDIT.md`](../AUDIT.md) scores
+each page against the Guidelines' nine steps.
+
+<br clear="right">
+
+## The reproduction
+
+This folder began as the standalone CAWT-BSZ repository, imported with its history.
 
 R replication pipeline for **Boll, Saez, and Zucman (2026)**, *California
 Billionaires: Wealth, Taxes, and Wealth Tax Revenue Estimates* (NBER Working
