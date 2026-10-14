@@ -59,14 +59,27 @@
   .site-nav a { color: var(--series-1); text-decoration: none; }
   .site-nav a:hover { text-decoration: underline; }
 
+  /* The header: title and standfirst on the left, the headline number on the right,
+     the same layout as the OPA code review page. */
   header {
+    display: flex; flex-wrap: wrap; gap: 16px 32px; align-items: flex-end; justify-content: space-between;
     border-bottom: 1px solid var(--rule); padding-bottom: 20px;
-    /* Stacking-context fix: .header-layer's negative z-index needs z-index:0 here. */
-    position: relative; z-index: 0; overflow: hidden;
   }
-  .header-layer {
-    position: absolute; top: 0; right: 0; height: 150px; width: auto;
-    opacity: 0.218; z-index: -1; pointer-events: none;
+  .hero-left { flex: 1 1 420px; min-width: 0; }
+  .headline { display: flex; flex-direction: column; gap: 2px; flex: 0 1 440px; min-width: 0; }
+  .headline .name { font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--ink-3); font-weight: 500; }
+  .headline .value { font-family: var(--serif); font-size: 40px; font-weight: 600;
+    line-height: 1; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .headline .def { font-size: 13.5px; color: var(--ink-2); line-height: 1.45; margin-top: 2px; }
+  .header-layer { height: 110px; width: auto; opacity: 0.218; align-self: flex-end;
+    margin-bottom: 8px; pointer-events: none; }
+  @media (max-width: 860px) {
+    header { position: relative; z-index: 0; overflow: hidden; }
+    .headline { flex-basis: 100%; }
+    .headline .value { font-size: 34px; }
+    /* On narrow screens the icon goes back behind the title, top right. */
+    .header-layer { position: absolute; top: 0; right: 0; height: 150px; margin: 0; z-index: -1; }
   }
   h1 {
     font-family: var(--serif); font-weight: 600; font-size: clamp(26px, 4.2vw, 36px);
@@ -87,13 +100,6 @@
   .preferred p { margin: 0; font-size: 14px; color: var(--ink-2); max-width: 60em; }
   .preferred p.fn { font-size: 12px; color: var(--ink-3); margin-top: 8px; }
 
-  /* The headline block: the same shape as the OPA code review page (label, number, definition). */
-  .identity { display: flex; flex-direction: column; gap: 2px; margin: 14px 0 6px; }
-  .identity .name { font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
-    color: var(--ink-3); font-weight: 500; }
-  .identity .value { font-family: var(--serif); font-size: clamp(32px, 5vw, 40px); font-weight: 600;
-    line-height: 1; color: var(--ink); font-variant-numeric: tabular-nums; }
-  .identity .def { font-size: 13.5px; color: var(--ink-2); max-width: 46em; line-height: 1.45; margin-top: 4px; }
 
   .cols { display: grid; grid-template-columns: minmax(0, 400px) minmax(0, 1fr); gap: 34px; margin-top: 28px; align-items: start; }
   @media (max-width: 860px) { .cols { grid-template-columns: minmax(0, 1fr); gap: 30px; } }
@@ -201,14 +207,22 @@
     <a href="../index.html">Overview</a>
   </p>
   <header>
-    <img class="header-layer" src="../assets/opa/opa-assumptions-solo.png" alt="" aria-hidden="true">
-    <h1>How much would the one-time billionaire tax raise, net?</h1>
-    <p class="standfirst">
-      Boll, Saez and Zucman (BSZ, 2026) estimate about $100 billion in wealth tax. Net of the income
-      tax it changes, that is the <strong>main estimate</strong> below. Most of its inputs are guesswork.
-      Move them and the estimate updates: every setting is precomputed by the pipeline that reproduces
-      the authors' workbook.
-    </p>
+    <div class="hero-left">
+      <h1>How much would the one-time billionaire tax raise, net?</h1>
+      <p class="standfirst">
+        Boll, Saez and Zucman (BSZ, 2026) estimate about $100 billion in wealth tax. Net of the income
+        tax it changes, that is the <strong>main estimate</strong>. Most of its inputs are guesswork.
+        Move them and the estimate updates: every setting is precomputed by the pipeline that reproduces
+        the authors' workbook.
+      </p>
+    </div>
+    <div class="headline">
+      <img class="header-layer" src="../assets/opa/opa-assumptions-solo.png" alt="" aria-hidden="true">
+      <span class="name" id="cell-name"></span>
+      <span class="value" id="cell-value"></span>
+      <span class="def">Defined as wealth tax + extra income tax from selling assets &minus;
+        income tax lost to leavers (present value, 5 years at 3%).</span>
+    </div>
   </header>
 
   <div class="cols">
@@ -221,12 +235,6 @@
 
     <section>
       <h2>Outcomes</h2>
-      <div class="identity">
-        <span class="name" id="cell-name"></span>
-        <span class="value" id="cell-value"></span>
-        <span class="def">Defined as wealth tax + extra income tax from selling assets &minus;
-          income tax lost to leavers (present value, 5 years at 3%).</span>
-      </div>
       <svg class="bars" id="bars" viewBox="0 0 640 200" role="img" aria-labelledby="bars-title">
         <title id="bars-title">Main estimate, this setting against the base scenario</title>
       </svg>
