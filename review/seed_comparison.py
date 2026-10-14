@@ -8,8 +8,8 @@ bottom (the two sides' export contracts). Snippets are cut from the files at the
 given, so re-running this script after a code edit refreshes them. The user's fields (state,
 understanding, missing, feedback) are kept from an existing comparison.json when present.
 
-GitHub links point at the main branch (LINK_REF), not at a commit: the chain was traced on a
-worktree branch whose commits reach GitHub only once merged. Reseed after the merge to pin a SHA.
+GitHub links pin the commit the chain was traced at (HEAD when the script runs), as the
+other seeds do. Reseed after any commit that touches a file on the chain.
 
 Run from the repo root:  python3 review/seed_comparison.py
 """
@@ -23,9 +23,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "review" / "comparison.json"
 REPO = "https://github.com/fhoces/opa-prop40"
-LINK_REF = "main"
 TRACED_AT = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "--short", "HEAD"],
                            capture_output=True, text=True, check=True).stdout.strip()
+LINK_REF = TRACED_AT  # GitHub links pin the commit the chain was traced at, as the other seeds do
 
 
 def loc(path, symbol, lines, language=None):
