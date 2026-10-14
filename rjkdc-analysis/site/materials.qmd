@@ -1,6 +1,6 @@
 ---
-title: "Open Materials: every script, test and CSV"
-subtitle: "The reproduction of Rauh et al. (SSRN, March 2026) and Jaros and Rauh (NBER, September 2026): what is in the repository, how to rebuild it, and what did not match"
+title: "Prop 40, RJKDC side: the materials"
+subtitle: "Every script, test, data file and source behind the explorer, the report and the slides, and what did not match"
 date: today
 format:
   html:
@@ -20,7 +20,7 @@ execute:
 ---
 
 ::: {.site-nav}
-Part of an Open Policy Analysis of Rauh et al. (2026) on California Proposition 40:
+RJKDC side of California Proposition 40:
 [Open Output (the explorer)](explorer/) &middot; Open Analysis: [Report](repro.html) and
 [Slides](slides/slides.html) &middot;
 [Open Materials](https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis) (this page is its guide) &middot;
@@ -66,7 +66,7 @@ pipeline with a Python twin; the site's explorer grid, report and deck read that
 exports, so none of them retypes a number.
 :::
 
-## How to rebuild
+## Rebuild everything
 
 ```sh
 git clone https://github.com/bjaros20/wealth_tax && git -C wealth_tax checkout 25e84dd   # the authors' MIT repo
@@ -83,28 +83,6 @@ Rscript -e 'rmarkdown::render("site/slides/slides.Rmd")'
 `RAUH_REPO_DIR` is the single place that knows where the authors' repository lives
 (`R/rauh_repo.R`, `py/rauh_repo.py`). Tests that re-run the authors' own scripts skip cleanly
 without it; everything else runs.
-
-## Scripts
-
-```{r}
-#| results: asis
-f <- c(file.path("R", list.files(file.path(root, "R"), pattern = "[.]R$")),
-       file.path("py", list.files(file.path(root, "py"), pattern = "[.]py$")),
-       "_targets.R", "tests/testthat.R", "tests/count_tests.R")
-scroll(kable(data.frame(file = vapply(f, link, ""), `what it does` = vapply(f, describe, ""),
-                        check.names = FALSE, row.names = NULL), escape = FALSE,
-             caption = "R pipeline (R/), Python twin (py/), and the runners"))
-```
-
-The pipeline's targets (`tar_manifest()`):
-
-```{r}
-#| results: asis
-m <- tar_manifest(script = file.path(root, "_targets.R"), fields = c("name", "command"),
-                  callr_function = NULL)
-m$command <- substr(gsub("\\s+", " ", m$command), 1, 90)
-scroll(kable(m, col.names = c("target", "command (first 90 characters)")))
-```
 
 ## Tests
 
@@ -136,7 +114,29 @@ They come in four kinds:
 A continuous-integration workflow for this folder is configured to rebuild the pipeline and run the suite on each push that touches it
 (`.github/workflows/rjkdc-ci.yml`, cloning the authors' repository at the pinned commit).
 
-## CSVs
+## Scripts
+
+```{r}
+#| results: asis
+f <- c(file.path("R", list.files(file.path(root, "R"), pattern = "[.]R$")),
+       file.path("py", list.files(file.path(root, "py"), pattern = "[.]py$")),
+       "_targets.R", "tests/testthat.R", "tests/count_tests.R")
+scroll(kable(data.frame(file = vapply(f, link, ""), `what it does` = vapply(f, describe, ""),
+                        check.names = FALSE, row.names = NULL), escape = FALSE,
+             caption = "R pipeline (R/), Python twin (py/), and the runners"))
+```
+
+The pipeline's targets (`tar_manifest()`):
+
+```{r}
+#| results: asis
+m <- tar_manifest(script = file.path(root, "_targets.R"), fields = c("name", "command"),
+                  callr_function = NULL)
+m$command <- substr(gsub("\\s+", " ", m$command), 1, 90)
+scroll(kable(m, col.names = c("target", "command (first 90 characters)")))
+```
+
+## Data files the site publishes
 
 ```{r}
 #| results: asis
@@ -148,7 +148,7 @@ what <- c("export/r/inputs.csv" = "every input: value, OPA label (data / researc
           "export/r/outputs.csv" = "every headline figure: reproduced value, printed value, page, absolute difference",
           "export/py/inputs.csv" = "the Python twin's inputs (same schema)",
           "export/py/outputs.csv" = "the Python twin's outputs (same schema)",
-          "site/data/headlines.csv" = "the two preferred estimates: printed, reproduced, exact (target site_headlines)",
+          "site/data/headlines.csv" = "the main estimate (NBER) and the earlier SSRN estimate: printed, reproduced, exact (target site_headlines)",
           "site/data/printed-tables.csv" = "hand transcription of printed Tables 8, 9, 10 and NBER Table 10, with PDF pages (checked by test-site.R)",
           "site/data/test-summary.csv" = "test counts per file (tests/count_tests.R)",
           "DATA-SOURCES.csv" = "the source manifest (below)")
@@ -176,7 +176,10 @@ scroll(kable(ds[, c("file", "provider", "obtained_via", "date_obtained", "url_or
              escape = FALSE, row.names = FALSE))
 ```
 
-## The nine mismatches {#mismatches}
+## What the checks found {#mismatches}
+
+Nine mismatches between the two papers, their READMEs and their code. The pipeline reproduces the
+code as shipped and records each one here.
 
 ```{r}
 #| results: asis
@@ -187,7 +190,7 @@ cat(mm, sep = "\n")
 ```
 
 ::: {.site-nav}
-Part of an Open Policy Analysis of Rauh et al. (2026) on California Proposition 40:
+RJKDC side of California Proposition 40:
 [Open Output (the explorer)](explorer/) &middot; Open Analysis: [Report](repro.html) and
 [Slides](slides/slides.html) &middot;
 [Open Materials](https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis) (this page is its guide) &middot;
