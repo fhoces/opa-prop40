@@ -19,8 +19,7 @@ esc <- function(x) {
 }
 
 read_exports <- function(dir) {
-  nm <- c("inputs", "bridge", "ends", "endpoints", "anchors", "loss", "hoopes", "meta",
-          "switchboard")
+  nm <- c("inputs", "bridge", "ends", "endpoints", "anchors", "loss", "hoopes", "meta")
   stats::setNames(lapply(nm, function(n) read_csv_plain(file.path(dir, paste0(n, ".csv")))), nm)
 }
 
@@ -163,22 +162,6 @@ render_site <- function(root = comparison_root(),
                money(as.numeric(d$value[d$input_id == "nber_headline_revenue"]), 0)))
   ), collapse = "\n")
 
-  # ---- horizon buttons and notes ----
-  hs <- setdiff(unique(en$horizon_setting), "own")
-  hlab <- function(st) { h <- sub("common_", "", st); if (h == "Inf") "Perpetuity" else paste(h, "years") }
-  tok$horizon_buttons <- paste(sprintf('      <button type="button" data-h="%s" aria-pressed="false">%s</button>', hs,
-                                       vapply(hs, hlab, "")), collapse = "\n")
-  notes <- list(own = sprintf(
-    "Each analysis's own horizon: the BSZ analysis counts the losses for %s (BSZ PDF p.27), the RJKDC analysis for ever; the horizon is then one of the bridge steps.",
-    fmt_input("H", inp$supporting_value[inp$input == "H"])))
-  for (st in hs) {
-    e <- en[en$horizon_setting == st & en$output == "b", ]
-    notes[[st]] <- sprintf(
-      "Both analyses at a common %s horizon, so the horizon is no longer a step. The BSZ end is %s and the RJKDC end %s at this horizon (the RJKDC analysis's own number assumes a perpetuity).",
-      tolower(hlab(st)), money(e$bsz_model, 1), money(e$nber_own, 1))
-  }
-  tok$horizon_note_own <- notes$own
-
   # ---- bridge table (static default: (b), Shapley, own horizon) ----
   resid_label <- sprintf(
     "Model difference: the RJKDC Monte Carlo that the input values come from uses the rounded literals %s and %s where the model uses the workbook's own %s and %s",
@@ -211,20 +194,50 @@ render_site <- function(root = comparison_root(),
   }, "")
   tok$bridge_rows <- paste(row_html, collapse = "\n")
 
-  # ---- the switchboard: one switch per disputed input, in the bridge's order ----
-  # Each row shows the input's BSZ value and RJKDC value in the wording of the disputed-inputs
-  # table (fmt_input). The page script sets aria-pressed and reads the values the switches
-  # give from D.switchboard (built below from export/r/switchboard.csv).
-  sw_row <- function(id, name, title, bv, rv, tip) sprintf(
-    '        <li><button type="button" class="sw" data-sw="%s" aria-pressed="false" title="%s"><span class="sw-tog" aria-hidden="true"></span><span class="sw-name"><b>%s</b><span class="sw-title">%s</span><span class="sw-note"></span></span><span class="sw-v sw-bsz"><span class="sw-who">BSZ </span>%s</span><span class="sw-v sw-rj"><span class="sw-who">RJKDC </span>%s</span></button></li>',
-    id, esc(tip), esc(name), esc(title), bv, rv)
+  # ---- the two slider panels: one slider per disputed input, in the bridge's order, plus
+  # the September 2026 revision. In both panels a slider prints the BSZ value at its left end
+  # and the RJKDC value at its right end, in the wording of the disputed-inputs table
+  # (fmt_input). The value of a slider is its position as slider_inputs() (model.R) defines
+  # it, 0 = the panel's own analysis: the BSZ panel's sliders run left to right, the RJKDC
+  # panel's right to left (dir="rtl"). The page script reads the rest from D.sliders.
   dis0 <- inp[match(steps$step_id, inp$step_id), ]
-  tok$switch_rows <- paste(vapply(seq_len(nrow(steps)), function(i) {
+  hz_fin <- SLIDER_HORIZONS[is.finite(SLIDER_HORIZONS)]
+  hz_words <- paste0(paste(head(hz_fin, -1), collapse = ", "), " and ", tail(hz_fin, 1),
+                     " years, and a perpetuity")
+  slider_row <- function(panel, id, name, title, tip, bsz_txt, rj_txt, max) {
+    rtl <- panel == "rjkdc"
+    ticks <- paste(sprintf('<i style="--t:%s"></i>', format((0:max) / max)), collapse = "")
+    sprintf(paste0(
+      '        <li class="sl" data-id="%2$s" title="%5$s">\n',
+      '          <label for="%1$s-%2$s"><b>%3$s</b> <span class="sl-title">%4$s</span></label>\n',
+      '          <div class="sl-row"><span class="sl-end sl-lo">%6$s</span><span class="sl-track',
+      '%9$s"><span class="sl-ticks" aria-hidden="true">%10$s</span><span class="sl-other" aria-hidden="true"></span>',
+      '<input type="range" class="sl-in" id="%1$s-%2$s" min="0" max="%8$d" step="1" value="0" data-panel="%1$s" data-id="%2$s"%11$s>',
+      '<output class="sl-cur" for="%1$s-%2$s">%12$s</output></span><span class="sl-end sl-hi">%7$s</span></div>\n',
+      '          <span class="sl-note"></span>\n',
+      '        </li>'),
+      panel, id, esc(name), esc(title), esc(tip), bsz_txt, rj_txt, as.integer(max),
+      if (rtl) " is-rtl" else "", ticks, if (rtl) ' dir="rtl"' else "",
+      if (rtl) rj_txt else bsz_txt)
+  }
+  slider_rows <- function(panel) paste(c(vapply(seq_len(nrow(steps)), function(i) {
     rowlab <- if (grepl("^\\d", steps$disputes_row[i])) paste0("DISPUTES row ", steps$disputes_row[i]) else "not a DISPUTES row"
-    sw_row(steps$step_id[i], unname(short_labels[steps$step_id[i]]), steps$title[i],
-           fmt_input(dis0$input[i], dis0$supporting_value[i]), fmt_input(dis0$input[i], dis0$rauh_value[i]),
-           paste0(rowlab, ", ", steps$kind[i]))
-  }, ""), collapse = "\n")
+    title <- steps$title[i]
+    if (steps$step_id[i] == "horizon") title <- paste0(title, " (five settings: ", hz_words, ")")
+    slider_row(panel, steps$step_id[i], unname(short_labels[steps$step_id[i]]), title,
+               paste0(rowlab, ", ", steps$kind[i]),
+               fmt_input(dis0$input[i], dis0$supporting_value[i]), fmt_input(dis0$input[i], dis0$rauh_value[i]),
+               SLIDER_STEPS)
+  }, ""), slider_row(panel, "revision", "September 2026 revision",
+                     "Not an input of the common function: see the note under the panels",
+                     "the RJKDC analysis's September 2026 revision", "not applied", "applied", 1)),
+    collapse = "\n")
+  tok$sliders_bsz <- slider_rows("bsz")
+  tok$sliders_rjkdc <- slider_rows("rjkdc")
+  tok$hz_words <- hz_words
+  ss <- read_csv_plain(file.path(root, "comparison", "export", "r", "slider_sample.csv"))
+  tok$n_slider_sample <- format(nrow(ss), big.mark = ",")
+  tok$n_slider_per_panel <- format(sum(ss$panel == "bsz"), big.mark = ",")
   tok$rev_step_b <- money(eb$nber_step, 1, TRUE)
   tok$rev_model_b <- money(eb$rauh_residual, 2, TRUE)
   tok$nber_growth <- pct(pick(k$rjkdc$inputs, "nber_growth_rate"))
@@ -237,13 +250,13 @@ render_site <- function(root = comparison_root(),
   tok$bridge_findings <- paste(sprintf("  <li>%s</li>", c(
     sprintf("The net fiscal effect falls from %s at the BSZ end to %s at the RJKDC end, a gap of %s. The three largest Shapley steps are %s.",
             money(eb$bsz_model, 1), money(eb$nber_own, 1), money(gap_b, 1), top3(bb)),
-    sprintf("The horizon is the single largest step read in Hoopes's order (%s, the last switch, when the loss is already RJKDC-sized) but only %s averaged over orders, because a perpetuity multiplies whatever annual loss the other inputs imply. The annual loss runs from %s (BSZ) to %s (RJKDC, September 2026).",
+    sprintf("The horizon is the single largest step read in Hoopes's order (%s, the last step, when the loss is already RJKDC-sized) but only %s averaged over orders, because a perpetuity multiplies whatever annual loss the other inputs imply. The annual loss runs from %s (BSZ) to %s (RJKDC, September 2026).",
             money(v(bb, "horizon", "sequential"), 1, TRUE), money(v(bb, "horizon"), 1, TRUE),
             money(ex$loss$annual_loss[ex$loss$source_id == "bsz_row1"], 2),
             money(ex$loss$annual_loss[ex$loss$source_id == "rauh_nber"], 2)),
     sprintf("One step raises the estimate: the RJKDC analysis applies no avoidance or evasion allowance beyond migration (its semi-elasticity is the migration share of Brulhart et al.'s response), so dropping the BSZ analysis's 10%% adds %s (Shapley). DISPUTES.md does not list this as a row.",
             money(v(bb, "avoidance"), 1, TRUE)),
-    sprintf("Order matters most for estimating the one-time tax as a permanent 5-percentage-point rate: %s averaged over all orders and %s in the one order shown. The RJKDC revenue is uniform between a confirmed-departures ceiling and an elasticity floor, so the elasticity bites only on top of whatever departures are already in. The step is large when switched early and smaller when switched after the departures.",
+    sprintf("Order matters most for estimating the one-time tax as a permanent 5-percentage-point rate: %s averaged over all orders and %s in the one order shown. The RJKDC revenue is uniform between a confirmed-departures ceiling and an elasticity floor, so the elasticity bites only on top of whatever departures are already in. The step is large when it is taken early and smaller when it comes after the departures.",
             money(v(bb, "one_time_as_permanent"), 1, TRUE), money(v(bb, "one_time_as_permanent", "sequential"), 1, TRUE)),
     sprintf("Model differences are small and shown, not hidden: %s, from the rounded literals in the RJKDC Monte Carlo code (MISMATCHES #6 in rjkdc-analysis).",
             money(eb$rauh_residual, 2, TRUE)),
@@ -376,33 +389,29 @@ render_site <- function(root = comparison_root(),
   headline <- list(bsz = eb$bsz_model, rjkdc = rj_main,
                    rjkdc_printed = ep$printed_value[ep$endpoint_id == "rauh_nber_npv"],
                    bsz_end_b = eb$bsz_model, rjkdc_end_b = eb$nber_own)
-  # The switchboard grid: for each horizon setting and output, the value of score_common()
-  # for every mix of switches. grid[[st]][[o]][m + 1] is the value at the mask m over
-  # players[[st]] (bit k-1 = players[[st]][k], the bridge's order without the horizon when
-  # the horizon is common). ends holds the two ends and the two constants the revision
-  # switch adds (model = rauh_residual, revision = nber_step), read from ends.csv.
-  sb <- ex$switchboard
-  r6 <- function(x) round(x, 6)
-  board <- list(inputs = lapply(seq_len(nrow(steps)), function(i) list(
-                  id = steps$step_id[i], short = unname(short_labels[steps$step_id[i]]))),
-                players = list(), grid = list(), ends = list())
-  for (st in unique(en$horizon_setting)) {
-    board$players[[st]] <- if (st == "own") steps$step_id else setdiff(steps$step_id, "horizon")
-    board$grid[[st]] <- list(); board$ends[[st]] <- list()
-    for (o in "b") {
-      g <- sb[sb$horizon_setting == st & sb$output == o, ]
-      g <- g[order(g$mask), ]
-      stopifnot(nrow(g) == 2^length(board$players[[st]]))
-      e <- en[en$horizon_setting == st & en$output == o, ]
-      board$grid[[st]][[o]] <- r6(g$value)
-      board$ends[[st]][[o]] <- list(bsz = r6(e$bsz_model), rjkdc = r6(e$nber_own),
-                                    model = r6(e$rauh_residual), revision = r6(e$nber_step))
-    }
-  }
-  # The explorer shows the net fiscal effect, output (b), only; output (a) stays in the
-  # exports, the report and the tests, not in the data file the explorer reads.
-  series_b <- lapply(series, function(x) x["b"])
-  data <- list(headline = headline, series = series_b, horizon_notes = notes, switchboard = board)
+  # The sliders: the two input vectors (bridge_inputs(), full precision; the perpetuity is
+  # written "Inf"), the horizon settings and the number of steps of slider_inputs(), the two
+  # revision constants at each horizon setting (slider_revision(), from ends.csv), and for
+  # each slider the argument it moves and its two values as the page prints them. The page's
+  # model.js computes every panel value from these; test-site checks it against
+  # export/r/slider_sample.csv.
+  bi <- bridge_inputs(k)
+  sl_vec <- function(v) lapply(v, function(z) if (is.infinite(z)) "Inf" else z)
+  rt <- slider_revision(en)
+  sliders <- list(
+    steps = SLIDER_STEPS, horizons = sl_vec(SLIDER_HORIZONS),
+    values = list(bsz = sl_vec(bi$sup), rjkdc = sl_vec(bi$rauh)),
+    revision = list(model = rt$model, revision = rt$revision),
+    inputs = lapply(seq_len(nrow(steps)), function(i) list(
+      id = steps$step_id[i], input = step_inputs[[steps$step_id[i]]],
+      short = unname(short_labels[steps$step_id[i]]),
+      bsz_text = fmt_input(dis0$input[i], dis0$supporting_value[i]),
+      rjkdc_text = fmt_input(dis0$input[i], dis0$rauh_value[i]))),
+    revision_text = list(bsz = "not applied", rjkdc = "applied"))
+  # The explorer shows the net fiscal effect, output (b), only, and the bridge at each
+  # analysis's own horizon; output (a) and the common horizons stay in the exports, the
+  # report and the tests, not in the data file the explorer reads.
+  data <- list(headline = headline, series = list(own = list(b = series$own$b)), sliders = sliders)
   js <- paste0("/* Generated by comparison/R/site.R from comparison/export/r/. Do not edit. */\n",
                "window.__BRIDGE__ = ",
                jsonlite::toJSON(data, auto_unbox = TRUE, digits = NA, null = "null"), ";\n")

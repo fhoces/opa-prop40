@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="The two analyses of California's Proposition 40 on one common output, the net fiscal effect, with a switch for each assumption they disagree on: switch them from the BSZ value to the RJKDC value and watch the estimate move from one analysis to the other.">
+<meta name="description" content="The two analyses of California's Proposition 40 on one common output, the net fiscal effect, in two panels of sliders, one per assumption they disagree on: move a slider from one analysis's value towards the other's and watch that panel's estimate move.">
 <title>Prop 40, the comparison: Explorer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -181,89 +181,89 @@
   .credit { margin: 14px 0 0; font-size: 11.5px; color: var(--ink-2); }
   .credit a { color: var(--series-1); text-decoration: none; }
   .credit a:hover { text-decoration: underline; }
-  /* The switchboard: the BSZ card, the switches, the RJKDC card. */
+  /* The two slider panels and the bars between them. */
   .board { margin-top: 28px; }
-  .board-lead { max-width: 62em; margin: 0 0 6px; font-size: 14.5px; color: var(--ink-2); }
-  .rack.settings { max-width: 46em; }
-  .rack.settings .dial { border-bottom: 0; }
-  .board-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.6fr) minmax(0, 1fr);
-    gap: 20px; align-items: start; margin: 20px 0 22px; }
-  .end-card { --c: var(--total); display: flex; flex-direction: column; gap: 2px;
-    border: 2px solid var(--c); border-radius: 6px; padding: 14px 16px 16px;
-    background: color-mix(in srgb, var(--c) 9%, var(--panel)); position: sticky; top: 16px; }
-  .end-card.bsz { --c: var(--series-1); }
-  .end-card.rjkdc { --c: var(--pref); }
-  .end-card .card-name { font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
-    color: var(--c); font-weight: 600; }
-  .end-card .card-value { font-family: var(--serif); font-size: 34px; font-weight: 600;
-    line-height: 1.1; margin: 4px 0 6px; font-variant-numeric: tabular-nums; }
-  .end-card .card-src { font-size: 13px; font-weight: 500; }
-  .end-card .card-def { font-size: 12.5px; color: var(--ink-2); line-height: 1.45; margin: 4px 0 0; }
-  .sw-head, button.sw { display: grid; grid-template-columns: 36px minmax(0, 1fr) 104px 104px;
-    gap: 10px; align-items: center; }
-  .sw-head { font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-3);
-    font-weight: 500; padding: 0 11px 6px; }
-  .sw-head span:nth-child(n+3) { text-align: right; }
-  .sw-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
-  button.sw { width: 100%; text-align: left; font: inherit; color: var(--ink); background: var(--panel);
-    border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px; cursor: pointer;
-    transition: border-color 120ms ease; }
-  button.sw:hover { border-color: var(--ink-3); }
-  button.sw:focus-visible { outline: 2px solid var(--series-1); outline-offset: 2px; }
-  .sw-tog { width: 34px; height: 18px; border-radius: 9px; background: var(--series-1); position: relative; }
-  .sw-tog::after { content: ""; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px;
-    border-radius: 50%; background: #fff; transition: left 120ms ease; }
-  button.sw[aria-pressed="true"] .sw-tog { background: var(--pref); }
-  button.sw[aria-pressed="true"] .sw-tog::after { left: 18px; }
-  .sw-name { min-width: 0; }
-  .sw-name b { display: block; font-weight: 600; font-size: 14px; line-height: 1.3; }
-  .sw-title, .sw-note { display: block; font-size: 12px; color: var(--ink-2); line-height: 1.35; }
-  .sw-note { color: var(--ink-3); font-style: italic; }
-  .sw-note:empty { display: none; }
-  .sw-v { font-family: var(--mono); font-size: 12.5px; text-align: right; color: var(--ink-3);
-    padding: 2px 4px; border-radius: 3px; overflow-wrap: anywhere; }
-  button.sw[aria-pressed="false"] .sw-bsz { color: var(--ink); font-weight: 500; box-shadow: inset 0 -2px 0 var(--series-1); }
-  button.sw[aria-pressed="true"] .sw-rj { color: var(--ink); font-weight: 500; box-shadow: inset 0 -2px 0 var(--pref); }
-  .sw-who { display: none; }
-  button.sw.is-inert { opacity: .55; }
-  .sw-sep { margin: 12px 0 8px; border-top: 1px solid var(--rule); }
-  .rev-note { font-size: 12.5px; color: var(--ink-2); margin: 8px 2px 0; line-height: 1.45; }
-  .result { margin-top: 16px; padding: 12px 14px 14px; background: var(--chip); border-radius: 6px; }
-  .result .now { font-size: 15px; }
-  .result .now b { font-family: var(--serif); font-size: 28px; font-weight: 600; margin-left: 6px;
+  .board-lead { max-width: 62em; margin: 0 0 10px; font-size: 14.5px; color: var(--ink-2); }
+  .board-lead code { font-family: var(--mono); font-size: 0.9em; background: var(--chip); padding: 1px 4px; border-radius: 3px; }
+  .board-lead a { color: var(--series-1); }
+  .panels { display: grid; grid-template-columns: minmax(0, 1fr) 220px minmax(0, 1fr);
+    gap: 22px; align-items: start; margin: 20px 0 18px; }
+  .panel { --c: var(--series-1); --oc: var(--pref); border: 1px solid var(--rule); border-top: 3px solid var(--c);
+    border-radius: 6px; padding: 12px 14px 14px; background: var(--panel); min-width: 0; }
+  .panel.rjkdc { --c: var(--pref); --oc: var(--series-1); }
+  .panel-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; align-items: start;
+    padding-bottom: 10px; border-bottom: 1px solid var(--rule); margin-bottom: 8px; }
+  .panel-head h3 { margin: 0; font-family: var(--serif); font-size: 26px; line-height: 1.15; font-weight: 600;
     font-variant-numeric: tabular-nums; }
-  .track { position: relative; height: 26px; margin: 8px 0 2px; }
-  .track::before { content: ""; position: absolute; left: 0; right: 0; top: 12px; height: 2px;
-    border-radius: 1px; background: linear-gradient(to right, var(--series-1), var(--pref)); }
-  .track .end { position: absolute; top: 6px; width: 2px; height: 14px; margin-left: -1px; }
-  .track .end.bsz { left: 6%; background: var(--series-1); }
-  .track .end.rjkdc { left: 94%; background: var(--pref); }
-  .track .marker { position: absolute; top: 4px; width: 18px; height: 18px; margin-left: -9px;
-    border-radius: 50%; background: var(--ink); border: 3px solid var(--chip);
-    transition: left 160ms ease; }
-  .track-labels { display: flex; justify-content: space-between; gap: 8px; font-family: var(--mono);
-    font-size: 11.5px; color: var(--ink-3); }
-  #sb-where { margin: 8px 0 0; }
-  .board-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-  .board-actions button { font-family: var(--mono); font-size: 13px; color: var(--ink-2);
-    background: var(--panel); border: 1px solid var(--rule); border-radius: 2px; padding: 6px 10px; cursor: pointer; }
-  .board-actions button:hover { border-color: var(--ink-3); }
-  .board-actions button:focus-visible { outline: 2px solid var(--series-1); outline-offset: 2px; }
-  svg.waterfall .is-off { opacity: .25; }
-  .legend span.faded::before { opacity: .3; }
+  .panel-head h3 .ph-name { color: var(--c); }
+  .panel-head .reset { grid-column: 2; grid-row: 1; align-self: center; font-family: var(--mono); font-size: 12.5px;
+    color: var(--ink-2); background: var(--panel); border: 1px solid var(--rule); border-radius: 2px;
+    padding: 5px 10px; cursor: pointer; }
+  .panel-head .reset:hover { border-color: var(--ink-3); }
+  .panel-head .reset:focus-visible { outline: 2px solid var(--series-1); outline-offset: 2px; }
+  .ph-src, .ph-now { grid-column: 1 / -1; margin: 0; font-size: 12.5px; color: var(--ink-2); line-height: 1.4; }
+  .ph-now { font-size: 14px; color: var(--ink); margin-top: 4px; }
+  .ph-now b { font-family: var(--serif); font-size: 22px; font-weight: 600; margin-left: 4px;
+    font-variant-numeric: tabular-nums; }
+  .sl-head { display: flex; justify-content: space-between; font-size: 10.5px; letter-spacing: .07em;
+    text-transform: uppercase; color: var(--ink-3); font-weight: 500; padding: 2px 0 0; }
+  .sl-head span:first-child { color: var(--series-1); }
+  .sl-head span:last-child { color: var(--pref); }
+  .sl-list { list-style: none; margin: 0; padding: 0; }
+  .sl { padding: 7px 0 2px; border-bottom: 1px solid var(--rule-2); }
+  .sl:last-child { border-bottom: 0; }
+  .sl label { display: block; font-size: 13.5px; line-height: 1.3; }
+  .sl label b { font-weight: 600; }
+  .sl-title { font-size: 12px; color: var(--ink-2); }
+  .sl-row { display: grid; grid-template-columns: 76px minmax(0, 1fr) 76px; gap: 6px; align-items: start; margin-top: 3px; }
+  .sl-end { font-family: var(--mono); font-size: 11px; color: var(--ink-3); line-height: 1.25;
+    padding-top: 4px; overflow-wrap: anywhere; }
+  .sl-lo { text-align: right; }
+  .sl-track { position: relative; display: block; height: 38px; }
+  .sl-track::before { content: ""; position: absolute; left: 9px; right: 9px; top: 10px; height: 2px;
+    background: var(--rule); border-radius: 1px; }
+  .sl-ticks i { position: absolute; top: 8px; width: 6px; height: 6px; margin-left: -3px; border-radius: 50%;
+    background: var(--rule); left: calc(9px + var(--t) * (100% - 18px)); }
+  .sl-other { position: absolute; top: 4px; width: 14px; height: 14px; margin-left: -7px; border-radius: 50%;
+    border: 2px solid var(--oc); background: var(--panel); left: calc(100% - 9px); }
+  .is-rtl .sl-other { left: 9px; }
+  .sl-in { -webkit-appearance: none; appearance: none; position: absolute; left: 0; top: 0; width: 100%;
+    height: 22px; margin: 0; background: transparent; cursor: pointer; z-index: 2; }
+  .sl-in::-webkit-slider-runnable-track { height: 22px; background: transparent; border: 0; }
+  .sl-in::-moz-range-track { height: 22px; background: transparent; border: 0; }
+  .sl-in::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px;
+    margin-top: 2px; border-radius: 50%; background: var(--c); border: 2px solid var(--panel); box-shadow: 0 0 0 1px var(--c); }
+  .sl-in::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: var(--c);
+    border: 2px solid var(--panel); box-shadow: 0 0 0 1px var(--c); }
+  .sl-in:focus { outline: none; }
+  .sl-in:focus-visible { outline: 2px solid var(--series-1); outline-offset: 2px; border-radius: 4px; }
+  .sl-cur { position: absolute; top: 22px; left: 9px; transform: translateX(-50%); font-family: var(--mono);
+    font-size: 11.5px; line-height: 15px; color: var(--ink); font-weight: 500; white-space: nowrap; }
+  .sl-note { display: block; font-size: 11.5px; color: var(--ink-3); font-style: italic; line-height: 1.35; }
+  .sl-note:empty { display: none; }
+  .sl.is-inert .sl-cur { color: var(--ink-3); font-weight: 400; }
+  .panel-note { font-size: 12px; color: var(--ink-2); margin: 8px 0 0; line-height: 1.45; }
+  .mid { margin: 0; position: sticky; top: 16px; text-align: center; }
+  svg.bars2 { width: 100%; max-width: 240px; height: auto; display: block; margin: 0 auto; }
+  svg.bars2 text { font-family: var(--sans); font-size: 12px; fill: var(--ink-2); }
+  svg.bars2 text.name { font-weight: 600; font-size: 12.5px; }
+  svg.bars2 text.val { font-family: var(--mono); font-size: 13px; fill: var(--ink); font-weight: 500;
+    paint-order: stroke; stroke: var(--paper); stroke-width: 4px; }
+  svg.bars2 .zero { stroke: var(--ink-3); stroke-width: 1.5; }
+  svg.bars2 .bar-bsz { fill: var(--series-1); }
+  svg.bars2 .bar-rjkdc { fill: var(--pref); }
+  .mid figcaption { font-size: 12px; color: var(--ink-3); line-height: 1.4; margin-top: 4px; }
+  .rev-note { font-size: 12.5px; color: var(--ink-2); margin: 0 0 12px; line-height: 1.5; max-width: 62em; }
   #controls-bridge { margin: 4px 0 6px; }
-  @media (max-width: 860px) {
-    .board-grid { grid-template-columns: minmax(0, 1fr); }
-    .end-card { position: static; }
+  @media (max-width: 980px) {
+    .panels { grid-template-columns: minmax(0, 1fr); }
+    .mid { position: static; order: 0; }
+    svg.bars2 { max-width: 260px; }
   }
-  @media (max-width: 640px) {
-    .sw-head { display: none; }
-    button.sw { grid-template-columns: 36px minmax(0, 1fr) minmax(0, 1fr); row-gap: 4px;
-      grid-template-areas: "tog name name" "tog bsz rj"; }
-    .sw-tog { grid-area: tog; } .sw-name { grid-area: name; }
-    .sw-bsz { grid-area: bsz; } .sw-rj { grid-area: rj; }
-    .sw-v { text-align: left; }
-    .sw-who { display: inline; font-family: var(--sans); font-size: 11px; color: var(--ink-3); font-weight: 400; }
+  @media (max-width: 420px) {
+    .panel { padding: 10px 10px 12px; }
+    .sl-row { grid-template-columns: 66px minmax(0, 1fr) 66px; gap: 4px; }
+    .sl-end { font-size: 10.5px; }
   }
 </style>
 </head>
@@ -286,10 +286,11 @@
         income tax it changes. The <a href="../../../rjkdc-analysis/site/">RJKDC analysis</a>
         (Jaros and Rauh, NBER, September 2026) finds that it loses money, because it counts the
         income tax lost to billionaires who leave for ever. This page puts both on one definition,
-        the net fiscal effect, and lines up the assumptions the two analyses disagree on. Each
-        switch below moves one assumption from the BSZ value to the RJKDC value. With every switch
-        off you get the BSZ analysis's estimate; with every switch on you get the RJKDC analysis's.
-        Every number is precomputed by the pipeline that reproduces both.
+        the net fiscal effect, and lists the assumptions the two analyses disagree on in two
+        panels. The BSZ panel starts from the BSZ analysis's values and the RJKDC panel from the
+        RJKDC analysis's. Each slider moves one assumption part of the way, or all the way, from
+        one analysis's value to the other's. The bars between the panels show what one estimating
+        function, used for both analyses, returns for each panel.
       </p>
     </div>
     <div class="headline">
@@ -309,80 +310,77 @@
     </div>
   </header>
 
-  <section class="board" id="switchboard" aria-labelledby="board-title">
-    <h2 id="board-title">From one analysis to the other, one switch at a time</h2>
-    <p class="board-lead">On the left is the BSZ analysis's estimate and on the right the RJKDC
-    analysis's (on a phone, at the top and at the bottom). Between them is one switch for each assumption the two analyses disagree on (a
-    disputed input). A switch that is off keeps the BSZ value; a switch that is on takes the RJKDC
-    value. The figure under the switches is what one estimating function, used for both analyses,
-    returns with the switches as they are set. The last switch adds the RJKDC analysis's September
-    2026 revision, which is not an input of that function. Every number on this page is the
-    net fiscal effect, which both main estimates measure: the one-time wealth tax, plus the extra
-    income tax from assets sold to pay it, minus the present value of the income tax lost to
-    billionaires who leave California.</p>
+  <section class="board" id="panels" aria-labelledby="board-title">
+    <h2 id="board-title">Two panels, one estimating function</h2>
+    <p class="board-lead">Each panel lists every assumption the two analyses disagree on (this page
+    calls them the disputed inputs), plus the RJKDC analysis's September 2026 revision. The BSZ
+    panel on the left starts every slider at the BSZ analysis's value. The RJKDC panel on the
+    right starts every slider at the RJKDC analysis's value. A slider has five positions: its own
+    analysis's value, the other analysis's value, and three evenly spaced steps between them. For
+    the loss horizon the five positions are {{hz_words}}. In both panels the BSZ value is
+    printed at a slider's left end and the RJKDC value at its right end. The filled dot is where
+    the slider is now, the hollow dot the other analysis's value, and the value under the filled
+    dot is the one in use.</p>
+    <p class="board-lead">The bars in the middle show what the common estimating function returns
+    for each panel. That function, <code>score_common()</code>, computes both analyses: every
+    disputed input is one of its arguments, and it returns the net fiscal effect. The two panels
+    are independent. The left sliders move only the left bar, and the right sliders only the
+    right bar. Move every slider in the BSZ panel to its RJKDC end and the left bar meets the
+    right one; the reverse works too. Your browser does the arithmetic with
+    <a href="model.js"><code>model.js</code></a>, a copy of the function the pipeline uses
+    (<code>comparison/R/model.R</code>). A test checks that the copy returns the pipeline's values.</p>
 
-    <div class="rack settings" id="controls">
-      <div class="dial" role="group" aria-label="Loss horizon" id="horizon-group">
-        <div class="label">How long the lost income tax lasts</div>
-        <div class="desc" id="horizon-note">{{horizon_note_own}}</div>
-        <div class="levels">
-          <button type="button" data-h="own" class="is-default" aria-pressed="true">Each analysis's own</button>
-{{horizon_buttons}}
+    <div class="panels">
+      <div class="panel bsz" id="panel-bsz" role="group" aria-labelledby="pbsz-h">
+        <div class="panel-head">
+          <h3 id="pbsz-h"><span class="ph-name">BSZ:</span> <span id="ph-bsz-main">{{hl_bsz}}</span></h3>
+          <button type="button" class="reset" data-panel="bsz">Reset</button>
+          <p class="ph-src">The BSZ analysis's main estimate<sup>1</sup> (Boll, Saez and Zucman, August 2026)</p>
+          <p class="ph-now">With these sliders <b id="now-bsz" aria-live="polite">{{bsz_end_b}}</b></p>
         </div>
+        <div class="sl-head" aria-hidden="true"><span>BSZ value</span><span>RJKDC value</span></div>
+        <ul class="sl-list" aria-label="The BSZ panel's sliders">
+{{sliders_bsz}}
+        </ul>
+        <p class="panel-note">Every slider starts at the BSZ value, so the panel starts at the BSZ
+        analysis's net total, {{bsz_end_b}}.</p>
+      </div>
+
+      <figure class="mid" id="mid">
+        <svg class="bars2" id="bars" viewBox="0 0 240 380" role="img" aria-labelledby="bars-title">
+          <title id="bars-title">The BSZ panel's estimate is {{bsz_end_b}} and the RJKDC panel's is {{nber_end_b}}.</title>
+        </svg>
+        <figcaption>Net fiscal effect, $ billions. Left bar: the BSZ panel. Right bar: the RJKDC panel.</figcaption>
+      </figure>
+
+      <div class="panel rjkdc" id="panel-rjkdc" role="group" aria-labelledby="prj-h">
+        <div class="panel-head">
+          <h3 id="prj-h"><span class="ph-name">RJKDC:</span> <span id="ph-rjkdc-main">{{hl_rjkdc}}</span></h3>
+          <button type="button" class="reset" data-panel="rjkdc">Reset</button>
+          <p class="ph-src">The RJKDC analysis's main estimate<sup>1</sup> (Jaros and Rauh, NBER, September 2026)</p>
+          <p class="ph-now">With these sliders <b id="now-rjkdc" aria-live="polite">{{nber_end_b}}</b></p>
+        </div>
+        <div class="sl-head" aria-hidden="true"><span>BSZ value</span><span>RJKDC value</span></div>
+        <ul class="sl-list" aria-label="The RJKDC panel's sliders">
+{{sliders_rjkdc}}
+        </ul>
+        <p class="panel-note">Every slider starts at the RJKDC value, so the panel starts at
+        {{nber_end_b2}}, the exact expectation of the authors' Monte Carlo. Their seeded run of
+        that Monte Carlo gives {{hl_rjkdc}}, the main estimate in the header.</p>
       </div>
     </div>
-    <p class="legend-default"><i></i>the setting the explorer opens on</p>
 
-    <div class="board-grid">
-      <div class="end-card bsz" id="card-bsz">
-        <span class="card-name">BSZ analysis</span>
-        <span class="card-value" id="card-bsz-value">{{bsz_end_b}}</span>
-        <span class="card-src">Boll, Saez and Zucman, August 2026</span>
-        <p class="card-def" id="card-bsz-def">Table 5 row 1 net of its own extra income tax and lost income tax (5 years)</p>
-      </div>
-
-      <div class="switches">
-        <div class="sw-head" aria-hidden="true"><span></span><span>Assumption</span><span>BSZ value</span><span>RJKDC value</span></div>
-        <ul class="sw-list" aria-label="One switch per disputed input">
-{{switch_rows}}
-        </ul>
-        <div class="sw-sep"></div>
-        <ul class="sw-list" aria-label="The September 2026 revision">
-        <li><button type="button" class="sw rev" data-sw="revision" aria-pressed="false" aria-describedby="rev-note"><span class="sw-tog" aria-hidden="true"></span><span class="sw-name"><b>September 2026 revision</b><span class="sw-title">What the common function cannot take as inputs</span><span class="sw-note"></span></span><span class="sw-v sw-bsz"><span class="sw-who">BSZ </span>not applied</span><span class="sw-v sw-rj"><span class="sw-who">RJKDC </span>applied</span></button></li>
-        </ul>
-        <p class="rev-note" id="rev-note">The RJKDC values in the switches above are those of the
-        RJKDC analysis's March 2026 version (Rauh, Jaros, Kearney, Doran and Cosso, SSRN), the
-        last version whose inputs are published. The September 2026 revision (Jaros and Rauh,
-        NBER) changes things the common function cannot take as inputs: it weights the revenue by
-        the chance that the tax survives litigation, grows the base {{nber_growth}} to the end of
-        2026, and draws the share of billionaires who leave independently of the revenue. This
-        switch adds that revision step (<span id="rev-step">{{rev_step_b}}</span> here) plus the
-        model difference (<span id="rev-model">{{rev_model_b}}</span>), the small gap between the
-        common function at the March 2026 inputs and that version's own Monte Carlo, which uses
-        rounded numbers.</p>
-
-        <div class="result">
-          <div class="now">With these switches: <b id="sb-value" aria-live="polite">{{bsz_end_b}}</b></div>
-          <div class="track" id="sb-track" role="img" aria-label="Where this value sits between the two analyses">
-            <span class="end bsz"></span><span class="end rjkdc"></span>
-            <span class="marker" id="sb-marker" style="left:6%"></span>
-          </div>
-          <div class="track-labels"><span>BSZ end <span id="tl-bsz">{{bsz_end_b}}</span></span><span>RJKDC end <span id="tl-rjkdc">{{nber_end_b}}</span></span></div>
-          <p class="small" id="sb-where">Every switch is off: this is the BSZ analysis's estimate.</p>
-          <div class="board-actions">
-            <button type="button" id="all-bsz">All BSZ</button>
-            <button type="button" id="all-rjkdc">All RJKDC</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="end-card rjkdc" id="card-rjkdc">
-        <span class="card-name">RJKDC analysis</span>
-        <span class="card-value" id="card-rjkdc-value">{{nber_end_b}}</span>
-        <span class="card-src">Jaros and Rauh, NBER, September 2026</span>
-        <p class="card-def" id="card-rjkdc-def">Mean NPV, the exact expectation of the authors' Monte Carlo</p>
-      </div>
-    </div>
+    <p class="rev-note" id="rev-note"><b>The September 2026 revision slider.</b> The RJKDC values
+    on the other sliders are those of the RJKDC analysis's March 2026 version (Rauh, Jaros,
+    Kearney, Doran and Cosso, SSRN), the last version whose inputs are published. The September
+    2026 revision (Jaros and Rauh, NBER) changes things the common function cannot take as
+    inputs. It weights the revenue by the chance that the tax survives litigation. It grows the
+    base {{nber_growth}} to the end of 2026. It also draws the share of billionaires who leave
+    independently of the revenue. So this slider has two positions, not five. When it is on, it
+    adds the revision step plus the model difference. The model difference is the small gap
+    between the common function at the March 2026 inputs and that version's own Monte Carlo,
+    which uses rounded numbers. Both depend on the horizon, and each panel adds them at its own
+    horizon slider's setting. At a perpetuity they are {{rev_step_b}} and {{rev_model_b}}.</p>
 
     <p class="fn"><sup>1</sup> Each analysis's own main estimate, defined its own way. The BSZ
     analysis's is a net total over 5 years: the wealth tax (Table 5 row 1), plus extra income tax from assets sold to pay it, minus the present value of
@@ -391,8 +389,8 @@
     <a href="../../../bsz-analysis/site/">BSZ analysis overview</a>. The RJKDC analysis's is a
     perpetuity net present value: the wealth tax minus the income tax lost for ever, averaged
     over the authors' Monte Carlo draws (Jaros and Rauh, NBER c15504, September 2026).</p>
-    <p class="fn">The net fiscal effect puts both on one definition, and the two cards are its
-    two ends. The BSZ end is the same
+    <p class="fn">The net fiscal effect puts both on one definition, and the two panels start at
+    its two ends. The BSZ end is the same
     <span id="fn-bsz-end">{{bsz_end_b}}</span>, with the 5 years discounted over the RJKDC
     analysis's {{r_min}} to {{r_max}} rate range instead of at 3%. The RJKDC end is
     <span id="fn-rjkdc-end">{{nber_end_b}}</span>, the exact expectation of the same Monte Carlo,
@@ -400,32 +398,34 @@
   </section>
 
   <section class="bridge" id="the-bridge">
-    <h2>The bridge: how much each switch moves the estimate</h2>
-    <p>The switchboard shows one mix of switches at a time. The bridge below adds up the whole
+    <h2>The bridge: how much each assumption moves the estimate</h2>
+    <p>The panels show one mix of slider positions at a time. The bridge below adds up the whole
     move, from the BSZ end to the RJKDC end, as a waterfall chart. The BSZ end is
     <b>{{bsz_end_b}}</b> and the RJKDC end <b>{{nber_end_b}}</b>, a gap of <b>{{gap_b}}</b>. Each
-    bar between the two ends is the effect of one switch. The last two bars belong to the revision
-    switch: the model difference and the September 2026 revision. Together the bars add up to
-    {{gap_b_signed}}. The bars of switches that are off above are faded.</p>
-    <p>One estimating function, <code>score_common()</code> (<code>comparison/R/model.R</code>,
-    with a Python twin), computes both analyses. Each disputed input is one of its arguments and
-    takes either the BSZ value or the RJKDC value; a switch flips one argument. With every input
-    at the BSZ value the function returns the BSZ end exactly. With every input at the RJKDC value it returns the Monte Carlo
-    expectation of the RJKDC version those values come from (the revision switch's note says
-    which), up to a {{rauh_resid_b}} model difference. The bridge runs in
-    the direction of Figure 2 of Hoopes (2026), the existing comparison
+    bar between the two ends is the effect of moving one assumption all the way from the BSZ
+    value to the RJKDC value. The last two bars belong to the revision slider: the model
+    difference and the September 2026 revision. Together the bars add up to {{gap_b_signed}}.</p>
+    <p>The bridge uses the same estimating function, <code>score_common()</code>
+    (<code>comparison/R/model.R</code>, with a Python twin and the browser copy
+    <code>model.js</code>). With every input at the BSZ value the function returns the BSZ end
+    exactly. With every input at the RJKDC value it returns the Monte Carlo expectation of the
+    RJKDC version those values come from (the note on the revision slider says which), up to a
+    {{rauh_resid_b}} model difference. The bridge runs in the direction of Figure 2 of Hoopes
+    (2026), the existing comparison
     <a href="../../../index.html#hoopes">described on the overview</a>.</p>
-    <p>What a switch adds depends on which switches are already on, because the inputs interact:
-    a departure matters more when the base is larger. So the bars can be sized two ways. The
-    default bars are <b>Shapley values</b>: each switch's effect averaged over all {{n_orders}}
-    orders in which the switches could be flipped, so the bars add up exactly to the gap whatever
-    the reading order. "One order" shows a single sequence instead, the one Hoopes reads in. This
-    setting changes the bridge only, not the switchboard.</p>
+    <p>What a step adds depends on which other inputs have already moved, because the inputs
+    interact: a departure matters more when the base is larger. So the bars can be sized two
+    ways. The default bars are <b>Shapley values</b>: each step's effect averaged over all
+    {{n_orders}} orders in which the inputs could be moved, so the bars add up exactly to the gap
+    whatever the reading order. "One order" shows a single sequence instead, the one Hoopes reads
+    in. The bridge uses each analysis's own horizon (5 years for the BSZ analysis, a perpetuity
+    for the RJKDC analysis), so the horizon is one of its steps. This setting changes the bridge
+    only, not the panels.</p>
 
     <div class="rack" id="controls-bridge">
       <div class="dial" role="group" aria-label="Step sizes">
         <div class="label">How each bar is sized</div>
-        <div class="desc">Averaged over every order the switches could be flipped in (Shapley
+        <div class="desc">Averaged over every order the inputs could be moved in (Shapley
         values), or the one order Hoopes (2026) reads in.</div>
         <div class="levels">
           <button type="button" data-method="shapley" class="is-default" aria-pressed="true">Shapley (all orders)</button>
@@ -433,6 +433,7 @@
         </div>
       </div>
     </div>
+    <p class="legend-default"><i></i>the setting the explorer opens on</p>
 
     <div class="chart-box" id="chart-box">
       <div class="chart-scroll">
@@ -448,7 +449,6 @@
       <span style="--c: var(--up)">step that raises it</span>
       <span style="--c: var(--down)">step that lowers it</span>
       <span style="--c: var(--model)">model difference</span>
-      <span class="faded" style="--c: var(--ink-3)">faded: its switch is off</span>
     </div>
 
     <p class="small" style="margin-top:14px">In the table, the DISPUTES row is the row of
@@ -462,8 +462,8 @@
       </tbody>
     </table>
     </div>
-    <p class="small" style="margin-top:8px">Step values in this table follow the settings above;
-    with JavaScript off they show the Shapley steps at each analysis's own horizon. Kinds follow the OPA
+    <p class="small" style="margin-top:8px">Step values in this table follow the setting above;
+    with JavaScript off they show the Shapley steps. Kinds follow the OPA
     input taxonomy: <b>data</b> (settled by observable facts), <b>research</b> (a published
     estimate), <b>guesswork</b> (asserted without data or a study behind it) and <b>scenario</b>
     (a choice of which world is estimated). The inputs and every page reference are in
@@ -482,19 +482,26 @@
       <code>comparison/R/</code> from the two analyses' export contracts
       (<code>bsz-analysis/export/r/</code>, <code>rjkdc-analysis/export/r/</code>: the files each
       analysis's pipeline writes for others to read) and the page-referenced transcriptions in
-      <code>comparison/data/</code>. A Python twin reproduces them ({{parity_note}}). The
-      <a href="../repro.html">reproduction report</a> derives each one step by step, and the
+      <code>comparison/data/</code>. A Python twin reproduces them ({{parity_note}}). The panels'
+      values are computed in the browser by <a href="model.js"><code>model.js</code></a> from the
+      inputs in the data file; a test runs it with node over {{n_slider_sample}} slider mixes and checks it
+      against the R values to 1e-9. The
+      <a href="../repro.html">reproduction report</a> derives each number step by step, and the
       <a href="../materials.html">materials page</a> is a guide to the code, tests and files.</p>
       <p><strong>Data.</strong> <a href="../../export/r/bridge.csv">bridge.csv</a> (every step,
       for each output and horizon setting), <a href="../../export/r/ends.csv">ends.csv</a> (the two
-      ends of every bridge), <a href="../../export/r/switchboard.csv">switchboard.csv</a> (the
-      value for every mix of switches: bit <i>i</i> of <code>mask</code> is the <i>i</i>-th
-      switch, in the bridge's order), <a href="../../export/r/inputs.csv">inputs.csv</a> (every disputed
-      input and its sources), <a href="../../../assets/comparison-data.js">comparison-data.js</a>
-      (what this page reads). The pipeline writes all of them; a test fails if
-      <code>comparison-data.js</code> or this page differs from its output.</p>
-      <p><strong>Links.</strong> The settings can be set from the address, for example
-      <code>#method=sequential&amp;h=common_20</code>.</p>
+      ends of every bridge, and the two constants the revision slider adds),
+      <a href="../../export/r/slider_sample.csv">slider_sample.csv</a> ({{n_slider_per_panel}} slider mixes per
+      panel with their values, the sample the tests run <code>model.js</code> on),
+      <a href="../../export/r/switchboard.csv">switchboard.csv</a> (the value for every mix of
+      inputs at one analysis's value or the other's, which the Shapley values average over: bit
+      <i>i</i> of <code>mask</code> is the <i>i</i>-th input, in the bridge's order),
+      <a href="../../export/r/inputs.csv">inputs.csv</a> (every disputed input and its sources),
+      <a href="../../../assets/comparison-data.js">comparison-data.js</a> (what this page reads).
+      The pipeline writes all of them; a test fails if <code>comparison-data.js</code> or this
+      page differs from its output.</p>
+      <p><strong>Links.</strong> The bridge's setting can be set from the address, for example
+      <code>#method=sequential</code>.</p>
     </div>
   </details>
 
@@ -509,27 +516,25 @@
 </div>
 
 <script src="../../../assets/comparison-data.js"></script>
+<script src="model.js"></script>
 <script>
 (function () {
   "use strict";
-  // D is the data file (assets/comparison-data.js).
-  // D.switchboard: for each horizon setting and output, grid[h][out][m] is the value of the
-  // common function with the switches in mask m on (bit k = players[h][k], the bridge's order;
-  // with a common horizon the horizon is not a player), and ends[h][out] holds the two ends
-  // and the two constants the revision switch adds (model, revision).
-  // D.series[horizon][output][method] is the list of bars of one view of the bridge: the BSZ
-  // end, the steps, the model difference, the September 2026 revision and the RJKDC end.
-  // D.headline holds the two main estimates. The page does no arithmetic beyond adding up.
-  var D = window.__BRIDGE__;
-  if (!D) return;
-  var SB = D.switchboard;
-  // The page shows the net fiscal effect, output (b), only.
-  var state = { out: "b", method: "shapley", h: "own", on: {}, rev: false };
-  // Deep link, e.g. index.html#method=sequential&h=common_20
+  // D is the data file (assets/comparison-data.js), M the estimating function (model.js).
+  // D.sliders: the two input vectors, the horizon settings, the revision constants and, per
+  // slider, the argument it moves and its two printed values. M.panelValue(D.sliders, panel,
+  // positions) is slider_value() of comparison/R/model.R.
+  // D.series.own.b[method] is the list of bars of one view of the bridge: the BSZ end, the
+  // steps, the model difference, the September 2026 revision and the RJKDC end.
+  // D.headline holds the two main estimates.
+  var D = window.__BRIDGE__, M = window.ComparisonModel;
+  if (!D || !M) return;
+  var S = D.sliders;
+  var state = { method: "shapley" };
+  // Deep link, e.g. index.html#method=sequential
   (location.hash || "").replace(/^#/, "").split("&").forEach(function (kv) {
     var p = kv.split("=");
     if (p[0] === "method" && (p[1] === "shapley" || p[1] === "sequential")) state.method = p[1];
-    if (p[0] === "h" && D.series[p[1]]) state.h = p[1];
   });
   var SVGNS = "http://www.w3.org/2000/svg";
   function el(tag, attrs, text) {
@@ -544,114 +549,125 @@
     var sign = v < 0 ? "−" : (signed ? "+" : "");
     return sign + "$" + s + "B";
   }
+  function money1(v) { return (v < 0 ? "−" : "") + "$" + Math.abs(v).toFixed(1) + "B"; }
   function $(id) { return document.getElementById(id); }
-  function bars() { return D.series[state.h][state.out][state.method]; }
 
   // ---- the headline and the footnote, from the data file, not typed ----
   var H = D.headline;
   $("hl-bsz").textContent = money(H.bsz);
   $("hl-rjkdc").textContent = money(H.rjkdc);
+  $("ph-bsz-main").textContent = money(H.bsz);
+  $("ph-rjkdc-main").textContent = money(H.rjkdc);
   $("fn-bsz-end").textContent = money(H.bsz_end_b);
   $("fn-rjkdc-end").textContent = money(H.rjkdc_end_b);
   $("fn-rjkdc-main").textContent = money(H.rjkdc);
 
-  var HNAME = { own: "each analysis's own horizon" };
-  Object.keys(D.series).forEach(function (h) {
-    if (h === "own") return;
-    var n = h.replace("common_", "");
-    HNAME[h] = n === "Inf" ? "a common perpetuity" : "a common " + n + "-year horizon";
-  });
-
-  // ---- the switchboard ----
-  var SWITCHES = Array.prototype.slice.call(document.querySelectorAll("button.sw"));
-  var HORIZON_TEXT = {};   // the horizon switch's two values as printed, for the own setting
-  SWITCHES.forEach(function (b) {
-    if (b.dataset.sw === "horizon")
-      HORIZON_TEXT = { bsz: b.querySelector(".sw-bsz").lastChild.textContent,
-                       rj: b.querySelector(".sw-rj").lastChild.textContent };
-  });
-  function grid() { return SB.grid[state.h][state.out]; }
-  function ends() { return SB.ends[state.h][state.out]; }
-  function mask() {
-    var m = 0;
-    SB.players[state.h].forEach(function (id, k) { if (state.on[id]) m += Math.pow(2, k); });
-    return m;
-  }
-  function boardValue() {
-    var e = ends(), v = grid()[mask()];
-    if (state.rev) v += e.model + e.revision;
-    return v;
-  }
-  // A switch has no effect in this setting if flipping it never changes the value.
-  function inert(id) {
-    var k = SB.players[state.h].indexOf(id);
-    if (k < 0) return true;
-    var g = grid(), bit = Math.pow(2, k);
-    for (var m = 0; m < g.length; m++)
-      if (!(m & bit) && Math.abs(g[m + bit] - g[m]) > 1e-9) return false;
-    return true;
-  }
-  function allSwitches(on) {
-    SB.inputs.forEach(function (x) { state.on[x.id] = on; });
-    state.rev = on;
-  }
-  function drawBoard() {
-    var e = ends(), v = boardValue();
-    var B = bars(), first = B[0].label, last = B[B.length - 1].label;
-    $("card-bsz-value").textContent = money(e.bsz);
-    $("card-rjkdc-value").textContent = money(e.rjkdc);
-    $("tl-bsz").textContent = money(e.bsz);
-    $("tl-rjkdc").textContent = money(e.rjkdc);
-    var cap = function (t) { t = t.slice(t.indexOf(": ") + 2); return t.charAt(0).toUpperCase() + t.slice(1); };
-    $("card-bsz-def").textContent = cap(first) + ".";
-    $("card-rjkdc-def").textContent = cap(last) + ", the exact expectation of the authors' Monte Carlo. " +
-      "Their seeded run gives " + money(H.rjkdc) +
-      (state.h === "own" ? ", the main estimate above." : " at their own horizon, a perpetuity.");
-    SWITCHES.forEach(function (b) {
-      var id = b.dataset.sw, isRev = id === "revision";
-      b.setAttribute("aria-pressed", (isRev ? state.rev : !!state.on[id]) ? "true" : "false");
-      var dead = !isRev && inert(id), note = "";
-      if (dead) note = id === "horizon" && state.h !== "own" ? "both at the common horizon set above"
-                     : "no effect on the net fiscal effect";
-      b.classList.toggle("is-inert", dead);
-      b.querySelector(".sw-note").textContent = note;
-      if (id === "horizon") {
-        var hn = state.h === "own" ? null : state.h.replace("common_", "");
-        var ht = hn === null ? null : hn === "Inf" ? "perpetuity" : hn + " years";
-        b.querySelector(".sw-bsz").lastChild.textContent = ht || HORIZON_TEXT.bsz;
-        b.querySelector(".sw-rj").lastChild.textContent = ht || HORIZON_TEXT.rj;
-      }
-    });
-    $("rev-step").textContent = money(e.revision, true);
-    $("rev-model").textContent = money(e.model, true);
-    $("sb-value").textContent = money(v);
-    // The track runs from the BSZ end (6%) to the RJKDC end (94%); a value beyond an end
-    // sits past it, up to the track's edge.
-    var span = e.rjkdc - e.bsz, t = span === 0 ? 0 : (v - e.bsz) / span;
-    var pos = Math.max(0, Math.min(100, 6 + 88 * t));
-    $("sb-marker").style.left = pos.toFixed(2) + "%";
-    $("sb-marker").setAttribute("data-t", t.toFixed(6));
-    var n = 0, live = 0;
-    SB.inputs.forEach(function (x) { if (!inert(x.id)) { live++; if (state.on[x.id]) n++; } });
-    var where;
-    if (mask() === 0 && !state.rev) where = "Every switch is off: this is the BSZ analysis's estimate.";
-    else if (n === live && state.rev) where = "Every switch is on: this is the RJKDC analysis's estimate.";
-    else {
-      var pct = Math.round(100 * t);
-      where = n + " of " + live + " input switches on" + (state.rev ? ", plus the revision" : "") + ". " +
-        (t < 0 ? "The estimate is above the BSZ end." : t > 1 ? "The estimate is beyond the RJKDC end." :
-         "The estimate is " + pct + "% of the way from the BSZ end to the RJKDC end.");
+  // ---- the two panels ----
+  // How an input value between the two ends is printed (the ends use the page's own wording,
+  // from the data file). Display only: the values come from model.js.
+  function fmtValue(input, v) {
+    var trim = function (s) { return s.indexOf(".") < 0 ? s : s.replace(/0+$/, "").replace(/\.$/, ""); };
+    var withCommas = function (s) { var p = s.split("."); p[0] = p[0].replace(/\B(?=(\d{3})+(?!\d))/g, ","); return p.join("."); };
+    switch (input) {
+      case "W_noncit": case "W_core": return "$" + withCommas(v.toFixed(1)) + "B";
+      case "re": case "d_conf": case "alpha": case "s": return (100 * v).toFixed(1) + "%";
+      case "dtau": return v === 0 ? "none applied" : trim((100 * v).toFixed(2)) + " pp";
+      case "eps": case "kappa": return v.toFixed(2);
+      case "C": return "$" + v.toFixed(2) + "B/yr";
+      case "H": return v === Infinity ? "perpetuity" : v + " years";
+      default: return String(v);
     }
-    $("sb-where").textContent = where;
-    $("sb-track").setAttribute("aria-label", "With these switches " + money(v) + ". " + where);
+  }
+  var INPUT = {};
+  S.inputs.forEach(function (x) { INPUT[x.id] = x; });
+  var PANELS = ["bsz", "rjkdc"];
+  var SL = {};   // SL[panel] = the panel's range inputs, in page order
+  PANELS.forEach(function (p) {
+    SL[p] = Array.prototype.slice.call(document.querySelectorAll('input.sl-in[data-panel="' + p + '"]'));
+  });
+  function positions(panel) {
+    var pos = {};
+    SL[panel].forEach(function (inp) { pos[inp.dataset.id] = +inp.value; });
+    return pos;
+  }
+  // The printed value of slider `id` at position p of `panel`. Position 0 is the panel's own
+  // analysis, the far end the other's.
+  function valueText(panel, id, p, x) {
+    var other = panel === "bsz" ? "rjkdc" : "bsz";
+    if (id === "revision") return S.revision_text[(p === 0) === (panel === "bsz") ? "bsz" : "rjkdc"];
+    var e = INPUT[id];
+    if (p === 0) return e[panel + "_text"];
+    if (p === S.steps) return e[other + "_text"];
+    return fmtValue(e.input, x[e.input]);
+  }
+  var current = {};
+  function updatePanel(panel) {
+    var pos = positions(panel), r = M.panelValue(S, panel, pos);
+    current[panel] = r.value;
+    $("now-" + panel).textContent = money1(r.value);
+    SL[panel].forEach(function (inp) {
+      var id = inp.dataset.id, p = +inp.value, max = +inp.max;
+      var txt = valueText(panel, id, p, r.x);
+      var out = inp.parentNode.querySelector(".sl-cur");
+      out.textContent = txt;
+      // under the thumb: the RJKDC panel's sliders run right to left
+      var frac = panel === "bsz" ? p / max : 1 - p / max;
+      out.style.left = "calc(9px + " + frac + " * (100% - 18px))";
+      out.style.transform = frac === 0 ? "translateX(-9px)" : frac === 1 ? "translateX(calc(-100% + 9px))" : "translateX(-50%)";
+      inp.setAttribute("aria-valuetext", txt + ", position " + p + " of " + max +
+        " from the " + (panel === "bsz" ? "BSZ" : "RJKDC") + " value");
+      // a slider with no effect at the other sliders' current positions says so
+      var dead = true;
+      for (var q = 0; q <= max && dead; q++) {
+        if (q === p) continue;
+        var alt = {}; for (var k in pos) alt[k] = pos[k];
+        alt[id] = q;
+        if (Math.abs(M.panelValue(S, panel, alt).value - r.value) > 1e-9) dead = false;
+      }
+      var li = inp.closest(".sl");
+      li.classList.toggle("is-inert", dead);
+      li.querySelector(".sl-note").textContent = dead ? "No effect while the other sliders stay where they are." : "";
+    });
   }
 
-  // ---- the waterfall ----
-  function barIsOff(b) {
-    if (b.type === "total") return false;
-    if (b.id === "rauh_resid" || b.id === "nber_step") return !state.rev;
-    return !state.on[b.id];
+  // ---- the bars: the two panels' estimates on one vertical scale with a zero line ----
+  function drawBars() {
+    var svg = $("bars");
+    Array.prototype.slice.call(svg.querySelectorAll("rect, text, line")).forEach(function (n) { svg.removeChild(n); });
+    var vb = current.bsz, vr = current.rjkdc;
+    var W = 240, top = 44, bottom = 352;
+    var hi = Math.max(0, vb, vr), lo = Math.min(0, vb, vr);
+    if (hi - lo < 1e-9) hi = lo + 1;
+    var y = function (v) { return top + (hi - v) / (hi - lo) * (bottom - top); };
+    var bars = [["BSZ panel", vb, "bar-bsz", 68], ["RJKDC panel", vr, "bar-rjkdc", 172]];
+    bars.forEach(function (b) {
+      var x = b[3], bw = 64, y0 = y(0), y1 = y(b[1]);
+      svg.appendChild(el("text", { x: x, y: 16, "text-anchor": "middle", "class": "name" }, b[0]));
+      svg.appendChild(el("rect", { x: x - bw / 2, y: Math.min(y0, y1), width: bw,
+                                   height: Math.max(1, Math.abs(y1 - y0)), rx: 2, "class": b[2] }));
+      var ly = b[1] >= 0 ? y1 - 8 : y1 + 20;
+      svg.appendChild(el("text", { x: x, y: ly, "text-anchor": "middle", "class": "val" }, money1(b[1])));
+    });
+    svg.appendChild(el("line", { x1: 20, x2: W - 20, y1: y(0), y2: y(0), "class": "zero" }));
+    svg.appendChild(el("text", { x: W - 18, y: y(0) + 4, "text-anchor": "start" }, "0"));
+    $("bars-title").textContent = "The BSZ panel's estimate is " + money1(vb) +
+      " and the RJKDC panel's is " + money1(vr) + " (net fiscal effect).";
+    svg.setAttribute("data-bsz", vb.toFixed(9));
+    svg.setAttribute("data-rjkdc", vr.toFixed(9));
   }
+  function renderPanels() { PANELS.forEach(updatePanel); drawBars(); }
+  PANELS.forEach(function (p) {
+    SL[p].forEach(function (inp) { inp.addEventListener("input", renderPanels); });
+  });
+  Array.prototype.slice.call(document.querySelectorAll("button.reset")).forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      SL[btn.dataset.panel].forEach(function (inp) { inp.value = "0"; });
+      renderPanels();
+    });
+  });
+
+  // ---- the waterfall (the bridge, each analysis's own horizon) ----
+  function bars() { return D.series.own.b[state.method]; }
   function draw() {
     var svg = $("waterfall");
     while (svg.childNodes.length > 2) svg.removeChild(svg.lastChild);
@@ -677,7 +693,6 @@
       var x = left + i * slot + (slot - bw) / 2, v0, v1, cls;
       if (b.type === "total") { v0 = 0; v1 = b.value; run = b.value; cls = "total"; }
       else { v0 = run; v1 = run + b.value; run = v1; cls = b.type === "model" ? "model" : (b.value >= 0 ? "up" : "down"); }
-      if (barIsOff(b)) cls += " is-off";
       var yt = Math.min(y(v0), y(v1)), hgt = Math.max(1.5, Math.abs(y(v0) - y(v1)));
       svg.appendChild(el("rect", { x: x, y: yt, width: bw, height: hgt, rx: 2, "class": cls, "data-id": b.id }));
       if (i < n - 1) {
@@ -701,7 +716,7 @@
     });
   }
 
-  // ---- the bridge table: the rows are on the page, the values follow the settings ----
+  // ---- the bridge table: the rows are on the page, the values follow the setting ----
   function table() {
     var B = bars(), run = 0;
     document.querySelectorAll("#bridge-table tbody tr").forEach(function (tr) {
@@ -720,33 +735,18 @@
     });
   }
 
-  var SETTINGS = Array.prototype.slice.call(document.querySelectorAll("#controls button, #controls-bridge button"));
-  function render() {
+  var SETTINGS = Array.prototype.slice.call(document.querySelectorAll("#controls-bridge button"));
+  function renderBridge() {
     SETTINGS.forEach(function (btn) {
-      var on = (btn.dataset.method && btn.dataset.method === state.method) ||
-               (btn.dataset.h && btn.dataset.h === state.h);
-      btn.setAttribute("aria-pressed", on ? "true" : "false");
+      btn.setAttribute("aria-pressed", btn.dataset.method === state.method ? "true" : "false");
     });
-    $("horizon-note").textContent = D.horizon_notes[state.h];
-    drawBoard(); draw(); table();
+    draw(); table();
   }
   SETTINGS.forEach(function (btn) {
-    btn.addEventListener("click", function () {
-      if (btn.dataset.method) state.method = btn.dataset.method;
-      if (btn.dataset.h) state.h = btn.dataset.h;
-      render();
-    });
+    btn.addEventListener("click", function () { state.method = btn.dataset.method; renderBridge(); });
   });
-  SWITCHES.forEach(function (b) {
-    b.addEventListener("click", function () {
-      var id = b.dataset.sw;
-      if (id === "revision") state.rev = !state.rev; else state.on[id] = !state.on[id];
-      render();
-    });
-  });
-  $("all-bsz").addEventListener("click", function () { allSwitches(false); render(); });
-  $("all-rjkdc").addEventListener("click", function () { allSwitches(true); render(); });
-  render();
+  renderPanels();
+  renderBridge();
 })();
 </script>
 

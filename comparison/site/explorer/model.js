@@ -1,0 +1,112 @@
+/* The common estimating function, in the browser.
+ *
+ * A port of comparison/R/model.R for the explorer's two slider panels: expected_annuity(),
+ * score_common(), slider_inputs() and slider_value(). The R code is the definition; the
+ * Python twin (comparison/py/bridge.py) mirrors it, and comparison/tests/testthat/test-site.R
+ * runs this file with node over comparison/export/r/slider_sample.csv and checks every value
+ * to 1e-9. Every number it uses (the two input vectors, the horizon settings, the revision
+ * constants, which argument each slider moves) comes from assets/comparison-data.js, the
+ * data file comparison/R/site.R writes; nothing is typed here.
+ *
+ * No modules and no build step: the page loads it with <script src="model.js">, and it puts
+ * one object, ComparisonModel, on window (or on the global object under node).
+ */
+(function (root) {
+  "use strict";
+
+  // Gauss-Legendre nodes and weights on [-1, 1] (Newton's method on the Legendre
+  // polynomial). The annuity's integrand is smooth on the rate range, so 40 nodes give the
+  // integral to machine precision, the accuracy R's integrate() reaches with rel.tol 1e-12.
+  function gaussLegendre(n) {
+    var x = [], w = [];
+    for (var i = 1; i <= n; i++) {
+      var z = Math.cos(Math.PI * (i - 0.25) / (n + 0.5)), pp = 0;
+      for (var it = 0; it < 100; it++) {
+        var p1 = 1, p2 = 0;
+        for (var j = 1; j <= n; j++) {
+          var p3 = p2; p2 = p1;
+          p1 = ((2 * j - 1) * z * p2 - (j - 1) * p3) / j;
+        }
+        pp = n * (z * p1 - p2) / (z * z - 1);
+        var dz = p1 / pp;
+        z -= dz;
+        if (Math.abs(dz) < 1e-16) break;
+      }
+      x.push(z); w.push(2 / ((1 - z * z) * pp * pp));
+    }
+    return { x: x, w: w };
+  }
+  var GL = gaussLegendre(40);
+
+  // expected_annuity(H, r_min, r_max): the value of 1 a year for H years, averaged over a
+  // discount rate uniform between r_min and r_max. H = Infinity is a perpetuity (closed form).
+  function expectedAnnuity(H, rMin, rMax) {
+    if (H === Infinity) return Math.log(rMax / rMin) / (rMax - rMin);
+    if (H === 0) return 0;
+    var mid = (rMax + rMin) / 2, half = (rMax - rMin) / 2, s = 0;
+    for (var i = 0; i < GL.x.length; i++) {
+      var r = mid + half * GL.x[i];
+      s += GL.w[i] * (1 - Math.pow(1 + r, -H)) / r;
+    }
+    return s * half / (rMax - rMin);
+  }
+
+  // score_common(x): the same formulas as model.R, line for line.
+  function scoreCommon(x) {
+    var R0 = x.tau * (x.W_core + x.W_noncit) * (1 - x.re);
+    var S = 1 - (x.d_conf + Math.max(x.d_conf, x.eps * x.dtau)) / 2;
+    var WT = R0 * (1 - x.alpha) * S;
+    var X = WT * x.s * x.g * x.t_cg;
+    var f = x.alpha * x.m + x.kappa * (1 - S) * (1 - x.alpha * x.m);
+    var A = expectedAnnuity(x.H, x.r_min, x.r_max);
+    var PV = f * x.C * A;
+    return { a: WT, b: WT + X - PV, R0: R0, S: S, X: X, f: f, annual_loss: f * x.C,
+             annuity: A, PV: PV };
+  }
+
+  // The data file writes the perpetuity as the string "Inf".
+  function num(v) { return v === "Inf" ? Infinity : v; }
+  function vec(o) { var x = {}; for (var k in o) x[k] = num(o[k]); return x; }
+
+  // slider_inputs(from, to, positions): positions[id] in 0..steps, 0 = from's value,
+  // steps = to's value. Numeric inputs: (1 - p/steps) * from + (p/steps) * to. The horizon:
+  // the horizon settings in order from from's horizon to to's.
+  function sliderInputs(S, from, to, positions) {
+    var x = {}, k;
+    for (k in from) x[k] = from[k];
+    var lad = S.horizons.map(num);
+    if (!(from.H <= to.H)) lad = lad.slice().reverse();
+    S.inputs.forEach(function (inp) {
+      var p = positions[inp.id] || 0, t = p / S.steps, nm = inp.input;
+      if (nm === "H") x.H = lad[p];
+      else x[nm] = (1 - t) * from[nm] + t * to[nm];
+    });
+    return x;
+  }
+
+  // slider_value(panel, positions): output (b) at the positions, plus the model difference
+  // and the September 2026 revision step at the sliders' horizon when the panel's revision
+  // slider is on. Revision position 0 is the panel's own analysis: off for "bsz", on for
+  // "rjkdc".
+  function panelValue(S, panel, positions) {
+    var bsz = vec(S.values.bsz), rj = vec(S.values.rjkdc);
+    var from = panel === "bsz" ? bsz : rj, to = panel === "bsz" ? rj : bsz;
+    var x = sliderInputs(S, from, to, positions);
+    var rp = positions.revision || 0;
+    var revOn = panel === "bsz" ? rp === 1 : rp === 0;
+    var v = scoreCommon(x).b;
+    if (revOn) {
+      var lad = S.horizons.map(num), k = lad.indexOf(x.H);
+      v += S.revision.model[k] + S.revision.revision[k];
+    }
+    return { value: v, x: x, revision: revOn };
+  }
+
+  root.ComparisonModel = {
+    expectedAnnuity: expectedAnnuity,
+    scoreCommon: scoreCommon,
+    sliderInputs: sliderInputs,
+    panelValue: panelValue,
+    num: num
+  };
+})(typeof window !== "undefined" ? window : globalThis);

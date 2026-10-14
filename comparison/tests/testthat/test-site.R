@@ -43,20 +43,14 @@ test_that("key numbers appear on the pages as computed", {
   txt <- read_page(file.path(root, "assets", "comparison-data.js"))
   D <- jsonlite::fromJSON(sub(";\\s*$", "", sub("^[^{]*", "", txt)), simplifyVector = FALSE)
   for (st in names(D$series)) expect_identical(names(D$series[[st]]), "b", label = st)
-  for (st in names(D$switchboard$grid)) expect_identical(names(D$switchboard$grid[[st]]), "b", label = st)
+  # the slider panels read inputs, not a precomputed grid
+  expect_null(D$switchboard)
 })
 
 test_that("the switchboard: all off is the BSZ end, all on plus the revision is the RJKDC end", {
   en <- read_csv_plain(file.path(root, "comparison", "export", "r", "ends.csv"))
   sb <- read_csv_plain(file.path(root, "comparison", "export", "r", "switchboard.csv"))
-  txt <- read_page(file.path(root, "assets", "comparison-data.js"))
-  D <- jsonlite::fromJSON(sub(";\\s*$", "", sub("^[^{]*", "", txt)), simplifyVector = FALSE)
   ids <- bridge_steps()$step_id
-  # one switch per disputed input, in the bridge's order, plus the revision switch
-  ex_html <- read_page(explorer)
-  sw <- regmatches(ex_html, gregexpr('data-sw="[a-z_]+" aria-pressed="false"', ex_html))[[1]]
-  expect_identical(sub('data-sw="([a-z_]+)".*', "\\1", sw), c(ids, "revision"))
-  expect_identical(vapply(D$switchboard$inputs, `[[`, "", "id"), ids)
   for (st in unique(en$horizon_setting)) {
     n <- if (st == "own") length(ids) else length(ids) - 1
     for (o in c("a", "b")) {
@@ -67,18 +61,91 @@ test_that("the switchboard: all off is the BSZ end, all on plus the revision is 
       expect_equal(g$value[g$mask == 0], e$bsz_model, tolerance = 1e-9, label = paste(st, o, "all off"))
       expect_equal(g$value[nrow(g)] + e$rauh_residual + e$nber_step, e$nber_own, tolerance = 1e-9,
                    label = paste(st, o, "all on"))
-      if (o == "b") {
-        # the data file the explorer reads: the same grid and constants, to 6 decimals
-        G <- unlist(D$switchboard$grid[[st]]$b); E <- D$switchboard$ends[[st]]$b
-        expect_equal(length(G), 2^n, label = paste(st, "data file length"))
-        expect_lt(max(abs(G - g$value)), 1e-6)
-        expect_lt(abs(G[1] - E$bsz), 1e-9)
-        expect_lt(abs(G[length(G)] + E$model + E$revision - E$rjkdc), 2e-6)
-        expect_lt(abs(E$rjkdc - e$nber_own), 1e-6)
-        expect_lt(abs(E$bsz - e$bsz_model), 1e-6)
-      }
     }
   }
+})
+
+test_that("the slider panels: one slider per disputed input in the bridge's order plus the revision, both panels", {
+  ids <- bridge_steps()$step_id
+  ex_html <- read_page(explorer)
+  txt <- read_page(file.path(root, "assets", "comparison-data.js"))
+  D <- jsonlite::fromJSON(sub(";\\s*$", "", sub("^[^{]*", "", txt)), simplifyVector = FALSE)
+  for (panel in c("bsz", "rjkdc")) {
+    sl <- regmatches(ex_html, gregexpr(sprintf('<input type="range" class="sl-in" id="%s-[a-z_]+" min="0" max="[0-9]" step="1" value="0" data-panel="%s" data-id="[a-z_]+"', panel, panel), ex_html))[[1]]
+    expect_identical(sub('.*data-id="([a-z_]+)"$', "\\1", sl), c(ids, "revision"), label = panel)
+    expect_identical(sub('.*max="([0-9])".*', "\\1", sl), c(rep(as.character(SLIDER_STEPS), length(ids)), "1"), label = panel)
+  }
+  # the RJKDC panel's sliders run right to left, so position 0 sits at the RJKDC end
+  expect_equal(length(gregexpr('data-panel="rjkdc" data-id="[a-z_]+" dir="rtl"', ex_html)[[1]]), length(ids) + 1)
+  expect_false(grepl('data-panel="bsz" data-id="[a-z_]+" dir="rtl"', ex_html))
+  # the data file: the inputs in the bridge's order, the argument each moves, both vectors
+  bi <- bridge_inputs(read_contracts(root))
+  expect_identical(vapply(D$sliders$inputs, `[[`, "", "id"), ids)
+  expect_identical(vapply(D$sliders$inputs, `[[`, "", "input"), unname(unlist(step_inputs[ids])))
+  num <- function(z) if (identical(z, "Inf")) Inf else z
+  for (nm in names(bi$sup)) {
+    expect_equal(num(D$sliders$values$bsz[[nm]]), bi$sup[[nm]], tolerance = 1e-14, label = paste("bsz", nm))
+    expect_equal(num(D$sliders$values$rjkdc[[nm]]), bi$rauh[[nm]], tolerance = 1e-14, label = paste("rjkdc", nm))
+  }
+  expect_equal(vapply(D$sliders$horizons, num, 0), SLIDER_HORIZONS)
+  en <- read_csv_plain(file.path(root, "comparison", "export", "r", "ends.csv"))
+  rt <- slider_revision(en)
+  expect_equal(unlist(D$sliders$revision$model), rt$model, tolerance = 1e-14)
+  expect_equal(unlist(D$sliders$revision$revision), rt$revision, tolerance = 1e-14)
+})
+
+test_that("the sliders' ends are the two analyses and position 2 lies between its neighbours", {
+  k <- read_contracts(root); bi <- bridge_inputs(k)
+  en <- read_csv_plain(file.path(root, "comparison", "export", "r", "ends.csv"))
+  eb <- en[en$horizon_setting == "own" & en$output == "b", ]
+  rt <- slider_revision(en)
+  ids <- bridge_steps()$step_id
+  all_at <- function(p, rev) stats::setNames(as.list(c(rep(p, length(ids)), rev)), c(ids, "revision"))
+  expect_equal(slider_value(bi, "bsz", all_at(0, 0), rt), eb$bsz_model, tolerance = 1e-12)
+  expect_equal(slider_value(bi, "rjkdc", all_at(0, 0), rt), eb$nber_own, tolerance = 1e-12)
+  expect_equal(slider_value(bi, "bsz", all_at(SLIDER_STEPS, 1), rt), eb$nber_own, tolerance = 1e-12)
+  expect_equal(slider_value(bi, "rjkdc", all_at(SLIDER_STEPS, 1), rt), eb$bsz_model, tolerance = 1e-12)
+  # position 0 and 4 are the two values exactly; the horizon steps through the five settings
+  x4 <- slider_inputs(bi$sup, bi$rauh, all_at(SLIDER_STEPS, 0))
+  for (nm in names(bi$rauh)) expect_identical(x4[[nm]], bi$rauh[[nm]], label = nm)
+  expect_equal(vapply(0:4, function(p) slider_inputs(bi$rauh, bi$sup, list(horizon = p))$H, 0),
+               rev(SLIDER_HORIZONS))
+  # one input at 1, 2, 3 with the rest at 0: the middle value lies strictly between
+  for (panel in c("bsz", "rjkdc")) for (id in c("base_list", "income_level", "confirmed_departures")) {
+    v <- vapply(1:3, function(p) slider_value(bi, panel, stats::setNames(list(p), id), rt), 0)
+    expect_true((v[2] - v[1]) * (v[3] - v[2]) > 0, label = paste(panel, id))
+  }
+})
+
+test_that("model.js returns the R values on every slider mix of the sample, to 1e-9", {
+  node <- Sys.which("node")
+  skip_if(!nzchar(node), "node is not on PATH: model.js parity not checked")
+  ss <- read_csv_plain(file.path(root, "comparison", "export", "r", "slider_sample.csv"))
+  expect_equal(nrow(ss), 600)
+  pos_cols <- setdiff(names(ss), c("panel", "draw", "value"))
+  tmp <- tempfile(fileext = ".json")
+  writeLines(jsonlite::toJSON(lapply(seq_len(nrow(ss)), function(i)
+    list(panel = ss$panel[i], pos = as.list(ss[i, pos_cols]))), auto_unbox = TRUE), tmp)
+  js <- tempfile(fileext = ".js")
+  writeLines(c(
+    "const path = require('path'), fs = require('fs');",
+    "globalThis.window = globalThis;",
+    sprintf("require(%s);", jsonlite::toJSON(file.path(root, "assets", "comparison-data.js"), auto_unbox = TRUE)),
+    sprintf("require(%s);", jsonlite::toJSON(file.path(root, "comparison", "site", "explorer", "model.js"), auto_unbox = TRUE)),
+    sprintf("const rows = JSON.parse(fs.readFileSync(%s, 'utf8'));", jsonlite::toJSON(tmp, auto_unbox = TRUE)),
+    "const S = window.__BRIDGE__.sliders, M = window.ComparisonModel;",
+    "console.log(JSON.stringify(rows.map(r => M.panelValue(S, r.panel, r.pos).value)));"), js)
+  out <- system2(node, js, stdout = TRUE)
+  v <- unlist(jsonlite::fromJSON(paste(out, collapse = "")))
+  expect_equal(length(v), nrow(ss))
+  expect_lt(max(abs(v - ss$value)), 1e-9)
+  # the two panels' starting values and far ends, on the page, are the two analyses' ends
+  en <- read_csv_plain(file.path(root, "comparison", "export", "r", "ends.csv"))
+  eb <- en[en$horizon_setting == "own" & en$output == "b", ]
+  expect_lt(abs(v[ss$panel == "bsz" & ss$draw == 1] - eb$bsz_model), 1e-9)
+  expect_lt(abs(v[ss$panel == "rjkdc" & ss$draw == 1] - eb$nber_own), 1e-9)
+  expect_lt(abs(v[ss$panel == "bsz" & ss$draw == 2] - eb$nber_own), 1e-9)
+  expect_lt(abs(v[ss$panel == "rjkdc" & ss$draw == 2] - eb$bsz_model), 1e-9)
 })
 
 test_that("the headline is the two main estimates; the bridge's two ends under (b) are those quantities", {
