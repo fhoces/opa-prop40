@@ -50,4 +50,4 @@ Amended 2026-10-01 at the author's request: Conceptualization changed from Equal
 
 CRediT roles describe who contributed what, not who is responsible for it.
 
-The **Human verification** row is not part of CRediT. It records how well a human understands each output, separately from who produced it, on a three-point scale: *Not reviewed* (no human eyes have reviewed the output), *Lightly reviewed* (lightly reviewed, but cannot be clearly explained) and *Understood* (can be explained to others).
+The **Human verification** row is not part of CRediT. It records how well a human understands each output, separately from who produced it, on a three-point scale: *Not reviewed* (no human eyes have reviewed the output), *Lightly reviewed* (checked, but cannot yet be clearly explained) and *Reviewed* (can be explained to others).

@@ -79,7 +79,7 @@
       "Visualization": "AI lead",
       "Writing – original draft": "AI lead",
       "Writing – review & editing": "AI lead",
-      "Human verification": "Not reviewed"
+      "Human verification": "Lightly reviewed"
     },
     "Overview page": {
       "Conceptualization": "Human lead",
@@ -104,6 +104,7 @@
     "all/AI lead": "For Software, Supervision, Validation, Visualization and both Writing roles the answer was \"the AI led\"; the follow-up question that separates *AI only* from *AI (lead)* was not asked, so these cells read *AI (lead)*: the AI led, with Fernando Hoces de la Guardia supporting (directing, reviewing) or not involved.",
     "all/Conceptualization": "Amended 2026-10-01 at the author's request: Conceptualization changed from Equal to Human (lead) on every object (the idea for each object was the author's).",
     "Slides/2026-10-07": "Amended 2026-10-07 at the author's request, Slides only: Visualization and Supervision changed to Human (lead), Writing – review & editing to Equal, and Human verification to Understood. The author directed the deck's figures, scenario names, wording and order, and reviewed it slide by slide.",
-    "Explorer/2026-10-07": "Amended 2026-10-07 at the author's request, Explorer only: Supervision and Writing – review & editing changed to Human (lead), and Human verification to Understood; Visualization stays AI (lead). The author directed the switch to the main estimate as the output and the page's wording, and reviewed it."
+    "Explorer/2026-10-07": "Amended 2026-10-07 at the author's request, Explorer only: Supervision and Writing – review & editing changed to Human (lead), and Human verification to Understood; Visualization stays AI (lead). The author directed the switch to the main estimate as the output and the page's wording, and reviewed it.",
+    "Repository/2026-10-14": "Amended 2026-10-14 at the author's request, Repository only: Human verification changed to Lightly reviewed. The author has started reviewing the code behind the main estimate, layer by layer, on the code review page."
   }
 }

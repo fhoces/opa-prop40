@@ -28,7 +28,7 @@ The raw answers are in `credit-answers.json`, the file this page and the landing
 | Visualization | AI (lead) | AI (lead) | Human (lead) | AI (lead) | AI (lead) |
 | Writing – original draft | AI (lead) | AI (lead) | AI (lead) | AI (lead) | AI (lead) |
 | Writing – review & editing | Human (lead) | AI (lead) | Equal | AI (lead) | AI (lead) |
-| **Human verification** | Reviewed | Lightly reviewed | Reviewed | Not reviewed | Lightly reviewed |
+| **Human verification** | Reviewed | Lightly reviewed | Reviewed | Lightly reviewed | Lightly reviewed |
 
 Human only / AI only: one side did the role and the other was not involved. Human (lead) / AI (lead): that side led and the other supported. Equal: both contributed equally. N/A: no one did this for the object.
 
@@ -40,15 +40,17 @@ Amended 2026-10-07 at the author's request, Slides only: Visualization and Super
 
 Amended 2026-10-07 at the author's request, Explorer only: Supervision and Writing – review & editing changed to Human (lead), and Human verification to Understood; Visualization stays AI (lead). The author directed the switch to the main estimate as the output and the page's wording, and reviewed it.
 
+Amended 2026-10-14 at the author's request, Repository only: Human verification changed to Lightly reviewed. The author has started reviewing the code behind the main estimate, layer by layer, on the code review page.
+
 ## Statements by object
 
-**Explorer.** Fernando Hoces de la Guardia: Conceptualization (lead), Software (supporting), Supervision (lead), Validation (supporting), Visualization (supporting), Writing – original draft (supporting), Writing – review & editing (lead). Claude Code (Opus, Sonnet): Conceptualization (supporting), Data curation (only), Formal analysis (only), Investigation (only), Methodology (only), Software (lead), Supervision (supporting), Validation (lead), Visualization (lead), Writing – original draft (lead), Writing – review & editing (supporting). Human verification: understood.
+**Explorer.** Fernando Hoces de la Guardia: Conceptualization (lead), Software (supporting), Supervision (lead), Validation (supporting), Visualization (supporting), Writing – original draft (supporting), Writing – review & editing (lead). Claude Code (Opus, Sonnet): Conceptualization (supporting), Data curation (only), Formal analysis (only), Investigation (only), Methodology (only), Software (lead), Supervision (supporting), Validation (lead), Visualization (lead), Writing – original draft (lead), Writing – review & editing (supporting). Human verification: reviewed.
 
 **Report.** Fernando Hoces de la Guardia: Conceptualization (lead), Software (supporting), Supervision (supporting), Validation (supporting), Visualization (supporting), Writing – original draft (supporting), Writing – review & editing (supporting). Claude Code (Opus, Sonnet): Conceptualization (supporting), Data curation (only), Formal analysis (only), Investigation (only), Methodology (only), Software (lead), Supervision (lead), Validation (lead), Visualization (lead), Writing – original draft (lead), Writing – review & editing (lead). Human verification: lightly reviewed.
 
-**Slides.** Fernando Hoces de la Guardia: Conceptualization (lead), Software (supporting), Supervision (lead), Validation (supporting), Visualization (lead), Writing – original draft (supporting), Writing – review & editing (equal). Claude Code (Opus, Sonnet): Conceptualization (supporting), Data curation (only), Formal analysis (only), Investigation (only), Methodology (only), Software (lead), Supervision (supporting), Validation (lead), Visualization (supporting), Writing – original draft (lead), Writing – review & editing (equal). Human verification: understood.
+**Slides.** Fernando Hoces de la Guardia: Conceptualization (lead), Software (supporting), Supervision (lead), Validation (supporting), Visualization (lead), Writing – original draft (supporting), Writing – review & editing (equal). Claude Code (Opus, Sonnet): Conceptualization (supporting), Data curation (only), Formal analysis (only), Investigation (only), Methodology (only), Software (lead), Supervision (supporting), Validation (lead), Visualization (supporting), Writing – original draft (lead), Writing – review & editing (equal). Human verification: reviewed.
 
-**Repository.** Fernando Hoces de la Guardia: Conceptualization (lead), Software (supporting), Supervision (supporting), Validation (supporting), Visualization (supporting), Writing – original draft (supporting), Writing – review & editing (supporting). Claude Code (Opus, Sonnet): Conceptualization (supporting), Data curation (only), Formal analysis (only), Investigation (only), Methodology (only), Software (lead), Supervision (lead), Validation (lead), Visualization (lead), Writing – original draft (lead), Writing – review & editing (lead). Human verification: not reviewed.
+**Repository.** Fernando Hoces de la Guardia: Conceptualization (lead), Software (supporting), Supervision (supporting), Validation (supporting), Visualization (supporting), Writing – original draft (supporting), Writing – review & editing (supporting). Claude Code (Opus, Sonnet): Conceptualization (supporting), Data curation (only), Formal analysis (only), Investigation (only), Methodology (only), Software (lead), Supervision (lead), Validation (lead), Visualization (lead), Writing – original draft (lead), Writing – review & editing (lead). Human verification: lightly reviewed.
 
 **Overview page.** Fernando Hoces de la Guardia: Conceptualization (lead), Software (supporting), Supervision (supporting), Validation (supporting), Visualization (supporting), Writing – original draft (supporting), Writing – review & editing (supporting). Claude Code (Opus, Sonnet): Conceptualization (supporting), Data curation (only), Formal analysis (only), Investigation (only), Methodology (only), Software (lead), Supervision (lead), Validation (lead), Visualization (lead), Writing – original draft (lead), Writing – review & editing (lead). Human verification: lightly reviewed.
 
@@ -56,4 +58,4 @@ Amended 2026-10-07 at the author's request, Explorer only: Supervision and Writi
 
 CRediT roles describe who contributed what, not who is responsible for it.
 
-The **Human verification** row is not part of CRediT. It records how well a human understands each output, separately from who produced it, on a three-point scale: *Not reviewed* (no human eyes have reviewed the output), *Lightly reviewed* (lightly reviewed, but cannot be clearly explained) and *Understood* (can be explained to others).
+The **Human verification** row is not part of CRediT. It records how well a human understands each output, separately from who produced it, on a three-point scale: *Not reviewed* (no human eyes have reviewed the output), *Lightly reviewed* (checked, but cannot yet be clearly explained) and *Reviewed* (can be explained to others).
