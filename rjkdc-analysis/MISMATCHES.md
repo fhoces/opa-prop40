@@ -1,42 +1,46 @@
 # Mismatches
 
-One numbered item per code/paper or doc/code discrepancy found while reproducing Rauh, Jaros,
-Kearney, Doran & Cosso (SSRN 6340778) and Jaros & Rauh (NBER, Sept 2026). By design, we do not
+Mismatches 1, 2, 7, 8 and 9 concern only the authors' first version (Rauh, Jaros, Kearney, Doran and Cosso, Hoover Institution, SSRN 6340778, March 2026), which the pipeline also reproduces. Mismatches 3 to 6 concern the NBER chapter.
+
+One numbered item per code/paper or doc/code discrepancy found while reproducing Jaros and Rauh,
+with Kearney, Doran and Cosso (NBER chapter c15504, September 2026). By design, we do not
 "fix" the authors: we reproduce their code as run, record the discrepancy, and where it matters
-expose the alternative reading as a parameter with both analyses under test.
+expose the alternative reading as a parameter with both readings under test.
 
-## 1. Eq. 22's printed WT upper bound (67.1) vs. the code's literal (67.51)
+## 1. First version: the printed WT upper bound (67.1) vs. the code's literal (67.51)
 
-**Paper**, p.20, eq. 22: `WT ~ U[$35B, $67.1B]`.
+**First-version paper**, p.20, eq. 22: `WT ~ U[$35B, $67.1B]`.
 **Code**, `NPV_data/NPV_dist.R:31`: `wt_max <- 67.51`.
 
-`$67.51B` is the confirmed-6-departures revenue ceiling used everywhere else in the paper (p.11,
+`$67.51B` is the confirmed-6-departures revenue ceiling used everywhere else in that version (p.11,
 Table 9's "Only 6 Confirmed Departures" column); `$67.1B` appears nowhere else. We treat 67.51 as
 the intended value (it is what the shipped, runnable code uses and what every other reference to
 the ceiling states) and reproduce the code, not the typo.
 
-## 2. NPV formula: growing perpetuity (eq. 20, `r-g`) vs. plain-`r` code (Sec 5.5)
+## 2. First version: growing perpetuity in the text (`r-g`) vs. plain-`r` code
 
-**Paper**, p.18, eq. 20: `NPV = WT - f * C / (r - g)` (eq. 18 on the same page is the plain-`r` form, `NPV = WT - f * C / r`), introduced with an explicit growth-rate
+**First-version paper**, p.18, eq. 20: `NPV = WT - f * C / (r - g)` (eq. 18 on the same page is the plain-`r` form, `NPV = WT - f * C / r`), introduced with an explicit growth-rate
 adjustment (Gordon Growth Model discussion, p.18-19).
-**Paper**, p.20, eq. 24 and surrounding prose: switches notation to plain `r ~ U[0.015, 0.045]`
+**First-version paper**, p.20, eq. 24 and surrounding prose: switches notation to plain `r ~ U[0.015, 0.045]`
 and states "NPV = WT - f * C / r" for the Sec 5.5 Monte Carlo.
 **Code**, `NPV_data/NPV_dist.R:60`: `pv_lost <- annual_loss / r_discount` (plain `r`, no growth
 term).
 
-The paper's own prose is internally inconsistent (Sec 5.2 derives a growing-perpetuity formula,
+That version's prose is internally inconsistent (Sec 5.2 derives a growing-perpetuity formula,
 Sec 5.5 silently drops the growth term); the code matches the *later* (Sec 5.5) plain-`r` reading.
 `R/npv_mc.R:compute_npv_mc_ssrn()` reproduces the code (plain `r`).
 
-## 3. NBER's `rg_discount` draw reuses the SSRN plain-`r` range for an `(r-g)` quantity
+## 3. One 1.5% to 4.5% interval for two discount concepts, `(r-g)` and plain `r`
 
 **Code**, `NBER_2026_litigation_weighted/NPV_data/NPV_dist_v8.R:22,28`: draws
 `rg_discount <- runif(n_sims, 0.015, 0.045)`, i.e. explicitly labelled `(r-g)`.
+**Paper**, PDF p.35, eq. 18 draws `(r - g) ~ U[0.015, 0.045]`; the sentence after eq. 19 computes
+`NPV = WT - f * C / r`, with the plain rate.
 **NBER README** assumptions table lists the same `[1.5%, 4.5%]` range for `(r - g)` under the
-litigation-weighted approach, and the *identical* range for plain `r` under the SSRN approach (see
-mismatch #2). Numerically the two papers draw from the same interval for two different discount
-concepts (one nets out growth, one doesn't); neither README nor either paper's text says why the
-same calibration should apply to both.
+litigation-weighted approach, and the *identical* range for plain `r` under the first version's
+approach (see mismatch #2). The same interval stands for two different discount concepts (one nets
+out growth, one doesn't); neither the README nor the text says why the same calibration should
+apply to both.
 
 ## 4. NBER ceiling: hard-coded 72 vs. 72.05/72.06 derivable from `final.csv`
 
@@ -74,18 +78,21 @@ true two-state litigation model would not produce). We reproduce the code as shi
 
 **Workbook**, `CA_Billionaires_Revenues_and_Migration_final.xlsx!Summary_Preferred!C5`
 (`=SUM(Calculations_Preferred!O3:O214)/$M$2`) = **94.30426206**.
-**Paper**, p.10 (Sec 4.1): "the wealth tax would generate **$94.20** billion in revenue."
+**First-version paper**, p.10 (Sec 4.1): "the wealth tax would generate **$94.20** billion in revenue."
+**NBER chapter**, PDF pp.18-19 (Sec 4.1, eq. 2): the same **$94.20B**. Its own person-level file
+at the grown vintage, `final.csv`, sums to $100.906B, which is exactly 1.07 x 94.304: the
+chapter's data also give 94.30.
 **Workbook**, `Summary_Preferred!C8` = **94.2** (typed literal, feeds `F8`'s literature-calibrated
 formula, p.14 eq.13) and `NPV_calculations_5.2.xlsx!B5` = **94.2** (typed literal, feeds every
 Table 9/10 scenario's `f = 1 - WT/baseline`, p.19-20).
 
-The paper's prose rounds 94.30 to 94.20 in one place (p.10) and then every *downstream*
+The first version's prose rounds 94.30 to 94.20 in one place (p.10) and then every *downstream*
 calculation (literature calibration, Table 9, Table 10) is built from the rounded 94.2 literal,
 not from the workbook's own more precise C5. `R/revenue_chain.R:compute_revenue_chain()` reports
 both `baseline_precise` (94.30, from the per-row sum) and `baseline_literal` (94.2, the value
 actually used downstream) so the discrepancy is visible rather than silently propagated.
 
-## 7. `Summary_Expanded!D23:D24` reads from the wrong sheet (stale copy-paste)
+## 7. First version: `Summary_Expanded!D23:D24` reads from the wrong sheet (stale copy-paste)
 
 **Workbook**, `Summary_Expanded!D23`:
 `=SUMIF(Calculations_Preferred!F3:F214,"N",Calculations_Preferred!D3:D214)` - and `D24` the same
@@ -96,20 +103,20 @@ copy-paste artifact from building `Summary_Expanded` off a copy of `Summary_Pref
 not affect any number this pipeline reproduces (`F5` = $55.10B is correctly sourced), only the
 "Stayers" net-worth memo cells (`C22:D25`), which we do not use.
 
-## 8. Table 9's Central Scenario (WT=$42.0B) has no derivation
+## 8. First version: the Table 9 central scenario (WT=$42.0B) has no derivation
 
 **Workbook**, `NPV_calculations_5.2.xlsx!B12`: `42` (typed literal, no formula).
-**Paper**, p.19: "The Central Scenario uses a revenue estimate of $42.0 billion and a midpoint
+**First-version paper**, p.19: "The Central Scenario uses a revenue estimate of $42.0 billion and a midpoint
 income tax estimate (C = $4.55 billion)."
 
-Every other WT figure in the paper traces to a computation (94.20 -> 67.51 -> 55.10 baseline
+Every other WT figure in that version traces to a computation (94.20 -> 67.51 -> 55.10 baseline
 chain, or 45.59 via the literature semi-elasticity). $42.0B does not: it is not the average of any
 two chain values (e.g. (67.51+35)/2 = 51.3, not 42), not the preferred-estimate midpoint stated on
 p.14 ((35+46)/2 = 40.5, close but not equal), and not linked to any semi-elasticity via the eq.
 12-13 formula used elsewhere. We treat it as a freestanding scenario input (labelled `scenario` in
 `export/{r,py}/inputs.csv`, not `data` or `research`) and do not attempt to re-derive it.
 
-## 9. SSRN Sec 5.5 printed summary (mean -$24.7B, sd $38.4B) does not exactly reproduce
+## 9. First version: the printed Monte Carlo summary (mean -$24.7B, sd $38.4B) does not exactly reproduce
 
 Running the authors' own unmodified `NPV_data/NPV_dist.R` from a scratch copy (seed 2026,
 n=100,000, `wt_max <- 67.51` as shipped) gives **mean -$24.8B, median -$19.1B, sd $38.6B, 71.0%
