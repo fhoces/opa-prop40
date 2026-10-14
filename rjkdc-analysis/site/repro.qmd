@@ -1,6 +1,6 @@
 ---
-title: "The Net Present Value of the Billionaire Tax Act"
-subtitle: "A reproduction of Rauh, Jaros, Kearney, Doran and Cosso (SSRN, March 2026) and Jaros and Rauh (NBER, September 2026), the RJKDC side's analysis of California Proposition 40"
+title: "Prop 40, RJKDC side: the reproduction"
+subtitle: "Jaros and Rauh (NBER, September 2026) and the earlier Rauh, Jaros, Kearney, Doran and Cosso (SSRN, March 2026), reproduced step by step from the authors' own public code and data"
 date: today
 format:
   html:
@@ -23,7 +23,7 @@ execute:
 ---
 
 ::: {.site-nav}
-Part of an Open Policy Analysis of Rauh et al. (2026) on California Proposition 40:
+RJKDC side of California Proposition 40:
 [Open Output (the explorer)](explorer/) &middot; Open Analysis: Report (here) and
 [Slides](slides/slides.html) &middot;
 [Open Materials](https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis) &middot;
@@ -93,18 +93,19 @@ ever, so the state ends up poorer. Following the
   source (guide, with all nine mismatches found along the way: [the materials page](materials.html))
 :::
 
-**What is reproduced.** Two versions of one analysis, side by side, as fixed in the project's
-pre-specified output before any results were seen:
+**What is reproduced.** Two versions of one analysis. The latest one gives this OPA's main
+estimate; the earlier one stays beside it as a scenario:
 
-1. **SSRN 6340778** (Rauh, Jaros, Kearney, Doran and Cosso, Hoover Institution, 17 March 2026).
-   Headline: revenue of about \$`r h("ssrn","revenue_headline","printed")`B and a mean NPV of
-   `r num(h("ssrn","mc_mean_npv","printed"))` \$B, with `r h("ssrn","mc_pct_negative","printed")`%
-   of simulated outcomes negative (PDF p.1).
-2. **NBER chapter c15504** (Jaros and Rauh, 22 September 2026), the litigation-weighted revision.
+1. **NBER chapter c15504** (Jaros and Rauh, 22 September 2026), the litigation-weighted revision.
    Headline: revenue of about \$30B (\$`r h("nber","revenue_range_low","printed")`B to
    \$`r h("nber","revenue_range_high","printed")`B) and a mean NPV of
    `r num(h("nber","mc_mean_npv","printed"))` \$B, with `r h("nber","mc_pct_negative","printed")`%
-   negative.
+   negative (PDF p.1). That mean NPV is **the main estimate**, derived step by step in
+   [the next section](#the-main-estimate).
+2. **SSRN 6340778** (Rauh, Jaros, Kearney, Doran and Cosso, Hoover Institution, 17 March 2026),
+   the earlier version. Headline: revenue of about \$`r h("ssrn","revenue_headline","printed")`B and
+   a mean NPV of `r num(h("ssrn","mc_mean_npv","printed"))` \$B, with
+   `r h("ssrn","mc_pct_negative","printed")`% of simulated outcomes negative (PDF p.1).
 
 Both are reproduced from the authors' own public, MIT-licensed code and data
 ([github.com/bjaros20/wealth_tax](https://github.com/bjaros20/wealth_tax), pinned at commit
@@ -132,6 +133,108 @@ We follow that order, then list what the NBER revision changes.
 | $\varepsilon$ | migration semi-elasticity: % of the base lost per percentage point of tax | |
 | $q$ | probability the Act survives constitutional challenge (NBER only) | probability |
 | NPV | $WT - f \cdot C/r$ (or $/(r-g)$), the net fiscal effect today | \$B |
+
+## The main estimate, step by step {#the-main-estimate}
+
+The main estimate is the NBER version's mean net present value, printed as
+**`r num(h("nber","mc_mean_npv","printed"))` \$B** (NBER PDF p.1 and p.35). The authors get it from a
+Monte Carlo: they draw four inputs at random 100,000 times, compute
+$NPV = WT - f \cdot C / r$ for each draw, and average. Because the four draws are independent,
+the average has an exact value too, and we build it one input at a time. Every number below is
+read from the pipeline (`R/npv_mc.R`, `R/nber_final.R`); the draw ranges are the defaults of
+`compute_npv_mc_nber()`, which copies the authors' script `NPV_dist_v8.R`.
+
+### Step 1: the wealth tax collected, $WT$
+
+The script draws $WT \sim U[`r nb$wt_min`, `r nb$wt_max`]$ (\$B). The top, `r nb$wt_max`, is
+the revenue if the Act survives in court, after removing the seven confirmed departures. Summing
+the NBER person-level file `final.csv` gives \$`r num(nc$ceiling_recomputed, 2)`B for the same
+quantity, so the script's round 72 is close ([mismatch 4](materials.html#mismatches)). The bottom,
+`r nb$wt_min`, is the Act struck down. The mean of the draw is
+$$E[WT] = \frac{`r nb$wt_min` + `r nb$wt_max`}{2} = `r num((nb$wt_min + nb$wt_max) / 2, 2)`.$$
+This is the paper's central revenue, $q \times 72$ with a survival chance $q$ = 0.50
+(PDF p.33). The 0 lower bound is **guesswork**.
+
+### Step 2: the share of the income tax base that leaves, $f$
+
+The script draws $f \sim U[`r nb$f_min`, `r nb$f_max`]$, on its own, unrelated to the revenue
+draw. Its mean is $E[f]$ = `r num((nb$f_min + nb$f_max) / 2, 2)`: on average, 45 cents of every
+dollar of billionaire income tax leaves the state. The range is **guesswork**, "centered
+conservatively around the observed wealth-base departure fraction" (PDF p.31).
+
+### Step 3: the income tax the billionaires pay each year, $C$
+
+The script draws $C \sim U[`r nb$c_min`, `r nb$c_max`]$ (\$B a year), the two ends of the income
+tax Monte Carlo in [Section 5.1](#section-5.1-the-income-tax-the-billionaires-pay). Its mean is
+$E[C]$ = `r num((nb$c_min + nb$c_max) / 2, 2)`.
+
+### Step 4: the discount rate, $r$
+
+The script draws $r \sim U[`r nb$rg_min`, `r nb$rg_max`]$, a rate between
+`r pct(100 * nb$rg_min)` and `r pct(100 * nb$rg_max)` a year. A stream of
+\$1 a year for ever is worth $1/r$ today, so what enters is the mean of $1/r$, not $1/E[r]$:
+$$E\!\left[\tfrac1r\right] = \frac{\ln(`r nb$rg_max` / `r nb$rg_min`)}{`r nb$rg_max` - `r nb$rg_min`} = `r num(npv_e_inv_rate(nb$rg_min, nb$rg_max), 2)`.$$
+In words: at these rates, \$1 lost every year for ever is worth about
+\$`r num(npv_e_inv_rate(nb$rg_min, nb$rg_max), 0)` today. The range is **guesswork**.
+
+### Step 5: the present value of the income tax lost
+
+The three loss inputs are independent, so the mean of their product is the product of their means:
+$$E\!\left[\frac{f\,C}{r}\right] = `r num((nb$f_min + nb$f_max) / 2, 2)` \times `r num((nb$c_min + nb$c_max) / 2, 2)` \times `r num(npv_e_inv_rate(nb$rg_min, nb$rg_max), 2)` = `r num(h("nber","pv_lost"), 2)`.$$
+
+### Step 6: the net present value
+
+The revenue of Step 1 minus the loss of Step 5:
+$$E[NPV] = E[WT] - E\!\left[\frac{f\,C}{r}\right]$$
+$$= `r num(h("nber","mc_expected_revenue"), 2)` - `r num(h("nber","pv_lost"), 2)` = `r num(tr("npv_mc_nber_analytic_mean"), 2)`.$$
+
+The authors do not print this exact value. They print the average of one seeded run (seed 2026,
+100,000 draws), which our R port replays draw for draw:
+**`r num(mcn$summary$mean, 3)` \$B**, printed as `r num(h("nber","mc_mean_npv","printed"))`.
+The two differ by `r num(abs(mcn$summary$mean - tr("npv_mc_nber_analytic_mean")), 2)` \$B, less
+than one Monte Carlo standard error (`r num(mcn$summary$sd, 1)` / $\sqrt{100{,}000}$ =
+`r num(mcn$summary$sd / sqrt(mcn$summary$n), 2)`). The overview and the explorer show the printed
+`r num(h("nber","mc_mean_npv","printed"))`; the explorer's grid holds the exact value for every other
+setting. The [explorer](explorer/) moves each of the four draws, and two readings the code does
+not implement (a litigation multiplier and growth of the lost income).
+
+The earlier SSRN version runs the same formula with different draws, $WT \sim U[35, 67.51]$ and
+$f$ tied to revenue, and gets `r num(h("ssrn","mc_mean_npv","printed"))` \$B
+([Section 5.5](#section-5.5-the-monte-carlo-behind-the-headline-eq.-22-to-24)).
+
+```{r}
+#| label: main-estimate-code
+#| echo: false
+#| results: asis
+# The code behind this section, read from R/ and py/ at render time so it cannot drift.
+grab <- function(path, start_pat) {
+  l <- readLines(path, warn = FALSE); i <- grep(start_pat, l)[1]
+  # R: up to the closing brace in column 1; Python: up to the next unindented line
+  nxt <- if (grepl("[.]R$", path)) which(seq_along(l) > i & l == "}") + 1
+         else which(seq_along(l) > i & grepl("^[^[:space:]#]", l))
+  j <- if (length(nxt)) nxt[1] - 1 else length(l)
+  while (j > i && !nzchar(trimws(l[j]))) j <- j - 1
+  l[i:j]
+}
+fold <- function(summary, lang, code) {
+  cat('\n<details class="code-fold"><summary>', summary, '</summary>\n\n```', lang, '\n',
+      paste(code, collapse = "\n"), '\n```\n\n</details>\n\n', sep = "")
+}
+fold("R code for the main estimate", "r", c(
+  "# R/npv_mc.R: the seeded Monte Carlo (the printed number) and the exact expectation.",
+  grab("../R/npv_mc.R", "^compute_npv_mc_nber <- function"), "",
+  grab("../R/npv_mc.R", "^npv_mc_summary <- function"), "",
+  grab("../R/npv_mc.R", "^npv_e_inv_rate <- function"), "",
+  grab("../R/npv_mc.R", "^npv_expectation <- function"), "",
+  "# _targets.R: the targets this section reads",
+  grep("npv_mc_nber|nber_ceiling", readLines("../_targets.R"), value = TRUE)))
+fold("Python code for the main estimate", "python", c(
+  "# py/npv_mc.py: the Python twin. numpy's random stream differs from R's, so its seeded",
+  "# mean agrees with R's within Monte Carlo error; the exact expectation agrees exactly.",
+  grab("../py/npv_mc.py", "^def compute_npv_mc_nber"), "",
+  grab("../py/npv_mc.py", "^def npv_mc_summary"), "",
+  grab("../py/npv_mc.py", "^def npv_mc_analytic_mean")))
+```
 
 ## Section 4: the wealth tax revenue
 
@@ -600,7 +703,7 @@ The authors' repository is MIT licensed but not redistributed here; the tests th
 authors' own scripts skip cleanly without it, and the rest of the suite does not need it.
 
 ::: {.site-nav}
-Part of an Open Policy Analysis of Rauh et al. (2026) on California Proposition 40:
+RJKDC side of California Proposition 40:
 [Open Output (the explorer)](explorer/) &middot; Open Analysis: Report (here) and
 [Slides](slides/slides.html) &middot;
 [Open Materials](https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis) &middot;
