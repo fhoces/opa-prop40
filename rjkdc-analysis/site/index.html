@@ -293,8 +293,8 @@
           <a class="subcard" href="repro.html">
             <h3>The reproduction report &rarr;</h3>
             <p>The main estimate derived step by step, then the paper's sections in order (the
-               revenue chain, the income tax, the perpetuity, Tables 8 to 10, the Monte Carlo) and
-               what the NBER revision changes. Every number is read from the pipeline.</p>
+               revenue and its litigation discount, the income tax, the perpetuity, the break-even
+               share, the Monte Carlo). Every number is read from the pipeline.</p>
           </a>
           <a class="subcard" href="slides/slides.html">
             <h3>Slides &rarr;</h3>
@@ -315,8 +315,8 @@
         <span class="kicker">Open Materials</span>
         <h3>Materials for computational reproduction &rarr;</h3>
         <p>The R pipeline (built with <code>{targets}</code>) and its Python twin, the test suite, every exported CSV, the source
-        manifest with SHA-256 hashes, and the nine mismatches between the papers, their READMEs and
-        their code. A guided summary is on the materials page, linked in the text below.</p>
+        manifest with SHA-256 hashes, and the nine mismatches between the authors' text, their
+        READMEs and their code. A guided summary is on the materials page, linked in the text below.</p>
       </div>
       <div class="card-icon-box" aria-hidden="true">
         <img src="assets/opa/opa-materials.png" alt="">
@@ -370,19 +370,19 @@
 <table>
   <thead><tr><th>Published result</th><th>Result</th></tr></thead>
   <tbody>
-    <tr><td>Revenue chain, Sec 4</td>
-        <td>94.30 / 67.51 / 55.10 / 45.59 from the authors' workbook; the paper prints 94.20 for the
-            first, which its later steps also use (mismatch 6)</td></tr>
-    <tr><td>Pareto fit and Table 8, income tax (p.17)</td>
+    <tr><td>Baseline revenue, Sec 4.1 (pp.18-19)</td>
+        <td>94.30 from the authors' workbook; the paper prints 94.20 (mismatch 6)</td></tr>
+    <tr><td>Revenue ceiling, Secs 4.1 and 4.3 (pp.19-21)</td>
+        <td>100.91 at the valuation date (printed 100.9); 72.05 after the seven confirmed
+            departures, printed 72.06 (mismatch 4)</td></tr>
+    <tr><td>Collectible revenue, Sec 4.4 (pp.22-23)</td>
+        <td>29.57 (printed 29.6), range 28.40 to 35.59</td></tr>
+    <tr><td>Pareto fit and Table 9, income tax (pp.26-30)</td>
         <td>alpha 1.44; all 21 cells round to the printed digit, replaying the authors' random-number (RNG) stream</td></tr>
-    <tr><td>Tables 9 and 10, NPV and break-even (pp.19-20)</td>
-        <td>all 18 and all 9 cells match the printed digit</td></tr>
-    <tr><td>First-version Monte Carlo, Sec 5.5</td>
-        <td>median and share negative match; mean and SD (standard deviation) do not quite (mismatch 9). The printed mean
-            equals the exact expectation, not the shipped seed's run</td></tr>
-    <tr><td>NBER revenue and Monte Carlo (pp.22-23, 35)</td>
-        <td>collectible 29.57 (printed 29.6), range 28.40 to 35.59; mean, median, SD and share
-            negative within Monte Carlo error</td></tr>
+    <tr><td>Table 10, break-even share (p.34)</td>
+        <td>all 3 cells match the printed digit</td></tr>
+    <tr><td>Monte Carlo, Sec 5.4 (p.35)</td>
+        <td>mean, median, SD (standard deviation) and share negative within Monte Carlo error</td></tr>
   </tbody>
 </table>
 </div>
@@ -390,22 +390,34 @@
 <p style="margin-top:14px;"><strong>"Match"</strong> means the reproduced value rounds to the printed
 digit for deterministic figures, and lies within four Monte Carlo standard errors for simulated ones.
 The test suite holds every comparison; the <a href="materials.html">materials page</a> gives its
-current count.</p>
+current count.<sup>2</sup></p>
 
 <p style="margin-top:14px;">Along the way we found <strong>nine mismatches</strong> between the
-papers, their READMEs and their code. We reproduce the code as shipped and record each one:</p>
-<ol style="margin:0 0 14px; padding-left:22px; color:var(--ink-2); font-size:15px;">
-  <li>Eq. 22 prints the revenue ceiling as 67.1; the code and the text use 67.51.</li>
-  <li>The text derives a growing perpetuity, C/(r &minus; g), with C the annual income tax lost, r the real discount rate and g the growth rate of that tax base (SSRN p.18); the Monte Carlo divides by the plain rate.</li>
-  <li>The NBER code labels the same 1.5% to 4.5% draw (r &minus; g), so one interval stands for two concepts.</li>
-  <li>The NBER ceiling is 72 in the script, 72.06 in the README and 72.05 in the person-level data.</li>
-  <li>The NBER litigation weight q = 0.50: the code never multiplies by q; drawing revenue uniformly from 0 to 72 gives the same mean, 0.5 &times; 72, but a different distribution.</li>
-  <li>The workbook's baseline is 94.30; the text and every later step use a typed 94.2.</li>
-  <li>Two memo cells in the workbook read from the wrong sheet (no headline number affected).</li>
-  <li>Table 9's central revenue, 42.0, is a typed literal with no derivation.</li>
-  <li>The first version's Monte Carlo printed mean and SD do not come out of the shipped seeded script.</li>
+authors' text, their READMEs and their code. Four of them concern this analysis.<sup>3</sup> We
+reproduce the code as shipped and record each one:</p>
+<ol start="3" style="margin:0 0 14px; padding-left:22px; color:var(--ink-2); font-size:15px;">
+  <li>The code and eq. 18 call the 1.5% to 4.5% draw (r &minus; g): r is the real discount rate and g the growth rate of the lost income tax. The sentence after eq. 19 divides by r alone (p.35), so one interval stands for two concepts.</li>
+  <li>The revenue ceiling is 72 in the script, 72.06 in the README and 72.05 in the person-level data.</li>
+  <li>The litigation weight q = 0.50, the chance the Act survives in court: the code never multiplies by q; drawing revenue uniformly from 0 to 72 gives the same mean, 0.5 &times; 72, but a different distribution.</li>
+  <li>The baseline revenue sums to 94.30 in the authors' workbook, and the grown person-level data give the same; the text prints 94.20 (p.19).</li>
 </ol>
 <p>Full text, with file and line references: <a href="materials.html#mismatches">materials page</a>.</p>
+
+<p class="fn" style="font-size:12.5px; color:var(--ink-3); margin-top:8px;"><sup>2</sup> The
+   pipeline also reproduces the authors' first version (Rauh, Jaros, Kearney, Doran and Cosso,
+   Hoover Institution, SSRN 6340778, March 2026). Its revenue chain, 94.30 / 67.51 / 55.10 / 45.59
+   from the authors' workbook, and all 18 and all 9 cells of its NPV and break-even tables match
+   the printed digits. Its Monte Carlo's median and share negative match; the mean and SD do not
+   quite (mismatch 9), and its printed mean equals the exact expectation, not the shipped seed's run.</p>
+<div class="fn" style="font-size:12.5px; color:var(--ink-3); margin-top:8px;"><sup>3</sup> The other
+   five concern only that first version:
+<ul style="list-style:none; margin:4px 0 0; padding-left:0;">
+  <li>1. Eq. 22 prints the revenue ceiling as 67.1; the code and the text use 67.51.</li>
+  <li>2. The text derives a growing perpetuity, C/(r &minus; g) (p.18); the Monte Carlo divides by the plain rate.</li>
+  <li>7. Two memo cells in the workbook read from the wrong sheet (no headline number affected).</li>
+  <li>8. Table 9's central revenue, 42.0, is a typed literal with no derivation.</li>
+  <li>9. The Monte Carlo's printed mean and SD do not come out of the shipped seeded script.</li>
+</ul></div>
   </div>
 </details>
 
@@ -455,7 +467,7 @@ original authors have not reviewed it.</p>
 
 <div class="note">
   <strong>A note on the source.</strong> The authors released their workbooks, scripts and
-  person-level data under an MIT licence. We do not redistribute them or the papers: the pipeline
+  person-level data under an MIT licence. We do not redistribute them or the paper: the pipeline
   reads a local clone pinned at commit <code>25e84dd</code>, and the source manifest lists each file
   with its SHA-256 hash.
 </div>
