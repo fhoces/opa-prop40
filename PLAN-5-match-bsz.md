@@ -204,3 +204,38 @@ values and their sources.
   and a link check of every relative link in the changed pages and READMEs.
 - Report back: the commits, what each page shows now, the test result, the layers seeded (with
   the headline reproduced and the command that showed it), and anything left undone.
+
+## Round 2 (2026-10-14, second feedback list, applies to all three analyses)
+
+Decisions from the author's list, in their order:
+
+1. Every "Open Policy Analysis" link points to the academic paper: Hoces de la Guardia, Grant
+   and Miguel (2021), "A framework for open policy analysis", Science and Public Policy,
+   https://doi.org/10.1093/scipol/scaa067. No link to the BITSS page or the tinyurl remains.
+2. The root README opens like `bsz-analysis/README.md`: intro paragraph, the code review link
+   first, the layer image on the right, then the three parts of the project as numbered
+   components, each linking its subfolder and its live overview page.
+3. The reconciliation page's headline block shows the two main estimates side by side,
+   $106.8B (BSZ, net total) and -$38.9B (RJKDC, NBER September 2026), not the gap. The gap
+   stays inside the bridge. The comparison review chain's headline follows.
+4. The RJKDC explorer gets the BSZ outcomes chart: two horizontal bars, "This setting" and
+   "Main estimate" (the NBER setting), values printed at the end of each bar, drawn by the
+   same SVG approach as `bsz-analysis/site/explorer/index.html` (the `bars` SVG and the
+   `drawBars` code). It sits above the outcomes table.
+5. The comparison centres on the common output (b), the net fiscal effect: the bridge opens on
+   it, the ends and the steps are stated on it, the review chain traces it. Output (a) stays
+   as the secondary setting.
+6. The comparison gets its own explorer page, `comparison/site/explorer/index.html`, in the
+   BSZ explorer's layout: site-nav line, flex header with the headline block (the two main
+   estimates), the bridge with its dials, the two-bar chart of the two ends under output (b),
+   the footer. `assets/comparison-data.js` stays where it is (the explorer reads it with a
+   relative path). The root page's Open Output card links to the explorer; the bridge section
+   on the root page goes (the fold's text moves to the explorer or the report).
+7. The word "side" or "sides" is never used for the BSZ or RJKDC work. Wording: "the BSZ
+   analysis", "the RJKDC analysis", "BSZ analysis overview", "the two analyses". Sweep every
+   page, explorer, report, slide deck, README, AUDIT.md, the review ledgers and the review page.
+
+Split: agent A does item 4 (RJKDC explorer and its tests) in the main working tree; agent B
+does items 3, 5 and 6 (comparison) in a worktree; the root README (item 2), the links (item 1)
+and the sweep (item 7) are done after the merge, except that each agent already writes its own
+new text without "side" and with the paper link.
