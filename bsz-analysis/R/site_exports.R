@@ -159,6 +159,8 @@ site_grid_js_text <- function(grid, inp) {
   dials <- site_dials()
   outs  <- site_outcomes()
   named <- lapply(site_named_rows(), function(v) v - 1L)
+  # The output estimates: one row per dial setting (the grid's row order), the nine
+  # outcomes in the order of outs$key, rounded to 6 decimals. The page reads this as snap.
   snap  <- lapply(seq_len(nrow(grid)), function(i)
     unname(round(as.numeric(grid[i, outs$key]), 6)))
   payload <- list(
@@ -177,7 +179,7 @@ site_grid_js_text <- function(grid, inp) {
     snap     = snap
   )
   json <- jsonlite::toJSON(payload, auto_unbox = TRUE, digits = NA, pretty = FALSE)
-  paste0("/* Generated file: do not edit. See R/site_exports.R. */\n",
+  paste0("/* Generated file: do not edit. See R/site_exports.R. snap holds every precomputed setting: one row per combination of the dials (first dial slowest), each row the outcomes in the order of keys. */\n",
          "window.__GRID__ = ", json, ";\n")
 }
 

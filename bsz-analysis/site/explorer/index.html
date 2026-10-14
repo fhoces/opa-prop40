@@ -282,6 +282,9 @@
 <script>
 (function () {
   "use strict";
+  // G is the precomputed grid from grid.js. G.snap holds every setting: one row per
+  // combination of the six dials, each row the nine outcomes in the order of G.keys.
+  // The page does no arithmetic beyond picking a row of G.snap.
   var G = window.__GRID__;
   var SIZES = G.dials.map(function (d) { return d.levels.length; });
   var names = Object.keys(G.named);
@@ -471,8 +474,8 @@
   }
 
   function render() {
-    var i = idx(state);
-    var snap = G.snap[i];
+    var i = idx(state);        // position of the current dial setting in G.snap
+    var snap = G.snap[i];      // that setting's outcomes, read below by G.keys index
     document.querySelectorAll(".levels button").forEach(function (b) { b.setAttribute("aria-pressed", "false"); });
     var off = state[DI.pareto] === 0;
     rowEl[DI.avoidance_small].classList.toggle("is-off", off);
