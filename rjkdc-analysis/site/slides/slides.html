@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang xml:lang>
   <head>
-    <title>The Net Present Value of the Billionaire Tax Act</title>
+    <title>The Net Present Value of the California Billionaire Tax Act</title>
     <meta charset="utf-8" />
     <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -210,10 +210,10 @@ color: #1a237e;
 class: center, middle, inverse, title-slide
 
 .title[
-# The Net Present Value of the Billionaire Tax Act
+# The Net Present Value of the California Billionaire Tax Act
 ]
 .subtitle[
-## Teaching deck: RJKDC’s fiscal estimate of California Proposition 40 (Jaros and Rauh, with Kearney, Doran and Cosso, NBER, September 2026)
+## Teaching deck: RJKDC’s fiscal estimate of California Proposition 40 (Jaros and Rauh, NBER, September 2026; first version by Rauh, Jaros, Kearney, Doran and Cosso)
 ]
 
 ---
@@ -227,9 +227,9 @@ class: center, middle, opa-slide
 # An Open Reproduction
 
 .opa-intro[
-The estimate of California&#39;s Billionaire Tax Act by Jaros and Rauh, with Kearney, Doran and
-Cosso (RJKDC), rebuilt from the authors&#39; own
-code and data and taught step by step, following the
+The estimate of California&#39;s Billionaire Tax Act by Jaros and Rauh (NBER, September 2026),
+revising the first version by Rauh, Jaros, Kearney, Doran and Cosso (RJKDC), rebuilt from the
+authors&#39; own code and data and taught step by step, following the
 [Open Policy Analysis](https://doi.org/10.1093/scipol/scaa067) framework.
 ]
 
@@ -343,7 +343,7 @@ class: center, middle, inverse
 # What is being estimated
 
 **Proposition 40** taxes, once, 5% of the net worth of billionaires who lived in California on
-1 January 2026 (payable over five years). The [BSZ report](../../../bsz-analysis/site/) estimates it at about 100 bn. (Amounts in this deck are in billions of dollars, &quot;bn&quot;.)
+1 January 2026 (payable over five years). The [BSZ report](../../../bsz-analysis/site/) estimates it at about $100 billion.
 
 The RJKDC analysis asks a different question: **is the state better off, counting what it loses?**
 
@@ -372,12 +372,12 @@ name: headline
 
 # The headline
 
-**NBER chapter c15504**, 22 September 2026: Jaros and Rauh, with Kearney, Doran and Cosso,
-litigation-weighted
+**NBER chapter c15504**, 22 September 2026: Jaros and Rauh, litigation-weighted (the first
+version, March 2026, was by Rauh, Jaros, Kearney, Doran and Cosso)
 
-.big[&amp;minus;38.9 bn]
-mean NPV; 85.2% of outcomes negative (PDF p.1)&lt;sup&gt;1&lt;/sup&gt;&lt;br&gt;
-revenue &quot;approximately 30 billion&quot; (28.4 bn to 35.6 bn)
+.big[−$38.9B]
+mean NPV; 85.2% of outcomes negative (PDF p.35, Figure 3 note; 85% in the text, p.1)&lt;sup&gt;1&lt;/sup&gt;&lt;br&gt;
+revenue &quot;approximately 30 billion&quot; ($28.4B to $35.6B)
 
 Reproduced: &amp;minus;38.89 (the authors&#39; seeded run, replayed draw for draw) and
 &amp;minus;38.98 (the exact expectation of the same draws).
@@ -388,7 +388,7 @@ the revenue (Part 2), the income tax (Part 3), the perpetuity (Part 4) and the M
 that averages them (Part 5).
 ]
 
-.footnote[&lt;sup&gt;1&lt;/sup&gt; The authors&#39; first version (Rauh, Jaros, Kearney, Doran and Cosso, Hoover Institution, SSRN 6340778, March 2026) printed &amp;minus;24.7 bn with 71% negative. The pipeline reproduces it too; see the appendix of [the report](../repro.html#appendix-first-version).]
+.footnote[&lt;sup&gt;1&lt;/sup&gt; The authors&#39; first version (Rauh, Jaros, Kearney, Doran and Cosso, Hoover Institution, SSRN 6340778, March 2026) printed −$24.7B with 71% negative. The pipeline reproduces it too; see the appendix of [the report](../repro.html#appendix-first-version).]
 
 ---
 name: part-revenue
@@ -399,7 +399,7 @@ class: center, middle, inverse
 ---
 name: revenue
 
-# From 94 bn to about 30 bn (Sec 4)
+# From $94 billion to about $30 billion (Sec 4)
 
 &lt;img src=&quot;data:image/png;base64,#slides_files/figure-html/revchain-1.png&quot; style=&quot;display: block; margin: auto;&quot; /&gt;
 
@@ -407,7 +407,7 @@ name: revenue
 Each step sums 5% of each stayer&#39;s net worth, minus their home. The first four bars come out of the
 authors&#39; workbook and person-level file. The last multiplies by `\(q\)` = 0.50, the chance the
 Act survives in court, borrowed from an accounting rule (ASC 740-10): a judgement, not an estimate.
-Printed: 29.6 bn, range 28.4 to 35.6 bn (PDF p.23).
+Printed: $29.6 billion, range $28.4 to $35.6 billion (PDF p.23).
 ]
 
 ---
@@ -450,7 +450,7 @@ name: income-tax-c
 
 **Upper bound.** Fit a Pareto tail to the Franchise Tax Board&#39;s (FTB, the state tax agency) filer counts above 1M to 10M dollars of income:
 `\(\hat\alpha\)` = 1.44. If the 212 billionaires *are* the 212 highest earners, they pay
-**5.76 bn** a year.
+**$5.76 billion** a year.
 
 **But** wealth is not income: many billionaires realise little in a given year. So place them at random
 among the top `\(K\)` filers (Table 9).
@@ -464,7 +464,7 @@ among the top `\(K\)` filers (Table 9).
 ]
 
 .highlight-box[
-The authors call `\(K \approx 500\)` &quot;a reasonable lower bound&quot;: 3.31 bn.
+The authors call `\(K \approx 500\)` &quot;a reasonable lower bound&quot;: $3.31B.
 So `\(C \in [3.3, 5.8]\)`: a range between a model&#39;s upper bound and a **judgement** about the floor.
 ]
 
@@ -497,7 +497,7 @@ name: break-even
 `$$NPV = 0 \quad\Longleftrightarrow\quad x^* = \frac{WT \cdot (r - g)}{C}$$`
 
 If less than `\(x^*\)` of the income tax base leaves, the tax pays for itself. Table 10, at the paper&#39;s
-central revenue, 36 bn (= 0.5 × 72), and `\(C\)` = 4.55 bn:
+central revenue, $36 billion (= 0.5 × 72), and `\(C\)` = $4.55 billion:
 
 &lt;table class=&quot;dt&quot;&gt;&lt;tr&gt;&lt;th&gt;&lt;/th&gt;&lt;th&gt;1.5%&lt;/th&gt;&lt;th&gt;3.0%&lt;/th&gt;&lt;th&gt;4.5%&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;x*&lt;/td&gt;&lt;td&gt;11.9%&lt;/td&gt;&lt;td&gt;23.7%&lt;/td&gt;&lt;td&gt;35.6%&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 
@@ -558,7 +558,7 @@ name: seven-inputs
 
 # The seven inputs that move the answer
 
-&lt;table class=&quot;dt&quot;&gt;&lt;tr&gt;&lt;th&gt;Input&lt;/th&gt;&lt;th&gt;Values in the explorer&lt;/th&gt;&lt;th&gt;Origin&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Revenue, low end of the draw ($B)&lt;/td&gt;&lt;td&gt;0 (as coded); 35; 45.59&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Revenue, high end of the draw ($B)&lt;/td&gt;&lt;td&gt;55.10; 67.51; 72 (as coded)&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og data&#39;&gt;data&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Litigation survival, applied to revenue&lt;/td&gt;&lt;td&gt;1 (as coded); 0.75; 0.50&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Annual billionaire income tax, C ($B)&lt;/td&gt;&lt;td&gt;3.3 to 5.8; 3.3 only; 5.8 only&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Discount rate drawn, r&lt;/td&gt;&lt;td&gt;1.5% to 4.5%; 1.5% only; 4.5% only&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Share of the income tax base that leaves, f&lt;/td&gt;&lt;td&gt;1 - WT/94.2; U[0.30, 0.60] (as coded); 0.283 fixed&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Growth of lost income, g (r vs r - g reading)&lt;/td&gt;&lt;td&gt;0 (as coded); 0.5% (illustrative); 1.0% (illustrative)&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;table class=&quot;dt&quot;&gt;&lt;tr&gt;&lt;th&gt;Input&lt;/th&gt;&lt;th&gt;Values in the explorer&lt;/th&gt;&lt;th&gt;Origin&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Revenue, lowest value the model&#39;s random pick can take ($B)&lt;/td&gt;&lt;td&gt;0 (as coded); 35; 45.59&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Revenue, highest value the model&#39;s random pick can take ($B)&lt;/td&gt;&lt;td&gt;55.10; 67.51; 72 (as coded)&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og data&#39;&gt;data&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Litigation survival, applied to revenue&lt;/td&gt;&lt;td&gt;1 (as coded); 0.75 (OPA reading); 0.50 (OPA reading)&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Annual billionaire income tax, C ($B)&lt;/td&gt;&lt;td&gt;3.3 to 5.8; 3.3 only; 5.8 only&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Discount rate, the range the model picks from, r&lt;/td&gt;&lt;td&gt;1.5% to 4.5%; 1.5% only; 4.5% only&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Share of the income tax base that leaves, f&lt;/td&gt;&lt;td&gt;1 - WT/94.2; 0.30 to 0.60 (as coded); 0.283 fixed&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Growth of lost income, g (r vs r - g reading)&lt;/td&gt;&lt;td&gt;0 (as coded); 0.5% (illustrative); 1.0% (illustrative)&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 
 .highlight-box[
 6 of the 7 are guesswork.

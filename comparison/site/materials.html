@@ -2320,7 +2320,7 @@ min-width: 0 !important;
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> comparison/tests/testthat.R       <span class="co"># the test suite</span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> comparison/py/bridge.py           <span class="co"># the Python twin alone, writes export/py/</span></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> comparison/site <span class="kw">&amp;&amp;</span> <span class="ex">quarto</span> render repro.qmd <span class="kw">&amp;&amp;</span> <span class="ex">quarto</span> render materials.qmd</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The comparison needs nothing downloaded. It reads each analysis’s <em>export contract</em>: the two files <code>export/r/inputs.csv</code> and <code>export/r/outputs.csv</code> that each analysis’s own pipeline writes for others to read. Both are committed, so the comparison rebuilds without either analysis’s sources. It also reads the values transcribed from the PDFs in <code>comparison/data/</code>. Set <code>OPA_PROP40_ROOT</code> if the scripts cannot find the repository root, and <code>PYTHON</code> to choose the interpreter <code>run.R</code> calls.</p>
+<p>The comparison needs nothing downloaded. It reads each analysis’s <em>export contract</em>: the two files <code>export/r/inputs.csv</code> and <code>export/r/outputs.csv</code> that each analysis’s own pipeline writes for others to read. Both are committed, so the comparison rebuilds without either analysis’s sources. It also reads the values transcribed from the PDFs in <code>comparison/data/</code>. Set <code>OPA_PROP40_ROOT</code> if the scripts cannot find the repository root, and <code>PYTHON</code> to choose the interpreter <code>run.R</code> calls for the Python twin, <code>py/bridge.py</code> (the same computation written a second time in Python and checked against the R result).</p>
 </section>
 <section id="tests" class="level2">
 <h2 class="anchored" data-anchor-id="tests">Tests</h2>
@@ -2405,7 +2405,7 @@ skipped
 9
 </td>
 <td style="text-align:right;">
-187
+189
 </td>
 <td style="text-align:right;">
 0
@@ -2439,7 +2439,7 @@ skipped
 32
 </td>
 <td style="text-align:right;">
-389
+391
 </td>
 <td style="text-align:right;">
 0
@@ -2451,10 +2451,10 @@ skipped
 </tbody>
 </table>
 </div>
-<p>Run while this page was rendered: <strong>389 expectations passed, 0 failed</strong>, in 32 test blocks. The files check:</p>
+<p>Run while this page was rendered: <strong>391 expectations passed, 0 failed</strong>, in 32 test blocks. The files check:</p>
 <ul>
-<li><code>test-endpoints.R</code>: each end of the bridge against the number its authors print (BSZ Table 5 row 1, the NBER mean NPV), plus the earlier figures the code still checks: the GGSS headline behind the BSZ analysis and the March 2026 version of the RJKDC analysis, where the bridge’s disputed-input steps end.</li>
-<li><code>test-shapley.R</code>: the Shapley steps sum exactly to the gap in every setting, and match a brute-force average over orders.</li>
+<li><code>test-endpoints.R</code>: each end of the bridge against the number its authors print (BSZ Table 5 row 1, the NBER mean NPV; NBER is the National Bureau of Economic Research, which circulates working papers), plus the earlier figures the code still checks: the headline of GGSS (the Galle, Gamage, Saez and Shanske expert report of July 2026, written in support of the measure), behind the BSZ analysis, and the March 2026 version of the RJKDC analysis, where the bridge’s disputed-input steps end.</li>
+<li><code>test-shapley.R</code>: the Shapley steps sum exactly to the gap in every setting, and match a brute-force average over orders (a Shapley value: a step’s effect averaged over every order the inputs could be switched in, so the steps add up to the gap).</li>
 <li><code>test-parity.R</code>: the R exports are current, and the Python twin’s agree with them to 1e-9.</li>
 <li><code>test-sources.R</code>: every transcribed input has a label, a source and a page.</li>
 <li><code>test-site.R</code>: the overview page and the explorer are exactly the generator’s output, have no unfilled token or em-dash, show the key numbers and the two main estimates, the explorer’s data file carries the same two values, the switchboard’s all-off and all-on settings equal the two ends in every horizon setting, the explorer’s slider panels start and end at the two analyses’ estimates, <code>site/explorer/model.js</code> (run with node) returns the R value on every mix in <code>slider_sample.csv</code> to 1e-9, the explorer shows no gross revenue number, and every relative link resolves.</li>
@@ -2517,7 +2517,7 @@ every number the page shows, written to export/r/*.csv
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/R/site.R"><code>R/site.R</code></a>
 </td>
 <td style="text-align:right;">
-429
+431
 </td>
 <td style="text-align:left;">
 renders the overview page (index.html), the explorer (site/explorer/index.html) and their data file from site/index.template.html and site/explorer.template.html
@@ -2572,7 +2572,7 @@ score_common() and the slider rule ported to JavaScript; the explorer’s panels
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/site/repro.qmd"><code>site/repro.qmd</code></a>
 </td>
 <td style="text-align:right;">
-602
+674
 </td>
 <td style="text-align:left;">
 the reproduction report
@@ -2583,7 +2583,7 @@ the reproduction report
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/site/materials.qmd"><code>site/materials.qmd</code></a>
 </td>
 <td style="text-align:right;">
-240
+258
 </td>
 <td style="text-align:left;">
 this page
@@ -2681,7 +2681,7 @@ each end against the number its authors print
 6
 </td>
 <td style="text-align:left;">
-the four revenue numbers of the RJKDC analysis’s March 2026 version, as candidates for where the steps end on output (a)
+the four revenue numbers of the RJKDC analysis’s March 2026 version, as candidates for where the steps end on output (a) (an anchor: the published number an end of the bridge is checked against)
 </td>
 </tr>
 <tr>
@@ -2757,6 +2757,7 @@ the common function’s value for every mix of switches (bit i of mask = dispute
 </tbody>
 </table>
 </div>
+<p><code>loss.csv</code>’s last column, <code>net_at_rauh_revenue_perpetuity</code>, nets each loss against the expected revenue of the RJKDC analysis’s March 2026 version ($51.3B, in <code>ends.csv</code> and <code>anchors.csv</code>). The last column of the comparison overview’s <a href="../../index.html#neutral-material">table of yearly income tax losses</a> nets against the September 2026 expected revenue instead ($36.0B), which <code>R/site.R</code> computes from <code>ends.csv</code>.</p>
 <p><code>comparison/export/py/</code> holds the same files from the Python twin (without <code>inputs.csv</code>). The explorer’s interactive bridge reads <code>assets/comparison-data.js</code>, written by <code>R/site.R</code> from these files. Its two slider panels read the two input vectors from the same data file and compute each panel’s estimate in the browser with <code>site/explorer/model.js</code>, which follows <code>slider_inputs()</code> in <code>R/model.R</code>: positions 1 to 3 are evenly spaced between the two values, and the horizon steps through 5, 10, 20 and 50 years and a perpetuity. The inputs the comparison transcribes itself are in <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/data/document-inputs.csv"><code>comparison/data/document-inputs.csv</code></a> (18 rows, each with an origin label, a source and a page) and <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/data/hoopes-fig2.csv"><code>comparison/data/hoopes-fig2.csv</code></a> (Hoopes’s Figure 2, read off the chart). None is edited by hand except these two transcriptions.</p>
 </section>
 <section id="sources" class="level2">
@@ -2822,6 +2823,7 @@ public-government-document (not committed per repo policy)
 </table>
 </div>
 <p>Full rows: <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/DATA-SOURCES.csv"><code>comparison/DATA-SOURCES.csv</code></a>. Neither PDF is redistributed.</p>
+<p>The GGSS expert report (20 July 2026) and the GGSS response to Rauh (17 March 2026), which the bridge cites for the non-citizen residents and for the BSZ value “none applied” of the step “One-time tax estimated as a permanent 5 pp rate”, are listed in the BSZ analysis’s manifest, <a href="https://github.com/fhoces/opa-prop40/blob/main/bsz-analysis/DATA-SOURCES.csv"><code>bsz-analysis/DATA-SOURCES.csv</code></a>, which records no URL for them.</p>
 </section>
 <section id="what-the-checks-found" class="level2">
 <h2 class="anchored" data-anchor-id="what-the-checks-found">What the checks found</h2>
@@ -2830,7 +2832,7 @@ public-government-document (not committed per repo policy)
 <li><strong>Equation 22 of the March 2026 version has a typo.</strong> It prints the revenue ceiling as 67.1; the text (p.11) and the authors’ code use 67.51. Only the latter reproduces that version’s printed mean NPV.</li>
 <li><strong>The March 2026 version’s Monte Carlo uses rounded literals.</strong> It divides by 94.2 where the workbook sum is 94.304. The bridge shows the effect as its own model-difference step: +$0.10B on (b) and −$0.0003B on (a).</li>
 <li><strong>The printed NPV is one run, not the expectation.</strong> The exact expectation of the NBER Monte Carlo, the bridge’s RJKDC end, is −$38.98B against a printed −$38.9B. The RJKDC pipeline reproduces the seeded run as −$38.886B, the RJKDC main estimate.</li>
-<li><strong>Both analyses’ discount factors are right.</strong> One reading magnifies the loss by a factor 67 (1/1.5%), BSZ say 33 (1/3%). The first is the RJKDC text anchor, the second the mean rate of its Monte Carlo (<code>DISPUTES.md</code>, row 2).</li>
+<li><strong>Both analyses’ discount factors are right.</strong> One reading magnifies the loss by a factor 67 (1/1.5%), BSZ say 33 (1/3%). The first is the rate the RJKDC text anchors its range on, the second the mean rate of its Monte Carlo (<code>DISPUTES.md</code>, row 2).</li>
 <li><strong>Two March disputes are closed in the BSZ analysis by August</strong>: Larry Ellison’s exclusion and the non-US-citizen residents (rows 7 and 8).</li>
 <li><strong>One Hoopes bar could not be traced.</strong> His confirmed-departures bar matches no number in the March 2026 version of the RJKDC analysis (see the <a href="../../index.html#hoopes">overview page</a>).</li>
 </ul>

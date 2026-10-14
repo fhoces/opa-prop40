@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-10-08">
+<meta name="dcterms.date" content="2026-10-14">
 
 <title>Prop 40, BSZ analysis: the materials</title>
 <style>
@@ -2293,7 +2293,7 @@ min-width: 0 !important;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 8, 2026</p>
+      <p class="date">October 14, 2026</p>
     </div>
   </div>
   
@@ -2321,7 +2321,7 @@ min-width: 0 !important;
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> tools/site-test-results.R        <span class="co"># the full test suite; writes site/data/test-results.csv</span></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> site <span class="kw">&amp;&amp;</span> <span class="ex">quarto</span> render repro.qmd <span class="kw">&amp;&amp;</span> <span class="ex">quarto</span> render materials.qmd</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> slides <span class="kw">&amp;&amp;</span> <span class="ex">Rscript</span> <span class="at">-e</span> <span class="st">&#39;rmarkdown::render(&quot;slides.Rmd&quot;)&#39;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The pipeline is an R <a href="https://docs.ropensci.org/targets/"><code>{targets}</code></a> project. The default workbook vintage is August 2026; <code>BSZ_VINTAGE=may</code> switches every vintage-dependent path, column and constant to May. <code>CAWTBSZ_MATERIALS</code> points the pipeline at the sources if they are not in <code>original-materials/</code>.</p>
+<p>The pipeline is an R <a href="https://docs.ropensci.org/targets/"><code>{targets}</code></a> project. The default workbook vintage (the dated version of the workbook a number comes from) is August 2026; <code>BSZ_VINTAGE=may</code> switches every vintage-dependent path, column and constant to May. <code>CAWTBSZ_MATERIALS</code> points the pipeline at the sources if they are not in <code>original-materials/</code>.</p>
 <p>Every computation also has a Python twin in <a href="https://github.com/fhoces/opa-prop40/blob/main/bsz-analysis/py/"><code>py/</code></a>, with the same function names as in <code>R/</code>. After <code>pip install -r requirements.txt</code>, the command <code>python py/run_export.py</code> (about 2 seconds) writes the same results to <code>export/py/</code>, and <a href="https://github.com/fhoces/opa-prop40/blob/main/bsz-analysis/tests/testthat/test-py-parity.R"><code>tests/testthat/test-py-parity.R</code></a> checks each file against R’s. The report’s code folds show both languages.</p>
 </section>
 <section id="tests" class="level2">
@@ -2434,7 +2434,7 @@ min-width: 0 !important;
 </table>
 </div>
 </div>
-<p>Last run: 2026-10-07, August vintage: <strong>719 expectations passed, 0 failed</strong>, in 114 test blocks. Of these, 671 belong to the reproduction itself and 48 to this site: they check that the explorer reproduces Table 5 exactly, that <code>explorer/grid.js</code> is the exporter’s own output, and that every number typed into a hand-written page still matches the pipeline. GitHub Actions rebuilds the pipeline and runs the suite on every push that touches <code>bsz-analysis/</code> (<code>.github/workflows/bsz-ci.yml</code>); it does not render the Quarto pages or the slides.</p>
+<p>Last run: 2026-10-07, August vintage: <strong>719 expectations passed, 0 failed</strong>, in 114 test blocks. Of these, 671 belong to the reproduction itself and 48 to this site: they check that the explorer reproduces Table 5 to 1e-12, that <code>explorer/grid.js</code> is the exporter’s own output, and that every number typed into a hand-written page still matches the pipeline. GitHub Actions rebuilds the pipeline and runs the suite on every push that touches <code>bsz-analysis/</code> (<code>.github/workflows/bsz-ci.yml</code>); it does not render the Quarto pages or the slides.</p>
 </section>
 <section id="scripts" class="level2">
 <h2 class="anchored" data-anchor-id="scripts">Scripts</h2>
@@ -2526,7 +2526,7 @@ min-width: 0 !important;
 </tr>
 <tr class="even">
 <td style="text-align: left;"><a href="https://github.com/fhoces/opa-prop40/blob/main/bsz-analysis/R/site_exports.R"><code>R/site_exports.R</code></a></td>
-<td style="text-align: right;">217</td>
+<td style="text-align: right;">223</td>
 <td style="text-align: left;">this site&#39;s data: the dials, the grid (computed by compute_tab5.R), input origins</td>
 </tr>
 <tr class="odd">
@@ -2718,7 +2718,7 @@ min-width: 0 !important;
 <li><strong>Two printed cells</strong> of Table 5 (the income tax loss in rows 2 and 3) that the paper rounds differently from its own workbook.</li>
 <li><strong>Display labels</strong> in this reproduction’s Tables 1 and A1 that do not match their values (GDP for AGI, 2025 for 2026).</li>
 <li><strong>A malformed row in our own source manifest</strong>: two <code>provider</code> fields contained an unquoted comma, which shifted every later column for any CSV reader; quoted on 2026-09-23.</li>
-<li><strong>Not reproduced</strong>: the paper’s Figure 8 and Appendix Figure A1, and the raw data behind the workbook, which the pipeline takes as given.</li>
+<li><strong>Not reproduced</strong>: the paper’s Figure 8 and Appendix Figure A1 (wealth relative to AGI; the pipeline’s target of that name builds the paper’s Figure 1 Panel B, the industry chart), and the raw data behind the workbook, which the pipeline takes as given.</li>
 </ul>
 <div class="site-nav">
 <p>BSZ analysis of California Proposition 40: <a href="explorer/">Open Output (the explorer)</a> · Open Analysis: <a href="repro.html">Report</a> and <a href="slides/slides.html">Slides</a> · <a href="https://github.com/fhoces/opa-prop40/tree/main/bsz-analysis">Open Materials</a> (this page is its guide) · <a href="index.html">Overview</a></p>
