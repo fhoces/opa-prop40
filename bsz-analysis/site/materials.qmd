@@ -64,7 +64,8 @@ cd slides && Rscript -e 'rmarkdown::render("slides.Rmd")'
 ```
 
 The pipeline is an R [`{targets}`](https://docs.ropensci.org/targets/) project. The
-default workbook vintage is August 2026; `BSZ_VINTAGE=may` switches every
+default workbook vintage (the dated version of the workbook a number comes from) is August
+2026; `BSZ_VINTAGE=may` switches every
 vintage-dependent path, column and constant to May. `CAWTBSZ_MATERIALS` points the
 pipeline at the sources if they are not in `original-materials/`.
 
@@ -89,7 +90,7 @@ Last run: `r tests$run_date[1]`, `r tools::toTitleCase(tests$vintage[1])` vintag
 expectations passed, `r sum(tests$failed)` failed**, in `r nrow(tests)` test blocks. Of
 these, `r sum(tests$passed[tests$file != "test-site.R"])` belong to the reproduction itself
 and `r sum(tests$passed[tests$file == "test-site.R"])` to this site: they check that the
-explorer reproduces Table 5 exactly, that `explorer/grid.js` is the exporter's own output,
+explorer reproduces Table 5 to 1e-12, that `explorer/grid.js` is the exporter's own output,
 and that every number typed into a hand-written page still matches the pipeline. GitHub
 Actions rebuilds the pipeline and runs the suite on every push that touches
 `bsz-analysis/` (`.github/workflows/bsz-ci.yml`); it does not render the Quarto pages or

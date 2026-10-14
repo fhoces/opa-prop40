@@ -24,9 +24,12 @@ library(ggplot2)
 theme_set(theme_minimal(base_size = 15))
 
 # Every number in this deck is read from the CSVs the targets pipeline writes
-# (bsz-analysis/_targets.R: site_tab5_csv, site_inputs_csv,
+# (bsz-analysis/_targets.R: site_tab5_csv, site_tab5_printed_csv, site_inputs_csv,
 # site_grid_csv, site_leavers_csv). Nothing below is retyped.
 t5  <- read.csv("../data/tab5.csv")
+t5p <- read.csv("../data/tab5-vs-printed.csv")   # each Table 5 cell beside the digit the paper prints
+wt_printed <- t5p$printed[t5p$column == "wealth_tax_revenue" & t5p$row == 1]   # row 1, PDF p.39
+stopifnot(length(wt_printed) == 1)
 ins <- read.csv("../data/inputs.csv", stringsAsFactors = FALSE)
 grd <- read.csv("../data/grid.csv")
 lv  <- read.csv("../data/leavers.csv", stringsAsFactors = FALSE)
@@ -58,16 +61,19 @@ California's billionaires, the taxes they pay, and what a one-time tax on them w
   Since 1982 the real wealth of the top 0.001% has multiplied by 25; average real family income
   has doubled.
 - **Taxes.** They pay about **0.2% of their wealth** a year in California income tax
-  ($3.2 billion a year), 2.4% of the state's income tax revenue over 2023 to 2025.
+  ($3.2 billion a year over 2023 to 2025; the 2019 to 2025 average the estimate uses is
+  $`r bn(C, 2)` billion, Table 2), 2.4% of the state's income tax revenue over 2023 to 2025.
 - **The top four.** SEC filings for Page, Brin, Zuckerberg and Huang (Ellison through 2020)
   show nearly $1 trillion in business wealth, about 40% of the total, taxed at 0.04% of wealth
   a year.
 - **The proposal.** A one-off 5% tax, payable over five years, is small next to recent wealth
   gains and large next to taxes now paid. The authors estimate **about $100 billion**
-  (Table 5: $`r bn(t5$wealth_tax_revenue[1])` billion), with minor effects on income tax.
+  (Table 5 prints $`r bn(wt_printed, 0)` billion; the workbook gives $`r bn(t5$wealth_tax_revenue[1])` billion),
+  with minor effects on income tax.
 
 .small[The figures above are the paper's own, from its abstract. Every number from the Deck Map
-onward is recomputed by the reproduction pipeline.]
+onward is recomputed by the reproduction pipeline. NBER is the National Bureau of Economic
+Research, which circulates working papers.]
 
 ---
 name: opa-frame
@@ -464,7 +470,7 @@ name: bottom-line
 
 ```{r bottom-line-tab}
 # Present value of the yearly loss over BSZ's 5-year horizon at one rate, 3%, the middle
-# of the RJKDC report's 1.5%-4.5% range. The reconciliation page averages over that range
+# of the RJKDC report's 1.5%-4.5% range. The comparison overview averages over that range
 # instead (comparison/R/model.R); the two agree to within $0.01B, checked here.
 ann <- function(r, H = 5) (1 - (1 + r)^(-H)) / r
 f5  <- ann(0.03)
@@ -500,9 +506,10 @@ horizon of about 5 years at **3% a year**, the middle of the [RJKDC report](../.
 
 **Change any assumption and watch the main estimate move: [the explorer](../explorer/).**
 
-.small[<sup>1</sup> Not the authors' choice: BSZ's headline is the wealth tax alone, $`r bn(t5$wealth_tax_revenue[1])` billion.
+.small[<sup>1</sup> Not the authors' choice: BSZ's headline is the wealth tax alone, about $100 billion (Table 5 prints
+$`r bn(wt_printed, 0)` billion; reproduced as $`r bn(t5$wealth_tax_revenue[1])` billion).
 This OPA uses the total as its main estimate because it compares more directly with
-[other analyses](../../../index.html), such as the [RJKDC report](../../../rjkdc-analysis/site/)'s net present value.]
+the [RJKDC analysis](../../../rjkdc-analysis/site/)'s net present value; the [comparison overview](../../../index.html) puts both on one definition.]
 
 ---
 name: part-guess

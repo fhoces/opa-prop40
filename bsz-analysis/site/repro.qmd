@@ -95,6 +95,9 @@ par  <- tr("pareto_summary")
 agg  <- tr("data_sec_agg_r")
 laf  <- tr("fig8_laffer_r")
 ins  <- tr("site_inputs")
+t5pr <- tr("site_tab5_printed")   # each Table 5 cell beside the digit the paper prints
+wt_printed <- t5pr$printed[t5pr$column == "wealth_tax_revenue" & t5pr$row == 1]   # row 1, PDF p.39
+stopifnot(length(wt_printed) == 1)
 stopifnot(identical(inp$vintage, "august"))
 
 bn  <- function(x, d = 1) formatC(x, format = "f", digits = d, big.mark = ",")
@@ -129,15 +132,17 @@ twin_html("the setup",
 ::: {.report-intro}
 ![](assets/opa/opa-details.png){.opa-figure}
 
-California's Proposition 40, the Billionaire Tax Act, would levy a one-time 5% tax on
-the net worth of California's billionaires, paid 1% a year over five years. Two
+California's Proposition 40, the Billionaire Tax Act, would levy, once, a 5% tax on the
+whole net worth of people who lived in California on 1 January 2026 and are worth \$1 billion
+or more, valued on 31 December 2026 and paid 1% a year over five years. Two
 documents carry BSZ's revenue estimate, and this report reproduces
 both:
 
 1. **Boll, Saez and Zucman (BSZ)**, *California Billionaires: Wealth, Taxes, and Wealth
-   Tax Revenue Estimates*, NBER Working Paper 35218, August 2026 revision, and its
-   supplementary Excel workbook. Table 5, row 1 estimates the tax at
-   **`r usd(t5$wealth_tax_revenue[1])`**.
+   Tax Revenue Estimates*, NBER (the National Bureau of Economic Research, which circulates
+   working papers) Working Paper 35218, August 2026 revision, and its supplementary Excel
+   workbook. Table 5, row 1 prints the tax at **`r usd(wt_printed, 0)`**
+   (`r usd(t5$wealth_tax_revenue[1])` in the workbook; the abstract says about \$100 billion).
 2. **Galle, Gamage, Saez and Shanske (GGSS)**, *Expert Report on Proposition 40*, updated
    20 July 2026. It cites **\$100 billion**, and says on p.4 where that comes from:
    "Factoring in 10% of tax avoidance and evasion leads to a scoring of \$104 billion that
@@ -157,10 +162,11 @@ income tax from asset sales, minus `r usd(-t5$annual_ca_inctax_loss[1] * pvf, 2)
 leavers (`r usd(-t5$annual_ca_inctax_loss[1], 2)` a year, over 5 years at 3%): **`r usd(main1)`**. The
 arithmetic is in [The main estimate](#the-main-estimate).
 
-**Not the authors' choice.** BSZ's own headline, the number both documents lead with, is the wealth
-tax alone, `r usd(t5$wealth_tax_revenue[1])`, which GGSS round to \$100 billion. This OPA uses the total
-because it compares more directly with other analyses, such as the
-[RJKDC report](../../rjkdc-analysis/site/)’s net present value. The project's pre-specified output
+**Not the authors' choice.** BSZ's own headline is the wealth tax alone: about \$100 billion in the
+abstract and in GGSS, `r usd(wt_printed, 0)` in Table 5 (p.39), reproduced here as
+`r usd(t5$wealth_tax_revenue[1])`. This OPA uses the total because it compares more directly with
+the [RJKDC analysis](../../rjkdc-analysis/site/)’s net present value; the
+[comparison overview](../../index.html) puts both on one definition. The project's pre-specified output
 (`PLAN.md`, "Pre-specified output"), fixed before any result was seen, named the wealth tax. The
 switch to the total was made on 7 October 2026 for comparability, and the wealth tax is still
 reported throughout. Rows 2 to 4 of Table 5 are the authors' own sensitivity checks: this report
@@ -258,8 +264,10 @@ twin_fold("Figure 1", "fig1")
 tr("fig1")
 ```
 
-The paper's Figure 1 has a Panel B, wealth by industry. The pipeline builds that
-chart as its "Appendix Figure A1":
+The paper's Figure 1 has a Panel B, wealth by industry. The pipeline builds that chart under
+a target it names after Appendix Figure A1, and the chart's title below still says so (a naming
+slip in the code: the paper's Appendix Figure A1, wealth relative to AGI, is not built; see
+"What is not reproduced" under [What reproduces](#what-reproduces)):
 
 ```{r}
 #| echo: false
@@ -785,7 +793,8 @@ billion at today's tax (the workbook's rounded input) and $\tau_0$ = 0.2% of wea
 income tax billionaires already pay,
 $$Z(\tau) = Z_0\, e^{-e(\tau - \tau_0)}, \qquad T(\tau) = \tau\, Z(\tau).$$
 Revenue peaks where the next point of tax loses as much base as it gains in rate, at
-$\tau = 1/e$. With $e$ = 10 (Brülhart et al. 2022, the same value [Rauh et al.](../../rjkdc-analysis/site/) use) that is
+$\tau = 1/e$. With $e$ = 10 (Brülhart et al. 2022, the calibration [Rauh et al.](../../rjkdc-analysis/site/)
+also start from, 10.32; they prefer 12 to 13, `comparison/DISPUTES.md`, row 4) that is
 `r pct(laf$tax_rate[which.max(laf$actual_tax_revenue)], 0)`. The long-run curve also erodes
 wealth itself: $d$ = 15 years of paying the tax shrinks fortunes by $(1-\tau)^d$, and revenue
 then peaks at `r pct(laf$tax_rate[which.max(laf$long_run_tax_revenue)])`, close to the paper's
