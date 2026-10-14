@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Prop 40 RJKDC OPA</title>
-<meta name="description" content="An Open Policy Analysis of the RJKDC side's fiscal estimate of California Proposition 40 (Rauh et al., SSRN March 2026; Jaros and Rauh, NBER September 2026).">
+<title>Prop 40, RJKDC side</title>
+<meta name="description" content="An Open Policy Analysis of the RJKDC side of California Proposition 40: the -$38.9 billion net present value, reproduced from the authors' own code, with its guesswork marked.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@400;600&display=swap">
@@ -73,6 +73,15 @@
   p { margin: 0 0 14px; }
   a { color: var(--accent); }
 
+  /* The main estimate, the same block as the explorer's header and the code review page. */
+  .headline { display: flex; flex-direction: column; gap: 2px; margin: 28px 0 0; }
+  .headline .name { font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--ink-3); font-weight: 500; }
+  .headline .value { font-family: var(--serif); font-size: 40px; font-weight: 600; line-height: 1;
+    color: var(--ink); font-variant-numeric: tabular-nums; }
+  .headline .def { font-size: 13.5px; color: var(--ink-2); line-height: 1.45; margin-top: 2px; max-width: 46em; }
+  .headline .fn { font-size: 12px; color: var(--ink-3); line-height: 1.45; margin: 8px 0 0; max-width: 60em; }
+  .headline .fn a { color: var(--accent); }
   .section-title { position: relative; margin: 44px 0 14px; text-align: center; }
   .section-title h2 { position: relative; z-index: 1; margin: 0; }
   .section-title-icon {
@@ -168,6 +177,8 @@
   table.scen td { color: var(--ink); }
   table.scen td, table.scen th { text-align: right; }
   table.scen td:first-child, table.scen th:first-child { text-align: left; }
+  table.scen td.pref, table.scen th.pref { background: color-mix(in srgb, var(--accent-2) 10%, transparent); }
+  .credit-empty { font-size: 14px; color: var(--ink-2); margin: 10px 0 0; }
 
   footer {
     margin-top: 52px; padding-top: 20px; border-top: 1px solid var(--rule);
@@ -210,26 +221,55 @@
 
 <header>
   <p class="eyebrow">Open Policy Analysis for:</p>
-  <h1>The Net Present Value of the Billionaire Tax Act <span class="wip">Work in progress</span></h1>
+  <h1>California Proposition 40, Analysis From Rauh, Jaros, Kearney, Doran, Cosso (RJKDC) <span class="wip">Work in progress</span></h1>
   <p class="byline">
-    A reproduction of the RJKDC side's fiscal estimate of California Proposition 40, the
-    one-time Billionaire Tax Act: Rauh, Jaros, Kearney, Doran and Cosso,
+    Proposition 40, the Billionaire Tax Act, would tax California's billionaires once, at 5%
+    of their net worth, paid over five years. The RJKDC side argues the state ends up poorer,
+    because billionaires who leave take their income tax with them for ever. This site
+    reproduces that estimate from its two versions, Rauh, Jaros, Kearney, Doran and Cosso,
     <cite><a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6340778">The Net Present
     Value of the Billionaire Tax Act</a></cite> (Hoover Institution, SSRN 6340778, 17 March 2026),
     and its revision by Jaros and Rauh
     (<a href="https://www.nber.org/system/files/chapters/c15504/c15504.pdf">NBER chapter c15504</a>,
-    22 September 2026). Rebuilt from the authors' own public code and data
-    (<a href="https://github.com/bjaros20/wealth_tax">github.com/bjaros20/wealth_tax</a>). This site
-    follows the <a href="https://tinyurl.com/1qypbihb">Open
+    22 September 2026). It is rebuilt from the authors' own public code and data
+    (<a href="https://github.com/bjaros20/wealth_tax">github.com/bjaros20/wealth_tax</a>), and it
+    marks which of its inputs are data and which are guesses.
+    This site follows the <a href="https://tinyurl.com/1qypbihb">Open
     Policy Analysis</a> (OPA) framework, so what the analysis
     concludes, how it gets there, and what to run yourself stay in separate,
     checkable places.
   </p>
 </header>
 
+<div class="headline">
+  <span class="name">Main estimate<sup>1</sup>, NBER September 2026</span>
+  <span class="value" id="hl-main">&minus;$38.9B</span>
+  <span class="def">Defined as the one-time wealth tax revenue minus the present value of
+    California income tax lost for ever to billionaires who leave (NPV = WT &minus; f&middot;C / r),
+    averaged over the authors' Monte Carlo draws.</span>
+  <p class="fn"><sup>1</sup> The authors' own headline, from their latest version (Jaros and
+    Rauh, NBER chapter c15504, September 2026, PDF p.1). Their first version (Rauh et al., SSRN,
+    March 2026) put it at <span id="hl-ssrn">&minus;$24.7 billion</span>. That earlier estimate
+    remains a scenario in the <a href="explorer/">explorer</a> and the anchor of the
+    <a href="../../index.html">comparison page</a>.</p>
+</div>
+<script src="explorer/grid.js"></script>
+<script>
+  // Read both numbers from the explorer's grid (its preferred list) so they cannot drift from it.
+  (function () {
+    var G = window.__GRID__;
+    if (!G || !G.preferred) return;
+    function pick(k) { return G.preferred.filter(function (p) { return p.key === k; })[0]; }
+    function usd(x) { return (x < 0 ? "\u2212$" : "$") + Math.abs(x).toFixed(1); }
+    var n = pick("nber"), s = pick("ssrn");
+    if (n) document.getElementById("hl-main").textContent = usd(n.printed_npv) + "B";
+    if (s) document.getElementById("hl-ssrn").textContent = usd(s.printed_npv) + " billion";
+  })();
+</script>
+
 <div class="section-title">
   <img class="section-title-icon" src="assets/opa/opa-all.png" alt="" aria-hidden="true">
-  <h2>Three layers to understand the paper</h2>
+  <h2>Three layers to understand the analysis</h2>
 </div>
 
 <div class="cards">
@@ -237,11 +277,12 @@
     <div class="card-row">
       <div class="card-text">
         <span class="kicker">Open Output</span>
-        <h3>What the Act is worth to the state &rarr;</h3>
-        <p>A precomputed grid over the seven inputs of the authors' Monte Carlo, 2,187
-           combinations of three levels each, labelled data or guesswork, with the two preferred
-           estimates (SSRN and NBER) side by side. Each cell holds the exact expected NPV and the
-           exact share of negative outcomes.</p>
+        <h3>Explore the main estimate and its assumptions &rarr;</h3>
+        <p>The mean net present value and the share of negative outcomes for every combination of
+           the seven inputs of the authors' Monte Carlo: 2,187 combinations of three levels each,
+           labelled data or guesswork. The page opens on the NBER setting, the main estimate; the
+           SSRN setting is one click away. Each cell holds the exact expected NPV and the exact
+           share of negative outcomes.</p>
       </div>
       <div class="card-icon-box" aria-hidden="true">
         <img src="assets/opa/opa-assumptions-solo.png" alt="">
@@ -253,18 +294,18 @@
     <div class="card-row">
       <div class="card-text">
         <span class="kicker">Open Analysis</span>
-        <p class="lead">The paper's claim and machinery, opened up in two forms: read in full, or taught step by step.</p>
+        <p class="lead">One reproduction, told two ways. Both read the same pipeline outputs.</p>
         <div class="card-subgrid">
           <a class="subcard" href="repro.html">
-            <h3>The full reproduction &rarr;</h3>
-            <p>The paper's sections in order (the revenue chain, the income tax, the perpetuity,
-               Tables 8 to 10, the Monte Carlo), then what the NBER revision changes. Every equation
-               explained in plain language and every number read from the pipeline.</p>
+            <h3>The reproduction report &rarr;</h3>
+            <p>The main estimate derived step by step, then the paper's sections in order (the
+               revenue chain, the income tax, the perpetuity, Tables 8 to 10, the Monte Carlo) and
+               what the NBER revision changes. Every number is read from the pipeline.</p>
           </a>
           <a class="subcard" href="slides/slides.html">
-            <h3>Teaching materials &rarr;</h3>
-            <p>A slide deck to teach the argument to yourself or others: the one equation, where
-               each input comes from, why a perpetuity decides the sign, and what to argue about.</p>
+            <h3>Slides &rarr;</h3>
+            <p>A short deck: the one equation, where each input comes from, why a perpetuity
+               decides the sign, and what to argue about.</p>
           </a>
         </div>
       </div>
@@ -278,7 +319,7 @@
     <div class="card-row">
       <div class="card-text">
         <span class="kicker">Open Materials</span>
-        <h3>The repository on GitHub &rarr;</h3>
+        <h3>Materials for computational reproduction &rarr;</h3>
         <p>The R pipeline (built with <code>{targets}</code>) and its Python twin, the test suite, every exported CSV, the source
         manifest with SHA-256 hashes, and the nine mismatches between the papers, their READMEs and
         their code. A guided summary is on the materials page, linked in the text below.</p>
@@ -296,27 +337,34 @@
 <p>The Act collects a wealth tax once; billionaires who leave stop paying California income
    tax for ever. The authors value that lost stream as a perpetuity and subtract it: NPV = revenue
    &minus; (share of the income tax base that leaves) &times; (annual income tax) / (discount rate).
-   They report the average NPV over 100,000 random draws of those inputs. The project fixed in
-   advance that this side is shown as <strong>two estimates side by side</strong>: the March SSRN
-   anchor and the September NBER revision. Amounts are billions of dollars.</p>
+   They report the average NPV over 100,000 random draws of those inputs. This OPA's main
+   estimate is the latest version's average, <strong>&minus;$38.9 billion</strong>
+   (Jaros and Rauh, NBER, September 2026).<sup>1</sup> The earlier version (Rauh et al., SSRN,
+   March 2026) put it at &minus;$24.7 billion; the table keeps it beside the main estimate.
+   Amounts are billions of dollars.</p>
 
 <div class="table-scroll">
 <table class="scen">
-  <thead><tr><th></th><th>SSRN, Mar 2026</th><th>NBER, Sept 2026</th></tr></thead>
+  <thead><tr><th></th><th class="pref">NBER, Sept 2026<br><span class="table-subhead">main estimate</span></th><th>SSRN, Mar 2026<br><span class="table-subhead">earlier version</span></th></tr></thead>
   <tbody>
-    <tr><td><strong>Mean NPV to the state, as printed</strong></td><td><strong>−24.7</strong></td><td><strong>−38.9</strong></td></tr>
-    <tr><td>Share of outcomes below zero, as printed</td><td>71%</td><td>85.2%</td></tr>
-    <tr><td>Wealth tax revenue, the paper's headline</td><td>about 40 (35 to 46)</td><td>about 30 (28.4 to 35.6)</td></tr>
-    <tr><td>Mean NPV, authors' seeded run, reproduced</td><td>−24.77</td><td>−38.89</td></tr>
-    <tr><td>Mean NPV, exact expectation of the same draws</td><td>−24.71</td><td>−38.98</td></tr>
-    <tr><td>Mean revenue in the Monte Carlo's draw</td><td>51.26</td><td>36.00</td></tr>
-    <tr><td>Mean present value of income tax lost</td><td>75.96</td><td>74.98</td></tr>
+    <tr><td><strong>Mean NPV to the state, as printed</strong></td><td class="pref"><strong>−38.9</strong></td><td><strong>−24.7</strong></td></tr>
+    <tr><td>Share of outcomes below zero, as printed</td><td class="pref">85.2%</td><td>71%</td></tr>
+    <tr><td>Wealth tax revenue, the paper's headline</td><td class="pref">about 30 (28.4 to 35.6)</td><td>about 40 (35 to 46)</td></tr>
+    <tr><td>Mean NPV, authors' seeded run, reproduced</td><td class="pref">−38.89</td><td>−24.77</td></tr>
+    <tr><td>Mean NPV, exact expectation of the same draws</td><td class="pref">−38.98</td><td>−24.71</td></tr>
+    <tr><td>Mean revenue in the Monte Carlo's draw</td><td class="pref">36.00</td><td>51.26</td></tr>
+    <tr><td>Mean present value of income tax lost</td><td class="pref">74.98</td><td>75.96</td></tr>
   </tbody>
 </table>
 </div>
 
-<p style="margin-top:14px;">Printed values from SSRN PDF pp.1, 14 and 20 and NBER PDF pp.1, 23 and
-   35. Three things the numbers show. First, the result is driven by the loss side: roughly 75 of
+<p class="fn" style="font-size:12.5px; color:var(--ink-3); margin-top:8px;"><sup>1</sup> The
+   authors' own headline in their latest version (NBER PDF p.1). The SSRN estimate stays a scenario in
+   the <a href="explorer/">explorer</a> and the anchor of the <a href="../../index.html">comparison
+   page</a>.</p>
+
+<p style="margin-top:14px;">Printed values from NBER PDF pp.1, 23 and 35 and SSRN PDF pp.1, 14 and
+   20. Three things the numbers show. First, the result is driven by the loss side: roughly 75 of
    present value lost against a few tens collected, because at the draws' 1.5% to 4.5% rates a dollar
    a year for ever is worth 22 to 67 dollars today. Second, the SSRN Monte Carlo draws revenue with a
    mean of 51.26, above the paper's own preferred "about 40", while the NBER draw's mean, 36, is its
@@ -378,29 +426,27 @@ papers, their READMEs and their code. We reproduce the code as shipped and recor
 <p>This work was a collaboration between the author and Claude Code (Opus and Sonnet
 models) across many sessions, not an AI working alone. The table records who led the work on
 each public object of the RJKDC side, using the <a href="https://credit.niso.org/">CRediT</a>
-contributor roles. The author gave these answers in a questionnaire on 2026-10-01; they were not
-inferred from commit history. The author answered the roles once and applied the same answers
-to every object on all three pages, and answered the verification question object by object.
-The table groups the 14 roles into three: <em>ideas and direction</em> (conceptualization,
+contributor roles. The answers come from a questionnaire the author fills in; they are not
+inferred from commit history. The table groups the 14 roles into three: <em>ideas and direction</em> (conceptualization,
 methodology, supervision, project administration), <em>doing the work</em> (data curation,
 formal analysis, investigation, software, validation, visualization) and <em>writing</em>
 (original draft, review and editing). Funding and resources do not apply. Each square in a cell
 is one role, coloured by who led it (key below the table). The last column is not part of
-CRediT. It records how closely the author has checked the object. The role-by-role answers are
-in <a href="https://github.com/fhoces/opa-prop40/blob/main/rjkdc-analysis/site/credit/CREDIT.md">CREDIT.md</a>.</p>
+CRediT. It records how closely the author has checked the object.</p>
 
 <div class="table-scroll">
 <table class="ai-use">
   <thead><tr><th>Object</th><th>Ideas and<br>direction</th><th>Doing<br>the work</th><th>Writing</th><th>Human<br>verification</th></tr></thead>
   <tbody>
-    <tr><td>Explorer<br><span class="table-subhead">Open Output</span></td><td><span class="sqs" role="img" aria-label="Ideas and direction: author led conceptualization; Claude led methodology, supervision; not applicable: project administration" title="Ideas and direction: author led conceptualization; Claude led methodology, supervision; not applicable: project administration"><i class="sq h"></i><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="sqs" role="img" aria-label="Doing the work: Claude led data curation, formal analysis, investigation, software, validation, visualization" title="Doing the work: Claude led data curation, formal analysis, investigation, software, validation, visualization"><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="sqs" role="img" aria-label="Writing: Claude led original draft, review &amp; editing" title="Writing: Claude led original draft, review &amp; editing"><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="meter" aria-hidden="true"><i class="pip on"></i><i class="pip"></i></span>Lightly reviewed</td></tr>
-    <tr><td>Report<br><span class="table-subhead">Open Analysis</span></td><td><span class="sqs" role="img" aria-label="Ideas and direction: author led conceptualization; Claude led methodology, supervision; not applicable: project administration" title="Ideas and direction: author led conceptualization; Claude led methodology, supervision; not applicable: project administration"><i class="sq h"></i><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="sqs" role="img" aria-label="Doing the work: Claude led data curation, formal analysis, investigation, software, validation, visualization" title="Doing the work: Claude led data curation, formal analysis, investigation, software, validation, visualization"><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="sqs" role="img" aria-label="Writing: Claude led original draft, review &amp; editing" title="Writing: Claude led original draft, review &amp; editing"><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="meter" aria-hidden="true"><i class="pip"></i><i class="pip"></i></span>Not reviewed</td></tr>
-    <tr><td>Slides<br><span class="table-subhead">Open Analysis</span></td><td><span class="sqs" role="img" aria-label="Ideas and direction: author led conceptualization; Claude led methodology, supervision; not applicable: project administration" title="Ideas and direction: author led conceptualization; Claude led methodology, supervision; not applicable: project administration"><i class="sq h"></i><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="sqs" role="img" aria-label="Doing the work: Claude led data curation, formal analysis, investigation, software, validation, visualization" title="Doing the work: Claude led data curation, formal analysis, investigation, software, validation, visualization"><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="sqs" role="img" aria-label="Writing: Claude led original draft, review &amp; editing" title="Writing: Claude led original draft, review &amp; editing"><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="meter" aria-hidden="true"><i class="pip"></i><i class="pip"></i></span>Not reviewed</td></tr>
-    <tr><td>Repository<br><span class="table-subhead">Open Materials</span></td><td><span class="sqs" role="img" aria-label="Ideas and direction: author led conceptualization; Claude led methodology, supervision; not applicable: project administration" title="Ideas and direction: author led conceptualization; Claude led methodology, supervision; not applicable: project administration"><i class="sq h"></i><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="sqs" role="img" aria-label="Doing the work: Claude led data curation, formal analysis, investigation, software, validation, visualization" title="Doing the work: Claude led data curation, formal analysis, investigation, software, validation, visualization"><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="sqs" role="img" aria-label="Writing: Claude led original draft, review &amp; editing" title="Writing: Claude led original draft, review &amp; editing"><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="meter" aria-hidden="true"><i class="pip"></i><i class="pip"></i></span>Not reviewed</td></tr>
-    <tr><td>Overview page<br><span class="table-subhead">this page</span></td><td><span class="sqs" role="img" aria-label="Ideas and direction: author led conceptualization; Claude led methodology, supervision; not applicable: project administration" title="Ideas and direction: author led conceptualization; Claude led methodology, supervision; not applicable: project administration"><i class="sq h"></i><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="sqs" role="img" aria-label="Doing the work: Claude led data curation, formal analysis, investigation, software, validation, visualization" title="Doing the work: Claude led data curation, formal analysis, investigation, software, validation, visualization"><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="sqs" role="img" aria-label="Writing: Claude led original draft, review &amp; editing" title="Writing: Claude led original draft, review &amp; editing"><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="meter" aria-hidden="true"><i class="pip"></i><i class="pip"></i></span>Not reviewed</td></tr>
+    <tr><td>Explorer<br><span class="table-subhead">Open Output</span></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td>Report<br><span class="table-subhead">Open Analysis</span></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td>Slides<br><span class="table-subhead">Open Analysis</span></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td>Repository<br><span class="table-subhead">Open Materials</span></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td>Overview page<br><span class="table-subhead">this page</span></td><td></td><td></td><td></td><td></td></tr>
   </tbody>
 </table>
 </div>
+<p class="credit-empty">The credit interview has not been run for this side yet.</p>
 <div class="ai-key">
   <div><span><i class="sq h"></i> led by the author</span>
   <span><i class="sq ai"></i> led by Claude</span>
@@ -428,12 +474,10 @@ original authors have not reviewed it.</p>
 </details>
 
 <footer>
-  Open Output: <a href="explorer/">the explorer</a> &middot;
-  Open Analysis: <a href="repro.html">Report</a> and <a href="slides/slides.html">Slides</a> &middot;
-  Open Materials: <a href="https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis">the repository</a> (guide: <a href="materials.html">materials page</a>) &middot;
-  Overview (this page). See also the <a href="../../bsz-analysis/site/">BSZ report</a> and the
-  <a href="../../index.html">reconciliation page</a>.
-  Source: <a href="https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis">github.com/fhoces/opa-prop40</a>.
+  Part of <a href="https://github.com/fhoces/opa-prop40">opa-prop40</a>, an Open Policy
+  Analysis of both sides of California Proposition 40 (the Billionaire Tax Act). See also the
+  <a href="../../bsz-analysis/site/">BSZ side overview</a> and the
+  <a href="../../index.html">comparison overview</a>.
   <p class="credit">OPA done by <a href="https://fhoces.github.io">Fernando Hoces de la Guardia</a>, using <a href="#how-ai-was-used">agentic coding tools</a></p>
 </footer>
 
