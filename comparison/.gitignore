@@ -1,0 +1,3 @@
+# The comparison report and materials page are published pages: track them
+# (the root .gitignore ignores rendered *.html elsewhere).
+!site/*.html
