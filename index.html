@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Prop 40, Reconciled</title>
+<title>California Proposition 40, Reconciliation of the Two Analyses</title>
 <meta name="description" content="Reconciling the two rival revenue analyses of California's Proposition 40 (the 2026 Billionaire Tax Act) on one common output definition and one input-by-input bridge.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -205,106 +205,180 @@
   .ai-key { font-size: 13px; color: var(--ink-2); margin: 8px 0 0; line-height: 1.8; }
   .ai-key span { margin-right: 14px; white-space: nowrap; }
   footer .credit { margin: 10px 0 0; font-size: 85%; color: var(--ink-3); }
-  /* Sections after the layer cards fold, closed by default (as on the per-side overviews).
-     The summary holds the section title, left-aligned; the chevron sits to its left. */
+  /* The sections after the cards fold, closed by default, as on the side overviews.
+     The chevron is drawn in CSS; the h2 keeps its own style inside the summary. */
   details.fold > summary { list-style: none; cursor: pointer; display: flex; align-items: center;
-    justify-content: flex-start; gap: 12px; margin: 44px 0 14px; }
+    gap: 12px; margin: 30px 0 0; }
   details.fold > summary::-webkit-details-marker { display: none; }
-  details.fold > summary .section-title { margin: 0; text-align: left; }
+  details.fold > summary h2 { margin: 0; }
   details.fold > summary::before {
-    content: ""; flex: none; width: 9px; height: 9px;
+    content: ""; flex: none; width: 9px; height: 9px; margin-left: 2px;
     border-right: 2px solid var(--ink-3); border-bottom: 2px solid var(--ink-3);
     transform: rotate(-45deg); transition: transform .15s;
   }
   details.fold[open] > summary::before { transform: rotate(45deg); }
   details.fold > summary:hover h2, details.fold > summary:focus-visible h2 { color: var(--accent); }
   details.fold > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 4px; }
+  details.fold > .fold-body { margin-top: 14px; }
   details.fold:not([open]) > .fold-body { display: none; }
+
+  /* The main estimate, the same block as on the side overviews and the code review page. */
+  .headline { display: flex; flex-direction: column; gap: 2px; margin: 28px 0 0; }
+  .headline .name { font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--ink-3); font-weight: 500; }
+  .headline .value { font-family: var(--serif); font-size: 40px; font-weight: 600; line-height: 1;
+    color: var(--ink); font-variant-numeric: tabular-nums; }
+  .headline .def { font-size: 13.5px; color: var(--ink-2); line-height: 1.45; margin-top: 2px; max-width: 46em; }
+  .headline .fn { font-size: 12px; color: var(--ink-3); line-height: 1.45; margin: 8px 0 0; max-width: 60em; }
+  .headline .fn a { color: var(--accent); }
+
+  /* The three layer cards, as on the side overviews. z-index:0 gives each card its own
+     stacking context, so the watermark icon (z-index:-1) paints behind the card's text
+     and not behind the page. */
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 22px 0 0; }
+  .card {
+    display: block; padding: 20px 22px; border: 1px solid var(--rule);
+    border-radius: 10px; background: var(--panel); color: inherit;
+    text-decoration: none; transition: border-color .15s, transform .15s;
+    position: relative; z-index: 0; overflow: hidden;
+  }
+  .card.wide { grid-column: 1 / -1; }
+  .card:hover, .card:focus-visible { border-color: var(--accent); transform: translateY(-1px); }
+  .card .kicker {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+  .card h3 {
+    font-family: var(--serif); font-size: 20px; font-weight: 600;
+    margin: 4px 0 6px; color: var(--accent);
+  }
+  .card p { color: var(--ink-2); font-size: 15px; margin: 0; }
+  .card .card-icon-box { height: 110px; width: 130px; }
+  .card .card-icon-box img { height: 110px; }
+  .card p.lead { margin: 2px 0 14px; }
+  .card-subgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .subcard {
+    display: block; padding: 12px 14px; border: 1px solid var(--rule);
+    border-radius: 8px; text-decoration: none; color: inherit;
+    transition: border-color .15s, transform .15s;
+  }
+  .subcard:hover, .subcard:focus-visible { border-color: var(--accent); transform: translateY(-1px); }
+  @media (max-width: 560px) {
+    .cards { grid-template-columns: 1fr; }
+    .card-subgrid { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
 
 <header>
-  <p class="eyebrow">Open Policy Analysis: reconciliation of two rival analyses</p>
-  <h1>California's Billionaire Tax (Proposition 40): why the two revenue estimates differ <span class="wip">Work in progress</span></h1>
+  <p class="eyebrow">Open Policy Analysis for:</p>
+  <h1>California Proposition 40, Reconciliation of the Two Analyses <span class="wip">Work in progress</span></h1>
   <p class="byline">
-    The BSZ side estimates the one-time 5% tax on the net worth of California's billionaires at about
-    $100B; the RJKDC report (Rauh, Jaros, Kearney, Doran and Cosso) finds
-    −$24.7B once lost income tax is netted out. This page puts both on one common output
-    and walks from one number to the other, one disputed input at a time. Each side is also a
-    full, independent Open Policy Analysis of its own; this page adds a reconciliation layer on
-    top, following the <a href="https://tinyurl.com/1qypbihb">Open Policy Analysis</a> framework.
+    Proposition 40, the Billionaire Tax Act, would tax California's billionaires once, at 5%
+    of their net worth, paid over five years. Two analyses estimate it and reach very different
+    numbers. The <a href="bsz-analysis/site/">BSZ report</a> (Boll, Saez and Zucman, with the
+    GGSS expert report by Galle, Gamage, Saez and Shanske) estimates the revenue at about
+    $100B. The <a href="rjkdc-analysis/site/">RJKDC report</a> (Rauh, Jaros, Kearney,
+    Doran and Cosso) finds a net present value of −$38.9B in its latest version, once lost
+    income tax is netted out. This page puts both on one common output and walks from one number
+    to the other, one disputed input at a time. Each analysis is also a full Open Policy Analysis
+    of its own. This page adds a reconciliation layer on top, following the
+    <a href="https://tinyurl.com/1qypbihb">Open Policy Analysis</a> (OPA) framework.
   </p>
 </header>
 
+<div class="headline">
+  <span class="name">Main estimate<sup>1</sup>, the gap on the common output</span>
+  <span class="value" id="hl-main">$67.8B</span>
+  <span class="def">Defined as the difference between the two sides' gross one-time wealth tax
+    revenue once both are estimated on one definition, explained one disputed input at a time.</span>
+  <p class="fn"><sup>1</sup> Neither side reports this number. It is this OPA's reconciliation,
+    between the two ends of <a href="#the-bridge">the bridge</a>. One end is
+    <span id="hl-bsz">$103.8B</span>, the wealth tax revenue in Table 5 row 1 of the
+    <a href="bsz-analysis/site/">BSZ report</a> (NBER WP 35218, PDF p.39). The other is
+    <span id="hl-nber">$36.0B</span>, the expected revenue in the Monte Carlo of the
+    <a href="rjkdc-analysis/site/">RJKDC report</a>'s latest version (Jaros and Rauh, NBER
+    c15504, September 2026), where the revenue is drawn uniformly between zero and
+    $72B.</p>
+</div>
+<script src="assets/comparison-data.js"></script>
+<script>
+  // Read the two ends from the bridge's data file so the number cannot drift from it:
+  // the "bsz" and "nber" bars of the default view, output (a), own horizons.
+  (function () {
+    var D = window.__BRIDGE__;
+    if (!D || !D.series || !D.series.own) return;
+    var B = D.series.own.a.shapley;
+    function end(id) { return B.filter(function (b) { return b.id === id; })[0].value; }
+    var bsz = end("bsz"), nber = end("nber");
+    document.getElementById("hl-main").textContent = "$" + (bsz - nber).toFixed(1) + "B";
+    document.getElementById("hl-bsz").textContent = "$" + bsz.toFixed(1) + "B";
+    document.getElementById("hl-nber").textContent = "$" + nber.toFixed(1) + "B";
+  })();
+</script>
+
 <div class="section-title">
   <img class="section-title-icon" src="assets/opa/opa-all.png" alt="" aria-hidden="true">
-  <h2>A common output definition</h2>
+  <h2>Three layers to understand the analysis</h2>
 </div>
 
-<p>The two headlines answer different questions. The BSZ side (Boll, Saez and Zucman, plus the
-GGSS expert report by Galle, Gamage, Saez and Shanske) reports how much the
-one-time tax collects; the RJKDC side reports a net present value that subtracts income tax
-lost for ever. Before any step of a bridge means anything, both are put on the same two outputs:</p>
-
-<div class="formula">(a) gross revenue    = one-time wealth tax collected
-(b) net fiscal effect = (a) + extra income tax from assets sold to pay
-                        - present value of income tax lost to departures, over a horizon of H years</div>
-
-<p>The horizon H is itself disputed (row 2 of the project's list of 8 disputed inputs,
-<a href="comparison/DISPUTES.md">comparison/DISPUTES.md</a>): the BSZ side counts the losses for
-about the 5 payment years, the RJKDC side for ever. It is therefore a dial on the bridge
-below, not a fixed choice. Discounting uses the RJKDC report's own range for the discount
-rate, r uniform between 1.5% and 4.5% (Rauh p.20 eq.24); the BSZ side takes no
-position on r.</p>
-
-<div class="section-title">
-  <img class="section-title-icon" src="assets/opa/opa-assumptions-solo.png" alt="" aria-hidden="true">
-  <h2>Two analyses, two estimates each</h2>
-</div>
-
-<div class="subopa-cards">
-  <a class="subopa-card" href="bsz-analysis/site/">
-    <span class="kicker">BSZ side: a revenue estimate</span>
-    <h3>Galle, Gamage, Saez, Shanske; Boll, Saez, Zucman &rarr;</h3>
-    <p>Static estimation on the Forbes list with a 10% avoidance allowance.</p>
-    <span class="headline">GGSS (20 Jul 2026): $100B (estimated at $103.8B, rounded)</span>
-    <span class="headline">BSZ (Aug 2026), Table 5 row 1: $103.8B</span>
-    <div class="card-icon-box" aria-hidden="true"><img src="assets/opa/opa-assumptions-solo.png" alt=""></div>
+<div class="cards">
+  <a class="card wide" href="#the-bridge">
+    <div class="card-row">
+      <div class="card-text">
+        <span class="kicker">Open Output</span>
+        <h3>Explore the main estimate and its assumptions &rarr;</h3>
+        <p>The bridge on this page: a waterfall from BSZ Table 5 row 1 to the NBER expected
+        revenue, one bar per disputed input. Its controls switch the output (gross revenue or
+        net fiscal effect), how each step is sized (averaged over every order, or one order)
+        and how long the lost income tax lasts.</p>
+      </div>
+      <div class="card-icon-box" aria-hidden="true">
+        <img src="assets/opa/opa-assumptions-solo.png" alt="">
+      </div>
+    </div>
   </a>
-  <a class="subopa-card" href="rjkdc-analysis/site/">
-    <span class="kicker">RJKDC side: a net present value estimate</span>
-    <h3>Rauh, Jaros, Kearney, Doran, Cosso &rarr;</h3>
-    <p>Person-by-person base, observed departures, literature elasticities, lost income tax.</p>
-    <span class="headline">SSRN (17 Mar 2026): mean NPV −$24.7B</span>
-    <span class="headline">NBER (Sep 2026): mean NPV −$38.9B</span>
-    <div class="card-icon-box" aria-hidden="true"><img src="assets/opa/opa-details.png" alt=""></div>
+
+  <div class="card wide">
+    <div class="card-row">
+      <div class="card-text">
+        <span class="kicker">Open Analysis</span>
+        <p class="lead">One report. It reads the same exported files as this page.</p>
+        <div class="card-subgrid">
+          <a class="subcard" href="comparison/site/repro.html">
+            <h3>The reproduction report &rarr;</h3>
+            <p>The common output, the two ends estimated on it, the bridge step by step, the
+            Hoopes comparison and every input by origin. Each exhibit has its R code and the
+            Python twin in a fold.</p>
+          </a>
+        </div>
+      </div>
+      <div class="card-icon-box" aria-hidden="true">
+        <img src="assets/opa/opa-details.png" alt="">
+      </div>
+    </div>
+  </div>
+
+  <a class="card wide" href="https://github.com/fhoces/opa-prop40/tree/main/comparison">
+    <div class="card-row">
+      <div class="card-text">
+        <span class="kicker">Open Materials</span>
+        <h3>Materials for computational reproduction &rarr;</h3>
+        <p>The R code that computes every number on this page, its Python twin, the test suite,
+        every exported CSV and the page-referenced transcriptions. A guided summary is on the
+        materials page, linked in the text below.</p>
+      </div>
+      <div class="card-icon-box" aria-hidden="true">
+        <img src="assets/opa/opa-materials.png" alt="">
+      </div>
+    </div>
   </a>
 </div>
 
-<div class="table-scroll">
-<table>
-  <thead><tr><th>Estimate</th><th class="num">(a) gross revenue</th><th class="num">(b) net fiscal effect</th><th>What the authors print</th></tr></thead>
-  <tbody>
-    <tr><td>GGSS expert report (20 Jul 2026)</td><td class="num">$100B</td><td class="num">not computed</td><td>$104B estimate, rounded to $100B (p.4)</td></tr>
-    <tr><td>BSZ NBER WP 35218, Table 5 row 1 (Aug 2026)</td><td class="num">$103.8B</td><td class="num">$106.8B</td><td>$104B revenue (PDF p.39); no net figure</td></tr>
-    <tr><td>Rauh et al., SSRN 6340778 (17 Mar 2026)</td><td class="num">$51.26B</td><td class="num">−$24.71B</td><td>mean NPV −$24.7B (p.20); revenue 'about $40B' (p.14)</td></tr>
-    <tr><td>Jaros and Rauh, NBER c15504 (Sep 2026)</td><td class="num">$36.0B</td><td class="num">−$38.98B</td><td>mean NPV −$38.9B; revenue 'approximately $30B' (p.1)</td></tr>
-  </tbody>
-</table>
-</div>
-<p class="small">(b) for the BSZ side is not printed by either paper: it is BSZ Table 5 row 1's
-own three columns combined here, the $103.8B revenue plus $3.68B of extra income tax from
-asset sales minus $0.70B, the present value of five years of its $0.15B annual income tax
-loss. Rauh's (a) is the expected revenue in the Monte Carlo that produces his −$24.7B; the
-other revenue numbers he prints are listed under the bridge.</p>
-
-<details class="fold" id="bridge">
-  <summary><div class="section-title">
-  <img class="section-title-icon" src="assets/opa/opa-details.png" alt="" aria-hidden="true">
-  <h2>The bridge, one disputed input at a time</h2>
-</div></summary>
+<details class="fold" id="the-bridge">
+  <summary><h2>The bridge, one disputed input at a time</h2></summary>
   <div class="fold-body">
 <p>One estimating function, <code>score_common()</code> (<code>comparison/R/model.R</code>, with a
 Python twin), estimates both sides. Every disputed input is an argument that takes either the
@@ -318,6 +392,12 @@ size of a step depends on the order the inputs are switched. The default bars ar
 values</b>: each step's switch averaged over all 39,916,800 possible orders, so the steps add up
 exactly to the total gap whatever the reading order. "One order" shows a single sequence instead,
 the one Hoopes reads in.</p>
+<p>The bridge works on two common outputs, defined <a href="#common-output">below</a>: (a) the
+gross one-time wealth tax revenue and (b) the net fiscal effect. The main estimate at the top of
+this page is the distance between two bars of the default view, output (a): BSZ row 1
+($103.8B) and the last bar, the NBER expected revenue ($36.0B). Every bar between
+them is a step of that gap, the model difference and the NBER revision included, and together
+they add up to −$67.8B.</p>
 
 <div class="controls" id="controls">
   <div class="control-group" role="group" aria-label="Output">
@@ -418,14 +498,80 @@ tax revenue.</p>
   </tbody>
 </table>
 </div>
+<p class="small" style="margin-top:14px;">Every number on this page is computed by
+<code>comparison/R/</code> from the two sides' export contracts (<code>bsz-analysis/export/r/</code>,
+<code>rjkdc-analysis/export/r/</code>: the files each side's pipeline writes for others to read)
+and the page-referenced transcriptions in <code>comparison/data/</code>. A Python twin reproduces
+them (R and Python agree to 1e-9 on every exported number; see comparison/tests). The <a href="comparison/site/repro.html">reproduction report</a> derives
+each one step by step, and the <a href="comparison/site/materials.html">materials page</a> is a
+guide to the code, tests and files.</p>
+  </div>
+</details>
+
+<details class="fold" id="common-output">
+  <summary><h2>A common output definition</h2></summary>
+  <div class="fold-body">
+<p>The two headlines answer different questions. The BSZ side (Boll, Saez and Zucman, plus the
+GGSS expert report by Galle, Gamage, Saez and Shanske) reports how much the
+one-time tax collects; the RJKDC side reports a net present value that subtracts income tax
+lost for ever. Before any step of a bridge means anything, both are put on the same two outputs:</p>
+
+<div class="formula">(a) gross revenue    = one-time wealth tax collected
+(b) net fiscal effect = (a) + extra income tax from assets sold to pay
+                        - present value of income tax lost to departures, over a horizon of H years</div>
+
+<p>The horizon H is itself disputed (row 2 of the project's list of 8 disputed inputs,
+<a href="comparison/DISPUTES.md">comparison/DISPUTES.md</a>): the BSZ side counts the losses for
+about the 5 payment years, the RJKDC side for ever. It is therefore a dial on the bridge
+below, not a fixed choice. Discounting uses the RJKDC report's own range for the discount
+rate, r uniform between 1.5% and 4.5% (Rauh p.20 eq.24); the BSZ side takes no
+position on r.</p>
+  </div>
+</details>
+
+<details class="fold" id="two-analyses">
+  <summary><h2>Two analyses, two estimates each</h2></summary>
+  <div class="fold-body">
+<div class="subopa-cards">
+  <a class="subopa-card" href="bsz-analysis/site/">
+    <span class="kicker">BSZ side: a revenue estimate</span>
+    <h3>Galle, Gamage, Saez, Shanske; Boll, Saez, Zucman &rarr;</h3>
+    <p>Static estimation on the Forbes list with a 10% avoidance allowance.</p>
+    <span class="headline">GGSS (20 Jul 2026): $100B (estimated at $103.8B, rounded)</span>
+    <span class="headline">BSZ (Aug 2026), Table 5 row 1: $103.8B</span>
+    <div class="card-icon-box" aria-hidden="true"><img src="assets/opa/opa-assumptions-solo.png" alt=""></div>
+  </a>
+  <a class="subopa-card" href="rjkdc-analysis/site/">
+    <span class="kicker">RJKDC side: a net present value estimate</span>
+    <h3>Rauh, Jaros, Kearney, Doran, Cosso &rarr;</h3>
+    <p>Person-by-person base, observed departures, literature elasticities, lost income tax.</p>
+    <span class="headline">SSRN (17 Mar 2026): mean NPV −$24.7B</span>
+    <span class="headline">NBER (Sep 2026): mean NPV −$38.9B</span>
+    <div class="card-icon-box" aria-hidden="true"><img src="assets/opa/opa-details.png" alt=""></div>
+  </a>
+</div>
+
+<div class="table-scroll">
+<table>
+  <thead><tr><th>Estimate</th><th class="num">(a) gross revenue</th><th class="num">(b) net fiscal effect</th><th>What the authors print</th></tr></thead>
+  <tbody>
+    <tr><td>GGSS expert report (20 Jul 2026)</td><td class="num">$100B</td><td class="num">not computed</td><td>$104B estimate, rounded to $100B (p.4)</td></tr>
+    <tr><td>BSZ NBER WP 35218, Table 5 row 1 (Aug 2026)</td><td class="num">$103.8B</td><td class="num">$106.8B</td><td>$104B revenue (PDF p.39); no net figure</td></tr>
+    <tr><td>Rauh et al., SSRN 6340778 (17 Mar 2026)</td><td class="num">$51.26B</td><td class="num">−$24.71B</td><td>mean NPV −$24.7B (p.20); revenue 'about $40B' (p.14)</td></tr>
+    <tr><td>Jaros and Rauh, NBER c15504 (Sep 2026)</td><td class="num">$36.0B</td><td class="num">−$38.98B</td><td>mean NPV −$38.9B; revenue 'approximately $30B' (p.1)</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="small">(b) for the BSZ side is not printed by either paper: it is BSZ Table 5 row 1's
+own three columns combined here, the $103.8B revenue plus $3.68B of extra income tax from
+asset sales minus $0.70B, the present value of five years of its $0.15B annual income tax
+loss. Rauh's (a) is the expected revenue in the Monte Carlo that produces his −$24.7B; the
+other revenue numbers he prints are listed under the bridge.</p>
   </div>
 </details>
 
 <details class="fold">
-  <summary><div class="section-title">
-  <img class="section-title-icon" src="assets/opa/opa-details.png" alt="" aria-hidden="true">
-  <h2 id="hoopes">The existing comparison: Hoopes (2026)</h2>
-</div></summary>
+  <summary><h2 id="hoopes">The existing comparison: Hoopes (2026)</h2></summary>
   <div class="fold-body">
 <p>Jeffrey Hoopes, "Galle v Rauh: Comparing Two Revenue Estimates for California Billionaire
 Taxation" (SSRN 6428578, 7 pages), is the one published side-by-side of the two estimates. His
@@ -474,10 +620,7 @@ me to read both of these analyses carefully and compare the two" (p.1); Gamage i
 </details>
 
 <details class="fold" id="vintage-gap">
-  <summary><div class="section-title">
-  <img class="section-title-icon" src="assets/opa/opa-materials.png" alt="" aria-hidden="true">
-  <h2>The vintage gap</h2>
-</div></summary>
+  <summary><h2>The vintage gap</h2></summary>
   <div class="fold-body">
 <p>The documents were written months apart, and the BSZ side has moved twice since the
 RJKDC report. Some of the March disputes are settled on the BSZ side by August (Larry
@@ -500,10 +643,7 @@ Ellison's exclusion, the non-citizen residents); others are not.</p>
 </details>
 
 <details class="fold" id="disputed-inputs">
-  <summary><div class="section-title">
-  <img class="section-title-icon" src="assets/opa/opa-assumptions-solo.png" alt="" aria-hidden="true">
-  <h2>The disputed inputs</h2>
-</div></summary>
+  <summary><h2>The disputed inputs</h2></summary>
   <div class="fold-body">
 <p>One bridge step per row of <a href="comparison/DISPUTES.md">comparison/DISPUTES.md</a>, where
 every page reference was checked against the PDFs; row 7 is split into its two parts, and two
@@ -533,10 +673,7 @@ rounded 94.2 rather than 94.304.</p>
 </details>
 
 <details class="fold" id="neutral-material">
-  <summary><div class="section-title">
-  <img class="section-title-icon" src="assets/opa/opa-all.png" alt="" aria-hidden="true">
-  <h2>Neutral material and credited alternative dials</h2>
-</div></summary>
+  <summary><h2>Neutral material and credited alternative dials</h2></summary>
   <div class="fold-body">
 <p><b>LAO (neutral context).</b> The Legislative Analyst's ballot analysis gives no point estimate:
 the tax "probably would collect tens of billions of dollars", and responses "probably would reduce
@@ -567,50 +704,43 @@ credited dial, the others are for scale.</p>
 </details>
 
 <details class="fold" id="full-analyses">
-  <summary><div class="section-title">
-  <img class="section-title-icon" src="assets/opa/opa-all.png" alt="" aria-hidden="true">
-  <h2>The two full analyses</h2>
-</div></summary>
+  <summary><h2>The two full analyses</h2></summary>
   <div class="fold-body">
 <ul>
   <li><a href="bsz-analysis/site/">BSZ side</a>: GGSS and BSZ reproduced from the BSZ workbook, with an explorer over Table 5's guesswork inputs, a report, slides and materials.</li>
   <li><a href="rjkdc-analysis/site/">RJKDC side</a>: Rauh et al. (SSRN) and Jaros and Rauh (NBER) reproduced from the authors' public code.</li>
-  <li><a href="comparison/DISPUTES.md">The disputes crosswalk</a> and the reconciliation's code, tests and exports in <code>comparison/</code>.</li>
+  <li><a href="comparison/DISPUTES.md">The disputes crosswalk</a> and the reconciliation's code, tests and exports in <code>comparison/</code>, with a guide on the <a href="comparison/site/materials.html">materials page</a>.</li>
 </ul>
   </div>
 </details>
 
-<details class="fold">
-  <summary><div class="section-title" id="how-ai-was-used">
-  <img class="section-title-icon" src="assets/opa/opa-all.png" alt="" aria-hidden="true">
-  <h2>How AI was used in this exercise, and what has been verified</h2>
-</div></summary>
+<details class="fold" id="how-ai-was-used">
+  <summary><h2>How AI was used in this exercise, and what has been verified</h2></summary>
   <div class="fold-body">
 <p>This work was a collaboration between the author and Claude Code (Opus and Sonnet
 models) across many sessions, not an AI working alone. The table records who led the work on
 each public object of the reconciliation, using the <a href="https://credit.niso.org/">CRediT</a>
-contributor roles. The author gave these answers in a questionnaire on 2026-10-01; they were not
-inferred from commit history. The author answered the roles once and applied the same answers
-to every object on all three pages, and answered the verification question object by object.
+contributor roles. The answers will come from a questionnaire the author fills in, not from
+commit history.
 The table groups the 14 roles into three: <em>ideas and direction</em> (conceptualization,
 methodology, supervision, project administration), <em>doing the work</em> (data curation,
 formal analysis, investigation, software, validation, visualization) and <em>writing</em>
 (original draft, review and editing). Funding and resources do not apply. Each square in a cell
 is one role, coloured by who led it (key below the table). The last column is not part of
-CRediT. It records how closely the author has checked the object. The role-by-role answers are
-in <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/site/credit/CREDIT.md">CREDIT.md</a>.</p>
+CRediT. It records how closely the author has checked the object.</p>
 
 <div class="table-scroll">
 <table class="ai-use">
   <thead><tr><th>Object</th><th>Ideas and<br>direction</th><th>Doing<br>the work</th><th>Writing</th><th>Human<br>verification</th></tr></thead>
   <tbody>
-    <tr><td>Reconciliation page<br><span class="table-subhead">this page</span></td><td><span class="sqs" role="img" aria-label="Ideas and direction: author led conceptualization; Claude led methodology, supervision; not applicable: project administration" title="Ideas and direction: author led conceptualization; Claude led methodology, supervision; not applicable: project administration"><i class="sq h"></i><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="sqs" role="img" aria-label="Doing the work: Claude led data curation, formal analysis, investigation, software, validation, visualization" title="Doing the work: Claude led data curation, formal analysis, investigation, software, validation, visualization"><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="sqs" role="img" aria-label="Writing: Claude led original draft, review &amp; editing" title="Writing: Claude led original draft, review &amp; editing"><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="meter" aria-hidden="true"><i class="pip on"></i><i class="pip"></i></span>Lightly reviewed</td></tr>
-    <tr><td>Bridge analysis code<br><span class="table-subhead">Open Materials</span></td><td><span class="sqs" role="img" aria-label="Ideas and direction: author led conceptualization; Claude led methodology, supervision; not applicable: project administration" title="Ideas and direction: author led conceptualization; Claude led methodology, supervision; not applicable: project administration"><i class="sq h"></i><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="sqs" role="img" aria-label="Doing the work: Claude led data curation, formal analysis, investigation, software, validation, visualization" title="Doing the work: Claude led data curation, formal analysis, investigation, software, validation, visualization"><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="sqs" role="img" aria-label="Writing: Claude led original draft, review &amp; editing" title="Writing: Claude led original draft, review &amp; editing"><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="meter" aria-hidden="true"><i class="pip"></i><i class="pip"></i></span>Not reviewed</td></tr>
-    <tr><td>Disputes table<br><span class="table-subhead">Open Materials</span></td><td><span class="sqs" role="img" aria-label="Ideas and direction: author led conceptualization; Claude led methodology, supervision; not applicable: project administration" title="Ideas and direction: author led conceptualization; Claude led methodology, supervision; not applicable: project administration"><i class="sq h"></i><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="sqs" role="img" aria-label="Doing the work: Claude led data curation, formal analysis, investigation, software, validation, visualization" title="Doing the work: Claude led data curation, formal analysis, investigation, software, validation, visualization"><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="sqs" role="img" aria-label="Writing: Claude led original draft, review &amp; editing" title="Writing: Claude led original draft, review &amp; editing"><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="meter" aria-hidden="true"><i class="pip"></i><i class="pip"></i></span>Not reviewed</td></tr>
-    <tr><td>Hoopes comparison<br><span class="table-subhead">this page</span></td><td><span class="sqs" role="img" aria-label="Ideas and direction: author led conceptualization; Claude led methodology, supervision; not applicable: project administration" title="Ideas and direction: author led conceptualization; Claude led methodology, supervision; not applicable: project administration"><i class="sq h"></i><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="sqs" role="img" aria-label="Doing the work: Claude led data curation, formal analysis, investigation, software, validation, visualization" title="Doing the work: Claude led data curation, formal analysis, investigation, software, validation, visualization"><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="sqs" role="img" aria-label="Writing: Claude led original draft, review &amp; editing" title="Writing: Claude led original draft, review &amp; editing"><i class="sq ai"></i><i class="sq ai"></i></span></td><td><span class="meter" aria-hidden="true"><i class="pip"></i><i class="pip"></i></span>Not reviewed</td></tr>
+    <tr><td>Reconciliation page<br><span class="table-subhead">this page</span></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td>Bridge analysis code<br><span class="table-subhead">Open Materials</span></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td>Disputes table<br><span class="table-subhead">Open Materials</span></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td>Hoopes comparison<br><span class="table-subhead">this page</span></td><td></td><td></td><td></td><td></td></tr>
   </tbody>
 </table>
 </div>
+<p class="small" style="margin:8px 0 0;">The credit interview has not been run for this side yet.</p>
 <div class="ai-key">
   <div><span><i class="sq h"></i> led by the author</span>
   <span><i class="sq ai"></i> led by Claude</span>
@@ -631,17 +761,14 @@ original authors have not reviewed it.</p>
 </details>
 
 <footer>
-  Every number on this page is computed by <code>comparison/R/</code> from the two sides' export
-  contracts (<code>bsz-analysis/export/r/</code>, <code>rjkdc-analysis/export/r/</code>)
-  and the page-referenced transcriptions in <code>comparison/data/</code>; a Python twin
-  reproduces them (R and Python agree to 1e-9 on every exported number; see comparison/tests). Source and materials:
-  <a href="https://github.com/fhoces/opa-prop40">github.com/fhoces/opa-prop40</a>.
-  Read everything here as built with substantial AI assistance and not yet independently reviewed.
+  Part of <a href="https://github.com/fhoces/opa-prop40">opa-prop40</a>, an Open Policy
+  Analysis of both sides of California Proposition 40 (the Billionaire Tax Act).
+  <a href="bsz-analysis/site/">BSZ side overview</a> &middot;
+  <a href="rjkdc-analysis/site/">RJKDC side overview</a>.
   <p class="credit">OPA done by <a href="https://fhoces.github.io">Fernando Hoces de la Guardia</a>, using <a href="#how-ai-was-used">agentic coding tools</a></p>
 </footer>
 
 </div>
-<script src="assets/comparison-data.js"></script>
 <script>
 (function () {
   var D = window.__BRIDGE__;
@@ -762,19 +889,25 @@ original authors have not reviewed it.</p>
 })();
 </script>
 <script>
-  // A link into a folded section (index.html#difference, or an anchor inside one) opens it.
+  // A link into a folded section (index.html#the-bridge, or an anchor inside one) opens it.
+  // A bridge deep link (index.html#out=b&method=sequential) opens the bridge.
   (function () {
-    function reveal() {
-      var id = location.hash.slice(1);
+    function reveal(id) {
       if (!id) return;
+      if (id.indexOf("=") >= 0) id = "the-bridge";
       var el = document.getElementById(id);
       if (!el) return;
       var d = el.closest ? el.closest("details.fold") : null;
       if (d) d.open = true;
       el.scrollIntoView();
     }
-    window.addEventListener("hashchange", reveal);
-    reveal();
+    window.addEventListener("hashchange", function () { reveal(location.hash.slice(1)); });
+    // Clicking a same-page link opens its fold even when the hash does not change.
+    document.addEventListener("click", function (e) {
+      var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
+      if (a) reveal(a.getAttribute("href").slice(1));
+    });
+    reveal(location.hash.slice(1));
   })();
 </script>
 </body>
