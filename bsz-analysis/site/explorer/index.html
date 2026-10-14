@@ -71,7 +71,7 @@
     color: var(--ink-3); font-weight: 500; }
   .headline .value { font-family: var(--serif); font-size: 40px; font-weight: 600;
     line-height: 1; color: var(--ink); font-variant-numeric: tabular-nums; }
-  .headline .def { font-size: 13.5px; color: var(--ink-2); line-height: 1.45; margin-top: 2px; }
+  .headline .def { font-size: 15px; color: var(--ink-2); line-height: 1.45; margin-top: 2px; }
   .header-layer { height: 110px; width: auto; opacity: 0.218; align-self: flex-end;
     margin-bottom: 8px; pointer-events: none; }
   @media (max-width: 860px) {
@@ -130,7 +130,7 @@
   .dial .label:hover .tip, .dial .info:focus + .tip, .dial .tip.open { display: block; }
   details.fold { margin-top: 14px; }
   .presets-h { font-size: 12px; color: var(--ink-3); margin: 14px 0 6px; }
-  p.fn { font-size: 12px; color: var(--ink-3); line-height: 1.45; margin: 4px 0 0; }
+  p.fn { font-size: 13.5px; color: var(--ink-2); line-height: 1.45; margin: 4px 0 0; }
   dl.scen-key { margin: 10px 0 0; font-size: 12.5px; color: var(--ink-2); line-height: 1.45; }
   dl.scen-key dt { display: inline; font-weight: 600; color: var(--ink); }
   dl.scen-key dd { display: inline; margin: 0; }
@@ -156,6 +156,8 @@
   .levels button:focus-visible { outline: 2px solid var(--series-1); outline-offset: 2px; }
   .legend-default { font-size: 12px; color: var(--ink-3); margin-top: 6px; }
   .legend-default i { display: inline-block; width: 16px; height: 2px; background: var(--pref); vertical-align: 3px; margin-right: 4px; }
+  p.small { font-size: 12.5px; color: var(--ink-2); line-height: 1.45; margin: 8px 0 0; }
+  p.small b { color: var(--ink); font-weight: 600; }
 
   .presets { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
   .presets button {
@@ -173,6 +175,9 @@
   .bars .bar.cur { fill: var(--series-1); }
 
   .table-scroll { overflow-x: auto; margin-top: 12px; }
+  .table-scroll::before { content: "Scroll sideways for the rest \2192"; display: none; font: 11px var(--sans);
+    color: var(--ink-3); margin-bottom: 4px; }
+  @media (max-width: 640px) { .table-scroll::before { display: block; } }
   table { border-collapse: collapse; font-size: 12.5px; min-width: 520px; width: 100%; }
   th, td { text-align: right; padding: 6px 10px 6px 0; border-bottom: 1px solid var(--rule-2);
            font-family: var(--mono); font-variant-numeric: tabular-nums; }
@@ -209,8 +214,9 @@
     <div class="hero-left">
       <h1>How much would the one-time billionaire tax raise, net?</h1>
       <p class="standfirst">
-        Boll, Saez and Zucman (BSZ, 2026) estimate about $100 billion in wealth tax. Net of the income
-        tax it changes, that is the <strong>main estimate</strong>. Most of its inputs are guesswork.
+        Boll, Saez and Zucman (BSZ, 2026) estimate about $100 billion of wealth tax ($104 billion in their
+        Table 5). Add the income tax the tax changes and the total is this site's <strong>main estimate</strong>.
+        Most of its inputs are guesswork.
         Move them and the estimate updates: every setting is precomputed by the pipeline that reproduces
         the authors' workbook.
       </p>
@@ -219,8 +225,9 @@
       <img class="header-layer" src="../assets/opa/opa-assumptions-solo.png" alt="" aria-hidden="true">
       <span class="name" id="cell-name"></span>
       <span class="value" id="cell-value"></span>
-      <span class="def">Defined as wealth tax + extra income tax from selling assets &minus;
-        income tax lost to leavers (present value, 5 years at 3%).</span>
+      <span class="def">Defined as the wealth tax, plus the extra income tax from assets sold to pay it,
+        minus the income tax lost to billionaires who leave, counted over 5 years in today's dollars
+        (present value at 3% a year).</span>
     </div>
   </header>
 
@@ -229,6 +236,11 @@
       <h2>The inputs</h2>
       <div class="rack" id="rack"></div>
       <p class="legend-default"><i></i>the value the authors use</p>
+      <p class="small">Levels other than the authors' are this OPA's, chosen to bracket the authors' value;
+      the two yes/no switches instead turn on the authors' own Table 5 scenarios (rows 2 to 4). The explorer
+      holds every combination. Origins follow the OPA taxonomy: <b>data</b> (settled by observable facts),
+      <b>research</b> (a published estimate), <b>guesswork</b> (asserted without data or a study behind it),
+      <b>scenario</b> (a choice of which world is estimated).</p>
 
     </section>
 
@@ -238,9 +250,10 @@
         <title id="bars-title">Main estimate, this setting against the base scenario</title>
       </svg>
       <p class="fn"><sup>1</sup> The main estimate is not the authors' choice: BSZ's headline is
-      the wealth tax alone, <span id="pref-wt"></span>. This OPA uses the total because it compares more
-      directly with <a href="../../../index.html">other analyses</a>, such as the
-      <a href="../../../rjkdc-analysis/site/">RJKDC report</a>'s net present value.</p>
+      the wealth tax alone, about $100 billion in the abstract and $104 billion in Table 5 (reproduced
+      here as <span id="pref-wt"></span>). This OPA uses the total because it compares more directly
+      with the <a href="../../../rjkdc-analysis/site/">RJKDC analysis</a>'s net present value; the
+      <a href="../../../index.html">comparison overview</a> puts both on one definition.</p>
       <p class="presets-h">Jump to a scenario</p>
       <div class="presets" id="presets"></div>
       <dl class="scen-key" id="scen-key"></dl>
@@ -264,8 +277,8 @@
     <div class="note">
       <p><strong>Horizon.</strong> The income tax lost to leavers recurs every year they stay away.
       BSZ argue about 5 years (PDF p.27). The main estimate counts 5 years at 3% a year, the middle of
-      the <a href="../../../rjkdc-analysis/site/">RJKDC report</a>'s 1.5% to 4.5% range (BSZ give no
-      rate). The RJKDC report counts it forever: see the <a href="../../../index.html">comparison OPA</a>.</p>
+      the <a href="../../../rjkdc-analysis/site/">RJKDC analysis</a>'s 1.5% to 4.5% range (BSZ give no
+      rate). The RJKDC analysis counts it forever: see the <a href="../../../index.html">comparison overview</a>.</p>
       <p><strong>Two departures from the workbook.</strong> (1) Its income tax loss is a literal 5%
       (<code>Tab5!H6</code>); the explorer reads it as avoidance times the share leaving, identical at
       the authors' values. (2) Table 5 deducts the $1B to $1.1B phase-in in row 2 but not row 4
@@ -364,12 +377,23 @@
     tipDef.appendChild(document.createTextNode(fmtLevel(dial, dial.levels[DEFAULT[di]]) +
       " (" + dial.origin + ")"));
     tip.appendChild(tipDesc); tip.appendChild(tipDef);
+    // The two yes/no switches have no OPA levels: "yes" is the authors' own Table 5 rows 2 to 4.
+    if (dial.fmt !== "bool") {
+      var tipOther = document.createElement("div");
+      tipOther.textContent = "Other levels: this OPA's.";
+      tip.appendChild(tipOther);
+    }
     info.addEventListener("click", function (e) {
       e.stopPropagation();
       document.querySelectorAll(".dial .tip.open").forEach(function (t) { if (t !== tip) t.classList.remove("open"); });
       tip.classList.toggle("open");
     });
     label.appendChild(info); label.appendChild(tip);
+    // The first sentence of the description sits under the label; the full text stays in the tip.
+    var cut = dial.desc.indexOf(". ");
+    var desc = document.createElement("div");
+    desc.className = "desc";
+    desc.textContent = cut < 0 ? dial.desc : dial.desc.slice(0, cut + 1);
     var levels = document.createElement("div");
     levels.className = "levels";
     dial.levels.forEach(function (value, li) {
@@ -385,7 +409,7 @@
       });
       levels.appendChild(b);
     });
-    row.appendChild(label); row.appendChild(levels);
+    row.appendChild(label); row.appendChild(desc); row.appendChild(levels);
     if (dial.key === "avoidance_small") {
       var hint = document.createElement("div");
       hint.className = "hint";
