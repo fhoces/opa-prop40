@@ -1,5 +1,5 @@
-# Sec 4: the revenue chain 94.20 -> 67.51 -> 55.10, plus the 45.59
-# literature-calibrated figure (paper pp.10-14). Ported from
+# First version numbering: Sec 4, the revenue chain 94.20 -> 67.51 -> 55.10, plus the 45.59
+# literature-calibrated figure (March 2026 version pp.10-14). Ported from
 # CA_Billionaires_Revenues_and_Migration_final.xlsx (workbook cell formulas
 # enumerated with openpyxl, data_only=False/True; see port-excel-formula
 # skill). Per-row formulas (sheet Calculations_Preferred / _Expanded,

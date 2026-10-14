@@ -3,7 +3,8 @@
 Mismatches 1, 2, 7, 8 and 9 concern only the authors' first version (Rauh, Jaros, Kearney, Doran and Cosso, Hoover Institution, SSRN 6340778, March 2026), which the pipeline also reproduces. Mismatches 3 to 6 concern the NBER chapter.
 
 One numbered item per code/paper or doc/code discrepancy found while reproducing Jaros and Rauh,
-with Kearney, Doran and Cosso (NBER chapter c15504, September 2026). By design, we do not
+*The Net Present Value of the California Billionaire Tax Act* (NBER chapter c15504, September 2026;
+first version by Rauh, Jaros, Kearney, Doran and Cosso, March 2026). By design, we do not
 "fix" the authors: we reproduce their code as run, record the discrepancy, and where it matters
 expose the alternative reading as a parameter with both readings under test.
 
@@ -46,13 +47,16 @@ apply to both.
 
 **Code**, `NBER_2026_litigation_weighted/NPV_data/NPV_dist_v8.R:19`: `wt_max <- 72` (a literal).
 **NBER README** assumptions table: "$72.06B" (text).
+**NBER chapter**, PDF p.22 (eq. 4): the same 72.06 in the semi-elasticity formula.
 **Our recomputation** from `final.csv` (`R/nber_final.R:compute_nber_ceiling()`,
 `py/nber_final.py:compute_nber_ceiling()`): domestic total at 7% growth
 (`sum(face_tax_5pct[panel=="domestic"])` = $100.9056B) minus the 7 `removed_departed` rows
 ($28.8541B) = **$72.0515B**.
 
 Three different numbers for the same quantity: the script's literal (72), the README's prose
-(72.06), and the value the underlying person-level data actually sums to (72.05). We rebuild the
+(72.06), and the value the underlying person-level data actually sums to (72.05). The 72.06 is the
+difference of the two figures as rounded to two decimals (100.91 − 28.85); the person-level sum is
+72.0515. We rebuild the
 ceiling from `final.csv` by design rather than trusting either the script's literal or the
 README's rounding, and flag that the shipped NPV_dist_v8.R does not itself perform this rebuild -
 it uses the hard-coded 72.

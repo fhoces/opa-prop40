@@ -1,5 +1,5 @@
-# Sec 5.2-5.4: Table 9 (NPV by departure scenario, p.19) and Table 10
-# (break-even departure fraction, p.20). Ported from
+# First version numbering: Sec 5.2-5.4, Table 9 (NPV by departure scenario, p.19) and Table 10
+# (break-even departure fraction, p.20; the chapter's break-even table is Table 10, p.34). Ported from
 # NPV_calculations_5.2.xlsx!Sheet1, cells B32:D50 (Table 9) and B52:D64
 # (Table 10). Deterministic: NPV = WT - f*C/(r-g), f = 1 - WT/baseline,
 # x* = WT*(r-g)/C (paper eq. 20-21). No RNG.

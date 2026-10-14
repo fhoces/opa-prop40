@@ -1,6 +1,6 @@
 ---
 title: "Prop 40, RJKDC analysis: the reproduction"
-subtitle: "Jaros and Rauh, with Kearney, Doran and Cosso (NBER, September 2026), reproduced step by step from the authors' own public code and data"
+subtitle: "Jaros and Rauh (NBER, September 2026; first version by Rauh, Jaros, Kearney, Doran and Cosso, March 2026), reproduced step by step from the authors' own public code and data"
 date: today
 format:
   html:
@@ -93,12 +93,15 @@ ever, so the state ends up poorer. Following the
   source (guide, with all nine mismatches found along the way: [the materials page](materials.html))
 :::
 
-**What is reproduced.** Jaros and Rauh, with Kearney, Doran and Cosso, *The Net Present Value
-of the Billionaire Tax Act*, NBER chapter c15504 (22 September 2026), the litigation-weighted
-analysis. Its headline: revenue of about \$30B (\$`r h("nber","revenue_range_low","printed")`B to
+**What is reproduced.** Jaros and Rauh, *The Net Present Value of the California Billionaire Tax Act*,
+NBER chapter c15504 (22 September 2026; NBER is the National Bureau of Economic Research, which
+circulates working papers), the litigation-weighted revision of the first version by Rauh, Jaros,
+Kearney, Doran and Cosso (SSRN 6340778, March 2026; SSRN is a preprint site). Its headline:
+revenue of about \$30B (\$`r h("nber","revenue_range_low","printed")`B to
 \$`r h("nber","revenue_range_high","printed")`B) and a mean NPV of
 `r num(h("nber","mc_mean_npv","printed"))` \$B, with `r h("nber","mc_pct_negative","printed")`%
-of simulated outcomes negative (PDF p.1). That mean NPV is **the main estimate**, derived step by
+of simulated outcomes negative (the Figure 3 note, PDF p.35; the text on p.1 says 85%). That mean
+NPV is **the main estimate**, derived step by
 step in [the next section](#the-main-estimate).^[The authors released a first version in March
 2026: Rauh, Jaros, Kearney, Doran and Cosso, Hoover Institution, SSRN 6340778. It printed revenue
 of about \$`r h("ssrn","revenue_headline","printed")`B and a mean NPV of
@@ -175,7 +178,13 @@ The script draws $r \sim U[`r nb$rg_min`, `r nb$rg_max`]$, a rate between
 \$1 a year for ever is worth $1/r$ today, so what enters is the mean of $1/r$, not $1/E[r]$:
 $$E\!\left[\tfrac1r\right] = \frac{\ln(`r nb$rg_max` / `r nb$rg_min`)}{`r nb$rg_max` - `r nb$rg_min`} = `r num(npv_e_inv_rate(nb$rg_min, nb$rg_max), 2)`.$$
 In words: at these rates, \$1 lost every year for ever is worth about
-\$`r num(npv_e_inv_rate(nb$rg_min, nb$rg_max), 0)` today. The range is **guesswork**.
+\$`r num(npv_e_inv_rate(nb$rg_min, nb$rg_max), 0)` today. The range is **guesswork**: its
+`r pct(100 * nb$rg_min)` anchor is a published market yield, which is why the export contract (the
+two CSV files, `inputs.csv` and `outputs.csv`, that each analysis's pipeline writes for the
+comparison to read) and the comparison's
+[disputes row 2](https://github.com/fhoces/opa-prop40/blob/main/comparison/DISPUTES.md) call the
+range research, but the width of the band, to `r pct(100 * nb$rg_max)`, is the authors' judgement,
+and the width is what moves the result.
 
 ### Step 5: the present value of the income tax lost
 
@@ -188,8 +197,11 @@ The revenue of Step 1 minus the loss of Step 5:
 $$E[NPV] = E[WT] - E\!\left[\frac{f\,C}{r}\right]$$
 $$= `r num(h("nber","mc_expected_revenue"), 2)` - `r num(h("nber","pv_lost"), 2)` = `r num(tr("npv_mc_nber_analytic_mean"), 2)`.$$
 
-The authors do not print this exact value. They print the average of one seeded run (seed 2026,
-100,000 draws), which our R port replays draw for draw:
+The authors do not print this exact expectation (the average of the Monte Carlo computed by
+formula rather than by drawing). They print the average of one seeded run of 100,000 draws (a
+seeded run: one run of the random draws started from a fixed seed number, 2026, so it gives the
+same draws every time; its mean differs from the exact expectation by sampling error), which our
+R port replays draw for draw:
 **`r num(mcn$summary$mean, 3)` \$B**, printed as `r num(h("nber","mc_mean_npv","printed"))`.
 The two differ by `r num(abs(mcn$summary$mean - tr("npv_mc_nber_analytic_mean")), 2)` \$B, less
 than one Monte Carlo standard error (`r num(mcn$summary$sd, 1)` / $\sqrt{100{,}000}$ =
@@ -273,10 +285,12 @@ standard's 50% threshold, not from a legal assessment of the challenges, so it i
 Page, Brin, Thiel, Hankey, Spielberg, Kalanick and Sacks moved out between the initiative's filing
 and the 1 January 2026 residency date (Table 7, PDF p.21). Removing their
 \$`r num(nc$removed_departed_total, 2)`B leaves **\$`r num(nc$ceiling_recomputed, 2)`B** in
-`final.csv`. The paper prints \$`r out("nber_ceiling","printed_value")`B and the script
-hard-codes `r nb$wt_max` ([mismatch 4](materials.html#mismatches)): three numbers for one
-quantity. The paper then asks how big a behavioural response that is. It divides the share of
-revenue lost by the rate change, in percentage points (eq. 4, PDF p.22):
+`final.csv`. The paper (eq. 4, p.22) and the authors' README print
+\$`r out("nber_ceiling","printed_value")`B, the difference of two figures each rounded to two
+decimals (`r num(nc$domestic_total_grown, 2)` − `r num(nc$removed_departed_total, 2)`), and the
+script hard-codes `r nb$wt_max` ([mismatch 4](materials.html#mismatches)): one unrounded value,
+its rounding and a round literal. The paper then asks how big a behavioural response that is.
+It divides the share of revenue lost by the rate change, in percentage points (eq. 4, PDF p.22):
 
 $$\varepsilon = \frac{\%\Delta \text{TaxBase}}{\Delta \text{TaxRate (p.p.)}}
  = \frac{(100.9 - 72.06)/100.9}{5}$$
@@ -528,8 +542,8 @@ dials <- site_dials(rc)
 dial_rows <- do.call(rbind, lapply(dials, function(d) data.frame(
   input = d$key, what = d$label, `value(s)` = paste(d$labels, collapse = "; "),
   origin = d$origin, where = "explorer dial (R/site.R)", check.names = FALSE)))
-# The first version's own rows (its script's draw ranges, its central scenario) go to the appendix.
-first_only <- inputs$version == "ssrn" | grepl("^rauh_mc_", inputs$input_id)
+# The rows only the first version uses (version "ssrn") go to the appendix.
+first_only <- inputs$version == "ssrn"
 inp_row <- function(x) data.frame(input = x$input_id, what = x$description,
   `value(s)` = ifelse(is.na(x$value), "1.5% to 4.5%", vapply(x$value, function(v) format(signif(v, 6)), "")),
   origin = x$label, where = x$source, check.names = FALSE)
@@ -554,8 +568,7 @@ the FTB brackets, the Pareto fit) fix the *scale*; whether the NPV is negative i
 guesswork: how wide the revenue draw is, where the income tax range stops, which rate is used, and
 whether the lost income tax is permanent.^[The pipeline's input file also lists
 `r sum(first_only)` rows sourced to the authors' first version (March 2026): its revenue floor,
-its central scenario, the Swiss semi-elasticity as its workbook applies it, and its script's draw
-ranges (the same income tax and rate ranges as the dials above). The
+its central scenario and the Swiss semi-elasticity as its workbook applies it. The
 [appendix](#appendix-first-version) shows them.]
 
 ## What reproduces

@@ -1,4 +1,4 @@
-# Sec 5.1.2: income-tax Monte Carlo (Table 8, p.17). Ported from
+# Income-tax Monte Carlo (first version numbering: Sec 5.1.2, Table 8, p.17; in the chapter Table 9, p.30). Ported from
 # RAUH/NPV_data/monte_carlo_sim.R:98-152. The 212 billionaires are drawn
 # uniformly at random (without replacement) from the top K positions of the
 # Pareto-implied income schedule, K = 212 ... 2000, 100,000 draws per K.

@@ -58,8 +58,8 @@ ts <- read.csv("data/test-summary.csv")
 ::: {.report-intro}
 ![](assets/opa/opa-materials.png){.opa-figure}
 
-This page is a guide to the **Open Materials** layer (the repository) of the analysis of Jaros and Rauh, with Kearney, Doran and Cosso
-(RJKDC; NBER chapter c15504, September 2026): everything needed to rebuild every number on this
+This page is a guide to the **Open Materials** layer (the repository) of the RJKDC analysis (Jaros and Rauh,
+NBER chapter c15504, September 2026; first version by Rauh, Jaros, Kearney, Doran and Cosso, March 2026): everything needed to rebuild every number on this
 site, in the repository [github.com/fhoces/opa-prop40](https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis),
 folder `rjkdc-analysis/`. The analysis is an R [`{targets}`](https://docs.ropensci.org/targets/)
 pipeline with a Python twin; the site's explorer grid, report and deck read that pipeline's store and
@@ -91,10 +91,11 @@ without it; everything else runs.
 tot <- colSums(ts[, c("tests", "expectations", "passed", "failed", "skipped")])
 scroll(kable(rbind(ts[, c("file", "tests", "expectations", "passed", "failed", "skipped")],
                    data.frame(file = "total", t(tot))), row.names = FALSE,
+             col.names = c("file", "tests", "expectations", "tests passed", "tests failed", "tests skipped"),
              caption = "Counted with testthat's ListReporter by tests/count_tests.R"))
 ```
 
-**`r tot["tests"]` tests (`r tot["expectations"]` expectations): `r tot["passed"]` passed,
+**`r tot["tests"]` tests (`r tot["expectations"]` expectations): `r tot["passed"]` tests passed,
 `r tot["failed"]` failed, `r tot["skipped"]` skipped**, run on `r ts$run_date[1]` with R
 `r ts$r_version[1]`, with the authors' repository
 `r if (all(ts$authors_repo_available)) "available" else "not available (the vs-authors'-script tests skip)"`.

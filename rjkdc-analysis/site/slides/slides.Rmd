@@ -1,6 +1,6 @@
 ---
-title: "The Net Present Value of the Billionaire Tax Act"
-subtitle: "Teaching deck: RJKDC's fiscal estimate of California Proposition 40 (Jaros and Rauh, with Kearney, Doran and Cosso, NBER, September 2026)"
+title: "The Net Present Value of the California Billionaire Tax Act"
+subtitle: "Teaching deck: RJKDC's fiscal estimate of California Proposition 40 (Jaros and Rauh, NBER, September 2026; first version by Rauh, Jaros, Kearney, Doran and Cosso)"
 output:
   xaringan::moon_reader:
     self_contained: true
@@ -34,6 +34,7 @@ nc <- tr("nber_ceiling"); ncol <- tr("nber_collectible"); hl <- tr("site_headlin
 outputs <- read.csv("../../export/r/outputs.csv"); inputs <- read.csv("../../export/r/inputs.csv")
 nb <- formals(compute_npv_mc_nber)
 num <- function(x, d = 1) { s <- formatC(abs(x), format = "f", digits = d, big.mark = ","); ifelse(x < 0, paste0("&minus;", s), s) }
+usdb <- function(x, d = 1) paste0(ifelse(x < 0, "−$", "$"), formatC(abs(x), format = "f", digits = d), "B")
 h <- function(v, q, col = "reproduced") hl[[col]][hl$version == v & hl$quantity == q]
 out <- function(id, col = "value") outputs[[col]][outputs$output_id == id]
 inp <- function(id) inputs$value[inputs$input_id == id]
@@ -56,9 +57,9 @@ class: center, middle, opa-slide
 # An Open Reproduction
 
 .opa-intro[
-The estimate of California's Billionaire Tax Act by Jaros and Rauh, with Kearney, Doran and
-Cosso (RJKDC), rebuilt from the authors' own
-code and data and taught step by step, following the
+The estimate of California's Billionaire Tax Act by Jaros and Rauh (NBER, September 2026),
+revising the first version by Rauh, Jaros, Kearney, Doran and Cosso (RJKDC), rebuilt from the
+authors' own code and data and taught step by step, following the
 [Open Policy Analysis](https://doi.org/10.1093/scipol/scaa067) framework.
 ]
 
@@ -172,7 +173,7 @@ class: center, middle, inverse
 # What is being estimated
 
 **Proposition 40** taxes, once, 5% of the net worth of billionaires who lived in California on
-1 January 2026 (payable over five years). The [BSZ report](../../../bsz-analysis/site/) estimates it at about 100 bn. (Amounts in this deck are in billions of dollars, "bn".)
+1 January 2026 (payable over five years). The [BSZ report](../../../bsz-analysis/site/) estimates it at about $100 billion.
 
 The RJKDC analysis asks a different question: **is the state better off, counting what it loses?**
 
@@ -201,12 +202,12 @@ name: headline
 
 # The headline
 
-**NBER chapter c15504**, 22 September 2026: Jaros and Rauh, with Kearney, Doran and Cosso,
-litigation-weighted
+**NBER chapter c15504**, 22 September 2026: Jaros and Rauh, litigation-weighted (the first
+version, March 2026, was by Rauh, Jaros, Kearney, Doran and Cosso)
 
-.big[`r num(h("nber","mc_mean_npv","printed"))` bn]
-mean NPV; `r h("nber","mc_pct_negative","printed")`% of outcomes negative (PDF p.1)<sup>1</sup><br>
-revenue "approximately 30 billion" (`r h("nber","revenue_range_low","printed")` bn to `r h("nber","revenue_range_high","printed")` bn)
+.big[`r usdb(h("nber","mc_mean_npv","printed"))`]
+mean NPV; `r h("nber","mc_pct_negative","printed")`% of outcomes negative (PDF p.35, Figure 3 note; 85% in the text, p.1)<sup>1</sup><br>
+revenue "approximately 30 billion" (`r usdb(h("nber","revenue_range_low","printed"))` to `r usdb(h("nber","revenue_range_high","printed"))`)
 
 Reproduced: `r num(mcn$summary$mean, 2)` (the authors' seeded run, replayed draw for draw) and
 `r num(tr("npv_mc_nber_analytic_mean"), 2)` (the exact expectation of the same draws).
@@ -217,7 +218,7 @@ the revenue (Part 2), the income tax (Part 3), the perpetuity (Part 4) and the M
 that averages them (Part 5).
 ]
 
-.footnote[<sup>1</sup> The authors' first version (Rauh, Jaros, Kearney, Doran and Cosso, Hoover Institution, SSRN 6340778, March 2026) printed `r num(h("ssrn","mc_mean_npv","printed"))` bn with `r h("ssrn","mc_pct_negative","printed")`% negative. The pipeline reproduces it too; see the appendix of [the report](../repro.html#appendix-first-version).]
+.footnote[<sup>1</sup> The authors' first version (Rauh, Jaros, Kearney, Doran and Cosso, Hoover Institution, SSRN 6340778, March 2026) printed `r usdb(h("ssrn","mc_mean_npv","printed"))` with `r h("ssrn","mc_pct_negative","printed")`% negative. The pipeline reproduces it too; see the appendix of [the report](../repro.html#appendix-first-version).]
 
 ---
 name: part-revenue
@@ -228,7 +229,7 @@ class: center, middle, inverse
 ---
 name: revenue
 
-# From 94 bn to about 30 bn (Sec 4)
+# From $94 billion to about $30 billion (Sec 4)
 
 ```{r revchain, fig.height=3.4}
 d <- data.frame(
@@ -245,7 +246,7 @@ ggplot(d, aes(step, v)) + geom_col(fill = c(rep("#1f6fce", 4), "#eb6834"), width
 Each step sums 5% of each stayer's net worth, minus their home. The first four bars come out of the
 authors' workbook and person-level file. The last multiplies by $q$ = `r num(ncol$q, 2)`, the chance the
 Act survives in court, borrowed from an accounting rule (ASC 740-10): a judgement, not an estimate.
-Printed: `r h("nber","revenue_headline","printed")` bn, range `r h("nber","revenue_range_low","printed")` to `r h("nber","revenue_range_high","printed")` bn (PDF p.23).
+Printed: $`r h("nber","revenue_headline","printed")` billion, range $`r h("nber","revenue_range_low","printed")` to $`r h("nber","revenue_range_high","printed")` billion (PDF p.23).
 ]
 
 ---
@@ -288,7 +289,7 @@ name: income-tax-c
 
 **Upper bound.** Fit a Pareto tail to the Franchise Tax Board's (FTB, the state tax agency) filer counts above 1M to 10M dollars of income:
 $\hat\alpha$ = `r num(pf$alpha, 2)`. If the 212 billionaires *are* the 212 highest earners, they pay
-**`r num(t8$mean_fy25[t8$K == 212], 2)` bn** a year.
+**$`r num(t8$mean_fy25[t8$K == 212], 2)` billion** a year.
 
 **But** wealth is not income: many billionaires realise little in a given year. So place them at random
 among the top $K$ filers (Table 9).
@@ -308,7 +309,7 @@ ggplot(t8, aes(K, mean_fy25)) +
 ]
 
 .highlight-box[
-The authors call $K \approx 500$ "a reasonable lower bound": `r num(t8$mean_fy25[t8$K == 500], 2)` bn.
+The authors call $K \approx 500$ "a reasonable lower bound": `r usdb(t8$mean_fy25[t8$K == 500], 2)`.
 So $C \in [3.3, 5.8]$: a range between a model's upper bound and a **judgement** about the floor.
 ]
 
@@ -348,7 +349,7 @@ name: break-even
 $$NPV = 0 \quad\Longleftrightarrow\quad x^* = \frac{WT \cdot (r - g)}{C}$$
 
 If less than $x^*$ of the income tax base leaves, the tax pays for itself. Table 10, at the paper's
-central revenue, `r num(n10$WT[1], 0)` bn (= 0.5 × 72), and $C$ = `r num(n10$C[1], 2)` bn:
+central revenue, $`r num(n10$WT[1], 0)` billion (= 0.5 × 72), and $C$ = $`r num(n10$C[1], 2)` billion:
 
 ```{r t10tab, results="asis"}
 cat('<table class="dt"><tr><th></th><th>1.5%</th><th>3.0%</th><th>4.5%</th></tr>')
