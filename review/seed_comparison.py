@@ -123,9 +123,12 @@ def main():
                   "of the current view (endsOf); in the default view, output (b) at each analysis's "
                   "own horizon, these are the bridge's two ends. The BSZ end is the same number as "
                   "the BSZ main estimate; the RJKDC end is the exact expectation of the same Monte "
-                  "Carlo, a little below the seeded run. The static page already carries the same "
-                  "numbers, written by site.R (layer 3), so it reads the same with JavaScript off."),
-            inputs="D = window.__BRIDGE__ from assets/comparison-data.js; D.headline; B = D.series.own.b.shapley",
+                  "Carlo, a little below the seeded run. The two panels below the header each list the "
+                  "disputed inputs with a five-position slider; the page reads every slider, builds the "
+                  "input vector with model.js (a JavaScript copy of score_common(), layer 6, checked "
+                  "against R by test-site.R) and draws the two bars. The static header carries the "
+                  "same two numbers, written by site.R (layer 3), so it reads the same with JavaScript off."),
+            inputs="D = window.__BRIDGE__ from assets/comparison-data.js (D.headline, D.sliders: the two input vectors and the revision constants); M = model.js",
             inputs_from=[dict(layer="comparison-2", what="window.__BRIDGE__: the headline object and every bar of every view; the default view is series.own.b.shapley")],
             other_inputs="none",
             outputs=(f"headline: '{m(H['bsz'])}' (BSZ main estimate) and '{m(rj_main)}' (RJKDC main estimate); "
@@ -135,8 +138,8 @@ def main():
                         "NPV in perpetuity. The footnote on the explorer says the common output (b) puts "
                         "both on one definition, of which the two bars are the ends."),
             method_status="plumbing",
-            r=loc(EXPLORER, "the headline and the two-bar chart: read the data file's headline and the ends of the current view",
-                  find_lines(EXPLORER, "function bars()", 'getElementById("fn-rjkdc-main")'), language="javascript"),
+            r=loc(EXPLORER, "positions(), updatePanel(), drawBars(): read each panel's sliders, call model.js, draw the two bars",
+                  find_lines(EXPLORER, "function positions(panel)", "function renderPanels()"), language="javascript"),
             py=None,
             targets=None,
         ),
@@ -206,7 +209,7 @@ def main():
                         "model difference and the revision add up to the gap on (b)."),
             method_status="opa_definition",
             r=loc("comparison/R/build.R", "build_all(): the ends and the bridge, for every horizon setting", [78, 131]),
-            py=loc("comparison/py/bridge.py", "build_all(): the same loop", [191, 227]),
+            py=loc("comparison/py/bridge.py", "build_all(): the same loop", [269, 305]),
             targets="comparison/run.R: write_exports(build_all(read_contracts(root)), ...)",
         ),
         dict(
@@ -229,8 +232,8 @@ def main():
             method_ref=("Shapley value, the standard average-over-orders decomposition. test-shapley.R "
                         "checks the sum in every setting and compares with a brute-force average over orders."),
             method_status="matches",
-            r=loc("comparison/R/model.R", "switch_inputs(), shapley_bridge(), sequential_bridge()", [87, 122]),
-            py=loc("comparison/py/bridge.py", "switch_inputs(), shapley_bridge(), sequential_bridge()", [112, 147]),
+            r=loc("comparison/R/model.R", "coalition_values(), shapley_bridge(), sequential_bridge()", [190, 226]),
+            py=loc("comparison/py/bridge.py", "shapley_bridge(), sequential_bridge()", [200, 227]),
             targets=None,
         ),
         dict(
@@ -274,7 +277,7 @@ def main():
             method_ref="Each value's source and page is in comparison/export/r/inputs.csv (bridge_input_table()).",
             method_status="matches",
             r=loc("comparison/R/build.R", "bridge_inputs()", [6, 35]),
-            py=loc("comparison/py/bridge.py", "bridge_inputs()", [163, 187]),
+            py=loc("comparison/py/bridge.py", "bridge_inputs()", [241, 265]),
             targets=None,
         ),
         dict(
