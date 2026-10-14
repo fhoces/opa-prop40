@@ -1,12 +1,12 @@
 name: comparison CI
 
-# Rebuilds the comparison layer from the two sides' committed export contracts
+# Rebuilds the comparison layer from the two analyses' committed export contracts
 # (bsz-analysis/export/r/, rjkdc-analysis/export/r/) plus
 # comparison/data/, with both the R build and its Python twin, then runs the
 # comparison test suite (endpoints vs printed numbers, Shapley identities,
 # R vs Python parity, the page being exactly the generator's output). Finally
 # it checks that the committed site root, index.html, is what the generator
-# writes: a change to either side's contract that was not followed by
+# writes: a change to either analysis's contract that was not followed by
 # `Rscript comparison/run.R` fails here. (The data files carry 15-digit floats
 # that can differ in the last digit across platforms, so only the page, whose
 # numbers are rounded, is compared byte for byte.)

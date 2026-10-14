@@ -43,7 +43,7 @@ Still missing: What object contains all the grid estimates? snap?
 
 ## The comparison: the main estimate
 
-- Headline: Main estimate, the gap on the common output, $67.8B. the difference between the two sides' gross one-time wealth tax revenue once both are estimated on one definition, explained one disputed input at a time: BSZ Table 5 row 1 minus the NBER expected revenue
+- Headline: Main estimate, the gap on the common output, $67.8B. the difference between the two analyses' gross one-time wealth tax revenue once both are estimated on one definition, explained one disputed input at a time: BSZ Table 5 row 1 minus the NBER expected revenue
 - Where: https://fhoces.github.io/opa-prop40/
 - Commit: 54e8015
 - Seeded: 2026-10-14
@@ -54,7 +54,7 @@ Progress: 0 of 8 reviewed, 0 lightly reviewed, 8 not reviewed
 
 | Layer | Where | Method | State | Missing | Feedback | Updated |
 |---|---|---|---|---|---|---|
-| 1. The number on the page | [index.html the headline script: read the two end bars, print the gap L306-L320](https://github.com/fhoces/opa-prop40/blob/54e8015/index.html#L306-L320) | plumbing: Display only. The definition under the number is the method: the gap on the common output (a) between the bridge's two ends. Footnote 1 says neither side reports it; it is this OPA's reconciliation. | not reviewed |  |  | 2026-10-14 |
+| 1. The number on the page | [index.html the headline script: read the two end bars, print the gap L306-L320](https://github.com/fhoces/opa-prop40/blob/54e8015/index.html#L306-L320) | plumbing: Display only. The definition under the number is the method: the gap on the common output (a) between the bridge's two ends. Footnote 1 says neither analysis reports it; it is this OPA's reconciliation. | not reviewed |  |  | 2026-10-14 |
 | 2. The bridge's data file | [assets/comparison-data.js window.__BRIDGE__ L1-L2](https://github.com/fhoces/opa-prop40/blob/54e8015/assets/comparison-data.js) | plumbing: Plumbing. test-site.R checks the committed file is byte-identical to what render_site() writes. | not reviewed |  |  | 2026-10-14 |
 | 3. Writing the page and the data file | [comparison/R/site.R build_series() L47-L95](https://github.com/fhoces/opa-prop40/blob/54e8015/comparison/R/site.R#L47-L95) | plumbing: Plumbing. The Python twin has no site writer; its export/py/ends.csv carries the same two numbers (test-parity.R). | not reviewed |  |  | 2026-10-14 |
 | 4. The bridge's ends and steps | [comparison/R/build.R build_all(): the ends and the bridge, for every horizon setting L78-L131](https://github.com/fhoces/opa-prop40/blob/54e8015/comparison/R/build.R#L78-L131)<br>[comparison/py/bridge.py build_all(): the same loop L191-L227](https://github.com/fhoces/opa-prop40/blob/54e8015/comparison/py/bridge.py#L191-L227) | OPA's own definition: This OPA's reconciliation (PLAN.md, the common output; DISPUTES.md for each input). Checks: test-endpoints.R pins each end against the printed number; test-shapley.R that the steps sum to the gap. | not reviewed |  |  | 2026-10-14 |

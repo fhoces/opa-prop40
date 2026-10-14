@@ -1,5 +1,5 @@
 # Export contract: the only files the comparison layer (comparison/) reads from
-# this side. Same schema as rjkdc-analysis/export/r/:
+# this analysis. Same schema as rjkdc-analysis/export/r/:
 #   inputs.csv  input_id, version, description, value, unit, label, provenance, source, page
 #   outputs.csv output_id, version, value, unit, printed_value, printed_page, abs_diff
 #

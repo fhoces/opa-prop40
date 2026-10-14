@@ -1,6 +1,6 @@
 # py/: the Python side of the BSZ analysis
 
-The BSZ side runs in two steps (see `sql/README.md`). Both have Python code
+The BSZ analysis runs in two steps (see `sql/README.md`). Both have Python code
 here:
 
 1. **Raw data to spreadsheet (step 1).** The confidential inputs the authors

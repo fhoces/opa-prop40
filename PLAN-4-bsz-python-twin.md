@@ -2,7 +2,7 @@
 
 > Written 2026-10-07. The standing rule (`PLAN.md`, "Standing conventions"): every analysis runs in
 > both R and Python, and any step on a dataset of more than 1,000 rows goes through shared `.sql`
-> files that both languages run verbatim. The RJKDC side and the comparison layer meet it. The BSZ
+> files that both languages run verbatim. The RJKDC analysis and the comparison layer meet it. The BSZ
 > side's step 2 (the public workbook to the paper's tables, figures and the site) is R only. This
 > phase closes that gap. Step 1's remaining raw-data queries are a later phase.
 

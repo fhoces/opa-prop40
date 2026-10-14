@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Prop 40, BSZ side</title>
-<meta name="description" content="An Open Policy Analysis of the BSZ side of California Proposition 40: the $104 billion estimate, reproduced, with its guesswork marked.">
+<title>Prop 40, BSZ analysis</title>
+<meta name="description" content="An Open Policy Analysis of the BSZ analysis of California Proposition 40: the $104 billion estimate, reproduced, with its guesswork marked.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@400;600&display=swap">
@@ -228,13 +228,12 @@
   <h1>California Proposition 40, Analysis From Boll, Saez, Zucman (BSZ) <span class="wip">Work in progress</span></h1>
   <p class="byline">
     Proposition 40, the Billionaire Tax Act, would tax California's billionaires once, at 5%
-    of their net worth, paid over five years. Two documents estimate it at about $100 billion.
-    This site reproduces that estimate from its two sources, the
-    <cite>Boll, Saez and Zucman</cite> (BSZ) working paper (NBER WP 35218, August 2026) and the
-    <cite>Galle, Gamage, Saez and Shanske</cite> (GGSS) expert report (July 2026), and marks which of
-    its inputs are data and which are guesses.
+    of their net worth, paid over five years. <cite>Boll, Saez and Zucman</cite> (BSZ) estimate
+    it at about $100 billion (NBER Working Paper 35218, August 2026). This site reproduces that
+    estimate from the paper and its workbook, and marks which of its inputs are data and which
+    are guesses.
     This site follows the
-    <a href="https://tinyurl.com/1qypbihb">Open
+    <a href="https://doi.org/10.1093/scipol/scaa067">Open
     Policy Analysis</a> (OPA) framework, so what the analysis
     concludes, how it gets there, and what to run yourself stay in separate,
     checkable places.
@@ -345,19 +344,17 @@ The other rows are the authors' own sensitivity checks.</p>
     <tr><td>Missing billionaires (2)</td><td>$127.9B</td><td>$4.5B</td><td>$0.20B</td><td>$131.5B</td></tr>
     <tr><td>Leavers (3)</td><td>$88.8B</td><td>$3.1B</td><td>$0.52B</td><td>$89.6B</td></tr>
     <tr><td>Missing + leavers (4)</td><td>$114.8B</td><td>$4.1B</td><td>$0.56B</td><td>$116.3B</td></tr>
-    <tr><td>GGSS expert report (cited)</td><td>$100B</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td></tr>
   </tbody>
 </table>
 </div>
 <p class="fn" style="font-size:12.5px; color:var(--ink-3); margin-top:8px;"><sup>1</sup> Total = wealth tax +
 extra income tax &minus; income tax lost (present value, 5 years at 3%). Not the authors' choice: BSZ's
-headline is the wealth tax alone, $103.8 billion, which the GGSS expert report rounds to $100 billion
-(p.4). This OPA uses the total because it compares more directly with
+headline is the wealth tax alone, $103.8 billion. This OPA uses the total because it compares more directly with
 <a href="../../index.html">other analyses</a>, such as the <a href="../../rjkdc-analysis/site/">RJKDC
 report</a>'s net present value.</p>
 
 <p style="margin-top:14px;">The yearly income tax loss has no end date in Table 5. The authors
-argue it should last about as long as the five payment years; the <a href="../../rjkdc-analysis/site/">RJKDC report</a> (Rauh, Jaros, Kearney, Doran and Cosso) counts it forever, which BSZ call the main driver of the gap between the two sides (PDF p.22, fn.29). The revenue itself moves with only
+argue it should last about as long as the five payment years; the <a href="../../rjkdc-analysis/site/">RJKDC report</a> (Rauh, Jaros, Kearney, Doran and Cosso) counts it forever, which BSZ call the main driver of the gap between the two analyses (PDF p.22, fn.29). The revenue itself moves with only
 two guesses: the avoidance rate, and whether anyone left California before 1 January 2026.
 See <a href="repro.html#every-input-by-origin">every input, by origin</a>.</p>
   </div>
@@ -397,7 +394,7 @@ Test counts, scripts and the source manifest are on the <a href="materials.html"
   <div class="fold-body">
 <p>This work was a collaboration between the author and Claude Code (Opus and Sonnet
 models) across many sessions, not an AI working alone. The table records who led the work on
-each public object of the BSZ side, using the <a href="https://credit.niso.org/">CRediT</a>
+each public object of the BSZ analysis, using the <a href="https://credit.niso.org/">CRediT</a>
 contributor roles. The author gave these answers in a questionnaire on 2026-10-01; they were not
 inferred from commit history. The author answered the roles once and applied the same answers
 to every object on all three pages, and answered the verification question object by object.
@@ -450,7 +447,7 @@ original authors have not reviewed it.</p>
   Source, tests and build instructions:
   <a href="https://github.com/fhoces/opa-prop40">github.com/fhoces/opa-prop40</a>
   (<code>bsz-analysis/</code>).
-  Part of an Open Policy Analysis of both sides of Proposition 40: see also the
+  Part of an Open Policy Analysis of both analyses of Proposition 40: see also the
   <a href="../../rjkdc-analysis/site/">RJKDC report</a> and the
   <a href="../../index.html">reconciliation page</a>.
   <p class="credit">OPA done by <a href="https://fhoces.github.io">Fernando Hoces de la Guardia</a>, using <a href="#how-ai-was-used">agentic coding tools</a></p>

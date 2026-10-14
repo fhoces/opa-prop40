@@ -18,7 +18,7 @@ step that requires sharing (1 to 5, and 8 at level 1) was then Level 0, and so w
 
 | # | Step | Level | Evidence | What the next level needs |
 |---|---|---|---|---|
-| 1 | Unified output | 1 | "One table or graph is highlighted as the best reflection": the main estimate in `site/explorer/index.html` (Table 5 row 1, base scenario: wealth tax plus extra income tax from sales minus income tax lost to leavers, present value over 5 years at 3%), shown as the headline number in the explorer's header with its definition, and a footnote that it is not the authors' choice. It replaced a preferred-estimate box (`c1c411c`, `b646791`) | Level 2 needs "a sample output published pre-release". The output was fixed in `PLAN.md` (`0b07ce7`, "Pre-specified output") and pushed in `9adcd2f` before any RJKDC result, but only to a private repo, and after this side's own reproduction (imported from May). Publish the spec before the next round's results |
+| 1 | Unified output | 1 | "One table or graph is highlighted as the best reflection": the main estimate in `site/explorer/index.html` (Table 5 row 1, base scenario: wealth tax plus extra income tax from sales minus income tax lost to leavers, present value over 5 years at 3%), shown as the headline number in the explorer's header with its definition, and a footnote that it is not the authors' choice. It replaced a preferred-estimate box (`c1c411c`, `b646791`) | Level 2 needs "a sample output published pre-release". The output was fixed in `PLAN.md` (`0b07ce7`, "Pre-specified output") and pushed in `9adcd2f` before any RJKDC result, but only to a private repo, and after this analysis's own reproduction (imported from May). Publish the spec before the next round's results |
 | 2 | Input-output link | 3 | "An interactive tool allowing for adjusted inputs is provided, and its underlying code shares the same key sections of code behind the analysis section": the 6-dial explorer's grid is computed by `score_tab5_cell()` in `R/compute_tab5.R`, the function `compute_tab5()` itself uses for the reproduction (commit `6219268`; `test-site.R` asserts both call it) | None (top level) |
 | 3 | Methodological accounts | 3 | "Code is clearly documented into a dynamic document": `site/repro.qmd` (knitr, folded code, every number computed) | None (top level) |
 | 4 | Data | 3 | Analytic data in the repo (`site/data/*.csv`, `export/r/*.csv`; `outputs/` is generated and gitignored). The raw workbook is not redistributed, but `DATA-SOURCES.csv` gives the URL, date and SHA-256, and `site/materials.qmd` gives the download command | None. Note that the author-shared bundle is confidential and not used by anything published |
@@ -44,16 +44,16 @@ step that requires sharing (1 to 5, and 8 at level 1) was then Level 0, and so w
 
 ## Reconciliation page (site root, `comparison/`)
 
-Not a full OPA by design (it takes each side's contract as given), so steps 3 to 8 are scored
+Not a full OPA by design (it takes each analysis's contract as given), so steps 3 to 8 are scored
 on the comparison layer itself. Updated 2026-10-14 for the BSZ-shaped root page, the report and
 the materials page.
 
 | # | Step | Level | Evidence | What the next level needs |
 |---|---|---|---|---|
-| 1 | Unified output | 1 | "One table or graph is highlighted as the best reflection": the main estimate at the top of `index.html`, the gap on output (a) between the bridge's two ends (BSZ Table 5 row 1 minus the NBER expected revenue), computed by `comparison/R/site.R` and re-read by the page from `assets/comparison-data.js`, with its definition and a footnote that neither side reports it. The bridge, the Open Output, explains it one disputed input at a time | Level 2: the common outputs and the bridge direction were fixed in `2c302eb`, after both side reproductions had merged, though before any comparison number; the gap as the single main estimate was chosen on 2026-10-14, after the results. Publish the spec before results next time |
+| 1 | Unified output | 1 | "One table or graph is highlighted as the best reflection": the main estimate at the top of `index.html`, the gap on output (a) between the bridge's two ends (BSZ Table 5 row 1 minus the NBER expected revenue), computed by `comparison/R/site.R` and re-read by the page from `assets/comparison-data.js`, with its definition and a footnote that neither analysis reports it. The bridge, the Open Output, explains it one disputed input at a time | Level 2: the common outputs and the bridge direction were fixed in `2c302eb`, after both side reproductions had merged, though before any comparison number; the gap as the single main estimate was chosen on 2026-10-14, after the results. Publish the spec before results next time |
 | 2 | Input-output link | 3 | Interactive toggles on `index.html`: output (a/b), method (Shapley / one order), horizon (own / 5 / 10 / 20 / 30 / 50 years / perpetuity). The horizon is a disputed input (DISPUTES row 2), and the page reads `assets/comparison-data.js`, written by `comparison/run.R` from the same `build_all()` the tests run | Met, with a caveat: one input dial (horizon), served from `build_all()` like the sides' grids; more dials would strengthen it (e.g. r range, avoidance) |
 | 3 | Methodological accounts | 3 | "Code is clearly documented into a dynamic document": `comparison/site/repro.qmd` (knitr) reads the exports, derives the main estimate step by step, and folds the R source and its Python twin under each exhibit | None (top level) |
-| 4 | Data | 3 | Analytic data: `comparison/export/{r,py}/`, listed with rows and contents on `comparison/site/materials.html`. Inputs: the two sides' committed export contracts, `comparison/data/document-inputs.csv` and `hoopes-fig2.csv` (digitized). The two third-party PDFs only the comparison uses are in `comparison/DATA-SOURCES.csv` with URL and SHA-256 | None |
+| 4 | Data | 3 | Analytic data: `comparison/export/{r,py}/`, listed with rows and contents on `comparison/site/materials.html`. Inputs: the two analyses' committed export contracts, `comparison/data/document-inputs.csv` and `hoopes-fig2.csv` (digitized). The two third-party PDFs only the comparison uses are in `comparison/DATA-SOURCES.csv` with URL and SHA-256 | None |
 | 5 | Open report | 3 | "A dynamic document ... and include version control tracking": `comparison/site/repro.qmd` in git, rendered to `repro.html`, plus `DISPUTES.md` | None |
 | 6 | File structure | 3 | `comparison/` with `R/`, `py/`, `data/`, `export/`, `site/`, `tests/`, `README.md` (Open Materials top in the BSZ shape) | None |
 | 7 | Label inputs | 3 | 18 rows in `document-inputs.csv`, each with a label (data 7, guesswork 5, derived 4, scenario 2), a source and a page; every bridge step carries a kind | Guesswork analyst/date, as above |
@@ -79,7 +79,7 @@ the materials page.
    own garbage collection, but both claim links are already used: checked 2026-09-24, each one
    redirects to its claimed document (1436128 in the BITSS RPubs account, 1436129 in `fhoces`), so
    a leftover copy of a token cannot claim anything.
-2. **One estimating function per side (step 2 to Level 3).** Done 2026-09-23: each explorer grid now calls the
+2. **One estimating function per analysis (step 2 to Level 3).** Done 2026-09-23: each explorer grid now calls the
    analysis's own functions (BSZ `6219268`; RJKDC `e899ae9`), with grids and
    exports byte-identical before and after.
 3. **Step 1 to Level 2 for the next round.** It cannot be met retroactively for this round. For

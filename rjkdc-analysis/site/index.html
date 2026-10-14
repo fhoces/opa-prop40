@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Prop 40, RJKDC side</title>
-<meta name="description" content="An Open Policy Analysis of the RJKDC side of California Proposition 40: the -$38.9 billion net present value, reproduced from the authors' own code, with its guesswork marked.">
+<title>Prop 40, RJKDC analysis</title>
+<meta name="description" content="An Open Policy Analysis of the RJKDC analysis of California Proposition 40: the -$38.9 billion net present value, reproduced from the authors' own code, with its guesswork marked.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@400;600&display=swap">
@@ -224,17 +224,14 @@
   <h1>California Proposition 40, Analysis From Rauh, Jaros, Kearney, Doran, Cosso (RJKDC) <span class="wip">Work in progress</span></h1>
   <p class="byline">
     Proposition 40, the Billionaire Tax Act, would tax California's billionaires once, at 5%
-    of their net worth, paid over five years. The RJKDC side argues the state ends up poorer,
+    of their net worth, paid over five years. The RJKDC analysis argues the state ends up poorer,
     because billionaires who leave take their income tax with them for ever. This site
-    reproduces that estimate from its two versions, Rauh, Jaros, Kearney, Doran and Cosso,
-    <cite><a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6340778">The Net Present
-    Value of the Billionaire Tax Act</a></cite> (Hoover Institution, SSRN 6340778, 17 March 2026),
-    and its revision by Jaros and Rauh
-    (<a href="https://www.nber.org/system/files/chapters/c15504/c15504.pdf">NBER chapter c15504</a>,
-    22 September 2026). It is rebuilt from the authors' own public code and data
+    reproduces that estimate from Jaros and Rauh, with Kearney, Doran and Cosso,
+    <cite><a href="https://www.nber.org/system/files/chapters/c15504/c15504.pdf">The Net Present
+    Value of the Billionaire Tax Act</a></cite> (NBER chapter c15504, 22 September 2026). It is rebuilt from the authors' own public code and data
     (<a href="https://github.com/bjaros20/wealth_tax">github.com/bjaros20/wealth_tax</a>), and it
     marks which of its inputs are data and which are guesses.
-    This site follows the <a href="https://tinyurl.com/1qypbihb">Open
+    This site follows the <a href="https://doi.org/10.1093/scipol/scaa067">Open
     Policy Analysis</a> (OPA) framework, so what the analysis
     concludes, how it gets there, and what to run yourself stay in separate,
     checkable places.
@@ -247,23 +244,21 @@
   <span class="def">Defined as the one-time wealth tax revenue minus the present value of
     California income tax lost for ever to billionaires who leave (NPV = WT &minus; f&middot;C / r),
     averaged over the authors' Monte Carlo draws.</span>
-  <p class="fn"><sup>1</sup> The authors' own headline, from their latest version (Jaros and
-    Rauh, NBER chapter c15504, September 2026, PDF p.1). Their first version (Rauh et al., SSRN,
-    March 2026) put it at <span id="hl-ssrn">&minus;$24.7 billion</span>. That earlier estimate
-    remains a scenario in the <a href="explorer/">explorer</a> and the anchor of the
-    <a href="../../index.html">comparison page</a>.</p>
+  <p class="fn"><sup>1</sup> The authors' own headline (Jaros and Rauh, NBER chapter c15504,
+    September 2026, PDF p.1), averaged over their Monte Carlo draws. The
+    <a href="explorer/">explorer</a> shows how far each input moves it, and the
+    <a href="../../index.html">comparison overview</a> sets it beside the BSZ analysis.</p>
 </div>
 <script src="explorer/grid.js"></script>
 <script>
-  // Read both numbers from the explorer's grid (its preferred list) so they cannot drift from it.
+  // Read the number from the explorer's grid (its preferred list) so it cannot drift from it.
   (function () {
     var G = window.__GRID__;
     if (!G || !G.preferred) return;
     function pick(k) { return G.preferred.filter(function (p) { return p.key === k; })[0]; }
     function usd(x) { return (x < 0 ? "\u2212$" : "$") + Math.abs(x).toFixed(1); }
-    var n = pick("nber"), s = pick("ssrn");
+    var n = pick("nber");
     if (n) document.getElementById("hl-main").textContent = usd(n.printed_npv) + "B";
-    if (s) document.getElementById("hl-ssrn").textContent = usd(s.printed_npv) + " billion";
   })();
 </script>
 
@@ -280,8 +275,7 @@
         <h3>Explore the main estimate and its assumptions &rarr;</h3>
         <p>The mean net present value and the share of negative outcomes for every combination of
            the seven inputs of the authors' Monte Carlo: 2,187 combinations of three levels each,
-           labelled data or guesswork. The page opens on the NBER setting, the main estimate; the
-           SSRN setting is one click away. Each cell holds the exact expected NPV and the exact
+           labelled data or guesswork. The page opens on the main estimate's setting. Each cell holds the exact expected NPV and the exact
            share of negative outcomes.</p>
       </div>
       <div class="card-icon-box" aria-hidden="true">
@@ -337,38 +331,33 @@
 <p>The Act collects a wealth tax once; billionaires who leave stop paying California income
    tax for ever. The authors value that lost stream as a perpetuity and subtract it: NPV = revenue
    &minus; (share of the income tax base that leaves) &times; (annual income tax) / (discount rate).
-   They report the average NPV over 100,000 random draws of those inputs. This OPA's main
-   estimate is the latest version's average, <strong>&minus;$38.9 billion</strong>
-   (Jaros and Rauh, NBER, September 2026).<sup>1</sup> The earlier version (Rauh et al., SSRN,
-   March 2026) put it at &minus;$24.7 billion; the table keeps it beside the main estimate.
+   They report the average NPV over 100,000 random draws of those inputs: the main estimate,
+   <strong>&minus;$38.9 billion</strong> (Jaros and Rauh, NBER, September 2026).<sup>1</sup>
    Amounts are billions of dollars.</p>
 
 <div class="table-scroll">
 <table class="scen">
-  <thead><tr><th></th><th class="pref">NBER, Sept 2026<br><span class="table-subhead">main estimate</span></th><th>SSRN, Mar 2026<br><span class="table-subhead">earlier version</span></th></tr></thead>
+  <thead><tr><th></th><th class="pref">NBER, Sept 2026<br><span class="table-subhead">main estimate</span></th></tr></thead>
   <tbody>
-    <tr><td><strong>Mean NPV to the state, as printed</strong></td><td class="pref"><strong>−38.9</strong></td><td><strong>−24.7</strong></td></tr>
-    <tr><td>Share of outcomes below zero, as printed</td><td class="pref">85.2%</td><td>71%</td></tr>
-    <tr><td>Wealth tax revenue, the paper's headline</td><td class="pref">about 30 (28.4 to 35.6)</td><td>about 40 (35 to 46)</td></tr>
-    <tr><td>Mean NPV, authors' seeded run, reproduced</td><td class="pref">−38.89</td><td>−24.77</td></tr>
-    <tr><td>Mean NPV, exact expectation of the same draws</td><td class="pref">−38.98</td><td>−24.71</td></tr>
-    <tr><td>Mean revenue in the Monte Carlo's draw</td><td class="pref">36.00</td><td>51.26</td></tr>
-    <tr><td>Mean present value of income tax lost</td><td class="pref">74.98</td><td>75.96</td></tr>
+    <tr><td><strong>Mean NPV to the state, as printed</strong></td><td class="pref"><strong>−38.9</strong></td></tr>
+    <tr><td>Share of outcomes below zero, as printed</td><td class="pref">85.2%</td></tr>
+    <tr><td>Wealth tax revenue, the paper's headline</td><td class="pref">about 30 (28.4 to 35.6)</td></tr>
+    <tr><td>Mean NPV, authors' seeded run, reproduced</td><td class="pref">−38.89</td></tr>
+    <tr><td>Mean NPV, exact expectation of the same draws</td><td class="pref">−38.98</td></tr>
+    <tr><td>Mean revenue in the Monte Carlo's draw</td><td class="pref">36.00</td></tr>
+    <tr><td>Mean present value of income tax lost</td><td class="pref">74.98</td></tr>
   </tbody>
 </table>
 </div>
 
 <p class="fn" style="font-size:12.5px; color:var(--ink-3); margin-top:8px;"><sup>1</sup> The
-   authors' own headline in their latest version (NBER PDF p.1). The SSRN estimate stays a scenario in
-   the <a href="explorer/">explorer</a> and the anchor of the <a href="../../index.html">comparison
-   page</a>.</p>
+   authors' own headline (NBER PDF p.1). The <a href="../../index.html">comparison overview</a> sets it
+   beside the BSZ analysis.</p>
 
-<p style="margin-top:14px;">Printed values from NBER PDF pp.1, 23 and 35 and SSRN PDF pp.1, 14 and
-   20. Three things the numbers show. First, the result is driven by the loss side: roughly 75 of
+<p style="margin-top:14px;">Printed values from NBER PDF pp.1, 23 and 35. Three things the numbers show. First, the result is driven by the loss term: roughly 75 of
    present value lost against a few tens collected, because at the draws' 1.5% to 4.5% rates a dollar
-   a year for ever is worth 22 to 67 dollars today. Second, the SSRN Monte Carlo draws revenue with a
-   mean of 51.26, above the paper's own preferred "about 40", while the NBER draw's mean, 36, is its
-   litigation-discounted ceiling (0.5 &times; 72). Third, of the seven inputs that move the answer,
+   a year for ever is worth 22 to 67 dollars today. Second, the Monte Carlo draws revenue with a mean of 36, the paper's
+   litigation-discounted ceiling (0.5 &times; 72), below the "about 30" it prints as collectible. Third, of the seven inputs that move the answer,
    six are guesswork; the <a href="explorer/">explorer</a> shows how far each one moves it. Whether
    the income tax loss really lasts for ever is the main point the <a href="../../bsz-analysis/site/">BSZ report</a> (Boll, Saez and Zucman) disputes.</p>
   </div>
@@ -381,14 +370,14 @@
 <table>
   <thead><tr><th>Published result</th><th>Result</th></tr></thead>
   <tbody>
-    <tr><td>Revenue chain, Sec 4 (SSRN pp.10-14)</td>
+    <tr><td>Revenue chain, Sec 4</td>
         <td>94.30 / 67.51 / 55.10 / 45.59 from the authors' workbook; the paper prints 94.20 for the
             first, which its later steps also use (mismatch 6)</td></tr>
     <tr><td>Pareto fit and Table 8, income tax (p.17)</td>
         <td>alpha 1.44; all 21 cells round to the printed digit, replaying the authors' random-number (RNG) stream</td></tr>
     <tr><td>Tables 9 and 10, NPV and break-even (pp.19-20)</td>
         <td>all 18 and all 9 cells match the printed digit</td></tr>
-    <tr><td>SSRN Monte Carlo, Sec 5.5 (p.20)</td>
+    <tr><td>First-version Monte Carlo, Sec 5.5</td>
         <td>median and share negative match; mean and SD (standard deviation) do not quite (mismatch 9). The printed mean
             equals the exact expectation, not the shipped seed's run</td></tr>
     <tr><td>NBER revenue and Monte Carlo (pp.22-23, 35)</td>
@@ -414,7 +403,7 @@ papers, their READMEs and their code. We reproduce the code as shipped and recor
   <li>The workbook's baseline is 94.30; the text and every later step use a typed 94.2.</li>
   <li>Two memo cells in the workbook read from the wrong sheet (no headline number affected).</li>
   <li>Table 9's central revenue, 42.0, is a typed literal with no derivation.</li>
-  <li>The SSRN Monte Carlo's printed mean and SD do not come out of the shipped seeded script.</li>
+  <li>The first version's Monte Carlo printed mean and SD do not come out of the shipped seeded script.</li>
 </ol>
 <p>Full text, with file and line references: <a href="materials.html#mismatches">materials page</a>.</p>
   </div>
@@ -425,7 +414,7 @@ papers, their READMEs and their code. We reproduce the code as shipped and recor
   <div class="fold-body">
 <p>This work was a collaboration between the author and Claude Code (Opus and Sonnet
 models) across many sessions, not an AI working alone. The table records who led the work on
-each public object of the RJKDC side, using the <a href="https://credit.niso.org/">CRediT</a>
+each public object of the RJKDC analysis, using the <a href="https://credit.niso.org/">CRediT</a>
 contributor roles. The answers come from a questionnaire the author fills in; they are not
 inferred from commit history. The table groups the 14 roles into three: <em>ideas and direction</em> (conceptualization,
 methodology, supervision, project administration), <em>doing the work</em> (data curation,
@@ -446,7 +435,7 @@ CRediT. It records how closely the author has checked the object.</p>
   </tbody>
 </table>
 </div>
-<p class="credit-empty">The credit interview has not been run for this side yet.</p>
+<p class="credit-empty">The credit interview has not been run for this analysis yet.</p>
 <div class="ai-key">
   <div><span><i class="sq h"></i> led by the author</span>
   <span><i class="sq ai"></i> led by Claude</span>
@@ -475,8 +464,8 @@ original authors have not reviewed it.</p>
 
 <footer>
   Part of <a href="https://github.com/fhoces/opa-prop40">opa-prop40</a>, an Open Policy
-  Analysis of both sides of California Proposition 40 (the Billionaire Tax Act). See also the
-  <a href="../../bsz-analysis/site/">BSZ side overview</a> and the
+  Analysis of both analyses of California Proposition 40 (the Billionaire Tax Act). See also the
+  <a href="../../bsz-analysis/site/">BSZ analysis overview</a> and the
   <a href="../../index.html">comparison overview</a>.
   <p class="credit">OPA done by <a href="https://fhoces.github.io">Fernando Hoces de la Guardia</a>, using <a href="#how-ai-was-used">agentic coding tools</a></p>
 </footer>

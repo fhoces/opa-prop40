@@ -1,6 +1,6 @@
 ---
 title: "The Net Present Value of the Billionaire Tax Act"
-subtitle: "Teaching deck: the RJKDC side's fiscal estimate of California Proposition 40 (Rauh et al., SSRN March 2026; Jaros and Rauh, NBER September 2026)"
+subtitle: "Teaching deck: RJKDC's fiscal estimate of California Proposition 40 (Rauh et al., SSRN March 2026; Jaros and Rauh, NBER September 2026)"
 output:
   xaringan::moon_reader:
     self_contained: true
@@ -49,7 +49,7 @@ class: center, middle, opa-slide
 The estimate of California's Billionaire Tax Act by Rauh, Jaros, Kearney, Doran and Cosso
 (RJKDC), rebuilt from the authors' own
 code and data and taught step by step, following the
-[Open Policy Analysis](https://tinyurl.com/1qypbihb) framework.
+[Open Policy Analysis](https://doi.org/10.1093/scipol/scaa067) framework.
 ]
 
 <img src="../assets/opa/opa-details.png" class="opa-mark" alt="">
@@ -216,7 +216,7 @@ Reproduced: `r num(mcn$summary$mean, 2)` (seeded run), `r num(tr("npv_mc_nber_an
 ]
 
 .blue-box[
-The project fixed, before seeing results, that the RJKDC side is shown as these **two** estimates
+The project fixed, before seeing results, that the RJKDC analysis is shown as these **two** estimates
 side by side: the SSRN anchor, and the NBER revision that changes mainly one input, litigation risk.
 ]
 

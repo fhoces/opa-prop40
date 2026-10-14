@@ -1,5 +1,5 @@
 ---
-title: "Prop 40, BSZ side: the reproduction"
+title: "Prop 40, BSZ analysis: the reproduction"
 subtitle: "Boll, Saez and Zucman (BSZ, 2026) and the Galle, Gamage, Saez and Shanske (GGSS) expert report, reproduced step by step from the authors' August 2026 workbook"
 date: today
 format:
@@ -21,7 +21,7 @@ execute:
 ---
 
 ::: {.site-nav}
-BSZ side of California Proposition 40:
+BSZ analysis of California Proposition 40:
 [Open Output (the explorer)](explorer/) &middot; Open Analysis: Report (here) and
 [Slides](slides/slides.html) &middot;
 [Open Materials](https://github.com/fhoces/opa-prop40/tree/main/bsz-analysis) &middot;
@@ -131,7 +131,7 @@ twin_html("the setup",
 
 California's Proposition 40, the Billionaire Tax Act, would levy a one-time 5% tax on
 the net worth of California's billionaires, paid 1% a year over five years. Two
-documents carry the BSZ side's revenue estimate, and this report reproduces
+documents carry BSZ's revenue estimate, and this report reproduces
 both:
 
 1. **Boll, Saez and Zucman (BSZ)**, *California Billionaires: Wealth, Taxes, and Wealth
@@ -144,7 +144,7 @@ both:
    we round to \$100 billion for simplicity." So the GGSS number is the BSZ row-1
    computation, rounded. Reproducing one reproduces the other.
 
-This report is part of an Open Policy Analysis of the BSZ side:
+This report is part of an Open Policy Analysis of the BSZ analysis:
 
 - **Open Output**: [the explorer](explorer/), where the assumptions move and the revenue follows
 - **Open Analysis**: this document, and [the slide deck](slides/slides.html)
@@ -458,7 +458,7 @@ tr("fig7")
 
 ## A. The one-time 5% tax: Table 5, step by step {#table-5}
 
-This is the section the BSZ side's headline rests on. Table 5 has four scenarios: the **base**
+This is the section BSZ's headline rests on. Table 5 has four scenarios: the **base**
 scenario (row 1), the **missing billionaires** scenario (row 2), the **leavers** scenario (row 3),
 and **missing + leavers** (row 4). We build the base scenario in five steps, then each other
 scenario as a change to it.
@@ -963,7 +963,7 @@ The workbook is not redistributed; `DATA-SOURCES.csv` gives its URL and SHA-256.
 `CAWTBSZ_MATERIALS` if it lives outside `bsz-analysis/original-materials/`.
 
 ::: {.site-nav}
-BSZ side of California Proposition 40:
+BSZ analysis of California Proposition 40:
 [Open Output (the explorer)](explorer/) &middot; Open Analysis: Report (here) and
 [Slides](slides/slides.html) &middot;
 [Open Materials](https://github.com/fhoces/opa-prop40/tree/main/bsz-analysis) &middot;

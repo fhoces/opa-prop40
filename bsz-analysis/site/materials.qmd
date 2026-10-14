@@ -1,5 +1,5 @@
 ---
-title: "Prop 40, BSZ side: the materials"
+title: "Prop 40, BSZ analysis: the materials"
 subtitle: "Every script, test, data file and source behind the explorer, the report and the slides"
 date: today
 format:
@@ -17,7 +17,7 @@ execute:
 ---
 
 ::: {.site-nav}
-BSZ side of California Proposition 40:
+BSZ analysis of California Proposition 40:
 [Open Output (the explorer)](explorer/) &middot; Open Analysis: [Report](repro.html) and
 [Slides](slides/slides.html) &middot;
 [Open Materials](https://github.com/fhoces/opa-prop40/tree/main/bsz-analysis) (this page is its guide) &middot;
@@ -43,7 +43,7 @@ tests <- read.csv("data/test-results.csv", stringsAsFactors = FALSE)
 ::: {.report-intro}
 ![](assets/opa/opa-materials.png){.opa-figure}
 
-This page is a guide to the **Open Materials** layer (the repository) of the BSZ side (Boll, Saez and Zucman, BSZ, plus the
+This page is a guide to the **Open Materials** layer (the repository) of the BSZ analysis (Boll, Saez and Zucman, BSZ, plus the
 Galle, Gamage, Saez and Shanske (GGSS) expert report): what to download, what
 to run, and what the checks found. Everything lives in one repository,
 [fhoces/opa-prop40](https://github.com/fhoces/opa-prop40), under `bsz-analysis/`.
@@ -194,7 +194,7 @@ used by anything published here.
   the workbook, which the pipeline takes as given.
 
 ::: {.site-nav}
-BSZ side of California Proposition 40:
+BSZ analysis of California Proposition 40:
 [Open Output (the explorer)](explorer/) &middot; Open Analysis: [Report](repro.html) and
 [Slides](slides/slides.html) &middot;
 [Open Materials](https://github.com/fhoces/opa-prop40/tree/main/bsz-analysis) (this page is its guide) &middot;

@@ -7,7 +7,7 @@ the gitignored `original-materials/`).
 
 | Column | Meaning |
 |---|---|
-| `file` | Path relative to this side's directory. |
+| `file` | Path relative to this analysis's directory. |
 | `side` | `bsz` (Boll, Saez and Zucman) or `rjkdc` (Rauh et al.). |
 | `provider` | Who produced the file. |
 | `obtained_via` | `public-download` (fetched from a public URL), `author-shared` (given to us directly by a paper's authors, not publicly posted), `re-pull` (an independent extraction from a primary public data source, e.g. SEC EDGAR, that stands in for a workbook-cached figure), or `git-clone` (a public code repository cloned at a pinned commit; `sha256` then holds the commit SHA). |
@@ -22,29 +22,29 @@ the gitignored `original-materials/`).
 
 Either paper's authors (BSZ, or Rauh et al.) may share raw data or code that never appears on a
 public page: SEC filings extracts, an internal spreadsheet, a data appendix sent by email. Two
-items have arrived, both on 2026-09-23 and both recorded in the sides' `DATA-SOURCES.csv`:
+items have arrived, both on 2026-09-23 and both recorded in both analyses' `DATA-SOURCES.csv`:
 
-- BSZ side: a confidential replication bundle of code and data
+- BSZ analysis: a confidential replication bundle of code and data
   (`author-shared/2026-09-23_bsz-replication-code-data/`, `obtained_via=author-shared`; re-analysis
   permitted, no public sharing). Not yet wired into any `tar_target`.
-- RJKDC side: the authors' public GitHub repository `bjaros20/wealth_tax` (MIT licence), cloned at
+- RJKDC analysis: the authors' public GitHub repository `bjaros20/wealth_tax` (MIT licence), cloned at
   commit `25e84dd` (`author-shared/2026-09-23_wealth_tax-repo/`, `obtained_via=git-clone`). It is
   public, not author-shared in the sense above; it sits in the author-shared slot only for
   convenience, because the authors pointed us to it and the pipeline resolves it from there
   (`RAUH_REPO_DIR`).
 
-- **Where it goes**: `<side>/original-materials/author-shared/<YYYY-MM-DD>_<short-desc>/`, e.g.
+- **Where it goes**: `<folder>/original-materials/author-shared/<YYYY-MM-DD>_<short-desc>/`, e.g.
   `bsz-analysis/original-materials/author-shared/2026-10-05_bsz-sec-panel/`. This sits
   under the already-gitignored `original-materials/`, so author-shared files are never
   committed, and anything derived from them (CSVs, `*.sqlite` extracts) stays gitignored too;
   the existing root `.gitignore` patterns (`**/original-materials/`, `*.sqlite`) already cover
   both without any change.
-- **Record it**: add a row to this side's `DATA-SOURCES.csv` with `obtained_via=author-shared`,
+- **Record it**: add a row to this analysis's `DATA-SOURCES.csv` with `obtained_via=author-shared`,
   the date received, a contact description in `url_or_contact` (e.g. "email from J. Rauh,
   2026-10-05"), the SHA-256, and specific `terms` (author-shared data often comes with tighter
   restrictions than a public PDF, so confirm with the sender rather than defaulting to
   `do-not-redistribute`).
 - **How the pipeline uses it**: see "Future: author-shared raw data" in `../PLAN.md` for how a
-  later phase wires an author-shared file into the pipeline through one path-resolver per side,
+  later phase wires an author-shared file into the pipeline through one path-resolver per analysis,
   the same pattern `BSZ_VINTAGE` already establishes for choosing between the May and August
   workbooks.

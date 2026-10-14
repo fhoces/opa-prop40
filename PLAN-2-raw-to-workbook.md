@@ -85,7 +85,7 @@ Answer keys:
 The answer-key files are located through the gitignored `data-raw/private-paths.csv`
 (schema in `private-paths.example.csv`). Details of how the private files differ from
 one another are kept in the gitignored `data-raw/NOTES-private.md`. Compare the
-aggregate on the intersection of dates and report what is extra on each side.
+aggregate on the intersection of dates and report what is extra on each analysis.
 
 ## The rules of query 1, in plain words (verify against the script)
 
@@ -257,4 +257,4 @@ commit SHAs. No file dumps.
 5. **Compustat-based steps** (now possible, extracts are in the bundle): Form 4 to
    daily prices, donation values, the `wrds_*` sheets, then `main_annual_*` to
    `data_sec_*`. The capital-gains basis loop is sequential and becomes an R and
-   Python twin with SQL on either side.
+   Python twin with SQL on either analysis.

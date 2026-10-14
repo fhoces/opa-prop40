@@ -3,7 +3,7 @@
 One numbered item per code/paper or doc/code discrepancy found while reproducing Rauh, Jaros,
 Kearney, Doran & Cosso (SSRN 6340778) and Jaros & Rauh (NBER, Sept 2026). By design, we do not
 "fix" the authors: we reproduce their code as run, record the discrepancy, and where it matters
-expose the alternative reading as a parameter with both sides under test.
+expose the alternative reading as a parameter with both analyses under test.
 
 ## 1. Eq. 22's printed WT upper bound (67.1) vs. the code's literal (67.51)
 

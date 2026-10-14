@@ -16,7 +16,7 @@ Proposition 40 (the Billionaire Tax Act, a one-time 5% tax on net worth above $1
   only; reproduced in the end from the authors' public repository, bjaros20/wealth_tax at `25e84dd`.
 
 The end state is one repo (private while it is built, public once the blockers in `AUDIT.md` are
-cleared): a full OPA for each side, plus a comparison layer that puts
+cleared): a full OPA for each analysis, plus a comparison layer that puts
 both on one input-to-output chain. **Phase 1 covers only the steps below.** No Python twin, no
 SQL files, no Rauh work and no website yet.
 
@@ -25,19 +25,19 @@ SQL files, no Rauh work and no website yet.
 Stated here, before any Rauh reproduction or reconciliation work, so the choice of output cannot
 be tuned to the results (OPA step 1: fix the output first).
 
-**Whose version is analysed: the strongest version of each side.** That means the anchor team's
+**Whose version is analysed: the strongest version of each analysis.** That means the anchor team's
 latest estimate, plus their own later documents, with any correction they conceded applied. We do
-not strengthen either side ourselves; our own improvements appear only on the reconciliation page,
+not strengthen either analysis ourselves; our own improvements appear only on the reconciliation page,
 credited to us.
 
-- **BSZ side** reports **two estimates side by side**:
+- **BSZ analysis** reports **two estimates side by side**:
   1. GGSS expert report (updated 20 July 2026): $100B from static scoring with 10% avoidance, the
      number the campaign cites.
   2. BSZ NBER WP 35218 (August 2026, workbook): the $104B benchmark and the other rows of its
      Table 5.
   The conceded fix is already in both: the non-US-citizen residents are included (see
   `comparison/DISPUTES.md`, row 8).
-- **RJKDC side** reports **two estimates side by side**, mirroring the BSZ side (decided
+- **RJKDC analysis** reports **two estimates side by side**, mirroring the BSZ analysis (decided
   2026-09-23):
   1. Rauh et al., SSRN 6340778 (17 March 2026): European-elasticity approach, about $40B in revenue,
      mean NPV −$24.7B. This is the anchor that `comparison/DISPUTES.md` is verified against.
@@ -46,15 +46,15 @@ credited to us.
      Act survives constitutional challenge, so it enters the bridge as one extra step.
   Both are replicated from the authors' public MIT repo (github.com/bjaros20/wealth_tax). The Hoover
   August 2026 brief repeats the SSRN numbers.
-- **Other same-side work** enters as **credited alternative dials** on specific inputs, never merged
-  into a side's headline. Current candidates: Walczak / California Tax Foundation (2026-04-22),
-  RJKDC side.
+- **Other work on the same question** enters as **credited alternative dials** on specific inputs, never merged
+  into an analysis's headline. Current candidates: Walczak / California Tax Foundation (2026-04-22),
+  RJKDC analysis.
 - **Neutral material** feeds the reconciliation page only: LAO ballot analysis, and Hoopes, "Galle v
   Rauh" (SSRN 6428578).
 
 **Deliverables: three pages.**
 
-1. **Two full OPAs**, one per side, each shaped like
+1. **Two full OPAs**, one per analysis, each shaped like
    `../opa-ai-macro-econ-scenarios/index.html`. A landing page with OPA layer cards:
    - Open Output: an explorer with dials over a precomputed grid, the preferred estimate highlighted.
    - Open Analysis: a full reproduction report (sections in order, every equation and step
@@ -105,10 +105,10 @@ credited to us.
 4. The Rauh Monte Carlo input ranges (`rauh_mc_*`, `nber_mc_*`) live in the RJKDC export contract
    (`rjkdc-analysis/export/{r,py}/inputs.csv`, taken from the simulation functions' defaults),
    not in `comparison/data/document-inputs.csv`.
-5. Naming (user, 2026-09-23): the two sides are called by their authors' initials, BSZ and
+5. Naming (user, 2026-09-23): the two analyses are called by their authors' initials, BSZ and
    RJKDC, in directory names (`bsz-analysis/`, `rjkdc-analysis/`), workflow names, CSV side keys
    (`bsz`, `rjkdc`, `neutral`), identifiers and prose. The words supporting and opposing appear
-   only where a page explains which side is which.
+   only where a page explains which analysis is which.
 
 **Same format as the previous OPA (user requirement 2026-09-23).** Every public surface (overview
 page, interactive explorer, Quarto reproduction report, teaching deck, reproduction-materials links,
@@ -126,7 +126,7 @@ by-products only, before any site page is committed.
 
 - **One git repo** at `opa-prop40`, no nested repos.
 - **Sources are never committed.** Third-party PDFs, workbooks, SSRN files and anything
-  extracted from them (CSV, `*.sqlite`) are gitignored. Each side's README records the source
+  extracted from them (CSV, `*.sqlite`) are gitignored. Each analysis's README records the source
   URL and SHA-256 instead. `.DS_Store` is already globally ignored; don't add it.
 - **Every analysis runs in both R and Python** (later phases). Any step that manipulates a
   dataset of more than 1,000 rows goes through shared `.sql` files that both languages run
@@ -257,8 +257,8 @@ arrived as of phase 1; phase 1 only prepares the slot.
   or re-pulled, gets one row in the tracked `<side>/DATA-SOURCES.csv` manifest (columns: `file,
   side, provider, obtained_via, date_obtained, url_or_contact, sha256, terms, feeds, status`).
   See `bsz-analysis/DATA-SOURCES.md` for the full column definitions.
-- **(b) One path-resolver per side.** A later pipeline reads every input through a single
-  resolver function per side (the same role `xlsx_path_default()` plays now for `BSZ_VINTAGE`),
+- **(b) One path-resolver per analysis.** A later pipeline reads every input through a single
+  resolver function per analysis (the same role `xlsx_path_default()` plays now for `BSZ_VINTAGE`),
   so an author-shared file can replace a workbook-cached input at the exact stage it feeds
   without touching downstream code. This extends the vintage-switch idea: a future
   `BSZ_INPUTS=workbook|author` (or per-input equivalent) selects the source, and the resolver is

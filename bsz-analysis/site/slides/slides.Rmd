@@ -78,7 +78,7 @@ class: center, middle, opa-slide
 .opa-intro[
 A policy analysis is **open** when a reader can see the one estimate it recommends, follow
 every step from the inputs to that estimate, and rerun it. The
-[Open Policy Analysis](https://tinyurl.com/1qypbihb) framework asks for three layers.
+[Open Policy Analysis](https://doi.org/10.1093/scipol/scaa067) framework asks for three layers.
 ]
 
 <img src="../assets/opa/opa-details.png" class="opa-mark" alt="">
@@ -155,7 +155,7 @@ a.reflink:hover { color: #1a237e; border-bottom-color: #1a237e; }
 ```
 
 .site-nav[
-BSZ side of California Proposition 40:
+BSZ analysis of California Proposition 40:
 [Open Output (the explorer)](../explorer/) &middot; Open Analysis:
 [Report](../repro.html) and Slides (here) &middot;
 [Open Materials](https://github.com/fhoces/opa-prop40/tree/main/bsz-analysis) &middot;
@@ -166,7 +166,7 @@ BSZ side of California Proposition 40:
 
 <table style="width:100%; font-size:85%; border-collapse:collapse;">
 <tr style="background:#e8eaf6;"><th style="text-align:left; padding:6px;">Part</th><th style="text-align:left; padding:6px;">What it covers</th></tr>
-<tr><td style="padding:6px;"><b><a href="#part-policy">1. What is being estimated</a></b></td><td style="padding:6px;">The tax, and the two documents that make the BSZ side's case</td></tr>
+<tr><td style="padding:6px;"><b><a href="#part-policy">1. What is being estimated</a></b></td><td style="padding:6px;">The tax, and the two documents that make BSZ's case</td></tr>
 <tr><td style="padding:6px;"><b><a href="#part-steps">2. Five steps to $`r round(t5$wealth_tax_revenue[1])` billion</a></b></td><td style="padding:6px;">The base scenario, built one line at a time</td></tr>
 <tr><td style="padding:6px;"><b><a href="#part-rows">3. Alternative scenarios</a></b></td><td style="padding:6px;">Three more scenarios, the bottom line, and how far each guess moves it</td></tr>
 <tr><td style="padding:6px;"><b><a href="#part-repro">4. What reproduces</a></b></td><td style="padding:6px;">Tests, mismatches found, and what is not checked</td></tr>
@@ -200,7 +200,7 @@ Directly held real estate is excluded; business real estate is not.
 ]
 
 .pull-right[
-**Two documents make the BSZ side's case**
+**Two documents make BSZ's case**
 
 1. Boll, Saez and Zucman (**BSZ**), NBER WP 35218, August 2026, with a public Excel
    workbook. Base scenario: **$`r bn(t5$wealth_tax_revenue[1])` billion.**

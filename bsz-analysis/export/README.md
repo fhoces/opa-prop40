@@ -1,4 +1,4 @@
-Export contract read by the comparison layer (`comparison/`), and nothing else from this side.
+Export contract read by the comparison layer (`comparison/`), and nothing else from this analysis.
 
 - `r/inputs.csv`: `input_id, version, description, value, unit, label, provenance, source, page`
 - `r/outputs.csv`: `output_id, version, value, unit, printed_value, printed_page, abs_diff`

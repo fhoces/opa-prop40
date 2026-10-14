@@ -1,5 +1,5 @@
 ---
-title: "Prop 40, RJKDC side: the reproduction"
+title: "Prop 40, RJKDC analysis: the reproduction"
 subtitle: "Jaros and Rauh (NBER, September 2026) and the earlier Rauh, Jaros, Kearney, Doran and Cosso (SSRN, March 2026), reproduced step by step from the authors' own public code and data"
 date: today
 format:
@@ -23,7 +23,7 @@ execute:
 ---
 
 ::: {.site-nav}
-RJKDC side of California Proposition 40:
+RJKDC analysis of California Proposition 40:
 [Open Output (the explorer)](explorer/) &middot; Open Analysis: Report (here) and
 [Slides](slides/slides.html) &middot;
 [Open Materials](https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis) &middot;
@@ -79,12 +79,12 @@ scroll <- function(x) cat("\n\n```{=html}\n<div class=\"table-scroll\">\n",
 ::: {.report-intro}
 ![](assets/opa/opa-details.png){.opa-figure}
 
-This report rebuilds, step by step, the RJKDC side's fiscal estimate of California's
+This report rebuilds, step by step, RJKDC's fiscal estimate of California's
 Proposition 40 (the Billionaire Tax Act): a one-time 5% tax on the net worth of billionaires
 resident in California on 1 January 2026. The authors argue that the tax would collect far less
 than the [BSZ report](../../bsz-analysis/site/) estimates, and that billionaires who leave take their income tax with them for
 ever, so the state ends up poorer. Following the
-[Open Policy Analysis](https://tinyurl.com/1qypbihb) framework:
+[Open Policy Analysis](https://doi.org/10.1093/scipol/scaa067) framework:
 
 - **Open Output**: [the explorer](explorer/), the mean net present value and share of
   negative outcomes for every combination of seven inputs
@@ -524,7 +524,7 @@ ggplot(dd, aes(npv, fill = npv < 0)) +
 ## The NBER revision (September 2026)
 
 The NBER version keeps Sections 4 and 5.1 (same base, same Pareto fit, same Table 8, now numbered
-Table 9) and changes the revenue side and the Monte Carlo. Five changes, in the order they enter:
+Table 9) and changes the revenue part and the Monte Carlo. Five changes, in the order they enter:
 
 1. **A later valuation date.** Net worth is grown 7% to the 31 December 2026 valuation date, and the
    base is rebuilt person by person in `final.csv`: `r nc$n_domestic` domestic rows, face value
@@ -703,7 +703,7 @@ The authors' repository is MIT licensed but not redistributed here; the tests th
 authors' own scripts skip cleanly without it, and the rest of the suite does not need it.
 
 ::: {.site-nav}
-RJKDC side of California Proposition 40:
+RJKDC analysis of California Proposition 40:
 [Open Output (the explorer)](explorer/) &middot; Open Analysis: Report (here) and
 [Slides](slides/slides.html) &middot;
 [Open Materials](https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis) &middot;

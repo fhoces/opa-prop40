@@ -1,8 +1,8 @@
-# BSZ side of California Proposition 40: Open Materials
+# BSZ analysis of California Proposition 40: Open Materials
 
-This folder is the BSZ side of [opa-prop40](https://fhoces.github.io/opa-prop40/bsz-analysis/site/), an Open Policy Analysis of California's
+This folder is the BSZ analysis of [opa-prop40](https://fhoces.github.io/opa-prop40/bsz-analysis/site/), an Open Policy Analysis of California's
 2026 Proposition 40 (the Billionaire Tax Act). The [comparison overview](https://fhoces.github.io/opa-prop40/)
-sets this side next to the RJKDC side. This folder reproduces the revenue estimate of Boll, Saez and
+sets this analysis next to the RJKDC analysis. This folder reproduces the revenue estimate of Boll, Saez and
 Zucman (2026) and opens every input, every line of code and every number behind it. The aim is a
 transparent and reproducible analysis that anyone can check, and a shared basis for discussing the
 policy.
@@ -28,10 +28,10 @@ full. The authors' paper and workbook are not redistributed: see
 [what is and is not in the repo](#what-is-and-is-not-in-the-repo).
 
 The [BSZ overview page](https://fhoces.github.io/opa-prop40/bsz-analysis/site/) links all three. The [comparison overview](https://fhoces.github.io/opa-prop40/)
-compares this side with the RJKDC side.
+compares this analysis with the RJKDC analysis.
 
-This project follows the [Open Policy Analysis (OPA) Guidelines](https://www.bitss.org/opa/) of the
-Berkeley Initiative for Transparency in the Social Sciences (BITSS). [`AUDIT.md`](../AUDIT.md) scores
+This project follows the [Open Policy Analysis (OPA) framework](https://doi.org/10.1093/scipol/scaa067) (Hoces de la
+Guardia, Grant and Miguel, 2021). [`AUDIT.md`](../AUDIT.md) scores
 each page against the Guidelines' nine steps.
 
 <br clear="right">
