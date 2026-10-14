@@ -1,7 +1,8 @@
 # BSZ side of California Proposition 40: Open Materials
 
-This folder is the BSZ side of [opa-prop40](../README.md), an Open Policy Analysis of California's
-2026 Proposition 40 (the Billionaire Tax Act). It reproduces the revenue estimate of Boll, Saez and
+This folder is the BSZ side of [opa-prop40](https://fhoces.github.io/opa-prop40/bsz-analysis/site/), an Open Policy Analysis of California's
+2026 Proposition 40 (the Billionaire Tax Act). The [comparison overview](https://fhoces.github.io/opa-prop40/)
+sets this side next to the RJKDC side. This folder reproduces the revenue estimate of Boll, Saez and
 Zucman (2026) and opens every input, every line of code and every number behind it. The aim is a
 transparent and reproducible analysis that anyone can check, and a shared basis for discussing the
 policy.
@@ -26,7 +27,7 @@ and [`site/slides/`](site/slides/).
 full. The authors' paper and workbook are not redistributed: see
 [what is and is not in the repo](#what-is-and-is-not-in-the-repo).
 
-The [BSZ overview page](https://fhoces.github.io/opa-prop40/bsz-analysis/site/) links all three. The [project overview](https://fhoces.github.io/opa-prop40/)
+The [BSZ overview page](https://fhoces.github.io/opa-prop40/bsz-analysis/site/) links all three. The [comparison overview](https://fhoces.github.io/opa-prop40/)
 compares this side with the RJKDC side.
 
 This project follows the [Open Policy Analysis (OPA) Guidelines](https://www.bitss.org/opa/) of the
