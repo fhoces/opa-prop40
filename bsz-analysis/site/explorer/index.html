@@ -466,7 +466,8 @@
   }
   function drawBars(i) {
     var svg = document.getElementById("bars");
-    while (svg.childNodes.length > 1) svg.removeChild(svg.lastChild);
+    // Clear the bars and labels, keeping the <title> that names the chart for screen readers.
+    Array.prototype.slice.call(svg.querySelectorAll("rect, text")).forEach(function (n) { svg.removeChild(n); });
     var rows = [["This setting", G.snap[i][K.main_estimate], "cur"],
                 [PREF, G.snap[namedIdx[PREF]][K.main_estimate], "pref"]];
     var max = 0;

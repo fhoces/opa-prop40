@@ -57,19 +57,19 @@ site_dials <- function(revenue_chain) {
     list(key = "wt_lo", label = "Revenue, low end of the draw ($B)",
          origin = "guesswork",
          desc = paste0("Lower bound of the uniform draw for one-time wealth tax revenue WT. ",
-                       "0 is the NBER script (its only trace of litigation risk); 35 is the SSRN ",
-                       "script (a 12-13 semi-elasticity, above the literature's 10.32); ",
+                       "0 is the NBER script (its only trace of litigation risk); 35 is the earlier ",
+                       "version's script (a 12-13 semi-elasticity, above the literature's 10.32); ",
                        "45.59 is the literature-calibrated revenue (Sec 4.4)."),
          levels = c(nb$wt_min, ss$wt_min, revenue_chain$literature_calibrated),
-         labels = c("0 (NBER)", "35 (SSRN)", sprintf("%.2f", revenue_chain$literature_calibrated))),
+         labels = c("0 (NBER)", "35 (earlier version)", sprintf("%.2f", revenue_chain$literature_calibrated))),
     list(key = "wt_hi", label = "Revenue, high end of the draw ($B)",
          origin = "data",
          desc = paste0("Upper bound of the WT draw: revenue after publicly reported departures. ",
-                       "55.10 removes 10 departures (Sec 4.3); 67.51 the 6 confirmed ones (Sec 4.2, SSRN script); ",
+                       "55.10 removes 10 departures (Sec 4.3); 67.51 the 6 confirmed ones (Sec 4.2, the earlier version's script); ",
                        "72 the 7 confirmed ones at the 7%-grown NBER vintage (the NBER script's literal)."),
          levels = c(revenue_chain$expanded10_estimate, ss$wt_max, nb$wt_max),
          labels = c(sprintf("%.2f", revenue_chain$expanded10_estimate),
-                    sprintf("%.2f (SSRN)", ss$wt_max), sprintf("%g (NBER)", nb$wt_max))),
+                    sprintf("%.2f (earlier version)", ss$wt_max), sprintf("%g (NBER)", nb$wt_max))),
     list(key = "q", label = "Litigation survival, applied to revenue",
          origin = "guesswork",
          desc = paste0("Probability the Act survives constitutional challenge, as a multiplier on revenue ",
@@ -95,13 +95,13 @@ site_dials <- function(revenue_chain) {
                     sprintf("%.1f%% only", 100 * ss$r_min), sprintf("%.1f%% only", 100 * ss$r_max))),
     list(key = "f", label = "Share of the income tax base that leaves, f",
          origin = "guesswork",
-         desc = paste0("SSRN: implied by the revenue draw, f = 1 - WT/94.2 (income tax lost in ",
+         desc = paste0("Earlier version: implied by the revenue draw, f = 1 - WT/94.2 (income tax lost in ",
                        "proportion to wealth lost). NBER: an independent U[0.30, 0.60]. Third option: ",
                        "fixed at the 6 confirmed departures' share of the base."),
          levels = list(list(mode = "implied", baseline = ss$baseline_revenue),
                        list(mode = "uniform", lo = nb$f_min, hi = nb$f_max),
                        list(mode = "fixed", value = f_fixed)),
-         labels = c("1 - WT/94.2 (SSRN)",
+         labels = c("1 - WT/94.2 (earlier version)",
                     sprintf("U[%.2f, %.2f] (NBER)", nb$f_min, nb$f_max),
                     sprintf("%.3f fixed", f_fixed))),
     list(key = "g", label = "Growth of lost income, g (r vs r - g reading)",
@@ -124,7 +124,7 @@ site_named <- function() {
 }
 
 site_named_labels <- function() {
-  c(ssrn = "SSRN, Mar 2026", nber = "NBER, Sept 2026")
+  c(ssrn = "Earlier version, Mar 2026", nber = "NBER, Sept 2026")
 }
 
 # One cell of the grid: the analysis's own closed form and exact share
