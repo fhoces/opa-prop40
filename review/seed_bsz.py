@@ -235,6 +235,130 @@ def main():
         for x in L["inputs_from"]:
             x.update(HANDOFF_TOKENS.get((L["n"], x["layer"]), dict(tokens=[], source_tokens=[])))
 
+    # A few lines to check each layer by hand in Positron, after the chain's environment
+    # code has been run (see ENVIRONMENT below). Keys: r, py, or js (browser console).
+    INTERACTIVE = {
+        1: dict(js="""// In the browser: open the BSZ explorer, then paste this in the developer console.
+G = window.__GRID__
+i = 788                                   // the Base row (named.Base = [2, 2, 1, 1, 0, 0])
+Object.fromEntries(G.keys.map((k, j) => [k, G.snap[i][j]]))
+G.snap.length                             // 1920 settings"""),
+        2: dict(r="""# Layer 2: read the committed grid.js back and look at the Base row.
+txt <- readLines("site/explorer/grid.js")[2]
+G   <- jsonlite::fromJSON(sub(";$", "", sub("^window.__GRID__ = ", "", txt)))
+G$keys
+G$named$Base                 # 0-based level per dial
+dim(G$snap)                  # 1920 settings x 9 outcomes
+setNames(G$snap[789, ], G$keys)   # row 788 (0-based) is the Base scenario""",
+                py="""# Layer 2: read the committed grid.js back and look at the Base row.
+import json
+s = open("site/explorer/grid.js").read()
+G = json.loads(s[s.index("{"):s.rindex("}") + 1])
+G["keys"]
+G["named"]["Base"]           # 0-based level per dial
+len(G["snap"])               # 1920 settings
+dict(zip(G["keys"], G["snap"][788]))   # the Base scenario"""),
+        3: dict(r="""# Layer 3: the text that becomes grid.js, from the grid table and the fixed inputs.
+txt <- site_grid_js_text(grid, inp)
+cat(substr(txt, 1, 400))
+nchar(txt)
+identical(txt, paste0(readLines("site/explorer/grid.js"), "\n", collapse = ""))  # matches the committed file""",
+                py="""# Layer 3: the text that becomes grid.js, from the grid table and the fixed inputs.
+txt = site_grid_js_text(grid, inp)
+print(txt[:400])
+len(txt)
+txt == open("site/explorer/grid.js").read()   # matches the committed (R-written) file"""),
+        4: dict(r="""# Layer 4: the grid, and the main estimate assembled from its three pieces.
+grid <- build_site_grid(inp)
+dim(grid)                                  # 1920 rows
+site_pv_factor()                           # 4.5797: 5 years at 3%
+base <- grid[grid$cell == 789, ]           # the Base scenario
+base[, c("wealth_tax_revenue", "extra_ca_inctax_sales", "annual_ca_inctax_loss", "main_estimate")]
+with(base, wealth_tax_revenue + extra_ca_inctax_sales + annual_ca_inctax_loss * site_pv_factor())""",
+                py="""# Layer 4: the grid, and the main estimate assembled from its three pieces.
+grid = build_site_grid(inp)
+grid.shape                                 # (1920, 25)
+site_pv_factor()                           # 4.5797: 5 years at 3%
+base = grid[grid["cell"] == 789].iloc[0]   # the Base scenario
+base[["wealth_tax_revenue", "extra_ca_inctax_sales", "annual_ca_inctax_loss", "main_estimate"]]
+base["wealth_tax_revenue"] + base["extra_ca_inctax_sales"] + base["annual_ca_inctax_loss"] * site_pv_factor()"""),
+        5: dict(r="""# Layer 5: the estimating function at the Base setting, then with one dial moved.
+score_tab5_cell(inp)                              # revenue 103.815, extra 3.682, yearly loss -0.153
+score_tab5_cell(inp, avoidance = 0.20)            # more avoidance: less revenue, more leaver loss
+score_tab5_cell(inp, pareto = TRUE, leavers = TRUE)   # Table 5 row 4
+0.05 * (1 - 0.10) * inp$W0                         # the revenue line by hand""",
+                py="""# Layer 5: the estimating function at the Base setting, then with one dial moved.
+score_tab5_cell(inp)                              # revenue 103.815, extra 3.682, yearly loss -0.153
+score_tab5_cell(inp, avoidance=0.20)              # more avoidance: less revenue, more leaver loss
+score_tab5_cell(inp, pareto=True, leavers=True)   # Table 5 row 4
+0.05 * (1 - 0.10) * inp["W0"]                     # the revenue line by hand"""),
+        6: dict(r="""# Layer 6: the fixed inputs list, built from the pipeline's tables.
+inp <- tab5_scoring_inputs(pareto_missing_r, tab2, tab3)
+names(inp)
+inp[c("W0", "n0", "C", "resid_rate", "W_pre", "leaver_loss")]
+inp$leavers
+tab2[grepl("average", tab2$year), c("year", "ca_inctax_estimated")]   # where C comes from""",
+                py="""# Layer 6: the fixed inputs list, built from the pipeline's tables.
+inp = tab5_scoring_inputs(pareto_missing_r, tab2, tab3)
+list(inp)
+{k: inp[k] for k in ("W0", "n0", "C", "resid_rate", "W_pre", "leaver_loss")}
+inp["leavers"]
+tab2[tab2["year"].str.contains("average")][["year", "ca_inctax_estimated"]]   # where C comes from"""),
+        7: dict(r="""# Layer 7: the constants that differ between the two workbooks.
+bsz_vintage()
+tab5_const("baseline_wealth"); tab5_const("baseline_n")
+str(.TAB5_CONST$august)
+str(.TAB5_CONST$may)
+read.csv("site/data/inputs.csv")[, c("symbol", "input", "value", "origin")]""",
+                py="""# Layer 7: the constants that differ between the two workbooks.
+bsz_vintage()
+tab5_const("baseline_wealth"), tab5_const("baseline_n")
+TAB5_CONST["august"]
+TAB5_CONST["may"]
+import pandas as pd; pd.read_csv("site/data/inputs.csv")[["symbol", "input", "value", "origin"]]"""),
+        8: dict(r="""# Layer 8: the workbook and the two sheets this chain reads.
+xlsx_path_default()
+tab2 <- extract_tab2(); tab2
+tab3 <- extract_tab3(); tab3
+readxl::read_excel(xlsx_path_default(), sheet = "Tab5", range = "A5:H9")   # the printed Table 5 rows""",
+                py="""# Layer 8: the workbook and the two sheets this chain reads.
+xlsx_path_default()
+tab2 = extract_tab2(); tab2
+tab3 = extract_tab3(); tab3
+import pandas as pd; pd.read_excel(xlsx_path_default(), sheet_name="Tab5", header=None, skiprows=4, nrows=5, usecols="A:H")"""),
+    }
+    for L in layers:
+        L["interactive"] = INTERACTIVE[L["n"]]
+
+    ENVIRONMENT = dict(
+        r=r"""# Environment for the BSZ chain, R. In Positron open the opa-prop40 folder, then run this once.
+# Needs the pipeline run once (Rscript -e 'targets::tar_make()' in bsz-analysis/) and the workbook in place.
+if (basename(getwd()) != "bsz-analysis") setwd("bsz-analysis")
+library(targets)
+invisible(lapply(list.files("R", pattern = "\\.R$", full.names = TRUE), source))   # every function on the chain
+tab2 <- tar_read(tab2); tab3 <- tar_read(tab3)                  # layer 8: the workbook's tables
+pareto_missing_r <- tar_read(pareto_missing_r)                   # the Pareto fit (off the chain)
+inp  <- tar_read(site_scoring_inputs)                            # layer 6: the fixed inputs list
+grid <- tar_read(site_grid)                                      # layer 4: the grid table
+cat("ready:", nrow(grid), "grid rows; W0 =", inp$W0, "\n")""",
+        py="""# Environment for the BSZ chain, Python. In Positron open the opa-prop40 folder, then run this once.
+# Needs the workbook in place (same as R); nothing precomputed is required.
+import os, sys
+if os.path.basename(os.getcwd()) != "bsz-analysis": os.chdir("bsz-analysis")
+sys.path.insert(0, "py")
+from data_sheets import extract_tab2, extract_tab3, extract_pareto_missing      # layer 8
+from ingest_excel import xlsx_path_default
+from vintage import TAB5_CONST, tab5_const, bsz_vintage                          # layer 7
+from compute_pareto import compute_pareto_missing
+from compute_tab5 import tab5_scoring_inputs, score_tab5_cell, compute_tab5      # layers 6, 5
+from site_exports import build_site_grid, site_pv_factor, site_grid_js_text      # layers 4, 3
+tab2, tab3 = extract_tab2(), extract_tab3()
+pareto_missing_r = compute_pareto_missing(extract_pareto_missing())
+inp = tab5_scoring_inputs(pareto_missing_r, tab2, tab3)
+grid = build_site_grid(inp)
+print("ready:", len(grid), "grid rows; W0 =", inp["W0"])""",
+    )
+
     # keep the user's fields from a previous seed
     old = {}
     if OUT.exists():
@@ -268,6 +392,7 @@ def main():
                         "x (1 - 1.03^-5)/0.03 = 106.795965"),
         "runs_for_a_stranger": ("AUDIT.md step 8, level 2: .github/workflows/bsz-ci.yml rebuilds "
                                 "the pipeline on a clean runner; no one-click (Binder) yet."),
+        "environment": ENVIRONMENT,
         "layers": layers,
     }
     OUT.write_text(json.dumps(chain, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
