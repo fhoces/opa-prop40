@@ -7,7 +7,7 @@ HERE = Path(__file__).resolve().parent
 OUT = HERE / "README.md"
 METHOD = {"matches": "matches", "matches_with_caveat": "matches with caveat",
           "opa_definition": "OPA's own definition", "plumbing": "plumbing"}
-STATE = {"understood": "understood", "partly": "partly", "not_reviewed": "not reviewed"}
+STATE = {"understood": "reviewed", "partly": "lightly reviewed", "not_reviewed": "not reviewed"}
 
 
 def one(s):
@@ -36,8 +36,8 @@ def main():
            "top (the number on the page) to bottom (the raw data), with the reviewer's state per "
            "layer. The states are recorded during review sessions; see the review protocol in "
            "the opa-review skill.", "",
-           "The three states: understood means the reviewer knows what goes in, what comes out "
-           "and the one idea. Partly means the layer was reviewed, with what is understood so "
+           "The three states: reviewed means the reviewer knows what goes in, what comes out "
+           "and the one idea. Lightly reviewed means the layer was looked at, with what is understood so "
            "far and what is still missing written down. Not reviewed means no review yet.", ""]
     for f in sorted(p for p in HERE.glob("*.json") if not p.name.startswith("seed_")):
         d = json.loads(f.read_text(encoding="utf-8"))
@@ -51,7 +51,7 @@ def main():
                 f"- Seeded: {d['seeded']}",
                 f"- Headline verified by: {one(d['verified_by'])}",
                 f"- Runs for a stranger: {one(d['runs_for_a_stranger'])}", "",
-                f"Progress: {c['understood']} of {len(layers)} understood, {c['partly']} partly, "
+                f"Progress: {c['understood']} of {len(layers)} reviewed, {c['partly']} lightly reviewed, "
                 f"{c['not_reviewed']} not reviewed", "",
                 "| Layer | Where | Method | State | Missing | Feedback | Updated |",
                 "|---|---|---|---|---|---|---|"]

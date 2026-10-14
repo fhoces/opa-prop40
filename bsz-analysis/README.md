@@ -9,7 +9,7 @@ policy.
 ### [Review the code behind the $106.8 billion main estimate](https://claude.ai/artifact/6VZEezoAsCNACjmgPLEvah)
 
 A layer-by-layer walk from the number on the page down to the authors' workbook. Each layer is
-marked understood, partly understood or not reviewed. Work in progress; the record is also kept in
+marked reviewed, lightly reviewed or not reviewed. Work in progress; the record is also kept in
 [`review/`](../review/README.md).
 
 <img align="right" width="340" src="site/assets/opa/opa-materials-wordmark.png" alt="Open Policy Analysis, Materials layer">
