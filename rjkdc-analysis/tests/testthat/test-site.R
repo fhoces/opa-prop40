@@ -99,16 +99,17 @@ test_that("every number typed into the landing page matches its source", {
   outs <- utils::read.csv(project_path("export", "r", "outputs.csv"))
   h <- function(v, q, col = "reproduced") hl[[col]][hl$version == v & hl$quantity == q]
   o <- function(id) outs$value[outs$output_id == id]
+  # The page cites only the NBER version (round 2, item 8), so only NBER numbers are pinned
+  # here; both versions' values are still checked against the pipeline in the tests above.
   expected <- c(
-    minus(h("ssrn", "mc_mean_npv", "printed"), 1), minus(h("nber", "mc_mean_npv", "printed"), 1),
-    paste0(format(h("ssrn", "mc_pct_negative", "printed")), "%"), paste0(format(h("nber", "mc_pct_negative", "printed")), "%"),
-    minus(h("ssrn", "mc_mean_npv"), 2), minus(h("nber", "mc_mean_npv"), 2),
-    minus(h("ssrn", "analytic_mean_npv"), 2), minus(h("nber", "analytic_mean_npv"), 2),
-    minus(h("ssrn", "mc_expected_revenue"), 2), minus(h("nber", "mc_expected_revenue"), 2),
-    minus(h("ssrn", "pv_lost"), 2), minus(h("nber", "pv_lost"), 2),
+    minus(h("nber", "mc_mean_npv", "printed"), 1),
+    paste0(format(h("nber", "mc_pct_negative", "printed")), "%"),
+    minus(h("nber", "mc_mean_npv"), 2),
+    minus(h("nber", "analytic_mean_npv"), 2),
+    minus(h("nber", "mc_expected_revenue"), 2),
+    minus(h("nber", "pv_lost"), 2),
     minus(h("nber", "revenue_headline"), 2), minus(h("nber", "revenue_range_low"), 2),
     minus(h("nber", "revenue_range_high"), 2),
-    sprintf("about %g (%g to %g)", h("ssrn", "revenue_headline", "printed"), 35, h("ssrn", "revenue_range_high", "printed")),
     sprintf("about 30 (%g to %g)", h("nber", "revenue_range_low", "printed"), h("nber", "revenue_range_high", "printed")),
     sprintf("%s / %s / %s / %s", minus(o("revenue_baseline"), 2), minus(o("revenue_confirmed6"), 2),
             minus(o("revenue_expanded10"), 2), minus(o("revenue_literature_calibrated"), 2)),
