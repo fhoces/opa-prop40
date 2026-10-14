@@ -104,7 +104,9 @@ passed, `r sum(res$failed)` failed**, in `r nrow(res)` test blocks. The files ch
 - `test-sources.R`: every transcribed input has a label, a source and a page.
 - `test-site.R`: the overview page and the explorer are exactly the generator's output, have
   no unfilled token or em-dash, show the key numbers and the two main estimates, the explorer's
-  data file carries the same two values, and every relative link resolves.
+  data file carries the same two values, the switchboard's all-off and all-on settings equal the
+  two ends in every horizon setting, the explorer shows no gross revenue number, and every
+  relative link resolves.
 
 GitHub Actions rebuilds the exports in R and Python on a clean runner and runs the suite on
 every push that touches `comparison/` or either analysis's export contract
@@ -143,7 +145,8 @@ desc <- c(
   "anchors.csv" = "the four revenue numbers of the RJKDC analysis's March 2026 version, as candidates for where the steps end on output (a)",
   "loss.csv" = "every annual income tax loss on one scale, with present values",
   "hoopes.csv" = "Hoopes (2026) Figure 2 beside the bridge read in his order",
-  "meta.csv" = "intermediate values the page quotes (annuity factors, the BSZ net terms)")
+  "meta.csv" = "intermediate values the page quotes (annuity factors, the BSZ net terms)",
+  "switchboard.csv" = "the common function's value for every mix of switches (bit i of mask = disputed input i at the RJKDC value), for each output and horizon setting")
 dfs <- names(desc)
 rd <- function(f) read.csv(file.path(root, "comparison", "export", "r", f))
 scroll(show(data.frame(
@@ -155,7 +158,9 @@ scroll(show(data.frame(
 
 `comparison/export/py/` holds the same files from the Python twin (without `inputs.csv`).
 The explorer's interactive bridge reads `assets/comparison-data.js`, written by `R/site.R`
-from these files. The inputs the comparison transcribes itself are in
+from these files. Its switchboard reads the net fiscal effect rows of `switchboard.csv` from the
+same data file, so turning the switches on and off does no arithmetic beyond adding the
+revision step. The inputs the comparison transcribes itself are in
 `r link("comparison/data/document-inputs.csv")`
 (`r nrow(read.csv(file.path(root, "comparison", "data", "document-inputs.csv")))` rows, each
 with an origin label, a source and a page) and
