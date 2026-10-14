@@ -30,11 +30,55 @@ test_that("key numbers appear on the pages as computed", {
   expect_true(grepl(money(v("bsz_tab5_row1"), 1), html, fixed = TRUE))
   expect_true(grepl(money(eb$nber_own, 2), html, fixed = TRUE))       # the (b) table
   expect_true(grepl(money(ea$nber_own, 1), html, fixed = TRUE))
-  # the explorer's bridge text: both ends and the gap on (b), then (a)
-  expect_true(grepl(sprintf("the BSZ end is <b>%s</b> and the RJKDC end\n    <b>%s</b>: a gap of <b>%s</b>",
+  # the explorer's bridge text: both ends and the gap on the net fiscal effect, output (b)
+  expect_true(grepl(sprintf("The BSZ end is\n    <b>%s</b> and the RJKDC end <b>%s</b>, a gap of <b>%s</b>.",
                             money(eb$bsz_model, 1), money(eb$nber_own, 1), money(eb$bsz_model - eb$nber_own, 1)),
                     ex_html, fixed = TRUE))
-  expect_true(grepl(money(ea$bsz_model - ea$nber_own, 1), ex_html, fixed = TRUE))
+  # the explorer shows the net fiscal effect only: no output setting, no gross revenue
+  # number (the two ends on output (a), its gap, Table 5 row 1), no output (a) in its data file
+  expect_false(grepl("data-out=", ex_html, fixed = TRUE))
+  for (x in c(money(ea$bsz_model, 1), money(ea$nber_own, 1), money(ea$bsz_model - ea$nber_own, 1),
+              money(ea$bsz_model, 3)))
+    expect_false(grepl(x, ex_html, fixed = TRUE), label = paste("explorer shows", x))
+  txt <- read_page(file.path(root, "assets", "comparison-data.js"))
+  D <- jsonlite::fromJSON(sub(";\\s*$", "", sub("^[^{]*", "", txt)), simplifyVector = FALSE)
+  for (st in names(D$series)) expect_identical(names(D$series[[st]]), "b", label = st)
+  for (st in names(D$switchboard$grid)) expect_identical(names(D$switchboard$grid[[st]]), "b", label = st)
+})
+
+test_that("the switchboard: all off is the BSZ end, all on plus the revision is the RJKDC end", {
+  en <- read_csv_plain(file.path(root, "comparison", "export", "r", "ends.csv"))
+  sb <- read_csv_plain(file.path(root, "comparison", "export", "r", "switchboard.csv"))
+  txt <- read_page(file.path(root, "assets", "comparison-data.js"))
+  D <- jsonlite::fromJSON(sub(";\\s*$", "", sub("^[^{]*", "", txt)), simplifyVector = FALSE)
+  ids <- bridge_steps()$step_id
+  # one switch per disputed input, in the bridge's order, plus the revision switch
+  ex_html <- read_page(explorer)
+  sw <- regmatches(ex_html, gregexpr('data-sw="[a-z_]+" aria-pressed="false"', ex_html))[[1]]
+  expect_identical(sub('data-sw="([a-z_]+)".*', "\\1", sw), c(ids, "revision"))
+  expect_identical(vapply(D$switchboard$inputs, `[[`, "", "id"), ids)
+  for (st in unique(en$horizon_setting)) {
+    n <- if (st == "own") length(ids) else length(ids) - 1
+    for (o in c("a", "b")) {
+      e <- en[en$horizon_setting == st & en$output == o, ]
+      g <- sb[sb$horizon_setting == st & sb$output == o, ]
+      g <- g[order(g$mask), ]
+      expect_equal(nrow(g), 2^n, label = paste(st, o, "rows"))
+      expect_equal(g$value[g$mask == 0], e$bsz_model, tolerance = 1e-9, label = paste(st, o, "all off"))
+      expect_equal(g$value[nrow(g)] + e$rauh_residual + e$nber_step, e$nber_own, tolerance = 1e-9,
+                   label = paste(st, o, "all on"))
+      if (o == "b") {
+        # the data file the explorer reads: the same grid and constants, to 6 decimals
+        G <- unlist(D$switchboard$grid[[st]]$b); E <- D$switchboard$ends[[st]]$b
+        expect_equal(length(G), 2^n, label = paste(st, "data file length"))
+        expect_lt(max(abs(G - g$value)), 1e-6)
+        expect_lt(abs(G[1] - E$bsz), 1e-9)
+        expect_lt(abs(G[length(G)] + E$model + E$revision - E$rjkdc), 2e-6)
+        expect_lt(abs(E$rjkdc - e$nber_own), 1e-6)
+        expect_lt(abs(E$bsz - e$bsz_model), 1e-6)
+      }
+    }
+  }
 })
 
 test_that("the headline is the two main estimates; the bridge's two ends under (b) are those quantities", {
