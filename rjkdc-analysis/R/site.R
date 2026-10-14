@@ -121,7 +121,7 @@ site_dials <- function(revenue_chain) {
                        list(mode = "uniform", lo = nb$f_min, hi = nb$f_max),
                        list(mode = "fixed", value = f_fixed)),
          labels = c("1 - WT/94.2",
-                    sprintf("U[%.2f, %.2f] (as coded)", nb$f_min, nb$f_max),
+                    sprintf("%.2f to %.2f (as coded)", nb$f_min, nb$f_max),
                     sprintf("%.3f fixed", f_fixed))),
     list(key = "g", label = "Growth of lost income, g (r vs r - g reading)",
          origin = "guesswork",

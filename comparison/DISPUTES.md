@@ -1,7 +1,7 @@
 # Disputed inputs: Rauh et al. vs the BSZ analysis
 
 Crosswalk of the inputs on which the two analyses disagree. This is the starting list for the
-reconciliation page's bridge (one bridge step per row). Every page reference was checked against
+comparison overview's bridge (one bridge step per row). Every page reference was checked against
 text extracted from the PDF (PyMuPDF, per-page markers). Page numbers are **PDF pages**, not printed
 folios. For Rauh and GGSS the two coincide. BSZ's folio runs two behind in the main text (PDF p.26 is
 folio 24) and restarts in the appendices (PDF p.54 is folio 17).
@@ -75,13 +75,13 @@ exactly from `NBER_2026_litigation_weighted/NPV_data/NPV_dist_v8.R` (mean −38.
 negative). Compared with SSRN, it keeps the same 212-person base, grows it 7% to the 31 Dec 2026
 valuation date, removes **7** confirmed departures (SSRN's 6 plus Travis Kalanick, $3.5B), applies a
 litigation-survival probability q = 0.50, drops Zuckerberg from the central base, and draws the
-departure fraction f ~ U[0.30, 0.60] independently of WT. On the bridge it enters as extra steps after
-the SSRN anchor.
+departure fraction f ~ U[0.30, 0.60] independently of WT. On the bridge it enters as one step, the
+September 2026 revision, after the SSRN anchor.
 
 ## Handled outside the table
 
 - BSZ's headline counts wealth tax revenue only (GGSS $100B; BSZ $104B benchmark), while
-  Rauh's is an NPV net of lost income tax. The reconciliation page first puts both on a common
+  Rauh's is an NPV net of lost income tax. The comparison overview first puts both on a common
   output definition (see PLAN.md, "Pre-specified output").
 - Control-weighted valuation (Rauh §2.5 and App. A; GGSS p.8): both analyses value economic ownership,
   so it is not a live input, only a motive for pre-snapshot departures (row 3).
