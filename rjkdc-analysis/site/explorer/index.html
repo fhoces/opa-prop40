@@ -73,7 +73,7 @@
     color: var(--ink-3); font-weight: 500; }
   .headline .value { font-family: var(--serif); font-size: 40px; font-weight: 600;
     line-height: 1; color: var(--ink); font-variant-numeric: tabular-nums; }
-  .headline .def { font-size: 13.5px; color: var(--ink-2); line-height: 1.45; margin-top: 2px; }
+  .headline .def { font-size: 15px; color: var(--ink-2); line-height: 1.45; margin-top: 2px; }
   .headline .sub { font-size: 12px; color: var(--ink-3); line-height: 1.45; margin-top: 4px; }
   .header-layer { height: 110px; width: auto; opacity: 0.218; align-self: flex-end;
     margin-bottom: 8px; pointer-events: none; }
@@ -125,7 +125,7 @@
   .origin.research { border-color: #6fae7c; color: #2f7a41; }
   .origin.scenario { border-color: #9b86c9; color: #5d45a0; }
 
-  p.fn { font-size: 12px; color: var(--ink-3); line-height: 1.45; margin: 10px 0 0; }
+  p.fn { font-size: 13.5px; color: var(--ink-2); line-height: 1.45; margin: 10px 0 0; }
   p.fn a { color: var(--series-1); }
   .presets { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
   .presets button {
@@ -146,6 +146,8 @@
 
   /* ---- table view ------------------------------------------------------- */
   .table-scroll { overflow-x: auto; margin-top: 12px; }
+  .table-scroll::before { content: "Scroll sideways for the rest \2192"; display: none; font: 11px var(--sans); color: var(--ink-3); margin-bottom: 4px; }
+  @media (max-width: 640px) { .table-scroll::before { display: block; } }
   table { border-collapse: collapse; font-size: 12.5px; min-width: 320px; width: 100%; }
   th, td { text-align: right; padding: 6px 10px 6px 0; border-bottom: 1px solid var(--rule-2);
            font-family: var(--mono); font-variant-numeric: tabular-nums; }
@@ -177,7 +179,8 @@
     <div class="hero-left">
       <h1>What the Billionaire Tax Act is worth to the state, by the RJKDC method</h1>
       <p class="standfirst">
-        Jaros and Rauh, with Kearney, Doran and Cosso (RJKDC), estimate the Act's fiscal effect as its one-time wealth tax revenue minus the present
+        Jaros and Rauh (NBER, September 2026; the first version was by Rauh, Jaros, Kearney, Doran
+        and Cosso, RJKDC for short) estimate the Act's fiscal effect as its one-time wealth tax revenue minus the present
         value of income tax lost for ever when billionaires leave:
         NPV = WT &minus; f&middot;C / r, where NPV is the net present value, WT the wealth tax
         collected once, f the share of the income tax base that leaves, C the annual California
@@ -193,7 +196,7 @@
       <span class="value" id="cell-value"></span>
       <span class="def">Defined as the one-time wealth tax revenue minus the present value of
         California income tax lost for ever to billionaires who leave (NPV = WT &minus; f&middot;C / r),
-        averaged over the authors' Monte Carlo draws.</span>
+        averaged over the authors' Monte Carlo draws: 100,000 random runs of their model.</span>
       <span class="sub" id="cell-sub"></span>
     </div>
   </header>
@@ -212,7 +215,8 @@
         uniforms) and an exact share of negative outcomes (numerical integration, accurate to
         about 0.01 points), not a new random draw. At the main estimate's setting this gives
         <span id="gap-text"></span> The gap is not an error: the paper prints one seeded run of
-        100,000 draws. Monte Carlo error on the mean is about &plusmn;0.5 ($B), four standard errors (one
+        100,000 draws (a run started from a fixed seed number, so it gives the same draws every
+        time). Monte Carlo error on the mean is about &plusmn;0.5 ($B), four standard errors (one
         standard error is the printed SD, 37.6, over &radic;100,000, about 0.12). The labels
         after each input name (data, research, guesswork) follow the report's
         <a href="../repro.html#every-input-by-origin">every input, by origin</a> table. The
@@ -243,7 +247,8 @@
         </div>
       </details>
       <p class="fn" id="hl-fn"><sup>1</sup> The main estimate is the authors' own headline: the mean
-      NPV in Jaros and Rauh, NBER chapter c15504, September 2026 (PDF p.1).</p>
+      NPV in Jaros and Rauh, NBER (the National Bureau of Economic Research) chapter c15504,
+      September 2026 (PDF p.1).</p>
     </section>
   </div>
   <footer>
@@ -266,6 +271,8 @@
   var ORDER = [MAIN];
   var HEAD = { nber: "NBER September 2026" };
   var ROLE = { nber: "main estimate" };
+  // The outcomes table's column header for the main estimate (the preset button keeps nlabel()).
+  var COLHEAD = { nber: "Main estimate (NBER, September 2026)" };
   function nlabel(k) { return (G.named_labels && G.named_labels[k]) || (k.charAt(0).toUpperCase() + k.slice(1)); }
   var state = G.named[MAIN].slice();
   var SIZES = G.dials.map(function (d) { return d.levels.length; });
@@ -340,7 +347,7 @@
   var headRow = document.getElementById("cmp-head");
   ORDER.forEach(function (name) {
     var th = document.createElement("th");
-    th.textContent = nlabel(name);
+    th.textContent = COLHEAD[name] || nlabel(name);
     headRow.appendChild(th);
   });
   var tbody = document.querySelector("#cmp tbody");
@@ -413,15 +420,35 @@
     // The headline: at the NBER setting, the authors' printed mean (the overview's number);
     // anywhere else, this grid's exact expectation for the setting on screen.
     document.getElementById("cell-name").innerHTML = "Main estimate<sup>1</sup>, " +
-      (name ? HEAD[name] : "a setting the authors did not publish");
+      (name ? HEAD[name] + ", as printed" : "a setting the authors did not publish");
     var p = name ? P[name] : null;
     document.getElementById("cell-value").textContent = usd(npvOf(i)) + "B";
     document.getElementById("cell-sub").textContent = p
-      ? "As printed (" + p.printed_page + "), with " + p.printed_pct_negative + "% of draws below zero. " +
-        "Seeded rerun of the authors' script: " + f2(p.mc_npv) + "; exact expectation of this setting: " + f2(snap[0]) + "."
+      ? "As printed: the mean NPV (" + p.printed_page + "); " + p.printed_pct_negative +
+        "% of draws below zero (p.35, Figure 3 note; the text prints 85%). " +
+        "Seeded rerun of the authors' script (one run of the random draws from a fixed seed number, 2026): " +
+        f2(p.mc_npv) + "; exact expectation of this setting, its average computed by formula: " + f2(snap[0]) + "."
       : "Exact expectation of the authors' formula at this setting, with " + snap[1].toFixed(1) + "% of outcomes below zero.";
 
     tbody.textContent = "";
+    // First row: the authors' printed mean (their seeded run), the number the box above shows
+    // at the main setting; the rows under it are this grid's exact expectations.
+    if (P[MAIN]) {
+      var trp = document.createElement("tr");
+      var thp = document.createElement("th");
+      thp.setAttribute("scope", "row");
+      thp.textContent = "Mean NPV, as printed (seeded run) ($B)";
+      trp.appendChild(thp);
+      var tdp = document.createElement("td");
+      tdp.textContent = name ? f1(P[MAIN].printed_npv) : "not printed";
+      trp.appendChild(tdp);
+      ORDER.forEach(function (nm) {
+        var tdq = document.createElement("td");
+        tdq.textContent = P[nm] ? f1(P[nm].printed_npv) : "not printed";
+        trp.appendChild(tdq);
+      });
+      tbody.appendChild(trp);
+    }
     G.outcomes.forEach(function (label, oi) {
       var tr = document.createElement("tr");
       var th = document.createElement("th");
