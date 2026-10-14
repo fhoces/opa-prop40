@@ -117,6 +117,75 @@ def switch_inputs(sup: dict, rauh: dict, on) -> dict:
     return x
 
 
+# ---- the explorer's sliders (twin of slider_inputs() etc. in R/model.R) ---------------
+# Positions 0 to 4 per input, 0 = the panel's own analysis's value, 4 = the other's: linear in
+# the parameter for numeric inputs, the five settings 5/10/20/50 years/perpetuity for the
+# horizon; the revision has positions 0 and 1 (0 = the panel's own analysis).
+SLIDER_STEPS = 4
+SLIDER_HORIZONS = [5, 10, 20, 50, math.inf]
+
+
+def slider_inputs(frm: dict, to: dict, positions: dict) -> dict:
+    x = dict(frm)
+    for st in IDS:
+        p = positions.get(st, 0)
+        assert p in range(SLIDER_STEPS + 1)
+        t = p / SLIDER_STEPS
+        for nm in STEP_INPUTS[st]:
+            if nm == "H":
+                lad = SLIDER_HORIZONS if frm["H"] <= to["H"] else SLIDER_HORIZONS[::-1]
+                assert lad[0] == frm["H"] and lad[-1] == to["H"]
+                x["H"] = lad[p]
+            else:
+                x[nm] = (1 - t) * frm[nm] + t * to[nm]
+    return x
+
+
+def slider_revision(ends):
+    out = []
+    for H in SLIDER_HORIZONS:
+        st = "common_Inf" if math.isinf(H) else f"common_{H}"
+        e = [r for r in ends if r["horizon_setting"] == st and r["output"] == "b"][0]
+        out.append({"H": H, "model": e["rauh_residual"], "revision": e["nber_step"]})
+    return out
+
+
+def slider_value(sup, rauh, panel, positions, rev_table):
+    frm, to = (sup, rauh) if panel == "bsz" else (rauh, sup)
+    x = slider_inputs(frm, to, positions)
+    rp = positions.get("revision", 0)
+    assert rp in (0, 1)
+    rev_on = rp == 1 if panel == "bsz" else rp == 0
+    v = score_common(x)["b"]
+    if rev_on:
+        r = [r for r in rev_table if r["H"] == x["H"]][0]
+        v = v + r["model"] + r["revision"]
+    return v
+
+
+def slider_sample(sup, rauh, rev_table, n=300, seed=20261014):
+    """Per panel: all at 0, all at the far end, then n - 2 Park-Miller draws (same as R)."""
+    state = [seed]
+
+    def draw(k):
+        state[0] = (16807 * state[0]) % 2147483647
+        return state[0] % k
+
+    rows = []
+    for panel in ("bsz", "rjkdc"):
+        for i in range(1, n + 1):
+            if i == 1:
+                pos = [0] * len(IDS) + [0]
+            elif i == 2:
+                pos = [SLIDER_STEPS] * len(IDS) + [1]
+            else:
+                pos = [draw(SLIDER_STEPS + 1) for _ in IDS] + [draw(2)]
+            p = dict(zip(IDS + ["revision"], pos))
+            rows.append({"panel": panel, "draw": i, **p,
+                         "value": slider_value(sup, rauh, panel, p, rev_table)})
+    return rows
+
+
 def coalition_values(sup, rauh, players, output):
     """v[mask]: score_common() with the players whose bit is set (bit i = players[i]) at the
     RJKDC value and the rest at the BSZ value. The explorer's switchboard reads these."""
@@ -306,7 +375,8 @@ def build_all(k):
             {"key": "PV_bsz_own", "value": score_common(sup)["PV"]},
             {"key": "f_rauh", "value": s_r["f"]}, {"key": "C_rauh", "value": rauh["C"]}]
     return {"bridge": bridge, "ends": ends, "endpoints": endpoints, "anchors": anchors,
-            "loss": loss, "hoopes": hoopes, "meta": meta, "switchboard": board}
+            "loss": loss, "hoopes": hoopes, "meta": meta, "switchboard": board,
+            "slider_sample": slider_sample(sup, rauh, slider_revision(ends))}
 
 
 def fmt(v):

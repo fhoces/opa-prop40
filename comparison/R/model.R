@@ -90,6 +90,99 @@ switch_inputs <- function(sup, rauh, on) {
   x
 }
 
+# ---- the explorer's sliders ---------------------------------------------------------
+# The explorer has two panels. The BSZ panel starts every disputed input at the BSZ value and
+# moves it towards the RJKDC value; the RJKDC panel starts at the RJKDC value and moves towards
+# the BSZ value. Each input has five positions, 0 to 4: 0 is the panel's own analysis's value,
+# 4 the other analysis's. This is the one definition of what positions 1 to 3 mean; the
+# Python twin (slider_inputs in py/bridge.py) and the page (site/explorer/model.js) mirror it,
+# and test-parity / test-site check both against the values written here.
+#   numeric inputs: linear in the parameter, (1 - p/4) * own + (p/4) * other, so 0 and 4 are
+#                   the two values exactly;
+#   the horizon:    the five settings 5, 10, 20, 50 years and perpetuity, in that order from
+#                   the BSZ analysis's 5 years (or in reverse from the RJKDC perpetuity);
+#   the revision:   two positions only (see slider_value()).
+SLIDER_STEPS <- 4
+SLIDER_HORIZONS <- c(5, 10, 20, 50, Inf)
+
+slider_inputs <- function(from, to, positions) {
+  x <- from
+  for (st in names(step_inputs)) {
+    p <- positions[[st]]
+    if (is.null(p)) p <- 0
+    stopifnot(p %in% 0:SLIDER_STEPS)
+    t <- p / SLIDER_STEPS
+    for (nm in step_inputs[[st]]) {
+      if (nm == "H") {
+        lad <- if (from$H <= to$H) SLIDER_HORIZONS else rev(SLIDER_HORIZONS)
+        stopifnot(lad[1] == from$H, lad[length(lad)] == to$H)
+        x$H <- lad[p + 1]
+      } else {
+        x[[nm]] <- (1 - t) * from[[nm]] + t * to[[nm]]
+      }
+    }
+  }
+  x
+}
+
+# The two constants the revision slider adds, at each horizon setting of the sliders: the
+# model difference (rauh_residual) and the September 2026 revision step (nber_step) of
+# output (b), from ends.csv's common-horizon rows. They depend on the horizon only.
+slider_revision <- function(ends) {
+  st <- ifelse(is.infinite(SLIDER_HORIZONS), "common_Inf", paste0("common_", SLIDER_HORIZONS))
+  e <- ends[ends$output == "b", ]
+  e <- e[match(st, e$horizon_setting), ]
+  stopifnot(!anyNA(e$rauh_residual))
+  data.frame(H = SLIDER_HORIZONS, model = e$rauh_residual, revision = e$nber_step)
+}
+
+# One panel's value: output (b) of score_common() at the slider positions, plus the two
+# revision constants (at the sliders' horizon) when the panel's revision slider is on. The
+# revision slider has positions 0 and 1, 0 being the panel's own analysis: off for the BSZ
+# panel, on for the RJKDC panel.
+slider_value <- function(bi, panel = c("bsz", "rjkdc"), positions, rev_table) {
+  panel <- match.arg(panel)
+  from <- if (panel == "bsz") bi$sup else bi$rauh
+  to   <- if (panel == "bsz") bi$rauh else bi$sup
+  x <- slider_inputs(from, to, positions)
+  rp <- positions[["revision"]]
+  if (is.null(rp)) rp <- 0
+  stopifnot(rp %in% 0:1)
+  rev_on <- if (panel == "bsz") rp == 1 else rp == 0
+  v <- score_common(x)[["b"]]
+  if (rev_on) {
+    k <- match(x$H, rev_table$H)
+    v <- v + rev_table$model[k] + rev_table$revision[k]
+  }
+  v
+}
+
+# A fixed sample of slider mixes for the parity tests (R, Python and model.js): per panel,
+# all at 0, all at the far end, then n - 2 draws. The draws come from the Park-Miller
+# generator (x <- 16807 x mod 2^31 - 1), integer-exact in R, Python and JavaScript alike, so
+# the R and Python twins write the same positions without sharing a random number library.
+slider_sample <- function(bi, rev_table, n = 300, seed = 20261014) {
+  ids <- names(step_inputs)
+  x <- seed
+  draw <- function(k) { x <<- (16807 * x) %% 2147483647; x %% k }
+  rows <- list()
+  for (panel in c("bsz", "rjkdc")) {
+    for (i in seq_len(n)) {
+      pos <- if (i == 1) c(rep(0, length(ids)), 0)
+             else if (i == 2) c(rep(SLIDER_STEPS, length(ids)), 1)
+             else c(vapply(ids, function(id) draw(SLIDER_STEPS + 1), 0), draw(2))
+      names(pos) <- c(ids, "revision")
+      rows[[length(rows) + 1]] <- data.frame(
+        panel = panel, draw = i, as.list(pos),
+        value = slider_value(bi, panel, as.list(pos), rev_table), check.names = FALSE)
+    }
+  }
+  out <- do.call(rbind, rows)
+  for (nm in c("draw", ids, "revision")) out[[nm]] <- as.integer(out[[nm]])
+  rownames(out) <- NULL
+  out
+}
+
 # The value of every coalition: v[mask + 1] is score_common() with the players whose bit
 # is set in `mask` (bit i-1 = players[i]) at the RJKDC value and the rest at the BSZ value.
 # mask 0 is the all-BSZ setting, mask 2^n - 1 the all-RJKDC one. The explorer's switchboard

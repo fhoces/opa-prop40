@@ -238,6 +238,7 @@ build_all <- function(k = read_contracts()) {
 
   list(inputs = bridge_input_table(bi), bridge = bridge, ends = ends, endpoints = endpoints,
        anchors = anchors, loss = loss, hoopes = hoopes, switchboard = board,
+       slider_sample = slider_sample(bi, slider_revision(ends)),
        meta = data.frame(key = c("A_5", "A_inf", "kappa_bsz", "R0_rauh", "S_rauh",
                                  "X_bsz", "PV_bsz_own", "f_rauh", "C_rauh"),
                          value = c(A5, Ainf, sup$kappa, score_common(rauh)[["R0"]],
@@ -248,7 +249,7 @@ build_all <- function(k = read_contracts()) {
 write_exports <- function(res, dir) {
   dir.create(dir, recursive = TRUE, showWarnings = FALSE)
   for (nm in c("inputs", "bridge", "ends", "endpoints", "anchors", "loss", "hoopes", "meta",
-               "switchboard")) {
+               "switchboard", "slider_sample")) {
     utils::write.csv(res[[nm]], file.path(dir, paste0(nm, ".csv")), row.names = FALSE,
                      fileEncoding = "UTF-8")
   }

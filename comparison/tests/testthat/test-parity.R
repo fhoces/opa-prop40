@@ -15,7 +15,7 @@ test_that("Python exports agree with R to 1e-9 on every shared numeric column", 
     r <- read_csv_plain(file.path(rdir, f)); p <- read_csv_plain(file.path(pdir, f))
     expect_equal(nrow(r), nrow(p), label = paste(f, "rows"))
     key <- intersect(c("horizon_setting", "output", "step_id", "endpoint_id", "anchor_id",
-                       "source_id", "key", "mask"), intersect(names(r), names(p)))
+                       "source_id", "key", "mask", "panel", "draw"), intersect(names(r), names(p)))
     kr <- do.call(paste, r[key]); kp <- do.call(paste, p[key])
     expect_setequal(kr, kp)
     p <- p[match(kr, kp), ]
