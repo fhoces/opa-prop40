@@ -112,17 +112,27 @@ twin_html("the setup",
 ::: {.report-intro}
 ![](assets/opa/opa-details.png){.opa-figure}
 
-California's Proposition 40, the Billionaire Tax Act, would tax California's billionaires
-once, at 5% of their net worth, paid over five years. Two analyses estimate it. This report
-cites each in its latest version. The [BSZ analysis](../../bsz-analysis/site/) (Boll, Saez
-and Zucman, NBER WP 35218, August 2026) estimates
-**`r usd(epv("bsz_tab5_row1"))`** of wealth tax (Table 5 row 1), and
-**`r usd(eb$bsz_model)`** net of the income tax it changes. The
-[RJKDC analysis](../../rjkdc-analysis/site/) (Rauh, Jaros, Kearney, Doran and Cosso; latest
-version Jaros and Rauh, NBER c15504, September 2026) estimates a net present value for the
-state of **`r usd(epv("rauh_nber_npv", "printed_value"))`**. The two numbers answer
-different questions, so neither can be read against the other directly. This report puts both
-on one common output and walks from one to the other, one disputed input at a time.
+Proposition 40, the Billionaire Tax Act, would tax people who lived in California on
+1 January 2026 and are worth \$1 billion or more: once, at 5% of their whole net worth as
+valued on 31 December 2026, paid in five equal yearly installments. Two analyses estimate it.
+This report cites each in its latest version. The [BSZ analysis](../../bsz-analysis/site/)
+(Boll, Saez and Zucman, NBER WP 35218, August 2026; NBER is the National Bureau of Economic
+Research, which circulates working papers) estimates about \$100 billion of wealth
+tax (`r usd(epv("bsz_tab5_row1", "printed_value"), 0)` in its Table 5 row 1, reproduced here
+as **`r usd(epv("bsz_tab5_row1"))`**), and **`r usd(eb$bsz_model)`** once the income tax the
+tax changes is added in. The [RJKDC analysis](../../rjkdc-analysis/site/) (Jaros and Rauh,
+NBER c15504, September 2026, revising the March 2026 version by Rauh, Jaros, Kearney, Doran
+and Cosso) finds that the tax would collect about
+`r usd(pick(k$docs, "nber_headline_revenue"), 0)` by its own account but leave the state
+**`r usd(-epv("rauh_nber_npv", "printed_value"))`** poorer in today's dollars (a net present
+value of `r usd(epv("rauh_nber_npv", "printed_value"))`), because billionaires who leave stop
+paying California income tax for ever. Today's dollars (present value): what money received
+or lost in future years is worth now. The three inputs that separate the two most: whether a
+one-time tax changes behaviour the way a permanent one would, how many billionaires had
+already left, and whether the lost income tax is counted for five years (BSZ) or for ever
+(RJKDC). The two numbers answer different questions, so neither can be read against the other
+directly. This report puts both on one common output and walks from one to the other, one
+disputed input at a time.
 
 This report is part of the comparison's [Open Policy Analysis](https://doi.org/10.1093/scipol/scaa067) (OPA):
 
@@ -139,8 +149,11 @@ This report is part of the comparison's [Open Policy Analysis](https://doi.org/1
 years, **`r usd(eb$bsz_model)`**, and the RJKDC analysis's mean net present value in
 perpetuity, **`r usd(epv("rauh_nber_npv", "contract_value"))`** (NBER, September 2026). On
 the common output (b), the net fiscal effect, they are the bridge's two ends. The BSZ end is
-the same `r usd(eb$bsz_model)`. The RJKDC end is `r usd(eb$nber_own, 2)`, the exact
-expectation of the Monte Carlo whose seeded run the authors print. The gap between the two ends,
+the same `r usd(eb$bsz_model)`. Jaros and Rauh print
+`r usd(epv("rauh_nber_npv", "printed_value"))` from one seeded run of their Monte Carlo (a run
+of the random draws started from a fixed seed number, so it gives the same draws every time);
+the RJKDC end, `r usd(eb$nber_own, 2)`, is its exact expectation, the average computed by
+formula. The gap between the two ends,
 `r usd(eb$bsz_model - eb$nber_own)`, is what the bridge explains. The arithmetic is in
 [The two main estimates](#the-main-estimate).
 
@@ -159,8 +172,9 @@ print.
 
 Every number in running text is computed when this page is rendered, from the files
 `comparison/run.R` writes. Open any "code" fold to see the R functions behind an exhibit and
-their Python twins. Page numbers are PDF pages. "Shapley value" is defined where it is first
-used, in [The bridge](#the-bridge).
+their Python twins (a Python twin: the same computation written a second time in Python and
+checked against the R result). Page numbers are PDF pages. "Shapley value" is defined where it
+is first used, in [The bridge](#the-bridge).
 
 # The common output, and what each analysis reports {#the-common-output}
 
@@ -180,6 +194,16 @@ RJKDC report counts them forever. Discounting uses the RJKDC report's own range,
 drawn uniformly between `r pct(pick(k$rjkdc$inputs, "rauh_mc_r_min"), 1)` and
 `r pct(pick(k$rjkdc$inputs, "rauh_mc_r_max"), 1)`. The BSZ analysis takes no position on the
 rate; its overview discounts at 3%, the middle of that range.
+
+**Conventions.** All amounts are nominal billions of dollars. The wealth tax is counted at its
+face value when assessed (the BSZ analysis values the base on 1 July 2026; the RJKDC
+analysis's September version grows the base it used in March, the 2025 Forbes list, by
+`r pct(pick(k$rjkdc$inputs, "nber_growth_rate"))` to 31 December 2026), undiscounted although
+the Act collects it in five yearly installments; both analyses do this, so the comparison
+follows them. Present values are at the assessment date. The discount-rate range is the one
+the RJKDC code draws; its code labels the draw (r &minus; g), the rate less the growth of the
+lost income tax, while its text uses both (r &minus; g) and the plain rate r (the RJKDC
+analysis's mismatch 3).
 
 ```{r}
 #| results: asis
@@ -214,9 +238,47 @@ authors' own Monte Carlo, computed exactly rather than by drawing.
 One estimating function, `score_common()`, takes every disputed input as an argument. Each
 argument takes either the BSZ analysis's value or the RJKDC analysis's. At the all-BSZ setting
 the function must return the BSZ end: Table 5 row 1 on (a), and its net on (b). The RJKDC
-values are those of its March 2026 version, where the inputs are published, and the September
-2026 revision is the last step of the bridge, to the RJKDC end. The table checks each end
-against the number its authors print.
+values are those of its March 2026 version, the one whose inputs the common function can take
+one by one (the September version's code and person-level file are in the same public
+repository), and the September 2026 revision is the last step of the bridge, to the RJKDC end.
+
+In words, the function computes seven quantities in order. Each argument is written as
+`score_common()` names it and, where a step of the bridge switches it, followed by that step's
+title in quotation marks; `tau`, `m`, `g`, `t_cg` and the discount-rate range are shared by
+both ends.
+
+1. `R0 = tau * (W_core + W_noncit) * (1 - re)`: the revenue with no behavioural response.
+   `tau` is the tax rate; `W_core` (the base) and `W_noncit` (the non-US-citizen residents)
+   are in billions of dollars ("Base list and valuation date", "Non-US-citizen residents");
+   `re` is the share of the revenue the real-estate deduction removes ("Real-estate
+   deduction").
+2. `S = 1 - (d_conf + max(d_conf, eps * dtau)) / 2`: the share of the base still taxed.
+   `d_conf` is the share of the base that had already left ("Billionaires already
+   departed"); `eps` is the mobility semi-elasticity, the percent of the tax base that leaves
+   for each percentage point of tax ("Size of the mobility semi-elasticity"); `dtau` is the
+   permanent rate change it is applied to, in percentage points ("One-time tax estimated as a
+   permanent 5 pp rate"). The RJKDC revenue is uniform between a ceiling, the base left after
+   the confirmed departures (`d_conf`), and a floor, the base left after the elasticity
+   response (`eps * dtau`); `S` is the mean of that range, which is why the permanent-rate and
+   elasticity steps act only through the floor.
+3. `WT = R0 * (1 - alpha) * S`: output (a), the gross one-time revenue after the avoidance
+   allowance `alpha`, a share of the base ("Avoidance and evasion allowance").
+4. `X = WT * s * g * t_cg`: the extra income tax from assets sold to pay. `s` is the share of
+   the tax paid by selling assets ("Extra income tax from selling assets to pay"), `g` the
+   capital-gain share of a sale and `t_cg` the top California rate on realized gains.
+5. `f = alpha*m + kappa * (1 - S) * (1 - alpha*m)`: the share of billionaire income tax lost.
+   The first term is the BSZ movers' share (`m` is the part of the avoidance allowance that is
+   people leaving California); the second is the RJKDC proportional loss on the base that
+   left, where `kappa` is the leavers' income tax per dollar of wealth relative to the
+   average, a ratio ("Lost income tax proportional to lost wealth").
+6. `PV = f * C * E_r[annuity(r, H)]`: the present value of the lost income tax. `C` is
+   billionaires' annual California income tax, in billions of dollars a year ("Billionaires'
+   annual CA income tax"), lost for `H` years ("How long the income tax loss lasts"; for ever
+   at the RJKDC end); `annuity(r, H)` is what 1 a year for `H` years is worth today at the
+   discount rate `r`, averaged over the rate range.
+7. `NET = WT + X - PV`: output (b), the net fiscal effect.
+
+The table checks each end against the number its authors print.
 
 ```{r}
 #| results: asis
@@ -310,6 +372,9 @@ b_a <- br[br$horizon_setting == "own" & br$output == "a", ]
 b_b <- br[br$horizon_setting == "own" & br$output == "b", ]
 stopifnot(abs(sum(b_b$shapley) + eb$rauh_residual + eb$nber_step + gap_b) < 1e-9,
           abs(sum(b_a$shapley) + ea$rauh_residual + ea$nber_step + gap) < 1e-9)
+# The introduction names the three largest steps on (b) in words; stop if they change.
+stopifnot(setequal(b_b$step_id[order(b_b$shapley)][1:3],
+                   c("one_time_as_permanent", "confirmed_departures", "horizon")))
 ```
 
 ```{r}
@@ -320,7 +385,7 @@ twin_fold("the two main estimates", c("bridge_inputs", "score_common", "rauh_nbe
 # The bridge, step by step {#the-bridge}
 
 Each step switches one input from the BSZ value to the RJKDC value of its March 2026
-version, where the inputs are published. Because the inputs interact (a departure matters more when the base is larger), the size of a step depends on
+version, the one whose inputs the common function takes one by one. Because the inputs interact (a departure matters more when the base is larger), the size of a step depends on
 the order in which the inputs are switched. The report shows two answers:
 
 - **Shapley values** (the default on the explorer). Each step's switch is averaged over
@@ -451,7 +516,8 @@ scroll(show(data.frame(
 
 One bridge step per row of `comparison/DISPUTES.md`, the crosswalk of disputed inputs, where
 every page reference was checked against the PDFs. Row 7 is split into its two parts, and
-two steps cover inputs the crosswalk does not list as rows.
+two steps cover inputs the crosswalk does not list as rows. In the source columns, GGSS is the
+Galle, Gamage, Saez and Shanske expert report of July 2026, written in support of the measure.
 
 ```{r}
 #| results: asis
@@ -472,9 +538,9 @@ scroll(show(data.frame(
 # The Hoopes comparison {#the-hoopes-comparison}
 
 Jeffrey Hoopes, "Galle v Rauh: Comparing Two Revenue Estimates for California Billionaire
-Taxation" (SSRN 6428578), is the one published comparison of the two estimates. It compares
-their earlier versions: the February 2026 text of the GGSS expert report, on which the BSZ
-analysis builds, and the March 2026 version of the RJKDC analysis. His Figure 2 (p.6) is a
+Taxation" (SSRN 6428578; SSRN is a preprint site), is the one published comparison of the two
+estimates. It compares their earlier versions: the February 2026 text of the GGSS expert
+report, on which the BSZ analysis builds, and the March 2026 version of the RJKDC analysis. His Figure 2 (p.6) is a
 waterfall from the "Galle estimate" to "Rauh net fiscal effect". It
 prints no values, so his column below is read off the chart
 (`comparison/tools/digitize_hoopes_fig2.py`, tick fit within
@@ -500,6 +566,11 @@ scroll(show(data.frame(
     if (is.na(x)) "none" else money(x, if (abs(x) < 0.05) 4 else 1, hz$step_id[i] != "galle_estimate") }, ""),
   `Our steps` = esc(hz$our_steps), check.names = FALSE)))
 ```
+
+The "Galle estimate" bar is clipped by the chart's frame at
+`r usd(hz$hoopes[hz$step_id == "galle_estimate"], 0)`; its value is taken from the note's text
+(p.3), so the reading uncertainty printed with it is the digitizer's default for every bar,
+not a measurement.
 
 # Every input, by origin {#every-input-by-origin}
 
@@ -549,9 +620,10 @@ maxdiff <- if (py_ok) max(vapply(c("ends", "bridge", "endpoints"), function(f) {
   The September 2026 revision then reaches the RJKDC end, the exact expectation of the NBER
   Monte Carlo (`r usd(eb$nber_own, 3)` against the printed
   `r usd(epv("rauh_nber_npv", "printed_value"))`).
-- **The bridge adds up.** In every horizon setting and for both outputs, the Shapley steps
-  sum exactly to the distance between the two model ends (`test-shapley.R`), and they match
-  a brute-force average over orders.
+- **The code does what the method says.** Shapley values sum to the gap by construction;
+  `test-shapley.R` checks that ours do in every horizon setting and for both outputs, and that
+  they equal a brute-force average over orders. This is a check of the code, not a finding
+  about the analyses.
 - **R and Python agree.** The Python twin writes the same tables;
   the largest difference on the ends, the bridge and the endpoints is
   `r if (py_ok) formatC(maxdiff, format = "e", digits = 1) else "not checked (run comparison/py/bridge.py)"`

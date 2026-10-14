@@ -29,6 +29,8 @@ REPO <- "https://github.com/fhoces/opa-prop40/blob/main/"
 for (f in list.files("../R", pattern = "[.]R$", full.names = TRUE)) source(f)
 root <- comparison_root()
 link <- function(path, text = path) sprintf('<a href="%s%s"><code>%s</code></a>', REPO, path, text)
+# Money in running text: a dollar sign in markdown starts a formula, so escape it.
+usd <- function(x, d = 1, s = FALSE) gsub("$", "\\$", money(x, d, s), fixed = TRUE)
 # "(a)" in a raw HTML table cell reads as a list marker to pandoc, and a bare dollar sign
 # can start a formula, so both are written as entities.
 ent <- function(x) gsub("\\(([a-z])\\)", "&#40;\\1)", gsub("$", "&#36;", x, fixed = TRUE))
@@ -77,7 +79,8 @@ files `export/r/inputs.csv` and `export/r/outputs.csv` that each analysis's own 
 for others to read. Both are committed, so the comparison rebuilds without either analysis's
 sources. It also reads the values transcribed from the PDFs in `comparison/data/`. Set
 `OPA_PROP40_ROOT` if the scripts cannot find the repository root, and `PYTHON` to choose the
-interpreter `run.R` calls.
+interpreter `run.R` calls for the Python twin, `py/bridge.py` (the same computation written a
+second time in Python and checked against the R result).
 
 ## Tests
 
@@ -95,11 +98,14 @@ Run while this page was rendered: **`r sum(res$nb - res$failed - res$skipped)` e
 passed, `r sum(res$failed)` failed**, in `r nrow(res)` test blocks. The files check:
 
 - `test-endpoints.R`: each end of the bridge against the number its authors print (BSZ
-  Table 5 row 1, the NBER mean NPV), plus the earlier figures the code still checks: the GGSS
-  headline behind the BSZ analysis and the March 2026 version of the RJKDC analysis, where the
-  bridge's disputed-input steps end.
+  Table 5 row 1, the NBER mean NPV; NBER is the National Bureau of Economic Research, which
+  circulates working papers), plus the earlier figures the code still checks: the
+  headline of GGSS (the Galle, Gamage, Saez and Shanske expert report of July 2026, written in
+  support of the measure), behind the BSZ analysis, and the March 2026 version of the RJKDC
+  analysis, where the bridge's disputed-input steps end.
 - `test-shapley.R`: the Shapley steps sum exactly to the gap in every setting, and match a
-  brute-force average over orders.
+  brute-force average over orders (a Shapley value: a step's effect averaged over every order
+  the inputs could be switched in, so the steps add up to the gap).
 - `test-parity.R`: the R exports are current, and the Python twin's agree with them to 1e-9.
 - `test-sources.R`: every transcribed input has a label, a source and a page.
 - `test-site.R`: the overview page and the explorer are exactly the generator's output, have
@@ -145,7 +151,7 @@ desc <- c(
   "bridge.csv" = "every step's Shapley value and one-order value, for each output and horizon setting",
   "ends.csv" = "the two ends of every bridge (BSZ, Jaros and Rauh NBER), the point where the disputed-input steps end, the model difference and the September revision",
   "endpoints.csv" = "each end against the number its authors print",
-  "anchors.csv" = "the four revenue numbers of the RJKDC analysis's March 2026 version, as candidates for where the steps end on output (a)",
+  "anchors.csv" = "the four revenue numbers of the RJKDC analysis's March 2026 version, as candidates for where the steps end on output (a) (an anchor: the published number an end of the bridge is checked against)",
   "loss.csv" = "every annual income tax loss on one scale, with present values",
   "hoopes.csv" = "Hoopes (2026) Figure 2 beside the bridge read in his order",
   "meta.csv" = "intermediate values the page quotes (annuity factors, the BSZ net terms)",
@@ -158,7 +164,15 @@ scroll(show(data.frame(
   rows = vapply(dfs, function(f) nrow(rd(f)), 1L),
   columns = vapply(dfs, function(f) ncol(rd(f)), 1L),
   contents = unname(desc))))
+own_a <- subset(rd("ends.csv"), horizon_setting == "own" & output == "a")
 ```
+
+`loss.csv`'s last column, `net_at_rauh_revenue_perpetuity`, nets each loss against the
+expected revenue of the RJKDC analysis's March 2026 version (`r usd(own_a$rauh_own)`, in
+`ends.csv` and `anchors.csv`). The last column of the comparison overview's
+[table of yearly income tax losses](../../index.html#neutral-material) nets against the
+September 2026 expected revenue instead (`r usd(own_a$nber_own)`), which `R/site.R` computes
+from `ends.csv`.
 
 `comparison/export/py/` holds the same files from the Python twin (without `inputs.csv`).
 The explorer's interactive bridge reads `assets/comparison-data.js`, written by `R/site.R`
@@ -192,6 +206,11 @@ scroll(show(data.frame(
 
 Full rows: `r link("comparison/DATA-SOURCES.csv")`. Neither PDF is redistributed.
 
+The GGSS expert report (20 July 2026) and the GGSS response to Rauh (17 March 2026), which the
+bridge cites for the non-citizen residents and for the BSZ value "none applied" of the step
+"One-time tax estimated as a permanent 5 pp rate", are listed in the BSZ analysis's manifest,
+`r link("bsz-analysis/DATA-SOURCES.csv")`, which records no URL for them.
+
 ## What the checks found
 
 ```{r}
@@ -200,7 +219,6 @@ k <- read_contracts(root)
 ep <- ex$endpoints; own <- ex$ends[ex$ends$horizon_setting == "own", ]
 ea <- own[own$output == "a", ]; eb <- own[own$output == "b", ]
 oo <- k$rjkdc$outputs
-usd <- function(x, d = 1, s = FALSE) gsub("$", "\\$", money(x, d, s), fixed = TRUE)
 ```
 
 The full crosswalk of disputed inputs, with every page reference checked against the PDFs, is

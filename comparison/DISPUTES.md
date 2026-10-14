@@ -19,9 +19,10 @@ folio 24) and restarts in the appendices (PDF p.54 is folio 17).
 Resp's characterizations are therefore claims to check against our copy, not facts about it. The
 one checked in detail is Resp's "78%" (row 5): the string does not appear in the March 17 text,
 but the number follows from it (4.55 / 5.8 = 78.4%, which is how BSZ Aug p.11 fn.13 states it).
-Rauh has not updated since March 17 (as of 2026-09-23); the BSZ analysis has moved twice (GGSS
-July, BSZ August). So two disputes that were open in March are settled on the BSZ analysis by
-August (rows 7 and 8).
+The table's Rauh column is the March 17 version, the one the bridge's input steps reach; the
+September 2026 chapter (Jaros and Rauh, obtained 2026-09-23) is described below and enters the
+bridge as its last step. The BSZ analysis moved twice (GGSS July, BSZ August), so two disputes
+that were open in March are settled on the BSZ analysis by August (rows 7 and 8).
 
 ## Kind labels
 
@@ -29,6 +30,7 @@ August (rows 7 and 8).
 - **data**: settled by observable facts (lists, filings, tax statistics).
 - **research**: a parameter taken from published empirical work.
 - **guesswork**: an assumption the authors assert without data or a study behind it (including legal judgments about unresolved questions).
+- **compound kinds**: "A vs B" reads the BSZ value's kind against the Rauh value's; "A + B" means one value rests on both; "guesswork on data" means a judgment applied to observed facts.
 
 ## The table
 
@@ -61,7 +63,8 @@ Reproduced here with 10 million draws:
 
 So eq.22's "67.1" is a typo for 67.51. The authors' own code confirms it: `NPV_data/NPV_dist.R:31` sets `wt_max <- 67.51` and line 60 divides by the plain discount rate r (`annual_loss / r_discount`), even though the replication README labels that draw "(r − g)" (repo github.com/bjaros20/wealth_tax at 25e84dd). The headline is an average over the Monte Carlo's draws of
 WT and C, not a preferred scenario, and its preferred-WT point (≈$40-42B) sits inside that range.
-For the bridge, the Rauh anchor to use is the Monte Carlo mean (−$24.7B). Table 9's central cell
+For the bridge, the Rauh anchor to use (an anchor: the published number an end of the bridge
+is checked against) is the Monte Carlo mean (−$24.7B). Table 9's central cell
 (−$126.1B) is a separate, more pessimistic reading.
 
 ## The second RJKDC estimate (NBER, Sept 2026)
