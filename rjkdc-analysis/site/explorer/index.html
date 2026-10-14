@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Explorer for the Rauh et al. net present value of California Proposition 40: move seven inputs and see the mean NPV and the share of negative outcomes.">
-<title>Prop 40 RJKDC Explorer</title>
+<meta name="description" content="Move the guesswork behind the RJKDC side's -$38.9 billion net present value of California's one-time billionaire tax and watch the estimate move.">
+<title>Prop 40, RJKDC side: Explorer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@400;600&display=swap">
@@ -42,7 +42,9 @@
     --chip-on: #eef1f4; --chip-on-tx: #14171a;
   }
 
+  * { box-sizing: border-box; }
   body {
+    margin: 0;
     background: var(--paper); color: var(--ink); font-family: var(--sans);
     font-size: 15px; line-height: 1.55; -webkit-font-smoothing: antialiased;
     /* Clip, not hidden: never establishes a scroll container, so a descendant
@@ -52,39 +54,43 @@
     overflow-x: clip;
   }
   html { overflow-x: clip; }
-  .wrap { max-width: 1180px; margin: 0 auto; padding-inline: 20px; padding-block: 32px 48px; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding-inline: 16px; padding-block: 32px 48px; }
 
   .site-nav { font-family: var(--mono); font-size: 11.5px; color: var(--ink-3); margin: 0 0 16px; }
   .site-nav a { color: var(--series-1); text-decoration: none; }
   .site-nav a:hover { text-decoration: underline; }
 
+  /* The header: title and standfirst on the left, the headline number on the right,
+     the same layout as the BSZ explorer and the OPA code review page. */
   header {
+    display: flex; flex-wrap: wrap; gap: 16px 32px; align-items: flex-end; justify-content: space-between;
     border-bottom: 1px solid var(--rule); padding-bottom: 20px;
-    /* Stacking-context fix: position:relative alone does not create one, so
-       .header-layer's negative z-index needs z-index:0 here too, or the
-       watermark paints behind the page instead of just behind the heading. */
-    position: relative; z-index: 0; overflow: hidden;
   }
-  .header-layer {
-    position: absolute; top: 0; right: 0; height: 150px; width: auto;
-    opacity: 0.218; z-index: -1; pointer-events: none;
+  .hero-left { flex: 1 1 420px; min-width: 0; }
+  .headline { display: flex; flex-direction: column; gap: 2px; flex: 0 1 440px; min-width: 0; }
+  .headline .name { font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--ink-3); font-weight: 500; }
+  .headline .value { font-family: var(--serif); font-size: 40px; font-weight: 600;
+    line-height: 1; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .headline .def { font-size: 13.5px; color: var(--ink-2); line-height: 1.45; margin-top: 2px; }
+  .headline .sub { font-size: 12px; color: var(--ink-3); line-height: 1.45; margin-top: 4px; }
+  .header-layer { height: 110px; width: auto; opacity: 0.218; align-self: flex-end;
+    margin-bottom: 8px; pointer-events: none; }
+  @media (max-width: 860px) {
+    header { position: relative; z-index: 0; overflow: hidden; }
+    .headline { flex-basis: 100%; }
+    .headline .value { font-size: 34px; }
+    /* On narrow screens the icon goes back behind the title, top right. */
+    .header-layer { position: absolute; top: 0; right: 0; height: 150px; margin: 0; z-index: -1; }
   }
   h1 {
     font-family: var(--serif); font-weight: 600; font-size: clamp(26px, 4.2vw, 36px);
     line-height: 1.15; letter-spacing: -0.01em; margin: 0 0 8px; text-wrap: balance;
   }
-  .standfirst { font-family: var(--serif); color: var(--ink-2); margin: 0; font-size: 15.5px; }
+  .standfirst { font-family: var(--serif); color: var(--ink-2); margin: 0; font-size: 15.5px; max-width: 46em; }
   .standfirst + .standfirst { margin-top: 14px; }
   .standfirst a { color: var(--series-1); text-decoration: none; }
   .standfirst a:hover { text-decoration: underline; }
-
-  .identity {
-    display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 18px;
-    margin-top: 22px; padding: 14px 16px; background: var(--panel);
-    border: 1px solid var(--rule); border-left: 3px solid var(--series-1);
-  }
-  .identity .name { font-family: var(--serif); font-size: 17px; font-weight: 600; }
-  .identity .meta { font-family: var(--mono); font-size: 12.5px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
 
   .cols { display: grid; grid-template-columns: minmax(0, 400px) minmax(0, 1fr); gap: 34px; margin-top: 28px; align-items: start; }
   @media (max-width: 860px) { .cols { grid-template-columns: minmax(0, 1fr); gap: 30px; } }
@@ -118,7 +124,9 @@
   .origin.research { border-color: #6fae7c; color: #2f7a41; }
   .origin.scenario { border-color: #9b86c9; color: #5d45a0; }
 
-  .pref { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 22px; }
+  p.fn { font-size: 12px; color: var(--ink-3); line-height: 1.45; margin: 10px 0 0; }
+  p.fn a { color: var(--series-1); }
+  .pref { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 0; }
   @media (max-width: 640px) { .pref { grid-template-columns: minmax(0, 1fr); } }
   .pref-card { padding: 14px 16px; background: var(--panel); border: 1px solid var(--rule);
                border-top: 3px solid var(--rule); }
@@ -136,6 +144,7 @@
     border: 1px solid var(--rule); border-radius: 2px; padding: 6px 12px; cursor: pointer;
   }
   .presets button:hover { border-color: var(--ink-3); }
+  .presets button.main { border-color: var(--series-1); }
 
   /* ---- table view (the shell's default output; add SVG charts once the
      real grid exporter and outcome list exist) ---------------------------- */
@@ -160,35 +169,37 @@
 
 <div class="wrap">
   <p class="site-nav">
-    Part of an Open Policy Analysis of Rauh et al. (2026) on California Proposition 40:
+    RJKDC side of California Proposition 40:
     Open Output (here) &middot;
     Open Analysis: <a href="../repro.html">Report</a> and
     <a href="../slides/slides.html">Slides</a> &middot;
     <a href="https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis">Open Materials</a> &middot;
-    <a href="../index.html">Overview</a> &middot;
-    <a href="../../../index.html">Reconciliation page</a>
+    <a href="../index.html">Overview</a>
   </p>
   <header>
-    <img class="header-layer" src="../assets/opa/opa-assumptions-solo.png" alt="" aria-hidden="true">
-    <h1>What the Billionaire Tax Act is worth to the state, by the RJKDC side&rsquo;s method</h1>
-    <p class="standfirst">
-      Rauh, Jaros, Kearney, Doran and Cosso (RJKDC; Rauh et al. below) estimate the Act's fiscal effect as its one-time wealth tax revenue minus the present
-      value of income tax lost for ever when billionaires leave:
-      NPV = WT &minus; f&middot;C / r, where NPV is the net present value, WT the wealth tax
-      collected once, f the share of the income tax base that leaves, C the annual California
-      income tax that base pays, and r the discount rate. They report the average over 100,000 random draws of
-      those inputs. This page recomputes that average, and the share of draws below zero,
-      for every combination of seven inputs. It is this project's <strong>open output</strong>:
-      all 2,187 combinations are precomputed, so the outcomes update as you click.
-    </p>
+    <div class="hero-left">
+      <h1>What the Billionaire Tax Act is worth to the state, by the RJKDC side&rsquo;s method</h1>
+      <p class="standfirst">
+        Rauh, Jaros, Kearney, Doran and Cosso (RJKDC; Rauh et al. below) estimate the Act's fiscal effect as its one-time wealth tax revenue minus the present
+        value of income tax lost for ever when billionaires leave:
+        NPV = WT &minus; f&middot;C / r, where NPV is the net present value, WT the wealth tax
+        collected once, f the share of the income tax base that leaves, C the annual California
+        income tax that base pays, and r the discount rate. They report the average over 100,000 random draws of
+        those inputs. This page recomputes that average, and the share of draws below zero,
+        for every combination of seven inputs. It is this project's <strong>open output</strong>:
+        all 2,187 combinations are precomputed, so the outcomes update as you click.
+      </p>
+    </div>
+    <div class="headline">
+      <img class="header-layer" src="../assets/opa/opa-assumptions-solo.png" alt="" aria-hidden="true">
+      <span class="name" id="cell-name"></span>
+      <span class="value" id="cell-value"></span>
+      <span class="def">Defined as the one-time wealth tax revenue minus the present value of
+        California income tax lost for ever to billionaires who leave (NPV = WT &minus; f&middot;C / r),
+        averaged over the authors' Monte Carlo draws.</span>
+      <span class="sub" id="cell-sub"></span>
+    </div>
   </header>
-
-  <h2 style="margin-top:26px;">The preferred estimates: two versions, side by side</h2>
-  <div class="pref" id="pref"></div>
-
-  <div class="identity">
-    <span class="name" id="cell-name">Preferred estimate: SSRN, Mar 2026</span>
-  </div>
 
   <div class="cols">
     <section>
@@ -222,7 +233,8 @@
         <div class="table-scroll">
           <table id="cmp">
             <caption style="caption-side:top; text-align:left; font-size:12px; color:var(--ink-3); padding-bottom:8px;">
-              Exact expectations for the setting you chose, next to the two preferred settings.
+              Exact expectations for the setting you chose, next to the NBER setting (the main
+              estimate) and the SSRN setting (the earlier version).
               $B are billions of dollars, present value at the time the tax is collected.
             </caption>
             <thead><tr id="cmp-head"><th>Outcome</th><th>This setting</th></tr></thead>
@@ -230,9 +242,18 @@
           </table>
         </div>
       </details>
+      <p class="fn" id="hl-fn"><sup>1</sup> The main estimate is the authors' own choice: the mean
+      NPV in their latest version (Jaros and Rauh, NBER chapter c15504, September 2026). Their first
+      version (Rauh et al., SSRN, March 2026) put it at <span id="fn-ssrn"></span> billion; it stays a
+      scenario here and is the anchor of the <a href="../../../index.html">comparison page</a>.</p>
+      <h2 style="margin-top:26px;">Both versions, side by side</h2>
+      <div class="pref" id="pref"></div>
     </section>
   </div>
   <footer>
+    Part of <a href="https://github.com/fhoces/opa-prop40">opa-prop40</a>, an Open Policy
+    Analysis of both sides of California Proposition 40 (the Billionaire Tax Act).
+    <a href="../index.html">RJKDC side overview</a>.
     <p class="credit">OPA done by <a href="https://fhoces.github.io">Fernando Hoces de la Guardia</a>, using <a href="../index.html#how-ai-was-used">agentic coding tools</a></p>
   </footer>
 </div>
@@ -242,9 +263,14 @@
 (function () {
   "use strict";
   var G = window.__GRID__;
-  var firstNamed = Object.keys(G.named)[0];
+  // The main estimate is the NBER setting; the page opens on it. The SSRN setting is the
+  // earlier version, kept as a scenario.
+  var MAIN = "nber";
+  var ORDER = [MAIN].concat(Object.keys(G.named).filter(function (k) { return k !== MAIN; }));
+  var HEAD = { nber: "NBER September 2026", ssrn: "SSRN March 2026 (the earlier version)" };
+  var ROLE = { nber: "main estimate", ssrn: "earlier version" };
   function nlabel(k) { return (G.named_labels && G.named_labels[k]) || (k.charAt(0).toUpperCase() + k.slice(1)); }
-  var state = G.named[firstNamed].slice();
+  var state = G.named[MAIN].slice();
   var SIZES = G.dials.map(function (d) { return d.levels.length; });
 
   // Mixed-radix cell index: cells are written in itertools.product order, and
@@ -303,10 +329,11 @@
 
   // ---- preset buttons, one per named scenario in the grid ---------------
   var presets = document.getElementById("presets");
-  Object.keys(G.named).forEach(function (name) {
+  ORDER.forEach(function (name) {
     var b = document.createElement("button");
     b.type = "button";
-    b.textContent = "Load " + nlabel(name);
+    if (name === MAIN) b.className = "main";
+    b.textContent = "Load " + nlabel(name) + (ROLE[name] ? " (" + ROLE[name] + ")" : "");
     b.addEventListener("click", function () { state = G.named[name].slice(); render(); });
     presets.appendChild(b);
   });
@@ -314,7 +341,7 @@
   // ---- table header + body, one column per named scenario plus "this
   // setting", one row per outcome --------------------------------------
   var headRow = document.getElementById("cmp-head");
-  Object.keys(G.named).forEach(function (name) {
+  ORDER.forEach(function (name) {
     var th = document.createElement("th");
     th.textContent = nlabel(name);
     headRow.appendChild(th);
@@ -324,15 +351,19 @@
   // ---- preferred-estimate cards: printed value, the seeded reproduction, and
   // this grid's exact expectation, all from grid.js (generated by targets) ----
   function f1(x) { return (x < 0 ? "\u2212" : "") + Math.abs(x).toFixed(1); }
+  function f2(x) { return (x < 0 ? "\u2212" : "") + Math.abs(x).toFixed(2); }
+  function usd(x) { return (x < 0 ? "\u2212$" : "$") + Math.abs(x).toFixed(1); }
+  var P = {}; (G.preferred || []).forEach(function (p) { P[p.key] = p; });
+  if (P.ssrn) document.getElementById("fn-ssrn").textContent = usd(P.ssrn.printed_npv);
   var pref = document.getElementById("pref");
   var gaps = [];
-  (G.preferred || []).forEach(function (p) {
+  ORDER.map(function (k) { return P[k]; }).filter(Boolean).forEach(function (p) {
     var snap = G.snap[namedIdx[p.key]];
     var card = document.createElement("div");
     card.className = "pref-card";
     card.id = "pref-" + p.key;
     card.innerHTML =
-      '<div class="k">' + p.label + '</div>' +
+      '<div class="k">' + p.label + (ROLE[p.key] ? ', ' + ROLE[p.key] : '') + '</div>' +
       '<div class="v">' + f1(p.printed_npv) + ' $B</div>' +
       '<div class="s">Mean NPV as printed (' + p.printed_page + '), with ' +
       p.printed_pct_negative + '% of draws negative and revenue of about $' + p.printed_revenue +
@@ -361,8 +392,16 @@
 
     var name = null;
     for (var k in namedIdx) if (namedIdx[k] === i) name = k;
-    document.getElementById("cell-name").textContent =
-      name ? "Preferred estimate: " + nlabel(name) : "Your setting: not one of the two preferred estimates";
+    // The headline: at the authors' two settings, their printed mean (the overview's number);
+    // anywhere else, this grid's exact expectation for the setting on screen.
+    document.getElementById("cell-name").innerHTML = "Main estimate<sup>1</sup>, " +
+      (name ? (HEAD[name] || nlabel(name)) : "a setting the authors did not publish");
+    var p = name ? P[name] : null;
+    document.getElementById("cell-value").textContent = usd(p ? p.printed_npv : snap[0]) + "B";
+    document.getElementById("cell-sub").textContent = p
+      ? "As printed (" + p.printed_page + "), with " + p.printed_pct_negative + "% of draws below zero. " +
+        "Seeded rerun of the authors' script: " + f2(p.mc_npv) + "; exact expectation of this setting: " + f2(snap[0]) + "."
+      : "Exact expectation of the authors' formula at this setting, with " + snap[1].toFixed(1) + "% of outcomes below zero.";
     (G.preferred || []).forEach(function (p) {
       var el = document.getElementById("pref-" + p.key);
       if (el) el.className = "pref-card" + (p.key === name ? " on" : "");
@@ -378,7 +417,7 @@
       var td = document.createElement("td");
       td.textContent = f1(snap[oi]);
       tr.appendChild(td);
-      Object.keys(G.named).forEach(function (nm) {
+      ORDER.forEach(function (nm) {
         var td2 = document.createElement("td");
         td2.textContent = f1(G.snap[namedIdx[nm]][oi]);
         tr.appendChild(td2);
