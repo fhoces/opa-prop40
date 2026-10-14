@@ -1,6 +1,6 @@
 ---
 title: "Prop 40, the comparison: the reproduction"
-subtitle: "The BSZ report and the RJKDC report put on one common output, and the gap between them explained one disputed input at a time"
+subtitle: "The BSZ analysis and the RJKDC analysis put on one common output, and the gap between them explained one disputed input at a time"
 date: today
 format:
   html:
@@ -22,7 +22,7 @@ execute:
 
 ::: {.site-nav}
 The comparison of California Proposition 40:
-[Open Output (the bridge)](../../index.html#the-bridge) &middot; Open Analysis: Report (here) &middot;
+[Open Output: Explorer](explorer/index.html) &middot; Open Analysis: Report (here) &middot;
 [Open Materials](https://github.com/fhoces/opa-prop40/tree/main/comparison) &middot;
 [Overview](../../index.html)
 :::
@@ -30,9 +30,9 @@ The comparison of California Proposition 40:
 ```{r}
 #| label: setup
 # The report never retypes a result. It reads the files comparison/run.R writes
-# (comparison/export/r/*.csv) and the two sides' export contracts. The functions in
+# (comparison/export/r/*.csv) and the two analyses' export contracts. The functions in
 # comparison/R/ are sourced so the folds can show their code, and so a few lines below
-# can recompute the main estimate from the contracts and check it against the export.
+# can recompute the two main estimates from the contracts and check them against the export.
 for (f in list.files("../R", pattern = "[.]R$", full.names = TRUE)) source(f, keep.source = TRUE)
 root <- comparison_root()
 ex <- read_exports(file.path(root, "comparison", "export", "r"))   # R/site.R
@@ -113,39 +113,44 @@ twin_html("the setup",
 ![](assets/opa/opa-details.png){.opa-figure}
 
 California's Proposition 40, the Billionaire Tax Act, would tax California's billionaires
-once, at 5% of their net worth, paid over five years. Two analyses estimate it. The
-[BSZ report](../../bsz-analysis/site/) (Boll, Saez and Zucman, NBER WP 35218, with the GGSS
-expert report by Galle, Gamage, Saez and Shanske) estimates the revenue at about
-**`r usd(epv("ggss_headline"), 0)`**. The [RJKDC report](../../rjkdc-analysis/site/) (Rauh,
-Jaros, Kearney, Doran and Cosso) estimates a net present value for the state of
-**`r usd(epv("rauh_nber_npv", "printed_value"))`** in its latest version (Jaros and Rauh,
-NBER c15504, September 2026). The two numbers answer different questions, so neither can be
-read against the other directly. This report puts both on one common output and walks from
-one to the other, one disputed input at a time.
+once, at 5% of their net worth, paid over five years. Two analyses estimate it. This report
+cites each in its latest version. The [BSZ analysis](../../bsz-analysis/site/) (Boll, Saez
+and Zucman, NBER WP 35218, August 2026) estimates
+**`r usd(epv("bsz_tab5_row1"))`** of wealth tax (Table 5 row 1), and
+**`r usd(eb$bsz_model)`** net of the income tax it changes. The
+[RJKDC analysis](../../rjkdc-analysis/site/) (Rauh, Jaros, Kearney, Doran and Cosso; latest
+version Jaros and Rauh, NBER c15504, September 2026) estimates a net present value for the
+state of **`r usd(epv("rauh_nber_npv", "printed_value"))`**. The two numbers answer
+different questions, so neither can be read against the other directly. This report puts both
+on one common output and walks from one to the other, one disputed input at a time.
 
-This report is part of the comparison's Open Policy Analysis (OPA):
+This report is part of the comparison's [Open Policy Analysis](https://doi.org/10.1093/scipol/scaa067) (OPA):
 
-- **Open Output**: [the bridge](../../index.html#the-bridge) on the overview page, where the
-  output, the step sizes and the loss horizon can be switched
+- **Open Output**: [the explorer](explorer/index.html), with the two main estimates and the
+  bridge, where the output, the step sizes and the loss horizon can be switched
 - **Open Analysis**: this document
 - **Open Materials**: [the repository folder](https://github.com/fhoces/opa-prop40/tree/main/comparison), every script, test and data file (guide: [the materials page](materials.html))
 :::
 
-**The main estimate** is the gap on the common output (a), the gross one-time wealth tax
-revenue, between the bridge's two ends: BSZ Table 5 row 1 at
-`r usd(ea$bsz_model)` and the expected revenue in the NBER Monte Carlo at
-`r usd(ea$nber_own)`. The gap is **`r usd(ea$bsz_model - ea$nber_own)`**. The arithmetic is in
-[The main estimate](#the-main-estimate).
+**The two main estimates** are each analysis's own: the BSZ analysis's net total over 5
+years, **`r usd(eb$bsz_model)`**, and the RJKDC analysis's mean net present value in
+perpetuity, **`r usd(epv("rauh_nber_npv", "contract_value"))`** (NBER, September 2026). On
+the common output (b), the net fiscal effect, they are the bridge's two ends. The BSZ end is
+the same `r usd(eb$bsz_model)`. The RJKDC end is `r usd(eb$nber_own, 2)`, the exact
+expectation of the Monte Carlo whose seeded run the authors print. The gap between the two ends,
+`r usd(eb$bsz_model - eb$nber_own)`, is what the bridge explains. The arithmetic is in
+[The two main estimates](#the-main-estimate).
 
-**Neither side reports this number.** It is this OPA's reconciliation. Each side keeps its
-own main estimate on its own overview page. What this report adds is one definition both
-can be estimated on, and an accounting of the distance between them.
+**Neither analysis reports the other's number, or the gap.** Each keeps its own main estimate
+on its own overview page. What this report adds is one definition both can be estimated on,
+and an accounting of the distance between them.
 
-**What "reproduced" means here.** The comparison does not re-run either side. It reads each
-side's *export contract*: two files, `inputs.csv` and `outputs.csv`, that each side's own
-pipeline writes under `export/r/` for others to read. It also reads a short list of values
-transcribed from the PDFs with their page (`comparison/data/`). From these it rebuilds both
-ends with one estimating function and checks each end against the number its authors print.
+**What "reproduced" means here.** The comparison does not re-run either analysis. It reads
+each analysis's *export contract*: two files, `inputs.csv` and `outputs.csv`, that each
+analysis's own pipeline writes under `export/r/` for others to read. It also reads a short list
+of values transcribed from the PDFs with their page (`comparison/data/`). From these it rebuilds
+both ends with one estimating function and checks each end against the number its authors
+print.
 
 ### How to read this report
 
@@ -154,26 +159,28 @@ Every number in running text is computed when this page is rendered, from the fi
 their Python twins. Page numbers are PDF pages. "Shapley value" is defined where it is first
 used, in [The bridge](#the-bridge).
 
-# The common output, and what each side reports {#the-common-output}
+# The common output, and what each analysis reports {#the-common-output}
 
 The BSZ report says how much the one-time tax collects. The RJKDC report says what the state
 gains or loses in present value once income tax lost to billionaires who leave is subtracted.
-Before any step of a bridge means anything, both are put on the same two outputs:
+Before any step of a bridge means anything, both are put on the same two outputs. Output (b)
+comes first, because it is the question both main estimates answer:
 
-- **(a) gross revenue**: the one-time wealth tax collected.
-- **(b) net fiscal effect**: (a), plus extra income tax from assets sold to pay the tax,
-  minus the present value of income tax lost to departures over a horizon of H years.
+- **(b) net fiscal effect**: the one-time wealth tax collected, plus extra income tax from
+  assets sold to pay the tax, minus the present value of income tax lost to departures over a
+  horizon of H years.
+- **(a) gross revenue**: the one-time wealth tax collected, the secondary output.
 
 The horizon H is itself disputed. The BSZ report counts the losses for about the
 `r fmt_input("H", inp$supporting_value[inp$input == "H"])` of payments (BSZ PDF p.27). The
 RJKDC report counts them forever. Discounting uses the RJKDC report's own range, a rate
 drawn uniformly between `r pct(pick(k$rjkdc$inputs, "rauh_mc_r_min"), 1)` and
-`r pct(pick(k$rjkdc$inputs, "rauh_mc_r_max"), 1)` (Rauh p.20 eq.24). The BSZ report takes no
-position on the rate.
+`r pct(pick(k$rjkdc$inputs, "rauh_mc_r_max"), 1)`. The BSZ analysis takes no position on the
+rate; its overview discounts at 3%, the middle of that range.
 
 ```{r}
 #| results: asis
-twin_fold("the four estimates on the common output", c("score_common", "rauh_ssrn_expectation", "rauh_nber_expectation", "expected_annuity"))
+twin_fold("the two analyses on the common output", c("score_common", "rauh_nber_expectation", "expected_annuity"))
 ```
 
 ```{r}
@@ -181,34 +188,32 @@ twin_fold("the four estimates on the common output", c("score_common", "rauh_ssr
 d <- k$docs
 dv <- function(id) as.numeric(d$value[d$input_id == id])
 tab <- data.frame(
-  Estimate = c("GGSS expert report (20 Jul 2026)", "BSZ NBER WP 35218, Table 5 row 1 (Aug 2026)",
-               "Rauh et al., SSRN 6340778 (17 Mar 2026)", "Jaros and Rauh, NBER c15504 (Sep 2026)"),
-  `(a) gross revenue` = c(money(epv("ggss_headline"), 0), money(ea$bsz_model, 1),
-                          money(ea$rauh_own, 2), money(ea$nber_own, 1)),
-  `(b) net fiscal effect` = c("not computed", money(eb$bsz_model, 1), money(eb$rauh_own, 2), money(eb$nber_own, 2)),
+  Analysis = c("BSZ analysis: Boll, Saez and Zucman, NBER WP 35218, Table 5 row 1 (Aug 2026)",
+               "RJKDC analysis: Jaros and Rauh, NBER c15504 (Sep 2026)"),
+  `(b) net fiscal effect` = c(money(eb$bsz_model, 1), money(eb$nber_own, 2)),
+  `(a) gross revenue` = c(money(ea$bsz_model, 1), money(ea$nber_own, 1)),
   `What the authors print` = c(
-    sprintf("%s estimate, rounded to %s (p.4)", money(epv("ggss_scoring", "printed_value"), 0), money(epv("ggss_headline"), 0)),
     sprintf("%s revenue (PDF p.39); no net figure", money(epv("bsz_tab5_row1", "printed_value"), 0)),
-    sprintf("mean NPV %s (p.20); revenue 'about %s' (p.14)", money(epv("rauh_ssrn_npv", "printed_value"), 1), money(dv("rauh_headline_revenue"), 0)),
     sprintf("mean NPV %s; revenue 'approximately %s' (p.1)", money(epv("rauh_nber_npv", "printed_value"), 1), money(dv("nber_headline_revenue"), 0))),
   check.names = FALSE)
 scroll(show(tab))
 ```
 
-Output (b) for the BSZ report is not printed by either paper. It is Table 5 row 1's own three
+Output (b) for the BSZ analysis is not printed by the paper. It is Table 5 row 1's own three
 columns combined here: the `r usd(ea$bsz_model)` revenue, plus
 `r usd(ex$meta$value[ex$meta$key == "X_bsz"], 2)` of extra income tax from asset sales, minus
 `r usd(ex$meta$value[ex$meta$key == "PV_bsz_own"], 2)`, the present value of five years of
-its income tax loss. For the RJKDC report, both outputs are the expectations of the
+its income tax loss. For the RJKDC analysis, both outputs are the expectations of the
 authors' own Monte Carlo, computed exactly rather than by drawing.
 
 # The two ends, estimated on it {#the-two-ends}
 
 One estimating function, `score_common()`, takes every disputed input as an argument. Each
-argument takes either the BSZ report's value or the RJKDC report's. At the all-BSZ setting
-the function must return BSZ Table 5 row 1. At the all-RJKDC setting it must return the
-expectation of Rauh's SSRN Monte Carlo. The NBER version is then one further step. The table
-checks each end against the number its authors print.
+argument takes either the BSZ analysis's value or the RJKDC analysis's. At the all-BSZ setting
+the function must return the BSZ end: Table 5 row 1 on (a), and its net on (b). The RJKDC
+values are those of its March 2026 version, where the inputs are published, and the September
+2026 revision is the last step of the bridge, to the RJKDC end. The table checks each end
+against the number its authors print.
 
 ```{r}
 #| results: asis
@@ -217,7 +222,7 @@ twin_fold("the endpoint checks", c("bridge_inputs", "score_common"))
 
 ```{r}
 #| results: asis
-e2 <- ep[ep$endpoint_id != "bsz_net_constructed", ]
+e2 <- ep[match(c("bsz_net_constructed", "bsz_tab5_row1", "rauh_nber_npv", "rauh_nber_revenue_mc"), ep$endpoint_id), ]
 scroll(show(data.frame(
   End = esc(e2$description),
   `Computed here` = vapply(e2$value, function(v) formatC(v, format = "f", digits = 3), ""),
@@ -231,62 +236,91 @@ Every difference is a rounding of the printed number. The NBER mean NPV is the e
 of the Monte Carlo (`r usd(eb$nber_own, 2)`), while the authors print one run of it
 (`r usd(epv("rauh_nber_npv", "printed_value"))`).
 
-## The main estimate {#the-main-estimate}
+## The two main estimates {#the-main-estimate}
 
 ```{r}
 bi  <- bridge_inputs(k)                       # the two input vectors, from the contracts
 sup <- bi$sup
-v_sup <- score_common(sup)                    # the BSZ end
+v_sup <- score_common(sup)                    # the BSZ end, both outputs
 oi <- k$rjkdc$inputs
 nber <- rauh_nber_expectation(wt_min = 0, wt_max = pick(oi, "nber_ceiling_hardcoded"),
                               f_min = pick(oi, "nber_mc_f_min"), f_max = pick(oi, "nber_mc_f_max"),
                               c_min = pick(oi, "rauh_mc_c_min"), c_max = pick(oi, "rauh_mc_c_max"),
                               r_min = pick(oi, "rauh_mc_r_min"), r_max = pick(oi, "rauh_mc_r_max"))
+rj_main <- epv("rauh_nber_npv", "contract_value")   # the RJKDC main estimate (seeded run)
+f_mid <- (pick(oi, "nber_mc_f_min") + pick(oi, "nber_mc_f_max")) / 2
+c_mid <- (pick(oi, "rauh_mc_c_min") + pick(oi, "rauh_mc_c_max")) / 2
+a_inf <- expected_annuity(Inf, pick(oi, "rauh_mc_r_min"), pick(oi, "rauh_mc_r_max"))
+gap_b <- v_sup[["b"]] - nber[["b"]]
 gap <- v_sup[["a"]] - nber[["a"]]
-stopifnot(isTRUE(all.equal(v_sup[["a"]], ea$bsz_model)), isTRUE(all.equal(nber[["a"]], ea$nber_own)))
+stopifnot(isTRUE(all.equal(v_sup[["b"]], eb$bsz_model)), isTRUE(all.equal(nber[["b"]], eb$nber_own)),
+          isTRUE(all.equal(v_sup[["a"]], ea$bsz_model)), isTRUE(all.equal(nber[["a"]], ea$nber_own)))
 ```
 
-**Step 1: the BSZ end.** At the all-BSZ inputs, output (a) is the tax rate times the base,
-less the avoidance allowance. The base is the `r usd(sup$W_core + sup$W_noncit, 0)` that
-Forbes lists for California's billionaires on 1 July 2026, the non-US-citizen residents
-(`r usd(sup$W_noncit, 0)`) included. The BSZ report applies no real-estate deduction, no
-departures before the tax and no mobility response to a one-time tax. So
-(a) = `r pct(sup$tau)` &times; `r usd(sup$W_core + sup$W_noncit, 0)` &times;
-(1 &minus; `r pct(sup$alpha)`) = **`r usd(v_sup[["a"]], 3)`**, which is BSZ Table 5 row 1
-(printed `r usd(epv("bsz_tab5_row1", "printed_value"), 0)`, PDF p.39).
+**Step 1: the BSZ main estimate, the BSZ end on (b).** At the all-BSZ inputs, the wealth tax
+is the tax rate times the base, less the avoidance allowance. The base is the
+`r usd(sup$W_core + sup$W_noncit, 0)` that Forbes lists for California's billionaires on 1 July
+2026, the non-US-citizen residents (`r usd(sup$W_noncit, 0)`) included. The BSZ analysis
+applies no real-estate deduction, no departures before the tax and no mobility response to a
+one-time tax. So the wealth tax is `r pct(sup$tau)` &times;
+`r usd(sup$W_core + sup$W_noncit, 0)` &times; (1 &minus; `r pct(sup$alpha)`) =
+`r usd(v_sup[["a"]], 3)`, which is Table 5 row 1 (printed
+`r usd(epv("bsz_tab5_row1", "printed_value"), 0)`, PDF p.39). Output (b) adds
+`r usd(v_sup[["X"]], 3)` of extra income tax from assets sold to pay and subtracts
+`r usd(v_sup[["PV"]], 3)`, five years of the `r usd(v_sup[["annual_loss"]], 3)` annual
+income tax loss discounted over the rate range: **`r usd(v_sup[["b"]], 3)`**, shown as
+`r usd(v_sup[["b"]])`. The BSZ analysis overview discounts at 3% instead and gets the same
+`r usd(v_sup[["b"]])`.
 
-**Step 2: the NBER end.** In the Monte Carlo of Jaros and Rauh's NBER version the revenue is
-drawn uniformly between zero and `r usd(pick(oi, "nber_ceiling_hardcoded"), 0)`. Its
-expectation is the midpoint: **`r usd(nber[["a"]], 1)`**. The authors print the revenue as
-"approximately `r usd(dv("nber_headline_revenue"), 0)`" (p.1); the bridge uses the
-expectation because it is the revenue the printed mean NPV assumes.
+**Step 2: the RJKDC main estimate, and the RJKDC end on (b).** In the Monte Carlo of Jaros and
+Rauh's NBER version the revenue is drawn uniformly between zero and
+`r usd(pick(oi, "nber_ceiling_hardcoded"), 0)`, the share of the income tax base that leaves
+between `r pick(oi, "nber_mc_f_min")` and `r pick(oi, "nber_mc_f_max")`, the annual income tax
+between `r usd(pick(oi, "rauh_mc_c_min"))` and `r usd(pick(oi, "rauh_mc_c_max"))`, and the
+discount rate as above, all independently. The mean net present value is therefore
+`r usd(nber[["a"]], 1)` &minus; `r f_mid` &times; `r usd(c_mid, 3)` &times;
+`r formatC(a_inf, format = "f", digits = 3)` (the average of 1/r) =
+**`r usd(nber[["b"]], 3)`**, the bridge's RJKDC end. The authors print
+`r usd(epv("rauh_nber_npv", "printed_value"))` from one seeded run of the same Monte Carlo,
+which the RJKDC pipeline reproduces as `r usd(rj_main, 3)`. That run is the RJKDC main
+estimate, shown as `r usd(rj_main)`.
 
-**Step 3: the gap.** `r usd(v_sup[["a"]], 3)` &minus; `r usd(nber[["a"]], 1)` =
-**`r usd(gap, 3)`**, shown as `r usd(gap)`.
+**Step 3: the gap on (b).** `r usd(v_sup[["b"]], 3)` &minus; (`r usd(nber[["b"]], 3)`) =
+**`r usd(gap_b, 3)`**, shown as `r usd(gap_b)`.
 
 **Step 4: where the gap comes from.** The next section splits it into one step per disputed
-input (`r usd(sum(br$shapley[br$horizon_setting == "own" & br$output == "a"]), 2, TRUE)` in
-total), a model difference from the RJKDC report's rounded literals
-(`r usd(ea$rauh_residual, 4, TRUE)`) and the NBER revision
-(`r usd(ea$nber_step, 2, TRUE)`). The three add up to `r usd(-gap, 3)`.
+input (`r usd(sum(br$shapley[br$horizon_setting == "own" & br$output == "b"]), 2, TRUE)` in
+total), a model difference from the rounded literals in the March 2026 version's code
+(`r usd(eb$rauh_residual, 2, TRUE)`) and the September 2026 revision
+(`r usd(eb$nber_step, 2, TRUE)`). The three add up to `r usd(-gap_b, 3)`.
+
+**On output (a)**, the secondary setting, the two ends are the wealth tax alone:
+`r usd(v_sup[["a"]], 3)` and the NBER expected revenue, `r usd(nber[["a"]], 1)` (the midpoint
+of zero and `r usd(pick(oi, "nber_ceiling_hardcoded"), 0)`; the authors print "approximately
+`r usd(dv("nber_headline_revenue"), 0)`", p.1). The gap is `r usd(gap, 3)`, split the same
+way: `r usd(sum(br$shapley[br$horizon_setting == "own" & br$output == "a"]), 2, TRUE)` of steps,
+`r usd(ea$rauh_residual, 4, TRUE)` of model difference and `r usd(ea$nber_step, 2, TRUE)` of
+revision.
 
 ```{r}
 b_a <- br[br$horizon_setting == "own" & br$output == "a", ]
-stopifnot(abs(sum(b_a$shapley) + ea$rauh_residual + ea$nber_step + gap) < 1e-9)
+b_b <- br[br$horizon_setting == "own" & br$output == "b", ]
+stopifnot(abs(sum(b_b$shapley) + eb$rauh_residual + eb$nber_step + gap_b) < 1e-9,
+          abs(sum(b_a$shapley) + ea$rauh_residual + ea$nber_step + gap) < 1e-9)
 ```
 
 ```{r}
 #| results: asis
-twin_fold("the main estimate", c("bridge_inputs", "score_common", "rauh_nber_expectation"))
+twin_fold("the two main estimates", c("bridge_inputs", "score_common", "rauh_nber_expectation"))
 ```
 
 # The bridge, step by step {#the-bridge}
 
-Each step switches one input from the BSZ value to the RJKDC value. Because the inputs
-interact (a departure matters more when the base is larger), the size of a step depends on
+Each step switches one input from the BSZ value to the RJKDC value of its March 2026
+version, where the inputs are published. Because the inputs interact (a departure matters more when the base is larger), the size of a step depends on
 the order in which the inputs are switched. The report shows two answers:
 
-- **Shapley values** (the default on the overview page). Each step's switch is averaged over
+- **Shapley values** (the default on the explorer). Each step's switch is averaged over
   all `r format(factorial(nrow(steps)), big.mark = ",")` orders of the
   `r nrow(steps)` steps. The code computes this exactly, by estimating the model at every one
   of the `r format(2^nrow(steps), big.mark = ",")` subsets of switched inputs. The steps then
@@ -314,20 +348,35 @@ bt <- function(o) {
     `One order` = vapply(b$sequential, money, "", digits = 2, signed = TRUE),
     check.names = FALSE)
   extra <- data.frame(
-    Step = c("Sum of the steps", "Model difference (rounded literals)", "NBER revision"),
+    Step = c("Sum of the steps", "Model difference (rounded literals)", "September 2026 revision"),
     `DISPUTES row` = "", Kind = c("", "model", "guesswork + data"), `BSZ value` = "", `RJKDC value` = "",
     Shapley = c(money(sum(b$shapley), 2, TRUE), money(e$rauh_residual, 4, TRUE), money(e$nber_step, 2, TRUE)),
     `One order` = c(money(sum(b$sequential), 2, TRUE), money(e$rauh_residual, 4, TRUE), money(e$nber_step, 2, TRUE)),
     check.names = FALSE)
   top <- data.frame(Step = sprintf("<b>BSZ end, (%s)</b>", o), `DISPUTES row` = "", Kind = "", `BSZ value` = "",
                     `RJKDC value` = "", Shapley = money(e$bsz_model, 2), `One order` = money(e$bsz_model, 2), check.names = FALSE)
-  bot <- data.frame(Step = sprintf("<b>NBER end, (%s)</b>", o), `DISPUTES row` = "", Kind = "", `BSZ value` = "",
+  bot <- data.frame(Step = sprintf("<b>RJKDC end, (%s)</b>", o), `DISPUTES row` = "", Kind = "", `BSZ value` = "",
                     `RJKDC value` = "", Shapley = money(e$nber_own, 2), `One order` = money(e$nber_own, 2), check.names = FALSE)
   scroll(show(rbind(top, rows, extra, bot)))
 }
-cat("\n**Output (a), gross revenue, each side's own horizon.**\n\n"); bt("a")
-cat("\n**Output (b), net fiscal effect, each side's own horizon.** The horizon step switches from the BSZ report's 5 years to a perpetuity.\n\n"); bt("b")
+cat("\n**Output (b), net fiscal effect, each analysis's own horizon.** The horizon step switches from the BSZ analysis's 5 years to a perpetuity.\n\n"); bt("b")
+cat("\n**Output (a), gross revenue, the secondary output.** It does not depend on the horizon.\n\n"); bt("a")
 ```
+
+Reading the (b) table: the three largest Shapley steps are
+```{r}
+#| results: asis
+top3b <- b_b[order(b_b$shapley), ][1:3, ]
+cat(paste(sprintf("%s (%s)", tolower(top3b$title), usd(top3b$shapley, 1, TRUE)), collapse = "; "), ".", sep = "")
+```
+The horizon is the largest step read in Hoopes's order
+(`r usd(b_b$sequential[b_b$step_id == "horizon"], 1, TRUE)`, switched last, when the loss is
+already RJKDC-sized) but `r usd(b_b$shapley[b_b$step_id == "horizon"], 1, TRUE)` averaged over
+orders, because a perpetuity multiplies whatever annual loss the other inputs imply.
+One step raises the number: the RJKDC analysis applies no avoidance allowance beyond migration,
+so dropping the BSZ analysis's `r pct(sup$alpha)` adds
+`r usd(b_b$shapley[b_b$step_id == "avoidance"], 1, TRUE)` on (b) and
+`r usd(b_a$shapley[b_a$step_id == "avoidance"], 1, TRUE)` on (a).
 
 Reading the (a) table: the three largest Shapley steps are
 ```{r}
@@ -335,8 +384,6 @@ Reading the (a) table: the three largest Shapley steps are
 top3 <- b_a[order(b_a$shapley), ][1:3, ]
 cat(paste(sprintf("%s (%s)", tolower(top3$title), usd(top3$shapley, 1, TRUE)), collapse = "; "), ".", sep = "")
 ```
-One step raises the number: the RJKDC report applies no avoidance allowance beyond migration,
-so dropping the BSZ report's `r pct(sup$alpha)` adds `r usd(b_a$shapley[b_a$step_id == "avoidance"], 1, TRUE)`.
 Order matters most for estimating the one-time tax as a permanent 5-percentage-point rate:
 `r usd(b_a$shapley[b_a$step_id == "one_time_as_permanent"], 1, TRUE)` averaged over all
 orders, `r usd(b_a$sequential[b_a$step_id == "one_time_as_permanent"], 1, TRUE)` in the one
@@ -351,21 +398,21 @@ twin_fold("the waterfall", "build_series", py = character(0))
 #| label: fig-waterfall
 #| fig-width: 9
 #| fig-height: 4.6
-#| fig-cap: "Output (a), Shapley steps, each side's own horizon: the same bars as the overview page's default view."
+#| fig-cap: "Output (b), Shapley steps, each analysis's own horizon: the same bars as the explorer's default view."
 library(ggplot2)
-B <- build_series(ex, "Model difference")$own$a$shapley
+B <- build_series(ex, "Model difference")$own$b$shapley
 run <- 0; rows <- list()
 for (i in seq_along(B)) {
   b <- B[[i]]
   if (b$type == "total") { y0 <- 0; y1 <- b$value; run <- b$value } else { y0 <- run; y1 <- run + b$value; run <- y1 }
   rows[[i]] <- data.frame(i = i, short = b$short, y0 = y0, y1 = y1,
-                          fill = if (b$type == "total") "an estimate" else if (b$type == "model") "model difference or rounding"
+                          fill = if (b$type == "total") "an analysis's estimate" else if (b$type == "model") "model difference"
                                  else if (b$value >= 0) "step that raises it" else "step that lowers it")
 }
 wf <- do.call(rbind, rows)
 ggplot(wf) +
   geom_rect(aes(xmin = i - 0.38, xmax = i + 0.38, ymin = pmin(y0, y1), ymax = pmax(y0, y1), fill = fill)) +
-  scale_fill_manual(values = c("an estimate" = "#5b6873", "model difference or rounding" = "#a8b2bb",
+  scale_fill_manual(values = c("an analysis's estimate" = "#5b6873", "model difference" = "#a8b2bb",
                                "step that raises it" = "#1f6fce", "step that lowers it" = "#eb6834"), name = NULL) +
   scale_x_continuous(breaks = wf$i, labels = wf$short) +
   labs(x = NULL, y = "$ billion") + theme_minimal(base_size = 11) +
@@ -373,12 +420,13 @@ ggplot(wf) +
         panel.grid.major.x = element_blank())
 ```
 
-# Which of Rauh's revenue numbers is output (a)? {#which-revenue}
+## Which revenue of the March 2026 version the steps reach {#which-revenue}
 
-The RJKDC report's SSRN version prints four different revenue figures. The bridge takes the
-one consistent with its `r usd(epv("rauh_ssrn_npv", "printed_value"))` headline, the expected
-revenue in the same Monte Carlo, because it is the revenue that headline assumes. Using any
-of the others would add a further step of the size shown.
+The disputed-input steps end at the RJKDC analysis's March 2026 version, before the September
+revision. That version prints four different revenue figures. On output (a) the steps reach
+the one consistent with its mean NPV, the expected revenue in the same Monte Carlo, because it
+is the revenue that NPV assumes. Using any of the others would add a further step of the size
+shown.
 
 ```{r}
 #| results: asis
@@ -389,7 +437,8 @@ twin_fold("the candidates", "build_all")
 #| results: asis
 an <- ex$anchors
 scroll(show(data.frame(
-  Candidate = paste0(esc(an$label), ifelse(an$default, " (used)", "")),
+  Candidate = paste0(esc(sub("behind the -?[0-9.]+ mean NPV", "behind that version's mean NPV", an$label)),
+                     ifelse(an$default, " (used)", "")),
   Value = vapply(an$value, money, "", digits = 2), Where = esc(an$where),
   `Extra step vs the bridge end` = vapply(an$value - an$value[an$default], function(z) if (abs(z) < 1e-9) "none" else money(z, 2, TRUE), ""),
   check.names = FALSE)))
@@ -420,12 +469,15 @@ scroll(show(data.frame(
 # The Hoopes comparison {#the-hoopes-comparison}
 
 Jeffrey Hoopes, "Galle v Rauh: Comparing Two Revenue Estimates for California Billionaire
-Taxation" (SSRN 6428578), is the one published side-by-side of the two estimates. His
-Figure 2 (p.6) is a waterfall from the "Galle estimate" to "Rauh net fiscal effect". It
+Taxation" (SSRN 6428578), is the one published comparison of the two estimates. It compares
+their earlier versions: the February 2026 text of the GGSS expert report, on which the BSZ
+analysis builds, and the March 2026 version of the RJKDC analysis. His Figure 2 (p.6) is a
+waterfall from the "Galle estimate" to "Rauh net fiscal effect". It
 prints no values, so his column below is read off the chart
 (`comparison/tools/digitize_hoopes_fig2.py`, tick fit within
 `r usd(as.numeric(k$hoopes$tick_fit_max_resid[1]), 1)`). Beside it is the bridge read in his
-order. The overview page lists every difference between the two in its Hoopes section.
+order, ending at the March 2026 version, before the September revision. The overview page
+lists every difference between the two in its Hoopes section.
 
 ```{r}
 #| results: asis
@@ -463,7 +515,7 @@ twin_fold("reading the inputs", c("read_contracts", "pick"))
 #| results: asis
 dd <- k$docs[order(k$docs$label, k$docs$side), ]
 scroll(show(data.frame(
-  Origin = dd$label, Side = dd$side, Input = esc(dd$description),
+  Origin = dd$label, Analysis = toupper(dd$side), Input = esc(dd$description),
   Value = paste(format(dd$value, drop0trailing = TRUE), dd$unit), Source = esc(dd$source),
   check.names = FALSE)))
 cnt <- table(k$docs$label)
@@ -487,11 +539,13 @@ maxdiff <- if (py_ok) max(vapply(c("ends", "bridge", "endpoints"), function(f) {
 ```
 
 - **Both ends.** At the all-BSZ inputs the estimating function returns BSZ Table 5 row 1
-  exactly (`r usd(ea$bsz_model, 3)`). At the all-RJKDC inputs it returns the expectation of
-  Rauh's SSRN Monte Carlo up to a model difference of `r usd(ea$rauh_residual, 4, TRUE)` on
-  (a) and `r usd(eb$rauh_residual, 2, TRUE)` on (b), from the rounded literals in the
-  authors' code. Rauh's printed `r usd(epv("rauh_ssrn_npv", "printed_value"))` is
-  `r usd(eb$rauh_own, 3)` unrounded.
+  exactly (`r usd(ea$bsz_model, 3)`), and its net on (b) (`r usd(eb$bsz_model, 3)`). With the
+  inputs of the RJKDC analysis's March 2026 version it returns that version's Monte Carlo
+  expectation up to a model difference of `r usd(eb$rauh_residual, 2, TRUE)` on (b) and
+  `r usd(ea$rauh_residual, 4, TRUE)` on (a), from the rounded literals in the authors' code.
+  The September 2026 revision then reaches the RJKDC end, the exact expectation of the NBER
+  Monte Carlo (`r usd(eb$nber_own, 3)` against the printed
+  `r usd(epv("rauh_nber_npv", "printed_value"))`).
 - **The bridge adds up.** In every horizon setting and for both outputs, the Shapley steps
   sum exactly to the distance between the two model ends (`test-shapley.R`), and they match
   a brute-force average over orders.
@@ -499,20 +553,21 @@ maxdiff <- if (py_ok) max(vapply(c("ends", "bridge", "endpoints"), function(f) {
   the largest difference on the ends, the bridge and the endpoints is
   `r if (py_ok) formatC(maxdiff, format = "e", digits = 1) else "not checked (run comparison/py/bridge.py)"`
   (`test-parity.R` requires 1e-9).
-- **Not reproduced.** The comparison does not re-run either side: it takes each side's
-  export contract as given, and each side's own reproduction is on its overview page.
+- **Not reproduced.** The comparison does not re-run either analysis: it takes each
+  analysis's export contract as given, and each analysis's own reproduction is on its overview
+  page.
 
 # Reproducing this document
 
 ```sh
-Rscript comparison/run.R                 # exports (R and Python) and the overview page
+Rscript comparison/run.R                 # exports (R and Python), the overview page and the explorer
 Rscript comparison/tests/testthat.R      # the test suite
 cd comparison/site && quarto render repro.qmd
 ```
 
 ::: {.site-nav}
 The comparison of California Proposition 40:
-[Open Output (the bridge)](../../index.html#the-bridge) &middot; Open Analysis: Report (here) &middot;
+[Open Output: Explorer](explorer/index.html) &middot; Open Analysis: Report (here) &middot;
 [Open Materials](https://github.com/fhoces/opa-prop40/tree/main/comparison) &middot;
 [Overview](../../index.html)
 :::

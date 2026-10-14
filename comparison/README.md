@@ -1,25 +1,26 @@
 # The comparison of California Proposition 40: Open Materials
 
-This folder is the comparison layer of [opa-prop40](https://fhoces.github.io/opa-prop40/), an Open Policy Analysis of
-California's 2026 Proposition 40 (the Billionaire Tax Act). The [comparison overview](https://fhoces.github.io/opa-prop40/)
-is the repository's front page, and this folder builds it. It puts the
-[BSZ side](https://fhoces.github.io/opa-prop40/bsz-analysis/site/) and the
-[RJKDC side](https://fhoces.github.io/opa-prop40/rjkdc-analysis/site/) on one common output and explains the gap
-between their numbers one disputed input at a time. The aim is a transparent account of why the two
+This folder is the comparison layer of [opa-prop40](https://fhoces.github.io/opa-prop40/), an
+[Open Policy Analysis](https://doi.org/10.1093/scipol/scaa067) of California's 2026 Proposition 40 (the Billionaire
+Tax Act). The [comparison overview](https://fhoces.github.io/opa-prop40/) is the repository's front page, and this
+folder builds it and the [comparison explorer](https://fhoces.github.io/opa-prop40/comparison/site/explorer/). It
+puts the [BSZ analysis](https://fhoces.github.io/opa-prop40/bsz-analysis/site/) (August 2026) and the
+[RJKDC analysis](https://fhoces.github.io/opa-prop40/rjkdc-analysis/site/) (Jaros and Rauh, September 2026) on one
+common output, the net fiscal effect, and explains the gap between their numbers one disputed input at a time. The aim is a transparent account of why the two
 estimates differ, which anyone can check.
 
-### [Review the code behind the $67.8 billion main estimate](https://claude.ai/artifact/6VZEezoAsCNACjmgPLEvah)
+### [Review the code behind the two main estimates, $106.8 billion and -$38.9 billion](https://claude.ai/artifact/6VZEezoAsCNACjmgPLEvah)
 
-A layer-by-layer walk from the number on the overview page down to the two sides' export
+A layer-by-layer walk from the two numbers on the explorer down to the two analyses' export
 contracts. Each layer is marked reviewed, lightly reviewed or not reviewed. Work in progress; the
 record is also kept in [`review/`](../review/README.md).
 
 <img align="right" width="340" src="site/assets/opa/opa-materials-wordmark.png" alt="Open Policy Analysis, Materials layer">
 
-1 - **Open Output.** [The bridge](https://fhoces.github.io/opa-prop40/#the-bridge), an interactive waterfall on the
-overview page from BSZ Table 5 row 1 to the NBER expected revenue, with switches for the output,
-the step sizes and the loss horizon. Materials can be found in
-[`site/index.template.html`](site/index.template.html) and [`R/site.R`](R/site.R).
+1 - **Open Output.** [The explorer](https://fhoces.github.io/opa-prop40/comparison/site/explorer/): the two main
+estimates and the bridge between them, an interactive waterfall from the BSZ analysis to the RJKDC analysis on the
+net fiscal effect, with settings for the output, the step sizes and the loss horizon. Materials can be found in
+[`site/explorer.template.html`](site/explorer.template.html) and [`R/site.R`](R/site.R).
 
 2 - **Open Analysis.** An open policy report in the form of a
 [dynamic document](https://fhoces.github.io/opa-prop40/comparison/site/repro.html), which derives the main
@@ -27,12 +28,12 @@ estimate and every step of the bridge from the exported files. Materials can be 
 [`site/repro.qmd`](site/repro.qmd).
 
 3 - **Open Materials.** This folder, which stores all the code needed to rebuild the comparison
-from the two sides' committed export contracts. A guide is the
+from the two analyses' committed export contracts. A guide is the
 [materials page](https://fhoces.github.io/opa-prop40/comparison/site/materials.html).
 
 The [comparison overview](https://fhoces.github.io/opa-prop40/) links all three, and the
 [BSZ overview](https://fhoces.github.io/opa-prop40/bsz-analysis/site/) and the
-[RJKDC overview](https://fhoces.github.io/opa-prop40/rjkdc-analysis/site/) each side's own analysis.
+[RJKDC overview](https://fhoces.github.io/opa-prop40/rjkdc-analysis/site/) each analysis on its own.
 
 This project follows the [Open Policy Analysis (OPA) Guidelines](https://www.bitss.org/opa/) of the
 Berkeley Initiative for Transparency in the Social Sciences (BITSS). [`AUDIT.md`](../AUDIT.md) rates
@@ -42,9 +43,11 @@ each page against the Guidelines' nine steps.
 
 ## The reproduction
 
-The reconciliation layer: puts the BSZ side (GGSS July 2026, BSZ August 2026) and the
-RJKDC side (Rauh et al. SSRN March 2026, Jaros and Rauh NBER September 2026) on one common
-output and one input-by-input bridge. It renders the site-root page, `../index.html`.
+The reconciliation layer: puts the BSZ analysis (Boll, Saez and Zucman, August 2026) and the
+RJKDC analysis (Jaros and Rauh, NBER, September 2026) on one common output and one
+input-by-input bridge. The disputed inputs on the RJKDC end are those of its March 2026
+version, where they are published, and the September revision is the bridge's last step. It
+renders the site-root page, `../index.html`, and the explorer, `site/explorer/index.html`.
 
 ## What it reads (and nothing else)
 
