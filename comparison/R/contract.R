@@ -1,7 +1,7 @@
-# Reading the two sides' export contracts, and nothing else from them.
+# Reading the two analyses' export contracts, and nothing else from them.
 #
 # comparison/ reads exactly three kinds of file:
-#   <side>/export/r/inputs.csv, <side>/export/r/outputs.csv   (each side's contract)
+#   <side>/export/r/inputs.csv, <side>/export/r/outputs.csv   (each analysis's contract)
 #   comparison/data/document-inputs.csv                        (values transcribed here from
 #                                                               the PDFs, each with its page:
 #                                                               inputs neither contract carries)

@@ -1,7 +1,7 @@
 # The common estimating function and its decomposition.
 #
-# ONE function estimates both sides. Every disputed input is an argument that takes
-# either the BSZ side's value (GGSS July 2026 / BSZ August 2026, which share
+# ONE function estimates both analyses. Every disputed input is an argument that takes
+# either BSZ's value (GGSS July 2026 / BSZ August 2026, which share
 # their benchmark) or Rauh et al.'s (SSRN, March 2026). At the all-BSZ
 # setting it must return BSZ Table 5 row 1; at the all-Rauh setting it must return
 # the expectation of Rauh's own Monte Carlo (its inputs are independent uniforms,
@@ -19,7 +19,7 @@
 #
 # annuity(r, H) = (1 - (1 + r)^-H) / r, the value of 1 per year for H years; H = Inf
 # gives Rauh's perpetuity 1/r and r -> 0 gives H. r ~ U[r_min, r_max] as in Rauh
-# eq.24; the BSZ side takes no position on r (it disputes the horizon), so r
+# eq.24; the BSZ analysis takes no position on r (it disputes the horizon), so r
 # is a shared input, not a bridge step.
 
 expected_annuity <- function(H, r_min, r_max) {

@@ -1,6 +1,6 @@
 # Build the reconciliation: R exports, Python twin exports, and the site-root page.
 # Run from anywhere inside the repo:  Rscript comparison/run.R
-# Needs the two sides' export contracts to be current (each side's own pipeline
+# Needs the two analyses' export contracts to be current (each analysis's own pipeline
 # writes them). Python: set PYTHON, default python3 on PATH.
 
 local({

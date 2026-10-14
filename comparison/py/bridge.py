@@ -1,7 +1,7 @@
 """Python twin of comparison/R/{contract,model,build}.R.
 
-Reads the same three kinds of file (each side's export/r contract, comparison/data/
-document-inputs.csv, comparison/data/hoopes-fig2.csv), estimates both sides with the same
+Reads the same three kinds of file (each analysis's export/r contract, comparison/data/
+document-inputs.csv, comparison/data/hoopes-fig2.csv), estimates both analyses with the same
 common function, and writes comparison/export/py/*.csv in the same layout as the R side.
 comparison/tests/testthat/test-parity.R compares the two export directories.
 

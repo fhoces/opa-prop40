@@ -1,6 +1,6 @@
-# Disputed inputs: Rauh et al. vs the BSZ side
+# Disputed inputs: Rauh et al. vs the BSZ analysis
 
-Crosswalk of the inputs on which the two sides disagree. This is the starting list for the
+Crosswalk of the inputs on which the two analyses disagree. This is the starting list for the
 reconciliation page's bridge (one bridge step per row). Every page reference was checked against
 text extracted from the PDF (PyMuPDF, per-page markers). Page numbers are **PDF pages**, not printed
 folios. For Rauh and GGSS the two coincide. BSZ's folio runs two behind in the main text (PDF p.26 is
@@ -19,8 +19,8 @@ folio 24) and restarts in the appendices (PDF p.54 is folio 17).
 Resp's characterizations are therefore claims to check against our copy, not facts about it. The
 one checked in detail is Resp's "78%" (row 5): the string does not appear in the March 17 text,
 but the number follows from it (4.55 / 5.8 = 78.4%, which is how BSZ Aug p.11 fn.13 states it).
-Rauh has not updated since March 17 (as of 2026-09-23); the BSZ side has moved twice (GGSS
-July, BSZ August). So two disputes that were open in March are settled on the BSZ side by
+Rauh has not updated since March 17 (as of 2026-09-23); the BSZ analysis has moved twice (GGSS
+July, BSZ August). So two disputes that were open in March are settled on the BSZ analysis by
 August (rows 7 and 8).
 
 ## Kind labels
@@ -41,7 +41,7 @@ August (rows 7 and 8).
 | 5 | **Billionaires' annual CA income tax** | C = $3.3 / 4.55 / 5.8B (p.15-17; Table 8 p.17; Table 9 p.19). 5.76 is the Pareto upper bound, assuming billionaires are the top 212 earners (p.15). 3.3 is the K≈500 dispersion draw (p.16-17). 4.55 is their midpoint, = 0.24% of $1,894.8B | About $3B/yr average over 2019-2025, 0.2% of wealth in 2023-25, 0.26% average 2019-25 (BSZ p.11). Top wealth holders' income is 50% of top earners' (Balkir et al. 2025; SCF), BSZ p.11 and p.55. BSZ p.11 fn.13 puts Rauh's central at 78.4% of top earners' income (= 4.55/5.8) | research (BSZ: Balkir 50%) vs guesswork (Rauh: midpoint of two model bounds) | Y (78% derived, not quoted; see caveat) |
 | 6 | **Is the income tax lost proportional to the wealth lost?** | f = 1 − WT/94.20 is used as the lost share of the **income tax** base (p.19; Monte Carlo p.20), so income tax lost scales with wealth departed. Page + Brin + Zuckerberg are ~90% of departed wealth (Tables 6-7) | The top 4 (Page, Brin, Zuckerberg, Huang) pay $0.27B/yr on company wealth, 2019-25, = 0.07% of wealth (BSZ Table 4, p.38; GGSS p.9). Resp p.5: Page + Brin + Zuckerberg paid $269M in 2025, 0.04% of wealth; $222M/yr average 2019-25. With leavers valued from SEC data, BSZ's aggressive scenario loses $0.51B/yr (p.26) | data (SEC filings) vs guesswork (proportionality) | Partial: $0.27B and 0.07% verified in BSZ Aug; Resp's $269M / $222M figures for the top 3 are not restated in the Aug text; check against the workbook `top4taxes` sheet |
 | 7 | **Base definition** | 212 billionaires, $1,894.8B, 2025 Forbes list (p.4-5, Table 2). Removes Ellison, Houston, Snyder; adds Sacks (p.4-5). Deducts directly held residential real estate, $8.19B among stayers (p.8, Table 5). Real-estate-free baseline WT $94.20B (p.5, p.10) | **Ellison now excluded by BSZ too** (p.5 fn.3; p.54; p.54 fn.40, "Rauh et al. 2026 also choose to exclude Larry Ellison"). GGSS removed him relative to the Feb 16 version (GGSS p.2 fn.1). BSZ: 240 billionaires, $2,055B at 1 Jan 2026, adding Amodei, Kardashian, Powell Jobs, Winfrey (+$22.8B) (p.54); 250 and $2,307B at 1 Jul 2026 (p.24, Table 5 p.39). Estimate = 90% × 5% × $2,307B = $104B (p.24), with no separate real-estate deduction | data (list membership, valuation date) | Y. The March dispute over Ellison is closed in the strongest version; what remains is Houston, Snyder, Sacks, the 4 added names, non-citizens (row 8), valuation date, and the real-estate deduction |
-| 8 | **The 24-25 non-US-citizen residents** | Omitted: Rauh starts from Forbes' CA-residence field (p.4), which Resp p.6 fn.5 says covers residence only for US and Chinese residents | Resp p.6: both sides omitted 24 people, $110B, "an omission we will correct in our next iteration". **Corrected by August:** BSZ includes 25 non-US citizens, $132B at 1 Jan 2026 (p.54; "We include both US and non-US citizens", p.5). GGSS July: 24 people, about $150B (p.2 fn.1) | data | Y. Conceded fix applied on the BSZ side. Rauh still omits them, and the NBER version (Sept 2026) now does so explicitly: 28 "international" rows, $146.3B, excluded from the collectible base (`NBER_2026_litigation_weighted/NPV_data/final.csv`, "Section 3.5") |
+| 8 | **The 24-25 non-US-citizen residents** | Omitted: Rauh starts from Forbes' CA-residence field (p.4), which Resp p.6 fn.5 says covers residence only for US and Chinese residents | Resp p.6: both analyses omitted 24 people, $110B, "an omission we will correct in our next iteration". **Corrected by August:** BSZ includes 25 non-US citizens, $132B at 1 Jan 2026 (p.54; "We include both US and non-US citizens", p.5). GGSS July: 24 people, about $150B (p.2 fn.1) | data | Y. Conceded fix applied on the BSZ analysis. Rauh still omits them, and the NBER version (Sept 2026) now does so explicitly: 28 "international" rows, $146.3B, excluded from the collectible base (`NBER_2026_litigation_weighted/NPV_data/final.csv`, "Section 3.5") |
 
 ## Rauh's headline: where −$24.7B comes from (open item, resolved)
 
@@ -77,10 +77,10 @@ the SSRN anchor.
 
 ## Handled outside the table
 
-- The BSZ side's headline counts wealth tax revenue only (GGSS $100B; BSZ $104B benchmark), while
+- BSZ's headline counts wealth tax revenue only (GGSS $100B; BSZ $104B benchmark), while
   Rauh's is an NPV net of lost income tax. The reconciliation page first puts both on a common
   output definition (see PLAN.md, "Pre-specified output").
-- Control-weighted valuation (Rauh §2.5 and App. A; GGSS p.8): both sides value economic ownership,
+- Control-weighted valuation (Rauh §2.5 and App. A; GGSS p.8): both analyses value economic ownership,
   so it is not a live input, only a motive for pre-snapshot departures (row 3).
 - Extra CA income tax from asset sales to pay the tax: +$3.7B in BSZ's benchmark (Table 5, p.39),
   absent from Rauh.

@@ -35,8 +35,8 @@ The [comparison overview](https://fhoces.github.io/opa-prop40/) links all three,
 [BSZ overview](https://fhoces.github.io/opa-prop40/bsz-analysis/site/) and the
 [RJKDC overview](https://fhoces.github.io/opa-prop40/rjkdc-analysis/site/) each analysis on its own.
 
-This project follows the [Open Policy Analysis (OPA) Guidelines](https://www.bitss.org/opa/) of the
-Berkeley Initiative for Transparency in the Social Sciences (BITSS). [`AUDIT.md`](../AUDIT.md) rates
+This project follows the [Open Policy Analysis (OPA) framework](https://doi.org/10.1093/scipol/scaa067) (Hoces de la
+Guardia, Grant and Miguel, 2021). [`AUDIT.md`](../AUDIT.md) rates
 each page against the Guidelines' nine steps.
 
 <br clear="right">
@@ -52,7 +52,7 @@ renders the site-root page, `../index.html`, and the explorer, `site/explorer/in
 ## What it reads (and nothing else)
 
 - `../bsz-analysis/export/r/{inputs,outputs}.csv` and
-  `../rjkdc-analysis/export/r/{inputs,outputs}.csv`: each side's export contract.
+  `../rjkdc-analysis/export/r/{inputs,outputs}.csv`: each analysis's export contract.
 - `data/document-inputs.csv`: values neither contract carries, transcribed from the PDFs with
   their page (Rauh's Monte Carlo ranges, the NBER departure range, GGSS's non-citizen wealth,
   BSZ's 5-year horizon, Walczak, LAO, Hoopes's text figures).

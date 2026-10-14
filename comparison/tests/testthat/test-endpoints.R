@@ -1,4 +1,4 @@
-# Endpoints: the common estimating function must reproduce each side's own number.
+# Endpoints: the common estimating function must reproduce each analysis's own number.
 k   <- read_contracts()
 res <- build_all(k)
 ep  <- res$endpoints
@@ -27,7 +27,7 @@ test_that("BSZ-side net components equal BSZ Table 5 row 1's own columns", {
 test_that("Rauh SSRN: analytic expectation is -24.707 and rounds to the printed -24.7", {
   expect_equal(val("rauh_ssrn_npv"), -24.707, tolerance = 5e-4 / 24.707)
   expect_equal(round(val("rauh_ssrn_npv"), 1), val("rauh_ssrn_npv", "printed_value"))
-  # the RJKDC side's own seeded run is within Monte Carlo error of the expectation
+  # RJKDC's own seeded run is within Monte Carlo error of the expectation
   expect_lt(abs(val("rauh_ssrn_npv", "contract_value") - val("rauh_ssrn_npv")), 0.5)
   expect_equal(val("rauh_ssrn_revenue_mc"), (35 + 67.51) / 2)
 })

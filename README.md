@@ -15,17 +15,17 @@ also kept in [`review/`](review/README.md).
 
 <img align="right" width="340" src="bsz-analysis/site/assets/opa/opa-materials-wordmark.png" alt="Open Policy Analysis, Materials layer">
 
-1 - **The BSZ analysis.** Boll, Saez and Zucman, NBER Working Paper 35218 (August 2026): a
+1 - **[The BSZ analysis](bsz-analysis/README.md).** Boll, Saez and Zucman, NBER Working Paper 35218 (August 2026): a
 one-time wealth tax of about $100 billion, with a main estimate of $106.8 billion net of the income
 tax it changes. [Overview page](https://fhoces.github.io/opa-prop40/bsz-analysis/site/). Materials
 can be found in [`bsz-analysis/`](bsz-analysis/).
 
-2 - **The RJKDC analysis.** Jaros and Rauh, NBER chapter c15504 (September 2026), with Kearney,
+2 - **[The RJKDC analysis](rjkdc-analysis/README.md).** Jaros and Rauh, NBER chapter c15504 (September 2026), with Kearney,
 Doran and Cosso: a net present value to the state of about -$39 billion, because billionaires who
 leave take their income tax with them. [Overview page](https://fhoces.github.io/opa-prop40/rjkdc-analysis/site/).
 Materials can be found in [`rjkdc-analysis/`](rjkdc-analysis/).
 
-3 - **The comparison.** One common output definition, both analyses estimated on it, and a bridge
+3 - **[The comparison](comparison/README.md).** One common output definition, both analyses estimated on it, and a bridge
 that explains the gap one disputed input at a time. [Overview page](https://fhoces.github.io/opa-prop40/).
 Materials can be found in [`comparison/`](comparison/).
 

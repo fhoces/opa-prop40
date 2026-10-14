@@ -82,7 +82,7 @@ build_all <- function(k = read_contracts()) {
   steps <- bridge_steps()
   ids <- steps$step_id
 
-  # ---- each side's own numbers ------------------------------------------------
+  # ---- each analysis's own numbers ------------------------------------------------
   ggss_printed <- pick(so, "ggss_headline", "printed_value")
   bsz_row1     <- pick(so, "tab5_row1_wealth_tax_revenue")
   rauh_args <- list(wt_min = pick(oi, "rauh_mc_wt_min"),

@@ -9,7 +9,7 @@ test_that("document inputs carry a kind label, a source and a page", {
   expect_false(any(duplicated(d$input_id)))
 })
 
-test_that("both sides' contracts have the agreed schema", {
+test_that("both analyses' contracts have the agreed schema", {
   ins <- c("input_id", "version", "description", "value", "unit", "label", "provenance", "source", "page")
   outs <- c("output_id", "version", "value", "unit", "printed_value", "printed_page", "abs_diff")
   for (s in c("bsz", "rjkdc")) {
