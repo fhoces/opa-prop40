@@ -7,7 +7,9 @@ coordinator's final review, and `00-run.md` with the commit the iteration starte
 arguments, the checks and the generated pages that still need a local rebuild.
 
 `DECISIONS.md` lists the items the loop settled as "won't do", with the reason, so later
-iterations do not raise them again.
+iterations do not raise them again. A run made in the cloud ends with a handoff file for the
+local session (`NNN-YYYY-MM-DD/07-handoff-local.md`): the rebuilds to run, the questions to put
+to the author one at a time, and the follow-ups.
 
 Run the loop from a Claude Code session at the repository root:
 
