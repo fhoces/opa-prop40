@@ -11,6 +11,8 @@ estimates differ, which anyone can check.
 
 ### [Review the code behind the two main estimates, $106.8 billion and -$38.9 billion](https://claude.ai/artifact/6VZEezoAsCNACjmgPLEvah)
 
+($106.8 billion is this OPA's net total for the BSZ analysis, whose own headline is the wealth tax alone; -$38.9 billion is the RJKDC analysis's own headline.)
+
 A layer-by-layer walk from the two numbers on the explorer down to the two analyses' export
 contracts. Each layer is marked reviewed, lightly reviewed or not reviewed. Work in progress; the
 record is also kept in [`review/`](../review/README.md).
@@ -19,7 +21,8 @@ record is also kept in [`review/`](../review/README.md).
 
 1 - **Open Output.** [The explorer](https://fhoces.github.io/opa-prop40/comparison/site/explorer/): the two main
 estimates and the bridge between them, an interactive waterfall from the BSZ analysis to the RJKDC analysis on the
-net fiscal effect, with settings for the output, the step sizes and the loss horizon. Materials can be found in
+net fiscal effect, with one setting, how the bars are sized (averaged over every order, or one order); the loss
+horizon is a slider in each panel, and gross revenue is in the report. Materials can be found in
 [`site/explorer.template.html`](site/explorer.template.html) and [`R/site.R`](R/site.R).
 
 2 - **Open Analysis.** An open policy report in the form of a
@@ -28,7 +31,8 @@ estimate and every step of the bridge from the exported files. Materials can be 
 [`site/repro.qmd`](site/repro.qmd).
 
 3 - **Open Materials.** This folder, which stores all the code needed to rebuild the comparison
-from the two analyses' committed export contracts. A guide is the
+from the two analyses' committed export contracts (the two CSV files, `inputs.csv` and
+`outputs.csv`, that each analysis's pipeline writes for the comparison to read). A guide is the
 [materials page](https://fhoces.github.io/opa-prop40/comparison/site/materials.html).
 
 The [comparison overview](https://fhoces.github.io/opa-prop40/) links all three, and the
@@ -46,7 +50,9 @@ each page against the Guidelines' nine steps.
 The reconciliation layer: puts the BSZ analysis (Boll, Saez and Zucman, August 2026) and the
 RJKDC analysis (Jaros and Rauh, NBER, September 2026) on one common output and one
 input-by-input bridge. The disputed inputs on the RJKDC end are those of its March 2026
-version, where they are published, and the September revision is the bridge's last step. It
+version, the one whose inputs the common function takes one by one (the September revision's
+code and data are in the same public repository), and the September revision is the bridge's
+last step. It
 renders the site-root page, `../index.html`, and the explorer, `site/explorer/index.html`.
 
 ## What it reads (and nothing else)
@@ -73,7 +79,7 @@ assets sold to pay - present value of income tax lost to departures, over a hori
 | `R/build.R` | every number the page shows, written to `export/r/*.csv` |
 | `R/site.R` | renders `../index.html` and `../assets/comparison-data.js` from `site/index.template.html` |
 | `site/repro.qmd`, `site/materials.qmd` | the reproduction report and the materials page (`quarto render` in `site/`) |
-| `py/bridge.py` | Python twin of contract/model/build, writes `export/py/*.csv` |
+| `py/bridge.py` | Python twin of contract/model/build (the same computation written a second time in Python and checked against the R result), writes `export/py/*.csv` |
 | `run.R` | builds all three: `Rscript comparison/run.R` |
 
 ## Tests
@@ -88,6 +94,7 @@ with every internal link resolving.
 
 - Rauh's output (a) is the Monte Carlo's expected revenue (51.26 SSRN, 36 NBER), the only choice
   consistent with the -24.7 headline. The literature-calibrated 45.59, Table 9's 42 and the
-  abstract's "about $40 billion" are exported as alternatives (`export/r/anchors.csv`).
+  abstract's "about $40 billion" are exported as alternatives (`export/r/anchors.csv`; an anchor is
+  the published number an end of the bridge is checked against).
 - The Monte Carlo ranges (WT floor 35, C in [3.3, 5.8], r in [1.5%, 4.5%], NBER f in
   [0.30, 0.60]) are read from the RJKDC contract (`rauh_mc_*`, `nber_mc_*` rows).

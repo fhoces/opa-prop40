@@ -63,6 +63,9 @@
     letter-spacing: -0.015em; margin: 0 0 12px;
   }
   .byline { color: var(--ink-2); font-size: 15px; margin: 0; }
+  .site-nav { font-family: var(--mono); font-size: 11.5px; color: var(--ink-3); margin: 0 0 16px; }
+  .site-nav a { color: var(--accent); text-decoration: none; }
+  .site-nav a:hover { text-decoration: underline; }
   h2 {
     font-family: var(--serif); font-weight: 600; font-size: 21px;
     margin: 44px 0 14px; letter-spacing: -0.01em;
@@ -127,6 +130,8 @@
   table { border-collapse: collapse; width: 100%; font-size: 14.5px; margin: 4px 0 0; }
   .table-scroll { overflow-x: auto; margin: 8px 0 0; }
   .table-scroll table { margin: 0; }
+  .table-scroll::before { content: "Scroll sideways for the rest \2192"; display: none; font: 11px var(--sans); color: var(--ink-3); margin-bottom: 4px; }
+  @media (max-width: 640px) { .table-scroll::before { display: block; } }
   th, td { text-align: left; padding: 7px 12px 7px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
   th { font-size: 11.5px; font-family: var(--mono); letter-spacing: 0.06em;
        text-transform: uppercase; color: var(--ink-3); font-weight: 500; }
@@ -184,7 +189,7 @@
     display: inline-block; vertical-align: middle; margin-left: .5rem;
     padding: .15rem .55rem; border: 1px solid var(--accent-2); border-radius: 999px;
     color: var(--accent-2); font: 600 .72rem/1.3 var(--sans);
-    letter-spacing: .06em; text-transform: uppercase; white-space: nowrap;
+    letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; text-decoration: none;
   }
   .table-subhead { font-family: var(--sans, inherit); text-transform: none;
        letter-spacing: normal; font-weight: 400; font-size: 11px; }
@@ -208,9 +213,11 @@
   /* The sections after the cards fold, closed by default, as on the analysis overviews.
      The chevron is drawn in CSS; the h2 keeps its own style inside the summary. */
   details.fold > summary { list-style: none; cursor: pointer; display: flex; align-items: center;
-    gap: 12px; margin: 30px 0 0; }
+    flex-wrap: wrap; gap: 12px; margin: 30px 0 0; }
   details.fold > summary::-webkit-details-marker { display: none; }
   details.fold > summary h2 { margin: 0; }
+  details.fold > summary .teaser { flex-basis: 100%; padding-left: 23px; margin-top: -6px;
+    font-size: 13px; font-weight: 400; color: var(--ink-3); }
   details.fold > summary::before {
     content: ""; flex: none; width: 9px; height: 9px; margin-left: 2px;
     border-right: 2px solid var(--ink-3); border-bottom: 2px solid var(--ink-3);
@@ -232,8 +239,8 @@
     color: var(--ink-3); font-weight: 500; }
   .headline .value { font-family: var(--serif); font-size: 40px; font-weight: 600; line-height: 1;
     color: var(--ink); font-variant-numeric: tabular-nums; }
-  .headline .def { font-size: 13.5px; color: var(--ink-2); line-height: 1.45; margin-top: 2px; max-width: 46em; }
-  .headline .fn { font-size: 12px; color: var(--ink-3); line-height: 1.45; margin: 8px 0 0; max-width: 60em; }
+  .headline .def { font-size: 15px; color: var(--ink-2); line-height: 1.45; margin-top: 2px; max-width: 46em; }
+  .headline .fn { font-size: 13.5px; color: var(--ink-2); line-height: 1.45; margin: 8px 0 0; max-width: 60em; }
   .headline .fn a { color: var(--accent); }
 
   /* The three layer cards, as on the analysis overviews. z-index:0 gives each card its own
@@ -276,22 +283,43 @@
 <body>
 <div class="wrap">
 
+<p class="site-nav">
+  Comparison of the two analyses of California Proposition 40:
+  Overview (here) &middot;
+  Open Output: <a href="comparison/site/explorer/">Explorer</a> &middot;
+  Open Analysis: <a href="comparison/site/repro.html">Report</a> &middot;
+  <a href="https://github.com/fhoces/opa-prop40/tree/main/comparison">Open Materials</a> &middot;
+  <a href="bsz-analysis/site/">BSZ analysis overview</a> &middot;
+  <a href="rjkdc-analysis/site/">RJKDC analysis overview</a>
+</p>
+
 <header>
   <p class="eyebrow">Open Policy Analysis for:</p>
-  <h1>California Proposition 40, Reconciliation of the Two Analyses <span class="wip">Work in progress</span></h1>
+  <h1>California Proposition 40, Reconciliation of the Two Analyses <a class="wip" href="#how-ai-was-used" title="The numbers are final for the versions cited; what is still being completed is the author's review of each part and the credit interview. See what has been verified.">Work in progress</a></h1>
   <p class="byline">
-    Proposition 40, the Billionaire Tax Act, would tax California's billionaires once, at 5%
-    of their net worth, paid over five years. Two analyses estimate it and reach very different
-    numbers. The <a href="bsz-analysis/site/">BSZ analysis</a> (Boll, Saez and Zucman, NBER WP
-    35218, August 2026) estimates $103.8B of wealth tax, and $106.8B net of the income tax
-    it changes. The <a href="rjkdc-analysis/site/">RJKDC analysis</a> (Rauh, Jaros, Kearney,
-    Doran and Cosso; latest version Jaros and Rauh, NBER, September 2026) finds a net present
-    value of −$38.9B once income tax lost to billionaires who leave is netted out. This page
-    puts both on one common output and walks from one number to the other, one disputed input at
-    a time. Each analysis is also a full Open Policy Analysis of its own. This page adds a
-    reconciliation layer on top, following the
+    Proposition 40, the Billionaire Tax Act, would tax people who lived in California on
+    1 January 2026 and are worth $1 billion or more: once, at 5% of their whole net worth as
+    valued on 31 December 2026, paid in five equal yearly installments. Two analyses estimate
+    what it would bring in and reach very different numbers. The
+    <a href="bsz-analysis/site/">BSZ analysis</a> (Boll, Saez and Zucman, NBER Working Paper
+    35218, August 2026; NBER is the National Bureau of Economic Research, which circulates
+    working papers) estimates about $100 billion of wealth tax ($104 billion in its Table 5,
+    reproduced here as $103.8B), and $106.8B once the income tax the tax changes is added
+    in. The <a href="rjkdc-analysis/site/">RJKDC analysis</a> (Jaros and Rauh, NBER, September
+    2026, revising the March 2026 version by Rauh, Jaros, Kearney, Doran and Cosso) finds that
+    the tax would collect about $30 billion by its own account but leave the state $38.9 billion
+    poorer in today's dollars (−$38.9B, a net present value), because billionaires who leave
+    stop paying California income tax for ever. The three inputs that separate the two most:
+    whether a one-time tax changes behaviour the way a permanent one would, how many
+    billionaires had already left, and whether the lost income tax is counted for five years
+    (BSZ) or for ever (RJKDC). This page puts both on one common output and walks from one
+    number to the other, one disputed input at a time. Each analysis is also a full Open Policy
+    Analysis of its own; this page adds a comparison layer on top, following the
     <a href="https://doi.org/10.1093/scipol/scaa067">Open Policy Analysis</a> (OPA) framework.
   </p>
+  <p class="byline" style="margin-top:6px">OPA by <a href="https://fhoces.github.io">Fernando Hoces de la Guardia</a>.
+    This site recommends no vote and favours neither analysis: it reproduces both analyses'
+    arithmetic and shows where their assumptions differ.</p>
 </header>
 
 <div class="headline">
@@ -299,27 +327,32 @@
     <div class="hl">
       <span class="name">BSZ main estimate<sup>1</sup></span>
       <span class="value" id="hl-bsz">$106.8B</span>
-      <span class="def">Net total, present value 5 years at 3%</span>
+      <span class="def">Net total: the wealth tax plus the income tax it changes, over 5 years, in today's dollars</span>
     </div>
     <div class="hl">
       <span class="name">RJKDC main estimate<sup>1</sup></span>
       <span class="value" id="hl-rjkdc">−$38.9B</span>
-      <span class="def">NBER September 2026 mean NPV</span>
+      <span class="def">Net present value: the wealth tax minus the income tax lost for ever, in today's dollars, averaged over the authors' model runs (Jaros and Rauh, September 2026)</span>
     </div>
   </div>
+  <p class="def" style="margin:6px 0 0">Today's dollars (present value): what money received or lost in future years is worth now.</p>
   <p class="fn"><sup>1</sup> Each analysis's own main estimate, defined its own way. The BSZ
-    analysis's is a net total over 5 years: the wealth tax ($103.8B, Table 5 row 1), plus
-    extra income tax from assets sold to pay it, minus the present value of the income tax lost
-    to billionaires who leave, counted for 5 years. BSZ's own headline is the wealth tax alone;
-    the net total is this OPA's choice, explained on the
-    <a href="bsz-analysis/site/">BSZ analysis overview</a>. The RJKDC analysis's is a perpetuity
-    net present value: the wealth tax minus the income tax lost for ever, averaged over the
-    authors' Monte Carlo draws (Jaros and Rauh, NBER c15504, September 2026). The common output
-    (b), the net fiscal effect, puts both on one definition, and the
-    <a href="comparison/site/explorer/">explorer</a> walks from one to the other. On it the BSZ
-    end is the same $106.8B, with the 5 years discounted over the RJKDC analysis's 1.5% to
-    4.5% rate range instead of at 3%. The RJKDC end is −$39.0B, the exact expectation of
-    the same Monte Carlo, of which the authors' seeded run gives −$38.9B.</p>
+    analysis's is a net total over 5 years: the wealth tax ($103.8B as reproduced; the paper
+    prints $104B, Table 5 row 1), plus extra income tax from assets sold to pay it, minus
+    the present value of the income tax lost to billionaires who leave, counted for 5 years.
+    BSZ's own headline is the wealth tax alone; the net total is this OPA's choice, explained on
+    the <a href="bsz-analysis/site/">BSZ analysis overview</a>. The RJKDC analysis's is a
+    perpetuity net present value: the wealth tax minus the income tax lost for ever, averaged
+    over the authors' Monte Carlo draws (the authors draw each uncertain input at random
+    100,000 times and average the result; Jaros and Rauh, NBER c15504, September 2026). The net
+    fiscal effect, one shared definition explained under "A common output definition" below,
+    puts both on the same footing, and the <a href="comparison/site/explorer/">explorer</a>
+    walks from one to the other. On it the BSZ end is the same $106.8B, with the 5 years
+    discounted over the RJKDC analysis's 1.5% to 4.5% rate range instead of at 3% (a
+    discount rate turns future dollars into today's dollars; both give $106.8B). The RJKDC
+    end is −$39.0B, the exact expectation of the same Monte Carlo, its average computed by
+    formula; the authors' seeded run (one run of the random draws started from a fixed seed
+    number, so it gives the same draws every time) gives −$38.9B.</p>
 </div>
 
 <div class="section-title">
@@ -333,11 +366,11 @@
       <div class="card-text">
         <span class="kicker">Open Output</span>
         <h3>Explore the main estimate and its assumptions &rarr;</h3>
-        <p>The explorer: the two main estimates on one definition, the net fiscal effect, and
-        the bridge between them, a waterfall from the BSZ analysis to the RJKDC analysis with
-        one bar per disputed input. Its settings switch the output (net fiscal effect or gross
-        revenue), how each step is sized (averaged over every order, or one order) and how long
-        the lost income tax lasts.</p>
+        <p>The explorer: the two main estimates on one definition, the net fiscal effect, in
+        two panels of sliders, one per disputed input, and the bridge between them, a waterfall
+        from the BSZ analysis to the RJKDC analysis with one bar per input. Its one setting
+        sizes the bars, averaged over every order or in one order; the horizon is a slider in
+        each panel. Gross revenue, output (a), is in the report.</p>
       </div>
       <div class="card-icon-box" aria-hidden="true">
         <img src="assets/opa/opa-assumptions-solo.png" alt="">
@@ -382,13 +415,17 @@
 </div>
 
 <details class="fold" id="common-output">
-  <summary><h2>A common output definition</h2></summary>
+  <summary><h2>A common output definition</h2> <span class="teaser">one definition both numbers can be put on, and the conventions behind it</span></summary>
   <div class="fold-body">
 <p>The two headlines answer different questions. The BSZ analysis (Boll, Saez and Zucman)
 reports how much the one-time tax collects. The RJKDC analysis reports a net present value that
 subtracts income tax lost for ever. Before any step of a bridge means anything, both are put on
 the same two outputs. The explorer opens on (b), the net fiscal effect, because it is the
-question both main estimates answer; (a) is the secondary setting.</p>
+question both main estimates answer; (a) is the secondary output, shown in the report.</p>
+
+<p>In words: the net fiscal effect is the wealth tax collected, plus the extra income tax from
+people selling stock to pay it, minus the income tax lost to people who leave, counted for some
+number of years (the two analyses disagree on how many).</p>
 
 <div class="formula">(b) net fiscal effect = (a) + extra income tax from assets sold to pay
                         - present value of income tax lost to departures, over a horizon of H years
@@ -396,15 +433,33 @@ question both main estimates answer; (a) is the secondary setting.</p>
 
 <p>The horizon H is itself disputed (row 2 of the project's list of 8 disputed inputs,
 <a href="comparison/DISPUTES.md">comparison/DISPUTES.md</a>). The BSZ analysis counts the
-losses for about the 5 payment years, the RJKDC analysis for ever. It is therefore a setting on
-the <a href="comparison/site/explorer/">explorer</a>'s bridge, not a fixed choice. Discounting
+losses for about the 5 payment years, the RJKDC analysis for ever. It is therefore a slider in
+each panel of the <a href="comparison/site/explorer/">explorer</a>, not a fixed choice; the
+bridge uses each analysis's own horizon and shows the switch as one of its steps. Discounting
 uses the RJKDC analysis's own range for the discount rate, r uniform between 1.5% and
 4.5%. The BSZ analysis takes no position on r.</p>
+<p><strong>Conventions.</strong> All amounts are nominal billions of dollars. The wealth tax is
+counted at its face value when assessed (the BSZ analysis values the base on 1 July 2026; the
+RJKDC analysis's September version grows the base it used in March, the 2025 Forbes list, by 7%
+to 31 December 2026), undiscounted although the Act collects it in five yearly installments;
+both analyses do this, so the comparison follows them. Present values are at the assessment
+date. The 1.5% to 4.5% range is what the RJKDC code draws; its code labels the draw
+(r &minus; g), the rate less the growth of the lost income tax, and its text r (the RJKDC
+analysis's mismatch 3).</p>
+<p><strong>What this OPA does not estimate.</strong> Both analyses, and so this OPA, take the
+measure as written (full text in <a href="docs/initiative/README.md">docs/initiative/</a>): the
+5% rate, the 1 January 2026 residency date, the 31 December 2026 valuation date and payment in
+five yearly installments, with the wealth tax counted at its face value, not discounted over the
+five years. Neither analysis estimates the day-to-day movement of the Forbes base (GGSS, the
+Galle, Gamage, Saez and Shanske expert report written in support of the measure, note a range of
+$87 billion to $107 billion between January and July 2026, p.4 fn.8). The BSZ analysis alone
+adds the income tax from assets sold to pay the tax; the RJKDC analysis alone weights the revenue
+by the chance the Act survives in court. Nothing is added to either here.</p>
   </div>
 </details>
 
 <details class="fold" id="two-analyses">
-  <summary><h2>The two analyses on the common output</h2></summary>
+  <summary><h2>The two analyses on the common output</h2> <span class="teaser">both main estimates on that definition, and what each paper prints</span></summary>
   <div class="fold-body">
 <div class="subopa-cards">
   <a class="subopa-card" href="bsz-analysis/site/">
@@ -412,7 +467,7 @@ uses the RJKDC analysis's own range for the discount rate, r uniform between 1.5
     <h3>Boll, Saez, Zucman, NBER WP 35218 (Aug 2026) &rarr;</h3>
     <p>Static estimation on the Forbes list with a 10% avoidance allowance.</p>
     <span class="headline">Main estimate, net total: $106.8B</span>
-    <span class="headline">Table 5 row 1, wealth tax: $103.8B</span>
+    <span class="headline">Table 5 row 1, wealth tax: $103.8B (the paper prints $104B)</span>
     <div class="card-icon-box" aria-hidden="true"><img src="assets/opa/opa-assumptions-solo.png" alt=""></div>
   </a>
   <a class="subopa-card" href="rjkdc-analysis/site/">
@@ -442,13 +497,13 @@ whose revenue is drawn uniformly between zero and $72B.</p>
 </details>
 
 <details class="fold">
-  <summary><h2 id="hoopes">The existing comparison: Hoopes (2026)</h2></summary>
+  <summary><h2 id="hoopes">The existing comparison: Hoopes (2026)</h2> <span class="teaser">the one published comparison, read off its chart and set beside this bridge</span></summary>
   <div class="fold-body">
 <p>Jeffrey Hoopes, "Galle v Rauh: Comparing Two Revenue Estimates for California Billionaire
 Taxation" (SSRN 6428578, 7 pages), is the one published comparison of the two estimates. It
 compares their earlier versions: the February 2026 text of the GGSS expert report (Galle,
-Gamage, Saez and Shanske), on which the BSZ analysis builds, and the March 2026 version of the
-RJKDC analysis (Rauh et al., SSRN). His Figure 2 (p.6) is a waterfall from the "Galle estimate" to "Rauh net fiscal effect". It prints no
+Gamage, Saez and Shanske, written in support of the measure), on which the BSZ analysis builds,
+and the March 2026 version of the RJKDC analysis (Rauh et al., SSRN, a preprint site). His Figure 2 (p.6) is a waterfall from the "Galle estimate" to "Rauh net fiscal effect". It prints no
 values, so the numbers in its column below are <b>read off the chart</b>: bar edges measured in a
 300 dpi raster against the y-axis ticks (tick fit within $0.1B; reading uncertainty about
 $0.6B per bar; script <code>comparison/tools/digitize_hoopes_fig2.py</code>). Beside them
@@ -476,6 +531,8 @@ me to read both of these analyses carefully and compare the two" (p.1); Gamage i
   </tbody>
 </table>
 </div>
+<p class="small">The "Galle estimate" bar is clipped by the chart's frame at $100B; its value is taken
+from the note's text (p.3).</p>
 
 <h3>Every difference</h3>
 <ul>
@@ -487,16 +544,17 @@ me to read both of these analyses carefully and compare the two" (p.1); Gamage i
   <li><b>Real estate.</b> His bar is drawn near zero (−$1.1B &plusmn; 0.8 read off the chart), while his text says the exclusion reduces the base by about $8B (p.4). The two are consistent: $8B of base is about $0.4B of revenue at 5%. Ours is −$0.24B.</li>
   <li><b>Level before income tax.</b> His revenue level before the income-tax bar is about $47.2B; Rauh's preferred estimate is 'about $40B' (p.14) and the expected revenue in the Monte Carlo behind its mean NPV is $51.26B. Our bridge uses the last, $51.26B.</li>
   <li><b>Income tax.</b> His single bar, −$71.5B, ends at −$24.3B, close to the March 2026 version's −$24.7B. That version's own expected present value of lost income tax is −$75.96B against $51.26B of revenue, so with a different starting level his bar works as a plug. We split it into four labelled steps (proportionality, the income tax level, the horizon, asset-sale tax), which interact with the base steps.</li>
-  <li><b>Order and labels.</b> His is one sequential order, with no provenance labels; ours shows Shapley averages over all orders as well as one order, with each step labelled data, research, guesswork or scenario.</li>
+  <li><b>Order and labels.</b> His is one sequential order, with no provenance labels; ours shows Shapley averages over all orders (a Shapley value: a step's effect averaged over every order the inputs could be switched in, so the steps add up to the gap) as well as one order, with each step labelled data, research, guesswork or scenario.</li>
   <li><b>Steps he does not have.</b> The non-US-citizen residents, the BSZ analysis's avoidance allowance being dropped, the asset-sale income tax, and the September 2026 revision (which postdates his note).</li>
 </ul>
   </div>
 </details>
 
 <details class="fold" id="vintage-gap">
-  <summary><h2>The vintage gap</h2></summary>
+  <summary><h2>The vintage gap</h2> <span class="teaser">the documents were written months apart; which version each number comes from</span></summary>
   <div class="fold-body">
-<p>This site cites each analysis in its latest version: BSZ, August 2026, and Jaros and Rauh,
+<p>A vintage is the dated version of a document or workbook a number comes from. This site
+cites each analysis in its latest version: BSZ, August 2026, and Jaros and Rauh,
 September 2026. The documents below were written months apart, and the earlier ones are listed
 because the Hoopes comparison and some input sources refer to them. Some of the March disputes
 are settled in the BSZ analysis by August (Larry Ellison's exclusion, the non-citizen
@@ -519,13 +577,14 @@ residents); others are not.</p>
 </details>
 
 <details class="fold" id="disputed-inputs">
-  <summary><h2>The disputed inputs</h2></summary>
+  <summary><h2>The disputed inputs</h2> <span class="teaser">the eight inputs the two analyses disagree on, with both values and sources</span></summary>
   <div class="fold-body">
 <p>One bridge step per row of <a href="comparison/DISPUTES.md">comparison/DISPUTES.md</a>, where
 every page reference was checked against the PDFs; row 7 is split into its two parts, and two
 steps cover inputs the crosswalk does not list as rows. The RJKDC values are those of its March
-2026 version, where the inputs are published; the September 2026 revision is the bridge's last
-step.</p>
+2026 version (Rauh, Jaros, Kearney, Doran and Cosso, SSRN), the version whose inputs the common
+function can take one by one; the September 2026 revision (Jaros and Rauh, NBER; its code and
+person-level file are in the same public repository) is the bridge's last step.</p>
 <div class="table-scroll">
 <table>
   <thead><tr><th>Row</th><th>Dispute</th><th>Kind</th><th>BSZ value and source</th><th>RJKDC value and source</th></tr></thead>
@@ -535,10 +594,10 @@ step.</p>
     <tr><td>7</td><td>Real-estate deduction</td><td><span class="kind">data</span></td><td class="small"><b>0.0%</b>. no separate deduction (BSZ PDF p.24: 90% x 5% x $2,307B)</td><td class="small"><b>0.5%</b>. 1 - revenue_baseline / (5% x base) from the RJKDC export (Rauh p.8 Table 5, $8.19B among stayers)</td></tr>
     <tr><td>3</td><td>Billionaires already departed</td><td><span class="kind">guesswork on data</span></td><td class="small"><b>0.0%</b>. benchmark taxes all 1 Jan 2026 residents (BSZ PDF p.23); aggressive row 3 is a checkpoint</td><td class="small"><b>28.4%</b>. 1 - revenue_confirmed6 / revenue_baseline from the RJKDC export (Rauh p.11, 6 departures)</td></tr>
     <tr><td>(not a row)</td><td>Avoidance and evasion allowance</td><td><span class="kind">guesswork</span></td><td class="small"><b>10.0%</b>. BSZ export avoidance_rate (GGSS p.4; BSZ PDF p.24)</td><td class="small"><b>0.0%</b>. none: the elasticity replaces any avoidance allowance (Rauh pp.13-14)</td></tr>
-    <tr><td>1</td><td>One-time tax estimated as a permanent 5 pp rate</td><td><span class="kind">scenario + guesswork</span></td><td class="small"><b>none applied</b>. one-time tax, responses temporary: no elasticity applied (BSZ PDF p.22 fn.29; GGSS response to Rauh, 17 Mar 2026, pp.1-3)</td><td class="small"><b>5 pp</b>. semi-elasticity applied to a 5.00 pp rate change (Rauh p.11 eq.7-8, p.14 eq.13)</td></tr>
+    <tr><td>1</td><td>One-time tax estimated as a permanent 5 pp rate</td><td><span class="kind">scenario + guesswork</span></td><td class="small"><b>none applied</b>. one-time tax, responses temporary: no elasticity applied (BSZ PDF p.22 fn.29; GGSS response to Rauh, 17 Mar 2026, pp.1-3)</td><td class="small"><b>5 pp</b>. the recurring-tax semi-elasticity applied to the 5 pp rate, because the authors argue taxpayers price a constitutional amendment with no sunset as a recurring tax (Rauh p.14; Sec. 6, p.21; eq.7-8 p.11, eq.13 p.14)</td></tr>
     <tr><td>4</td><td>Size of the mobility semi-elasticity</td><td><span class="kind">research + guesswork</span></td><td class="small"><b>10.00</b>. BSZ export semi_elasticity_permanent (BSZ PDF p.28; Fig8!B8), used only for a permanent tax</td><td class="small"><b>12.58</b>. the Monte Carlo floor of $35B (Rauh p.20 eq.22; 'approximately 12.6', p.19)</td></tr>
-    <tr><td>6</td><td>Lost income tax proportional to lost wealth</td><td><span class="kind">data vs guesswork</span></td><td class="small"><b>0.33</b>. leavers' tax per $ of wealth / average, from BSZ export leavers_annual_inctax, leavers_wealth, ca_inctax_billionaires (SEC data, BSZ PDF p.26, Table 4 p.38)</td><td class="small"><b>1.00</b>. f = 1 - WT/94.20 (Rauh p.19, p.20)</td></tr>
-    <tr><td>5</td><td>Billionaires' annual CA income tax</td><td><span class="kind">research vs guesswork</span></td><td class="small"><b>$3.06B/yr</b>. BSZ export ca_inctax_billionaires (Tab2!C14; BSZ PDF p.11)</td><td class="small"><b>$4.55B/yr</b>. midpoint of C ~ U[3.3, 5.8] (Rauh p.20 eq.23)</td></tr>
+    <tr><td>6</td><td>Lost income tax proportional to lost wealth</td><td><span class="kind">data vs guesswork</span></td><td class="small"><b>0.33</b>. leavers' tax per $ of wealth / average, from BSZ export leavers_annual_inctax, leavers_wealth, ca_inctax_billionaires (data: SEC filings for the top 3 and a wealth-proportional rate for the rest, BSZ PDF p.26, Table 4 p.38)</td><td class="small"><b>1.00</b>. f = 1 - WT/94.20 (Rauh p.19, p.20): guesswork, full proportionality assumed</td></tr>
+    <tr><td>5</td><td>Billionaires' annual CA income tax</td><td><span class="kind">research vs guesswork</span></td><td class="small"><b>$3.06B/yr</b>. BSZ export ca_inctax_billionaires (Tab2!C14; BSZ PDF p.11): research, top wealth holders' income is 50% of top earners' (Balkir et al. 2025)</td><td class="small"><b>$4.55B/yr</b>. midpoint of C ~ U[3.3, 5.8] (Rauh p.20 eq.23): guesswork, the K = 500 floor is the authors' judgement</td></tr>
     <tr><td>2</td><td>How long the income tax loss lasts</td><td><span class="kind">scenario</span></td><td class="small"><b>5 years</b>. BSZ PDF p.27 ('If they last say only 5 years')</td><td class="small"><b>perpetuity</b>. perpetuity (Rauh p.18 eq.17-18)</td></tr>
     <tr><td>(not a row)</td><td>Extra income tax from selling assets to pay</td><td><span class="kind">guesswork</span></td><td class="small"><b>1/3</b>. BSZ export sell_share (BSZ PDF p.24)</td><td class="small"><b>0%</b>. not modelled</td></tr>
   </tbody>
@@ -547,13 +606,17 @@ step.</p>
 <p class="small">Row 3: the 28.4% already departed is 1 &minus; 67.51 / 94.304, from
 the RJKDC workbook values. DISPUTES row 3 and the RJKDC f dial show 28.3%: they divide by the
 rounded 94.2 rather than 94.304.</p>
+<p class="small">Kinds follow the OPA input taxonomy, defined on the explorer: data, research, guesswork,
+scenario. "A vs B" reads the BSZ value's kind against the RJKDC value's; "A + B" means one value
+rests on both; "guesswork on data" means a judgement applied to observed facts.</p>
   </div>
 </details>
 
 <details class="fold" id="neutral-material">
-  <summary><h2>Neutral material and credited alternative dials</h2></summary>
+  <summary><h2>Other estimates of the yearly income tax loss, for scale</h2> <span class="teaser">the Legislative Analyst, the California Tax Foundation and both analyses' own figures on one scale</span></summary>
   <div class="fold-body">
-<p><b>LAO (neutral context).</b> The Legislative Analyst's ballot analysis gives no point estimate:
+<p><b>The LAO (the Legislative Analyst's Office, the state's nonpartisan fiscal adviser; neutral
+context).</b> Its ballot analysis gives no point estimate:
 the tax "probably would collect tens of billions of dollars", and responses "probably would reduce
 state revenues by less than $1 billion per year" (LAO p.2). It enters here only as context.
 <b>Walczak / California Tax Foundation (22 Apr 2026)</b> points the same way as the RJKDC
@@ -563,25 +626,26 @@ where E[&middot;] is an average over the Monte Carlo draws, WT the one-time weal
 the share of the income tax base that leaves and C the annual income tax it pays:</p>
 <div class="table-scroll">
 <table>
-  <thead><tr><th>Annual income tax loss</th><th>Analysis</th><th class="num">Per year</th><th class="num">PV, 5 years</th><th class="num">PV, perpetuity</th><th class="num">RJKDC E[WT] net of it (perpetuity)</th></tr></thead>
+  <thead><tr><th>Annual income tax loss</th><th>Analysis</th><th class="num">Per year</th><th class="num">PV, 5 years</th><th class="num">PV, perpetuity</th><th class="num">Net of the RJKDC analysis's expected revenue, $36.0B (this OPA's arithmetic)</th></tr></thead>
   <tbody>
     <tr><td>BSZ Table 5 row 1 (benchmark) <span class="small">(BSZ PDF p.39)</span></td><td>BSZ</td><td class="num">$0.15B</td><td class="num">$0.7B</td><td class="num">$5.6B</td><td class="num">$30.4B</td></tr>
     <tr><td>BSZ Table 5 row 3 (aggressive leavers) <span class="small">(BSZ PDF p.39)</span></td><td>BSZ</td><td class="num">$0.52B</td><td class="num">$2.4B</td><td class="num">$18.9B</td><td class="num">$17.1B</td></tr>
     <tr><td>LAO ballot analysis (upper bound, 'less than $1 billion') <span class="small">(LAO p.2)</span></td><td>neutral</td><td class="num">$1.00B</td><td class="num">$4.6B</td><td class="num">$36.6B</td><td class="num">−$0.6B</td></tr>
     <tr><td>RJKDC, Jaros and Rauh NBER: E[f] x E[C] <span class="small">(NBER p.35)</span></td><td>RJKDC</td><td class="num">$2.05B</td><td class="num">$9.4B</td><td class="num">$75.0B</td><td class="num">−$39.0B</td></tr>
-    <tr><td>Walczak / CalTax, low (incl. spillovers) <span class="small">(Walczak p.1)</span></td><td>RJKDC (credited dial)</td><td class="num">$3.53B</td><td class="num">$16.2B</td><td class="num">$129.3B</td><td class="num">−$93.3B</td></tr>
-    <tr><td>Walczak / CalTax, high (incl. spillovers) <span class="small">(Walczak p.1)</span></td><td>RJKDC (credited dial)</td><td class="num">$4.49B</td><td class="num">$20.6B</td><td class="num">$164.4B</td><td class="num">−$128.4B</td></tr>
+    <tr><td>Walczak / CalTax, low (incl. spillovers) <span class="small">(Walczak p.1)</span></td><td>Walczak / CalTax (alternative dial; same direction as RJKDC)</td><td class="num">$3.53B</td><td class="num">$16.2B</td><td class="num">$129.3B</td><td class="num">−$93.3B</td></tr>
+    <tr><td>Walczak / CalTax, high (incl. spillovers) <span class="small">(Walczak p.1)</span></td><td>Walczak / CalTax (alternative dial; same direction as RJKDC)</td><td class="num">$4.49B</td><td class="num">$20.6B</td><td class="num">$164.4B</td><td class="num">−$128.4B</td></tr>
   </tbody>
 </table>
 </div>
 <p class="small">Present values use the same r range as the bridge. The last column puts each
-loss against the RJKDC analysis's expected revenue (September 2026), $36.0B, in perpetuity:
-the Walczak rows are the credited dial, the others are for scale.</p>
+loss against the RJKDC analysis's expected revenue (September 2026), $36.0B, in perpetuity.
+The Walczak rows are not an RJKDC number: they are credited to Walczak and set against the RJKDC
+analysis's revenue for scale, as the other rows are.</p>
   </div>
 </details>
 
 <details class="fold" id="full-analyses">
-  <summary><h2>The two full analyses</h2></summary>
+  <summary><h2>The two full analyses</h2> <span class="teaser">the two reproductions and the comparison's code</span></summary>
   <div class="fold-body">
 <ul>
   <li><a href="bsz-analysis/site/">BSZ analysis</a>: Boll, Saez and Zucman (August 2026) reproduced from the authors' workbook, with an explorer over Table 5's guesswork inputs, a report, slides and materials.</li>
@@ -592,8 +656,11 @@ the Walczak rows are the credited dial, the others are for scale.</p>
 </details>
 
 <details class="fold" id="how-ai-was-used">
-  <summary><h2>How AI was used in this exercise, and what has been verified</h2></summary>
+  <summary><h2>How AI was used in this exercise, and what has been verified</h2> <span class="teaser">who did what, and what a person has checked</span></summary>
   <div class="fold-body">
+<p>"Work in progress" on this page means: the numbers reproduce and are tested; what is still
+being completed is the author's own review of each part, recorded in the last column below, and
+the credit interview.</p>
 <p>This work was a collaboration between the author and Claude Code (Opus and Sonnet
 models) across many sessions, not an AI working alone. The table records who led the work on
 each public object of the reconciliation, using the <a href="https://credit.niso.org/">CRediT</a>
@@ -617,7 +684,10 @@ CRediT. It records how closely the author has checked the object.</p>
   </tbody>
 </table>
 </div>
-<p class="small" style="margin:8px 0 0;">The credit interview has not been run for the comparison yet.</p>
+<p class="small" style="margin:8px 0 0;">Not yet filled in as of October 2026. The record in
+<a href="comparison/site/credit/CREDIT.md">comparison/site/credit/CREDIT.md</a> (2026-10-01) carries the answers the author gave
+once, for the BSZ explorer, and asked to be applied to every object; the per-object interview for
+the comparison has not been run, so the table is left blank until it is.</p>
 <div class="ai-key">
   <div><span><i class="sq h"></i> led by the author</span>
   <span><i class="sq ai"></i> led by Claude</span>

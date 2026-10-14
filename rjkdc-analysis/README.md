@@ -3,7 +3,7 @@
 This folder is the RJKDC analysis of [opa-prop40](https://fhoces.github.io/opa-prop40/rjkdc-analysis/site/), an Open Policy Analysis of California's
 2026 Proposition 40 (the Billionaire Tax Act). The [comparison overview](https://fhoces.github.io/opa-prop40/)
 sets this analysis next to the BSZ analysis. This folder reproduces the net present value estimate
-of Jaros and Rauh, with Kearney, Doran and Cosso (NBER chapter c15504, September 2026), and opens every input, every line of code and every number behind it. The aim is
+of Jaros and Rauh (NBER chapter c15504, September 2026), the revision of the first version by Rauh, Jaros, Kearney, Doran and Cosso (SSRN 6340778, March 2026), and opens every input, every line of code and every number behind it. The aim is
 a transparent and reproducible analysis that anyone can check, and a shared basis for discussing
 the policy.
 
@@ -41,7 +41,7 @@ each page against the Guidelines' nine steps.
 Open Policy Analysis replication of the RJKDC revenue and net-present-value estimates
 for California's Proposition 40 (Billionaire Tax Act):
 
-> Jaros, B., & Rauh, J. (2026, September). *The Net Present Value of the Billionaire Tax Act*.
+> Jaros, B., & Rauh, J. (2026, September). *The Net Present Value of the California Billionaire Tax Act*.
 > NBER chapter c15504. https://www.nber.org/system/files/chapters/c15504/c15504.pdf
 
 Everything is reproduced from the authors' own public MIT-licensed materials:

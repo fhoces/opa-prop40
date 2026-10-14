@@ -47,8 +47,9 @@ short_labels <- c(
 # The bars of every view of the bridge, in display order. The page shows each analysis in
 # its latest version only: the first bar is the BSZ analysis (August 2026, Table 5 row 1),
 # the last the RJKDC analysis (Jaros and Rauh, NBER, September 2026). Between them: one
-# step per disputed input (BSZ value to the RJKDC value of its March 2026 version, where
-# the inputs are published), the model difference, and the September 2026 revision. The
+# step per disputed input (BSZ value to the RJKDC value of its March 2026 version, the one
+# whose inputs the common function takes one by one), the model difference, and the
+# September 2026 revision. The
 # export tables still carry the GGSS and March 2026 totals; the page shows neither as an end.
 build_series <- function(ex, resid_label) {
   br <- ex$bridge; en <- ex$ends; steps <- bridge_steps()
@@ -80,7 +81,7 @@ build_series <- function(ex, resid_label) {
         }
         add("rauh_resid", "model", e$rauh_residual, resid_label, "model difference")
         add("nber_step", "step", e$nber_step,
-            "September 2026 revision of the RJKDC analysis: litigation-survival weight, 7% grown base, departure fraction drawn separately (the steps before it reach the earlier version whose inputs are published)",
+            "September 2026 revision of the RJKDC analysis: litigation-survival weight, 7% grown base, departure fraction drawn separately (the steps before it reach the March 2026 version, whose inputs the common function takes one by one)",
             "guesswork (litigation risk) + data")
         add("nber", "total", e$nber_own,
             if (o == "a") "RJKDC analysis (Jaros and Rauh, NBER, September 2026): expected revenue in the Monte Carlo"
@@ -113,6 +114,7 @@ render_site <- function(root = comparison_root(),
   tok$ggss_headline <- money(epv("ggss_headline"), 0)
   tok$ggss_scoring <- money(epv("ggss_scoring"), 1)
   tok$bsz_row1 <- money(epv("bsz_tab5_row1"), 1)
+  tok$bsz_printed <- money(ep$printed_value[ep$endpoint_id == "bsz_tab5_row1"], 0)   # the digit the paper prints
   tok$bsz_row1_exact <- money(epv("bsz_tab5_row1"), 3)
   tok$rauh_npv <- money(epv("rauh_ssrn_npv"), 1)
   tok$nber_npv <- money(ep$printed_value[ep$endpoint_id == "rauh_nber_npv"], 1)
@@ -323,7 +325,7 @@ render_site <- function(root = comparison_root(),
             money(hz_pre, 1), money(dv("rauh_headline_revenue"), 0), money(ea$rauh_own, 2), money(ea$rauh_own, 2)),
     sprintf("<b>Income tax.</b> His single bar, %s, ends at %s, close to the March 2026 version's %s. That version's own expected present value of lost income tax is %s against %s of revenue, so with a different starting level his bar works as a plug. We split it into four labelled steps (proportionality, the income tax level, the horizon, asset-sale tax), which interact with the base steps.",
             hfmt(hs_("income_tax_loss"), NA), money(hz_end, 1), tok$rauh_npv, money(ho("income_tax_loss"), 2, TRUE), money(ea$rauh_own, 2)),
-    "<b>Order and labels.</b> His is one sequential order, with no provenance labels; ours shows Shapley averages over all orders as well as one order, with each step labelled data, research, guesswork or scenario.",
+    "<b>Order and labels.</b> His is one sequential order, with no provenance labels; ours shows Shapley averages over all orders (a Shapley value: a step's effect averaged over every order the inputs could be switched in, so the steps add up to the gap) as well as one order, with each step labelled data, research, guesswork or scenario.",
     "<b>Steps he does not have.</b> The non-US-citizen residents, the BSZ analysis's avoidance allowance being dropped, the asset-sale income tax, and the September 2026 revision (which postdates his note)."
   )), collapse = "\n")
   tok$hoopes_fit <- money(as.numeric(hraw$tick_fit_max_resid[1]), 1)
@@ -360,7 +362,7 @@ render_site <- function(root = comparison_root(),
 
   # ---- loss table ----
   ls <- ex$loss[ex$loss$source_id != "rauh_ssrn", ]
-  who <- c(bsz = "BSZ", rjkdc = "RJKDC", neutral = "neutral", "rjkdc (credited dial)" = "RJKDC (credited dial)")
+  who <- c(bsz = "BSZ", rjkdc = "RJKDC", neutral = "neutral", "rjkdc (credited dial)" = "Walczak / CalTax (alternative dial; same direction as RJKDC)")
   ls$label[ls$source_id == "rauh_nber"] <- "RJKDC, Jaros and Rauh NBER: E[f] x E[C]"
   tok$loss_rows <- paste(sprintf(
     '    <tr><td>%s <span class="small">(%s)</span></td><td>%s</td><td class="num">%s</td><td class="num">%s</td><td class="num">%s</td><td class="num">%s</td></tr>',

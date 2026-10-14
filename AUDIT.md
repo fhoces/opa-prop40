@@ -59,14 +59,14 @@ version only.
 | 5 | Open report | 3 | "A dynamic document ... and include version control tracking": `comparison/site/repro.qmd` in git, rendered to `repro.html`, plus `DISPUTES.md` | None |
 | 6 | File structure | 3 | `comparison/` with `R/`, `py/`, `data/`, `export/`, `site/`, `tests/`, `README.md` (Open Materials top in the BSZ shape) | None |
 | 7 | Label inputs | 3 | 18 rows in `document-inputs.csv`, each with a label (data 7, guesswork 5, derived 4, scenario 2), a source and a page; every bridge step carries a kind | Guesswork analyst/date, as above |
-| 8 | Reproducible code | 2 | `Rscript comparison/run.R` rebuilds everything, the explorer included; 214 expectations (counted on the materials page when it renders); `.github/workflows/comparison-ci.yml` rebuilds R and Python on a clean runner and the suite checks the committed `index.html`, explorer and data file are the generator's output | One click (Binder/devcontainer); CI does not render the two Quarto pages |
+| 8 | Reproducible code | 2 | `Rscript comparison/run.R` rebuilds everything, the explorer included; the materials page gives the current count of test expectations, read from the test output; `.github/workflows/comparison-ci.yml` rebuilds R and Python on a clean runner and the suite checks the committed `index.html`, explorer and data file are the generator's output | One click (Binder/devcontainer); CI (continuous integration, the automatic rebuild and test run on every change) does not render the two Quarto pages |
 | 9 | Version control | 3 | As above | None |
 
 ## Headline
 
 - **Level 1** for all three pages (the minimum across steps; step 1 sets it everywhere).
   Before the repository went public on 2026-10-01, every page was Level 0. Vectors: BSZ `1-3-3-3-3-3-3-2-3`, RJKDC `1-3-3-3-3-3-3-2-3`,
-  reconciliation `1-3-2-2-2-3-3-2-3`.
+  reconciliation `1-3-3-3-3-3-3-2-3`, so the three vectors are now identical.
 
 ## Best credibility per unit of effort
 

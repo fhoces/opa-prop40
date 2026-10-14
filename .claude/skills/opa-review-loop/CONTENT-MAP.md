@@ -6,7 +6,8 @@ goes, and what has to be rebuilt afterwards). Paths are relative to the reposito
 ## The project in one paragraph
 
 An Open Policy Analysis (OPA) of the two rival revenue analyses of California's 2026
-Proposition 40, the Billionaire Tax Act (a one-time 5% tax on net worth above $1 billion).
+Proposition 40, the Billionaire Tax Act (a one-time 5% tax on the whole net worth of Californians
+worth $1 billion or more).
 The BSZ analysis (Boll, Saez and Zucman, NBER Working Paper 35218, August 2026, with the
 Galle, Gamage, Saez and Shanske expert report of July 2026) estimates about $100 billion. The
 RJKDC analysis (Rauh, Jaros, Kearney, Doran and Cosso, SSRN March 2026; revised as Jaros and

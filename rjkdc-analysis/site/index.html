@@ -64,6 +64,9 @@
     letter-spacing: -0.015em; margin: 0 0 12px;
   }
   .byline { color: var(--ink-2); font-size: 15px; margin: 0; }
+  .site-nav { font-family: var(--mono); font-size: 11.5px; color: var(--ink-3); margin: 0 0 16px; }
+  .site-nav a { color: var(--accent); text-decoration: none; }
+  .site-nav a:hover { text-decoration: underline; }
   .byline cite { font-style: normal; }
 
   h2 {
@@ -79,8 +82,8 @@
     color: var(--ink-3); font-weight: 500; }
   .headline .value { font-family: var(--serif); font-size: 40px; font-weight: 600; line-height: 1;
     color: var(--ink); font-variant-numeric: tabular-nums; }
-  .headline .def { font-size: 13.5px; color: var(--ink-2); line-height: 1.45; margin-top: 2px; max-width: 46em; }
-  .headline .fn { font-size: 12px; color: var(--ink-3); line-height: 1.45; margin: 8px 0 0; max-width: 60em; }
+  .headline .def { font-size: 15px; color: var(--ink-2); line-height: 1.45; margin-top: 2px; max-width: 46em; }
+  .headline .fn { font-size: 13.5px; color: var(--ink-2); line-height: 1.45; margin: 8px 0 0; max-width: 60em; }
   .headline .fn a { color: var(--accent); }
   .section-title { position: relative; margin: 44px 0 14px; text-align: center; }
   .section-title h2 { position: relative; z-index: 1; margin: 0; }
@@ -151,6 +154,8 @@
      narrow viewports. Scroll the table itself rather than the page. */
   .table-scroll { overflow-x: auto; margin: 4px 0 0; }
   .table-scroll table { margin: 0; }
+  .table-scroll::before { content: "Scroll sideways for the rest \2192"; display: none; font: 11px var(--sans); color: var(--ink-3); margin-bottom: 4px; }
+  @media (max-width: 640px) { .table-scroll::before { display: block; } }
   th, td { text-align: left; padding: 8px 12px 8px 0; border-bottom: 1px solid var(--rule); }
   th { font-size: 12px; font-family: var(--mono); letter-spacing: 0.06em;
        text-transform: uppercase; color: var(--ink-3); font-weight: 500; }
@@ -194,7 +199,7 @@
     display: inline-block; vertical-align: middle; margin-left: .5rem;
     padding: .15rem .55rem; border: 1px solid var(--accent-2); border-radius: 999px;
     color: var(--accent-2); font: 600 .72rem/1.3 var(--sans);
-    letter-spacing: .06em; text-transform: uppercase; white-space: nowrap;
+    letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; text-decoration: none;
   }
   /* The sections after the cards fold, closed by default, so the page stays short.
      The chevron is drawn in CSS; the h2 keeps its own style inside the summary. */
@@ -219,16 +224,31 @@
 <body>
 <div class="wrap">
 
+<p class="site-nav">
+  RJKDC analysis of California Proposition 40:
+  Overview (here) &middot;
+  Open Output: <a href="explorer/">Explorer</a> &middot;
+  Open Analysis: <a href="repro.html">Report</a> and <a href="slides/slides.html">Slides</a> &middot;
+  <a href="https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis">Open Materials</a> &middot;
+  <a href="../../index.html">Comparison overview</a> &middot;
+  <a href="../../bsz-analysis/site/">BSZ analysis overview</a>
+</p>
+
 <header>
   <p class="eyebrow">Open Policy Analysis for:</p>
-  <h1>California Proposition 40, Analysis From Jaros and Rauh (JR) <span class="wip">Work in progress</span></h1>
+  <h1>California Proposition 40, Analysis From Jaros and Rauh (JR) <a class="wip" href="#how-ai-was-used" title="The numbers are final for the versions cited; what is still being completed is the author's review of each part and the credit interview. See what has been verified.">Work in progress</a></h1>
   <p class="byline">
-    Proposition 40, the Billionaire Tax Act, would tax California's billionaires once, at 5%
-    of their net worth, paid over five years. The RJKDC analysis argues the state ends up poorer,
-    because billionaires who leave take their income tax with them for ever. This site
-    reproduces that estimate from Jaros and Rauh, with Kearney, Doran and Cosso,
+    Proposition 40, the Billionaire Tax Act, would tax people who lived in California on
+    1 January 2026 and are worth $1 billion or more: once, at 5% of their whole net worth as
+    valued on 31 December 2026, paid in five equal yearly installments. The RJKDC analysis
+    argues the state ends up poorer, because billionaires who leave take their income tax with
+    them for ever. This site reproduces that estimate from Jaros and Rauh,
     <cite><a href="https://www.nber.org/system/files/chapters/c15504/c15504.pdf">The Net Present
-    Value of the Billionaire Tax Act</a></cite> (NBER chapter c15504, 22 September 2026). It is rebuilt from the authors' own public code and data
+    Value of the California Billionaire Tax Act</a></cite> (NBER chapter c15504, 22 September
+    2026; NBER is the National Bureau of Economic Research, which circulates working papers),
+    the revision of the first version by Rauh, Jaros, Kearney, Doran and Cosso (SSRN 6340778,
+    March 2026). This site calls the analysis RJKDC, after the five authors of that first
+    version; the title names the two authors of the version reproduced. It is rebuilt from the authors' own public code and data
     (<a href="https://github.com/bjaros20/wealth_tax">github.com/bjaros20/wealth_tax</a>), and it
     marks which of its inputs are data and which are guesses.
     This site follows the <a href="https://doi.org/10.1093/scipol/scaa067">Open
@@ -236,17 +256,22 @@
     concludes, how it gets there, and what to run yourself stay in separate,
     checkable places.
   </p>
+  <p class="byline" style="margin-top:6px">OPA by <a href="https://fhoces.github.io">Fernando Hoces de la Guardia</a>.
+    This site recommends no vote and favours neither analysis: it reproduces both analyses'
+    arithmetic and shows where their assumptions differ.</p>
 </header>
 
 <div class="headline">
   <span class="name">Main estimate<sup>1</sup>, NBER September 2026</span>
   <span class="value" id="hl-main">&minus;$38.9B</span>
   <span class="def">Defined as the one-time wealth tax revenue minus the present value of
-    California income tax lost for ever to billionaires who leave (NPV = WT &minus; f&middot;C / r),
-    averaged over the authors' Monte Carlo draws.</span>
+    California income tax lost for ever to billionaires who leave, averaged over 100,000 random
+    runs of the authors' model (a Monte Carlo simulation). Today's dollars (present value): what
+    money received or lost in future years is worth now.</span>
   <p class="fn"><sup>1</sup> The authors' own headline (Jaros and Rauh, NBER chapter c15504,
-    September 2026, PDF p.1), averaged over their Monte Carlo draws. The
-    <a href="explorer/">explorer</a> shows how far each input moves it, and the
+    September 2026, PDF p.1): the average over their Monte Carlo draws, as printed from one
+    seeded run (a run of the random draws started from a fixed seed number, so it gives the same
+    draws every time). The <a href="explorer/">explorer</a> shows how far each input moves it, and the
     <a href="../../index.html">comparison overview</a> sets it beside the BSZ analysis.</p>
 </div>
 <script src="explorer/grid.js"></script>
@@ -298,8 +323,8 @@
           </a>
           <a class="subcard" href="slides/slides.html">
             <h3>Slides &rarr;</h3>
-            <p>A short deck: the one equation, where each input comes from, why a perpetuity
-               decides the sign, and what to argue about.</p>
+            <p>A short deck, best on a laptop: the one equation, where each input comes from, why
+               a perpetuity decides the sign, and what to argue about.</p>
           </a>
         </div>
       </div>
@@ -314,7 +339,7 @@
       <div class="card-text">
         <span class="kicker">Open Materials</span>
         <h3>Materials for computational reproduction &rarr;</h3>
-        <p>The R pipeline (built with <code>{targets}</code>) and its Python twin, the test suite, every exported CSV, the source
+        <p>The R pipeline (built with <code>{targets}</code>, the R package that runs the pipeline's steps in order and records which outputs are current) and its Python twin, the test suite, every exported CSV, the source
         manifest with SHA-256 hashes, and the nine mismatches between the authors' text, their
         READMEs and their code. A guided summary is on the materials page, linked in the text below.</p>
       </div>
@@ -329,7 +354,8 @@
   <summary><h2>What the model says</h2></summary>
   <div class="fold-body">
 <p>The Act collects a wealth tax once; billionaires who leave stop paying California income
-   tax for ever. The authors value that lost stream as a perpetuity and subtract it: NPV = revenue
+   tax for ever. The authors value that lost stream as a perpetuity (the same amount every year
+   for ever, worth 1/r times the yearly amount today at discount rate r) and subtract it: NPV = revenue
    &minus; (share of the income tax base that leaves) &times; (annual income tax) / (discount rate).
    They report the average NPV over 100,000 random draws of those inputs: the main estimate,
    <strong>&minus;$38.9 billion</strong> (Jaros and Rauh, NBER, September 2026).<sup>1</sup>
@@ -340,8 +366,8 @@
   <thead><tr><th></th><th class="pref">NBER, Sept 2026<br><span class="table-subhead">main estimate</span></th></tr></thead>
   <tbody>
     <tr><td><strong>Mean NPV to the state, as printed</strong></td><td class="pref"><strong>−38.9</strong></td></tr>
-    <tr><td>Share of outcomes below zero, as printed</td><td class="pref">85.2%</td></tr>
-    <tr><td>Wealth tax revenue, the paper's headline</td><td class="pref">about 30 (28.4 to 35.6)</td></tr>
+    <tr><td>Share of outcomes below zero, as printed (85% in the text, p.1; 85.2% in the Figure 3 note, p.35)</td><td class="pref">85.2%</td></tr>
+    <tr><td>Wealth tax revenue, the paper's revenue headline (p.1, p.23)</td><td class="pref">about 30 (28.4 to 35.6)</td></tr>
     <tr><td>Mean NPV, authors' seeded run, reproduced</td><td class="pref">−38.89</td></tr>
     <tr><td>Mean NPV, exact expectation of the same draws</td><td class="pref">−38.98</td></tr>
     <tr><td>Mean revenue in the Monte Carlo's draw</td><td class="pref">36.00</td></tr>
@@ -356,10 +382,22 @@
 
 <p style="margin-top:14px;">Printed values from NBER PDF pp.1, 23 and 35. Three things the numbers show. First, the result is driven by the loss term: roughly 75 of
    present value lost against a few tens collected, because at the draws' 1.5% to 4.5% rates a dollar
-   a year for ever is worth 22 to 67 dollars today. Second, the Monte Carlo draws revenue with a mean of 36, the paper's
-   litigation-discounted ceiling (0.5 &times; 72), below the "about 30" it prints as collectible. Third, of the seven inputs that move the answer,
+   a year for ever is worth 22 to 67 dollars today. Second, the paper says the tax would collect about $30 billion (p.23: half of the base
+   it recognizes after the pre-filing and Zuckerberg exclusions). The simulation behind the headline uses more: it draws revenue
+   anywhere between 0 and 72, the most the tax could collect after the seven confirmed departures, with a mean of 36, the paper's
+   litigation-discounted ceiling (0.5 &times; 72, its central revenue, p.33). So the headline rests on a revenue above the one the
+   paper prints as collectible. Third, of the seven inputs that move the answer,
    six are guesswork; the <a href="explorer/">explorer</a> shows how far each one moves it. Whether
-   the income tax loss really lasts for ever is the main point the <a href="../../bsz-analysis/site/">BSZ report</a> (Boll, Saez and Zucman) disputes.</p>
+   the income tax loss really lasts for ever is the main point the <a href="../../bsz-analysis/site/">BSZ analysis</a> (Boll, Saez and Zucman) disputes.</p>
+<p style="margin-top:14px;"><strong>What this OPA does not estimate.</strong> Both analyses, and so this OPA, take the
+measure as written (full text in <a href="../../docs/initiative/README.md">docs/initiative/</a>): the
+5% rate, the 1 January 2026 residency date, the 31 December 2026 valuation date and payment in
+five yearly installments, with the wealth tax counted at its face value, not discounted over the
+five years. Neither analysis estimates the day-to-day movement of the Forbes base (GGSS, the
+Galle, Gamage, Saez and Shanske expert report written in support of the measure, note a range of
+$87 billion to $107 billion between January and July 2026, p.4 fn.8). The BSZ analysis alone
+adds the income tax from assets sold to pay the tax; the RJKDC analysis alone weights the revenue
+by the chance the Act survives in court. Nothing is added to either here.</p>
   </div>
 </details>
 
@@ -397,7 +435,7 @@ authors' text, their READMEs and their code. Four of them concern this analysis.
 reproduce the code as shipped and record each one:</p>
 <ol start="3" style="margin:0 0 14px; padding-left:22px; color:var(--ink-2); font-size:15px;">
   <li>The code and eq. 18 call the 1.5% to 4.5% draw (r &minus; g): r is the real discount rate and g the growth rate of the lost income tax. The sentence after eq. 19 divides by r alone (p.35), so one interval stands for two concepts.</li>
-  <li>The revenue ceiling is 72 in the script, 72.06 in the README and 72.05 in the person-level data.</li>
+  <li>The revenue ceiling is 72 in the script, 72.06 in the README and in the paper's eq. 4 (p.22), and 72.05 in the person-level data.</li>
   <li>The litigation weight q = 0.50, the chance the Act survives in court: the code never multiplies by q; drawing revenue uniformly from 0 to 72 gives the same mean, 0.5 &times; 72, but a different distribution.</li>
   <li>The baseline revenue sums to 94.30 in the authors' workbook, and the grown person-level data give the same; the text prints 94.20 (p.19).</li>
 </ol>
@@ -424,6 +462,9 @@ reproduce the code as shipped and record each one:</p>
 <details class="fold" id="how-ai-was-used">
   <summary><h2>How AI was used in this exercise, and what has been verified</h2></summary>
   <div class="fold-body">
+<p>"Work in progress" on this page means: the numbers reproduce and are tested; what is still
+being completed is the author's own review of each part, recorded in the last column below, and
+the credit interview.</p>
 <p>This work was a collaboration between the author and Claude Code (Opus and Sonnet
 models) across many sessions, not an AI working alone. The table records who led the work on
 each public object of the RJKDC analysis, using the <a href="https://credit.niso.org/">CRediT</a>
@@ -447,7 +488,10 @@ CRediT. It records how closely the author has checked the object.</p>
   </tbody>
 </table>
 </div>
-<p class="credit-empty">The credit interview has not been run for this analysis yet.</p>
+<p class="credit-empty">Not yet filled in as of October 2026. The record in
+<a href="credit/CREDIT.md">credit/CREDIT.md</a> (2026-10-01) carries the answers the author gave once, for the
+BSZ explorer, and asked to be applied to every object; the per-object interview for this analysis
+has not been run, so the table is left blank until it is.</p>
 <div class="ai-key">
   <div><span><i class="sq h"></i> led by the author</span>
   <span><i class="sq ai"></i> led by Claude</span>

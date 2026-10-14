@@ -1,7 +1,8 @@
 # California Proposition 40: Open Materials
 
 This repository is an Open Policy Analysis of the two rival revenue analyses of California's
-2026 Proposition 40 (the Billionaire Tax Act, a one-time 5% tax on net worth above $1 billion).
+2026 Proposition 40 (the Billionaire Tax Act, a one-time 5% tax on the whole net worth of Californians
+worth $1 billion or more).
 The [comparison overview](https://fhoces.github.io/opa-prop40/) puts the two analyses on one
 output definition. Each analysis is reproduced in full and opens every input, every line of code
 and every number behind its main estimate. The aim is a transparent and reproducible account of
@@ -15,13 +16,15 @@ also kept in [`review/`](review/README.md).
 
 <img align="right" width="340" src="bsz-analysis/site/assets/opa/opa-materials-wordmark.png" alt="Open Policy Analysis, Materials layer">
 
-1 - **[The BSZ analysis](bsz-analysis/README.md).** Boll, Saez and Zucman, NBER Working Paper 35218 (August 2026): a
-one-time wealth tax of about $100 billion, with a main estimate of $106.8 billion net of the income
-tax it changes. [Overview page](https://fhoces.github.io/opa-prop40/bsz-analysis/site/). Materials
+1 - **[The BSZ analysis](bsz-analysis/README.md).** Boll, Saez and Zucman, NBER Working Paper 35218 (August 2026;
+NBER is the National Bureau of Economic Research, which circulates working papers): a one-time
+wealth tax of about $100 billion. This OPA's main estimate, $106.8 billion, nets it of the income
+tax it changes (not the authors' headline, which is the wealth tax alone). [Overview page](https://fhoces.github.io/opa-prop40/bsz-analysis/site/). Materials
 can be found in [`bsz-analysis/`](bsz-analysis/).
 
-2 - **[The RJKDC analysis](rjkdc-analysis/README.md).** Jaros and Rauh, NBER chapter c15504 (September 2026), with Kearney,
-Doran and Cosso: a net present value to the state of about -$39 billion, because billionaires who
+2 - **[The RJKDC analysis](rjkdc-analysis/README.md).** Jaros and Rauh, NBER chapter c15504 (September 2026), the
+revision of the March 2026 version by Rauh, Jaros, Kearney, Doran and Cosso (SSRN 6340778; SSRN is a
+preprint site): a net present value to the state of about -$39 billion, because billionaires who
 leave take their income tax with them. [Overview page](https://fhoces.github.io/opa-prop40/rjkdc-analysis/site/).
 Materials can be found in [`rjkdc-analysis/`](rjkdc-analysis/).
 
@@ -50,7 +53,9 @@ opa-prop40/
 └── AUDIT.md               OPA Guidelines audit baseline
 ```
 
-Each analysis publishes an export contract (`<folder>/export/r/{inputs,outputs}.csv`: the two CSV
+`{targets}` is the R package that runs a pipeline's steps in order and records which outputs are
+current; a twin is the same computation written a second time in another language and checked
+against the R result. Each analysis publishes an export contract (`<folder>/export/r/{inputs,outputs}.csv`: the two CSV
 files the comparison reads), and `comparison/` reads only those contracts plus the values
 transcribed in `comparison/data/document-inputs.csv`.
 
@@ -58,11 +63,13 @@ transcribed in `comparison/data/document-inputs.csv`.
 
 | Part | State | Tests | CI |
 |---|---|---|---|
-| `bsz-analysis/` | BSZ reproduced cell by cell; OPA site (explorer, report, slides, materials) | 561 expectations, 0 failed | `bsz-ci.yml`, green |
-| `rjkdc-analysis/` | RJKDC reproduced from the authors' code, R and Python; 9 documented mismatches (`MISMATCHES.md`); OPA site | 159 expectations, 0 failed | `rjkdc-ci.yml`, green |
-| `comparison/` | Comparison overview at the site root, explorer, report and materials page; 8 disputed inputs (`DISPUTES.md`) | 179 expectations, 0 failed | `comparison-ci.yml`, green |
+| `bsz-analysis/` | BSZ reproduced cell by cell; OPA site (explorer, report, slides, materials) | [materials page](https://fhoces.github.io/opa-prop40/bsz-analysis/site/materials.html#tests), which reads the test output | `bsz-ci.yml`, green |
+| `rjkdc-analysis/` | RJKDC reproduced from the authors' code, R and Python; 9 documented mismatches (`MISMATCHES.md`); OPA site | [materials page](https://fhoces.github.io/opa-prop40/rjkdc-analysis/site/materials.html#tests), which reads the test output | `rjkdc-ci.yml`, green |
+| `comparison/` | Comparison overview at the site root, explorer with two slider panels, report and materials page; 8 disputed inputs (`DISPUTES.md`) | [materials page](https://fhoces.github.io/opa-prop40/comparison/site/materials.html#tests), which reads the test output | `comparison-ci.yml`, green |
 
-Each part's README gives its rebuild and test commands. The site is served at
+CI is continuous integration: an automatic rebuild and test run on every change, in
+`.github/workflows/`. Each materials page prints the count of test expectations from the last
+recorded run, so the counts are not repeated here. Each part's README gives its rebuild and test commands. The site is served at
 <https://fhoces.github.io/opa-prop40/> as work in progress. The CRediT / AI-use answers are in
 each `site/credit/CREDIT.md`.
 

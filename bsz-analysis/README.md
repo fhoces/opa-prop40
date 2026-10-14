@@ -7,7 +7,7 @@ Zucman (2026) and opens every input, every line of code and every number behind 
 transparent and reproducible analysis that anyone can check, and a shared basis for discussing the
 policy.
 
-### [Review the code behind the $106.8 billion main estimate](https://claude.ai/artifact/6VZEezoAsCNACjmgPLEvah)
+### [Review the code behind the $106.8 billion main estimate](https://claude.ai/artifact/6VZEezoAsCNACjmgPLEvah) (this OPA's net total; BSZ's headline is the wealth tax, about $100 billion)
 
 A layer-by-layer walk from the number on the page down to the authors' workbook. Each layer is
 marked reviewed, lightly reviewed or not reviewed. Work in progress; the record is also kept in
