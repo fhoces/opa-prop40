@@ -66,7 +66,8 @@ def main():
     for f in files:
         for pat, cmd in RULES:
             if fnmatch.fnmatch(f, pat):
-                if cmd not in commands:
+                # one line per command, whatever comment the rule carries
+                if cmd.split("   #")[0] not in [c.split("   #")[0] for c in commands]:
                     commands.append(cmd)
                 matched.add(f)
         for pat, why in GENERATED.items():

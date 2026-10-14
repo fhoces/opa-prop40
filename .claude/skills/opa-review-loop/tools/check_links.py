@@ -14,7 +14,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[4]
 SKIP_DIRS = {".git", "node_modules", "_targets", "outputs", "original-materials", ".quarto",
-             "_files", "rsconnect", "__pycache__", ".pytest_cache", "worktrees"}
+             "_files", "rsconnect", "__pycache__", ".pytest_cache", "worktrees", "feedback"}
 EXTS = {".md", ".html", ".qmd", ".Rmd"}
 MD_LINK = re.compile(r"(?<!\!)\[[^\]]*\]\(([^)\s]+)(?:\s+\"[^\"]*\")?\)")
 MD_IMG = re.compile(r"!\[[^\]]*\]\(([^)\s]+)(?:\s+\"[^\"]*\")?\)")
