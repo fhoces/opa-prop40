@@ -135,3 +135,20 @@ test_that("every explorer dial carries an OPA origin label", {
   expect_length(origins, 7)
   expect_true(all(sub('origin = "([a-z]+)"', "\\1", origins) %in% c("data", "research", "guesswork", "scenario")))
 })
+
+test_that("the explorer draws the outcomes chart above the table and cites only the NBER version", {
+  html <- paste(readLines(site_path("explorer", "index.html"), warn = FALSE), collapse = "\n")
+  # the two-bar chart (this setting, main estimate) sits under "Outcomes", above the table,
+  # has an accessible title, and is redrawn by render() on every dial or preset click
+  bars <- regexpr('<svg class="bars" id="bars"', html, fixed = TRUE)
+  expect_true(bars > regexpr("<h2>Outcomes</h2>", html, fixed = TRUE))
+  expect_true(bars < regexpr('<table id="cmp">', html, fixed = TRUE))
+  expect_true(grepl('<title id="bars-title">', html, fixed = TRUE))
+  render_body <- sub(".*function render\\(\\) \\{(.*?)\\n  render\\(\\);.*", "\\1", html)
+  expect_true(grepl("drawBars(i);", render_body, fixed = TRUE))
+  # the main estimate is the NBER setting; the page has no SSRN cards, preset or column
+  expect_true(grepl('var MAIN = "nber";', html, fixed = TRUE))
+  expect_true(grepl("var ORDER = [MAIN];", html, fixed = TRUE))
+  expect_false(grepl("pref-card", html, fixed = TRUE))
+  expect_false(grepl("SSRN March 2026", html, fixed = TRUE))
+})
