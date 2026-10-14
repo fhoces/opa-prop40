@@ -1,6 +1,6 @@
 ---
 title: "Prop 40, RJKDC analysis: the reproduction"
-subtitle: "Jaros and Rauh (NBER, September 2026) and the earlier Rauh, Jaros, Kearney, Doran and Cosso (SSRN, March 2026), reproduced step by step from the authors' own public code and data"
+subtitle: "Jaros and Rauh, with Kearney, Doran and Cosso (NBER, September 2026), reproduced step by step from the authors' own public code and data"
 date: today
 format:
   html:
@@ -93,32 +93,32 @@ ever, so the state ends up poorer. Following the
   source (guide, with all nine mismatches found along the way: [the materials page](materials.html))
 :::
 
-**What is reproduced.** Two versions of one analysis. The latest one gives this OPA's main
-estimate; the earlier one stays beside it as a scenario:
+**What is reproduced.** Jaros and Rauh, with Kearney, Doran and Cosso, *The Net Present Value
+of the Billionaire Tax Act*, NBER chapter c15504 (22 September 2026), the litigation-weighted
+analysis. Its headline: revenue of about \$30B (\$`r h("nber","revenue_range_low","printed")`B to
+\$`r h("nber","revenue_range_high","printed")`B) and a mean NPV of
+`r num(h("nber","mc_mean_npv","printed"))` \$B, with `r h("nber","mc_pct_negative","printed")`%
+of simulated outcomes negative (PDF p.1). That mean NPV is **the main estimate**, derived step by
+step in [the next section](#the-main-estimate).^[The authors released a first version in March
+2026: Rauh, Jaros, Kearney, Doran and Cosso, Hoover Institution, SSRN 6340778. It printed revenue
+of about \$`r h("ssrn","revenue_headline","printed")`B and a mean NPV of
+`r num(h("ssrn","mc_mean_npv","printed"))` \$B, with `r h("ssrn","mc_pct_negative","printed")`%
+of outcomes negative (its PDF p.1). The pipeline reproduces it too; the
+[appendix](#appendix-first-version) at the end of this report sets out what it printed and
+which checks concern it.]
 
-1. **NBER chapter c15504** (Jaros and Rauh, 22 September 2026), the litigation-weighted revision.
-   Headline: revenue of about \$30B (\$`r h("nber","revenue_range_low","printed")`B to
-   \$`r h("nber","revenue_range_high","printed")`B) and a mean NPV of
-   `r num(h("nber","mc_mean_npv","printed"))` \$B, with `r h("nber","mc_pct_negative","printed")`%
-   negative (PDF p.1). That mean NPV is **the main estimate**, derived step by step in
-   [the next section](#the-main-estimate).
-2. **SSRN 6340778** (Rauh, Jaros, Kearney, Doran and Cosso, Hoover Institution, 17 March 2026),
-   the earlier version. Headline: revenue of about \$`r h("ssrn","revenue_headline","printed")`B and
-   a mean NPV of `r num(h("ssrn","mc_mean_npv","printed"))` \$B, with
-   `r h("ssrn","mc_pct_negative","printed")`% of simulated outcomes negative (PDF p.1).
-
-Both are reproduced from the authors' own public, MIT-licensed code and data
+The analysis is reproduced from the authors' own public, MIT-licensed code and data
 ([github.com/bjaros20/wealth_tax](https://github.com/bjaros20/wealth_tax), pinned at commit
-`25e84dd`): their Excel workbooks are read cell by cell, their R scripts are ported line by line
-and also re-run unmodified, and the NBER person-level file `final.csv` is summed directly. Every
+`25e84dd`): their Excel workbook is read cell by cell, their R scripts are ported line by line
+and also re-run unmodified, and the person-level file `final.csv` is summed directly. Every
 number in this document is read from the project's `{targets}` pipeline at render time; the only
-numbers typed in are the papers' printed values we compare against, each with its PDF page
+numbers typed in are the paper's printed values we compare against, each with its PDF page
 (page numbers are PDF pages throughout).
 
 **The shape of the argument**, in one line: net present value = wealth tax collected once, minus
 the present value of the income tax that departing billionaires would have paid in every future
-year. Sections 4 and 5.1 of the paper estimate the two pieces; Sections 5.2 to 5.5 combine them.
-We follow that order, then list what the NBER revision changes.
+year. Sections 4 and 5.1 of the paper estimate the two pieces; Sections 5.2 to 5.4 combine them.
+We follow that order.
 
 ### Notation, in one place
 
@@ -131,13 +131,13 @@ We follow that order, then list what the NBER revision changes.
 | $r$ | real discount rate (the Monte Carlo's draw) | per year |
 | $g$ | real growth of the lost income tax stream | per year |
 | $\varepsilon$ | migration semi-elasticity: % of the base lost per percentage point of tax | |
-| $q$ | probability the Act survives constitutional challenge (NBER only) | probability |
+| $q$ | probability the Act survives constitutional challenge | probability |
 | NPV | $WT - f \cdot C/r$ (or $/(r-g)$), the net fiscal effect today | \$B |
 
 ## The main estimate, step by step {#the-main-estimate}
 
-The main estimate is the NBER version's mean net present value, printed as
-**`r num(h("nber","mc_mean_npv","printed"))` \$B** (NBER PDF p.1 and p.35). The authors get it from a
+The main estimate is the paper's mean net present value, printed as
+**`r num(h("nber","mc_mean_npv","printed"))` \$B** (PDF p.1 and p.35). The authors get it from a
 Monte Carlo: they draw four inputs at random 100,000 times, compute
 $NPV = WT - f \cdot C / r$ for each draw, and average. Because the four draws are independent,
 the average has an exact value too, and we build it one input at a time. Every number below is
@@ -148,7 +148,7 @@ read from the pipeline (`R/npv_mc.R`, `R/nber_final.R`); the draw ranges are the
 
 The script draws $WT \sim U[`r nb$wt_min`, `r nb$wt_max`]$ (\$B). The top, `r nb$wt_max`, is
 the revenue if the Act survives in court, after removing the seven confirmed departures. Summing
-the NBER person-level file `final.csv` gives \$`r num(nc$ceiling_recomputed, 2)`B for the same
+the authors' person-level file `final.csv` gives \$`r num(nc$ceiling_recomputed, 2)`B for the same
 quantity, so the script's round 72 is close ([mismatch 4](materials.html#mismatches)). The bottom,
 `r nb$wt_min`, is the Act struck down. The mean of the draw is
 $$E[WT] = \frac{`r nb$wt_min` + `r nb$wt_max`}{2} = `r num((nb$wt_min + nb$wt_max) / 2, 2)`.$$
@@ -198,10 +198,6 @@ than one Monte Carlo standard error (`r num(mcn$summary$sd, 1)` / $\sqrt{100{,}0
 setting. The [explorer](explorer/) moves each of the four draws, and two readings the code does
 not implement (a litigation multiplier and growth of the lost income).
 
-The earlier SSRN version runs the same formula with different draws, $WT \sim U[35, 67.51]$ and
-$f$ tied to revenue, and gets `r num(h("ssrn","mc_mean_npv","printed"))` \$B
-([Section 5.5](#section-5.5-the-monte-carlo-behind-the-headline-eq.-22-to-24)).
-
 ```{r}
 #| label: main-estimate-code
 #| echo: false
@@ -238,80 +234,110 @@ fold("Python code for the main estimate", "python", c(
 
 ## Section 4: the wealth tax revenue
 
-### 4.1 The baseline, before anyone leaves (eq. 3)
+### 4.1 The baseline, before anyone leaves (eqs. 1 and 2)
 
-$$R_{\text{baseline}} = \sum_{i=1}^{N} \tau \times \text{TaxBase}_i$$
+$$R_{\text{base}} = \sum_{i=1}^{N} \tau \times \text{TaxBase}_i, \qquad \text{TaxBase}_i = \text{NetWorth}_i - \text{TRRE}_i$$
 
 In words: take each of the $N$ = `r inp("n_billionaires")` California billionaires on the 2025
 Forbes list (with the authors' corrections), subtract their directly held residential real estate
-(the Act exempts it), multiply what is left by the `r pct(100*inp("tax_rate"),0)` rate, and add up.
-Their aggregate net worth is \$`r num(inp("baseline_net_worth"))`B. The workbook's own row-by-row
-sum gives **\$`r num(rc$baseline_precise, 2)`B**; the paper prints \$94.20B (p.10). The
-difference is [mismatch 6](materials.html#mismatches): the paper's text rounds the workbook's
-cell, and every later step then uses the typed literal `r rc$baseline_literal` rather than the
-workbook's own sum. We reproduce the code, so later steps use `r rc$baseline_literal` too.
+(TRRE, total residential real estate; the Act exempts it), multiply what is left by the
+`r pct(100*inp("tax_rate"),0)` rate, and add up. Their aggregate net worth is
+\$`r num(inp("baseline_net_worth"))`B. The authors' workbook sums this row by row to
+**\$`r num(rc$baseline_precise, 2)`B**; the paper prints \$`r num(out("revenue_baseline","printed_value"), 2)`B
+(PDF p.19, eq. 2). The difference is [mismatch 6](materials.html#mismatches).
 
-### 4.2 The six confirmed departures (eq. 4, 6 to 8)
+The tax is assessed on net worth at 31 December 2026, so the authors grow every net worth by
+`r pct(100 * inp("nber_growth_rate"), 0)` to that valuation date and rebuild the base person by
+person in `final.csv`: `r nc$n_domestic` domestic rows, face value
+**\$`r num(nc$domestic_total_grown, 2)`B** (printed \$`r out("nber_domestic_grown","printed_value")`B,
+PDF p.19). That is exactly `r num(nc$domestic_total_grown / rc$baseline_precise, 4)` times the
+workbook's \$`r num(rc$baseline_precise, 2)`B, so the person-level file and the workbook agree with
+each other, and both differ from the printed \$`r num(out("revenue_baseline","printed_value"), 2)`B. The
+`r nc$n_international` non-US-citizen residents (\$`r num(nc$international_net_worth, 1)`B of net
+worth) stay outside the base (PDF p.17).
 
-$$R_{\text{adjusted}} = \sum_{i=1}^{N} (1 - \text{Departed}_i) \times \tau \times \text{TaxBase}_i$$
+### 4.2 The collectibility principle (eq. 3)
 
-The same sum, dropping anyone publicly reported to have moved out before the 1 January 2026
-residency date: Page, Brin, Thiel, Hankey, Spielberg and Sacks (Table 6, p.11). Revenue falls to
-**\$`r num(rc$confirmed6_ceiling, 2)`B** (printed: \$`r out("revenue_confirmed6","printed_value")`B).
-The paper then asks how big a behavioural response that is. It divides the share of revenue lost
-by the rate change, in percentage points (eq. 5):
+$$E[R] = q \times R_{\text{recognized}}$$
+
+The authors count revenue only when it is "more likely than not" to be collected. They borrow this
+test from the accounting rule for uncertain tax positions in company accounts (ASC 740-10,
+PDF p.20). It works at two levels. For each taxpayer: confirmed departures, pre-filing departures
+and billionaires imputed from a Pareto curve are left out of the recognized base,
+$R_{\text{recognized}}$. For the Act as a whole: $q$ is the probability that the Act survives
+constitutional challenge, set at `r num(ncol$q, 2)` (PDF pp.19-20). That value comes from the accounting
+standard's 50% threshold, not from a legal assessment of the challenges, so it is **guesswork**.
+
+### 4.3 The seven confirmed departures (Table 7, eq. 4)
+
+Page, Brin, Thiel, Hankey, Spielberg, Kalanick and Sacks moved out between the initiative's filing
+and the 1 January 2026 residency date (Table 7, PDF p.21). Removing their
+\$`r num(nc$removed_departed_total, 2)`B leaves **\$`r num(nc$ceiling_recomputed, 2)`B** in
+`final.csv`. The paper prints \$`r out("nber_ceiling","printed_value")`B and the script
+hard-codes `r nb$wt_max` ([mismatch 4](materials.html#mismatches)): three numbers for one
+quantity. The paper then asks how big a behavioural response that is. It divides the share of
+revenue lost by the rate change, in percentage points (eq. 4, PDF p.22):
 
 $$\varepsilon = \frac{\%\Delta \text{TaxBase}}{\Delta \text{TaxRate (p.p.)}}
- = \frac{(94.20 - 67.51)/94.20}{5} = 5.67$$
+ = \frac{(100.9 - 72.06)/100.9}{5}$$
 
 ```{r}
 #| label: semi-elasticity
-#| code-summary: "R code for the implied semi-elasticities"
-eps6  <- 100 * (1 - rc$confirmed6_ceiling / rc$baseline_literal) / (100 * inp("tax_rate"))
-eps10 <- 100 * (1 - rc$expanded10_estimate / rc$baseline_literal) / (100 * inp("tax_rate"))
-c(confirmed_6 = eps6, expanded_10 = eps10)
+#| code-summary: "R code for the implied semi-elasticity"
+eps7 <- 100 * (1 - nc$ceiling_recomputed / nc$domestic_total_grown) / (100 * inp("tax_rate"))
+eps7
 ```
 
-A semi-elasticity of `r num(eps6, 2)` means that a 1-point tax rate rise drives out about
-`r num(eps6, 1)`% of the base. The authors treat this as a floor because it counts only departures
-that made the news.
+This gives `r num(eps7, 2)` (printed 5.73): a 1-point tax rate rise drives out about
+`r num(eps7, 1)`% of the base. The authors treat this as a floor, because it counts only
+departures that made the news (PDF pp.22-24).
 
-### 4.3 The expanded departures (eq. 9 to 11)
+### 4.4 The litigation discount and the collectible estimate (eqs. 5 to 8)
 
-Adding four more reported or rumoured leavers (Zuckerberg after the snapshot date; Koum, Hastings
-and Fang unconfirmed; Table 7, p.12), revenue falls to **\$`r num(rc$expanded10_estimate, 2)`B**
-(printed \$`r out("revenue_expanded10","printed_value")`B), and the implied semi-elasticity rises
-to `r num(eps10, 2)`. The paper argues that people who left after the snapshot date may still escape
-the tax, because the retroactive residency date may not survive in court (pp.12-13).
+Removing three pre-filing departures as well (\$`r num(ncol$removed_prefiling, 2)`B) leaves
+\$`r num(ncol$collectible_base, 2)`B (printed \$71.17B, PDF p.22). Mark Zuckerberg announced his
+move in February 2026, after the residency date. The authors exclude his
+\$`r num(ncol$zuckerberg, 2)`B, because collecting it depends on the retroactive date surviving in
+court. That leaves a recognized base of **\$`r num(ncol$recognized, 2)`B** (eq. 5). Multiplying by
+$q$ = `r num(ncol$q, 2)` gives
 
-### 4.4 The literature calibration (eq. 12 to 14)
+$$E[R] = q \times R_{\text{recognized}} = `r num(ncol$q, 2)` \times `r num(ncol$recognized, 2)` = `r num(ncol$central, 2)`$$
 
-$$\varepsilon_{\text{lit}} = 0.24 \times 43.00 = 10.32, \qquad
-R^{\text{lit}} = (1 - \varepsilon_{\text{lit}} \times 0.05) \times 94.20$$
+(printed \$`r h("nber","revenue_headline","printed")`B, eqs. 6 and 8, PDF p.23). Keeping
+Zuckerberg gives \$`r num(ncol$upper, 2)`B (eq. 7). Moving the gray-zone names out gives
+\$`r num(ncol$lower, 2)`B: these are the seven billionaires with departure signals short of
+confirmation, plus Jan Koum, Reed Hastings and Andy Fang, reported as considering a move
+(PDF p.23). Hence the printed range, \$`r h("nber","revenue_range_low","printed")`B to
+\$`r h("nber","revenue_range_high","printed")`B, around "approximately \$30 billion".
 
-Brülhart et al. (2022) estimate that Swiss taxable wealth falls by 43% per point of wealth tax,
-about 24% of it through people moving. The authors keep only the moving part,
-`r inp("brulhart_semi_elasticity")`, and apply it linearly to the full 5-point rate: the base shrinks
-by `r pct(100 * rc$migration_share)` and revenue is **\$`r num(rc$literature_calibrated, 2)`B**
-(printed \$`r out("revenue_literature_calibrated","printed_value")`B). Two things to notice. First,
-that is a Swiss estimate for a recurring annual tax, applied here to a one-time tax; the paper
-argues a one-time tax with easy interstate moves could provoke a *larger* response (p.14), and the
-[BSZ report](../../bsz-analysis/site/) (Boll, Saez and Zucman) disputes exactly this ([disputes row 1](https://github.com/fhoces/opa-prop40/blob/main/comparison/DISPUTES.md)).
-Second, a linear 10.32 × 5 = 51.6% loss is steeper than the log form the NBER revision later uses
-(41.1%, NBER PDF p.24).
+The Monte Carlo does not use this point estimate. It draws revenue from 0 to 72, whose mean is the
+paper's central \$`r num(h("nber","mc_expected_revenue"), 0)`B (Step 1 and
+[Section 5.4](#monte-carlo)).
 
-### 4.5 The preferred revenue estimate
+### 4.5 Validation against the literature (Table 8)
 
-The paper settles on "approximately \$`r h("ssrn","revenue_headline","printed")` billion (range:
-\$35-46 billion)" (p.14). The top of the range is the literature calibration, \$`r num(rc$literature_calibrated, 2)`B.
-The bottom comes from a judgement that the true semi-elasticity is 12 to 13 (footnote 6, p.14),
-which the authors call "plausible and conservative". The \$40B point itself is not computed
-anywhere in the authors' code; it sits near the middle of that range. **Labelled guesswork**
-in this reproduction.
+$$\eta_{\text{mig}} = 0.24 \times 43 = 10.32, \qquad \text{base lost} = 1 - (1 - 0.05)^{10.32}$$
+
+```{r}
+#| label: log-form
+#| code-summary: "R code for the literature-implied base loss"
+lit_loss <- 1 - (1 - inp("tax_rate"))^inp("brulhart_semi_elasticity")
+lit_loss
+```
+
+Brülhart et al. (2022) estimate that Swiss taxable wealth falls by about 43% per point of wealth
+tax, about 24% of it through people moving. The authors keep only the moving part,
+`r inp("brulhart_semi_elasticity")`, and apply it to the 5-point rate in log form: the base
+shrinks by **`r pct(100 * lit_loss)`** (PDF p.24). Table 8 (PDF p.25) sets this beside the observed
+28.6% from the seven confirmed departures. This check does not enter the main estimate. Two
+things to notice. First, the Swiss estimate is for a recurring annual tax. The paper argues that
+taxpayers price the Act as the start of a recurring regime, so the recurring-tax estimate is the
+right benchmark (PDF p.25). Second, the [BSZ report](../../bsz-analysis/site/) (Boll, Saez and
+Zucman) disputes exactly this transfer ([disputes row 1](https://github.com/fhoces/opa-prop40/blob/main/comparison/DISPUTES.md)).
 
 ## Section 5.1: the income tax the billionaires pay
 
-### The Pareto upper bound (eq. 15 and 16)
+### The Pareto upper bound (eqs. 9 and 10)
 
 $$N(y) = A\,y^{-\alpha}, \qquad S(k, n) = \left(\frac{k}{n}\right)^{(\alpha - 1)/\alpha}$$
 
@@ -319,12 +345,12 @@ The state publishes how many tax returns report income above \$1M, \$2M, \$3M, \
 \$10M (Franchise Tax Board, FTB below: Personal Income Tax Annual Report 2024, Table B-4A). If top incomes follow a Pareto distribution, the log
 of those counts falls on a straight line against the log of the thresholds, with slope $-\alpha$.
 The fitted line gives $\hat\alpha$ = **`r num(pf$alpha, 3)`** (printed `r out("pareto_alpha","printed_value")`,
-$R^2$ = `r num(pf$r_squared, 4)`).
+$R^2$ = `r num(pf$r_squared, 4)`, PDF p.26).
 
 ```{r}
 #| label: f-pareto
 #| code-summary: "R code for the Pareto fit figure"
-#| fig-cap: "The six published filer counts against their AGI thresholds, log-log, with the fitted Pareto line (paper Figure 1)."
+#| fig-cap: "The six published filer counts against their AGI thresholds, log-log, with the fitted Pareto line (paper Figure 1, PDF p.27)."
 #| fig-width: 6
 #| fig-height: 3.6
 d <- data.frame(y = pf$thresholds, n = pf$filer_counts)
@@ -341,25 +367,25 @@ $S(k, n)$ is the share of the bracket's income that goes to its top $k$ of $n$ f
 top `r inp("n_billionaires")` of the 4,729 filers above \$10M, the continuous formula gives
 `r pct(100 * sch$continuous_top_share)` of the bracket's \$`r inp("bracket_tax_ty23")`B of tax.
 The script then builds a rank-by-rank income schedule and rescales it by
-`r num(sch$rescale_factor, 3)` so that its top 212 match the continuous share (footnote 12: the
-discrete sum undershoots by about 11%). Scaling Tax Year 2023 to FY 2024-25 collections
+`r num(sch$rescale_factor, 3)` so that its top 212 match the continuous share (footnote 28,
+PDF p.28: the discrete sum undershoots by about 11%). Scaling Tax Year 2023 to FY 2024-25 collections
 (\$`r inp("total_pit_fy25")`B in total) multiplies by `r num(attr(itmc, "scale_factor"), 3)`. If
 the billionaires *are* the 212 highest earners, they pay **\$`r num(t8$mean_fy25[t8$K == 212], 2)`B
 a year**. That is the upper bound, and the top of $C$'s range.
 
-### The dispersion Monte Carlo (Table 8)
+### The dispersion Monte Carlo (Table 9)
 
 Billionaires are ranked by wealth, not income, and many realise little income in a given year. So
 the script places the 212 billionaires at random among the top $K$ filers (without replacement,
 100,000 draws for each $K$ from 212 to 2,000) and sums their tax. The wider the pool, the lower the
-expected total. The authors take $K \approx 500$ ("roughly the top decile of the bracket") as a
-reasonable floor, which gives the bottom of $C$'s range, \$3.3B. The choice of $K$ = 500 is a
+expected total. The authors take $K \approx 500$ ("roughly the top decile of the bracket", PDF p.28)
+as a reasonable floor, which gives the bottom of $C$'s range, \$3.3B. The choice of $K$ = 500 is a
 judgement, not an estimate, so the range $C \in [3.3, 5.8]$ is labelled **guesswork** below.
 
 ```{r}
 #| label: t-table8
 #| results: asis
-#| code-summary: "R code for Table 8"
+#| code-summary: "R code for Table 9"
 p8 <- printed[printed$table == "table8", ]
 pv <- function(k, col) p8$printed[p8$row == k & p8$column == col]
 tab8 <- t8 %>% transmute(
@@ -370,13 +396,13 @@ tab8 <- t8 %>% transmute(
 m8 <- sum(round(t8$mean_fy25, 2) == sapply(t8$K, pv, "mean")) +
       sum(round(t8$p05_fy25, 2) == sapply(t8$K, pv, "p05")) +
       sum(round(t8$p95_fy25, 2) == sapply(t8$K, pv, "p95"))
-scroll(kable(tab8, align = "rrrrrrr", caption = "Table 8, $B per year (PDF p.17)"))
+scroll(kable(tab8, align = "rrrrrrr", caption = "Table 9, $B per year (PDF p.30)"))
 ```
 
 `r m8` of the `r 3 * nrow(t8)` cells round to the printed value; the tests hold this at the printed rounding
 (`tests/testthat/test-income-tax-mc.R`).
 
-## Section 5.2: from an annual loss to a present value (eq. 17 to 20)
+## Section 5.2: from an annual loss to a present value (eqs. 11 to 14)
 
 $$PV = \frac{C}{r}, \qquad NPV = WT - f \cdot \frac{C}{r}$$
 
@@ -386,201 +412,105 @@ This is the step that makes the result. The wealth tax is collected **once**. Th
 anyone who leaves is lost **every year, for ever**, and a perpetuity paying $C$ a year is worth
 $C/r$ today. At $r$ = 1.5% a perpetuity is worth 1/0.015, about 67 years of payments; at 4.5%,
 about 22. The paper's text then argues the lost stream grows with the billionaires' wealth, making
-it a growing perpetuity, $C/(r-g)$, and calibrates $r - g$ at about 1.5% from the S&P 500's
-dividend yield (p.18).
+it a growing perpetuity, $C/(r-g)$ (PDF p.31). It calibrates $r - g$ at about 1.5% from the
+S&P 500's dividend yield, and presents scenarios at 1.5%, 3.0% and 4.5% (PDF p.32).
 
-Two things are worth knowing before reading the tables:
+Three things are worth knowing before reading the rest:
 
-- **Which rate is drawn.** Tables 9 and 10 label their rates $(r-g)$. The Monte Carlo in Sec 5.5
-  draws "$r$" and computes $C/r$. The SSRN code (`NPV_dist.R:60`) divides by the plain draw, and the
-  NBER code draws the same interval but calls it $(r-g)$
-  ([mismatches 2 and 3](materials.html#mismatches)). Numerically nothing changes, because the same
-  interval is used whatever it is called; conceptually, the interval is asked to stand for two
+- **Which rate is drawn.** The Monte Carlo's eq. 18 and the code (`NPV_dist_v8.R`) call the 1.5% to
+  4.5% draw $(r-g)$. The sentence after eq. 19 then computes $C/r$ (PDF p.35)
+  ([mismatch 3](materials.html#mismatches)). Numerically nothing changes, because the same
+  interval is used whatever it is called. Conceptually, the interval is asked to stand for two
   different things. The explorer's growth dial shows what the ambiguity is worth.
+- **The loss is not scaled by $q$.** People who left do not come back if the Act is struck down,
+  so the income tax loss stays even when the wealth tax collects nothing (PDF p.33).
 - **The horizon.** Treating the loss as permanent is itself one of the disputed choices: the
   [BSZ report](../../bsz-analysis/site/) estimates the loss as lasting about the five payment years
   ([disputes row 2](https://github.com/fhoces/opa-prop40/blob/main/comparison/DISPUTES.md)).
 
-## Section 5.3: NPV by departure scenario (Table 9)
-
-Three scenarios, each a revenue figure paired with an income tax figure, each at three rates. The
-departure share is implied by the revenue: $f = 1 - WT/94.20$, so revenue lost and income tax lost
-move together ([disputes row 6](https://github.com/fhoces/opa-prop40/blob/main/comparison/DISPUTES.md)
-questions that proportionality).
-
-```{r}
-#| label: t-table9
-#| results: asis
-#| code-summary: "R code for Table 9"
-p9 <- printed[printed$table == "table9", ]
-t9p <- t9 %>% mutate(key = paste0(scenario, "@", r)) %>% rowwise() %>% mutate(
-  pv_printed = p9$printed[p9$row == key & p9$column == "pv_lost"],
-  npv_printed = p9$printed[p9$row == key & p9$column == "npv"]) %>% ungroup()
-tab9 <- t9p %>% transmute(Scenario = label, `WT ($B)` = num(WT, 2), `C ($B)` = num(C, 2),
-  `f` = pct(100 * f), `r - g` = pct(100 * r),
-  `PV lost` = num(pv_lost), `printed` = num(pv_printed),
-  `NPV` = num(npv), `printed ` = num(npv_printed))
-m9 <- sum(abs(round(t9p$pv_lost, 1) - t9p$pv_printed) < 1e-9) + sum(abs(round(t9p$npv, 1) - t9p$npv_printed) < 1e-9)
-scroll(kable(tab9, align = "lrrrrrrrr", caption = "Table 9, $B (PDF p.19)"))
-```
-
-`r m9` of the `r 2 * nrow(t9p)` cells match the printed digit. The central scenario's \$`r inp("wt_central_scenario")`B is a
-typed literal with no derivation anywhere ([mismatch 8](materials.html#mismatches)), which is why
-the input table labels it **scenario**. Note that the headline \$`r num(h("ssrn","mc_mean_npv","printed"))`B
-is *not* a cell of this table: the central cell at 1.5% is
-`r num(t9$npv[t9$scenario=="central" & t9$r==0.015])` \$B. The headline is the Monte Carlo mean of Sec 5.5.
-
-## Section 5.4: the break-even departure share (Table 10, eq. 21)
+## Section 5.3: the break-even departure share (Table 10, eq. 15)
 
 $$x^* = \frac{WT \cdot (r - g)}{C}$$
 
-Set NPV to zero and solve for the departure share: the tax pays for itself only if fewer than
-$x^*$ of the income tax base leaves. The script computes $WT \cdot r / C$ with the drawn rate.
-
-```{r}
-#| label: t-table10
-#| results: asis
-#| code-summary: "R code for Table 10"
-p10 <- printed[printed$table == "table10", ]
-tab10 <- t10 %>% mutate(key = paste0(scenario, "@", r)) %>% rowwise() %>%
-  mutate(printed = p10$printed[p10$row == key]) %>% ungroup() %>%
-  transmute(Scenario = label, `r - g` = pct(100 * r), `x*` = pct(100 * break_even_pct),
-            printed = pct(printed))
-m10 <- sum(abs(round(100 * t10$break_even_pct, 1) -
-  sapply(paste0(t10$scenario, "@", t10$r), function(k) p10$printed[p10$row == k])) < 1e-9)
-scroll(kable(tab10, align = "lrrr", caption = "Table 10 (PDF p.20)"))
-```
-
-`r m10` of the `r nrow(t10)` cells match. A check that is not an input: plugging each $x^*$ back into the Table 9 formula
-must give an NPV of exactly zero (see [internal identities](#internal-identities)).
-
-## Section 5.5: the Monte Carlo behind the headline (eq. 22 to 24)
-
-$$WT \sim U[\$35\text{B}, \$67.1\text{B}], \quad C \sim U[\$3.3\text{B}, \$5.8\text{B}], \quad
-r \sim U[0.015, 0.045]$$
-
-$$f = 1 - WT/94.20, \qquad NPV = WT - f\cdot C/r$$
-
-Draw the three inputs independently and uniformly, 100,000 times, and average the NPV. Three
-details matter:
-
-1. **The printed upper bound 67.1 is a typo for 67.51** ([mismatch 1](materials.html#mismatches)).
-   The code uses `r ss$wt_max`; with 67.1 the printed mean does not come out.
-2. **The discount term is $C/r$, not $C/(r-g)$** (mismatch 2), over the whole 1.5% to 4.5% band.
-3. **The draw's revenue range is not the preferred revenue.** $WT \sim U[35, 67.51]$ has a mean of
-   \$`r num(h("ssrn","mc_expected_revenue"), 2)`B, above the paper's own preferred \$`r h("ssrn","revenue_headline","printed")`B,
-   because the ceiling (only the six confirmed departures) enters as the top of the draw.
-
-```{r}
-#| label: t-mc
-#| results: asis
-#| code-summary: "R code for Section 5.5"
-mk <- function(v, lab) {
-  s <- if (v == "ssrn") tr("npv_mc_ssrn_summary") else tr("npv_mc_nber_summary")
-  data.frame(Version = lab,
-    `Mean` = num(s$mean, 2), `printed` = num(h(v, "mc_mean_npv", "printed")),
-    `Median` = num(s$median, 2), `printed ` = num(h(v, "mc_median_npv", "printed")),
-    `SD` = num(s$sd, 2), `printed  ` = num(h(v, "mc_sd_npv", "printed")),
-    `% negative` = num(s$pct_negative, 2), `printed   ` = num(h(v, "mc_pct_negative", "printed")),
-    check.names = FALSE)
-}
-scroll(kable(rbind(mk("ssrn", "SSRN (p.20)"), mk("nber", "NBER (p.35)")),
-             align = "lrrrrrrrr", caption = "NPV Monte Carlo, $B, seed 2026, 100,000 draws"))
-```
-
-Our R port replays the authors' script exactly (same seed, same draw order) and agrees with an
-unmodified run of `NPV_dist.R` to machine precision. The SSRN median and share negative match
-the printed values. The mean (`r num(mcs$summary$mean, 2)` against `r num(h("ssrn","mc_mean_npv","printed"))`)
-and the standard deviation (`r num(mcs$summary$sd, 2)` against `r h("ssrn","mc_sd_npv","printed")`)
-do not quite ([mismatch 9](materials.html#mismatches)). The draws are independent, so the mean has
-a closed form:
-
-$$E[NPV] = E[WT] - \left(1 - \frac{E[WT]}{94.20}\right) E[C]\, E\!\left[\tfrac{1}{r}\right]$$
-
-$$E\!\left[\tfrac{1}{r}\right] = \frac{\ln(0.045/0.015)}{0.045 - 0.015}$$
-
-It equals **`r num(tr("npv_mc_ssrn_analytic_mean"), 3)` \$B**, which rounds to the printed
-`r num(h("ssrn","mc_mean_npv","printed"))`. So the printed mean is the model's exact expectation,
-while the shipped seed gives `r num(mcs$summary$mean, 2)`. The printed SD stays unexplained.
-
-```{r}
-#| label: f-npv
-#| code-summary: "R code for the NPV distribution figure"
-#| fig-cap: "The distribution of simulated NPV, both versions (paper Figure 3). Draws below zero in orange; the dashed line is the mean."
-#| fig-width: 8
-#| fig-height: 3.4
-dd <- rbind(data.frame(v = "SSRN, Mar 2026", npv = mcs$draws$npv),
-            data.frame(v = "NBER, Sept 2026", npv = mcn$draws$npv))
-dd$v <- factor(dd$v, levels = c("SSRN, Mar 2026", "NBER, Sept 2026"))
-mm <- dd %>% group_by(v) %>% summarise(m = mean(npv))
-ggplot(dd, aes(npv, fill = npv < 0)) +
-  geom_histogram(binwidth = 5, boundary = 0) +
-  geom_vline(data = mm, aes(xintercept = m), linetype = 2) +
-  scale_fill_manual(values = c(`TRUE` = "#eb6834", `FALSE` = "#1f6fce"), guide = "none") +
-  facet_wrap(~v) + coord_cartesian(xlim = c(-250, 70)) +
-  labs(x = "NPV, $B", y = "draws") + theme_minimal(base_size = 11)
-```
-
-## The NBER revision (September 2026)
-
-The NBER version keeps Sections 4 and 5.1 (same base, same Pareto fit, same Table 8, now numbered
-Table 9) and changes the revenue part and the Monte Carlo. Five changes, in the order they enter:
-
-1. **A later valuation date.** Net worth is grown 7% to the 31 December 2026 valuation date, and the
-   base is rebuilt person by person in `final.csv`: `r nc$n_domestic` domestic rows, face value
-   \$`r num(nc$domestic_total_grown, 2)`B (printed \$`r out("nber_domestic_grown","printed_value")`B).
-2. **Seven confirmed departures** (the six, plus Travis Kalanick): removing them leaves
-   **\$`r num(nc$ceiling_recomputed, 2)`B**. The README says \$72.06B and the script hard-codes 72
-   ([mismatch 4](materials.html#mismatches)); three numbers for one quantity. The
-   `r nc$n_international` non-US-citizen residents (\$`r num(nc$international_net_worth, 1)`B of net
-   worth) stay outside the base, now explicitly.
-3. **A litigation discount** (PDF pp.19-23, eqs. 5 to 8). Removing three pre-filing departures
-   and Zuckerberg leaves a recognized base of \$`r num(ncol$recognized, 2)`B; multiplying by
-   $q$ = `r ncol$q`, the chance the Act survives in court, gives
-   $E[R] = q \times R_{\text{recognized}}$ = **\$`r num(ncol$central, 2)`B**
-   (printed \$`r h("nber","revenue_headline","printed")`B). Keeping Zuckerberg gives
-   \$`r num(ncol$upper, 2)`B; moving the gray-zone names out (the seven
-   billionaires with departure signals short of confirmation, plus Jan Koum, Reed Hastings and
-   Andy Fang, reported as considering a move; NBER PDF p.23) gives \$`r num(ncol$lower, 2)`B,
-   the printed range \$`r h("nber","revenue_range_low","printed")`B to \$`r h("nber","revenue_range_high","printed")`B.
-   The choice of $q$ = 0.50 comes from an accounting standard for uncertain tax positions
-   (ASC 740-10), not from a legal assessment; it is **guesswork**.
-4. **The departure share is drawn on its own**, $f \sim U[`r nb$f_min`, `r nb$f_max`]$,
-   independent of revenue, "centered conservatively around the observed wealth-base departure
-   fraction" (PDF p.31).
-5. **The Monte Carlo draws revenue from zero**: $WT \sim U[0, 72]$ (PDF p.35, eq. 16). Its mean,
-   \$`r num(h("nber","mc_expected_revenue"), 0)`B, is $0.5 \times 72$, which the paper calls the
-   central estimate (PDF p.33). This is the only place $q$ appears in the code: there is no
-   explicit multiplier ([mismatch 5](materials.html#mismatches)), and a uniform draw from 0 is a
-   different assumption from a survive-or-not coin flip on a fixed base. The paper also states
-   the income tax loss is not scaled by $q$: people who left do not come back if the Act is struck
-   down (PDF p.33).
-
-The NBER break-even table, from the same `compute_npv_table10()` at the paper's central
-\$36B and \$4.55B:
+Set NPV to zero and solve for the departure share: the tax pays for itself only if less than
+$x^*$ of the income tax base leaves. The paper evaluates it at its central revenue,
+\$`r num(0.5 * nb$wt_max, 0)`B ($q \times 72$), and the midpoint income tax, \$4.55B (PDF p.33).
 
 ```{r}
 #| label: t-nber-table10
 #| results: asis
-#| code-summary: "R code for NBER Table 10"
+#| code-summary: "R code for Table 10"
 wt36 <- 0.5 * nb$wt_max
 n10 <- compute_npv_table10(scenarios = list(central = list(label = "Central", WT = wt36, C = 4.55)))
 pn <- printed[printed$table == "nber_table10", ]
+mn10 <- sum(abs(round(100 * n10$break_even_pct, 1) - pn$printed[match(paste0("central@", n10$r), pn$row)]) < 1e-9)
 scroll(kable(n10 %>% transmute(`WT ($B)` = num(WT, 0), `C ($B)` = num(C, 2), `r - g` = pct(100 * r),
                                `x*` = pct(100 * break_even_pct),
                                printed = pct(pn$printed[match(paste0("central@", r), pn$row)])),
-             align = "rrrrr", caption = "NBER Table 10 (PDF p.34)"))
+             align = "rrrrr", caption = "Table 10 (PDF p.34)"))
 ```
 
-The NBER Monte Carlo reproduces its printed summary to within Monte Carlo error with no systematic
-gap (table above). Its exact expectation is `r num(tr("npv_mc_nber_analytic_mean"), 2)` \$B, which
-rounds to `r num(tr("npv_mc_nber_analytic_mean"), 1)` rather than the printed
-`r num(h("nber","mc_mean_npv","printed"))`: here the printed value is the seeded run's, not the
+`r mn10` of the `r nrow(n10)` cells match the printed digit. The central departure share,
+$E[f]$ = `r num((nb$f_min + nb$f_max) / 2, 2)`, is above every one of them, which is why the mean
+NPV comes out negative (PDF p.34). A check that is not an input: plugging each $x^*$ back into the
+NPV formula must give exactly zero (see [internal identities](#internal-identities)).
+
+## Section 5.4: the Monte Carlo behind the headline (eqs. 16 to 19) {#monte-carlo}
+
+$$WT \sim U[\$0\text{B}, \$72\text{B}], \quad C \sim U[\$3.3\text{B}, \$5.8\text{B}], \quad
+(r - g) \sim U[0.015, 0.045], \quad f \sim U[0.30, 0.60]$$
+
+Draw the four inputs independently and uniformly, 100,000 times, and average the NPV
+(PDF p.35). Two details matter:
+
+1. **Revenue is drawn from zero.** The mean of $U[0, 72]$, \$`r num(h("nber","mc_expected_revenue"), 0)`B,
+   is $0.5 \times 72$, the paper's central estimate (PDF p.33). This is the only place $q$
+   appears in the code: there is no explicit multiplier ([mismatch 5](materials.html#mismatches)).
+   A uniform draw from 0 is a different assumption from a survive-or-not coin flip on a fixed
+   base. The two share a mean, not a distribution.
+2. **The departure share is drawn on its own**, not tied to revenue. Revenue lost and income tax
+   lost do not move together in a draw.
+
+```{r}
+#| label: t-mc
+#| results: asis
+#| code-summary: "R code for Section 5.4"
+s <- tr("npv_mc_nber_summary")
+scroll(kable(data.frame(
+  ` ` = c("reproduced (seed 2026)", "printed (PDF p.35)"),
+  `Mean` = c(num(s$mean, 2), num(h("nber", "mc_mean_npv", "printed"))),
+  `Median` = c(num(s$median, 2), num(h("nber", "mc_median_npv", "printed"))),
+  `SD` = c(num(s$sd, 2), num(h("nber", "mc_sd_npv", "printed"))),
+  `% negative` = c(num(s$pct_negative, 2), num(h("nber", "mc_pct_negative", "printed"))),
+  check.names = FALSE), align = "lrrrr",
+  caption = "NPV Monte Carlo, $B, seed 2026, 100,000 draws"))
+```
+
+Our R port replays the authors' script exactly (same seed, same draw order) and agrees with an
+unmodified run of `NPV_dist_v8.R` to machine precision (`tests/testthat/test-npv-mc.R`). The
+printed summary reproduces to within Monte Carlo error, with no systematic gap. Its exact
+expectation is `r num(tr("npv_mc_nber_analytic_mean"), 2)` \$B, which rounds to
+`r num(tr("npv_mc_nber_analytic_mean"), 1)` rather than the printed
+`r num(h("nber","mc_mean_npv","printed"))`: the printed value is the seeded run's, not the
 expectation. The explorer shows the exact expectations and says so.
+
+```{r}
+#| label: f-npv
+#| code-summary: "R code for the NPV distribution figure"
+#| fig-cap: "The distribution of simulated NPV (paper Figure 3, PDF p.35). Draws below zero in orange; the dashed line is the mean."
+#| fig-width: 7
+#| fig-height: 3.4
+ggplot(data.frame(npv = mcn$draws$npv), aes(npv, fill = npv < 0)) +
+  geom_histogram(binwidth = 5, boundary = 0) +
+  geom_vline(xintercept = mean(mcn$draws$npv), linetype = 2) +
+  scale_fill_manual(values = c(`TRUE` = "#eb6834", `FALSE` = "#1f6fce"), guide = "none") +
+  coord_cartesian(xlim = c(-250, 70)) +
+  labs(x = "NPV, $B", y = "draws") + theme_minimal(base_size = 11)
+```
 
 ## Every input, by origin {#every-input-by-origin}
 
-This section is not in either paper: it re-sorts every input by *how much evidence stands behind
+This section is not in the paper: it re-sorts every input by *how much evidence stands behind
 it*, the question a reader who wants to argue with the result has to answer first.
 
 - **data**: read off a public dataset or the authors' own person-level file, and recomputable from it.
@@ -598,10 +528,12 @@ dials <- site_dials(rc)
 dial_rows <- do.call(rbind, lapply(dials, function(d) data.frame(
   input = d$key, what = d$label, `value(s)` = paste(d$labels, collapse = "; "),
   origin = d$origin, where = "explorer dial (R/site.R)", check.names = FALSE)))
-inp_rows <- data.frame(input = inputs$input_id, what = inputs$description,
-  `value(s)` = ifelse(is.na(inputs$value), "1.5% to 4.5%", vapply(inputs$value, function(v) format(signif(v, 6)), "")),
-  origin = inputs$label, where = inputs$source, check.names = FALSE)
-odf <- rbind(inp_rows, dial_rows)
+# The first version's own rows (its script's draw ranges, its central scenario) go to the appendix.
+first_only <- inputs$version == "ssrn" | grepl("^rauh_mc_", inputs$input_id)
+inp_row <- function(x) data.frame(input = x$input_id, what = x$description,
+  `value(s)` = ifelse(is.na(x$value), "1.5% to 4.5%", vapply(x$value, function(v) format(signif(v, 6)), "")),
+  origin = x$label, where = x$source, check.names = FALSE)
+odf <- rbind(inp_row(inputs[!first_only, ]), dial_rows)
 scroll(kable(odf, caption = "Inputs by origin (export/r/inputs.csv, then the explorer's dials)"))
 ```
 
@@ -618,9 +550,13 @@ scroll(kable(cnt))
 **The headline:** `r n_guess_dials` of the `r length(dials)` inputs that move the result in the
 explorer are guesswork. The one labelled data, the revenue ceiling, rests on a legal judgement
 about who counts as having left (disputes row 3). The data and research inputs (the Forbes base,
-the FTB brackets, the Pareto fit, the Swiss semi-elasticity) fix the *scale*; whether the NPV is
-negative is decided by the guesswork: how wide the revenue draw is, where the income tax range
-stops, which rate is used, and whether the lost income tax is permanent.
+the FTB brackets, the Pareto fit) fix the *scale*; whether the NPV is negative is decided by the
+guesswork: how wide the revenue draw is, where the income tax range stops, which rate is used, and
+whether the lost income tax is permanent.^[The pipeline's input file also lists
+`r sum(first_only)` rows sourced to the authors' first version (March 2026): its revenue floor,
+its central scenario, the Swiss semi-elasticity as its workbook applies it, and its script's draw
+ranges (the same income tax and rate ranges as the dials above). The
+[appendix](#appendix-first-version) shows them.]
 
 ## What reproduces
 
@@ -628,25 +564,36 @@ stops, which rate is used, and whether the lost income tax is permanent.
 #| label: mismatch-summary
 #| results: asis
 #| code-summary: "R code for the output checks"
-o <- outputs %>% transmute(output = output_id, version, reproduced = signif(value, 6),
-  printed = printed_value, `abs diff` = signif(abs_diff, 2),
-  page = ifelse(is.na(printed_page), "NBER", printed_page))
-scroll(kable(o))
+# The chapter's PDF page for each figure it prints (typed, like the printed values).
+page_nber <- c(revenue_baseline = "19", nber_domestic_grown = "19", nber_ceiling = "21",
+               nber_international = "17", pareto_alpha = "26", income_tax_mc_k212 = "30",
+               income_tax_mc_k300 = "30", income_tax_mc_k500 = "30", npv_mc_nber_mean = "35",
+               npv_mc_nber_median = "35", npv_mc_nber_pct_negative = "35")
+ob <- outputs[outputs$output_id %in% names(page_nber), ]
+o <- ob %>% transmute(output = output_id, reproduced = signif(value, 6),
+  printed = printed_value, `abs diff` = signif(abs_diff, 2), page = page_nber[output_id])
+scroll(kable(o, row.names = FALSE))
+top_id <- ob$output_id[which.max(ob$abs_diff)]
+stopifnot(top_id == "revenue_baseline")   # the prose below names it as mismatch 6
 ```
 
 Every figure reproduces from the authors' own code to within the tolerances in
 `tests/testthat/` (printed rounding for deterministic figures, four Monte Carlo standard errors
-for simulated ones). The largest gap is `r outputs$output_id[which.max(outputs$abs_diff)]`
-(`r num(max(outputs$abs_diff), 2)`), mismatch 9.
-`r sum(grepl("^## [0-9]+\\.", readLines("../MISMATCHES.md")))` discrepancies were found between the
-papers, their READMEs and their code. We record them rather than fix them:
+for simulated ones). The largest gap is `r top_id` (`r num(max(ob$abs_diff), 2)`), the baseline
+of mismatch 6. Table 9's 21 cells and Table 10's 3 cells, shown above, match as well.^[The
+first version's own outputs are in the [appendix](#appendix-first-version).]
 
 ```{r}
 #| label: mismatch-list
 #| results: asis
 #| code-summary: "R code for the mismatch list"
-mm_lines <- grep("^## [0-9]+\\.", readLines("../MISMATCHES.md"), value = TRUE)
-cat(paste0(sub("^## ", "", mm_lines), collapse = "\n"), "\n\nFull text: [the materials page](materials.html#mismatches).\n")
+mm_lines <- sub("^## ", "", grep("^## [0-9]+\\.", readLines("../MISMATCHES.md"), value = TRUE))
+mm_first <- grepl("^[0-9]+\\. First version: ", mm_lines)
+cat(length(mm_lines), " discrepancies were found between the authors' text, their READMEs and their code. ",
+    sum(!mm_first), " of them concern the chapter. We record them rather than fix them:",
+    "^[The other ", sum(mm_first), " concern only the authors' first version: ",
+    paste(sub("First version: ", "", mm_lines[mm_first]), collapse = "; "), ".]\n\n", sep = "")
+cat(paste0(mm_lines[!mm_first], collapse = "\n"), "\n\nFull text: [the materials page](materials.html#mismatches).\n")
 ```
 
 ### Internal identities {#internal-identities}
@@ -657,37 +604,29 @@ Checks against things that are not inputs to anything:
 #| label: identities
 #| results: asis
 #| code-summary: "R code for the consistency checks"
-x10 <- t10 %>% left_join(t9 %>% select(scenario, r, WT, C), by = c("scenario", "r", "WT", "C"))
-npv_at_breakeven <- with(x10, WT - break_even_pct * C / r)
-s_cell <- site_grid_cell(grid, as.list(site_named()$ssrn))
 n_cell <- site_grid_cell(grid, as.list(site_named()$nber))
-se_s <- mcs$summary$sd / sqrt(mcs$summary$n); se_n <- mcn$summary$sd / sqrt(mcn$summary$n)
+se_n <- mcn$summary$sd / sqrt(mcn$summary$n)
 checks <- data.frame(
   identity = c(
-    "Table 10's x* plugged into Table 9's formula gives NPV = 0 (max |NPV|, $B)",
-    "Grid's SSRN cell equals the pipeline's analytic mean (abs diff, $B)",
-    "Grid's NBER cell equals the pipeline's analytic mean (abs diff, $B)",
-    "SSRN seeded MC mean vs exact expectation, in MC standard errors",
-    "NBER seeded MC mean vs exact expectation, in MC standard errors",
-    "SSRN share negative: quadrature vs seeded MC (points)",
-    "NBER share negative: quadrature vs seeded MC (points)",
-    "NBER ceiling: domestic total minus the 7 departures, recomputed minus the script's 72 ($B)"),
-  value = c(max(abs(npv_at_breakeven)),
-    abs(s_cell$mean_npv - tr("npv_mc_ssrn_analytic_mean")),
+    "Table 10's x* plugged into NPV = WT - x* C/r gives 0 (max |NPV|, $B)",
+    "Grid's main-estimate cell equals the pipeline's analytic mean (abs diff, $B)",
+    "Seeded MC mean vs exact expectation, in MC standard errors",
+    "Share negative: quadrature vs seeded MC (points)",
+    "Ceiling: domestic total minus the 7 departures, recomputed, minus the script's 72 ($B)"),
+  value = c(max(abs(with(n10, WT - break_even_pct * C / r))),
     abs(n_cell$mean_npv - tr("npv_mc_nber_analytic_mean")),
-    (mcs$summary$mean - tr("npv_mc_ssrn_analytic_mean")) / se_s,
     (mcn$summary$mean - tr("npv_mc_nber_analytic_mean")) / se_n,
-    s_cell$pct_negative - mcs$summary$pct_negative,
     n_cell$pct_negative - mcn$summary$pct_negative,
     nc$ceiling_recomputed - nb$wt_max))
 checks$value <- vapply(checks$value, function(v) format(signif(v, 3)), "")
 scroll(kable(checks))
 ```
 
-Both seeded means sit within about one Monte Carlo standard error of the exact expectation, on
-opposite sides. Which one the printed digit matches is a rounding coincidence: the SSRN printed
-`r num(h("ssrn","mc_mean_npv","printed"))` happens to equal the rounded expectation; the NBER printed
-`r num(h("nber","mc_mean_npv","printed"))` equals the rounded seeded run.
+The seeded mean sits within about one Monte Carlo standard error of the exact expectation. The
+printed `r num(h("nber","mc_mean_npv","printed"))` equals the rounded seeded run, not the rounded
+expectation, `r num(tr("npv_mc_nber_analytic_mean"), 1)`. Which one a printed digit matches is a
+rounding coincidence.^[In the authors' first version it is the other way round: its printed mean
+equals the rounded expectation (see the [appendix](#appendix-first-version)).]
 
 ## Reproducing this document
 
@@ -701,6 +640,126 @@ quarto render site/repro.qmd
 
 The authors' repository is MIT licensed but not redistributed here; the tests that re-run the
 authors' own scripts skip cleanly without it, and the rest of the suite does not need it.
+
+## Appendix: the authors' first version (March 2026) {#appendix-first-version}
+
+This appendix is not part of the account above. It records what the pipeline also reproduces:
+the authors' first version, Rauh, Jaros, Kearney, Doran and Cosso, *The Net Present Value of
+the Billionaire Tax Act*, Hoover Institution, SSRN 6340778 (17 March 2026). Page numbers in this
+appendix are that version's PDF pages. Its Pareto fit and income tax Monte Carlo are the ones in
+Section 5.1 above (its Table 8 is the chapter's Table 9). Its revenue part and its Monte Carlo
+differ.
+
+**Revenue.** It starts from the same \$`r num(out("revenue_baseline","printed_value"), 2)`B baseline,
+without growth to a valuation date or a litigation discount. Six confirmed departures leave
+\$`r num(rc$confirmed6_ceiling, 2)`B (printed \$`r out("revenue_confirmed6","printed_value")`B,
+p.11); ten reported departures leave \$`r num(rc$expanded10_estimate, 2)`B (printed
+\$`r out("revenue_expanded10","printed_value")`B, p.13). The Swiss semi-elasticity, applied
+linearly (10.32 × 5 = `r pct(100 * rc$migration_share)` of the base), gives
+\$`r num(rc$literature_calibrated, 2)`B (printed \$`r out("revenue_literature_calibrated","printed_value")`B,
+p.14). The preferred "approximately \$`r h("ssrn","revenue_headline","printed")` billion (range:
+\$35-46 billion)" (p.14) is not computed anywhere in the authors' code. Every step after the
+baseline uses a typed 94.2 rather than the workbook's 94.30 (mismatch 6).
+
+**NPV by scenario and break-even (its Tables 9 and 10).** The departure share is tied to revenue,
+$f = 1 - WT/94.2$, so revenue lost and income tax lost move together.
+
+```{r}
+#| label: t-table9
+#| results: asis
+#| code-summary: "R code for the first version's Table 9"
+p9 <- printed[printed$table == "table9", ]
+t9p <- t9 %>% mutate(key = paste0(scenario, "@", r)) %>% rowwise() %>% mutate(
+  pv_printed = p9$printed[p9$row == key & p9$column == "pv_lost"],
+  npv_printed = p9$printed[p9$row == key & p9$column == "npv"]) %>% ungroup()
+tab9 <- t9p %>% transmute(Scenario = label, `WT ($B)` = num(WT, 2), `C ($B)` = num(C, 2),
+  `f` = pct(100 * f), `r - g` = pct(100 * r),
+  `PV lost` = num(pv_lost), `printed` = num(pv_printed),
+  `NPV` = num(npv), `printed ` = num(npv_printed))
+m9 <- sum(abs(round(t9p$pv_lost, 1) - t9p$pv_printed) < 1e-9) + sum(abs(round(t9p$npv, 1) - t9p$npv_printed) < 1e-9)
+scroll(kable(tab9, align = "lrrrrrrrr", caption = "First version, Table 9, $B (its PDF p.19)"))
+```
+
+```{r}
+#| label: t-table10
+#| results: asis
+#| code-summary: "R code for the first version's Table 10"
+p10 <- printed[printed$table == "table10", ]
+tab10 <- t10 %>% mutate(key = paste0(scenario, "@", r)) %>% rowwise() %>%
+  mutate(printed = p10$printed[p10$row == key]) %>% ungroup() %>%
+  transmute(Scenario = label, `r - g` = pct(100 * r), `x*` = pct(100 * break_even_pct),
+            printed = pct(printed))
+m10 <- sum(abs(round(100 * t10$break_even_pct, 1) -
+  sapply(paste0(t10$scenario, "@", t10$r), function(k) p10$printed[p10$row == k])) < 1e-9)
+scroll(kable(tab10, align = "lrrr", caption = "First version, Table 10 (its PDF p.20)"))
+```
+
+`r m9` of the `r 2 * nrow(t9p)` Table 9 cells and `r m10` of the `r nrow(t10)` Table 10 cells
+match the printed digit. The central scenario's \$`r inp("wt_central_scenario")`B is a typed
+literal with no derivation (mismatch 8). The headline is not a cell of Table 9: the central cell
+at 1.5% is `r num(t9$npv[t9$scenario=="central" & t9$r==0.015])` \$B.
+
+**Monte Carlo (its Sec 5.5).** It draws $WT \sim U[`r ss$wt_min`, `r ss$wt_max`]$,
+$C \sim U[3.3, 5.8]$ and $r \sim U[0.015, 0.045]$, with $f = 1 - WT/94.2$. The paper prints the
+upper bound as 67.1, a typo for 67.51 (mismatch 1). The text derives a growing perpetuity, but the
+code divides by the plain rate (mismatch 2). The draw's revenue has a mean of
+\$`r num(h("ssrn","mc_expected_revenue"), 2)`B, above the preferred
+\$`r h("ssrn","revenue_headline","printed")`B.
+
+```{r}
+#| label: t-mc-first
+#| results: asis
+#| code-summary: "R code for the first version's Monte Carlo"
+s1 <- tr("npv_mc_ssrn_summary")
+scroll(kable(data.frame(
+  ` ` = c("reproduced (seed 2026)", "printed (its PDF p.20)"),
+  `Mean` = c(num(s1$mean, 2), num(h("ssrn", "mc_mean_npv", "printed"))),
+  `Median` = c(num(s1$median, 2), num(h("ssrn", "mc_median_npv", "printed"))),
+  `SD` = c(num(s1$sd, 2), num(h("ssrn", "mc_sd_npv", "printed"))),
+  `% negative` = c(num(s1$pct_negative, 2), num(h("ssrn", "mc_pct_negative", "printed"))),
+  check.names = FALSE), align = "lrrrr",
+  caption = "First version, NPV Monte Carlo, $B, seed 2026, 100,000 draws"))
+```
+
+Our R port agrees with an unmodified run of `NPV_dist.R` to machine precision. The median and
+share negative match the printed values. The mean (`r num(mcs$summary$mean, 2)` against
+`r num(h("ssrn","mc_mean_npv","printed"))`) and the standard deviation
+(`r num(mcs$summary$sd, 2)` against `r h("ssrn","mc_sd_npv","printed")`) do not quite
+(mismatch 9). The draws are independent, so the mean has a closed form:
+
+$$E[NPV] = E[WT] - \left(1 - \frac{E[WT]}{94.20}\right) E[C]\, E\!\left[\tfrac{1}{r}\right]$$
+
+It equals **`r num(tr("npv_mc_ssrn_analytic_mean"), 3)` \$B**, which rounds to the printed
+`r num(h("ssrn","mc_mean_npv","printed"))`. So the printed mean is the model's exact expectation,
+while the shipped seed gives `r num(mcs$summary$mean, 2)`. The printed SD stays unexplained.
+
+**Its outputs, inputs and checks.**
+
+```{r}
+#| label: first-version-tables
+#| results: asis
+#| code-summary: "R code for the first version's outputs, inputs and checks"
+of <- outputs[!outputs$output_id %in% names(page_nber) & outputs$version != "nber", ]
+scroll(kable(of %>% transmute(output = output_id, reproduced = signif(value, 6),
+  printed = printed_value, `abs diff` = signif(abs_diff, 2), `its page` = printed_page),
+  row.names = FALSE, caption = "First version: outputs"))
+scroll(kable(inp_row(inputs[first_only, ]), row.names = FALSE, caption = "First version: inputs"))
+x10 <- t10 %>% left_join(t9 %>% select(scenario, r, WT, C), by = c("scenario", "r", "WT", "C"))
+s_cell <- site_grid_cell(grid, as.list(site_named()$ssrn))
+se_s <- mcs$summary$sd / sqrt(mcs$summary$n)
+checks1 <- data.frame(
+  identity = c(
+    "Table 10's x* plugged into Table 9's formula gives NPV = 0 (max |NPV|, $B)",
+    "Grid's first-version cell equals the pipeline's analytic mean (abs diff, $B)",
+    "Seeded MC mean vs exact expectation, in MC standard errors",
+    "Share negative: quadrature vs seeded MC (points)"),
+  value = c(max(abs(with(x10, WT - break_even_pct * C / r))),
+    abs(s_cell$mean_npv - tr("npv_mc_ssrn_analytic_mean")),
+    (mcs$summary$mean - tr("npv_mc_ssrn_analytic_mean")) / se_s,
+    s_cell$pct_negative - mcs$summary$pct_negative))
+checks1$value <- vapply(checks1$value, function(v) format(signif(v, 3)), "")
+scroll(kable(checks1, caption = "First version: internal identities"))
+```
 
 ::: {.site-nav}
 RJKDC analysis of California Proposition 40:
