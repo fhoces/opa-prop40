@@ -18,8 +18,8 @@ step that requires sharing (1 to 5, and 8 at level 1) was then Level 0, and so w
 
 | # | Step | Level | Evidence | What the next level needs |
 |---|---|---|---|---|
-| 1 | Unified output | 1 | "One table or graph is highlighted as the best reflection": the main estimate in `site/explorer/index.html` (Table 5 row 1, base scenario: wealth tax plus extra income tax from sales minus income tax lost to leavers, present value over 5 years at 3%), shown as the headline number in the explorer's header with its definition, and a footnote that it is not the authors' choice. It replaced a preferred-estimate box (`c1c411c`, `b646791`) | Level 2 needs "a sample output published pre-release". The output was fixed in `PLAN.md` (`0b07ce7`, "Pre-specified output") and pushed in `9adcd2f` before any RJKDC result, but only to a private repo, and after this analysis's own reproduction (imported from May). Publish the spec before the next round's results |
-| 2 | Input-output link | 3 | "An interactive tool allowing for adjusted inputs is provided, and its underlying code shares the same key sections of code behind the analysis section": the 6-dial explorer's grid is computed by `score_tab5_cell()` in `R/compute_tab5.R`, the function `compute_tab5()` itself uses for the reproduction (commit `6219268`; `test-site.R` asserts both call it) | None (top level) |
+| 1 | Unified output | 1 | "One table or graph is highlighted as the best reflection": the explorer (`comparison/site/explorer/index.html`) is now the unified output. Its header shows the two main estimates next to each other, BSZ $106.8B (net total, 5 years) and RJKDC -$38.9B (NBER September 2026 mean NPV), the root page repeats the same block, and the two-bar chart under them shows the bridge's two ends under the common output (b), the net fiscal effect, which is what both main estimates measure. One footnote states the two definitions and that (b) puts them on one. The values come from `comparison/R/site.R` (tokens) and `assets/comparison-data.js` (the explorer's script), never typed. The gap on (b) is explained one disputed input at a time in the explorer's bridge | Level 2: the common outputs and the bridge direction were fixed in `2c302eb`, after both reproductions had merged, though before any comparison number; putting (b) first and the two main estimates in the headline were chosen on 2026-10-14, after the results. Publish the spec before results next time |
+| 2 | Input-output link | 3 | Interactive settings on the explorer: output ((b) by default, then (a)), method (Shapley / one order), horizon (own / 5 / 10 / 20 / 30 / 50 years / perpetuity). The horizon is a disputed input (DISPUTES row 2). The explorer's settings select precomputed views: every bar is a value `build_all()` wrote to `comparison/export/r/` by running the same `score_common()` the report derives step by step, serialized into `assets/comparison-data.js` by `site.R`. `test-site.R` asserts the data file and both pages are byte-identical to the generator's output, that the headline object and the first and last bars of the default view equal `ends.csv` on (b), and that the steps, the model difference and the September revision add up to the gap; `test-shapley.R` and `test-endpoints.R` assert the exported values are what `score_common()` returns | Met, with a caveat: one input dial (horizon), served from `build_all()` like the analyses' grids; more dials would strengthen it (e.g. r range, avoidance) |
 | 3 | Methodological accounts | 3 | "Code is clearly documented into a dynamic document": `site/repro.qmd` (knitr, folded code, every number computed) | None (top level) |
 | 4 | Data | 3 | Analytic data in the repo (`site/data/*.csv`, `export/r/*.csv`; `outputs/` is generated and gitignored). The raw workbook is not redistributed, but `DATA-SOURCES.csv` gives the URL, date and SHA-256, and `site/materials.qmd` gives the download command | None. Note that the author-shared bundle is confidential and not used by anything published |
 | 5 | Open report | 3 | "A dynamic document ... and include version control tracking": `site/repro.qmd` in git | None |
@@ -44,9 +44,11 @@ step that requires sharing (1 to 5, and 8 at level 1) was then Level 0, and so w
 
 ## Reconciliation page (site root, `comparison/`)
 
-Not a full OPA by design (it takes each analysis's contract as given), so steps 3 to 8 are scored
-on the comparison layer itself. Updated 2026-10-14 for the BSZ-shaped root page, the report and
-the materials page.
+Not a full OPA by design (it takes each analysis's contract as given), so steps 3 to 8 are
+scored on the comparison layer itself. Updated 2026-10-14 for the BSZ-shaped root page, the
+report and the materials page, then again the same day for the comparison explorer
+(`comparison/site/explorer/`), output (b) first, and both analyses cited in their latest
+version only.
 
 | # | Step | Level | Evidence | What the next level needs |
 |---|---|---|---|---|
@@ -57,7 +59,7 @@ the materials page.
 | 5 | Open report | 3 | "A dynamic document ... and include version control tracking": `comparison/site/repro.qmd` in git, rendered to `repro.html`, plus `DISPUTES.md` | None |
 | 6 | File structure | 3 | `comparison/` with `R/`, `py/`, `data/`, `export/`, `site/`, `tests/`, `README.md` (Open Materials top in the BSZ shape) | None |
 | 7 | Label inputs | 3 | 18 rows in `document-inputs.csv`, each with a label (data 7, guesswork 5, derived 4, scenario 2), a source and a page; every bridge step carries a kind | Guesswork analyst/date, as above |
-| 8 | Reproducible code | 2 | `Rscript comparison/run.R` rebuilds everything; 179 tests (counted on the materials page when it renders); `.github/workflows/comparison-ci.yml` rebuilds R and Python on a clean runner and checks the committed `index.html` is the generator's output | One click (Binder/devcontainer); CI does not render the two Quarto pages |
+| 8 | Reproducible code | 2 | `Rscript comparison/run.R` rebuilds everything, the explorer included; 214 expectations (counted on the materials page when it renders); `.github/workflows/comparison-ci.yml` rebuilds R and Python on a clean runner and the suite checks the committed `index.html`, explorer and data file are the generator's output | One click (Binder/devcontainer); CI does not render the two Quarto pages |
 | 9 | Version control | 3 | As above | None |
 
 ## Headline

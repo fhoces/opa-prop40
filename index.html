@@ -205,7 +205,7 @@
   .ai-key { font-size: 13px; color: var(--ink-2); margin: 8px 0 0; line-height: 1.8; }
   .ai-key span { margin-right: 14px; white-space: nowrap; }
   footer .credit { margin: 10px 0 0; font-size: 85%; color: var(--ink-3); }
-  /* The sections after the cards fold, closed by default, as on the side overviews.
+  /* The sections after the cards fold, closed by default, as on the analysis overviews.
      The chevron is drawn in CSS; the h2 keeps its own style inside the summary. */
   details.fold > summary { list-style: none; cursor: pointer; display: flex; align-items: center;
     gap: 12px; margin: 30px 0 0; }
@@ -222,8 +222,12 @@
   details.fold > .fold-body { margin-top: 14px; }
   details.fold:not([open]) > .fold-body { display: none; }
 
-  /* The main estimate, the same block as on the side overviews and the code review page. */
+  /* The two main estimates, the same block as on the two analysis overviews and the code
+     review page, one per analysis, next to each other. */
   .headline { display: flex; flex-direction: column; gap: 2px; margin: 28px 0 0; }
+  .hl-pair { display: flex; flex-wrap: wrap; gap: 14px 48px; }
+  .hl-pair .hl { display: flex; flex-direction: column; gap: 2px; flex: 0 1 300px; min-width: 0; }
+  .hl-pair .def { max-width: 22em; }
   .headline .name { font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
     color: var(--ink-3); font-weight: 500; }
   .headline .value { font-family: var(--serif); font-size: 40px; font-weight: 600; line-height: 1;
@@ -232,7 +236,7 @@
   .headline .fn { font-size: 12px; color: var(--ink-3); line-height: 1.45; margin: 8px 0 0; max-width: 60em; }
   .headline .fn a { color: var(--accent); }
 
-  /* The three layer cards, as on the side overviews. z-index:0 gives each card its own
+  /* The three layer cards, as on the analysis overviews. z-index:0 gives each card its own
      stacking context, so the watermark icon (z-index:-1) paints behind the card's text
      and not behind the page. */
   .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 22px 0 0; }
@@ -278,46 +282,45 @@
   <p class="byline">
     Proposition 40, the Billionaire Tax Act, would tax California's billionaires once, at 5%
     of their net worth, paid over five years. Two analyses estimate it and reach very different
-    numbers. The <a href="bsz-analysis/site/">BSZ report</a> (Boll, Saez and Zucman, with the
-    GGSS expert report by Galle, Gamage, Saez and Shanske) estimates the revenue at about
-    $100B. The <a href="rjkdc-analysis/site/">RJKDC report</a> (Rauh, Jaros, Kearney,
-    Doran and Cosso) finds a net present value of −$38.9B in its latest version, once lost
-    income tax is netted out. This page puts both on one common output and walks from one number
-    to the other, one disputed input at a time. Each analysis is also a full Open Policy Analysis
-    of its own. This page adds a reconciliation layer on top, following the
-    <a href="https://tinyurl.com/1qypbihb">Open Policy Analysis</a> (OPA) framework.
+    numbers. The <a href="bsz-analysis/site/">BSZ analysis</a> (Boll, Saez and Zucman, NBER WP
+    35218, August 2026) estimates $103.8B of wealth tax, and $106.8B net of the income tax
+    it changes. The <a href="rjkdc-analysis/site/">RJKDC analysis</a> (Rauh, Jaros, Kearney,
+    Doran and Cosso; latest version Jaros and Rauh, NBER, September 2026) finds a net present
+    value of −$38.9B once income tax lost to billionaires who leave is netted out. This page
+    puts both on one common output and walks from one number to the other, one disputed input at
+    a time. Each analysis is also a full Open Policy Analysis of its own. This page adds a
+    reconciliation layer on top, following the
+    <a href="https://doi.org/10.1093/scipol/scaa067">Open Policy Analysis</a> (OPA) framework.
   </p>
 </header>
 
 <div class="headline">
-  <span class="name">Main estimate<sup>1</sup>, the gap on the common output</span>
-  <span class="value" id="hl-main">$67.8B</span>
-  <span class="def">Defined as the difference between the two sides' gross one-time wealth tax
-    revenue once both are estimated on one definition, explained one disputed input at a time.</span>
-  <p class="fn"><sup>1</sup> Neither side reports this number. It is this OPA's reconciliation,
-    between the two ends of <a href="#the-bridge">the bridge</a>. One end is
-    <span id="hl-bsz">$103.8B</span>, the wealth tax revenue in Table 5 row 1 of the
-    <a href="bsz-analysis/site/">BSZ report</a> (NBER WP 35218, PDF p.39). The other is
-    <span id="hl-nber">$36.0B</span>, the expected revenue in the Monte Carlo of the
-    <a href="rjkdc-analysis/site/">RJKDC report</a>'s latest version (Jaros and Rauh, NBER
-    c15504, September 2026), where the revenue is drawn uniformly between zero and
-    $72B.</p>
+  <div class="hl-pair">
+    <div class="hl">
+      <span class="name">BSZ main estimate<sup>1</sup></span>
+      <span class="value" id="hl-bsz">$106.8B</span>
+      <span class="def">Net total, present value 5 years at 3%</span>
+    </div>
+    <div class="hl">
+      <span class="name">RJKDC main estimate<sup>1</sup></span>
+      <span class="value" id="hl-rjkdc">−$38.9B</span>
+      <span class="def">NBER September 2026 mean NPV</span>
+    </div>
+  </div>
+  <p class="fn"><sup>1</sup> Each analysis's own main estimate, defined its own way. The BSZ
+    analysis's is a net total over 5 years: the wealth tax ($103.8B, Table 5 row 1), plus
+    extra income tax from assets sold to pay it, minus the present value of the income tax lost
+    to billionaires who leave, counted for 5 years. BSZ's own headline is the wealth tax alone;
+    the net total is this OPA's choice, explained on the
+    <a href="bsz-analysis/site/">BSZ analysis overview</a>. The RJKDC analysis's is a perpetuity
+    net present value: the wealth tax minus the income tax lost for ever, averaged over the
+    authors' Monte Carlo draws (Jaros and Rauh, NBER c15504, September 2026). The common output
+    (b), the net fiscal effect, puts both on one definition, and the
+    <a href="comparison/site/explorer/">explorer</a> walks from one to the other. On it the BSZ
+    end is the same $106.8B, with the 5 years discounted over the RJKDC analysis's 1.5% to
+    4.5% rate range instead of at 3%. The RJKDC end is −$39.0B, the exact expectation of
+    the same Monte Carlo, of which the authors' seeded run gives −$38.9B.</p>
 </div>
-<script src="assets/comparison-data.js"></script>
-<script>
-  // Read the two ends from the bridge's data file so the number cannot drift from it:
-  // the "bsz" and "nber" bars of the default view, output (a), own horizons.
-  (function () {
-    var D = window.__BRIDGE__;
-    if (!D || !D.series || !D.series.own) return;
-    var B = D.series.own.a.shapley;
-    function end(id) { return B.filter(function (b) { return b.id === id; })[0].value; }
-    var bsz = end("bsz"), nber = end("nber");
-    document.getElementById("hl-main").textContent = "$" + (bsz - nber).toFixed(1) + "B";
-    document.getElementById("hl-bsz").textContent = "$" + bsz.toFixed(1) + "B";
-    document.getElementById("hl-nber").textContent = "$" + nber.toFixed(1) + "B";
-  })();
-</script>
 
 <div class="section-title">
   <img class="section-title-icon" src="assets/opa/opa-all.png" alt="" aria-hidden="true">
@@ -325,15 +328,16 @@
 </div>
 
 <div class="cards">
-  <a class="card wide" href="#the-bridge">
+  <a class="card wide" href="comparison/site/explorer/">
     <div class="card-row">
       <div class="card-text">
         <span class="kicker">Open Output</span>
         <h3>Explore the main estimate and its assumptions &rarr;</h3>
-        <p>The bridge on this page: a waterfall from BSZ Table 5 row 1 to the NBER expected
-        revenue, one bar per disputed input. Its controls switch the output (gross revenue or
-        net fiscal effect), how each step is sized (averaged over every order, or one order)
-        and how long the lost income tax lasts.</p>
+        <p>The explorer: the two main estimates on one definition, the net fiscal effect, and
+        the bridge between them, a waterfall from the BSZ analysis to the RJKDC analysis with
+        one bar per disputed input. Its settings switch the output (net fiscal effect or gross
+        revenue), how each step is sized (averaged over every order, or one order) and how long
+        the lost income tax lasts.</p>
       </div>
       <div class="card-icon-box" aria-hidden="true">
         <img src="assets/opa/opa-assumptions-solo.png" alt="">
@@ -345,12 +349,12 @@
     <div class="card-row">
       <div class="card-text">
         <span class="kicker">Open Analysis</span>
-        <p class="lead">One report. It reads the same exported files as this page.</p>
+        <p class="lead">One report. It reads the same exported files as this page and the explorer.</p>
         <div class="card-subgrid">
           <a class="subcard" href="comparison/site/repro.html">
             <h3>The reproduction report &rarr;</h3>
-            <p>The common output, the two ends estimated on it, the bridge step by step, the
-            Hoopes comparison and every input by origin. Each exhibit has its R code and the
+            <p>The common output, the two main estimates derived on it, the bridge step by
+            step, the Hoopes comparison and every input by origin. Each exhibit has its R code and the
             Python twin in a fold.</p>
           </a>
         </div>
@@ -377,196 +381,63 @@
   </a>
 </div>
 
-<details class="fold" id="the-bridge">
-  <summary><h2>The bridge, one disputed input at a time</h2></summary>
-  <div class="fold-body">
-<p>One estimating function, <code>score_common()</code> (<code>comparison/R/model.R</code>, with a
-Python twin), estimates both sides. Every disputed input is an argument that takes either the
-BSZ value or Rauh's. With every input at the BSZ value it returns BSZ Table 5 row
-1 exactly ($103.815B); with every input at Rauh's value it returns the expectation of
-Rauh's own Monte Carlo up to a $0.10B model difference that is shown as its own step.
-The bridge runs in the direction of Figure 2 of Hoopes (2026), the existing comparison
-<a href="#hoopes">described below</a>, from GGSS to Rauh; BSZ row 1 is the
-checkpoint. Because the inputs interact (a departure matters more when the base is larger), the
-size of a step depends on the order the inputs are switched. The default bars are <b>Shapley
-values</b>: each step's switch averaged over all 39,916,800 possible orders, so the steps add up
-exactly to the total gap whatever the reading order. "One order" shows a single sequence instead,
-the one Hoopes reads in.</p>
-<p>The bridge works on two common outputs, defined <a href="#common-output">below</a>: (a) the
-gross one-time wealth tax revenue and (b) the net fiscal effect. The main estimate at the top of
-this page is the distance between two bars of the default view, output (a): BSZ row 1
-($103.8B) and the last bar, the NBER expected revenue ($36.0B). Every bar between
-them is a step of that gap, the model difference and the NBER revision included, and together
-they add up to −$67.8B.</p>
-
-<div class="controls" id="controls">
-  <div class="control-group" role="group" aria-label="Output">
-    <span class="lbl">Output</span>
-    <button type="button" data-out="a" aria-pressed="true">(a) gross revenue</button>
-    <button type="button" data-out="b" aria-pressed="false">(b) net fiscal effect</button>
-  </div>
-  <div class="control-group" role="group" aria-label="Step sizes">
-    <span class="lbl">Steps</span>
-    <button type="button" data-method="shapley" aria-pressed="true">Shapley (all orders)</button>
-    <button type="button" data-method="sequential" aria-pressed="false">One order</button>
-  </div>
-  <div class="control-group" role="group" aria-label="Loss horizon" id="horizon-group">
-    <span class="lbl">Loss horizon</span>
-    <button type="button" data-h="own" aria-pressed="true">Each side's own</button>
-    <button type="button" data-h="common_5" aria-pressed="false">5 years</button>
-    <button type="button" data-h="common_10" aria-pressed="false">10 years</button>
-    <button type="button" data-h="common_20" aria-pressed="false">20 years</button>
-    <button type="button" data-h="common_30" aria-pressed="false">30 years</button>
-    <button type="button" data-h="common_50" aria-pressed="false">50 years</button>
-    <button type="button" data-h="common_Inf" aria-pressed="false">Perpetuity</button>
-  </div>
-</div>
-<p class="small" id="horizon-note">Each side's own horizon: the BSZ side counts the losses for 5 years (BSZ PDF p.27), Rauh in perpetuity; the horizon is then one of the bridge steps. Output (a) does not depend on the horizon.</p>
-
-<div class="chart-box" id="chart-box">
-  <div class="chart-scroll">
-  <svg class="waterfall" id="waterfall" viewBox="0 0 900 420" role="img" aria-labelledby="wf-title wf-desc">
-    <title id="wf-title">Waterfall from the BSZ estimate to the RJKDC estimate</title>
-    <desc id="wf-desc">Each bar is one step of the bridge; grey bars are the estimates themselves, light grey bars are model differences, blue bars raise and orange bars lower the estimate. The same numbers are in the table below.</desc>
-  </svg>
-  </div>
-  <div class="tip" id="tip"></div>
-</div>
-<div class="legend">
-  <span style="--c: var(--total)">an estimate</span>
-  <span style="--c: var(--up)">step that raises it</span>
-  <span style="--c: var(--down)">step that lowers it</span>
-  <span style="--c: var(--model)">model difference or rounding</span>
-</div>
-
-<p class="small">In the tables, pp means percentage points; p. and pp. mean pages.</p>
-<div class="table-scroll">
-<table id="bridge-table">
-  <thead><tr><th>Step</th><th>DISPUTES row</th><th>Kind</th><th class="num">BSZ value</th><th class="num">Rauh value</th><th class="num" id="bt-col">Step, $B</th><th class="num">Running total</th></tr></thead>
-  <tbody>
-    <tr data-id="ggss" class="total"><td>GGSS headline, as printed (GGSS p.4)</td><td></td><td></td><td class="num"></td><td class="num"></td><td class="num"></td><td class="num">$100.0B</td></tr>
-    <tr data-id="ggss_rounding" class="model"><td>GGSS round their estimate to the nearest $100B 'for simplicity' (p.4)</td><td></td><td></td><td class="num"></td><td class="num"></td><td class="num">+$3.8B</td><td class="num">$103.8B</td></tr>
-    <tr data-id="bsz" class="total"><td>BSZ Table 5 row 1 = the model at all-BSZ inputs (checkpoint)</td><td></td><td></td><td class="num"></td><td class="num"></td><td class="num"></td><td class="num">$103.8B</td></tr>
-    <tr data-id="bsz_net" class="total" style="display:none"><td>bsz_net</td><td></td><td></td><td class="num"></td><td class="num"></td><td class="num"></td><td class="num"></td></tr>
-    <tr data-id="noncitizens"><td>Non-US-citizen residents</td><td>8</td><td><span class="kind">data</span></td><td class="num">$150B</td><td class="num">$0B</td><td class="num step-neg">−$5.4B</td><td class="num">$98.4B</td></tr>
-    <tr data-id="base_list"><td>Base list and valuation date</td><td>7</td><td><span class="kind">data</span></td><td class="num">$2,157B</td><td class="num">$1,894.8B</td><td class="num step-neg">−$9.4B</td><td class="num">$89.1B</td></tr>
-    <tr data-id="real_estate"><td>Real-estate deduction</td><td>7</td><td><span class="kind">data</span></td><td class="num">0.0%</td><td class="num">0.5%</td><td class="num step-neg">−$0.3B</td><td class="num">$88.7B</td></tr>
-    <tr data-id="confirmed_departures"><td>Billionaires already departed</td><td>3</td><td><span class="kind">guesswork on data</span></td><td class="num">0.0%</td><td class="num">28.4%</td><td class="num step-neg">−$21.3B</td><td class="num">$67.4B</td></tr>
-    <tr data-id="avoidance"><td>Avoidance and evasion allowance</td><td>(not a row)</td><td><span class="kind">guesswork</span></td><td class="num">10.0%</td><td class="num">0.0%</td><td class="num step-pos">+$8.0B</td><td class="num">$75.5B</td></tr>
-    <tr data-id="one_time_as_permanent"><td>One-time tax estimated as a permanent 5 pp rate</td><td>1</td><td><span class="kind">scenario + guesswork</span></td><td class="num">none applied</td><td class="num">5 pp</td><td class="num step-neg">−$21.1B</td><td class="num">$54.4B</td></tr>
-    <tr data-id="elasticity_size"><td>Size of the mobility semi-elasticity</td><td>4</td><td><span class="kind">research + guesswork</span></td><td class="num">10.00</td><td class="num">12.58</td><td class="num step-neg">−$3.2B</td><td class="num">$51.3B</td></tr>
-    <tr data-id="income_proportional" style="display:none"><td>Lost income tax proportional to lost wealth</td><td>6</td><td><span class="kind">data vs guesswork</span></td><td class="num">0.33</td><td class="num">1.00</td><td class="num"></td><td class="num"></td></tr>
-    <tr data-id="income_level" style="display:none"><td>Billionaires' annual CA income tax</td><td>5</td><td><span class="kind">research vs guesswork</span></td><td class="num">$3.06B/yr</td><td class="num">$4.55B/yr</td><td class="num"></td><td class="num"></td></tr>
-    <tr data-id="horizon" style="display:none"><td>How long the income tax loss lasts</td><td>2</td><td><span class="kind">scenario</span></td><td class="num">5 years</td><td class="num">perpetuity</td><td class="num"></td><td class="num"></td></tr>
-    <tr data-id="asset_sales" style="display:none"><td>Extra income tax from selling assets to pay</td><td>(not a row)</td><td><span class="kind">guesswork</span></td><td class="num">1/3</td><td class="num">0%</td><td class="num"></td><td class="num"></td></tr>
-    <tr data-id="rauh_resid" class="model"><td>Model difference: Rauh's Monte Carlo uses the rounded literals 94.2 and 67.51 where the model uses the workbook's own 94.304 and 67.511</td><td></td><td></td><td class="num"></td><td class="num"></td><td class="num">−$0.00B</td><td class="num">$51.3B</td></tr>
-    <tr data-id="rauh" class="total"><td>Rauh SSRN: expected revenue in the Monte Carlo (Mar 2026)</td><td></td><td></td><td class="num"></td><td class="num"></td><td class="num"></td><td class="num">$51.3B</td></tr>
-    <tr data-id="nber_step"><td>NBER revision: litigation-survival weight, 7% grown base, departure fraction drawn separately</td><td></td><td></td><td class="num"></td><td class="num"></td><td class="num step-neg">−$15.3B</td><td class="num">$36.0B</td></tr>
-    <tr data-id="nber" class="total"><td>Jaros and Rauh NBER: expected revenue in the Monte Carlo (Sep 2026)</td><td></td><td></td><td class="num"></td><td class="num"></td><td class="num"></td><td class="num">$36.0B</td></tr>
-  </tbody>
-</table>
-</div>
-<p class="small">Step values in this table follow the controls above; with JavaScript off they show
-(a), Shapley, each side's own horizon. Kinds follow the OPA input taxonomy: <b>data</b> (settled
-by observable facts), <b>research</b> (a published estimate), <b>guesswork</b> (asserted without
-data or a study behind it) and <b>scenario</b> (a choice of which world is estimated). The
-inputs and every page reference are in <code>comparison/export/r/inputs.csv</code>.</p>
-
-<h3>What the Shapley and one-order steps say</h3>
-<ul>
-  <li>Output (a) falls from $103.8B to $51.3B. The three largest Shapley steps are billionaires already departed (−$21.3B, guesswork on data); one-time tax estimated as a permanent 5 pp rate (−$21.1B, scenario + guesswork); base list and valuation date (−$9.4B, data).</li>
-  <li>One step favours the BSZ side's number going up: Rauh applies no avoidance or evasion allowance beyond migration (his semi-elasticity is the migration share of Brulhart et al.'s response, Rauh pp.13-14), so dropping GGSS's 10% adds +$8.0B (Shapley). DISPUTES.md does not list this as a row.</li>
-  <li>Order matters most for estimating the one-time tax as a permanent 5-percentage-point rate: −$21.1B averaged over all orders, −$10.2B in the one order shown. Rauh's revenue is uniform between a confirmed-departures ceiling and an elasticity floor, so the elasticity bites only on top of whatever departures are already in: the step is large when switched early and smaller when switched after the departures.</li>
-  <li>For output (b) the horizon is the single largest step read in Hoopes's order (−$66.5B, the last switch, when the loss is already Rauh-sized) but only −$27.1B averaged over orders, because a perpetuity multiplies whatever annual loss the other inputs imply. The annual loss runs from $0.15B (BSZ) to $2.07B (Rauh).</li>
-  <li>Model differences are small and shown, not hidden: −$0.0003B on (a) and +$0.10B on (b), from Rauh's rounded literals (MISMATCHES #6 in rjkdc-analysis). Rauh's printed −$24.7B is the expectation of his Monte Carlo (−$24.707B); his seed-2026 run gives −$24.77B.</li>
-  <li>The NBER revision is one further step: −$15.3B on (a) and −$14.3B on (b). Its printed −$38.9B is one Monte Carlo run; the expectation is −$38.98B.</li>
-</ul>
-
-<h3 id="open-question">Which of Rauh's revenue numbers is output (a)?</h3>
-<p>Rauh et al. print four different revenue figures. We take the one consistent with the
-−$24.7B headline, the expected revenue in the same Monte Carlo, because it is the revenue the
-headline NPV actually assumes. Using any of the others would add a further step of the size shown. WT is the one-time wealth
-tax revenue.</p>
-<div class="table-scroll">
-<table>
-  <thead><tr><th>Candidate</th><th class="num">Value</th><th>Where</th><th class="num">Extra step vs the bridge endpoint</th></tr></thead>
-  <tbody>
-    <tr class="total"><td>Expected WT in the Monte Carlo behind the -24.7 mean NPV (used)</td><td class="num">$51.26B</td><td>Rauh p.20 eq.22 (with the code's 67.51 ceiling)</td><td class="num">none</td></tr>
-    <tr><td>Literature-calibrated (semi-elasticity 10.32)</td><td class="num">$45.59B</td><td>Rauh p.14 eq.13</td><td class="num">−$5.66B</td></tr>
-    <tr><td>Table 9 central scenario</td><td class="num">$42.00B</td><td>Rauh p.19 Table 9</td><td class="num">−$9.26B</td></tr>
-    <tr><td>Preferred estimate, 'about $40 billion'</td><td class="num">$40.00B</td><td>Rauh p.1 abstract, p.14</td><td class="num">−$11.26B</td></tr>
-  </tbody>
-</table>
-</div>
-<p class="small" style="margin-top:14px;">Every number on this page is computed by
-<code>comparison/R/</code> from the two sides' export contracts (<code>bsz-analysis/export/r/</code>,
-<code>rjkdc-analysis/export/r/</code>: the files each side's pipeline writes for others to read)
-and the page-referenced transcriptions in <code>comparison/data/</code>. A Python twin reproduces
-them (R and Python agree to 1e-9 on every exported number; see comparison/tests). The <a href="comparison/site/repro.html">reproduction report</a> derives
-each one step by step, and the <a href="comparison/site/materials.html">materials page</a> is a
-guide to the code, tests and files.</p>
-  </div>
-</details>
-
 <details class="fold" id="common-output">
   <summary><h2>A common output definition</h2></summary>
   <div class="fold-body">
-<p>The two headlines answer different questions. The BSZ side (Boll, Saez and Zucman, plus the
-GGSS expert report by Galle, Gamage, Saez and Shanske) reports how much the
-one-time tax collects; the RJKDC side reports a net present value that subtracts income tax
-lost for ever. Before any step of a bridge means anything, both are put on the same two outputs:</p>
+<p>The two headlines answer different questions. The BSZ analysis (Boll, Saez and Zucman)
+reports how much the one-time tax collects. The RJKDC analysis reports a net present value that
+subtracts income tax lost for ever. Before any step of a bridge means anything, both are put on
+the same two outputs. The explorer opens on (b), the net fiscal effect, because it is the
+question both main estimates answer; (a) is the secondary setting.</p>
 
-<div class="formula">(a) gross revenue    = one-time wealth tax collected
-(b) net fiscal effect = (a) + extra income tax from assets sold to pay
-                        - present value of income tax lost to departures, over a horizon of H years</div>
+<div class="formula">(b) net fiscal effect = (a) + extra income tax from assets sold to pay
+                        - present value of income tax lost to departures, over a horizon of H years
+(a) gross revenue     = one-time wealth tax collected</div>
 
 <p>The horizon H is itself disputed (row 2 of the project's list of 8 disputed inputs,
-<a href="comparison/DISPUTES.md">comparison/DISPUTES.md</a>): the BSZ side counts the losses for
-about the 5 payment years, the RJKDC side for ever. It is therefore a dial on the bridge
-below, not a fixed choice. Discounting uses the RJKDC report's own range for the discount
-rate, r uniform between 1.5% and 4.5% (Rauh p.20 eq.24); the BSZ side takes no
-position on r.</p>
+<a href="comparison/DISPUTES.md">comparison/DISPUTES.md</a>). The BSZ analysis counts the
+losses for about the 5 payment years, the RJKDC analysis for ever. It is therefore a setting on
+the <a href="comparison/site/explorer/">explorer</a>'s bridge, not a fixed choice. Discounting
+uses the RJKDC analysis's own range for the discount rate, r uniform between 1.5% and
+4.5%. The BSZ analysis takes no position on r.</p>
   </div>
 </details>
 
 <details class="fold" id="two-analyses">
-  <summary><h2>Two analyses, two estimates each</h2></summary>
+  <summary><h2>The two analyses on the common output</h2></summary>
   <div class="fold-body">
 <div class="subopa-cards">
   <a class="subopa-card" href="bsz-analysis/site/">
-    <span class="kicker">BSZ side: a revenue estimate</span>
-    <h3>Galle, Gamage, Saez, Shanske; Boll, Saez, Zucman &rarr;</h3>
+    <span class="kicker">BSZ analysis: a revenue estimate</span>
+    <h3>Boll, Saez, Zucman, NBER WP 35218 (Aug 2026) &rarr;</h3>
     <p>Static estimation on the Forbes list with a 10% avoidance allowance.</p>
-    <span class="headline">GGSS (20 Jul 2026): $100B (estimated at $103.8B, rounded)</span>
-    <span class="headline">BSZ (Aug 2026), Table 5 row 1: $103.8B</span>
+    <span class="headline">Main estimate, net total: $106.8B</span>
+    <span class="headline">Table 5 row 1, wealth tax: $103.8B</span>
     <div class="card-icon-box" aria-hidden="true"><img src="assets/opa/opa-assumptions-solo.png" alt=""></div>
   </a>
   <a class="subopa-card" href="rjkdc-analysis/site/">
-    <span class="kicker">RJKDC side: a net present value estimate</span>
-    <h3>Rauh, Jaros, Kearney, Doran, Cosso &rarr;</h3>
+    <span class="kicker">RJKDC analysis: a net present value estimate</span>
+    <h3>Jaros and Rauh, NBER c15504 (Sep 2026) &rarr;</h3>
     <p>Person-by-person base, observed departures, literature elasticities, lost income tax.</p>
-    <span class="headline">SSRN (17 Mar 2026): mean NPV −$24.7B</span>
-    <span class="headline">NBER (Sep 2026): mean NPV −$38.9B</span>
+    <span class="headline">Main estimate, mean NPV: −$38.9B</span>
     <div class="card-icon-box" aria-hidden="true"><img src="assets/opa/opa-details.png" alt=""></div>
   </a>
 </div>
 
 <div class="table-scroll">
 <table>
-  <thead><tr><th>Estimate</th><th class="num">(a) gross revenue</th><th class="num">(b) net fiscal effect</th><th>What the authors print</th></tr></thead>
+  <thead><tr><th>Analysis</th><th class="num">(b) net fiscal effect</th><th class="num">(a) gross revenue</th><th>What the authors print</th></tr></thead>
   <tbody>
-    <tr><td>GGSS expert report (20 Jul 2026)</td><td class="num">$100B</td><td class="num">not computed</td><td>$104B estimate, rounded to $100B (p.4)</td></tr>
-    <tr><td>BSZ NBER WP 35218, Table 5 row 1 (Aug 2026)</td><td class="num">$103.8B</td><td class="num">$106.8B</td><td>$104B revenue (PDF p.39); no net figure</td></tr>
-    <tr><td>Rauh et al., SSRN 6340778 (17 Mar 2026)</td><td class="num">$51.26B</td><td class="num">−$24.71B</td><td>mean NPV −$24.7B (p.20); revenue 'about $40B' (p.14)</td></tr>
-    <tr><td>Jaros and Rauh, NBER c15504 (Sep 2026)</td><td class="num">$36.0B</td><td class="num">−$38.98B</td><td>mean NPV −$38.9B; revenue 'approximately $30B' (p.1)</td></tr>
+    <tr><td>BSZ analysis: Boll, Saez and Zucman, NBER WP 35218, Table 5 row 1 (Aug 2026)</td><td class="num">$106.8B</td><td class="num">$103.8B</td><td>$104B revenue (PDF p.39); no net figure</td></tr>
+    <tr><td>RJKDC analysis: Jaros and Rauh, NBER c15504 (Sep 2026)</td><td class="num">−$38.98B</td><td class="num">$36.0B</td><td>mean NPV −$38.9B; revenue 'approximately $30B' (p.1)</td></tr>
   </tbody>
 </table>
 </div>
-<p class="small">(b) for the BSZ side is not printed by either paper: it is BSZ Table 5 row 1's
-own three columns combined here, the $103.8B revenue plus $3.68B of extra income tax from
-asset sales minus $0.70B, the present value of five years of its $0.15B annual income tax
-loss. Rauh's (a) is the expected revenue in the Monte Carlo that produces his −$24.7B; the
-other revenue numbers he prints are listed under the bridge.</p>
+<p class="small">(b) for the BSZ analysis is not printed by the paper. It is Table 5 row 1's own
+three columns combined here: the $103.8B revenue, plus $3.68B of extra income tax from asset
+sales, minus $0.70B, the present value of five years of its $0.15B annual income tax loss.
+For the RJKDC analysis both outputs are the exact expectations of the authors' Monte Carlo,
+whose revenue is drawn uniformly between zero and $72B.</p>
   </div>
 </details>
 
@@ -574,12 +445,15 @@ other revenue numbers he prints are listed under the bridge.</p>
   <summary><h2 id="hoopes">The existing comparison: Hoopes (2026)</h2></summary>
   <div class="fold-body">
 <p>Jeffrey Hoopes, "Galle v Rauh: Comparing Two Revenue Estimates for California Billionaire
-Taxation" (SSRN 6428578, 7 pages), is the one published side-by-side of the two estimates. His
-Figure 2 (p.6) is a waterfall from the "Galle estimate" to "Rauh net fiscal effect". It prints no
+Taxation" (SSRN 6428578, 7 pages), is the one published comparison of the two estimates. It
+compares their earlier versions: the February 2026 text of the GGSS expert report (Galle,
+Gamage, Saez and Shanske), on which the BSZ analysis builds, and the March 2026 version of the
+RJKDC analysis (Rauh et al., SSRN). His Figure 2 (p.6) is a waterfall from the "Galle estimate" to "Rauh net fiscal effect". It prints no
 values, so the numbers in its column below are <b>read off the chart</b>: bar edges measured in a
 300 dpi raster against the y-axis ticks (tick fit within $0.1B; reading uncertainty about
 $0.6B per bar; script <code>comparison/tools/digitize_hoopes_fig2.py</code>). Beside them
-is our bridge read in the same order, starting at the same printed $100B.</p>
+is our bridge read in the same order, starting at the same printed $100B and ending at the
+March 2026 version, before the September revision.</p>
 <p class="small">Disclosures from the note itself: Hoopes states his priors, "To lay my cards on
 the table, I believe that the world is complicated, and that when possible, empirical analysis
 should be done in as detailed a way as possible" (p.2), and thanks "David Gamage for encouraging
@@ -598,7 +472,7 @@ me to read both of these analyses carefully and compare the two" (p.1); Gamage i
     <tr><td>Real estate exclusion</td><td class="num">−$1.1B &plusmn; 0.8</td><td class="num">−$0.2B</td><td class="small">Real-estate deduction</td></tr>
     <tr><td>(no bar)</td><td class="num">none</td><td class="num">−$0.0003B</td><td class="small">Model difference (Rauh's rounded literals)</td></tr>
     <tr><td>Income tax loss</td><td class="num">−$71.5B &plusmn; 0.6</td><td class="num">−$76.0B</td><td class="small">Rauh's own NPV minus his own expected revenue (all income-tax steps together)</td></tr>
-    <tr class="total"><td>End: Rauh net fiscal effect</td><td class="num">−$24.3B</td><td class="num">−$24.71B</td><td class="small">Rauh SSRN mean NPV</td></tr>
+    <tr class="total"><td>End: Rauh net fiscal effect</td><td class="num">−$24.3B</td><td class="num">−$24.71B</td><td class="small">the March 2026 version&rsquo;s mean NPV</td></tr>
   </tbody>
 </table>
 </div>
@@ -606,15 +480,15 @@ me to read both of these analyses carefully and compare the two" (p.1); Gamage i
 <h3>Every difference</h3>
 <ul>
   <li><b>Vintage.</b> Hoopes's estimate uses the February GGSS text: 213 billionaires, $2,182B of wealth, $109B gross, $99B after 10% avoidance, rounded up to $100B (p.3 fn.1). The July GGSS text covers 250 billionaires and $2,307B: $103.8B after avoidance, rounded down to $100B. The same printed headline hides a rounding of +$1B in one vintage and of −$3.8B in the other.</li>
-  <li><b>Residency.</b> His bar is −$12.6B, close to Rauh's own −$12.84B for dropping Ellison, Houston and Snyder and adding Sacks (Rauh p.5). By July the BSZ side has itself dropped Ellison, so our step is a different quantity: the $150B of non-US-citizen residents Rauh omits plus the list and valuation-date difference, −$18.5B in one order.</li>
+  <li><b>Residency.</b> His bar is −$12.6B, close to Rauh's own −$12.84B for dropping Ellison, Houston and Snyder and adding Sacks (Rauh p.5). By July the BSZ analysis has itself dropped Ellison, so our step is a different quantity: the $150B of non-US-citizen residents Rauh omits plus the list and valuation-date difference, −$18.5B in one order.</li>
   <li><b>Confirmed departures.</b> His bar is −$17.0B; Rauh's own step is −$26.69B before avoidance (94.2 to 67.51, p.11), and ours is −$24.2B at that point of the order. We could not trace his figure to a number in Rauh et al.</li>
-  <li><b>Additional movers.</b> His −$12.5B matches Rauh's expanded ten-departure estimate (67.51 to 55.1, a step of −$12.41B, pp.12-13). Rauh's own −$24.7B headline does not use that estimate, so our bridge has no such step.</li>
+  <li><b>Additional movers.</b> His −$12.5B matches Rauh's expanded ten-departure estimate (67.51 to 55.1, a step of −$12.41B, pp.12-13). The March 2026 version's own −$24.7B mean NPV does not use that estimate, so our bridge has no such step.</li>
   <li><b>Behaviour.</b> His −$9.2B is close to Rauh's step from the expanded estimate to the literature calibration (55.1 to 45.59, −$9.51B, p.14). Ours, −$9.5B in one order, nets three labelled steps: dropping the 10.0% avoidance allowance (up), estimating the one-time tax as a permanent rate (down) and the elasticity from 10.00 to 12.58 (down).</li>
   <li><b>Real estate.</b> His bar is drawn near zero (−$1.1B &plusmn; 0.8 read off the chart), while his text says the exclusion reduces the base by about $8B (p.4). The two are consistent: $8B of base is about $0.4B of revenue at 5%. Ours is −$0.24B.</li>
-  <li><b>Level before income tax.</b> His revenue level before the income-tax bar is about $47.2B; Rauh's preferred estimate is 'about $40B' (p.14) and the expected revenue in the Monte Carlo behind the headline is $51.26B. Our bridge uses the last, $51.26B.</li>
-  <li><b>Income tax.</b> His single bar, −$71.5B, ends at −$24.3B, close to Rauh's −$24.7B. Rauh's own expected present value of lost income tax is −$75.96B against $51.26B of revenue, so with a different starting level his bar works as a plug. We split it into four labelled steps (proportionality, the income tax level, the horizon, asset-sale tax), which interact with the base steps.</li>
+  <li><b>Level before income tax.</b> His revenue level before the income-tax bar is about $47.2B; Rauh's preferred estimate is 'about $40B' (p.14) and the expected revenue in the Monte Carlo behind its mean NPV is $51.26B. Our bridge uses the last, $51.26B.</li>
+  <li><b>Income tax.</b> His single bar, −$71.5B, ends at −$24.3B, close to the March 2026 version's −$24.7B. That version's own expected present value of lost income tax is −$75.96B against $51.26B of revenue, so with a different starting level his bar works as a plug. We split it into four labelled steps (proportionality, the income tax level, the horizon, asset-sale tax), which interact with the base steps.</li>
   <li><b>Order and labels.</b> His is one sequential order, with no provenance labels; ours shows Shapley averages over all orders as well as one order, with each step labelled data, research, guesswork or scenario.</li>
-  <li><b>Steps he does not have.</b> The non-US-citizen residents, the BSZ side's avoidance allowance being dropped, the asset-sale income tax, and the NBER revision (which postdates his note).</li>
+  <li><b>Steps he does not have.</b> The non-US-citizen residents, the BSZ analysis's avoidance allowance being dropped, the asset-sale income tax, and the September 2026 revision (which postdates his note).</li>
 </ul>
   </div>
 </details>
@@ -622,9 +496,11 @@ me to read both of these analyses carefully and compare the two" (p.1); Gamage i
 <details class="fold" id="vintage-gap">
   <summary><h2>The vintage gap</h2></summary>
   <div class="fold-body">
-<p>The documents were written months apart, and the BSZ side has moved twice since the
-RJKDC report. Some of the March disputes are settled on the BSZ side by August (Larry
-Ellison's exclusion, the non-citizen residents); others are not.</p>
+<p>This site cites each analysis in its latest version: BSZ, August 2026, and Jaros and Rauh,
+September 2026. The documents below were written months apart, and the earlier ones are listed
+because the Hoopes comparison and some input sources refer to them. Some of the March disputes
+are settled in the BSZ analysis by August (Larry Ellison's exclusion, the non-citizen
+residents); others are not.</p>
 <div class="table-scroll">
 <table>
   <thead><tr><th>Document</th><th>Date</th><th>Base it uses</th></tr></thead>
@@ -647,10 +523,12 @@ Ellison's exclusion, the non-citizen residents); others are not.</p>
   <div class="fold-body">
 <p>One bridge step per row of <a href="comparison/DISPUTES.md">comparison/DISPUTES.md</a>, where
 every page reference was checked against the PDFs; row 7 is split into its two parts, and two
-steps cover inputs the crosswalk does not list as rows.</p>
+steps cover inputs the crosswalk does not list as rows. The RJKDC values are those of its March
+2026 version, where the inputs are published; the September 2026 revision is the bridge's last
+step.</p>
 <div class="table-scroll">
 <table>
-  <thead><tr><th>Row</th><th>Dispute</th><th>Kind</th><th>BSZ value and source</th><th>Rauh value and source</th></tr></thead>
+  <thead><tr><th>Row</th><th>Dispute</th><th>Kind</th><th>BSZ value and source</th><th>RJKDC value and source</th></tr></thead>
   <tbody>
     <tr><td>8</td><td>Non-US-citizen residents</td><td><span class="kind">data</span></td><td class="small"><b>$150B</b>. GGSS 20 Jul 2026 p.2 fn.1 (24 people, about $150B); BSZ PDF p.54 ($132B at 1 Jan)</td><td class="small"><b>$0B</b>. omitted: Forbes CA-residence field (Rauh p.4; DISPUTES row 8)</td></tr>
     <tr><td>7</td><td>Base list and valuation date</td><td><span class="kind">data</span></td><td class="small"><b>$2,157B</b>. BSZ export baseline_net_worth ($2,307B, 1 Jul 2026; BSZ PDF p.24, GGSS p.4) minus the non-citizens</td><td class="small"><b>$1,894.8B</b>. RJKDC export baseline_net_worth (212 billionaires, 2025 Forbes list; Rauh pp.4-5)</td></tr>
@@ -678,28 +556,27 @@ rounded 94.2 rather than 94.304.</p>
 <p><b>LAO (neutral context).</b> The Legislative Analyst's ballot analysis gives no point estimate:
 the tax "probably would collect tens of billions of dollars", and responses "probably would reduce
 state revenues by less than $1 billion per year" (LAO p.2). It enters here only as context.
-<b>Walczak / California Tax Foundation (22 Apr 2026)</b> is same-side work on the RJKDC side,
-credited as an alternative dial on the annual loss, never merged into Rauh's headline: his
-$3.53-4.49B per year includes spillovers to sales and other taxes (p.1). On one scale,
+<b>Walczak / California Tax Foundation (22 Apr 2026)</b> points the same way as the RJKDC
+analysis and is credited as an alternative dial on the annual loss, never merged into its
+headline: his $3.53-4.49B per year includes spillovers to sales and other taxes (p.1). On one scale,
 where E[&middot;] is an average over the Monte Carlo draws, WT the one-time wealth tax revenue, f
 the share of the income tax base that leaves and C the annual income tax it pays:</p>
 <div class="table-scroll">
 <table>
-  <thead><tr><th>Annual income tax loss</th><th>Side</th><th class="num">Per year</th><th class="num">PV, 5 years</th><th class="num">PV, perpetuity</th><th class="num">Rauh's E[WT] net of it (perpetuity)</th></tr></thead>
+  <thead><tr><th>Annual income tax loss</th><th>Analysis</th><th class="num">Per year</th><th class="num">PV, 5 years</th><th class="num">PV, perpetuity</th><th class="num">RJKDC E[WT] net of it (perpetuity)</th></tr></thead>
   <tbody>
-    <tr><td>BSZ Table 5 row 1 (benchmark) <span class="small">(BSZ PDF p.39)</span></td><td>bsz</td><td class="num">$0.15B</td><td class="num">$0.7B</td><td class="num">$5.6B</td><td class="num">$45.6B</td></tr>
-    <tr><td>BSZ Table 5 row 3 (aggressive leavers) <span class="small">(BSZ PDF p.39)</span></td><td>bsz</td><td class="num">$0.52B</td><td class="num">$2.4B</td><td class="num">$18.9B</td><td class="num">$32.4B</td></tr>
-    <tr><td>LAO ballot analysis (upper bound, 'less than $1 billion') <span class="small">(LAO p.2)</span></td><td>neutral</td><td class="num">$1.00B</td><td class="num">$4.6B</td><td class="num">$36.6B</td><td class="num">$14.6B</td></tr>
-    <tr><td>Rauh SSRN: E[f] x E[C] <span class="small">(Rauh p.20)</span></td><td>rjkdc</td><td class="num">$2.07B</td><td class="num">$9.5B</td><td class="num">$76.0B</td><td class="num">−$24.7B</td></tr>
-    <tr><td>Rauh NBER: E[f] x E[C] <span class="small">(NBER p.35)</span></td><td>rjkdc</td><td class="num">$2.05B</td><td class="num">$9.4B</td><td class="num">$75.0B</td><td class="num">−$23.7B</td></tr>
-    <tr><td>Walczak / CalTax, low (incl. spillovers) <span class="small">(Walczak p.1)</span></td><td>rjkdc (credited dial)</td><td class="num">$3.53B</td><td class="num">$16.2B</td><td class="num">$129.3B</td><td class="num">−$78.0B</td></tr>
-    <tr><td>Walczak / CalTax, high (incl. spillovers) <span class="small">(Walczak p.1)</span></td><td>rjkdc (credited dial)</td><td class="num">$4.49B</td><td class="num">$20.6B</td><td class="num">$164.4B</td><td class="num">−$113.2B</td></tr>
+    <tr><td>BSZ Table 5 row 1 (benchmark) <span class="small">(BSZ PDF p.39)</span></td><td>BSZ</td><td class="num">$0.15B</td><td class="num">$0.7B</td><td class="num">$5.6B</td><td class="num">$30.4B</td></tr>
+    <tr><td>BSZ Table 5 row 3 (aggressive leavers) <span class="small">(BSZ PDF p.39)</span></td><td>BSZ</td><td class="num">$0.52B</td><td class="num">$2.4B</td><td class="num">$18.9B</td><td class="num">$17.1B</td></tr>
+    <tr><td>LAO ballot analysis (upper bound, 'less than $1 billion') <span class="small">(LAO p.2)</span></td><td>neutral</td><td class="num">$1.00B</td><td class="num">$4.6B</td><td class="num">$36.6B</td><td class="num">−$0.6B</td></tr>
+    <tr><td>RJKDC, Jaros and Rauh NBER: E[f] x E[C] <span class="small">(NBER p.35)</span></td><td>RJKDC</td><td class="num">$2.05B</td><td class="num">$9.4B</td><td class="num">$75.0B</td><td class="num">−$39.0B</td></tr>
+    <tr><td>Walczak / CalTax, low (incl. spillovers) <span class="small">(Walczak p.1)</span></td><td>RJKDC (credited dial)</td><td class="num">$3.53B</td><td class="num">$16.2B</td><td class="num">$129.3B</td><td class="num">−$93.3B</td></tr>
+    <tr><td>Walczak / CalTax, high (incl. spillovers) <span class="small">(Walczak p.1)</span></td><td>RJKDC (credited dial)</td><td class="num">$4.49B</td><td class="num">$20.6B</td><td class="num">$164.4B</td><td class="num">−$128.4B</td></tr>
   </tbody>
 </table>
 </div>
 <p class="small">Present values use the same r range as the bridge. The last column puts each
-loss against Rauh's own expected revenue, $51.26B, in perpetuity: the Walczak rows are the
-credited dial, the others are for scale.</p>
+loss against the RJKDC analysis's expected revenue (September 2026), $36.0B, in perpetuity:
+the Walczak rows are the credited dial, the others are for scale.</p>
   </div>
 </details>
 
@@ -707,9 +584,9 @@ credited dial, the others are for scale.</p>
   <summary><h2>The two full analyses</h2></summary>
   <div class="fold-body">
 <ul>
-  <li><a href="bsz-analysis/site/">BSZ side</a>: GGSS and BSZ reproduced from the BSZ workbook, with an explorer over Table 5's guesswork inputs, a report, slides and materials.</li>
-  <li><a href="rjkdc-analysis/site/">RJKDC side</a>: Rauh et al. (SSRN) and Jaros and Rauh (NBER) reproduced from the authors' public code.</li>
-  <li><a href="comparison/DISPUTES.md">The disputes crosswalk</a> and the reconciliation's code, tests and exports in <code>comparison/</code>, with a guide on the <a href="comparison/site/materials.html">materials page</a>.</li>
+  <li><a href="bsz-analysis/site/">BSZ analysis</a>: Boll, Saez and Zucman (August 2026) reproduced from the authors' workbook, with an explorer over Table 5's guesswork inputs, a report, slides and materials.</li>
+  <li><a href="rjkdc-analysis/site/">RJKDC analysis</a>: Jaros and Rauh (NBER, September 2026) reproduced from the authors' public code.</li>
+  <li>The <a href="comparison/site/explorer/">comparison explorer</a>, <a href="comparison/DISPUTES.md">the disputes crosswalk</a> and the reconciliation's code, tests and exports in <code>comparison/</code>, with a guide on the <a href="comparison/site/materials.html">materials page</a>.</li>
 </ul>
   </div>
 </details>
@@ -740,7 +617,7 @@ CRediT. It records how closely the author has checked the object.</p>
   </tbody>
 </table>
 </div>
-<p class="small" style="margin:8px 0 0;">The credit interview has not been run for this side yet.</p>
+<p class="small" style="margin:8px 0 0;">The credit interview has not been run for the comparison yet.</p>
 <div class="ai-key">
   <div><span><i class="sq h"></i> led by the author</span>
   <span><i class="sq ai"></i> led by Claude</span>
@@ -762,139 +639,26 @@ original authors have not reviewed it.</p>
 
 <footer>
   Part of <a href="https://github.com/fhoces/opa-prop40">opa-prop40</a>, an Open Policy
-  Analysis of both sides of California Proposition 40 (the Billionaire Tax Act).
-  <a href="bsz-analysis/site/">BSZ side overview</a> &middot;
-  <a href="rjkdc-analysis/site/">RJKDC side overview</a>.
+  Analysis of the two analyses of California Proposition 40 (the Billionaire Tax Act).
+  <a href="bsz-analysis/site/">BSZ analysis overview</a> &middot;
+  <a href="rjkdc-analysis/site/">RJKDC analysis overview</a>.
   <p class="credit">OPA done by <a href="https://fhoces.github.io">Fernando Hoces de la Guardia</a>, using <a href="#how-ai-was-used">agentic coding tools</a></p>
 </footer>
 
 </div>
 <script>
-(function () {
-  var D = window.__BRIDGE__;
-  if (!D) return;
-  var state = { out: "a", method: "shapley", h: "own" };
-  // Optional deep link, e.g. index.html#out=b&method=sequential&h=common_20
-  (location.hash || "").replace(/^#/, "").split("&").forEach(function (kv) {
-    var p = kv.split("=");
-    if (p[0] === "out" && (p[1] === "a" || p[1] === "b")) state.out = p[1];
-    if (p[0] === "method" && (p[1] === "shapley" || p[1] === "sequential")) state.method = p[1];
-    if (p[0] === "h" && D.series[p[1]]) state.h = p[1];
-  });
-  var SVGNS = "http://www.w3.org/2000/svg";
-  function el(tag, attrs, text) {
-    var e = document.createElementNS(SVGNS, tag);
-    for (var k in attrs) e.setAttribute(k, attrs[k]);
-    if (text != null) e.textContent = text;
-    return e;
-  }
-  function money(v, signed) {
-    var a = Math.abs(v);
-    var s = a === 0 ? "0.0" : a < 0.005 ? a.toFixed(4) : a < 0.05 ? a.toFixed(2) : a.toFixed(1);
-    var sign = v < 0 ? "−" : (signed ? "+" : "");
-    return sign + "$" + s + "B";
-  }
-  function bars() { return D.series[state.h][state.out][state.method]; }
-
-  function draw() {
-    var svg = document.getElementById("waterfall");
-    while (svg.childNodes.length > 2) svg.removeChild(svg.lastChild);
-    var B = bars();
-    var W = 900, H = 420, left = 46, right = 10, top = 16, bottom = 96;
-    var lo = 0, hi = 0, run = 0;
-    B.forEach(function (b) {
-      if (b.type === "total") run = b.value; else run += b.value;
-      lo = Math.min(lo, run, b.type === "total" ? b.value : run - b.value);
-      hi = Math.max(hi, run, b.type === "total" ? b.value : run - b.value);
-    });
-    var step = 20; lo = Math.floor((lo - (lo < 0 ? 6 : 0)) / step) * step; hi = Math.ceil(hi / step) * step;
-    var y = function (v) { return top + (hi - v) / (hi - lo) * (H - top - bottom); };
-    for (var g = lo; g <= hi + 1e-9; g += step) {
-      svg.appendChild(el("line", { x1: left, x2: W - right, y1: y(g), y2: y(g), "class": g === 0 ? "zero" : "grid" }));
-      svg.appendChild(el("text", { x: left - 6, y: y(g) + 4, "text-anchor": "end" }, (g < 0 ? "−" : "") + "$" + Math.abs(g)));
-    }
-    var n = B.length, slot = (W - left - right) / n, bw = Math.max(8, slot * 0.62);
-    run = 0;
-    var tip = document.getElementById("tip"), box = document.getElementById("chart-box");
-    B.forEach(function (b, i) {
-      var x = left + i * slot + (slot - bw) / 2, v0, v1, cls;
-      if (b.type === "total") { v0 = 0; v1 = b.value; run = b.value; cls = "total"; }
-      else { v0 = run; v1 = run + b.value; run = v1; cls = b.type === "model" ? "model" : (b.value >= 0 ? "up" : "down"); }
-      var yt = Math.min(y(v0), y(v1)), hgt = Math.max(1.5, Math.abs(y(v0) - y(v1)));
-      svg.appendChild(el("rect", { x: x, y: yt, width: bw, height: hgt, rx: 2, "class": cls }));
-      if (i < n - 1) {
-        svg.appendChild(el("line", { x1: x + bw, x2: x + slot, y1: y(run), y2: y(run), "class": "conn" }));
-      }
-      var lab = b.type === "total" ? money(b.value) : money(b.value, true);
-      var ly = (b.type === "total" ? (b.value >= 0 ? yt - 4 : yt + hgt + 11) : (b.value >= 0 ? yt - 4 : yt + hgt + 11));
-      svg.appendChild(el("text", { x: x + bw / 2, y: ly, "text-anchor": "middle", "class": "val" }, lab));
-      var t = el("text", { x: x + bw / 2, y: H - bottom + 12, "text-anchor": "end",
-                          transform: "rotate(-40 " + (x + bw / 2) + " " + (H - bottom + 12) + ")" }, b.short);
-      svg.appendChild(t);
-      var hit = el("rect", { x: left + i * slot, y: top, width: slot, height: H - top - 20, "class": "hit" });
-      hit.addEventListener("mousemove", function (ev) {
-        var r = box.getBoundingClientRect();
-        tip.innerHTML = "<b>" + b.label + "</b><br>" + (b.type === "total" ? money(b.value) : money(b.value, true) + " (running total " + money(run_at(i)) + ")") + (b.kind ? "<br>" + b.kind : "");
-        tip.style.display = "block";
-        var tx = ev.clientX - r.left + 12; if (tx > r.width - 290) tx = ev.clientX - r.left - 290;
-        tip.style.left = Math.max(0, tx) + "px"; tip.style.top = (ev.clientY - r.top + 12) + "px";
-      });
-      hit.addEventListener("mouseleave", function () { tip.style.display = "none"; });
-      svg.appendChild(hit);
-    });
-    function run_at(k) { var r = 0; for (var j = 0; j <= k; j++) { if (B[j].type === "total") r = B[j].value; else r += B[j].value; } return r; }
-  }
-
-  function table() {
-    var B = bars(), run = 0;
-    var rows = document.querySelectorAll("#bridge-table tbody tr");
-    rows.forEach(function (tr) {
-      var b = B.filter(function (x) { return x.id === tr.getAttribute("data-id"); })[0];
-      var cells = tr.querySelectorAll("td");
-      if (!b) { tr.style.display = "none"; return; }
-      tr.style.display = "";
-    });
-    B.forEach(function (b) {
-      var tr = document.querySelector('#bridge-table tbody tr[data-id="' + b.id + '"]');
-      if (b.type === "total") run = b.value; else run += b.value;
-      if (!tr) return;
-      var c = tr.querySelectorAll("td");
-      c[5].textContent = b.type === "total" ? "" : money(b.value, true);
-      c[5].className = "num " + (b.type === "total" || b.type === "model" ? "" : (b.value >= 0 ? "step-pos" : "step-neg"));
-      c[6].textContent = money(run);
-      c[0].textContent = b.label;
-    });
-  }
-
-  function render() {
-    document.querySelectorAll("#controls button").forEach(function (btn) {
-      var on = (btn.dataset.out && btn.dataset.out === state.out) ||
-               (btn.dataset.method && btn.dataset.method === state.method) ||
-               (btn.dataset.h && btn.dataset.h === state.h);
-      btn.setAttribute("aria-pressed", on ? "true" : "false");
-    });
-    document.getElementById("horizon-group").style.opacity = state.out === "a" ? "0.45" : "1";
-    document.getElementById("horizon-note").textContent = D.horizon_notes[state.h];
-    draw(); table();
-  }
-  document.querySelectorAll("#controls button").forEach(function (btn) {
-    btn.addEventListener("click", function () {
-      if (btn.dataset.out) state.out = btn.dataset.out;
-      if (btn.dataset.method) state.method = btn.dataset.method;
-      if (btn.dataset.h) state.h = btn.dataset.h;
-      render();
-    });
-  });
-  render();
-})();
-</script>
-<script>
-  // A link into a folded section (index.html#the-bridge, or an anchor inside one) opens it.
-  // A bridge deep link (index.html#out=b&method=sequential) opens the bridge.
+  // A link into a folded section (index.html#hoopes, or an anchor inside one) opens it.
+  // The bridge moved to the explorer: an old link to it (index.html#the-bridge, or a deep
+  // link such as index.html#out=b&method=sequential&h=common_20) goes there, with the same
+  // settings.
   (function () {
+    var h = location.hash.slice(1);
+    if (h === "the-bridge" || h.indexOf("=") >= 0) {
+      location.replace("comparison/site/explorer/index.html" + (h.indexOf("=") >= 0 ? "#" + h : ""));
+      return;
+    }
     function reveal(id) {
       if (!id) return;
-      if (id.indexOf("=") >= 0) id = "the-bridge";
       var el = document.getElementById(id);
       if (!el) return;
       var d = el.closest ? el.closest("details.fold") : null;

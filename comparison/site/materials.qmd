@@ -1,6 +1,6 @@
 ---
 title: "Prop 40, the comparison: the materials"
-subtitle: "Every script, test, data file and source behind the bridge and the report"
+subtitle: "Every script, test, data file and source behind the explorer and the report"
 date: today
 format:
   html:
@@ -18,7 +18,7 @@ execute:
 
 ::: {.site-nav}
 The comparison of California Proposition 40:
-[Open Output (the bridge)](../../index.html#the-bridge) &middot; Open Analysis: [Report](repro.html) &middot;
+[Open Output: Explorer](explorer/index.html) &middot; Open Analysis: [Report](repro.html) &middot;
 [Open Materials](https://github.com/fhoces/opa-prop40/tree/main/comparison) (this page is its guide) &middot;
 [Overview](../../index.html)
 :::
@@ -53,8 +53,9 @@ res <- as.data.frame(testthat::test_dir(file.path(root, "comparison", "tests", "
 ![](assets/opa/opa-materials-wordmark.png){.opa-figure}
 
 This page is a guide to the **Open Materials** layer (the repository folder) of the
-comparison, the reconciliation of the [BSZ report](../../bsz-analysis/site/) and the
-[RJKDC report](../../rjkdc-analysis/site/). It says what to run, what the tests check, what
+comparison, the reconciliation of the [BSZ analysis](../../bsz-analysis/site/) and the
+[RJKDC analysis](../../rjkdc-analysis/site/), each in its latest version (BSZ, August 2026;
+Jaros and Rauh, September 2026). It says what to run, what the tests check, what
 each file is, and what the checks found. Everything lives in one repository,
 [fhoces/opa-prop40](https://github.com/fhoces/opa-prop40), under `comparison/`. The tables on
 this page are built from the files when the page is rendered.
@@ -65,15 +66,15 @@ this page are built from the files when the page is rendered.
 ```sh
 git clone https://github.com/fhoces/opa-prop40 && cd opa-prop40
 pip install scipy                         # the Python twin's one dependency
-Rscript comparison/run.R                  # export/r, export/py, index.html, assets/comparison-data.js
+Rscript comparison/run.R                  # export/r, export/py, index.html, site/explorer/, assets/comparison-data.js
 Rscript comparison/tests/testthat.R       # the test suite
 python3 comparison/py/bridge.py           # the Python twin alone, writes export/py/
 cd comparison/site && quarto render repro.qmd && quarto render materials.qmd
 ```
 
-The comparison needs nothing downloaded. It reads each side's *export contract*: the two
-files `export/r/inputs.csv` and `export/r/outputs.csv` that each side's own pipeline writes
-for others to read. Both are committed, so the comparison rebuilds without either side's
+The comparison needs nothing downloaded. It reads each analysis's *export contract*: the two
+files `export/r/inputs.csv` and `export/r/outputs.csv` that each analysis's own pipeline writes
+for others to read. Both are committed, so the comparison rebuilds without either analysis's
 sources. It also reads the values transcribed from the PDFs in `comparison/data/`. Set
 `OPA_PROP40_ROOT` if the scripts cannot find the repository root, and `PYTHON` to choose the
 interpreter `run.R` calls.
@@ -93,17 +94,20 @@ scroll(show(rbind(by_file, data.frame(file = "<b>total</b>", blocks = sum(by_fil
 Run while this page was rendered: **`r sum(res$nb - res$failed - res$skipped)` expectations
 passed, `r sum(res$failed)` failed**, in `r nrow(res)` test blocks. The files check:
 
-- `test-endpoints.R`: each end of the bridge against the number its authors print (GGSS
-  \$100B and \$104B, BSZ Table 5 row 1, Rauh's SSRN and NBER mean NPVs).
+- `test-endpoints.R`: each end of the bridge against the number its authors print (BSZ
+  Table 5 row 1, the NBER mean NPV), plus the earlier figures the code still checks: the GGSS
+  headline behind the BSZ analysis and the March 2026 version of the RJKDC analysis, where the
+  bridge's disputed-input steps end.
 - `test-shapley.R`: the Shapley steps sum exactly to the gap in every setting, and match a
   brute-force average over orders.
 - `test-parity.R`: the R exports are current, and the Python twin's agree with them to 1e-9.
 - `test-sources.R`: every transcribed input has a label, a source and a page.
-- `test-site.R`: the overview page is exactly the generator's output, has no unfilled token
-  or em-dash, shows the key numbers and the main estimate, and every relative link resolves.
+- `test-site.R`: the overview page and the explorer are exactly the generator's output, have
+  no unfilled token or em-dash, show the key numbers and the two main estimates, the explorer's
+  data file carries the same two values, and every relative link resolves.
 
 GitHub Actions rebuilds the exports in R and Python on a clean runner and runs the suite on
-every push that touches `comparison/` or either side's export contract
+every push that touches `comparison/` or either analysis's export contract
 (`.github/workflows/comparison-ci.yml`). It does not render the Quarto pages.
 
 ## Scripts
@@ -114,9 +118,9 @@ role <- c(
   "R/contract.R" = "reads the two export contracts and the document inputs, and nothing else",
   "R/model.R" = "score_common(), the one estimating function; exact Shapley over all orders; one sequential order; Rauh's Monte Carlo expectations",
   "R/build.R" = "every number the page shows, written to export/r/*.csv",
-  "R/site.R" = "renders the overview page (index.html) and its data file from site/index.template.html",
+  "R/site.R" = "renders the overview page (index.html), the explorer (site/explorer/index.html) and their data file from site/index.template.html and site/explorer.template.html",
   "py/bridge.py" = "the Python twin of contract.R, model.R and build.R; writes export/py/*.csv",
-  "run.R" = "builds all three: the R exports, the Python exports and the page",
+  "run.R" = "builds all three: the R exports, the Python exports and the two pages",
   "tools/digitize_hoopes_fig2.py" = "reads Hoopes (2026) Figure 2 off the chart into data/hoopes-fig2.csv",
   "site/repro.qmd" = "the reproduction report",
   "site/materials.qmd" = "this page")
@@ -132,11 +136,11 @@ scroll(show(data.frame(
 ```{r}
 #| results: asis
 desc <- c(
-  "inputs.csv" = "the disputed inputs: one row per bridge step, both sides' values and sources",
+  "inputs.csv" = "the disputed inputs: one row per bridge step, both analyses' values and sources",
   "bridge.csv" = "every step's Shapley value and one-order value, for each output and horizon setting",
-  "ends.csv" = "the two ends of every bridge (BSZ row 1, Rauh SSRN, Jaros and Rauh NBER) and the model difference",
+  "ends.csv" = "the two ends of every bridge (BSZ, Jaros and Rauh NBER), the point where the disputed-input steps end, the model difference and the September revision",
   "endpoints.csv" = "each end against the number its authors print",
-  "anchors.csv" = "the four revenue numbers Rauh et al. print, as candidates for output (a)",
+  "anchors.csv" = "the four revenue numbers of the RJKDC analysis's March 2026 version, as candidates for where the steps end on output (a)",
   "loss.csv" = "every annual income tax loss on one scale, with present values",
   "hoopes.csv" = "Hoopes (2026) Figure 2 beside the bridge read in his order",
   "meta.csv" = "intermediate values the page quotes (annuity factors, the BSZ net terms)")
@@ -150,8 +154,8 @@ scroll(show(data.frame(
 ```
 
 `comparison/export/py/` holds the same files from the Python twin (without `inputs.csv`).
-The overview page's interactive bridge reads `assets/comparison-data.js`, written by
-`R/site.R` from these files. The inputs the comparison transcribes itself are in
+The explorer's interactive bridge reads `assets/comparison-data.js`, written by `R/site.R`
+from these files. The inputs the comparison transcribes itself are in
 `r link("comparison/data/document-inputs.csv")`
 (`r nrow(read.csv(file.path(root, "comparison", "data", "document-inputs.csv")))` rows, each
 with an origin label, a source and a page) and
@@ -160,7 +164,7 @@ edited by hand except these two transcriptions.
 
 ## Sources
 
-The comparison reads no third-party file at run time. Each side's sources are listed on its
+The comparison reads no third-party file at run time. Each analysis's sources are listed on its
 own materials page ([BSZ](../../bsz-analysis/site/materials.html),
 [RJKDC](../../rjkdc-analysis/site/materials.html)). The two documents only the comparison
 uses are recorded in the manifest with where to get them and their SHA-256:
@@ -192,29 +196,31 @@ usd <- function(x, d = 1, s = FALSE) gsub("$", "\\$", money(x, d, s), fixed = TR
 The full crosswalk of disputed inputs, with every page reference checked against the PDFs, is
 `r link("comparison/DISPUTES.md")`. The checks behind the bridge found:
 
-- **Rauh's equation 22 has a typo.** It prints the revenue ceiling as 67.1; the text (p.11)
-  and the authors' code use `r formatC(pick(oo, "revenue_confirmed6", "printed_value"), format = "f", digits = 2)`.
-  Only the latter reproduces the printed mean NPV of
-  `r usd(ep$printed_value[ep$endpoint_id == "rauh_ssrn_npv"])`.
-- **Rauh's Monte Carlo uses rounded literals.** It divides by
+- **Equation 22 of the March 2026 version has a typo.** It prints the revenue ceiling as
+  67.1; the text (p.11) and the authors' code use
+  `r formatC(pick(oo, "revenue_confirmed6", "printed_value"), format = "f", digits = 2)`.
+  Only the latter reproduces that version's printed mean NPV.
+- **The March 2026 version's Monte Carlo uses rounded literals.** It divides by
   `r formatC(pick(oo, "revenue_baseline", "printed_value"), format = "f", digits = 1)` where
   the workbook sum is `r formatC(pick(oo, "revenue_baseline"), format = "f", digits = 3)`.
   The bridge shows the effect as its own model-difference step:
-  `r usd(ea$rauh_residual, 4, TRUE)` on (a) and `r usd(eb$rauh_residual, 2, TRUE)` on (b).
-- **The printed NPVs are one run, not the expectation.** The exact expectation of the NBER
-  Monte Carlo is `r usd(eb$nber_own, 2)` against a printed
-  `r usd(ep$printed_value[ep$endpoint_id == "rauh_nber_npv"])`.
-- **The two sides' discount factors are both right.** The response to Rauh says the loss is
-  "magnified by a factor 67" (1/1.5%), BSZ say 33 (1/3%). The first is Rauh's text anchor,
-  the second the mean rate of his Monte Carlo (`DISPUTES.md`, row 2).
-- **Two March disputes are closed on the BSZ side by August**: Larry Ellison's exclusion and
-  the non-US-citizen residents (rows 7 and 8).
+  `r usd(eb$rauh_residual, 2, TRUE)` on (b) and `r usd(ea$rauh_residual, 4, TRUE)` on (a).
+- **The printed NPV is one run, not the expectation.** The exact expectation of the NBER
+  Monte Carlo, the bridge's RJKDC end, is `r usd(eb$nber_own, 2)` against a printed
+  `r usd(ep$printed_value[ep$endpoint_id == "rauh_nber_npv"])`. The RJKDC pipeline reproduces
+  the seeded run as `r usd(ep$contract_value[ep$endpoint_id == "rauh_nber_npv"], 3)`, the RJKDC
+  main estimate.
+- **Both analyses' discount factors are right.** One reading magnifies the loss by a factor
+  67 (1/1.5%), BSZ say 33 (1/3%). The first is the RJKDC text anchor, the second the mean
+  rate of its Monte Carlo (`DISPUTES.md`, row 2).
+- **Two March disputes are closed in the BSZ analysis by August**: Larry Ellison's exclusion
+  and the non-US-citizen residents (rows 7 and 8).
 - **One Hoopes bar could not be traced.** His confirmed-departures bar matches no number in
-  Rauh et al. (see the [overview page](../../index.html#hoopes)).
+  the March 2026 version of the RJKDC analysis (see the [overview page](../../index.html#hoopes)).
 
 ::: {.site-nav}
 The comparison of California Proposition 40:
-[Open Output (the bridge)](../../index.html#the-bridge) &middot; Open Analysis: [Report](repro.html) &middot;
+[Open Output: Explorer](explorer/index.html) &middot; Open Analysis: [Report](repro.html) &middot;
 [Open Materials](https://github.com/fhoces/opa-prop40/tree/main/comparison) (this page is its guide) &middot;
 [Overview](../../index.html)
 :::
