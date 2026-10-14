@@ -117,12 +117,21 @@ def switch_inputs(sup: dict, rauh: dict, on) -> dict:
     return x
 
 
-def shapley_bridge(sup, rauh, players, output):
+def coalition_values(sup, rauh, players, output):
+    """v[mask]: score_common() with the players whose bit is set (bit i = players[i]) at the
+    RJKDC value and the rest at the BSZ value. The explorer's switchboard reads these."""
     n = len(players)
-    v = {}
+    v = []
     for mask in range(2 ** n):
         on = [players[i] for i in range(n) if mask & (1 << i)]
-        v[mask] = score_common(switch_inputs(sup, rauh, on))[output]
+        v.append(score_common(switch_inputs(sup, rauh, on))[output])
+    return v
+
+
+def shapley_bridge(sup, rauh, players, output, v=None):
+    n = len(players)
+    if v is None:
+        v = coalition_values(sup, rauh, players, output)
     phi = []
     for i in range(n):
         bit = 1 << i
@@ -202,7 +211,7 @@ def build_all(k):
               c_min=ra["c_min"], c_max=ra["c_max"], r_min=ra["r_min"], r_max=ra["r_max"])
 
     settings = ["own"] + [f"common_{'Inf' if math.isinf(h) else h}" for h in HORIZONS]
-    bridge, ends = [], []
+    bridge, ends, board = [], [], []
     for st in settings:
         s2, r2, players = dict(sup), dict(rauh), list(IDS)
         if st != "own":
@@ -212,8 +221,16 @@ def build_all(k):
         v_sup, v_rauh = score_common(s2), score_common(r2)
         own_r = rauh_ssrn_expectation(**ra, H=r2["H"])
         own_n = rauh_nber_expectation(**na, H=r2["H"])
+        # bit i of a switchboard mask = input i in the bridge's order (IDS); with a common
+        # horizon the horizon is not a player, so only masks with its bit off are listed
+        full_bit = [1 << IDS.index(p) for p in players]
         for out in ("a", "b"):
-            sh = shapley_bridge(s2, r2, players, out)
+            v = coalition_values(s2, r2, players, out)
+            sh = shapley_bridge(s2, r2, players, out, v=v)
+            for m, val in enumerate(v):
+                board.append({"output": out, "horizon_setting": st,
+                              "mask": sum(b for i, b in enumerate(full_bit) if m & (1 << i)),
+                              "value": val})
             sq = sequential_bridge(s2, r2, [p for p in SEQUENTIAL if p in players], out)
             for sid, row, title, kind in STEPS:
                 bridge.append({"step_id": sid, "horizon_setting": st, "output": out,
@@ -225,6 +242,7 @@ def build_all(k):
                          "rauh_own": own_r[out], "rauh_residual": own_r[out] - v_rauh[out],
                          "nber_own": own_n[out], "nber_step": own_n[out] - own_r[out]})
     bridge.sort(key=lambda r: (r["horizon_setting"], r["output"], IDS.index(r["step_id"])))
+    board.sort(key=lambda r: (r["output"], settings.index(r["horizon_setting"]), r["mask"]))
     ea = [e for e in ends if e["horizon_setting"] == "own" and e["output"] == "a"][0]
     eb = [e for e in ends if e["horizon_setting"] == "own" and e["output"] == "b"][0]
 
@@ -288,7 +306,7 @@ def build_all(k):
             {"key": "PV_bsz_own", "value": score_common(sup)["PV"]},
             {"key": "f_rauh", "value": s_r["f"]}, {"key": "C_rauh", "value": rauh["C"]}]
     return {"bridge": bridge, "ends": ends, "endpoints": endpoints, "anchors": anchors,
-            "loss": loss, "hoopes": hoopes, "meta": meta}
+            "loss": loss, "hoopes": hoopes, "meta": meta, "switchboard": board}
 
 
 def fmt(v):

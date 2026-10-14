@@ -99,7 +99,7 @@ build_all <- function(k = read_contracts()) {
 
   # ---- bridges, for each horizon setting ---------------------------------------
   settings <- c("own", paste0("common_", HORIZONS))
-  bridge <- list(); ends <- list()
+  bridge <- list(); ends <- list(); board <- list()
   for (st in settings) {
     s2 <- sup; r2 <- rauh
     players <- ids
@@ -111,8 +111,17 @@ build_all <- function(k = read_contracts()) {
     Hr <- r2$H
     v_sup  <- score_common(s2); v_rauh <- score_common(r2)
     own_r  <- rauh_own(Hr); own_n <- nber_own(Hr)
+    # bit i-1 of a switchboard mask = input i in the bridge's order (ids); with a common
+    # horizon the horizon is not a player, so only masks with its bit off are listed
+    full_bit <- 2^(match(players, ids) - 1)
     for (out in c("a", "b")) {
-      sh  <- shapley_bridge(s2, r2, players, out)
+      v   <- coalition_values(s2, r2, players, out)
+      sh  <- shapley_bridge(s2, r2, players, out, v = v)
+      cmask <- 0:(2^length(players) - 1)
+      board[[length(board) + 1]] <- data.frame(
+        output = out, horizon_setting = st,
+        mask = vapply(cmask, function(m) sum(full_bit[bitwAnd(m, 2^(seq_along(players) - 1)) > 0]), 0),
+        value = v, stringsAsFactors = FALSE)
       sq  <- sequential_bridge(s2, r2, intersect(sequential_order(), players), out)
       full_sh <- stats::setNames(rep(0, length(ids)), ids); full_sh[players] <- sh
       full_sq <- stats::setNames(rep(0, length(ids)), ids); full_sq[names(sq)] <- sq
@@ -129,6 +138,10 @@ build_all <- function(k = read_contracts()) {
     }
   }
   bridge <- do.call(rbind, bridge); ends <- do.call(rbind, ends)
+  board <- do.call(rbind, board)
+  board <- board[order(board$output, match(board$horizon_setting, settings), board$mask), ]
+  board$mask <- as.integer(board$mask)
+  rownames(board) <- NULL
   bridge <- merge(bridge, steps, by = "step_id", sort = FALSE)
   bridge <- bridge[order(bridge$horizon_setting, bridge$output, match(bridge$step_id, ids)), ]
   rownames(bridge) <- NULL
@@ -224,7 +237,7 @@ build_all <- function(k = read_contracts()) {
                         "Rauh's own NPV minus his own expected revenue (all income-tax steps together)")
 
   list(inputs = bridge_input_table(bi), bridge = bridge, ends = ends, endpoints = endpoints,
-       anchors = anchors, loss = loss, hoopes = hoopes,
+       anchors = anchors, loss = loss, hoopes = hoopes, switchboard = board,
        meta = data.frame(key = c("A_5", "A_inf", "kappa_bsz", "R0_rauh", "S_rauh",
                                  "X_bsz", "PV_bsz_own", "f_rauh", "C_rauh"),
                          value = c(A5, Ainf, sup$kappa, score_common(rauh)[["R0"]],
@@ -234,7 +247,8 @@ build_all <- function(k = read_contracts()) {
 
 write_exports <- function(res, dir) {
   dir.create(dir, recursive = TRUE, showWarnings = FALSE)
-  for (nm in c("inputs", "bridge", "ends", "endpoints", "anchors", "loss", "hoopes", "meta")) {
+  for (nm in c("inputs", "bridge", "ends", "endpoints", "anchors", "loss", "hoopes", "meta",
+               "switchboard")) {
     utils::write.csv(res[[nm]], file.path(dir, paste0(nm, ".csv")), row.names = FALSE,
                      fileEncoding = "UTF-8")
   }

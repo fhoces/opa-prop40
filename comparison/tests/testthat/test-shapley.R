@@ -52,3 +52,22 @@ test_that("every step is labelled and tied to a DISPUTES row or flagged as not o
                   as.character(1:8))
   expect_true(all(grepl("data|research|guesswork|scenario", st$kind)))
 })
+
+test_that("the switchboard grid is score_common() at every mix of switches", {
+  bi <- bridge_inputs(k); ids <- bridge_steps()$step_id
+  sb <- res$switchboard
+  g <- sb[sb$horizon_setting == "own" & sb$output == "b", ]
+  # bit i-1 of the mask is input i in the bridge's order
+  for (m in c(0L, 1L, 16L, 5L, 2047L, 1234L)) {
+    on <- ids[bitwAnd(m, 2^(seq_along(ids) - 1)) > 0]
+    expect_equal(g$value[g$mask == m], score_common(switch_inputs(bi$sup, bi$rauh, on))[["b"]],
+                 tolerance = 1e-12, label = paste("mask", m))
+  }
+  # with a common horizon the horizon bit (512) is never set
+  c20 <- sb[sb$horizon_setting == "common_20", ]
+  expect_true(all(bitwAnd(c20$mask, 512L) == 0))
+  # the Shapley steps are the average marginal effects over this same grid: they add up to
+  # the difference between its two corners
+  b <- br[br$horizon_setting == "own" & br$output == "b", ]
+  expect_equal(sum(b$shapley), g$value[g$mask == 2047] - g$value[g$mask == 0], tolerance = 1e-10)
+})

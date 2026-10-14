@@ -90,14 +90,25 @@ switch_inputs <- function(sup, rauh, on) {
   x
 }
 
+# The value of every coalition: v[mask + 1] is score_common() with the players whose bit
+# is set in `mask` (bit i-1 = players[i]) at the RJKDC value and the rest at the BSZ value.
+# mask 0 is the all-BSZ setting, mask 2^n - 1 the all-RJKDC one. The explorer's switchboard
+# reads these values (comparison/export/r/switchboard.csv).
+coalition_values <- function(sup, rauh, players, output = c("a", "b")) {
+  output <- match.arg(output)
+  n <- length(players)
+  inset <- function(mask) players[bitwAnd(mask, 2^(0:(n - 1))) > 0]
+  vapply(0:(2^n - 1), function(mk) score_common(switch_inputs(sup, rauh, inset(mk)))[[output]], 0)
+}
+
 # Exact Shapley values by enumerating all 2^n coalitions (n = 11: 2,048 scorings).
 # `players` can exclude steps (e.g. the horizon when both ends share one horizon).
-shapley_bridge <- function(sup, rauh, players, output = c("a", "b")) {
+# `v` can pass coalition_values() already computed for the same players and output.
+shapley_bridge <- function(sup, rauh, players, output = c("a", "b"), v = NULL) {
   output <- match.arg(output)
   n <- length(players)
   masks <- 0:(2^n - 1)
-  inset <- function(mask) players[bitwAnd(mask, 2^(0:(n - 1))) > 0]
-  v <- vapply(masks, function(mk) score_common(switch_inputs(sup, rauh, inset(mk)))[[output]], 0)
+  if (is.null(v)) v <- coalition_values(sup, rauh, players, output)
   size <- vapply(masks, function(mk) sum(bitwAnd(mk, 2^(0:(n - 1))) > 0), 0)
   # weight of a coalition of `size` others (the full coalition never lacks i)
   w <- ifelse(size < n, factorial(size) * factorial(pmax(n - size - 1, 0)) / factorial(n), 0)
