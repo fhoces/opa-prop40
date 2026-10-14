@@ -79,6 +79,8 @@ build_site_grid <- function(inp) {
   names(idx) <- vapply(dials, `[[`, "", "key")
   rows <- lapply(seq_len(nrow(idx)), function(i) {
     v <- mapply(function(d, j) d$levels[j], dials, as.integer(idx[i, ]))
+    # The key call: score_tab5_cell() (R/compute_tab5.R) does all the estimating.
+    # This loop only feeds it one setting of the dials and adds the present value.
     out <- score_tab5_cell(inp,
                            avoidance = v[[1]], mobility_share = v[[2]],
                            avoidance_small = v[[3]], sell_share = v[[4]],
@@ -161,6 +163,8 @@ site_grid_js_text <- function(grid, inp) {
   named <- lapply(site_named_rows(), function(v) v - 1L)
   # The output estimates: one row per dial setting (the grid's row order), the nine
   # outcomes in the order of outs$key, rounded to 6 decimals. The page reads this as snap.
+  # The nine are the main estimate first, then the eight rows of the explorer's outcome
+  # table. The main-estimate series alone is grid$main_estimate (column 0 of snap).
   snap  <- lapply(seq_len(nrow(grid)), function(i)
     unname(round(as.numeric(grid[i, outs$key]), 6)))
   payload <- list(
