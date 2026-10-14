@@ -2403,7 +2403,7 @@ min-width: 0 !important;
 <p>California’s Proposition 40, the Billionaire Tax Act, would tax California’s billionaires once, at 5% of their net worth, paid over five years. Two analyses estimate it. This report cites each in its latest version. The <a href="../../bsz-analysis/site/">BSZ analysis</a> (Boll, Saez and Zucman, NBER WP 35218, August 2026) estimates <strong>$103.8B</strong> of wealth tax (Table 5 row 1), and <strong>$106.8B</strong> net of the income tax it changes. The <a href="../../rjkdc-analysis/site/">RJKDC analysis</a> (Rauh, Jaros, Kearney, Doran and Cosso; latest version Jaros and Rauh, NBER c15504, September 2026) estimates a net present value for the state of <strong>−$38.9B</strong>. The two numbers answer different questions, so neither can be read against the other directly. This report puts both on one common output and walks from one to the other, one disputed input at a time.</p>
 <p>This report is part of the comparison’s <a href="https://doi.org/10.1093/scipol/scaa067">Open Policy Analysis</a> (OPA):</p>
 <ul>
-<li><strong>Open Output</strong>: <a href="explorer/index.html">the explorer</a>, with the two main estimates and the bridge on the net fiscal effect, where the step sizes and the loss horizon can be switched. Its switchboard has one switch per disputed input, between a BSZ card and an RJKDC card: each switch moves one input from the BSZ value to the RJKDC value, and the value for every mix of switches is precomputed in <code>comparison/export/r/switchboard.csv</code></li>
+<li><strong>Open Output</strong>: <a href="explorer/index.html">the explorer</a>, with the two main estimates and the bridge on the net fiscal effect. Its two panels of sliders, one slider per disputed input, move each input in five steps from one analysis’s value to the other’s, and the browser computes each panel’s estimate with <code>explorer/model.js</code>, a copy of <code>score_common()</code> that a test checks against the R values</li>
 <li><strong>Open Analysis</strong>: this document</li>
 <li><strong>Open Materials</strong>: <a href="https://github.com/fhoces/opa-prop40/tree/main/comparison">the repository folder</a>, every script, test and data file (guide: <a href="materials.html">the materials page</a>)</li>
 </ul>
@@ -2442,7 +2442,7 @@ min-width: 0 !important;
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">annuity =</span> A, <span class="at">PV =</span> PV)</span>
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/model.R, lines 145-149</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/model.R, lines 238-242</span></span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>rauh_nber_expectation <span class="ot">&lt;-</span> <span class="cf">function</span>(wt_min, wt_max, f_min, f_max, c_min, c_max, r_min, r_max, <span class="at">H =</span> <span class="cn">Inf</span>) {</span>
 <span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  e_wt <span class="ot">&lt;-</span> (wt_min <span class="sc">+</span> wt_max) <span class="sc">/</span> <span class="dv">2</span></span>
 <span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="at">a =</span> e_wt, <span class="at">b =</span> e_wt <span class="sc">-</span> (f_min <span class="sc">+</span> f_max) <span class="sc">/</span> <span class="dv">2</span> <span class="sc">*</span> (c_min <span class="sc">+</span> c_max) <span class="sc">/</span> <span class="dv">2</span> <span class="sc">*</span></span>
@@ -2472,7 +2472,7 @@ min-width: 0 !important;
 <span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">&quot;a&quot;</span>: WT, <span class="st">&quot;b&quot;</span>: WT <span class="op">+</span> X <span class="op">-</span> PV, <span class="st">&quot;R0&quot;</span>: R0, <span class="st">&quot;S&quot;</span>: S, <span class="st">&quot;X&quot;</span>: X, <span class="st">&quot;f&quot;</span>: f,</span>
 <span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;annual_loss&quot;</span>: f <span class="op">*</span> x[<span class="st">&quot;C&quot;</span>], <span class="st">&quot;annuity&quot;</span>: A, <span class="st">&quot;PV&quot;</span>: PV}</span>
 <span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/py/bridge.py, lines 165-168 (read-only display)</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/py/bridge.py, lines 234-237 (read-only display)</span></span>
 <span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> rauh_nber_expectation(wt_min, wt_max, f_min, f_max, c_min, c_max, r_min, r_max, H<span class="op">=</span>math.inf):</span>
 <span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    e_wt <span class="op">=</span> (wt_min <span class="op">+</span> wt_max) <span class="op">/</span> <span class="dv">2</span></span>
 <span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">&quot;a&quot;</span>: e_wt, <span class="st">&quot;b&quot;</span>: e_wt <span class="op">-</span> (f_min <span class="op">+</span> f_max) <span class="op">/</span> <span class="dv">2</span> <span class="op">*</span> (c_min <span class="op">+</span> c_max) <span class="op">/</span> <span class="dv">2</span> <span class="op">*</span></span>
@@ -2596,7 +2596,7 @@ mean NPV −$38.9B; revenue ‘approximately $30B’ (p.1)
 <div class="lang-py">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The Python twin (comparison/py/bridge.py); it writes comparison/export/py/.</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/py/bridge.py, lines 172-197 (read-only display)</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/py/bridge.py, lines 241-266 (read-only display)</span></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> bridge_inputs(k):</span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    si, so <span class="op">=</span> k[<span class="st">&quot;bsz&quot;</span>][<span class="st">&quot;inputs&quot;</span>], k[<span class="st">&quot;bsz&quot;</span>][<span class="st">&quot;outputs&quot;</span>]</span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    oi, oo <span class="op">=</span> k[<span class="st">&quot;rjkdc&quot;</span>][<span class="st">&quot;inputs&quot;</span>], k[<span class="st">&quot;rjkdc&quot;</span>][<span class="st">&quot;outputs&quot;</span>]</span>
@@ -2784,7 +2784,7 @@ not printed
 <span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">annuity =</span> A, <span class="at">PV =</span> PV)</span>
 <span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/model.R, lines 145-149</span></span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/model.R, lines 238-242</span></span>
 <span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>rauh_nber_expectation <span class="ot">&lt;-</span> <span class="cf">function</span>(wt_min, wt_max, f_min, f_max, c_min, c_max, r_min, r_max, <span class="at">H =</span> <span class="cn">Inf</span>) {</span>
 <span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>  e_wt <span class="ot">&lt;-</span> (wt_min <span class="sc">+</span> wt_max) <span class="sc">/</span> <span class="dv">2</span></span>
 <span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="at">a =</span> e_wt, <span class="at">b =</span> e_wt <span class="sc">-</span> (f_min <span class="sc">+</span> f_max) <span class="sc">/</span> <span class="dv">2</span> <span class="sc">*</span> (c_min <span class="sc">+</span> c_max) <span class="sc">/</span> <span class="dv">2</span> <span class="sc">*</span></span>
@@ -2794,7 +2794,7 @@ not printed
 <div class="lang-py">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The Python twin (comparison/py/bridge.py); it writes comparison/export/py/.</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/py/bridge.py, lines 172-197 (read-only display)</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/py/bridge.py, lines 241-266 (read-only display)</span></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> bridge_inputs(k):</span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    si, so <span class="op">=</span> k[<span class="st">&quot;bsz&quot;</span>][<span class="st">&quot;inputs&quot;</span>], k[<span class="st">&quot;bsz&quot;</span>][<span class="st">&quot;outputs&quot;</span>]</span>
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    oi, oo <span class="op">=</span> k[<span class="st">&quot;rjkdc&quot;</span>][<span class="st">&quot;inputs&quot;</span>], k[<span class="st">&quot;rjkdc&quot;</span>][<span class="st">&quot;outputs&quot;</span>]</span>
@@ -2834,7 +2834,7 @@ not printed
 <span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">&quot;a&quot;</span>: WT, <span class="st">&quot;b&quot;</span>: WT <span class="op">+</span> X <span class="op">-</span> PV, <span class="st">&quot;R0&quot;</span>: R0, <span class="st">&quot;S&quot;</span>: S, <span class="st">&quot;X&quot;</span>: X, <span class="st">&quot;f&quot;</span>: f,</span>
 <span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;annual_loss&quot;</span>: f <span class="op">*</span> x[<span class="st">&quot;C&quot;</span>], <span class="st">&quot;annuity&quot;</span>: A, <span class="st">&quot;PV&quot;</span>: PV}</span>
 <span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/py/bridge.py, lines 165-168 (read-only display)</span></span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/py/bridge.py, lines 234-237 (read-only display)</span></span>
 <span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> rauh_nber_expectation(wt_min, wt_max, f_min, f_max, c_min, c_max, r_min, r_max, H<span class="op">=</span>math.inf):</span>
 <span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>    e_wt <span class="op">=</span> (wt_min <span class="op">+</span> wt_max) <span class="op">/</span> <span class="dv">2</span></span>
 <span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">&quot;a&quot;</span>: e_wt, <span class="st">&quot;b&quot;</span>: e_wt <span class="op">-</span> (f_min <span class="op">+</span> f_max) <span class="op">/</span> <span class="dv">2</span> <span class="op">*</span> (c_min <span class="op">+</span> c_max) <span class="op">/</span> <span class="dv">2</span> <span class="op">*</span></span>
@@ -2862,7 +2862,7 @@ not printed
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  x</span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/model.R, lines 107-121</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/model.R, lines 200-214</span></span>
 <span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>shapley_bridge <span class="ot">&lt;-</span> <span class="cf">function</span>(sup, rauh, players, <span class="at">output =</span> <span class="fu">c</span>(<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>), <span class="at">v =</span> <span class="cn">NULL</span>) {</span>
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  output <span class="ot">&lt;-</span> <span class="fu">match.arg</span>(output)</span>
 <span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">length</span>(players)</span>
@@ -2879,7 +2879,7 @@ not printed
 <span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>  stats<span class="sc">::</span><span class="fu">setNames</span>(phi, players)</span>
 <span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/model.R, lines 123-133</span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/model.R, lines 216-226</span></span>
 <span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>sequential_bridge <span class="ot">&lt;-</span> <span class="cf">function</span>(sup, rauh, order, <span class="at">output =</span> <span class="fu">c</span>(<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>)) {</span>
 <span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>  output <span class="ot">&lt;-</span> <span class="fu">match.arg</span>(output)</span>
 <span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>  prev <span class="ot">&lt;-</span> <span class="fu">score_common</span>(sup)[[output]]</span>
@@ -2903,7 +2903,7 @@ not printed
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>            x[nm] <span class="op">=</span> rauh[nm]</span>
 <span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x</span>
 <span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/py/bridge.py, lines 131-146 (read-only display)</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/py/bridge.py, lines 200-215 (read-only display)</span></span>
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> shapley_bridge(sup, rauh, players, output, v<span class="op">=</span><span class="va">None</span>):</span>
 <span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    n <span class="op">=</span> <span class="bu">len</span>(players)</span>
 <span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> v <span class="kw">is</span> <span class="va">None</span>:</span>
@@ -2921,7 +2921,7 @@ not printed
 <span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>        phi.append(tot)</span>
 <span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">dict</span>(<span class="bu">zip</span>(players, phi))</span>
 <span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/py/bridge.py, lines 149-156 (read-only display)</span></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/py/bridge.py, lines 218-225 (read-only display)</span></span>
 <span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sequential_bridge(sup, rauh, order, output):</span>
 <span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>    prev <span class="op">=</span> score_common(sup)[output]</span>
 <span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>    out <span class="op">=</span> {}</span>
@@ -3702,7 +3702,7 @@ $36.00B
 <summary>
 R code for the waterfall
 </summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/site.R, lines 54-94</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/site.R, lines 53-93</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>build_series <span class="ot">&lt;-</span> <span class="cf">function</span>(ex, resid_label) {</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  br <span class="ot">&lt;-</span> ex<span class="sc">$</span>bridge; en <span class="ot">&lt;-</span> ex<span class="sc">$</span>ends; steps <span class="ot">&lt;-</span> <span class="fu">bridge_steps</span>()</span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  settings <span class="ot">&lt;-</span> <span class="fu">unique</span>(en<span class="sc">$</span>horizon_setting)</span>
@@ -3767,7 +3767,7 @@ Figure 1: Output (b), Shapley steps, each analysis’s own horizon: the same ba
 <a href="#" class="lang on" data-lang="r">R</a> or <a href="#" class="lang" data-lang="py">Python</a> code for the candidates
 </summary>
 <div class="lang-r">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/build.R, lines 78-246</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/build.R, lines 78-247</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>build_all <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">k =</span> <span class="fu">read_contracts</span>()) {</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  bi <span class="ot">&lt;-</span> <span class="fu">bridge_inputs</span>(k); sup <span class="ot">&lt;-</span> bi<span class="sc">$</span>sup; rauh <span class="ot">&lt;-</span> bi<span class="sc">$</span>rauh</span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  so <span class="ot">&lt;-</span> k<span class="sc">$</span>bsz<span class="sc">$</span>outputs; oo <span class="ot">&lt;-</span> k<span class="sc">$</span>rjkdc<span class="sc">$</span>outputs; d <span class="ot">&lt;-</span> k<span class="sc">$</span>docs</span>
@@ -3931,17 +3931,18 @@ Figure 1: Output (b), Shapley steps, each analysis’s own horizon: the same ba
 <span id="cb12-162"><a href="#cb12-162" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-163"><a href="#cb12-163" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">inputs =</span> <span class="fu">bridge_input_table</span>(bi), <span class="at">bridge =</span> bridge, <span class="at">ends =</span> ends, <span class="at">endpoints =</span> endpoints,</span>
 <span id="cb12-164"><a href="#cb12-164" aria-hidden="true" tabindex="-1"></a>       <span class="at">anchors =</span> anchors, <span class="at">loss =</span> loss, <span class="at">hoopes =</span> hoopes, <span class="at">switchboard =</span> board,</span>
-<span id="cb12-165"><a href="#cb12-165" aria-hidden="true" tabindex="-1"></a>       <span class="at">meta =</span> <span class="fu">data.frame</span>(<span class="at">key =</span> <span class="fu">c</span>(<span class="st">&quot;A_5&quot;</span>, <span class="st">&quot;A_inf&quot;</span>, <span class="st">&quot;kappa_bsz&quot;</span>, <span class="st">&quot;R0_rauh&quot;</span>, <span class="st">&quot;S_rauh&quot;</span>,</span>
-<span id="cb12-166"><a href="#cb12-166" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">&quot;X_bsz&quot;</span>, <span class="st">&quot;PV_bsz_own&quot;</span>, <span class="st">&quot;f_rauh&quot;</span>, <span class="st">&quot;C_rauh&quot;</span>),</span>
-<span id="cb12-167"><a href="#cb12-167" aria-hidden="true" tabindex="-1"></a>                         <span class="at">value =</span> <span class="fu">c</span>(A5, Ainf, sup<span class="sc">$</span>kappa, <span class="fu">score_common</span>(rauh)[[<span class="st">&quot;R0&quot;</span>]],</span>
-<span id="cb12-168"><a href="#cb12-168" aria-hidden="true" tabindex="-1"></a>                                   <span class="fu">score_common</span>(rauh)[[<span class="st">&quot;S&quot;</span>]], <span class="fu">score_common</span>(sup)[[<span class="st">&quot;X&quot;</span>]],</span>
-<span id="cb12-169"><a href="#cb12-169" aria-hidden="true" tabindex="-1"></a>                                   <span class="fu">score_common</span>(sup)[[<span class="st">&quot;PV&quot;</span>]], <span class="fu">score_common</span>(rauh)[[<span class="st">&quot;f&quot;</span>]], rauh<span class="sc">$</span>C)))</span>
-<span id="cb12-170"><a href="#cb12-170" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb12-165"><a href="#cb12-165" aria-hidden="true" tabindex="-1"></a>       <span class="at">slider_sample =</span> <span class="fu">slider_sample</span>(bi, <span class="fu">slider_revision</span>(ends)),</span>
+<span id="cb12-166"><a href="#cb12-166" aria-hidden="true" tabindex="-1"></a>       <span class="at">meta =</span> <span class="fu">data.frame</span>(<span class="at">key =</span> <span class="fu">c</span>(<span class="st">&quot;A_5&quot;</span>, <span class="st">&quot;A_inf&quot;</span>, <span class="st">&quot;kappa_bsz&quot;</span>, <span class="st">&quot;R0_rauh&quot;</span>, <span class="st">&quot;S_rauh&quot;</span>,</span>
+<span id="cb12-167"><a href="#cb12-167" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">&quot;X_bsz&quot;</span>, <span class="st">&quot;PV_bsz_own&quot;</span>, <span class="st">&quot;f_rauh&quot;</span>, <span class="st">&quot;C_rauh&quot;</span>),</span>
+<span id="cb12-168"><a href="#cb12-168" aria-hidden="true" tabindex="-1"></a>                         <span class="at">value =</span> <span class="fu">c</span>(A5, Ainf, sup<span class="sc">$</span>kappa, <span class="fu">score_common</span>(rauh)[[<span class="st">&quot;R0&quot;</span>]],</span>
+<span id="cb12-169"><a href="#cb12-169" aria-hidden="true" tabindex="-1"></a>                                   <span class="fu">score_common</span>(rauh)[[<span class="st">&quot;S&quot;</span>]], <span class="fu">score_common</span>(sup)[[<span class="st">&quot;X&quot;</span>]],</span>
+<span id="cb12-170"><a href="#cb12-170" aria-hidden="true" tabindex="-1"></a>                                   <span class="fu">score_common</span>(sup)[[<span class="st">&quot;PV&quot;</span>]], <span class="fu">score_common</span>(rauh)[[<span class="st">&quot;f&quot;</span>]], rauh<span class="sc">$</span>C)))</span>
+<span id="cb12-171"><a href="#cb12-171" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="lang-py">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The Python twin (comparison/py/bridge.py); it writes comparison/export/py/.</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/py/bridge.py, lines 200-309 (read-only display)</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/py/bridge.py, lines 269-379 (read-only display)</span></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> build_all(k):</span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    sup, rauh <span class="op">=</span> bridge_inputs(k)</span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    so, oo, d <span class="op">=</span> k[<span class="st">&quot;bsz&quot;</span>][<span class="st">&quot;outputs&quot;</span>], k[<span class="st">&quot;rjkdc&quot;</span>][<span class="st">&quot;outputs&quot;</span>], k[<span class="st">&quot;docs&quot;</span>]</span>
@@ -4051,7 +4052,8 @@ Figure 1: Output (b), Shapley steps, each analysis’s own horizon: the same ba
 <span id="cb13-110"><a href="#cb13-110" aria-hidden="true" tabindex="-1"></a>            {<span class="st">&quot;key&quot;</span>: <span class="st">&quot;PV_bsz_own&quot;</span>, <span class="st">&quot;value&quot;</span>: score_common(sup)[<span class="st">&quot;PV&quot;</span>]},</span>
 <span id="cb13-111"><a href="#cb13-111" aria-hidden="true" tabindex="-1"></a>            {<span class="st">&quot;key&quot;</span>: <span class="st">&quot;f_rauh&quot;</span>, <span class="st">&quot;value&quot;</span>: s_r[<span class="st">&quot;f&quot;</span>]}, {<span class="st">&quot;key&quot;</span>: <span class="st">&quot;C_rauh&quot;</span>, <span class="st">&quot;value&quot;</span>: rauh[<span class="st">&quot;C&quot;</span>]}]</span>
 <span id="cb13-112"><a href="#cb13-112" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">&quot;bridge&quot;</span>: bridge, <span class="st">&quot;ends&quot;</span>: ends, <span class="st">&quot;endpoints&quot;</span>: endpoints, <span class="st">&quot;anchors&quot;</span>: anchors,</span>
-<span id="cb13-113"><a href="#cb13-113" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;loss&quot;</span>: loss, <span class="st">&quot;hoopes&quot;</span>: hoopes, <span class="st">&quot;meta&quot;</span>: meta, <span class="st">&quot;switchboard&quot;</span>: board}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb13-113"><a href="#cb13-113" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;loss&quot;</span>: loss, <span class="st">&quot;hoopes&quot;</span>: hoopes, <span class="st">&quot;meta&quot;</span>: meta, <span class="st">&quot;switchboard&quot;</span>: board,</span>
+<span id="cb13-114"><a href="#cb13-114" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;slider_sample&quot;</span>: slider_sample(sup, rauh, slider_revision(ends))}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </details>
 <div class="table-scroll">
@@ -4218,7 +4220,7 @@ Rauh p.1 abstract, p.14
 <div class="lang-py">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The Python twin (comparison/py/bridge.py); it writes comparison/export/py/.</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/py/bridge.py, lines 172-197 (read-only display)</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/py/bridge.py, lines 241-266 (read-only display)</span></span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> bridge_inputs(k):</span>
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    si, so <span class="op">=</span> k[<span class="st">&quot;bsz&quot;</span>][<span class="st">&quot;inputs&quot;</span>], k[<span class="st">&quot;bsz&quot;</span>][<span class="st">&quot;outputs&quot;</span>]</span>
 <span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    oi, oo <span class="op">=</span> k[<span class="st">&quot;rjkdc&quot;</span>][<span class="st">&quot;inputs&quot;</span>], k[<span class="st">&quot;rjkdc&quot;</span>][<span class="st">&quot;outputs&quot;</span>]</span>
@@ -4468,7 +4470,7 @@ guesswork
 <a href="#" class="lang on" data-lang="r">R</a> or <a href="#" class="lang" data-lang="py">Python</a> code for the Hoopes comparison
 </summary>
 <div class="lang-r">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/build.R, lines 78-246</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/build.R, lines 78-247</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>build_all <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">k =</span> <span class="fu">read_contracts</span>()) {</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  bi <span class="ot">&lt;-</span> <span class="fu">bridge_inputs</span>(k); sup <span class="ot">&lt;-</span> bi<span class="sc">$</span>sup; rauh <span class="ot">&lt;-</span> bi<span class="sc">$</span>rauh</span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  so <span class="ot">&lt;-</span> k<span class="sc">$</span>bsz<span class="sc">$</span>outputs; oo <span class="ot">&lt;-</span> k<span class="sc">$</span>rjkdc<span class="sc">$</span>outputs; d <span class="ot">&lt;-</span> k<span class="sc">$</span>docs</span>
@@ -4632,17 +4634,18 @@ guesswork
 <span id="cb16-162"><a href="#cb16-162" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-163"><a href="#cb16-163" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">inputs =</span> <span class="fu">bridge_input_table</span>(bi), <span class="at">bridge =</span> bridge, <span class="at">ends =</span> ends, <span class="at">endpoints =</span> endpoints,</span>
 <span id="cb16-164"><a href="#cb16-164" aria-hidden="true" tabindex="-1"></a>       <span class="at">anchors =</span> anchors, <span class="at">loss =</span> loss, <span class="at">hoopes =</span> hoopes, <span class="at">switchboard =</span> board,</span>
-<span id="cb16-165"><a href="#cb16-165" aria-hidden="true" tabindex="-1"></a>       <span class="at">meta =</span> <span class="fu">data.frame</span>(<span class="at">key =</span> <span class="fu">c</span>(<span class="st">&quot;A_5&quot;</span>, <span class="st">&quot;A_inf&quot;</span>, <span class="st">&quot;kappa_bsz&quot;</span>, <span class="st">&quot;R0_rauh&quot;</span>, <span class="st">&quot;S_rauh&quot;</span>,</span>
-<span id="cb16-166"><a href="#cb16-166" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">&quot;X_bsz&quot;</span>, <span class="st">&quot;PV_bsz_own&quot;</span>, <span class="st">&quot;f_rauh&quot;</span>, <span class="st">&quot;C_rauh&quot;</span>),</span>
-<span id="cb16-167"><a href="#cb16-167" aria-hidden="true" tabindex="-1"></a>                         <span class="at">value =</span> <span class="fu">c</span>(A5, Ainf, sup<span class="sc">$</span>kappa, <span class="fu">score_common</span>(rauh)[[<span class="st">&quot;R0&quot;</span>]],</span>
-<span id="cb16-168"><a href="#cb16-168" aria-hidden="true" tabindex="-1"></a>                                   <span class="fu">score_common</span>(rauh)[[<span class="st">&quot;S&quot;</span>]], <span class="fu">score_common</span>(sup)[[<span class="st">&quot;X&quot;</span>]],</span>
-<span id="cb16-169"><a href="#cb16-169" aria-hidden="true" tabindex="-1"></a>                                   <span class="fu">score_common</span>(sup)[[<span class="st">&quot;PV&quot;</span>]], <span class="fu">score_common</span>(rauh)[[<span class="st">&quot;f&quot;</span>]], rauh<span class="sc">$</span>C)))</span>
-<span id="cb16-170"><a href="#cb16-170" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb16-165"><a href="#cb16-165" aria-hidden="true" tabindex="-1"></a>       <span class="at">slider_sample =</span> <span class="fu">slider_sample</span>(bi, <span class="fu">slider_revision</span>(ends)),</span>
+<span id="cb16-166"><a href="#cb16-166" aria-hidden="true" tabindex="-1"></a>       <span class="at">meta =</span> <span class="fu">data.frame</span>(<span class="at">key =</span> <span class="fu">c</span>(<span class="st">&quot;A_5&quot;</span>, <span class="st">&quot;A_inf&quot;</span>, <span class="st">&quot;kappa_bsz&quot;</span>, <span class="st">&quot;R0_rauh&quot;</span>, <span class="st">&quot;S_rauh&quot;</span>,</span>
+<span id="cb16-167"><a href="#cb16-167" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">&quot;X_bsz&quot;</span>, <span class="st">&quot;PV_bsz_own&quot;</span>, <span class="st">&quot;f_rauh&quot;</span>, <span class="st">&quot;C_rauh&quot;</span>),</span>
+<span id="cb16-168"><a href="#cb16-168" aria-hidden="true" tabindex="-1"></a>                         <span class="at">value =</span> <span class="fu">c</span>(A5, Ainf, sup<span class="sc">$</span>kappa, <span class="fu">score_common</span>(rauh)[[<span class="st">&quot;R0&quot;</span>]],</span>
+<span id="cb16-169"><a href="#cb16-169" aria-hidden="true" tabindex="-1"></a>                                   <span class="fu">score_common</span>(rauh)[[<span class="st">&quot;S&quot;</span>]], <span class="fu">score_common</span>(sup)[[<span class="st">&quot;X&quot;</span>]],</span>
+<span id="cb16-170"><a href="#cb16-170" aria-hidden="true" tabindex="-1"></a>                                   <span class="fu">score_common</span>(sup)[[<span class="st">&quot;PV&quot;</span>]], <span class="fu">score_common</span>(rauh)[[<span class="st">&quot;f&quot;</span>]], rauh<span class="sc">$</span>C)))</span>
+<span id="cb16-171"><a href="#cb16-171" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="lang-py">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The Python twin (comparison/py/bridge.py); it writes comparison/export/py/.</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/py/bridge.py, lines 200-309 (read-only display)</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/py/bridge.py, lines 269-379 (read-only display)</span></span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> build_all(k):</span>
 <span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    sup, rauh <span class="op">=</span> bridge_inputs(k)</span>
 <span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    so, oo, d <span class="op">=</span> k[<span class="st">&quot;bsz&quot;</span>][<span class="st">&quot;outputs&quot;</span>], k[<span class="st">&quot;rjkdc&quot;</span>][<span class="st">&quot;outputs&quot;</span>], k[<span class="st">&quot;docs&quot;</span>]</span>
@@ -4752,7 +4755,8 @@ guesswork
 <span id="cb17-110"><a href="#cb17-110" aria-hidden="true" tabindex="-1"></a>            {<span class="st">&quot;key&quot;</span>: <span class="st">&quot;PV_bsz_own&quot;</span>, <span class="st">&quot;value&quot;</span>: score_common(sup)[<span class="st">&quot;PV&quot;</span>]},</span>
 <span id="cb17-111"><a href="#cb17-111" aria-hidden="true" tabindex="-1"></a>            {<span class="st">&quot;key&quot;</span>: <span class="st">&quot;f_rauh&quot;</span>, <span class="st">&quot;value&quot;</span>: s_r[<span class="st">&quot;f&quot;</span>]}, {<span class="st">&quot;key&quot;</span>: <span class="st">&quot;C_rauh&quot;</span>, <span class="st">&quot;value&quot;</span>: rauh[<span class="st">&quot;C&quot;</span>]}]</span>
 <span id="cb17-112"><a href="#cb17-112" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">&quot;bridge&quot;</span>: bridge, <span class="st">&quot;ends&quot;</span>: ends, <span class="st">&quot;endpoints&quot;</span>: endpoints, <span class="st">&quot;anchors&quot;</span>: anchors,</span>
-<span id="cb17-113"><a href="#cb17-113" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;loss&quot;</span>: loss, <span class="st">&quot;hoopes&quot;</span>: hoopes, <span class="st">&quot;meta&quot;</span>: meta, <span class="st">&quot;switchboard&quot;</span>: board}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb17-113"><a href="#cb17-113" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;loss&quot;</span>: loss, <span class="st">&quot;hoopes&quot;</span>: hoopes, <span class="st">&quot;meta&quot;</span>: meta, <span class="st">&quot;switchboard&quot;</span>: board,</span>
+<span id="cb17-114"><a href="#cb17-114" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;slider_sample&quot;</span>: slider_sample(sup, rauh, slider_revision(ends))}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </details>
 <div class="table-scroll">

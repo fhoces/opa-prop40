@@ -2371,7 +2371,7 @@ skipped
 3
 </td>
 <td style="text-align:right;">
-80
+110
 </td>
 <td style="text-align:right;">
 0
@@ -2402,10 +2402,10 @@ skipped
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/tests/testthat/test-site.R"><code>test-site.R</code></a>
 </td>
 <td style="text-align:right;">
-6
+9
 </td>
 <td style="text-align:right;">
-161
+187
 </td>
 <td style="text-align:right;">
 0
@@ -2436,10 +2436,10 @@ skipped
 <b>total</b>
 </td>
 <td style="text-align:right;">
-29
+32
 </td>
 <td style="text-align:right;">
-333
+389
 </td>
 <td style="text-align:right;">
 0
@@ -2451,13 +2451,13 @@ skipped
 </tbody>
 </table>
 </div>
-<p>Run while this page was rendered: <strong>333 expectations passed, 0 failed</strong>, in 29 test blocks. The files check:</p>
+<p>Run while this page was rendered: <strong>389 expectations passed, 0 failed</strong>, in 32 test blocks. The files check:</p>
 <ul>
 <li><code>test-endpoints.R</code>: each end of the bridge against the number its authors print (BSZ Table 5 row 1, the NBER mean NPV), plus the earlier figures the code still checks: the GGSS headline behind the BSZ analysis and the March 2026 version of the RJKDC analysis, where the bridge’s disputed-input steps end.</li>
 <li><code>test-shapley.R</code>: the Shapley steps sum exactly to the gap in every setting, and match a brute-force average over orders.</li>
 <li><code>test-parity.R</code>: the R exports are current, and the Python twin’s agree with them to 1e-9.</li>
 <li><code>test-sources.R</code>: every transcribed input has a label, a source and a page.</li>
-<li><code>test-site.R</code>: the overview page and the explorer are exactly the generator’s output, have no unfilled token or em-dash, show the key numbers and the two main estimates, the explorer’s data file carries the same two values, the switchboard’s all-off and all-on settings equal the two ends in every horizon setting, the explorer shows no gross revenue number, and every relative link resolves.</li>
+<li><code>test-site.R</code>: the overview page and the explorer are exactly the generator’s output, have no unfilled token or em-dash, show the key numbers and the two main estimates, the explorer’s data file carries the same two values, the switchboard’s all-off and all-on settings equal the two ends in every horizon setting, the explorer’s slider panels start and end at the two analyses’ estimates, <code>site/explorer/model.js</code> (run with node) returns the R value on every mix in <code>slider_sample.csv</code> to 1e-9, the explorer shows no gross revenue number, and every relative link resolves.</li>
 </ul>
 <p>GitHub Actions rebuilds the exports in R and Python on a clean runner and runs the suite on every push that touches <code>comparison/</code> or either analysis’s export contract (<code>.github/workflows/comparison-ci.yml</code>). It does not render the Quarto pages.</p>
 </section>
@@ -2495,7 +2495,7 @@ reads the two export contracts and the document inputs, and nothing else
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/R/model.R"><code>R/model.R</code></a>
 </td>
 <td style="text-align:right;">
-149
+242
 </td>
 <td style="text-align:left;">
 score_common(), the one estimating function; exact Shapley over all orders; one sequential order; Rauh’s Monte Carlo expectations
@@ -2506,7 +2506,7 @@ score_common(), the one estimating function; exact Shapley over all orders; one 
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/R/build.R"><code>R/build.R</code></a>
 </td>
 <td style="text-align:right;">
-256
+257
 </td>
 <td style="text-align:left;">
 every number the page shows, written to export/r/*.csv
@@ -2517,7 +2517,7 @@ every number the page shows, written to export/r/*.csv
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/R/site.R"><code>R/site.R</code></a>
 </td>
 <td style="text-align:right;">
-420
+429
 </td>
 <td style="text-align:left;">
 renders the overview page (index.html), the explorer (site/explorer/index.html) and their data file from site/index.template.html and site/explorer.template.html
@@ -2528,7 +2528,7 @@ renders the overview page (index.html), the explorer (site/explorer/index.html) 
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/py/bridge.py"><code>py/bridge.py</code></a>
 </td>
 <td style="text-align:right;">
-338
+408
 </td>
 <td style="text-align:left;">
 the Python twin of contract.R, model.R and build.R; writes export/py/*.csv
@@ -2558,6 +2558,17 @@ reads Hoopes (2026) Figure 2 off the chart into data/hoopes-fig2.csv
 </tr>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/site/explorer/model.js"><code>site/explorer/model.js</code></a>
+</td>
+<td style="text-align:right;">
+112
+</td>
+<td style="text-align:left;">
+score_common() and the slider rule ported to JavaScript; the explorer’s panels run it in the browser (written by hand, checked against slider_sample.csv)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/site/repro.qmd"><code>site/repro.qmd</code></a>
 </td>
 <td style="text-align:right;">
@@ -2572,7 +2583,7 @@ the reproduction report
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/site/materials.qmd"><code>site/materials.qmd</code></a>
 </td>
 <td style="text-align:right;">
-235
+240
 </td>
 <td style="text-align:left;">
 this page
@@ -2729,10 +2740,24 @@ intermediate values the page quotes (annuity factors, the BSZ net terms)
 the common function’s value for every mix of switches (bit i of mask = disputed input i at the RJKDC value), for each output and horizon setting
 </td>
 </tr>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/export/r/slider_sample.csv"><code>slider_sample.csv</code></a>
+</td>
+<td style="text-align:right;">
+600
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:left;">
+300 slider mixes per explorer panel (positions 0 to 4 per input, 0 = the panel’s own analysis) and the panel’s value, the sample the tests run model.js on
+</td>
+</tr>
 </tbody>
 </table>
 </div>
-<p><code>comparison/export/py/</code> holds the same files from the Python twin (without <code>inputs.csv</code>). The explorer’s interactive bridge reads <code>assets/comparison-data.js</code>, written by <code>R/site.R</code> from these files. Its switchboard reads the net fiscal effect rows of <code>switchboard.csv</code> from the same data file, so turning the switches on and off does no arithmetic beyond adding the revision step. The inputs the comparison transcribes itself are in <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/data/document-inputs.csv"><code>comparison/data/document-inputs.csv</code></a> (18 rows, each with an origin label, a source and a page) and <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/data/hoopes-fig2.csv"><code>comparison/data/hoopes-fig2.csv</code></a> (Hoopes’s Figure 2, read off the chart). None is edited by hand except these two transcriptions.</p>
+<p><code>comparison/export/py/</code> holds the same files from the Python twin (without <code>inputs.csv</code>). The explorer’s interactive bridge reads <code>assets/comparison-data.js</code>, written by <code>R/site.R</code> from these files. Its two slider panels read the two input vectors from the same data file and compute each panel’s estimate in the browser with <code>site/explorer/model.js</code>, which follows <code>slider_inputs()</code> in <code>R/model.R</code>: positions 1 to 3 are evenly spaced between the two values, and the horizon steps through 5, 10, 20 and 50 years and a perpetuity. The inputs the comparison transcribes itself are in <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/data/document-inputs.csv"><code>comparison/data/document-inputs.csv</code></a> (18 rows, each with an origin label, a source and a page) and <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/data/hoopes-fig2.csv"><code>comparison/data/hoopes-fig2.csv</code></a> (Hoopes’s Figure 2, read off the chart). None is edited by hand except these two transcriptions.</p>
 </section>
 <section id="sources" class="level2">
 <h2 class="anchored" data-anchor-id="sources">Sources</h2>

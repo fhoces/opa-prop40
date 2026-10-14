@@ -127,10 +127,10 @@ on one common output and walks from one to the other, one disputed input at a ti
 This report is part of the comparison's [Open Policy Analysis](https://doi.org/10.1093/scipol/scaa067) (OPA):
 
 - **Open Output**: [the explorer](explorer/index.html), with the two main estimates and the
-  bridge on the net fiscal effect, where the step sizes and the loss horizon can be switched.
-  Its switchboard has one switch per disputed input, between a BSZ card and an RJKDC card:
-  each switch moves one input from the BSZ value to the RJKDC value, and the value for every
-  mix of switches is precomputed in `comparison/export/r/switchboard.csv`
+  bridge on the net fiscal effect. Its two panels of sliders, one slider per disputed input,
+  move each input in five steps from one analysis's value to the other's, and the browser
+  computes each panel's estimate with `explorer/model.js`, a copy of `score_common()` that
+  a test checks against the R values
 - **Open Analysis**: this document
 - **Open Materials**: [the repository folder](https://github.com/fhoces/opa-prop40/tree/main/comparison), every script, test and data file (guide: [the materials page](materials.html))
 :::
