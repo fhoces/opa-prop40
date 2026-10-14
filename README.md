@@ -26,6 +26,7 @@ opa-prop40/
 ├── rjkdc-analysis/        Rauh et al. SSRN + NBER reproduction (R, {targets}, Python twin)
 │                          + its OPA site in site/
 ├── comparison/            common output definition, Shapley bridge, R and Python twins
+├── review/                code-review ledgers: the chain behind each headline number, layer by layer
 ├── PLAN.md                plan, pre-specified output, decisions
 └── AUDIT.md               OPA Guidelines audit baseline
 ```

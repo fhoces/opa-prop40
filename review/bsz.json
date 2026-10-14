@@ -1,0 +1,497 @@
+{
+  "opa": "bsz",
+  "title": "BSZ: the main estimate",
+  "headline": {
+    "label": "Main estimate, Base scenario",
+    "value": "$106.8B",
+    "computed": 106.795965,
+    "definition": "wealth tax + extra income tax from selling assets - income tax lost to leavers (present value, 5 years at 3%)",
+    "where": "https://fhoces.github.io/opa-prop40/bsz-analysis/site/explorer/"
+  },
+  "commit": "2c0bdcb",
+  "seeded": "2026-10-13",
+  "verified_by": "python3: read grid.js, Base row index 788, main_estimate = wealth_tax_revenue + extra_ca_inctax_sales + annual_ca_inctax_loss x (1 - 1.03^-5)/0.03 = 106.795965",
+  "runs_for_a_stranger": "AUDIT.md step 8, level 2: .github/workflows/bsz-ci.yml rebuilds the pipeline on a clean runner; no one-click (Binder) yet.",
+  "layers": [
+    {
+      "n": 1,
+      "name": "The number on the page",
+      "what": "This layer is the explorer page's own JavaScript, not R or Python; the R and Python twins start at layer 3. The page reads the precomputed grid, finds the row for the dial setting on screen (the Base scenario when nothing is touched), and prints the main estimate under the bars. Footnote 1 defines the main estimate as this OPA's choice, not the authors'.",
+      "inputs": "G = window.__GRID__ from grid.js (G.snap holds every setting) and the six dial positions, Base = [2, 2, 1, 1, 0, 0]",
+      "inputs_from": [
+        {
+          "layer": "bsz-2",
+          "what": "G = window.__GRID__: the precomputed grid; G.snap has one row per dial setting",
+          "tokens": [
+            "G",
+            "snap"
+          ],
+          "source_tokens": [
+            "__GRID__",
+            "snap"
+          ]
+        }
+      ],
+      "other_inputs": "the six dial positions on screen, Base = [2, 2, 1, 1, 0, 0]",
+      "outputs": "the text 'main estimate $106.8B' and the nine-row outcome table",
+      "method_ref": "Display only. The definition in footnote 1 (lines 231-235) is the method.",
+      "method_status": "plumbing",
+      "r": {
+        "path": "bsz-analysis/site/explorer/index.html",
+        "symbol": "render(): pick the row, print the main estimate",
+        "lines": [
+          476,
+          494
+        ],
+        "language": "javascript",
+        "url": "https://github.com/fhoces/opa-prop40/blob/2c0bdcb/bsz-analysis/site/explorer/index.html#L476-L494",
+        "snippet": "  function render() {\n    var i = idx(state);        // position of the current dial setting in G.snap\n    var snap = G.snap[i];      // that setting's outcomes, read below by G.keys index\n    document.querySelectorAll(\".levels button\").forEach(function (b) { b.setAttribute(\"aria-pressed\", \"false\"); });\n    var off = state[DI.pareto] === 0;\n    rowEl[DI.avoidance_small].classList.toggle(\"is-off\", off);\n    rowEl[DI.avoidance_small].querySelectorAll(\"button\").forEach(function (b) { b.disabled = off; });\n    G.dials.forEach(function (dial, di) {\n      var b = document.getElementById(\"dial-\" + dial.key + \"-\" + state[di]);\n      if (b) b.setAttribute(\"aria-pressed\", \"true\");\n    });\n    var name = null;\n    for (var k in namedIdx) if (namedIdx[k] === i) name = k;\n    var ext = i === iMax ? \"The highest total across all settings\"\n            : i === iMin ? \"The lowest total across all settings\" : null;\n    document.getElementById(\"cell-name\").textContent =\n      name ? (name === PREF ? \"The main estimate\\u00B9: base scenario\" : name + \" scenario (Table 5)\")\n           : ext || \"A setting the authors did not publish\";\n    document.getElementById(\"cell-meta\").textContent ="
+      },
+      "py": null,
+      "targets": null,
+      "id": "bsz-1",
+      "state": "understood",
+      "understanding": "",
+      "missing": "",
+      "feedback": [
+        {
+          "date": "2026-10-13",
+          "id": "fb-mv7b1f83",
+          "status": "applied",
+          "text": "not r or python code",
+          "applied": "2026-10-13",
+          "response": "Layer text now says it is the page's own JavaScript; the code toggle shows JS; comments added at index.html lines 285-287 and 477-478."
+        }
+      ],
+      "updated": "2026-10-13"
+    },
+    {
+      "n": 2,
+      "name": "The grid file the page reads",
+      "what": "A generated JavaScript data file, not R or Python: the R pipeline writes the committed copy and the Python twin writes its own under export/py/. It holds one object, window.__GRID__. Its snap field holds all the grid estimates: one entry per combination of the six dials (6 x 5 x 4 x 4 x 2 x 2 = 1,920 entries), each a list of nine numbers in the order of keys, rounded to six decimals. named gives the position of the four Table 5 rows (Base = snap[788]). The page does no arithmetic beyond picking an entry.",
+      "inputs": "nothing at run time; the file is written by the next layer",
+      "inputs_from": [
+        {
+          "layer": "bsz-3",
+          "what": "the text of grid.js, written as raw UTF-8 bytes",
+          "tokens": [
+            "__GRID__"
+          ],
+          "source_tokens": [
+            "site_grid_js_text",
+            "json",
+            "payload",
+            "_json"
+          ]
+        }
+      ],
+      "other_inputs": "",
+      "outputs": "row 788 (Base): {\"main_estimate\": 106.795965, \"wealth_tax_revenue\": 103.815, \"extra_ca_inctax_sales\": 3.681972, \"income_tax_loss_pv\": -0.701007, \"annual_ca_inctax_loss\": -0.153068, \"taxable_wealth\": 2076.3, \"wealth\": 2307, \"n_billionaires\": 250, \"avoidance_rate\": 0.1}",
+      "method_ref": "Plumbing. The R-written file is the committed one; the Python twin writes the same text to export/py/site/grid.js, and test-site.R checks the committed file is byte-identical to the exporter's output.",
+      "method_status": "plumbing",
+      "r": {
+        "path": "bsz-analysis/site/explorer/grid.js",
+        "symbol": "window.__GRID__",
+        "lines": [
+          1,
+          2
+        ],
+        "language": "javascript",
+        "url": "https://github.com/fhoces/opa-prop40/blob/2c0bdcb/bsz-analysis/site/explorer/grid.js",
+        "snippet": "/* Generated file: do not edit. See R/site_exports.R. snap holds every precomputed setting: one row per combination of the dials (first dial slowest), each row the outcomes in the order of keys. */\nwindow.__GRID__ = {\n  \"dials\": [avoidance, mobility_share, avoidance_small, sell_share, pareto, leavers],   // levels per dial: [6, 5, 4, 4, 2, 2]\n  \"keys\": [\"main_estimate\", \"wealth_tax_revenue\", \"extra_ca_inctax_sales\", \"income_tax_loss_pv\", \"annual_ca_inctax_loss\", \"taxable_wealth\", \"wealth\", \"n_billionaires\", \"avoidance_rate\"],\n  \"named\": {\"Base\": [2, 2, 1, 1, 0, 0], \"Missing billionaires\": [2, 2, 1, 1, 1, 0], \"Leavers\": [2, 2, 1, 1, 0, 1], \"Missing + leavers\": [2, 2, 1, 1, 1, 1]},   // 0-based level index per dial\n  \"facts\": {\"W0\": 2307, \"n0\": 250, \"C\": 3.061364, \"pv_rate\": 0.03, \"pv_years\": 5, \"row4_phasein_gap\": 1.974134},\n  \"snap\": [ ... 1920 rows, one per dial combination ... ]\n};\n\n// snap[788] is the Base row (first dial slowest, as itertools.product):\n// {\"main_estimate\": 106.795965, \"wealth_tax_revenue\": 103.815, \"extra_ca_inctax_sales\": 3.681972, \"income_tax_loss_pv\": -0.701007, \"annual_ca_inctax_loss\": -0.153068, \"taxable_wealth\": 2076.3, \"wealth\": 2307, \"n_billionaires\": 250, \"avoidance_rate\": 0.1}"
+      },
+      "py": {
+        "path": "bsz-analysis/export/py/site/grid.js",
+        "symbol": "window.__GRID__",
+        "lines": [
+          1,
+          2
+        ],
+        "language": "javascript",
+        "url": null,
+        "snippet": "(gitignored; written by py/run_export.py, same shape as the R file)"
+      },
+      "targets": "_targets.R:154 site_grid_js",
+      "id": "bsz-2",
+      "state": "partly",
+      "understanding": "it displays the output",
+      "missing": "What object contains all the grid estimates? snap?\n",
+      "feedback": [
+        {
+          "date": "2026-10-13",
+          "id": "fb-mv7b5o76",
+          "status": "applied",
+          "text": "What object contains all the grid estimates? snap?",
+          "applied": "2026-10-13",
+          "response": "Yes, snap. Layer text now names it; the grid.js header comment and the explorer comments describe it (R/site_exports.R:180, py/site_exports.py:198, index.html:285-287)."
+        },
+        {
+          "date": "2026-10-13",
+          "id": "fb-mv7bczym",
+          "status": "applied",
+          "text": "this is not r or python",
+          "applied": "2026-10-13",
+          "response": "Right: it is a generated JavaScript data file. The layer text and the card now say so, and the toggle reads 'written by R' / 'written by Py'. The code that writes it is layer 3."
+        }
+      ],
+      "updated": "2026-10-13"
+    },
+    {
+      "n": 3,
+      "name": "Writing the grid file",
+      "what": "Turns the grid table into the JavaScript text: the dial definitions, the outcome keys, the four named Table 5 rows as 0-based indices, a few facts (W0, n0, C, the discount rate and horizon), and the rounded rows. The nine outcomes per row are the main estimate first, then the eight rows of the explorer's outcome table (the folded table under the bars). The series of the main estimate alone is column 0 of snap: grid$main_estimate in R, grid['main_estimate'] in Python.",
+      "inputs": "the grid table (1,920 rows) and the fixed inputs list",
+      "inputs_from": [
+        {
+          "layer": "bsz-4",
+          "what": "the grid table: 1,920 rows, one per dial combination, nine outcomes each",
+          "tokens": [
+            "grid"
+          ],
+          "source_tokens": [
+            "rows",
+            "build_site_grid"
+          ]
+        },
+        {
+          "layer": "bsz-6",
+          "what": "inp: the fixed inputs list (W0, n0, C, the Pareto summary, the leavers)",
+          "tokens": [
+            "inp"
+          ],
+          "source_tokens": [
+            "tab5_scoring_inputs"
+          ]
+        }
+      ],
+      "other_inputs": "the dial definitions and outcome labels (site_dials(), site_outcomes())",
+      "outputs": "the text of grid.js, written as raw UTF-8 bytes",
+      "method_ref": "Plumbing.",
+      "method_status": "plumbing",
+      "r": {
+        "path": "bsz-analysis/R/site_exports.R",
+        "symbol": "site_grid_js_text(), write_site_grid_js()",
+        "lines": [
+          160,
+          196
+        ],
+        "language": "r",
+        "url": "https://github.com/fhoces/opa-prop40/blob/2c0bdcb/bsz-analysis/R/site_exports.R#L160-L196",
+        "snippet": "site_grid_js_text <- function(grid, inp) {\n  dials <- site_dials()\n  outs  <- site_outcomes()\n  named <- lapply(site_named_rows(), function(v) v - 1L)\n  # The output estimates: one row per dial setting (the grid's row order), the nine\n  # outcomes in the order of outs$key, rounded to 6 decimals. The page reads this as snap.\n  # The nine are the main estimate first, then the eight rows of the explorer's outcome\n  # table. The main-estimate series alone is grid$main_estimate (column 0 of snap).\n  snap  <- lapply(seq_len(nrow(grid)), function(i)\n    unname(round(as.numeric(grid[i, outs$key]), 6)))\n  payload <- list(\n    source  = paste0(\"Generated by write_site_grid_js() in R/site_exports.R from the \",\n                     \"targets pipeline (BSZ workbook, \", inp$vintage, \" vintage). Do not edit.\"),\n    vintage = inp$vintage,\n    dials   = lapply(dials, function(d) d[c(\"key\", \"label\", \"sym\", \"origin\", \"desc\", \"levels\", \"fmt\")]),\n    outcomes = outs$label,\n    keys     = outs$key,\n    units    = outs$unit,\n    named    = named,\n    preferred = \"Base\",\n    facts    = list(W0 = inp$W0, n0 = inp$n0, C = round(inp$C, 6),\n                    pv_rate = site_pv_rate, pv_years = site_pv_years,\n                    row4_phasein_gap = round(inp$row4_phasein_gap, 6)),\n    snap     = snap\n  )\n  json <- jsonlite::toJSON(payload, auto_unbox = TRUE, digits = NA, pretty = FALSE)\n  paste0(\"/* Generated file: do not edit. See R/site_exports.R. snap holds every precomputed setting: one row per combination of the dials (first dial slowest), each row the outcomes in the order of keys. */\\n\",\n         \"window.__GRID__ = \", json, \";\\n\")\n}\n\nwrite_site_grid_js <- function(grid, inp) {\n  path <- site_dir(\"explorer\", \"grid.js\")\n  dir.create(dirname(path), recursive = TRUE, showWarnings = FALSE)\n  # Raw UTF-8 bytes, exactly the text (writeLines would add a second newline).\n  writeBin(charToRaw(enc2utf8(site_grid_js_text(grid, inp))), path)\n  path\n}"
+      },
+      "py": {
+        "path": "bsz-analysis/py/site_exports.py",
+        "symbol": "site_grid_js_text()",
+        "lines": [
+          181,
+          205
+        ],
+        "language": "python",
+        "url": "https://github.com/fhoces/opa-prop40/blob/2c0bdcb/bsz-analysis/py/site_exports.py#L181-L205",
+        "snippet": "def site_grid_js_text(grid, inp):\n    dials = site_dials()\n    keys = [k for k, _, _ in SITE_OUTCOMES]\n    # The output estimates: one row per dial setting (the grid's row order), the nine\n    # outcomes in the order of keys, rounded to 6 decimals. The page reads this as snap.\n    # The nine are the main estimate first, then the eight rows of the explorer's outcome\n    # table. The main-estimate series alone is grid[\"main_estimate\"] (column 0 of snap).\n    snap = [[_r_round(v, 6) for v in row] for row in grid[keys].itertuples(index=False)]\n    payload = {\n        \"source\": \"Generated by write_site_grid_js() in R/site_exports.R from the targets pipeline \"\n                  f\"(BSZ workbook, {inp['vintage']} vintage). Do not edit.\",\n        \"vintage\": inp[\"vintage\"],\n        \"dials\": [{k: d[k] for k in (\"key\", \"label\", \"sym\", \"origin\", \"desc\", \"levels\", \"fmt\")} for d in dials],\n        \"outcomes\": [lab for _, lab, _ in SITE_OUTCOMES],\n        \"keys\": keys,\n        \"units\": [u for _, _, u in SITE_OUTCOMES],\n        \"named\": {k: [i - 1 for i in v] for k, v in site_named_rows().items()},\n        \"preferred\": \"Base\",\n        \"facts\": {\"W0\": inp[\"W0\"], \"n0\": inp[\"n0\"], \"C\": _r_round(inp[\"C\"], 6),\n                  \"pv_rate\": SITE_PV_RATE, \"pv_years\": SITE_PV_YEARS,\n                  \"row4_phasein_gap\": _r_round(inp[\"row4_phasein_gap\"], 6)},\n        \"snap\": snap,\n    }\n    return (\"/* Generated file: do not edit. See R/site_exports.R. snap holds every precomputed setting: one row per combination of the dials (first dial slowest), each row the outcomes in the order of keys. */\\n\"\n            \"window.__GRID__ = \" + _json(payload) + \";\\n\")"
+      },
+      "targets": "_targets.R:154 site_grid_js",
+      "id": "bsz-3",
+      "state": "partly",
+      "understanding": "",
+      "missing": "",
+      "feedback": [
+        {
+          "applied": "2026-10-13",
+          "date": "2026-10-13",
+          "id": "fb-mv7bo28i",
+          "response": "Comment added above the snap line in both writers (R/site_exports.R:162-163, py/site_exports.py:182-183): one row per dial setting, nine outcomes in the order of keys, rounded to 6 decimals.",
+          "status": "applied",
+          "text": "comment right abouve the line that creates the output estimates"
+        },
+        {
+          "date": "2026-10-13",
+          "id": "fb-mv7bzxvi",
+          "status": "applied",
+          "text": "You mentioned 9 outputs. Male clear if this are the main + those in the folded table and explain how to get the series for the main estimate only",
+          "applied": "2026-10-13",
+          "response": "The nine are the main estimate first, then the eight rows of the explorer's folded outcome table. The main-estimate series alone is column 0 of snap (grid$main_estimate in R, grid['main_estimate'] in Python). Said in the layer text and in the comment above the snap line in both writers."
+        }
+      ],
+      "updated": "2026-10-13"
+    },
+    {
+      "n": 4,
+      "name": "Building the grid and the present value",
+      "what": "The key function here is score_tab5_cell(), defined in layer 5: it does all the estimating, and this layer only drives it. The loop goes over every dial combination, calls score_tab5_cell() at each, discounts the yearly income tax lost to leavers over 5 years at 3% a year (factor 4.5797), and adds the three pieces: wealth tax + extra income tax from sales + the (negative) present value of the loss. That sum is the main estimate.",
+      "inputs": "the fixed inputs list and the six dials' level values",
+      "inputs_from": [
+        {
+          "layer": "bsz-5",
+          "what": "seven outcomes for one dial setting: n, wealth, taxable wealth, avoidance rate, revenue, extra income tax, yearly loss",
+          "tokens": [
+            "out",
+            "score_tab5_cell"
+          ],
+          "source_tokens": [
+            "score_tab5_cell",
+            "n_billionaires",
+            "wealth",
+            "taxable_wealth",
+            "avoidance_rate",
+            "wealth_tax_revenue",
+            "extra_ca_inctax_sales",
+            "annual_ca_inctax_loss"
+          ]
+        },
+        {
+          "layer": "bsz-6",
+          "what": "inp: the fixed inputs list (W0, n0, C, the Pareto summary, the leavers)",
+          "tokens": [
+            "inp"
+          ],
+          "source_tokens": [
+            "tab5_scoring_inputs"
+          ]
+        }
+      ],
+      "other_inputs": "the six dials' level values; the discount rate 3% and horizon 5 years (site_pv_rate, site_pv_years)",
+      "outputs": "one row per combination; Base: 103.815 + 3.681972 + (-0.153068 x 4.5797) = 106.795965",
+      "method_ref": "The sum is this OPA's definition (comment at lines 52-57; the deck). BSZ PDF p.27 gives the 5-year horizon; the 3% rate is the middle of the RJKDC report's 1.5-4.5% range. BSZ give no rate.",
+      "method_status": "opa_definition",
+      "r": {
+        "path": "bsz-analysis/R/site_exports.R",
+        "symbol": "site_pv_factor(), build_site_grid()",
+        "lines": [
+          52,
+          94
+        ],
+        "language": "r",
+        "url": "https://github.com/fhoces/opa-prop40/blob/2c0bdcb/bsz-analysis/R/site_exports.R#L52-L94",
+        "snippet": "# The main estimate: the one-time wealth tax, plus the one-time extra income tax from\n# selling assets, minus the present value of the yearly income tax lost to leavers over\n# BSZ's horizon of about 5 years (PDF p.27), discounted at 3% a year (the middle of the\n# 1.5%-4.5% range the RJKDC report uses; BSZ give no rate). Same definition as the deck.\nsite_pv_rate  <- 0.03\nsite_pv_years <- 5\nsite_pv_factor <- function(r = site_pv_rate, H = site_pv_years) (1 - (1 + r)^(-H)) / r\n\nsite_outcomes <- function() {\n  tibble::tribble(\n    ~key,                    ~label,                                   ~unit,\n    \"main_estimate\",         \"Main estimate (net)\",                    \"$B\",\n    \"wealth_tax_revenue\",    \"Wealth tax revenue (one-time)\",          \"$B\",\n    \"extra_ca_inctax_sales\", \"Extra CA income tax from asset sales\",   \"$B\",\n    \"income_tax_loss_pv\",    \"Income tax lost to leavers, present value (5 years at 3%)\", \"$B\",\n    \"annual_ca_inctax_loss\", \"Income tax lost to leavers, per year\",   \"$B/yr\",\n    \"taxable_wealth\",        \"Taxable wealth after avoidance\",         \"$B\",\n    \"wealth\",                \"Wealth of CA billionaires\",              \"$B\",\n    \"n_billionaires\",        \"Number of billionaires\",                 \"count\",\n    \"avoidance_rate\",        \"Overall avoidance rate\",                 \"share\"\n  )\n}\n\n# Every cell of the dial grid, in itertools.product order (first dial slowest).\nbuild_site_grid <- function(inp) {\n  dials <- site_dials()\n  idx <- rev(expand.grid(rev(lapply(dials, function(d) seq_along(d$levels)))))\n  names(idx) <- vapply(dials, `[[`, \"\", \"key\")\n  rows <- lapply(seq_len(nrow(idx)), function(i) {\n    v <- mapply(function(d, j) d$levels[j], dials, as.integer(idx[i, ]))\n    # The key call: score_tab5_cell() (R/compute_tab5.R) does all the estimating.\n    # This loop only feeds it one setting of the dials and adds the present value.\n    out <- score_tab5_cell(inp,\n                           avoidance = v[[1]], mobility_share = v[[2]],\n                           avoidance_small = v[[3]], sell_share = v[[4]],\n                           pareto = v[[5]] == 1, leavers = v[[6]] == 1)\n    loss_pv <- out[[\"annual_ca_inctax_loss\"]] * site_pv_factor()\n    c(cell = i, stats::setNames(v, names(idx)), out,\n      income_tax_loss_pv = loss_pv,\n      main_estimate = out[[\"wealth_tax_revenue\"]] + out[[\"extra_ca_inctax_sales\"]] + loss_pv)\n  })\n  tibble::as_tibble(as.data.frame(do.call(rbind, rows)))\n}"
+      },
+      "py": {
+        "path": "bsz-analysis/py/site_exports.py",
+        "symbol": "site_pv_factor(), build_site_grid()",
+        "lines": [
+          17,
+          97
+        ],
+        "language": "python",
+        "url": "https://github.com/fhoces/opa-prop40/blob/2c0bdcb/bsz-analysis/py/site_exports.py#L17-L97",
+        "snippet": "SITE_PV_RATE = 0.03\nSITE_PV_YEARS = 5\n\n\ndef site_pv_factor(r=SITE_PV_RATE, H=SITE_PV_YEARS):\n    return (1 - (1 + r) ** (-H)) / r\n\n\ndef site_dials():\n    return [\n        dict(key=\"avoidance\", label=\"Avoidance and evasion\", sym=\"α\", origin=\"guesswork\",\n             desc=\"Share of listed wealth that escapes the tax. GGSS p.4: \\\"a relatively small \"\n                  \"avoidance rate of 10%\\\", argued from enforcement, not estimated.\",\n             levels=[0, 0.05, 0.10, 0.15, 0.20, 0.30], default=3, fmt=\"pct\"),\n        dict(key=\"mobility_share\", label=\"Share of avoidance that is leaving\", sym=\"m\",\n             origin=\"guesswork\",\n             desc=\"Only this part costs income tax. BSZ PDF p.24: \\\"If we assume that half of \"\n                  \"the 10% avoidance takes the form of mobility\\\".\",\n             levels=[0, 0.25, 0.50, 0.75, 1], default=3, fmt=\"pct\"),\n        dict(key=\"avoidance_small\", label=\"Avoidance by the less visible billionaires\",\n             sym=\"αₛ\", origin=\"guesswork\",\n             desc=\"Applies only when the Pareto-missing billionaires are counted. BSZ PDF p.25: \"\n                  \"\\\"Assuming a higher evasion rate of 20%\\\".\",\n             levels=[0.10, 0.20, 0.30, 0.50], default=2, fmt=\"pct\"),\n        dict(key=\"sell_share\", label=\"Share of the tax paid by selling assets\", sym=\"s\",\n             origin=\"guesswork\",\n             desc=\"Sales realise capital gains, which raise extra CA income tax. BSZ PDF p.24: \"\n                  \"\\\"paid one-third by selling assets\\\".\",\n             levels=[0, 1 / 3, 2 / 3, 1], default=2, fmt=\"frac3\"),\n        dict(key=\"pareto\", label=\"Count billionaires Forbes misses\", sym=\"P\", origin=\"research\",\n             desc=\"Pareto extrapolation of the $1B-4.5B range (Table 5 rows 2 and 4). BSZ PDF \"\n                  \"pp.24-25 and Appendix Figure A4.\",\n             levels=[0, 1], default=1, fmt=\"bool\"),\n        dict(key=\"leavers\", label=\"Aggressive assumption on leavers\", sym=\"L\", origin=\"guesswork\",\n             desc=\"Page, Thiel, Hankey, Kalanick escape the tax; Brin, Zuckerberg, Fang leave \"\n                  \"later (Table 5 rows 3 and 4). A legal judgment on residency, BSZ PDF p.26.\",\n             levels=[0, 1], default=1, fmt=\"bool\"),\n    ]\n\n\ndef site_named_rows():\n    \"\"\"The four Table 5 rows as dial settings (1-based level indices, as in R).\"\"\"\n    return {\n        \"Base\": [3, 3, 2, 2, 1, 1],\n        \"Missing billionaires\": [3, 3, 2, 2, 2, 1],\n        \"Leavers\": [3, 3, 2, 2, 1, 2],\n        \"Missing + leavers\":\n... (cut; open the file for the rest)"
+      },
+      "targets": "_targets.R:144 site_grid",
+      "id": "bsz-4",
+      "state": "partly",
+      "understanding": "",
+      "missing": "",
+      "feedback": [
+        {
+          "date": "2026-10-13",
+          "id": "fb-mv7c5mih",
+          "status": "applied",
+          "text": "highlitght that score_tab5_cell is the key function here",
+          "applied": "2026-10-13",
+          "response": "The layer text now opens with score_tab5_cell() as the key function (defined in layer 5), a comment marks the call in both writers, and the name is coloured in layer 5's colour in the code."
+        }
+      ],
+      "updated": "2026-10-13"
+    },
+    {
+      "n": 5,
+      "name": "The estimating function",
+      "what": "One setting of every guesswork input in, seven outcomes out. Taxable wealth = (1 - avoidance) x W0; revenue = 5% of that; extra income tax = revenue x share sold x gain share x 13.3%; yearly loss = -(avoidance x mobility share) x C. The Pareto and leaver switches add their rows' terms.",
+      "inputs": "inp (W0 = 2307, C = 3.0614, ...) and the dials: avoidance 0.10, mobility 0.50, sell 1/3, pareto off, leavers off",
+      "inputs_from": [
+        {
+          "layer": "bsz-6",
+          "what": "inp: the fixed inputs list (W0, n0, C, the Pareto summary, the leavers)",
+          "tokens": [
+            "inp"
+          ],
+          "source_tokens": [
+            "tab5_scoring_inputs"
+          ]
+        }
+      ],
+      "other_inputs": "the dials: avoidance 0.10, mobility 0.50, avoidance_small 0.20, sell 1/3, pareto off, leavers off; and the defaults tax_rate 0.05, phasein_rate 0.025, gains_share 0.80, ca_cg_rate 0.133",
+      "outputs": "Base: taxable 2076.3, revenue 103.815, extra 3.681972, yearly loss -0.153068",
+      "method_ref": "Tab5!B6:H6 of the workbook and BSZ PDF p.24. Matches: test-compute.R asserts the R row equals Tab5!B6:H9 to 1e-4, and the Python twin equals the R export.",
+      "method_status": "matches",
+      "r": {
+        "path": "bsz-analysis/R/compute_tab5.R",
+        "symbol": "score_tab5_cell()",
+        "lines": [
+          80,
+          110
+        ],
+        "language": "r",
+        "url": "https://github.com/fhoces/opa-prop40/blob/2c0bdcb/bsz-analysis/R/compute_tab5.R#L80-L110",
+        "snippet": "score_tab5_cell <- function(inp,\n                            avoidance      = 0.10,  # alpha: benchmark avoidance/evasion\n                            mobility_share = 0.50,  # share of alpha that is people leaving\n                            avoidance_small = 0.20, # alpha for Pareto-added billionaires\n                            sell_share     = 1/3,   # share of the tax paid by selling assets\n                            pareto         = FALSE, # add the Pareto-missing billionaires\n                            leavers        = FALSE, # aggressive leaver assumption\n                            tax_rate       = 0.05,\n                            phasein_rate   = 0.025,\n                            gains_share    = 0.80,\n                            ca_cg_rate     = 0.133) {\n  pw <- if (pareto) inp$pct_wealth_increase else 0\n  W  <- inp$W0 * (1 + pw)\n  n  <- inp$n0 * (if (pareto) 1 + inp$pct_count_increase else 1)\n  taxable <- (1 - avoidance) * (inp$W0 - if (leavers) inp$W_pre else 0) +\n             (1 - avoidance_small) * inp$W0 * pw\n  # Row 2 subtracts the phase-in deduction; row 4 (pareto AND leavers) does not\n  # (Tab5!F9). Literal workbook behaviour, see the header note.\n  phasein <- if (pareto && !leavers) inp$W0 * pw * inp$fraction_in_phasein * phasein_rate else 0\n  revenue <- tax_rate * taxable - phasein\n  extra   <- revenue * sell_share * gains_share * ca_cg_rate\n  loss    <- -(avoidance * mobility_share) * inp$C * (1 + pw) -\n             (if (leavers) inp$leaver_loss else 0)\n  c(n_billionaires        = n,\n    wealth                = W,\n    taxable_wealth        = taxable,\n    avoidance_rate        = 1 - taxable / W,\n    wealth_tax_revenue    = revenue,\n    extra_ca_inctax_sales = extra,\n    annual_ca_inctax_loss = loss)\n}"
+      },
+      "py": {
+        "path": "bsz-analysis/py/compute_tab5.py",
+        "symbol": "score_tab5_cell()",
+        "lines": [
+          72,
+          95
+        ],
+        "language": "python",
+        "url": "https://github.com/fhoces/opa-prop40/blob/2c0bdcb/bsz-analysis/py/compute_tab5.py#L72-L95",
+        "snippet": "def score_tab5_cell(inp, avoidance=0.10, mobility_share=0.50, avoidance_small=0.20,\n                    sell_share=1 / 3, pareto=False, leavers=False, tax_rate=0.05,\n                    phasein_rate=0.025, gains_share=0.80, ca_cg_rate=0.133):\n    pw = inp[\"pct_wealth_increase\"] if pareto else 0\n    W = inp[\"W0\"] * (1 + pw)\n    n = inp[\"n0\"] * ((1 + inp[\"pct_count_increase\"]) if pareto else 1)\n    taxable = ((1 - avoidance) * (inp[\"W0\"] - (inp[\"W_pre\"] if leavers else 0))\n               + (1 - avoidance_small) * inp[\"W0\"] * pw)\n    # Row 2 subtracts the phase-in deduction; row 4 (pareto AND leavers) does\n    # not (Tab5!F9). Literal workbook behaviour.\n    phasein = inp[\"W0\"] * pw * inp[\"fraction_in_phasein\"] * phasein_rate if (pareto and not leavers) else 0\n    revenue = tax_rate * taxable - phasein\n    extra = revenue * sell_share * gains_share * ca_cg_rate\n    loss = (-(avoidance * mobility_share) * inp[\"C\"] * (1 + pw)\n            - (inp[\"leaver_loss\"] if leavers else 0))\n    return {\n        \"n_billionaires\": float(n),\n        \"wealth\": float(W),\n        \"taxable_wealth\": float(taxable),\n        \"avoidance_rate\": float(1 - taxable / W),\n        \"wealth_tax_revenue\": float(revenue),\n        \"extra_ca_inctax_sales\": float(extra),\n        \"annual_ca_inctax_loss\": float(loss),\n    }"
+      },
+      "targets": "_targets.R:53 tab5_r (the reproduction); _targets.R:144 site_grid (the explorer)",
+      "id": "bsz-5",
+      "state": "not_reviewed",
+      "understanding": "",
+      "missing": "",
+      "feedback": [],
+      "updated": "2026-10-13"
+    },
+    {
+      "n": 6,
+      "name": "The fixed inputs the function needs",
+      "what": "Gathers everything the estimating function reads that is not a dial: W0 and n0 from the constants, C (the 2019-2025 average income tax of CA billionaires) from Table 2, the residual tax rate per dollar of wealth, the Pareto summary, and the seven named leavers with their yearly tax.",
+      "inputs": "three pipeline targets: pareto_missing_r, tab2, tab3",
+      "inputs_from": [
+        {
+          "layer": "bsz-7",
+          "what": "the constants: W0 = 2307, n0 = 250, the seven leavers' wealth and private-company shares",
+          "tokens": [
+            "tab5_const",
+            "W0",
+            "n0"
+          ],
+          "source_tokens": [
+            ".TAB5_CONST",
+            "TAB5_CONST",
+            "tab5_const",
+            "baseline_n",
+            "baseline_wealth"
+          ]
+        },
+        {
+          "layer": "bsz-8",
+          "what": "tab2 and tab3: the workbook's Table 2 and Table 3 as typed tables",
+          "tokens": [
+            "tab2",
+            "tab3"
+          ],
+          "source_tokens": [
+            "extract_tab2",
+            "extract_tab3"
+          ]
+        }
+      ],
+      "other_inputs": "pareto_missing_r, the Pareto fit of the missed billionaires (another pipeline target, not on this chain)",
+      "outputs": "a named list; for the Base row only W0 = 2307, n0 = 250 and C = 3.061364 matter",
+      "method_ref": "Tab2!C14 (C), Tab3 (the top 4's own tax), Tab5 rows 18-29 (leavers). The residual rate is Tab5!F18/B18.",
+      "method_status": "matches",
+      "r": {
+        "path": "bsz-analysis/R/compute_tab5.R",
+        "symbol": "tab5_scoring_inputs()",
+        "lines": [
+          26,
+          76
+        ],
+        "language": "r",
+        "url": "https://github.com/fhoces/opa-prop40/blob/2c0bdcb/bsz-analysis/R/compute_tab5.R#L26-L76",
+        "snippet": "tab5_scoring_inputs <- function(pareto_missing_r, tab2, tab3) {\n  pareto   <- compute_pareto_summary(pareto_missing_r)\n  avg_row  <- tab2[grepl(\"^2019.*average\", tab2$year), ]\n  avg_tax  <- tab3[grepl(\"^Average\", tab3$metric), ]\n  C        <- avg_row$ca_inctax_estimated                     # Tab2!C14, $B/yr\n\n  W0 <- tab5_const(\"baseline_wealth\"); n0 <- tab5_const(\"baseline_n\")\n  top4_wealth  <- tab5_const(\"page_wealth_B\") + tab5_const(\"brin_wealth_B\") +\n                  tab5_const(\"zuck_wealth_B\") + tab5_const(\"huang_wealth_B\")\n  top4_private <- tab5_const(\"page_private_B\") + tab5_const(\"brin_private_B\") +\n                  tab5_const(\"zuck_private_B\") + tab5_const(\"huang_private_B\")\n  # income tax per $ of wealth outside the top 4's company wealth (Tab5!F18/B18)\n  resid_rate <- (C - avg_tax$all_top4 / 1000) / (W0 - (top4_wealth - top4_private))\n\n  pre_names  <- c(\"page\", \"thiel\", \"hankey\", \"kalanick\")\n  pre_wealth <- c(tab5_const(\"page_wealth_B\"), tab5_const(\"thiel_wealth_B\"),\n                  tab5_const(\"hankey_wealth_B\"), tab5_const(\"kalanick_wealth_B\"))\n  pre_loss   <- c(avg_tax$page / 1000 + tab5_const(\"page_private_B\") * resid_rate,\n                  pre_wealth[2:4] * resid_rate)\n  post_names <- c(\"brin\", \"zuckerberg\", \"fang\")\n  post_wealth <- c(tab5_const(\"brin_wealth_B\"), tab5_const(\"zuck_wealth_B\"),\n                   tab5_const(\"fang_wealth_B\"))\n  post_loss  <- c(avg_tax$brin / 1000 + tab5_const(\"brin_private_B\") * resid_rate,\n                  avg_tax$zuckerberg / 1000 + tab5_const(\"zuck_private_B\") * resid_rate,\n                  tab5_const(\"fang_wealth_B\") * resid_rate)\n\n  list(\n    vintage             = bsz_vintage(),\n    n0                  = n0,\n    W0                  = W0,\n    C                   = C,\n    pct_wealth_increase = pareto$pct_wealth_increase,\n    pct_count_increase  = pareto$pct_count_increase,\n    fraction_in_phasein = pareto$fraction_in_phasein,\n    pareto_b            = pareto$pareto_b,\n    pareto_extra_n      = pareto$total_count_proj - pareto$total_count_emp,\n    pareto_extra_wealth = pareto$total_wealth_proj - pareto$total_wealth_emp,\n    resid_rate          = resid_rate,\n    leavers = tibble::tibble(\n      name   = c(pre_names, post_names),\n      timing = c(rep(\"pre-2026 (escapes the wealth tax)\", 4),\n                 rep(\"post-2026 (pays it, then leaves)\", 3)),\n      wealth = c(pre_wealth, post_wealth),\n      annual_inctax_loss = c(pre_loss, post_loss)\n    ),\n    W_pre       = sum(pre_wealth),\n    leaver_loss = sum(p\n... (cut; open the file for the rest)"
+      },
+      "py": {
+        "path": "bsz-analysis/py/compute_tab5.py",
+        "symbol": "tab5_scoring_inputs()",
+        "lines": [
+          17,
+          70
+        ],
+        "language": "python",
+        "url": "https://github.com/fhoces/opa-prop40/blob/2c0bdcb/bsz-analysis/py/compute_tab5.py#L17-L70",
+        "snippet": "def tab5_scoring_inputs(pareto_missing_r, tab2, tab3):\n    pareto = compute_pareto_summary(pareto_missing_r)\n    # R: tab2[grepl(\"^2019.*average\", tab2$year), ] picks the average row.\n    avg_row = tab2[tab2[\"year\"].map(lambda s: bool(re.search(r\"^2019.*average\", str(s))))].iloc[0]\n    avg_tax = tab3[tab3[\"metric\"].map(lambda s: bool(re.search(r\"^Average\", str(s))))].iloc[0]\n    C = float(avg_row[\"ca_inctax_estimated\"])                      # Tab2!C14, $B/yr\n\n    W0 = tab5_const(\"baseline_wealth\")\n    n0 = tab5_const(\"baseline_n\")\n    top4_wealth = (tab5_const(\"page_wealth_B\") + tab5_const(\"brin_wealth_B\")\n                   + tab5_const(\"zuck_wealth_B\") + tab5_const(\"huang_wealth_B\"))\n    top4_private = (tab5_const(\"page_private_B\") + tab5_const(\"brin_private_B\")\n                    + tab5_const(\"zuck_private_B\") + tab5_const(\"huang_private_B\"))\n    # income tax per $ of wealth outside the top 4's company wealth (Tab5!F18/B18)\n    resid_rate = (C - avg_tax[\"all_top4\"] / 1000) / (W0 - (top4_wealth - top4_private))\n\n    pre_names = [\"page\", \"thiel\", \"hankey\", \"kalanick\"]\n    pre_wealth = [tab5_const(\"page_wealth_B\"), tab5_const(\"thiel_wealth_B\"),\n                  tab5_const(\"hankey_wealth_B\"), tab5_const(\"kalanick_wealth_B\")]\n    pre_loss = ([avg_tax[\"page\"] / 1000 + tab5_const(\"page_private_B\") * resid_rate]\n                + [w * resid_rate for w in pre_wealth[1:4]])\n    post_names = [\"brin\", \"zuckerberg\", \"fang\"]\n    post_wealth = [tab5_const(\"brin_wealth_B\"), tab5_const(\"zuck_wealth_B\"),\n                   tab5_const(\"fang_wealth_B\")]\n    post_loss = [avg_tax[\"brin\"] / 1000 + tab5_const(\"brin_private_B\") * resid_rate,\n                 avg_tax[\"zuckerberg\"] / 1000 + tab5_const(\"zuck_private_B\") * resid_rate,\n                 tab5_const(\"fang_wealth_B\") * resid_rate]\n\n    # R's sum() over a short vector adds left to right, as sum() does here.\n    return {\n        \"vintage\": bsz_vintage(),\n        \"n0\": n0,\n        \"W0\": W0,\n        \"C\": C,\n        \"pct_wealth_increase\": pareto[\"pct_wealth_increase\"],\n        \"pct_count_increase\": pareto[\"pct_count_increase\"],\n        \"fraction_in_phasein\": pareto[\"fraction_in_phasein\"],\n        \"pareto_b\": pareto[\"pareto_b\"],\n        \"pareto_extra_n\": pareto[\"total_count_proj\"] - pareto[\"total_count_emp\"],\n        \"pareto_extra_wealth\": pareto[\"total_wealth_proj\"] - pareto[\"total_wealth_emp\"],\n        \"resid_rate\": float(resid_rate),\n        \"leavers\": pd.DataFrame({\n            \"name\": pre_names + post_names,\n          \n... (cut; open the file for the rest)"
+      },
+      "targets": "_targets.R:143 site_scoring_inputs",
+      "id": "bsz-6",
+      "state": "not_reviewed",
+      "understanding": "",
+      "missing": "",
+      "feedback": [],
+      "updated": "2026-10-13"
+    },
+    {
+      "n": 7,
+      "name": "Constants and labelled inputs",
+      "what": "The handful of numbers the authors typed into the workbook from Forbes, kept in code because they differ between the May and August workbooks: W0 = 2307, n0 = 250, and the seven leavers' wealth. site/data/inputs.csv labels every input of the estimate with its origin (data, research, guesswork).",
+      "inputs": "the BSZ_VINTAGE environment variable (default august)",
+      "inputs_from": [],
+      "other_inputs": "the BSZ_VINTAGE environment variable (default august)",
+      "outputs": "the literals; August: baseline_wealth 2307, baseline_n 250",
+      "method_ref": "Tab5!B6:C6 (Forbes real-time list, 1 Jul 2026). Caveat: retyped literals, checked only indirectly through the Tab5 test, not read from the cells.",
+      "method_status": "matches_with_caveat",
+      "r": {
+        "path": "bsz-analysis/R/vintage.R",
+        "symbol": ".TAB5_CONST, tab5_const()",
+        "lines": [
+          115,
+          147
+        ],
+        "language": "r",
+        "url": "https://github.com/fhoces/opa-prop40/blob/2c0bdcb/bsz-analysis/R/vintage.R#L115-L147",
+        "snippet": "# scenario-3 per-leaver wealth breakouts (Tab5 rows 20-29) are literals\n# hand-entered in the workbook from a specific Forbes snapshot date; they\n# moved between vintages (May: Forbes as of 4/15/2026; August: 7/1/2026).\n# Private-wealth splits and the leavers with unchanged wealth (Hankey,\n# Kalanick, Fang) did not move. Verified against both workbooks' Tab5 sheet\n# formulas/literals directly (openpyxl, data_only=False).\n# ---------------------------------------------------------------------------\n.TAB5_CONST <- list(\n  may = list(\n    baseline_n = 249, baseline_wealth = 2182,\n    page_wealth_B = 276,   page_private_B = 13.4,\n    thiel_wealth_B = 28.9,\n    hankey_wealth_B = 8.15,\n    kalanick_wealth_B = 3.56,\n    brin_wealth_B = 254.6, brin_private_B = 13.2,\n    zuck_wealth_B = 230.2, zuck_private_B = 2.5,\n    fang_wealth_B = 1.5,\n    huang_wealth_B = 172,  huang_private_B = 2.84\n  ),\n  august = list(\n    baseline_n = 250, baseline_wealth = 2307,\n    page_wealth_B = 294.6, page_private_B = 13.4,\n    thiel_wealth_B = 27.3,\n    hankey_wealth_B = 8.15,\n    kalanick_wealth_B = 3.56,\n    brin_wealth_B = 271.7, brin_private_B = 13.2,\n    zuck_wealth_B = 210.3, zuck_private_B = 2.5,\n    fang_wealth_B = 1.5,\n    huang_wealth_B = 170.9, huang_private_B = 2.84\n  )\n)\n\ntab5_const <- function(name, vintage = bsz_vintage()) .TAB5_CONST[[vintage]][[name]]"
+      },
+      "py": {
+        "path": "bsz-analysis/py/vintage.py",
+        "symbol": "TAB5_CONST, tab5_const()",
+        "lines": [
+          85,
+          112
+        ],
+        "language": "python",
+        "url": "https://github.com/fhoces/opa-prop40/blob/2c0bdcb/bsz-analysis/py/vintage.py#L85-L112",
+        "snippet": "TAB5_CONST = {\n    \"may\": dict(\n        baseline_n=249, baseline_wealth=2182,\n        page_wealth_B=276, page_private_B=13.4,\n        thiel_wealth_B=28.9,\n        hankey_wealth_B=8.15,\n        kalanick_wealth_B=3.56,\n        brin_wealth_B=254.6, brin_private_B=13.2,\n        zuck_wealth_B=230.2, zuck_private_B=2.5,\n        fang_wealth_B=1.5,\n        huang_wealth_B=172, huang_private_B=2.84,\n    ),\n    \"august\": dict(\n        baseline_n=250, baseline_wealth=2307,\n        page_wealth_B=294.6, page_private_B=13.4,\n        thiel_wealth_B=27.3,\n        hankey_wealth_B=8.15,\n        kalanick_wealth_B=3.56,\n        brin_wealth_B=271.7, brin_private_B=13.2,\n        zuck_wealth_B=210.3, zuck_private_B=2.5,\n        fang_wealth_B=1.5,\n        huang_wealth_B=170.9, huang_private_B=2.84,\n    ),\n}\n\n\ndef tab5_const(name, vintage=None):\n    return TAB5_CONST[vintage or bsz_vintage()][name]"
+      },
+      "targets": null,
+      "id": "bsz-7",
+      "state": "not_reviewed",
+      "understanding": "",
+      "missing": "",
+      "feedback": [],
+      "updated": "2026-10-13"
+    },
+    {
+      "n": 8,
+      "name": "The raw source: the workbook",
+      "what": "The public workbook BSZ_MainTablesFigures.xlsx (August 2026; SHA-256 in DATA-SOURCES.csv), read sheet by sheet into tables. The chain stops here: the Forbes snapshot behind Tab5!B6:C6 is not in the repo, and the confidential author bundle only feeds the data sheets, not this number.",
+      "inputs": "original-materials/BSZ_MainTablesFigures.xlsx (not redistributed; download command on the materials page)",
+      "inputs_from": [],
+      "other_inputs": "original-materials/BSZ_MainTablesFigures.xlsx (not redistributed; download command on the materials page)",
+      "outputs": "tab2 (8 rows) and tab3 (11 rows) as typed tables",
+      "method_ref": "Tab2 rows 7-14, Tab3 rows 6-16. Plumbing: readxl / openpyxl with fixed column names.",
+      "method_status": "plumbing",
+      "r": {
+        "path": "bsz-analysis/R/data_sheets.R",
+        "symbol": "extract_tab2(), extract_tab3()",
+        "lines": [
+          118,
+          141
+        ],
+        "language": "r",
+        "url": "https://github.com/fhoces/opa-prop40/blob/2c0bdcb/bsz-analysis/R/data_sheets.R#L118-L141",
+        "snippet": "extract_tab2 <- function(path = xlsx_path_default()) {\n  nm <- c(\"year\", \"ca_billionaires_wealth\", \"ca_inctax_estimated\",\n          \"ca_inctax_per_wealth\", \"gap_1\",\n          \"top4_company_wealth\", \"top4_ca_inctax\",\n          \"top4_ca_inctax_per_wealth\", \"gap_2\", \"gap_3\")\n  out <- read_rectangular(\n    \"Tab2\", path = path, skip = 5,\n    col_types = c(\"text\", rep(\"numeric\", 9)),\n    names = nm,\n    n_max = 8  # rows 7-14: 2019..2025 + \"2019-2025 average\"\n  )\n  out\n}\n\nextract_tab3 <- function(path = xlsx_path_default()) {\n  nm <- c(\"metric\", \"page\", \"brin\", \"zuckerberg\", \"huang\", \"all_top4\",\n          \"gap_1\", \"gap_2\", \"gap_3\")\n  read_rectangular(\n    \"Tab3\", path = path, skip = 4,\n    col_types = c(\"text\", rep(\"numeric\", 8)),\n    names = nm,\n    n_max = 11  # rows 6-16: years 2019-2025 + average + wealth begin/end + total tax/wealth\n  )\n}"
+      },
+      "py": {
+        "path": "bsz-analysis/py/data_sheets.py",
+        "symbol": "extract_tab2(), extract_tab3()",
+        "lines": [
+          120,
+          134
+        ],
+        "language": "python",
+        "url": "https://github.com/fhoces/opa-prop40/blob/2c0bdcb/bsz-analysis/py/data_sheets.py#L120-L134",
+        "snippet": "def extract_tab2(path=None):\n    nm = [\"year\", \"ca_billionaires_wealth\", \"ca_inctax_estimated\",\n          \"ca_inctax_per_wealth\", \"gap_1\",\n          \"top4_company_wealth\", \"top4_ca_inctax\",\n          \"top4_ca_inctax_per_wealth\", \"gap_2\", \"gap_3\"]\n    return read_rectangular(\"Tab2\", path=path, skip=5,\n                            col_types=[\"text\"] + [\"numeric\"] * 9, names=nm, n_max=8)\n\n\ndef extract_tab3(path=None):\n    nm = [\"metric\", \"page\", \"brin\", \"zuckerberg\", \"huang\", \"all_top4\",\n          \"gap_1\", \"gap_2\", \"gap_3\"]\n    return read_rectangular(\"Tab3\", path=path, skip=4,\n                            col_types=[\"text\"] + [\"numeric\"] * 8, names=nm, n_max=11)\n"
+      },
+      "targets": "_targets.R:12 xlsx_path; :26 tab2; :27 tab3",
+      "id": "bsz-8",
+      "state": "not_reviewed",
+      "understanding": "",
+      "missing": "",
+      "feedback": [],
+      "updated": "2026-10-13"
+    }
+  ]
+}
