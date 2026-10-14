@@ -44,26 +44,32 @@ for California's Proposition 40 (Billionaire Tax Act):
 > Jaros, B., & Rauh, J. (2026, September). *The Net Present Value of the Billionaire Tax Act*.
 > NBER chapter c15504. https://www.nber.org/system/files/chapters/c15504/c15504.pdf
 
-The pipeline also reproduces the authors' first version (March 2026), which the pages no longer
-present. Everything is reproduced from the authors' own public MIT-licensed materials:
+Everything is reproduced from the authors' own public MIT-licensed materials:
 [github.com/bjaros20/wealth_tax](https://github.com/bjaros20/wealth_tax), pinned at
-`25e84ddbb67fe0293a64cd9108ed4d35d8ae37ab`. See `DATA-SOURCES.csv` for the full source manifest.
+`25e84ddbb67fe0293a64cd9108ed4d35d8ae37ab`. See `DATA-SOURCES.csv` for the full source manifest.[^first]
+
+[^first]: The pipeline also reproduces the authors' first version: Rauh, Jaros, Kearney, Doran and
+Cosso, Hoover Institution, SSRN 6340778, March 2026. It shares the chapter's Pareto fit and income
+tax Monte Carlo. Its own parts are the revenue chain 94.20 -> 67.51 -> 55.10 and the
+literature-calibrated 45.59 (its pp.10-14, `R/revenue_chain.R`), NPV by departure scenario and its
+break-even table (its Tables 9 and 10, pp.19-20, `R/npv_tables.R`) and its Monte Carlo (its Sec 5.5,
+p.20, `R/npv_mc.R`), each with a Python twin. The report's appendix presents it; the pages do not.
 
 ## What this reproduces
 
 | Section | What | R | Python |
 |---|---|---|---|
-| Sec 5.1.1 (p.15) | Pareto tail fit, alpha = 1.44 | `R/pareto.R` | `py/pareto.py` |
-| Sec 5.1.2 (p.17, Table 8) | Income-tax Monte Carlo | `R/income_tax_mc.R` | `py/income_tax_mc.py` |
-| Sec 4 (pp.10-14) | Revenue chain 94.20 -> 67.51 -> 55.10, literature-calibrated 45.59 | `R/revenue_chain.R` | `py/revenue_chain.py` |
-| Sec 5.2-5.4 (pp.18-20, Tables 9-10) | NPV by departure scenario, break-even fraction | `R/npv_tables.R` | `py/npv_tables.py` |
-| Sec 5.5 (p.20) + NBER Sec 5.4 | NPV Monte Carlo, both versions, plus a seed-free analytic mean | `R/npv_mc.R` | `py/npv_mc.py` |
-| NBER bridge (final.csv) | Domestic/international totals, ceiling rebuilt from person-level data | `R/nber_final.R` | `py/nber_final.py` |
+| Sec 4.1 (pp.18-19) | Baseline revenue, 94.30 in the authors' workbook (printed 94.20) | `R/revenue_chain.R` | `py/revenue_chain.py` |
+| Secs 4.1 and 4.3 (pp.19-21, `final.csv`) | Base grown to the valuation date, domestic/international totals, ceiling rebuilt from person-level data | `R/nber_final.R` | `py/nber_final.py` |
+| Sec 4.4 (pp.22-23) | Collectible revenue, 29.6 (range 28.4 to 35.6) | `R/site.R` (`compute_nber_collectible()`) | |
+| Sec 5.1 (pp.26-27) | Pareto tail fit, alpha = 1.44 | `R/pareto.R` | `py/pareto.py` |
+| Sec 5.1 (p.30, Table 9) | Income-tax Monte Carlo | `R/income_tax_mc.R` | `py/income_tax_mc.py` |
+| Sec 5.3 (p.34, Table 10) | Break-even departure fraction | `R/npv_tables.R` | `py/npv_tables.py` |
+| Sec 5.4 (p.35) | NPV Monte Carlo, plus a seed-free analytic mean | `R/npv_mc.R` | `py/npv_mc.py` |
 
-Both versions of the paper share Sec 4 and Sec 5.1 (revenue chain, Pareto fit, income-tax MC);
-the NBER version differs in its NPV Monte Carlo (litigation-risk range, independent departure
-fraction `f`, a 7%-grown and 240-person-level `final.csv` base) - see `MISMATCHES.md` for exactly
-where the two diverge from each other and from their own documentation.
+The Monte Carlo draws revenue from 0 to the 72 ceiling, an income tax range from Table 9, a rate
+range and an independent departure fraction `f`, on a 7%-grown, 240-row person-level `final.csv`
+base. `MISMATCHES.md` records where the code departs from the text and the README.
 
 ## How to run
 
@@ -110,7 +116,7 @@ cannot avoid and don't affect correctness of the comparison):
 - **Not RNG-bit-parity with R.** Only the R side is checked against the authors' own script's
   exact RNG stream (test kind 2 above); the Python side is an independent Monte Carlo of the same
   algorithm, compared to R within Monte Carlo error.
-- **Income-tax MC uses `n_sims = 20,000` and only Table 8's seven printed `K` values** (not the
+- **Income-tax MC uses `n_sims = 20,000` and only Table 9's seven printed `K` values** (not the
   full 37-point sweep), documented in `py/income_tax_mc.py`: the vectorized without-replacement
   draw materializes an `(n_sims, K)` array, and 100,000 x 2,000 is too large to keep the sweep
   cheap in pure numpy.
@@ -120,10 +126,12 @@ cannot avoid and don't affect correctness of the comparison):
 `inputs.csv` (`input_id, version, description, value, unit, label, provenance, source, page`) and
 `outputs.csv` (`output_id, version, value, unit, printed_value, printed_page, abs_diff`), one row
 per key figure cited in this README's table above. `label` follows the OPA input taxonomy (data /
-research / guesswork / scenario); see `MISMATCHES.md` #8 for why Table 9's Central Scenario WT is
-labelled `scenario` rather than `data` or `research`. The inputs also carry the Monte Carlo
+research / guesswork / scenario).[^scenario] The inputs also carry the Monte Carlo
 draw ranges (`rauh_mc_*`, `nber_mc_*`), taken from the simulation functions' own defaults, which
 `../comparison/` reads from here.
+
+[^scenario]: The one `scenario` row, the first version's Table 9 central revenue, is explained in
+`MISMATCHES.md` #8.
 
 ## The OPA site (`site/`)
 
@@ -136,10 +144,11 @@ with `quarto render site/repro.qmd && quarto render site/materials.qmd`.
 
 Every headline number in the table above reproduces from the authors' own code to within the
 tolerances documented in `tests/testthat/`. `MISMATCHES.md` lists nine discrepancies found along
-the way - between the paper's prose and its own code, between the paper and the NBER README, and
-one case (mismatch #9) where the paper's *printed* Monte Carlo summary doesn't exactly reproduce
-even from the authors' own unmodified script. The gap is within Monte Carlo error, and the
-printed mean equals the model's exact (closed-form) expectation, -$24.707B, while the shipped
-seed-2026 run gives -$24.77B.
-We do not fix any of these; the pipeline reproduces the code as shipped and records where it
+the way, between the paper's prose and its own code and between the paper and the NBER README.
+Four concern the chapter.[^mm] We do not fix any of these; the pipeline reproduces the code as shipped and records where it
 disagrees with the surrounding text.
+
+[^mm]: The other five concern only the first version. One of them (mismatch #9) is a case where
+its *printed* Monte Carlo summary doesn't exactly reproduce even from the authors' own unmodified
+script. The gap is within Monte Carlo error, and the printed mean equals the model's exact
+(closed-form) expectation, -$24.707B, while the shipped seed-2026 run gives -$24.77B.
