@@ -74,7 +74,7 @@ estimate (the uniform draw also puts positive probability on values between 0 an
 true two-state litigation model would not produce). We reproduce the code as shipped
 (`wt ~ U[0, 72]`) and flag that it does not implement the README's own stated mechanism.
 
-## 6. Baseline revenue: workbook's precise 94.30 vs. the literal 94.2 used downstream
+## 6. Baseline revenue: the workbook's precise 94.30 vs. the printed 94.20
 
 **Workbook**, `CA_Billionaires_Revenues_and_Migration_final.xlsx!Summary_Preferred!C5`
 (`=SUM(Calculations_Preferred!O3:O214)/$M$2`) = **94.30426206**.
