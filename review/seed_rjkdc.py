@@ -119,7 +119,7 @@ def main():
                         "averaged over the authors' Monte Carlo draws. Footnote 1 says it is the "
                         "authors' own headline (NBER PDF p.1)."),
             method_status="plumbing",
-            r=loc(f"{SIDE}/site/index.html", "the headline block and its script", [244, 267], language="html"),
+            r=loc(f"{SIDE}/site/index.html", "the headline block and its script", [241, 263], language="html"),
             py=None,
             targets=None,
         ),
