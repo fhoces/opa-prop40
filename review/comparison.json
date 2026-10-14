@@ -1,61 +1,68 @@
 {
   "opa": "comparison",
-  "title": "The comparison: the main estimate",
+  "title": "The comparison: the two main estimates",
   "headline": {
-    "label": "Main estimate, the gap on the common output",
-    "value": "$67.8B",
-    "computed": 67.815,
-    "definition": "the difference between the two sides' gross one-time wealth tax revenue once both are estimated on one definition, explained one disputed input at a time: BSZ Table 5 row 1 minus the NBER expected revenue",
-    "where": "https://fhoces.github.io/opa-prop40/"
+    "label": "BSZ main estimate and RJKDC main estimate, on the common output (b)",
+    "value": "$106.8B and −$38.9B",
+    "computed": {
+      "bsz": 106.795627680481,
+      "rjkdc": -38.8863482422633,
+      "bsz_end_b": 106.795627680481,
+      "rjkdc_end_b": -38.9802887015985
+    },
+    "definition": "the two analyses' own main estimates, next to each other: BSZ's net total (wealth tax + extra income tax from selling assets - income tax lost to leavers, present value of 5 years) and RJKDC's NBER September 2026 mean NPV (perpetuity). Under the common output (b), the net fiscal effect, they are the bridge's two ends, $106.8B and −$39.0B (the exact expectation of the Monte Carlo whose seeded run is −$38.886B); the gap between the ends, $145.8B, is stated in the bridge",
+    "where": "https://fhoces.github.io/opa-prop40/comparison/site/explorer/"
   },
-  "commit": "54e8015",
+  "commit": "62977e6",
   "seeded": "2026-10-14",
-  "verified_by": "Rscript, layer 6 at 54e8015: score_common(bridge_inputs(read_contracts())$sup)[['a']] - rauh_nber_expectation(0, 72, 0.30, 0.60, ...)[['a']] = 103.815 - 36 = 67.815; the same from export/r/ends.csv (bsz_model - nber_own), from export/py/ends.csv, and from the two bars in assets/comparison-data.js",
+  "verified_by": "Rscript, layer 6 at 62977e6: score_common(bridge_inputs(read_contracts())$sup)[['b']] = 106.796 and rauh_nber_expectation(0, 72, 0.30, 0.60, 3.3, 5.8, 0.015, 0.045)[['b']] = -38.980; the same from export/r/ends.csv (bsz_model, nber_own on (b)), from export/py/ends.csv, and from the headline and the end bars in assets/comparison-data.js. The RJKDC main estimate as shown, −$38.886B, is the RJKDC contract row npv_mc_nber_mean (the authors' seeded run), traced by the RJKDC chain",
   "runs_for_a_stranger": "AUDIT.md step 8, level 2: .github/workflows/comparison-ci.yml rebuilds the comparison in R and Python on a clean runner; no one-click (Binder) yet.",
   "environment": {
-    "r": "# Environment for the comparison chain, R. In Positron open the opa-prop40 folder, then run this once.\n# Needs nothing downloaded: the two sides' export contracts are committed.\nwhile (!dir.exists(\"comparison\")) setwd(\"..\")\ninvisible(lapply(list.files(\"comparison/R\", pattern = \"\\\\.R$\", full.names = TRUE), source))   # every function on the chain\nk  <- read_contracts()          # layer 8: the two contracts and the document inputs\nbi <- bridge_inputs(k)          # layer 7: the two input vectors\ncat(\"ready: BSZ base\", bi$sup$W_core + bi$sup$W_noncit, \"; RJKDC base\", bi$rauh$W_core, \"\\n\")",
+    "r": "# Environment for the comparison chain, R. In Positron open the opa-prop40 folder, then run this once.\n# Needs nothing downloaded: the two analyses' export contracts are committed.\nwhile (!dir.exists(\"comparison\")) setwd(\"..\")\ninvisible(lapply(list.files(\"comparison/R\", pattern = \"\\\\.R$\", full.names = TRUE), source))   # every function on the chain\nk  <- read_contracts()          # layer 8: the two contracts and the document inputs\nbi <- bridge_inputs(k)          # layer 7: the two input vectors\ncat(\"ready: BSZ base\", bi$sup$W_core + bi$sup$W_noncit, \"; RJKDC base\", bi$rauh$W_core, \"\\n\")",
     "py": "# Environment for the comparison chain, Python. In Positron open the opa-prop40 folder, then run this once.\n# Needs scipy (pip install scipy); nothing downloaded.\nimport os, sys\nfrom pathlib import Path\nos.chdir(next(p for p in [Path.cwd(), *Path.cwd().parents] if (p / \"comparison\").is_dir()))   # the repo root\nsys.path.insert(0, \"comparison/py\")\nimport bridge as b                       # the Python twin: every function on the chain\nk = b.read_contracts(os.getcwd())        # layer 8: the two contracts and the document inputs\nsup, rauh = b.bridge_inputs(k)           # layer 7: the two input vectors\nprint(\"ready: BSZ base\", sup[\"W_core\"] + sup[\"W_noncit\"], \"; RJKDC base\", rauh[\"W_core\"])"
   },
   "layers": [
     {
       "n": 1,
-      "name": "The number on the page",
-      "what": "This layer is the root page's own JavaScript, not R or Python; the R and Python code starts at layer 3. The page loads the bridge's data file, takes the default view (output (a), Shapley steps, each side's own horizon), finds its two end bars, 'bsz' (BSZ Table 5 row 1) and 'nber' (the NBER expected revenue), and prints their difference as the main estimate, with the two ends in footnote 1. The static page already carries the same three numbers, written by site.R (layer 3), so it reads the same with JavaScript off.",
-      "inputs": "D = window.__BRIDGE__ from assets/comparison-data.js; B = D.series.own.a.shapley",
+      "name": "The numbers on the explorer",
+      "what": "This layer is the explorer's own JavaScript, not R or Python; the R and Python code starts at layer 3. The page loads the bridge's data file and prints the two main estimates from its headline object: headline.bsz, the BSZ net total, and headline.rjkdc, the RJKDC NBER mean NPV as the RJKDC pipeline reproduces the authors' seeded run. The two-bar chart below them takes the first and last bars of the current view (endsOf); in the default view, output (b) at each analysis's own horizon, these are the bridge's two ends. The BSZ end is the same number as the BSZ main estimate; the RJKDC end is the exact expectation of the same Monte Carlo, a little below the seeded run. The static page already carries the same numbers, written by site.R (layer 3), so it reads the same with JavaScript off.",
+      "inputs": "D = window.__BRIDGE__ from assets/comparison-data.js; D.headline; B = D.series.own.b.shapley",
       "inputs_from": [
         {
           "layer": "comparison-2",
-          "what": "window.__BRIDGE__: every bar of every view; the default view is series.own.a.shapley",
+          "what": "window.__BRIDGE__: the headline object and every bar of every view; the default view is series.own.b.shapley",
           "tokens": [
             "D",
             "__BRIDGE__",
+            "headline",
             "series"
           ],
           "source_tokens": [
             "__BRIDGE__",
+            "headline",
             "series"
           ]
         }
       ],
       "other_inputs": "none",
-      "outputs": "the text '$67.8B' (main estimate), '$103.8B' and '$36.0B' (the two ends)",
-      "method_ref": "Display only. The definition under the number is the method: the gap on the common output (a) between the bridge's two ends. Footnote 1 says neither side reports it; it is this OPA's reconciliation.",
+      "outputs": "headline: '$106.8B' (BSZ main estimate) and '−$38.9B' (RJKDC main estimate); bars: '$106.8B' (BSZ analysis) and '−$39.0B' (RJKDC analysis)",
+      "method_ref": "Display only. The definitions are the method: BSZ's net total, wealth tax plus extra income tax from asset sales minus 5 years of lost income tax; RJKDC's mean NPV in perpetuity. The footnote on the explorer says the common output (b) puts both on one definition, of which the two bars are the ends.",
       "method_status": "plumbing",
       "r": {
-        "path": "index.html",
-        "symbol": "the headline script: read the two end bars, print the gap",
+        "path": "comparison/site/explorer/index.html",
+        "symbol": "the headline and the two-bar chart: read the data file's headline and the ends of the current view",
         "lines": [
-          306,
-          320
+          440,
+          449
         ],
         "language": "javascript",
-        "url": "https://github.com/fhoces/opa-prop40/blob/54e8015/index.html#L306-L320",
-        "snippet": "<script src=\"assets/comparison-data.js\"></script>\n<script>\n  // Read the two ends from the bridge's data file so the number cannot drift from it:\n  // the \"bsz\" and \"nber\" bars of the default view, output (a), own horizons.\n  (function () {\n    var D = window.__BRIDGE__;\n    if (!D || !D.series || !D.series.own) return;\n    var B = D.series.own.a.shapley;\n    function end(id) { return B.filter(function (b) { return b.id === id; })[0].value; }\n    var bsz = end(\"bsz\"), nber = end(\"nber\");\n    document.getElementById(\"hl-main\").textContent = \"$\" + (bsz - nber).toFixed(1) + \"B\";\n    document.getElementById(\"hl-bsz\").textContent = \"$\" + bsz.toFixed(1) + \"B\";\n    document.getElementById(\"hl-nber\").textContent = \"$\" + nber.toFixed(1) + \"B\";\n  })();\n</script>"
+        "url": "https://github.com/fhoces/opa-prop40/blob/62977e6/comparison/site/explorer/index.html#L440-L449",
+        "snippet": "  function bars() { return D.series[state.h][state.out][state.method]; }\n  function endsOf(B) { return [B[0].value, B[B.length - 1].value]; }\n\n  // ---- the headline and the footnote, from the data file, not typed ----\n  var H = D.headline;\n  document.getElementById(\"hl-bsz\").textContent = money(H.bsz);\n  document.getElementById(\"hl-rjkdc\").textContent = money(H.rjkdc);\n  document.getElementById(\"fn-bsz-end\").textContent = money(H.bsz_end_b);\n  document.getElementById(\"fn-rjkdc-end\").textContent = money(H.rjkdc_end_b);\n  document.getElementById(\"fn-rjkdc-main\").textContent = money(H.rjkdc);"
       },
       "py": null,
       "targets": null,
       "interactive": {
-        "js": "// In the browser: open the root page (index.html), then paste this in the developer console.\nB = window.__BRIDGE__.series.own.a.shapley\nend = id => B.find(b => b.id === id).value\nend(\"bsz\"), end(\"nber\")            // 103.815, 36\nend(\"bsz\") - end(\"nber\")           // 67.815, printed as $67.8B\nB.map(b => b.id)                   // the bars, in display order"
+        "js": "// In the browser: open the explorer (comparison/site/explorer/), then paste this in the developer console.\nD = window.__BRIDGE__\nD.headline.bsz, D.headline.rjkdc       // 106.796, -38.886: the two main estimates\nB = D.series.own.b.shapley\nB[0].value, B[B.length - 1].value     // 106.796, -38.980: the two ends under (b)\nB[0].value - B[B.length - 1].value    // 145.776, the gap the bridge explains\nB.map(b => b.id)                      // the bars, in display order"
       },
       "id": "comparison-1",
       "state": "not_reviewed",
@@ -67,7 +74,7 @@
     {
       "n": 2,
       "name": "The bridge's data file",
-      "what": "A generated JavaScript data file, not R or Python, written by R only (the Python twin writes the same numbers as CSV under comparison/export/py/). It holds one object, window.__BRIDGE__. series has one entry per horizon setting (own, then a common 5, 10, 20, 30, 50 years or a perpetuity), each with outputs a and b and two ways of sizing the steps (shapley, sequential). Each is a list of bars: totals (an estimate), steps (one disputed input) and model differences. The page does no arithmetic beyond one subtraction.",
+      "what": "A generated JavaScript data file, not R or Python, written by R only (the Python twin writes the same numbers as CSV under comparison/export/py/). It holds one object, window.__BRIDGE__. headline holds the two main estimates and the two ends under (b). series has one entry per horizon setting (own, then a common 5, 10, 20, 30, 50 years or a perpetuity), each with outputs b and a and two ways of sizing the steps (shapley, sequential). Each is a list of bars: the BSZ end, one step per disputed input, the model difference, the September 2026 revision and the RJKDC end.",
       "inputs": "nothing at run time; the file is written by the next layer",
       "inputs_from": [
         {
@@ -78,14 +85,14 @@
           ],
           "source_tokens": [
             "build_series",
-            "out",
+            "headline",
             "add"
           ]
         }
       ],
       "other_inputs": "",
-      "outputs": "series.own.a.shapley: bsz = 103.815000, nber = 36.000000",
-      "method_ref": "Plumbing. test-site.R checks the committed file is byte-identical to what render_site() writes.",
+      "outputs": "headline.bsz = 106.795628, headline.rjkdc = -38.886348; series.own.b.shapley: bsz = 106.795628, nber = -38.980289",
+      "method_ref": "Plumbing. test-site.R checks the committed file is byte-identical to what render_site() writes, and that headline and the end bars equal ends.csv.",
       "method_status": "plumbing",
       "r": {
         "path": "assets/comparison-data.js",
@@ -95,14 +102,14 @@
           2
         ],
         "language": "javascript",
-        "url": "https://github.com/fhoces/opa-prop40/blob/54e8015/assets/comparison-data.js",
-        "snippet": "/* Generated by comparison/R/site.R from comparison/export/r/. Do not edit. */\nwindow.__BRIDGE__ = {\n  \"series\": { own, common_5, common_10, common_20, common_30, common_50, common_Inf },   // horizon settings\n    // each: { \"a\": {\"shapley\": [...], \"sequential\": [...]}, \"b\": {...} }, one object per bar\n  \"horizon_notes\": { ... }\n};\n\n// series.own.a.shapley, the default view (output (a), Shapley, each side's own horizon):\n//   ggss                   total    100.000000\n//   ggss_rounding          model      3.815000\n//   bsz                    total    103.815000\n//   noncitizens            step      -5.366699\n//   base_list              step      -9.380990\n//   real_estate            step      -0.349264\n//   confirmed_departures   step     -21.292674\n//   avoidance              step       8.033325\n//   one_time_as_permanent  step     -21.052398\n//   elasticity_size        step      -3.150974\n//   rauh_resid             model     -0.000325\n//   rauh                   total     51.255000\n//   nber_step              step     -15.255000\n//   nber                   total     36.000000"
+        "url": "https://github.com/fhoces/opa-prop40/blob/62977e6/assets/comparison-data.js",
+        "snippet": "/* Generated by comparison/R/site.R from comparison/export/r/. Do not edit. */\nwindow.__BRIDGE__ = {\n  \"headline\": {\"bsz\": 106.795627680481, \"rjkdc\": -38.8863482422633, \"rjkdc_printed\": -38.9, \"bsz_end_b\": 106.795627680481, \"rjkdc_end_b\": -38.9802887015985},\n  \"series\": { own, common_5, common_10, common_20, common_30, common_50, common_Inf },   // horizon settings\n    // each: { \"b\": {\"shapley\": [...], \"sequential\": [...]}, \"a\": {...} }, one object per bar\n  \"horizon_notes\": { ... }\n};\n\n// series.own.b.shapley, the default view (output (b), Shapley, each analysis's own horizon):\n//   bsz                    total    106.795628\n//   noncitizens            step      -5.469843\n//   base_list              step      -9.561286\n//   real_estate            step      -0.356169\n//   confirmed_departures   step     -33.159735\n//   avoidance              step      11.249600\n//   one_time_as_permanent  step     -33.627795\n//   elasticity_size        step      -6.052671\n//   income_proportional    step     -16.860588\n//   income_level           step      -8.024439\n//   horizon                step     -27.051219\n//   asset_sales            step      -2.687801\n//   rauh_resid             model      0.099335\n//   nber_step              step     -14.273305\n//   nber                   total    -38.980289"
       },
       "py": null,
       "targets": null,
       "interactive": {
-        "r": "# Layer 2: read the committed data file back and find the two end bars.\ntxt <- readLines(\"assets/comparison-data.js\")[2]\nD <- jsonlite::fromJSON(sub(\";$\", \"\", sub(\"^window.__BRIDGE__ = \", \"\", txt)), simplifyVector = FALSE)\nnames(D$series)                                   # own, common_5, ..., common_Inf\nB <- D$series$own$a$shapley\nvals <- setNames(vapply(B, function(b) b$value, 0), vapply(B, function(b) b$id, \"\"))\nvals\nvals[[\"bsz\"]] - vals[[\"nber\"]]                    # 67.815",
-        "py": "# Layer 2: read the committed data file back and find the two end bars.\nimport json\ns = open(\"assets/comparison-data.js\").read()\nD = json.loads(s[s.index(\"{\"):s.rindex(\"}\") + 1])\nlist(D[\"series\"])                                 # own, common_5, ..., common_Inf\nvals = {b[\"id\"]: b[\"value\"] for b in D[\"series\"][\"own\"][\"a\"][\"shapley\"]}\nvals\nvals[\"bsz\"] - vals[\"nber\"]                        # 67.815"
+        "r": "# Layer 2: read the committed data file back: the headline and the two end bars.\ntxt <- readLines(\"assets/comparison-data.js\")[2]\nD <- jsonlite::fromJSON(sub(\";$\", \"\", sub(\"^window.__BRIDGE__ = \", \"\", txt)), simplifyVector = FALSE)\nnames(D$series)                                   # own, common_5, ..., common_Inf\nstr(D$headline)                                   # bsz 106.796, rjkdc -38.886, ...\nB <- D$series$own$b$shapley\nvals <- setNames(vapply(B, function(b) b$value, 0), vapply(B, function(b) b$id, \"\"))\nvals\nvals[[\"bsz\"]] - vals[[\"nber\"]]                    # 145.776",
+        "py": "# Layer 2: read the committed data file back: the headline and the two end bars.\nimport json\ns = open(\"assets/comparison-data.js\").read()\nD = json.loads(s[s.index(\"{\"):s.rindex(\"}\") + 1])\nlist(D[\"series\"])                                 # own, common_5, ..., common_Inf\nD[\"headline\"]                                     # bsz 106.796, rjkdc -38.886, ...\nvals = {b[\"id\"]: b[\"value\"] for b in D[\"series\"][\"own\"][\"b\"][\"shapley\"]}\nvals\nvals[\"bsz\"] - vals[\"nber\"]                        # 145.776"
       },
       "id": "comparison-2",
       "state": "not_reviewed",
@@ -113,13 +120,13 @@
     },
     {
       "n": 3,
-      "name": "Writing the page and the data file",
-      "what": "build_series() turns the exported tables into the bars of every view, in display order: for output (a), the GGSS printed number, GGSS's rounding, BSZ row 1 (the 'bsz' bar), the eleven steps, the model difference, Rauh SSRN, the NBER revision and Rauh NBER (the 'nber' bar). render_site() fills the page's tokens, including the main estimate (lines 133-138 of site.R: gap = bsz_model - nber_own), and serializes the bars to JSON; write_site() writes both files.",
+      "name": "Writing the pages and the data file",
+      "what": "build_series() turns the exported tables into the bars of every view, in display order: the BSZ end (the 'bsz' bar), the eleven steps, the model difference, the September 2026 revision and the RJKDC end (the 'nber' bar). render_site() fills the two pages' tokens, including the two main estimates (hl_bsz = ends$bsz_model on (b); hl_rjkdc = the RJKDC contract's npv_mc_nber_mean), and serializes the headline object and the bars to JSON; write_site() writes index.html, the explorer and the data file.",
       "inputs": "ex: the eight exported tables read back from comparison/export/r/ (ends, bridge, endpoints, ...)",
       "inputs_from": [
         {
           "layer": "comparison-4",
-          "what": "ends (one row per horizon setting and output: bsz_model, rauh_own, nber_own, ...) and bridge (the step values)",
+          "what": "ends (one row per horizon setting and output: bsz_model, nber_own, ...), bridge (the step values) and endpoints (contract_value of rauh_nber_npv)",
           "tokens": [
             "ex",
             "en",
@@ -134,26 +141,26 @@
           ]
         }
       ],
-      "other_inputs": "the page template comparison/site/index.template.html (prose and {{tokens}})",
-      "outputs": "the 'bsz' bar = ends$bsz_model = 103.815000; the 'nber' bar = ends$nber_own = 36.000000; token gap_main = $67.8B",
-      "method_ref": "Plumbing. The Python twin has no site writer; its export/py/ends.csv carries the same two numbers (test-parity.R).",
+      "other_inputs": "the page templates comparison/site/index.template.html and explorer.template.html (prose and {{tokens}})",
+      "outputs": "the 'bsz' bar = ends$bsz_model = 106.795628; the 'nber' bar = ends$nber_own = -38.980289; tokens hl_bsz = $106.8B, hl_rjkdc = −$38.9B, gap_b = $145.8B",
+      "method_ref": "Plumbing. The Python twin has no site writer; its export/py/ends.csv carries the same two ends (test-parity.R).",
       "method_status": "plumbing",
       "r": {
         "path": "comparison/R/site.R",
         "symbol": "build_series()",
         "lines": [
           47,
-          95
+          93
         ],
         "language": "r",
-        "url": "https://github.com/fhoces/opa-prop40/blob/54e8015/comparison/R/site.R#L47-L95",
-        "snippet": "build_series <- function(ex, resid_label) {\n  br <- ex$bridge; en <- ex$ends; ep <- ex$endpoints; steps <- bridge_steps()\n  settings <- unique(en$horizon_setting)\n  ggss <- ep$value[ep$endpoint_id == \"ggss_headline\"]\n  out <- list()\n  for (st in settings) {\n    Hlab <- if (st == \"own\") \"\" else {\n      h <- sub(\"common_\", \"\", st); if (h == \"Inf\") \" (perpetuity)\" else paste0(\" (\", h, \"-year horizon)\") }\n    out[[st]] <- list()\n    for (o in c(\"a\", \"b\")) {\n      e <- en[en$horizon_setting == st & en$output == o, ]\n      out[[st]][[o]] <- list()\n      for (m in c(\"shapley\", \"sequential\")) {\n        b <- br[br$horizon_setting == st & br$output == o, ]\n        b <- if (m == \"sequential\") b[order(b$sequential_rank), ] else b[match(steps$step_id, b$step_id), ]\n        keep <- abs(b$shapley) > 1e-12 | abs(b$sequential) > 1e-12\n        b <- b[keep, ]\n        L <- list()\n        add <- function(id, type, value, label, kind = NULL)\n          L[[length(L) + 1]] <<- list(id = id, type = type, value = value, label = label,\n                                     short = unname(short_labels[id]), kind = kind)\n        if (o == \"a\") {\n          add(\"ggss\", \"total\", ggss, \"GGSS headline, as printed (GGSS p.4)\")\n          add(\"ggss_rounding\", \"model\", e$bsz_model - ggss,\n              \"GGSS round their estimate to the nearest $100B 'for simplicity' (p.4)\", \"rounding\")\n          add(\"bsz\", \"total\", e$bsz_model, \"BSZ Table 5 row 1 = the model at all-BSZ inputs (checkpoint)\")\n        } else {\n          add(\"bsz_net\", \"total\", e$bsz_model,\n              paste0(\"BSZ row 1 net of its own asset-sale tax and income tax losses\", Hlab, \" (constructed)\"))\n        }\n        for (i in seq_len(nrow(b))) {\n          rowlab <- if (grepl(\"^\\\\d\", b$disputes_row[i])) paste0(\"DISPUTES row \", b$disputes_row[i], \", \") else \"not a DISPUTES row, \"\n          add(b$step_id[i], \"step\", b[[m]][i], b$title[i], paste0(rowlab, b$kind[i]))\n        }\n        add(\"rauh_resid\", \"model\", e$rauh_residual, resid_label, \"model difference\")\n        add(\"rauh\", \"total\", e$rauh_own,\n            if (o == \"a\") \"Rauh SSRN: expected revenue in the Monte Carlo (Mar 2026)\"\n            else paste0(\"Rauh SSRN: mean NPV\", if (st == \"own\") \" (Mar 2026)\" else paste0(\" at Rauh's inputs\", Hlab)))\n        add(\"nber_step\", \"step\", e$nber_step,\n            \"NBER revision: litigation-survival weight, 7% grown base, departure fraction drawn separately\", \"guesswork (litigation risk) + data\")\n        add(\"nber\", \"total\", e$nber_own,\n      \n... (cut; open the file for the rest)"
+        "url": "https://github.com/fhoces/opa-prop40/blob/62977e6/comparison/R/site.R#L47-L93",
+        "snippet": "# The bars of every view of the bridge, in display order. The page shows each analysis in\n# its latest version only: the first bar is the BSZ analysis (August 2026, Table 5 row 1),\n# the last the RJKDC analysis (Jaros and Rauh, NBER, September 2026). Between them: one\n# step per disputed input (BSZ value to the RJKDC value of its March 2026 version, where\n# the inputs are published), the model difference, and the September 2026 revision. The\n# export tables still carry the GGSS and March 2026 totals; the page shows neither as an end.\nbuild_series <- function(ex, resid_label) {\n  br <- ex$bridge; en <- ex$ends; steps <- bridge_steps()\n  settings <- unique(en$horizon_setting)\n  out <- list()\n  for (st in settings) {\n    Hlab <- if (st == \"own\") \"\" else {\n      h <- sub(\"common_\", \"\", st); if (h == \"Inf\") \" (perpetuity)\" else paste0(\" (\", h, \"-year horizon)\") }\n    out[[st]] <- list()\n    for (o in c(\"a\", \"b\")) {\n      e <- en[en$horizon_setting == st & en$output == o, ]\n      out[[st]][[o]] <- list()\n      for (m in c(\"shapley\", \"sequential\")) {\n        b <- br[br$horizon_setting == st & br$output == o, ]\n        b <- if (m == \"sequential\") b[order(b$sequential_rank), ] else b[match(steps$step_id, b$step_id), ]\n        keep <- abs(b$shapley) > 1e-12 | abs(b$sequential) > 1e-12\n        b <- b[keep, ]\n        L <- list()\n        add <- function(id, type, value, label, kind = NULL)\n          L[[length(L) + 1]] <<- list(id = id, type = type, value = value, label = label,\n                                     short = unname(short_labels[id]), kind = kind)\n        add(\"bsz\", \"total\", e$bsz_model,\n            if (o == \"a\") \"BSZ analysis (August 2026): Table 5 row 1 wealth tax revenue\"\n            else paste0(\"BSZ analysis (August 2026): Table 5 row 1 net of its own extra income tax and lost income tax\",\n                        if (st == \"own\") \" (5 years)\" else Hlab))\n        for (i in seq_len(nrow(b))) {\n          rowlab <- if (grepl(\"^\\\\d\", b$disputes_row[i])) paste0(\"DISPUTES row \", b$disputes_row[i], \", \") else \"not a DISPUTES row, \"\n          add(b$step_id[i], \"step\", b[[m]][i], b$title[i], paste0(rowlab, b$kind[i]))\n        }\n        add(\"rauh_resid\", \"model\", e$rauh_residual, resid_label, \"model difference\")\n        add(\"nber_step\", \"step\", e$nber_step,\n            \"September 2026 revision of the RJKDC analysis: litigation-survival weight, 7% grown base, departure fraction drawn separately (the steps before it reach the March 2026 version)\",\n            \"gues\n... (cut; open the file for the rest)"
       },
       "py": null,
       "targets": "comparison/run.R: write_site(root)",
       "interactive": {
-        "r": "# Layer 3: the bars from the exported tables, and the page's own output.\nex <- read_exports(\"comparison/export/r\")\nB <- build_series(ex, \"Model difference\")$own$a$shapley\nvapply(B, function(b) b$value, 0)\ns <- render_site()\nidentical(s$js, paste0(paste(readLines(\"assets/comparison-data.js\"), collapse = \"\\n\"), \"\\n\"))   # TRUE\nregmatches(s$html, regexpr('id=\"hl-main\">[^<]+', s$html))",
-        "py": "# Layer 3: no Python twin writes the page; the twin's ends.csv carries the same two numbers.\nimport csv\nends = [r for r in csv.DictReader(open(\"comparison/export/py/ends.csv\"))\n        if r[\"horizon_setting\"] == \"own\" and r[\"output\"] == \"a\"][0]\nfloat(ends[\"bsz_model\"]), float(ends[\"nber_own\"])\nfloat(ends[\"bsz_model\"]) - float(ends[\"nber_own\"])   # 67.815"
+        "r": "# Layer 3: the bars from the exported tables, and the pages' own output.\nex <- read_exports(\"comparison/export/r\")\nB <- build_series(ex, \"Model difference\")$own$b$shapley\nvapply(B, function(b) b$value, 0)\ns <- render_site()\nidentical(s$js, paste0(paste(readLines(\"assets/comparison-data.js\"), collapse = \"\\n\"), \"\\n\"))   # TRUE\nregmatches(s$explorer, gregexpr('id=\"hl-(bsz|rjkdc)\">[^<]+', s$explorer))[[1]]",
+        "py": "# Layer 3: no Python twin writes the pages; the twin's ends.csv carries the same two ends.\nimport csv\nends = [r for r in csv.DictReader(open(\"comparison/export/py/ends.csv\"))\n        if r[\"horizon_setting\"] == \"own\" and r[\"output\"] == \"b\"][0]\nfloat(ends[\"bsz_model\"]), float(ends[\"nber_own\"])      # 106.796, -38.980\nfloat(ends[\"bsz_model\"]) - float(ends[\"nber_own\"])     # 145.776"
       },
       "id": "comparison-3",
       "state": "not_reviewed",
@@ -165,7 +172,7 @@
     {
       "n": 4,
       "name": "The bridge's ends and steps",
-      "what": "build_all() estimates everything the page shows. For each horizon setting it estimates the model at the all-BSZ inputs (the BSZ end), runs the two decompositions of layer 5 for outputs (a) and (b), and computes the RJKDC report's own expectations: the SSRN Monte Carlo and the NBER one. Each ends row records the BSZ end, the model at all-RJKDC inputs, the two expectations, the model difference (rauh_residual) and the NBER revision (nber_step).",
+      "what": "build_all() estimates everything the pages show. For each horizon setting it estimates the model at the all-BSZ inputs (the BSZ end), runs the two decompositions of layer 5 for outputs (b) and (a), and computes the RJKDC analysis's own expectations: its March 2026 version, where the disputed-input steps end, and the NBER September 2026 one, the RJKDC end. Each ends row records the BSZ end, the model at the March 2026 inputs, that version's expectation, the model difference (rauh_residual), the NBER end (nber_own) and the September revision (nber_step).",
       "inputs": "bi: the two input vectors; and the RJKDC Monte Carlo ranges (wt_min/max, f_min/max, c_min/max, r_min/max)",
       "inputs_from": [
         {
@@ -216,8 +223,8 @@
         }
       ],
       "other_inputs": "the horizon settings HORIZONS = 5, 10, 20, 30, 50 years and a perpetuity",
-      "outputs": "ends, own horizon, output (a): bsz_model 103.815, rauh_own 51.255, rauh_residual -0.000325, nber_own 36.000, nber_step -15.255; gap = 103.815 - 36.000 = 67.815",
-      "method_ref": "This OPA's reconciliation (PLAN.md, the common output; DISPUTES.md for each input). Checks: test-endpoints.R pins each end against the printed number; test-shapley.R that the steps sum to the gap.",
+      "outputs": "ends, own horizon, output (b): bsz_model 106.796, rauh_residual 0.099, nber_own -38.980, nber_step -14.273; gap = 106.796 - (-38.980) = 145.776",
+      "method_ref": "This OPA's reconciliation (PLAN.md, the common output; DISPUTES.md for each input). Checks: test-endpoints.R pins each end against the printed number; test-shapley.R that the steps sum to the gap; test-site.R that the steps, the model difference and the revision add up to the gap on (b).",
       "method_status": "opa_definition",
       "r": {
         "path": "comparison/R/build.R",
@@ -227,7 +234,7 @@
           131
         ],
         "language": "r",
-        "url": "https://github.com/fhoces/opa-prop40/blob/54e8015/comparison/R/build.R#L78-L131",
+        "url": "https://github.com/fhoces/opa-prop40/blob/62977e6/comparison/R/build.R#L78-L131",
         "snippet": "build_all <- function(k = read_contracts()) {\n  bi <- bridge_inputs(k); sup <- bi$sup; rauh <- bi$rauh\n  so <- k$bsz$outputs; oo <- k$rjkdc$outputs; d <- k$docs\n  oi <- k$rjkdc$inputs\n  steps <- bridge_steps()\n  ids <- steps$step_id\n\n  # ---- each side's own numbers ------------------------------------------------\n  ggss_printed <- pick(so, \"ggss_headline\", \"printed_value\")\n  bsz_row1     <- pick(so, \"tab5_row1_wealth_tax_revenue\")\n  rauh_args <- list(wt_min = pick(oi, \"rauh_mc_wt_min\"),\n                    wt_max = pick(oo, \"revenue_confirmed6\", \"printed_value\"),  # 67.51\n                    baseline = pick(oo, \"revenue_baseline\", \"printed_value\"),  # 94.2\n                    c_min = pick(oi, \"rauh_mc_c_min\"), c_max = pick(oi, \"rauh_mc_c_max\"),\n                    r_min = pick(oi, \"rauh_mc_r_min\"), r_max = pick(oi, \"rauh_mc_r_max\"))\n  nber_args <- list(wt_min = 0, wt_max = pick(k$rjkdc$inputs, \"nber_ceiling_hardcoded\"),\n                    f_min = pick(oi, \"nber_mc_f_min\"), f_max = pick(oi, \"nber_mc_f_max\"),\n                    c_min = rauh_args$c_min, c_max = rauh_args$c_max,\n                    r_min = rauh_args$r_min, r_max = rauh_args$r_max)\n  rauh_own <- function(H) do.call(rauh_ssrn_expectation, c(rauh_args, list(H = H)))\n  nber_own <- function(H) do.call(rauh_nber_expectation, c(nber_args, list(H = H)))\n\n  # ---- bridges, for each horizon setting ---------------------------------------\n  settings <- c(\"own\", paste0(\"common_\", HORIZONS))\n  bridge <- list(); ends <- list()\n  for (st in settings) {\n    s2 <- sup; r2 <- rauh\n    players <- ids\n    if (st != \"own\") {\n      H <- as.numeric(sub(\"common_\", \"\", st))\n      s2$H <- H; r2$H <- H\n      players <- setdiff(ids, \"horizon\")\n    }\n    Hr <- r2$H\n    v_sup  <- score_common(s2); v_rauh <- score_common(r2)\n    own_r  <- rauh_own(Hr); own_n <- nber_own(Hr)\n    for (out in c(\"a\", \"b\")) {\n      sh  <- shapley_bridge(s2, r2, players, out)\n      sq  <- sequential_bridge(s2, r2, intersect(sequential_order(), players), out)\n      full_sh <- stats::setNames(rep(0, length(ids)), ids); full_sh[players] <- sh\n      full_sq <- stats::setNames(rep(0, length(ids)), ids); full_sq[names(sq)] <- sq\n      bridge[[length(bridge) + 1]] <- data.frame(\n        horizon_setting = st, output = out, step_id = ids,\n        shapley = unname(full_sh), sequential = unname(full_sq),\n        sequential_rank = match(ids, sequential_order()), stringsAsFactors = FALSE)\n      ends[[length(ends) + 1]] <- data.frame(\n        horizon_settin\n... (cut; open the file for the rest)"
       },
       "py": {
@@ -238,13 +245,13 @@
           227
         ],
         "language": "python",
-        "url": "https://github.com/fhoces/opa-prop40/blob/54e8015/comparison/py/bridge.py#L191-L227",
+        "url": "https://github.com/fhoces/opa-prop40/blob/62977e6/comparison/py/bridge.py#L191-L227",
         "snippet": "def build_all(k):\n    sup, rauh = bridge_inputs(k)\n    so, oo, d = k[\"bsz\"][\"outputs\"], k[\"rjkdc\"][\"outputs\"], k[\"docs\"]\n    oi = k[\"rjkdc\"][\"inputs\"]\n    ggss_printed = pick(so, \"ggss_headline\", \"printed_value\")\n    ra = dict(wt_min=pick(oi, \"rauh_mc_wt_min\"), wt_max=pick(oo, \"revenue_confirmed6\", \"printed_value\"),\n              baseline=pick(oo, \"revenue_baseline\", \"printed_value\"),\n              c_min=pick(oi, \"rauh_mc_c_min\"), c_max=pick(oi, \"rauh_mc_c_max\"),\n              r_min=pick(oi, \"rauh_mc_r_min\"), r_max=pick(oi, \"rauh_mc_r_max\"))\n    na = dict(wt_min=0.0, wt_max=pick(k[\"rjkdc\"][\"inputs\"], \"nber_ceiling_hardcoded\"),\n              f_min=pick(oi, \"nber_mc_f_min\"), f_max=pick(oi, \"nber_mc_f_max\"),\n              c_min=ra[\"c_min\"], c_max=ra[\"c_max\"], r_min=ra[\"r_min\"], r_max=ra[\"r_max\"])\n\n    settings = [\"own\"] + [f\"common_{'Inf' if math.isinf(h) else h}\" for h in HORIZONS]\n    bridge, ends = [], []\n    for st in settings:\n        s2, r2, players = dict(sup), dict(rauh), list(IDS)\n        if st != \"own\":\n            H = math.inf if st.endswith(\"Inf\") else float(st.split(\"_\")[1])\n            s2[\"H\"] = r2[\"H\"] = H\n            players = [p for p in IDS if p != \"horizon\"]\n        v_sup, v_rauh = score_common(s2), score_common(r2)\n        own_r = rauh_ssrn_expectation(**ra, H=r2[\"H\"])\n        own_n = rauh_nber_expectation(**na, H=r2[\"H\"])\n        for out in (\"a\", \"b\"):\n            sh = shapley_bridge(s2, r2, players, out)\n            sq = sequential_bridge(s2, r2, [p for p in SEQUENTIAL if p in players], out)\n            for sid, row, title, kind in STEPS:\n                bridge.append({\"step_id\": sid, \"horizon_setting\": st, \"output\": out,\n                               \"shapley\": sh.get(sid, 0.0), \"sequential\": sq.get(sid, 0.0),\n                               \"sequential_rank\": SEQUENTIAL.index(sid) + 1,\n                               \"disputes_row\": row, \"title\": title, \"kind\": kind})\n            ends.append({\"horizon_setting\": st, \"output\": out,\n                         \"bsz_model\": v_sup[out], \"rauh_model\": v_rauh[out],\n                         \"rauh_own\": own_r[out], \"rauh_residual\": own_r[out] - v_rauh[out],\n                         \"nber_own\": own_n[out], \"nber_step\": own_n[out] - own_r[out]})\n    bridge.sort(key=lambda r: (r[\"horizon_setting\"], r[\"output\"], IDS.index(r[\"step_id\"])))"
       },
       "targets": "comparison/run.R: write_exports(build_all(read_contracts(root)), ...)",
       "interactive": {
-        "r": "# Layer 4: everything the page shows, rebuilt from the contracts.\nres <- build_all(k)\nea <- res$ends[res$ends$horizon_setting == \"own\" & res$ends$output == \"a\", ]\nea\nea$bsz_model - ea$nber_own                                             # 67.815\nb <- res$bridge[res$bridge$horizon_setting == \"own\" & res$bridge$output == \"a\", ]\nsum(b$shapley) + ea$rauh_residual + ea$nber_step                       # -67.815",
-        "py": "# Layer 4: everything the page shows, rebuilt from the contracts.\nres = b.build_all(k)\nea = [e for e in res[\"ends\"] if e[\"horizon_setting\"] == \"own\" and e[\"output\"] == \"a\"][0]\nea\nea[\"bsz_model\"] - ea[\"nber_own\"]                                       # 67.815\nsteps = [r for r in res[\"bridge\"] if r[\"horizon_setting\"] == \"own\" and r[\"output\"] == \"a\"]\nsum(r[\"shapley\"] for r in steps) + ea[\"rauh_residual\"] + ea[\"nber_step\"]   # -67.815"
+        "r": "# Layer 4: everything the pages show, rebuilt from the contracts.\nres <- build_all(k)\neb <- res$ends[res$ends$horizon_setting == \"own\" & res$ends$output == \"b\", ]\neb\neb$bsz_model - eb$nber_own                                             # 145.776\nb <- res$bridge[res$bridge$horizon_setting == \"own\" & res$bridge$output == \"b\", ]\nsum(b$shapley) + eb$rauh_residual + eb$nber_step                       # -145.776",
+        "py": "# Layer 4: everything the pages show, rebuilt from the contracts.\nres = b.build_all(k)\neb = [e for e in res[\"ends\"] if e[\"horizon_setting\"] == \"own\" and e[\"output\"] == \"b\"][0]\neb\neb[\"bsz_model\"] - eb[\"nber_own\"]                                       # 145.776\nsteps = [r for r in res[\"bridge\"] if r[\"horizon_setting\"] == \"own\" and r[\"output\"] == \"b\"]\nsum(r[\"shapley\"] for r in steps) + eb[\"rauh_residual\"] + eb[\"nber_step\"]   # -145.776"
       },
       "id": "comparison-4",
       "state": "not_reviewed",
@@ -256,12 +263,12 @@
     {
       "n": 5,
       "name": "Splitting the gap into steps",
-      "what": "Each step switches one disputed input from the BSZ value to the RJKDC value. Because inputs interact, a step's size depends on when it is switched. shapley_bridge() averages each switch over every order, exactly: it estimates the model at all 2^11 = 2,048 subsets of switched inputs and weights each difference by how many orders produce it. sequential_bridge() switches them in one order, Hoopes's. Both sets of steps add up to the model gap, BSZ end to all-RJKDC end.",
+      "what": "Each step switches one disputed input from the BSZ value to the RJKDC value of its March 2026 version, where the inputs are published. Because inputs interact, a step's size depends on when it is switched. shapley_bridge() averages each switch over every order, exactly: it estimates the model at all 2^11 = 2,048 subsets of switched inputs and weights each difference by how many orders produce it. sequential_bridge() switches them in one order, Hoopes's. Both sets of steps add up to the model gap between the two input vectors; the model difference and the September revision close the rest of the gap to the RJKDC end.",
       "inputs": "sup, rauh (the two input vectors) and the list of steps",
       "inputs_from": [
         {
           "layer": "comparison-6",
-          "what": "score_common(): output (a) or (b) at any mix of the two input vectors",
+          "what": "score_common(): output (b) or (a) at any mix of the two input vectors",
           "tokens": [
             "score_common"
           ],
@@ -284,7 +291,7 @@
         }
       ],
       "other_inputs": "step_inputs (which argument each step switches) and sequential_order()",
-      "outputs": "output (a), own horizon: eleven Shapley steps summing to -52.560 (103.815 to 51.255); the largest is billionaires already departed, -21.293",
+      "outputs": "output (b), own horizon: eleven Shapley steps summing to -131.602; the largest are one_time_as_permanent -33.628, confirmed_departures -33.160, horizon -27.051; plus the model difference 0.099 and the September revision -14.273, together -145.776",
       "method_ref": "Shapley value, the standard average-over-orders decomposition. test-shapley.R checks the sum in every setting and compares with a brute-force average over orders.",
       "method_status": "matches",
       "r": {
@@ -295,7 +302,7 @@
           122
         ],
         "language": "r",
-        "url": "https://github.com/fhoces/opa-prop40/blob/54e8015/comparison/R/model.R#L87-L122",
+        "url": "https://github.com/fhoces/opa-prop40/blob/62977e6/comparison/R/model.R#L87-L122",
         "snippet": "switch_inputs <- function(sup, rauh, on) {\n  x <- sup\n  for (st in on) for (nm in step_inputs[[st]]) x[[nm]] <- rauh[[nm]]\n  x\n}\n\n# Exact Shapley values by enumerating all 2^n coalitions (n = 11: 2,048 scorings).\n# `players` can exclude steps (e.g. the horizon when both ends share one horizon).\nshapley_bridge <- function(sup, rauh, players, output = c(\"a\", \"b\")) {\n  output <- match.arg(output)\n  n <- length(players)\n  masks <- 0:(2^n - 1)\n  inset <- function(mask) players[bitwAnd(mask, 2^(0:(n - 1))) > 0]\n  v <- vapply(masks, function(mk) score_common(switch_inputs(sup, rauh, inset(mk)))[[output]], 0)\n  size <- vapply(masks, function(mk) sum(bitwAnd(mk, 2^(0:(n - 1))) > 0), 0)\n  # weight of a coalition of `size` others (the full coalition never lacks i)\n  w <- ifelse(size < n, factorial(size) * factorial(pmax(n - size - 1, 0)) / factorial(n), 0)\n  phi <- vapply(seq_len(n), function(i) {\n    bit <- 2^(i - 1)\n    without <- masks[bitwAnd(masks, bit) == 0]\n    sum(w[without + 1] * (v[without + bit + 1] - v[without + 1]))\n  }, 0)\n  stats::setNames(phi, players)\n}\n\nsequential_bridge <- function(sup, rauh, order, output = c(\"a\", \"b\")) {\n  output <- match.arg(output)\n  prev <- score_common(sup)[[output]]\n  out <- numeric(length(order))\n  for (k in seq_along(order)) {\n    cur <- score_common(switch_inputs(sup, rauh, order[seq_len(k)]))[[output]]\n    out[k] <- cur - prev\n    prev <- cur\n  }\n  stats::setNames(out, order)\n}"
       },
       "py": {
@@ -306,13 +313,13 @@
           147
         ],
         "language": "python",
-        "url": "https://github.com/fhoces/opa-prop40/blob/54e8015/comparison/py/bridge.py#L112-L147",
+        "url": "https://github.com/fhoces/opa-prop40/blob/62977e6/comparison/py/bridge.py#L112-L147",
         "snippet": "def switch_inputs(sup: dict, rauh: dict, on) -> dict:\n    x = dict(sup)\n    for st in on:\n        for nm in STEP_INPUTS[st]:\n            x[nm] = rauh[nm]\n    return x\n\n\ndef shapley_bridge(sup, rauh, players, output):\n    n = len(players)\n    v = {}\n    for mask in range(2 ** n):\n        on = [players[i] for i in range(n) if mask & (1 << i)]\n        v[mask] = score_common(switch_inputs(sup, rauh, on))[output]\n    phi = []\n    for i in range(n):\n        bit = 1 << i\n        tot = 0.0\n        for mask in range(2 ** n):\n            if mask & bit:\n                continue\n            size = bin(mask).count(\"1\")\n            w = math.factorial(size) * math.factorial(n - size - 1) / math.factorial(n)\n            tot += w * (v[mask | bit] - v[mask])\n        phi.append(tot)\n    return dict(zip(players, phi))\n\n\ndef sequential_bridge(sup, rauh, order, output):\n    prev = score_common(sup)[output]\n    out = {}\n    for k in range(len(order)):\n        cur = score_common(switch_inputs(sup, rauh, order[:k + 1]))[output]\n        out[order[k]] = cur - prev\n        prev = cur\n    return out"
       },
       "targets": null,
       "interactive": {
-        "r": "# Layer 5: the eleven steps of output (a), two ways.\nplayers <- bridge_steps()$step_id\nsh <- shapley_bridge(bi$sup, bi$rauh, players, \"a\")\nround(sh, 3)\nsum(sh)                                                                # -52.560\nscore_common(bi$rauh)[[\"a\"]] - score_common(bi$sup)[[\"a\"]]            # the same\nround(sequential_bridge(bi$sup, bi$rauh, sequential_order(), \"a\"), 3)  # Hoopes's order",
-        "py": "# Layer 5: the eleven steps of output (a), two ways.\nsh = b.shapley_bridge(sup, rauh, b.IDS, \"a\")\n{k_: round(v, 3) for k_, v in sh.items()}\nsum(sh.values())                                                       # -52.560\nb.score_common(rauh)[\"a\"] - b.score_common(sup)[\"a\"]                   # the same\n{k_: round(v, 3) for k_, v in b.sequential_bridge(sup, rauh, b.SEQUENTIAL, \"a\").items()}"
+        "r": "# Layer 5: the eleven steps of output (b), two ways.\nplayers <- bridge_steps()$step_id\nsh <- shapley_bridge(bi$sup, bi$rauh, players, \"b\")\nround(sh, 3)\nsum(sh)                                                                # -131.602\nscore_common(bi$rauh)[[\"b\"]] - score_common(bi$sup)[[\"b\"]]            # the same\nround(sequential_bridge(bi$sup, bi$rauh, sequential_order(), \"b\"), 3)  # Hoopes's order",
+        "py": "# Layer 5: the eleven steps of output (b), two ways.\nsh = b.shapley_bridge(sup, rauh, b.IDS, \"b\")\n{k_: round(v, 3) for k_, v in sh.items()}\nsum(sh.values())                                                       # -131.602\nb.score_common(rauh)[\"b\"] - b.score_common(sup)[\"b\"]                   # the same\n{k_: round(v, 3) for k_, v in b.sequential_bridge(sup, rauh, b.SEQUENTIAL, \"b\").items()}"
       },
       "id": "comparison-5",
       "state": "not_reviewed",
@@ -323,8 +330,8 @@
     },
     {
       "n": 6,
-      "name": "The estimating function and the NBER end",
-      "what": "score_common() is the one function that estimates both sides. Output (a) is 5% x base x (1 - real-estate share) x (1 - avoidance) x S, where S is the share of the base still taxed after departures and the mobility response. At the all-BSZ inputs S = 1, so (a) = 0.05 x 2,307 x 0.9 = 103.815, BSZ Table 5 row 1. rauh_nber_expectation() (model.R lines 134-138, bridge.py lines 156-160) is the NBER end: the revenue is drawn uniformly between 0 and 72, so its expectation is 36. This is the last layer that computes: the difference of its two outputs is the main estimate.",
+      "name": "The estimating function and the RJKDC end",
+      "what": "score_common() is the one function that estimates both analyses. The wealth tax is 5% x base x (1 - real-estate share) x (1 - avoidance) x S, where S is the share of the base still taxed after departures and the mobility response. At the all-BSZ inputs S = 1, so the wealth tax is 0.05 x 2,307 x 0.9 = 103.815, BSZ Table 5 row 1; output (b) adds 3.682 of income tax from asset sales and subtracts 0.701, five years of lost income tax, giving 106.796, the BSZ end. rauh_nber_expectation() (model.R lines 134-138, bridge.py lines 156-160) is the RJKDC end: with the revenue uniform on [0, 72], the departing share f on [0.30, 0.60], the income tax C on [3.3, 5.8] and r on [1.5%, 4.5%], all independent, the mean NPV is 36 - 0.45 x 4.55 x 36.620 = -38.980. This is the last layer that computes: its two outputs are the two ends.",
       "inputs": "x: one input vector (sup at the BSZ end); the NBER Monte Carlo bounds",
       "inputs_from": [
         {
@@ -338,9 +345,9 @@
           ]
         }
       ],
-      "other_inputs": "the NBER bounds wt_min = 0 (a literal in build.R) and wt_max = 72 (contract row nber_ceiling_hardcoded)",
-      "outputs": "score_common(sup)['a'] = 103.815; rauh_nber_expectation(...)['a'] = 36.0; difference 67.815",
-      "method_ref": "BSZ PDF p.24 (90% x 5% x $2,307B) and Table 5 row 1, p.39; Jaros and Rauh NBER c15504, the Monte Carlo in the authors' public repository (NPV_dist_v8.R). test-endpoints.R checks both ends against the printed numbers.",
+      "other_inputs": "the NBER bounds wt_min = 0 (a literal in build.R), wt_max = 72 (contract row nber_ceiling_hardcoded), f, C and r ranges (contract rows nber_mc_f_*, rauh_mc_c_*, rauh_mc_r_*)",
+      "outputs": "score_common(sup)['b'] = 106.795628; rauh_nber_expectation(...)['b'] = -38.980289; difference 145.776",
+      "method_ref": "BSZ PDF p.24 (90% x 5% x $2,307B) and Table 5 row 1, p.39; Jaros and Rauh NBER c15504, the Monte Carlo in the authors' public repository (NPV_dist_v8.R). test-endpoints.R checks both ends against the printed numbers (the NBER one within Monte Carlo error of the printed -38.9).",
       "method_status": "matches",
       "r": {
         "path": "comparison/R/model.R",
@@ -350,7 +357,7 @@
           42
         ],
         "language": "r",
-        "url": "https://github.com/fhoces/opa-prop40/blob/54e8015/comparison/R/model.R#L32-L42",
+        "url": "https://github.com/fhoces/opa-prop40/blob/62977e6/comparison/R/model.R#L32-L42",
         "snippet": "score_common <- function(x) {\n  R0  <- x$tau * (x$W_core + x$W_noncit) * (1 - x$re)\n  S   <- 1 - (x$d_conf + max(x$d_conf, x$eps * x$dtau)) / 2\n  WT  <- R0 * (1 - x$alpha) * S\n  X   <- WT * x$s * x$g * x$t_cg\n  f   <- x$alpha * x$m + x$kappa * (1 - S) * (1 - x$alpha * x$m)\n  A   <- expected_annuity(x$H, x$r_min, x$r_max)\n  PV  <- f * x$C * A\n  c(a = WT, b = WT + X - PV, R0 = R0, S = S, X = X, f = f, annual_loss = f * x$C,\n    annuity = A, PV = PV)\n}"
       },
       "py": {
@@ -361,13 +368,13 @@
           85
         ],
         "language": "python",
-        "url": "https://github.com/fhoces/opa-prop40/blob/54e8015/comparison/py/bridge.py#L76-L85",
+        "url": "https://github.com/fhoces/opa-prop40/blob/62977e6/comparison/py/bridge.py#L76-L85",
         "snippet": "def score_common(x: dict) -> dict:\n    R0 = x[\"tau\"] * (x[\"W_core\"] + x[\"W_noncit\"]) * (1 - x[\"re\"])\n    S = 1 - (x[\"d_conf\"] + max(x[\"d_conf\"], x[\"eps\"] * x[\"dtau\"])) / 2\n    WT = R0 * (1 - x[\"alpha\"]) * S\n    X = WT * x[\"s\"] * x[\"g\"] * x[\"t_cg\"]\n    f = x[\"alpha\"] * x[\"m\"] + x[\"kappa\"] * (1 - S) * (1 - x[\"alpha\"] * x[\"m\"])\n    A = expected_annuity(x[\"H\"], x[\"r_min\"], x[\"r_max\"])\n    PV = f * x[\"C\"] * A\n    return {\"a\": WT, \"b\": WT + X - PV, \"R0\": R0, \"S\": S, \"X\": X, \"f\": f,\n            \"annual_loss\": f * x[\"C\"], \"annuity\": A, \"PV\": PV}"
       },
       "targets": null,
       "interactive": {
-        "r": "# Layer 6: the two ends, and the main estimate as their difference.\nv <- score_common(bi$sup); v[c(\"a\", \"R0\", \"S\")]                        # 103.815\n0.05 * 2307 * (1 - 0.10)                                               # the same by hand\noi <- k$rjkdc$inputs\nnber <- rauh_nber_expectation(wt_min = 0, wt_max = pick(oi, \"nber_ceiling_hardcoded\"),\n  f_min = pick(oi, \"nber_mc_f_min\"), f_max = pick(oi, \"nber_mc_f_max\"),\n  c_min = pick(oi, \"rauh_mc_c_min\"), c_max = pick(oi, \"rauh_mc_c_max\"),\n  r_min = pick(oi, \"rauh_mc_r_min\"), r_max = pick(oi, \"rauh_mc_r_max\"))\nnber                                                                   # a = 36\nv[[\"a\"]] - nber[[\"a\"]]                                                 # 67.815: the main estimate",
-        "py": "# Layer 6: the two ends, and the main estimate as their difference.\nv = b.score_common(sup); v[\"a\"], v[\"R0\"], v[\"S\"]                       # 103.815\n0.05 * 2307 * (1 - 0.10)                                               # the same by hand\noi = k[\"rjkdc\"][\"inputs\"]\nnber = b.rauh_nber_expectation(0.0, b.pick(oi, \"nber_ceiling_hardcoded\"),\n    b.pick(oi, \"nber_mc_f_min\"), b.pick(oi, \"nber_mc_f_max\"),\n    b.pick(oi, \"rauh_mc_c_min\"), b.pick(oi, \"rauh_mc_c_max\"),\n    b.pick(oi, \"rauh_mc_r_min\"), b.pick(oi, \"rauh_mc_r_max\"))\nnber                                                                   # a = 36\nv[\"a\"] - nber[\"a\"]                                                     # 67.815: the main estimate"
+        "r": "# Layer 6: the two ends under (b), and the gap between them.\nv <- score_common(bi$sup); v[c(\"a\", \"X\", \"PV\", \"b\")]                   # 103.815, 3.682, 0.701, 106.796\noi <- k$rjkdc$inputs\nnber <- rauh_nber_expectation(wt_min = 0, wt_max = pick(oi, \"nber_ceiling_hardcoded\"),\n  f_min = pick(oi, \"nber_mc_f_min\"), f_max = pick(oi, \"nber_mc_f_max\"),\n  c_min = pick(oi, \"rauh_mc_c_min\"), c_max = pick(oi, \"rauh_mc_c_max\"),\n  r_min = pick(oi, \"rauh_mc_r_min\"), r_max = pick(oi, \"rauh_mc_r_max\"))\nnber                                                                   # a = 36, b = -38.980\n36 - 0.45 * 4.55 * expected_annuity(Inf, 0.015, 0.045)                # the same by hand\nv[[\"b\"]] - nber[[\"b\"]]                                                 # 145.776",
+        "py": "# Layer 6: the two ends under (b), and the gap between them.\nv = b.score_common(sup); v[\"a\"], v[\"X\"], v[\"PV\"], v[\"b\"]              # 103.815, 3.682, 0.701, 106.796\noi = k[\"rjkdc\"][\"inputs\"]\nnber = b.rauh_nber_expectation(0.0, b.pick(oi, \"nber_ceiling_hardcoded\"),\n    b.pick(oi, \"nber_mc_f_min\"), b.pick(oi, \"nber_mc_f_max\"),\n    b.pick(oi, \"rauh_mc_c_min\"), b.pick(oi, \"rauh_mc_c_max\"),\n    b.pick(oi, \"rauh_mc_r_min\"), b.pick(oi, \"rauh_mc_r_max\"))\nnber                                                                   # a = 36, b = -38.980\nv[\"b\"] - nber[\"b\"]                                                     # 145.776"
       },
       "id": "comparison-6",
       "state": "not_reviewed",
@@ -379,7 +386,7 @@
     {
       "n": 7,
       "name": "The two input vectors",
-      "what": "bridge_inputs() builds the two settings of every disputed input, each value read from a contract row or a transcribed document input. The BSZ base is the contract's 2,307 split into 150 of non-US-citizen residents (GGSS p.2 fn.1) and the rest; the RJKDC values come from the RJKDC contract's workbook sums and Monte Carlo ranges.",
+      "what": "bridge_inputs() builds the two settings of every disputed input, each value read from a contract row or a transcribed document input. The BSZ base is the contract's 2,307 split into 150 of non-US-citizen residents and the rest; the RJKDC values are those of its March 2026 version, from the RJKDC contract's workbook sums and Monte Carlo ranges.",
       "inputs": "k: the two contracts and the document inputs",
       "inputs_from": [
         {
@@ -396,7 +403,7 @@
         }
       ],
       "other_inputs": "none",
-      "outputs": "sup: W_core 2157, W_noncit 150, alpha 0.10, re 0, d_conf 0, dtau 0, ...; rauh: W_core 1894.8, W_noncit 0, alpha 0, dtau 0.05, ...",
+      "outputs": "sup: W_core 2157, W_noncit 150, alpha 0.10, re 0, d_conf 0, dtau 0, H 5, ...; rauh: W_core 1894.8, W_noncit 0, alpha 0, dtau 0.05, H Inf, ...",
       "method_ref": "Each value's source and page is in comparison/export/r/inputs.csv (bridge_input_table()).",
       "method_status": "matches",
       "r": {
@@ -407,7 +414,7 @@
           35
         ],
         "language": "r",
-        "url": "https://github.com/fhoces/opa-prop40/blob/54e8015/comparison/R/build.R#L6-L35",
+        "url": "https://github.com/fhoces/opa-prop40/blob/62977e6/comparison/R/build.R#L6-L35",
         "snippet": "bridge_inputs <- function(k) {\n  si <- k$bsz$inputs; so <- k$bsz$outputs\n  oi <- k$rjkdc$inputs;   oo <- k$rjkdc$outputs\n  d  <- k$docs\n  W0      <- pick(si, \"baseline_net_worth\")\n  noncit  <- pick(d, \"ggss_noncitizen_wealth\")\n  C_sup   <- pick(si, \"ca_inctax_billionaires\")\n  kappa_s <- (pick(si, \"leavers_annual_inctax\") / pick(si, \"leavers_wealth\")) / (C_sup / W0)\n  tau     <- pick(oi, \"tax_rate\")\n  stopifnot(isTRUE(all.equal(tau, pick(si, \"tax_rate\"))))\n  base_r  <- pick(oi, \"baseline_net_worth\")\n  R0_r    <- pick(oo, \"revenue_baseline\")           # 94.304, the workbook's own sum\n  conf6   <- pick(oo, \"revenue_confirmed6\")         # 67.511\n  wt_min  <- pick(oi, \"rauh_mc_wt_min\")              # 35\n  shared <- list(tau = tau, m = pick(si, \"mobility_share\"), g = pick(si, \"gains_share\"),\n                 t_cg = pick(si, \"ca_cg_rate\"),\n                 r_min = pick(oi, \"rauh_mc_r_min\"), r_max = pick(oi, \"rauh_mc_r_max\"))\n  sup <- c(shared, list(\n    W_noncit = noncit, W_core = W0 - noncit, re = 0, d_conf = 0,\n    alpha = pick(si, \"avoidance_rate\"), dtau = 0, eps = pick(si, \"semi_elasticity_permanent\"),\n    kappa = kappa_s, C = C_sup, H = pick(d, \"bsz_loss_horizon\"),\n    s = pick(si, \"sell_share\")))\n  rauh <- c(shared, list(\n    W_noncit = 0, W_core = base_r, re = 1 - R0_r / (tau * base_r),\n    d_conf = 1 - conf6 / R0_r, alpha = 0, dtau = tau,\n    eps = (1 - wt_min / R0_r) / tau,\n    kappa = 1, C = (pick(oi, \"rauh_mc_c_min\") + pick(oi, \"rauh_mc_c_max\")) / 2,\n    H = pick(d, \"rauh_loss_horizon\"), s = 0))\n  list(sup = sup, rauh = rauh)\n}"
       },
       "py": {
@@ -418,13 +425,13 @@
           187
         ],
         "language": "python",
-        "url": "https://github.com/fhoces/opa-prop40/blob/54e8015/comparison/py/bridge.py#L163-L187",
+        "url": "https://github.com/fhoces/opa-prop40/blob/62977e6/comparison/py/bridge.py#L163-L187",
         "snippet": "def bridge_inputs(k):\n    si, so = k[\"bsz\"][\"inputs\"], k[\"bsz\"][\"outputs\"]\n    oi, oo = k[\"rjkdc\"][\"inputs\"], k[\"rjkdc\"][\"outputs\"]\n    d = k[\"docs\"]\n    W0 = pick(si, \"baseline_net_worth\")\n    noncit = pick(d, \"ggss_noncitizen_wealth\")\n    C_sup = pick(si, \"ca_inctax_billionaires\")\n    kappa_s = (pick(si, \"leavers_annual_inctax\") / pick(si, \"leavers_wealth\")) / (C_sup / W0)\n    tau = pick(oi, \"tax_rate\")\n    assert abs(tau - pick(si, \"tax_rate\")) < 1e-12\n    base_r = pick(oi, \"baseline_net_worth\")\n    R0_r = pick(oo, \"revenue_baseline\")\n    conf6 = pick(oo, \"revenue_confirmed6\")\n    wt_min = pick(oi, \"rauh_mc_wt_min\")\n    shared = {\"tau\": tau, \"m\": pick(si, \"mobility_share\"), \"g\": pick(si, \"gains_share\"),\n              \"t_cg\": pick(si, \"ca_cg_rate\"),\n              \"r_min\": pick(oi, \"rauh_mc_r_min\"), \"r_max\": pick(oi, \"rauh_mc_r_max\")}\n    sup = dict(shared, W_noncit=noncit, W_core=W0 - noncit, re=0.0, d_conf=0.0,\n               alpha=pick(si, \"avoidance_rate\"), dtau=0.0,\n               eps=pick(si, \"semi_elasticity_permanent\"), kappa=kappa_s, C=C_sup,\n               H=pick(d, \"bsz_loss_horizon\"), s=pick(si, \"sell_share\"))\n    rauh = dict(shared, W_noncit=0.0, W_core=base_r, re=1 - R0_r / (tau * base_r),\n                d_conf=1 - conf6 / R0_r, alpha=0.0, dtau=tau, eps=(1 - wt_min / R0_r) / tau,\n                kappa=1.0, C=(pick(oi, \"rauh_mc_c_min\") + pick(oi, \"rauh_mc_c_max\")) / 2,\n                H=pick(d, \"rauh_loss_horizon\"), s=0.0)"
       },
       "targets": null,
       "interactive": {
-        "r": "# Layer 7: the two input vectors, side by side.\nstr(bi$sup)\nstr(bi$rauh)\nbridge_input_table(bi)[, c(\"step_id\", \"input\", \"supporting_value\", \"rauh_value\")]",
-        "py": "# Layer 7: the two input vectors, side by side.\nsup\nrauh\n{s: (sup[i[0]], rauh[i[0]]) for s, i in b.STEP_INPUTS.items()}"
+        "r": "# Layer 7: the two input vectors, next to each other.\nstr(bi$sup)\nstr(bi$rauh)\nbridge_input_table(bi)[, c(\"step_id\", \"input\", \"supporting_value\", \"rauh_value\")]",
+        "py": "# Layer 7: the two input vectors, next to each other.\nsup\nrauh\n{s: (sup[i[0]], rauh[i[0]]) for s, i in b.STEP_INPUTS.items()}"
       },
       "id": "comparison-7",
       "state": "not_reviewed",
@@ -436,11 +443,11 @@
     {
       "n": 8,
       "name": "The raw source: the two export contracts",
-      "what": "The comparison reads exactly three kinds of file: each side's export contract (export/r/inputs.csv and outputs.csv, written by that side's own pipeline for others to read), the values transcribed from the PDFs with their page (comparison/data/document-inputs.csv) and Hoopes's digitized figure. pick() looks up one row and fails loudly if it is missing or duplicated. The chain stops here: what is behind each contract row is each side's own chain.",
+      "what": "The comparison reads exactly three kinds of file: each analysis's export contract (export/r/inputs.csv and outputs.csv, written by that analysis's own pipeline for others to read), the values transcribed from the PDFs with their page (comparison/data/document-inputs.csv) and Hoopes's digitized figure. pick() looks up one row and fails loudly if it is missing or duplicated. The chain stops here: what is behind each contract row is each analysis's own chain.",
       "inputs": "bsz-analysis/export/r/{inputs,outputs}.csv, rjkdc-analysis/export/r/{inputs,outputs}.csv, comparison/data/*.csv",
       "inputs_from": [],
       "other_inputs": "bsz-analysis/export/r/{inputs,outputs}.csv, rjkdc-analysis/export/r/{inputs,outputs}.csv, comparison/data/*.csv",
-      "outputs": "for the main estimate: BSZ baseline_net_worth 2307, avoidance_rate 0.1, tax_rate 0.05; RJKDC nber_ceiling_hardcoded 72; document input ggss_noncitizen_wealth 150",
+      "outputs": "for the two ends: BSZ baseline_net_worth 2307, avoidance_rate 0.1, tax_rate 0.05, tab5_row1 extra income tax and annual loss; RJKDC nber_ceiling_hardcoded 72, nber_mc_f_min/max 0.30/0.60, rauh_mc_c_min/max 3.3/5.8, rauh_mc_r_min/max 0.015/0.045, npv_mc_nber_mean -38.886 (the RJKDC main estimate); document input ggss_noncitizen_wealth 150",
       "method_ref": "Plumbing: base R read.csv / Python csv, no transformation.",
       "method_status": "plumbing",
       "r": {
@@ -451,7 +458,7 @@
           47
         ],
         "language": "r",
-        "url": "https://github.com/fhoces/opa-prop40/blob/54e8015/comparison/R/contract.R#L29-L47",
+        "url": "https://github.com/fhoces/opa-prop40/blob/62977e6/comparison/R/contract.R#L29-L47",
         "snippet": "read_contracts <- function(root = comparison_root()) {\n  side <- function(s) list(\n    inputs  = read_csv_plain(file.path(root, s, \"export\", \"r\", \"inputs.csv\")),\n    outputs = read_csv_plain(file.path(root, s, \"export\", \"r\", \"outputs.csv\")))\n  docs <- read_csv_plain(file.path(root, \"comparison\", \"data\", \"document-inputs.csv\"))\n  docs$value <- as.numeric(docs$value)          # \"Inf\" parses to Inf\n  list(bsz = side(\"bsz-analysis\"),\n       rjkdc = side(\"rjkdc-analysis\"),\n       docs       = docs,\n       hoopes     = read_csv_plain(file.path(root, \"comparison\", \"data\", \"hoopes-fig2.csv\")))\n}\n\n# Look up one value, failing loudly if the contract row is missing or duplicated.\npick <- function(df, id, col = \"value\", key = NULL) {\n  key <- key %||% names(df)[1]\n  hit <- df[df[[key]] == id, , drop = FALSE]\n  if (nrow(hit) != 1) stop(sprintf(\"expected exactly one row '%s', found %d\", id, nrow(hit)))\n  hit[[col]]\n}"
       },
       "py": {
@@ -462,13 +469,13 @@
           63
         ],
         "language": "python",
-        "url": "https://github.com/fhoces/opa-prop40/blob/54e8015/comparison/py/bridge.py#L49-L63",
+        "url": "https://github.com/fhoces/opa-prop40/blob/62977e6/comparison/py/bridge.py#L49-L63",
         "snippet": "def pick(rows: list[dict], key_value: str, col: str = \"value\") -> float:\n    key = list(rows[0].keys())[0]\n    hit = [r for r in rows if r[key] == key_value]\n    if len(hit) != 1:\n        raise KeyError(f\"expected exactly one row '{key_value}', found {len(hit)}\")\n    return num(hit[0][col])\n\n\ndef read_contracts(root: str) -> dict:\n    side = lambda s: {\"inputs\": read_rows(os.path.join(root, s, \"export\", \"r\", \"inputs.csv\")),\n                      \"outputs\": read_rows(os.path.join(root, s, \"export\", \"r\", \"outputs.csv\"))}\n    return {\"bsz\": side(\"bsz-analysis\"),\n            \"rjkdc\": side(\"rjkdc-analysis\"),\n            \"docs\": read_rows(os.path.join(root, \"comparison\", \"data\", \"document-inputs.csv\")),\n            \"hoopes\": read_rows(os.path.join(root, \"comparison\", \"data\", \"hoopes-fig2.csv\"))}"
       },
       "targets": null,
       "interactive": {
-        "r": "# Layer 8: the contracts and the rows the main estimate reads.\nnames(k)                                         # bsz, rjkdc, docs, hoopes\nhead(k$bsz$inputs[, c(\"input_id\", \"value\", \"label\", \"source\")])\npick(k$bsz$inputs, \"baseline_net_worth\"); pick(k$bsz$inputs, \"avoidance_rate\"); pick(k$bsz$inputs, \"tax_rate\")\npick(k$rjkdc$inputs, \"nber_ceiling_hardcoded\")\npick(k$docs, \"ggss_noncitizen_wealth\")",
-        "py": "# Layer 8: the contracts and the rows the main estimate reads.\nlist(k)                                          # bsz, rjkdc, docs, hoopes\nk[\"bsz\"][\"inputs\"][:3]\nb.pick(k[\"bsz\"][\"inputs\"], \"baseline_net_worth\"), b.pick(k[\"bsz\"][\"inputs\"], \"avoidance_rate\"), b.pick(k[\"bsz\"][\"inputs\"], \"tax_rate\")\nb.pick(k[\"rjkdc\"][\"inputs\"], \"nber_ceiling_hardcoded\")\nb.pick(k[\"docs\"], \"ggss_noncitizen_wealth\")"
+        "r": "# Layer 8: the contracts and the rows the two ends read.\nnames(k)                                         # bsz, rjkdc, docs, hoopes\nhead(k$bsz$inputs[, c(\"input_id\", \"value\", \"label\", \"source\")])\npick(k$bsz$inputs, \"baseline_net_worth\"); pick(k$bsz$inputs, \"avoidance_rate\"); pick(k$bsz$inputs, \"tax_rate\")\npick(k$rjkdc$inputs, \"nber_ceiling_hardcoded\"); pick(k$rjkdc$inputs, \"nber_mc_f_min\"); pick(k$rjkdc$inputs, \"nber_mc_f_max\")\npick(k$rjkdc$outputs, \"npv_mc_nber_mean\")       # -38.886, the RJKDC main estimate\npick(k$docs, \"ggss_noncitizen_wealth\")",
+        "py": "# Layer 8: the contracts and the rows the two ends read.\nlist(k)                                          # bsz, rjkdc, docs, hoopes\nk[\"bsz\"][\"inputs\"][:3]\nb.pick(k[\"bsz\"][\"inputs\"], \"baseline_net_worth\"), b.pick(k[\"bsz\"][\"inputs\"], \"avoidance_rate\"), b.pick(k[\"bsz\"][\"inputs\"], \"tax_rate\")\nb.pick(k[\"rjkdc\"][\"inputs\"], \"nber_ceiling_hardcoded\"), b.pick(k[\"rjkdc\"][\"inputs\"], \"nber_mc_f_min\"), b.pick(k[\"rjkdc\"][\"inputs\"], \"nber_mc_f_max\")\nb.pick(k[\"rjkdc\"][\"outputs\"], \"npv_mc_nber_mean\")   # -38.886, the RJKDC main estimate\nb.pick(k[\"docs\"], \"ggss_noncitizen_wealth\")"
       },
       "id": "comparison-8",
       "state": "not_reviewed",
