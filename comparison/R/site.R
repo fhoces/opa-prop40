@@ -126,6 +126,17 @@ render_site <- function(root = comparison_root(),
   tok$rauh_resid_b <- money(eb$rauh_residual, 2)
   tok$n_orders <- format(factorial(nrow(steps)), big.mark = ",")
 
+  # ---- the main estimate: the gap on output (a) between the bridge's two ends ----
+  # One end is BSZ Table 5 row 1 (the model at all-BSZ inputs), the other the expected
+  # revenue in the NBER Monte Carlo; the page's script reads the same two bars from
+  # assets/comparison-data.js.
+  gap <- ea$bsz_model - ea$nber_own
+  tok$gap_main <- money(gap, 1)
+  tok$gap_main_signed <- money(-gap, 1)
+  tok$gap_bsz_end <- money(ea$bsz_model, 1)
+  tok$gap_nber_end <- money(ea$nber_own, 1)
+  tok$nber_wt_max <- money(pick(k$rjkdc$inputs, "nber_ceiling_hardcoded"), 0)
+
   # ---- headline table ----
   hr <- function(name, a, b, printed) sprintf(
     '    <tr><td>%s</td><td class="num">%s</td><td class="num">%s</td><td>%s</td></tr>',

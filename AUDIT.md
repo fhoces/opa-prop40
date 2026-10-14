@@ -45,18 +45,19 @@ step that requires sharing (1 to 5, and 8 at level 1) was then Level 0, and so w
 ## Reconciliation page (site root, `comparison/`)
 
 Not a full OPA by design (it takes each side's contract as given), so steps 3 to 8 are scored
-on the comparison layer itself.
+on the comparison layer itself. Updated 2026-10-14 for the BSZ-shaped root page, the report and
+the materials page.
 
 | # | Step | Level | Evidence | What the next level needs |
 |---|---|---|---|---|
-| 1 | Unified output | 1 | Common outputs (a) gross revenue and (b) net fiscal effect, with one bridge highlighted (Shapley, each side's own horizon) on `index.html`; the Rauh (a) default was settled in `PLAN.md` ("Decisions after the first build") | Level 2: the output and bridge direction were fixed in `2c302eb` (16:26), after both side reproductions had merged (15:56 onward), though before any comparison number. Publish the spec before results next time |
+| 1 | Unified output | 1 | "One table or graph is highlighted as the best reflection": the main estimate at the top of `index.html`, the gap on output (a) between the bridge's two ends (BSZ Table 5 row 1 minus the NBER expected revenue), computed by `comparison/R/site.R` and re-read by the page from `assets/comparison-data.js`, with its definition and a footnote that neither side reports it. The bridge, the Open Output, explains it one disputed input at a time | Level 2: the common outputs and the bridge direction were fixed in `2c302eb`, after both side reproductions had merged, though before any comparison number; the gap as the single main estimate was chosen on 2026-10-14, after the results. Publish the spec before results next time |
 | 2 | Input-output link | 3 | Interactive toggles on `index.html`: output (a/b), method (Shapley / one order), horizon (own / 5 / 10 / 20 / 30 / 50 years / perpetuity). The horizon is a disputed input (DISPUTES row 2), and the page reads `assets/comparison-data.js`, written by `comparison/run.R` from the same `build_all()` the tests run | Met, with a caveat: one input dial (horizon), served from `build_all()` like the sides' grids; more dials would strengthen it (e.g. r range, avoidance) |
-| 3 | Methodological accounts | 2 | Annotated R and Python in `comparison/R`, `comparison/py`; `comparison/README.md`, `DISPUTES.md` | Level 3: a dynamic document for the comparison; `index.html` is generated from a template, not a notebook |
-| 4 | Data | 2 | Analytic data: `comparison/export/{r,py}/`. Inputs: `comparison/data/document-inputs.csv`, `hoopes-fig2.csv` (digitized) | Level 3 is met in substance through the sides' raw data; say so on the page |
-| 5 | Open report | 2 | `index.html` plus `DISPUTES.md`, version-controlled | Level 3: as step 3 |
-| 6 | File structure | 3 | `comparison/` with `R/`, `py/`, `data/`, `export/`, `tests/`, `README.md` | None (the root `README.md` was refreshed in `fedc0c7`) |
-| 7 | Label inputs | 3 | 18 rows in `document-inputs.csv`, each with a label (data 7, guesswork 5, derived 4, scenario 2), a source and a page | Guesswork analyst/date, as above |
-| 8 | Reproducible code | 2 | `Rscript comparison/run.R` rebuilds everything; 172 tests; `.github/workflows/comparison-ci.yml` rebuilds R and Python on a clean runner and checks the committed `index.html` is the generator's output | One click (Binder/devcontainer) |
+| 3 | Methodological accounts | 3 | "Code is clearly documented into a dynamic document": `comparison/site/repro.qmd` (knitr) reads the exports, derives the main estimate step by step, and folds the R source and its Python twin under each exhibit | None (top level) |
+| 4 | Data | 3 | Analytic data: `comparison/export/{r,py}/`, listed with rows and contents on `comparison/site/materials.html`. Inputs: the two sides' committed export contracts, `comparison/data/document-inputs.csv` and `hoopes-fig2.csv` (digitized). The two third-party PDFs only the comparison uses are in `comparison/DATA-SOURCES.csv` with URL and SHA-256 | None |
+| 5 | Open report | 3 | "A dynamic document ... and include version control tracking": `comparison/site/repro.qmd` in git, rendered to `repro.html`, plus `DISPUTES.md` | None |
+| 6 | File structure | 3 | `comparison/` with `R/`, `py/`, `data/`, `export/`, `site/`, `tests/`, `README.md` (Open Materials top in the BSZ shape) | None |
+| 7 | Label inputs | 3 | 18 rows in `document-inputs.csv`, each with a label (data 7, guesswork 5, derived 4, scenario 2), a source and a page; every bridge step carries a kind | Guesswork analyst/date, as above |
+| 8 | Reproducible code | 2 | `Rscript comparison/run.R` rebuilds everything; 179 tests (counted on the materials page when it renders); `.github/workflows/comparison-ci.yml` rebuilds R and Python on a clean runner and checks the committed `index.html` is the generator's output | One click (Binder/devcontainer); CI does not render the two Quarto pages |
 | 9 | Version control | 3 | As above | None |
 
 ## Headline
