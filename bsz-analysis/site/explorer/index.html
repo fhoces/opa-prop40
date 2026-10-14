@@ -87,13 +87,13 @@
   .preferred p { margin: 0; font-size: 14px; color: var(--ink-2); max-width: 60em; }
   .preferred p.fn { font-size: 12px; color: var(--ink-3); margin-top: 8px; }
 
-  .identity {
-    display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 18px;
-    margin-top: 14px; padding: 14px 16px; background: var(--panel);
-    border: 1px solid var(--rule); border-left: 3px solid var(--series-1);
-  }
-  .identity .name { font-family: var(--serif); font-size: 17px; font-weight: 600; }
-  .identity .meta { font-family: var(--mono); font-size: 12.5px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+  /* The headline block: the same shape as the OPA code review page (label, number, definition). */
+  .identity { display: flex; flex-direction: column; gap: 2px; margin: 14px 0 6px; }
+  .identity .name { font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--ink-3); font-weight: 500; }
+  .identity .value { font-family: var(--serif); font-size: clamp(32px, 5vw, 40px); font-weight: 600;
+    line-height: 1; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .identity .def { font-size: 13.5px; color: var(--ink-2); max-width: 46em; line-height: 1.45; margin-top: 4px; }
 
   .cols { display: grid; grid-template-columns: minmax(0, 400px) minmax(0, 1fr); gap: 34px; margin-top: 28px; align-items: start; }
   @media (max-width: 860px) { .cols { grid-template-columns: minmax(0, 1fr); gap: 30px; } }
@@ -223,13 +223,14 @@
       <h2>Outcomes</h2>
       <div class="identity">
         <span class="name" id="cell-name"></span>
-        <span class="meta" id="cell-meta"></span>
+        <span class="value" id="cell-value"></span>
+        <span class="def">Defined as wealth tax + extra income tax from selling assets &minus;
+          income tax lost to leavers (present value, 5 years at 3%).</span>
       </div>
       <svg class="bars" id="bars" viewBox="0 0 640 200" role="img" aria-labelledby="bars-title">
         <title id="bars-title">Main estimate, this setting against the base scenario</title>
       </svg>
-      <p class="fn"><sup>1</sup> Main estimate = wealth tax + extra income tax from selling assets &minus;
-      income tax lost to leavers (present value, 5 years at 3%). Not the authors' choice: BSZ's headline is
+      <p class="fn"><sup>1</sup> The main estimate is not the authors' choice: BSZ's headline is
       the wealth tax alone, <span id="pref-wt"></span>. This OPA uses the total because it compares more
       directly with <a href="../../../index.html">other analyses</a>, such as the
       <a href="../../../rjkdc-analysis/site/">RJKDC report</a>'s net present value.</p>
@@ -488,11 +489,10 @@
     for (var k in namedIdx) if (namedIdx[k] === i) name = k;
     var ext = i === iMax ? "The highest total across all settings"
             : i === iMin ? "The lowest total across all settings" : null;
-    document.getElementById("cell-name").textContent =
-      name ? (name === PREF ? "The main estimate\u00B9: base scenario" : name + " scenario (Table 5)")
-           : ext || "A setting the authors did not publish";
-    document.getElementById("cell-meta").textContent =
-      "main estimate\u00B9 " + fmtOut("$B", snap[K.main_estimate]);
+    document.getElementById("cell-name").textContent = "Main estimate\u00B9, " +
+      (name ? (name === PREF ? "base scenario" : name + " scenario (Table 5)")
+            : ext ? ext.toLowerCase() : "a setting the authors did not publish");
+    document.getElementById("cell-value").textContent = fmtOut("$B", snap[K.main_estimate]);
 
     tbody.textContent = "";
     G.outcomes.forEach(function (label, oi) {

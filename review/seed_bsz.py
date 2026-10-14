@@ -69,15 +69,16 @@ def main():
             what=("This layer is the explorer page's own JavaScript, not R or Python; the R and "
                   "Python twins start at layer 3. The page reads the precomputed grid, finds the "
                   "row for the dial setting on screen (the Base scenario when nothing is touched), "
-                  "and prints the main estimate under the bars. Footnote 1 defines the main "
-                  "estimate as this OPA's choice, not the authors'."),
+                  "and prints the main estimate as the headline number above the bars, with its "
+                  "definition under it. Footnote 1 says the main estimate is this OPA's choice, "
+                  "not the authors'."),
             inputs="G = window.__GRID__ from grid.js (G.snap holds every setting) and the six dial positions, Base = [2, 2, 1, 1, 0, 0]",
             inputs_from=[dict(layer="bsz-2", what="G = window.__GRID__: the precomputed grid; G.snap has one row per dial setting")],
             other_inputs="the six dial positions on screen, Base = [2, 2, 1, 1, 0, 0]",
             outputs=f"the text 'main estimate ${main_est:.1f}B' and the nine-row outcome table",
-            method_ref="Display only. The definition in footnote 1 (lines 231-235) is the method.",
+            method_ref="Display only. The definition under the headline number (lines 224-229) is the method; footnote 1 says it is this OPA's choice, not the authors'.",
             method_status="plumbing",
-            r=loc("bsz-analysis/site/explorer/index.html", "render(): pick the row, print the main estimate", [476, 494], language="javascript"),
+            r=loc("bsz-analysis/site/explorer/index.html", "render(): pick the row, print the main estimate", [477, 495], language="javascript"),
             py=None,
             targets=None,
         ),
