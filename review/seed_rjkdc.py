@@ -160,7 +160,7 @@ def main():
             outputs="the text of grid.js, written to site/explorer/grid.js",
             method_ref="Plumbing.",
             method_status="plumbing",
-            r=loc(f"{SIDE}/R/site.R", "site_grid_payload(), write_site_grid_js()", [199, 241]),
+            r=loc(f"{SIDE}/R/site.R", "site_grid_payload(), write_site_grid_js()", [205, 247]),
             py=None,
             targets="_targets.R:73 site_grid_js",
         ),
@@ -180,7 +180,7 @@ def main():
                         "column is computed. test-npv-mc.R checks the reproduced mean against the "
                         "printed one within four Monte Carlo standard errors."),
             method_status="matches",
-            r=loc(f"{SIDE}/R/site.R", "compute_site_headlines()", [168, 196]),
+            r=loc(f"{SIDE}/R/site.R", "compute_site_headlines()", [174, 202]),
             py=loc(f"{SIDE}/py/run_export.py", "build_outputs()", [107, 140]),
             targets="_targets.R:66 site_headlines",
         ),
