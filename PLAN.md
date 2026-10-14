@@ -55,7 +55,7 @@ credited to us.
 **Deliverables: three pages.**
 
 1. **Two full OPAs**, one per side, each shaped like
-   `~/Desktop/sandbox/opa-ai-macro-econ-scenarios/index.html`. A landing page with OPA layer cards:
+   `../opa-ai-macro-econ-scenarios/index.html`. A landing page with OPA layer cards:
    - Open Output: an explorer with dials over a precomputed grid, the preferred estimate highlighted.
    - Open Analysis: a full reproduction report (sections in order, every equation and step
      explained) plus a teaching slide deck.
@@ -113,7 +113,7 @@ credited to us.
 **Same format as the previous OPA (user requirement 2026-09-23).** Every public surface (overview
 page, interactive explorer, Quarto reproduction report, teaching deck, reproduction-materials links,
 the OPA background image, the cross-link footer, the CRediT / AI-use table) is instantiated from the
-shared kit at `~/Desktop/sandbox/opa-framework/template/`, which is extracted from
+shared kit at `../opa-framework/template/`, which is extracted from
 `opa-ai-macro-econ-scenarios`. The root reconciliation page uses the kit's multi-OPA overview variant.
 Pages are not hand-built from scratch, and any departure from the kit goes back into the kit.
 
@@ -124,14 +124,14 @@ by-products only, before any site page is committed.
 
 ## Standing conventions (apply to all phases)
 
-- **One git repo** at `~/Desktop/sandbox/opa-prop40`, no nested repos.
+- **One git repo** at `opa-prop40`, no nested repos.
 - **Sources are never committed.** Third-party PDFs, workbooks, SSRN files and anything
   extracted from them (CSV, `*.sqlite`) are gitignored. Each side's README records the source
   URL and SHA-256 instead. `.DS_Store` is already globally ignored; don't add it.
 - **Every analysis runs in both R and Python** (later phases). Any step that manipulates a
   dataset of more than 1,000 rows goes through shared `.sql` files that both languages run
   verbatim. The files use the **SQLite** dialect and follow the house style of
-  `~/Desktop/sandbox/courses/sql-industry-prep`, since the SQL is there to teach the user.
+  `../courses/sql-industry-prep`, since the SQL is there to teach the user.
 - **Commit messages**: no em-dash character anywhere. End each one with the session's own
   attribution trailer lines (`Co-Authored-By` and `Claude-Session`, as that session's reminder
   gives them; the model and session URL change from session to session).
@@ -168,7 +168,7 @@ opa-prop40/
 1. **Stage the source files.** Move the files currently in `bsz-analysis/` and
    `rjkdc-analysis/` into the `original-materials/` folders above, renaming
    `additional documentation` to `additional-documentation`. Copy the May workbook and PDF from
-   `~/Desktop/sandbox/CAWT-BSZ/original-materials/` into `bsz-analysis/original-materials/may-2026/`.
+   `../CAWT-BSZ/original-materials/` into `bsz-analysis/original-materials/may-2026/`.
    Record the SHA-256 of every source file; they go in the READMEs.
    - May workbook: `cffe04bd...b7b1a`
    - August workbook: `c236cc94...cb6ce`
@@ -280,4 +280,4 @@ arrived as of phase 1; phase 1 only prepares the slot.
 - Creating a GitHub remote or pushing.
 - Fixing August mismatches or regenerating snapshots.
 - Python, SQL, Rauh, the comparison layer, and the website.
-- Modifying `~/Desktop/sandbox/CAWT-BSZ` in any way.
+- Modifying `../CAWT-BSZ` in any way.

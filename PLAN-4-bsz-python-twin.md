@@ -25,7 +25,7 @@ Not in scope: `R/render.R`, `R/code_listing.R`, `R/verify.R` (R-side test helper
 ## Rules
 
 1. **SQL for the two large inputs.** `sql/02_data_sec_agg.sql` and `sql/03_ftb_b4a.sql` (names may
-   differ), in the house style of `sql/01_rtb_ca.sql` and `~/Desktop/sandbox/courses/sql-industry-prep`:
+   differ), in the house style of `sql/01_rtb_ca.sql` and `../courses/sql-industry-prep`:
    SQLite, banner header, `-- Q` blocks, CTEs, uppercase keywords, no dot-commands, `CREATE TABLE AS`,
    each block tagged with the course module it exercises. Both the R pipeline and Python run the same
    file. The input tables are loaded from the **public** workbook into a SQLite database under the

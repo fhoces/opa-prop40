@@ -75,7 +75,7 @@ export RAUH_REPO_DIR=/absolute/path/to/wealth_tax
 Rscript -e 'targets::tar_make()'        # pipeline, export/r/*.csv, site/data/*.csv, site/explorer/grid.js
 Rscript tests/testthat.R                # the test suite (console summary)
 Rscript tests/count_tests.R             # the same suite, counted: site/data/test-summary.csv
-/opt/anaconda3/bin/python3 py/run_export.py     # the Python twin: export/py/*.csv
+python3 py/run_export.py     # the Python twin: export/py/*.csv
 quarto render site/repro.qmd && quarto render site/materials.qmd
 Rscript -e 'rmarkdown::render("site/slides/slides.Rmd")'
 ```

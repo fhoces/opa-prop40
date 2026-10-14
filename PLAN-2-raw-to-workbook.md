@@ -12,7 +12,7 @@
 The user is learning SQL and Python. The repo's standing rule (`PLAN.md`, "Standing
 conventions") is that any step touching more than 1,000 rows goes through shared
 `.sql` files that both R and Python run verbatim, in the house style of the course
-`~/Desktop/sandbox/courses/sql-industry-prep`. No such file exists yet. This phase
+`../courses/sql-industry-prep`. No such file exists yet. This phase
 builds the first one against real data with a real answer key, so the user can read a
 working reproduction before writing the next query themselves.
 

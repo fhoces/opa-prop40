@@ -3,7 +3,7 @@ export/py/inputs.csv + export/py/outputs.csv, matching the schema and
 row ids of export/r/{inputs,outputs}.csv exactly (same input_id/output_id
 values) so tests/testthat/test-parity.R can join on them.
 
-Run from rjkdc-analysis/:  /opt/anaconda3/bin/python3 py/run_export.py
+Run from rjkdc-analysis/:  python3 py/run_export.py
 """
 import csv
 import inspect

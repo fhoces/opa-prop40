@@ -31,9 +31,8 @@ test_that("Python exports agree with R to 1e-9 on every shared numeric column", 
 })
 
 test_that("Python exports are current", {
-  skip_if_not(nzchar(Sys.which("python3")) || file.exists("/opt/anaconda3/bin/python3"))
-  py <- Sys.getenv("PYTHON", unset = "/opt/anaconda3/bin/python3")
-  skip_if_not(file.exists(py))
+  py <- Sys.getenv("PYTHON", unset = "python3")
+  skip_if_not(nzchar(Sys.which(py)) || file.exists(py))
   tmp <- tempfile(); dir.create(tmp)
   code <- sprintf("import sys; sys.path.insert(0, %s); import bridge as b; b.write_exports(b.build_all(b.read_contracts(%s)), %s)",
                   shQuote(file.path(root, "comparison", "py")), shQuote(root), shQuote(tmp))

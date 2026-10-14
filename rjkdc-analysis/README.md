@@ -39,7 +39,7 @@ From `rjkdc-analysis/`, with the authors' repo available (see below):
 export RAUH_REPO_DIR=/absolute/path/to/wealth_tax   # or use the default relative location
 Rscript -e 'targets::tar_make()'
 Rscript tests/testthat.R
-/opt/anaconda3/bin/python3 py/run_export.py
+python3 py/run_export.py
 ```
 
 `RAUH_REPO_DIR` is the single resolver (`R/rauh_repo.R`, `py/rauh_repo.py`) for the authors' repo.
