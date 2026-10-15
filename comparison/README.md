@@ -20,9 +20,9 @@ record is also kept in [`review/`](../review/README.md).
 <img align="right" width="340" src="site/assets/opa/opa-materials-wordmark.png" alt="Open Policy Analysis, Materials layer">
 
 1 - **Open Output.** [The explorer](https://fhoces.github.io/opa-prop40/comparison/site/explorer/): the two main
-estimates and the bridge between them, an interactive waterfall from the BSZ analysis to the JR analysis on the
-net fiscal effect, with one setting, how the bars are sized (averaged over every order, or one order); the loss
-horizon is a slider in each panel, and gross revenue is in the report. Materials can be found in
+estimates on the net fiscal effect, in two panels of sliders, one per disputed input that moves the estimate
+(three minor inputs share one switch), each with an explanation on hover; the step-by-step bridge and gross
+revenue are in the report. Materials can be found in
 [`site/explorer.template.html`](site/explorer.template.html) and [`R/site.R`](R/site.R).
 
 2 - **Open Analysis.** An open policy report in the form of a

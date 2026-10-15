@@ -17,10 +17,11 @@ execute:
 ---
 
 ::: {.site-nav}
-The comparison of California Proposition 40:
-[Open Output: Explorer](explorer/index.html) &middot; Open Analysis: [Report](repro.html) &middot;
-[Open Materials](https://github.com/fhoces/opa-prop40/tree/main/comparison) (this page is its guide) &middot;
-[Overview](../../index.html)
+Comparison of the two analyses of California Proposition 40:
+[Overview](../../index.html) &middot; Open Output: [Explorer](explorer/index.html) &middot; Open Analysis: [Report](repro.html) &middot;
+[Open Materials](https://github.com/fhoces/opa-prop40/tree/main/comparison) (this page is its guide)
+
+Also in this project: [BSZ analysis overview](../../bsz-analysis/site/) &middot; [JR analysis overview](../../rjkdc-analysis/site/)
 :::
 
 ```{r}
@@ -174,7 +175,7 @@ the September 2026 version's (`r usd(own_a$nber_own)`), which is the last column
 comparison overview's [table of yearly income tax losses](../../index.html#neutral-material).
 
 `comparison/export/py/` holds the same files from the Python twin (without `inputs.csv`).
-The explorer's interactive bridge reads `assets/comparison-data.js`, written by `R/site.R`
+The explorer reads `assets/comparison-data.js`, written by `R/site.R`
 from these files. Its two slider panels read the two input vectors from the same data file and
 compute each panel's estimate in the browser with `site/explorer/model.js`, which follows
 `slider_inputs()` in `R/model.R`: positions 1 to 3 are evenly spaced between the two values, and
@@ -246,10 +247,11 @@ The full crosswalk of disputed inputs, with every page reference checked against
   the March 2026 version of the JR analysis (see the [overview page](../../index.html#hoopes)).
 
 ::: {.site-nav}
-The comparison of California Proposition 40:
-[Open Output: Explorer](explorer/index.html) &middot; Open Analysis: [Report](repro.html) &middot;
-[Open Materials](https://github.com/fhoces/opa-prop40/tree/main/comparison) (this page is its guide) &middot;
-[Overview](../../index.html)
+Comparison of the two analyses of California Proposition 40:
+[Overview](../../index.html) &middot; Open Output: [Explorer](explorer/index.html) &middot; Open Analysis: [Report](repro.html) &middot;
+[Open Materials](https://github.com/fhoces/opa-prop40/tree/main/comparison) (this page is its guide)
+
+Also in this project: [BSZ analysis overview](../../bsz-analysis/site/) &middot; [JR analysis overview](../../rjkdc-analysis/site/)
 :::
 
 ::: {.credit}

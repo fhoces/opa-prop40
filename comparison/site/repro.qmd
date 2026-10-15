@@ -21,10 +21,11 @@ execute:
 ---
 
 ::: {.site-nav}
-The comparison of California Proposition 40:
-[Open Output: Explorer](explorer/index.html) &middot; Open Analysis: Report (here) &middot;
-[Open Materials](https://github.com/fhoces/opa-prop40/tree/main/comparison) &middot;
-[Overview](../../index.html)
+Comparison of the two analyses of California Proposition 40:
+[Overview](../../index.html) &middot; Open Output: [Explorer](explorer/index.html) &middot; Open Analysis: Report (here) &middot;
+[Open Materials](https://github.com/fhoces/opa-prop40/tree/main/comparison)
+
+Also in this project: [BSZ analysis overview](../../bsz-analysis/site/) &middot; [JR analysis overview](../../rjkdc-analysis/site/)
 :::
 
 ```{r}
@@ -136,11 +137,11 @@ disputed input at a time.
 
 This report is part of the comparison's [Open Policy Analysis](https://doi.org/10.1093/scipol/scaa067) (OPA):
 
-- **Open Output**: [the explorer](explorer/index.html), with the two main estimates and the
-  bridge on the net fiscal effect. Its two panels of sliders, one slider per disputed input,
-  move each input in five steps from one analysis's value to the other's, and the browser
-  computes each panel's estimate with `explorer/model.js`, a copy of `score_common()` that
-  a test checks against the R values
+- **Open Output**: [the explorer](explorer/index.html), with the two main estimates on the
+  net fiscal effect. Its two panels of sliders, one per disputed input that moves the
+  estimate, move each input in five steps from one analysis's value to the other's, and the
+  browser computes each panel's estimate with `explorer/model.js`, a copy of `score_common()`
+  that a test checks against the R values. The bridge below is this report's
 - **Open Analysis**: this document
 - **Open Materials**: [the repository folder](https://github.com/fhoces/opa-prop40/tree/main/comparison), every script, test and data file (guide: [the materials page](materials.html))
 :::
@@ -388,7 +389,7 @@ Each step switches one input from the BSZ value to the JR value of its March 202
 version, the one whose inputs the common function takes one by one. Because the inputs interact (a departure matters more when the base is larger), the size of a step depends on
 the order in which the inputs are switched. The report shows two answers:
 
-- **Shapley values** (the default on the explorer). Each step's switch is averaged over
+- **Shapley values**. Each step's switch is averaged over
   all `r format(factorial(nrow(steps)), big.mark = ",")` orders of the
   `r nrow(steps)` steps. The code computes this exactly, by estimating the model at every one
   of the `r format(2^nrow(steps), big.mark = ",")` subsets of switched inputs. The steps then
@@ -466,7 +467,7 @@ twin_fold("the waterfall", "build_series", py = character(0))
 #| label: fig-waterfall
 #| fig-width: 9
 #| fig-height: 4.6
-#| fig-cap: "Output (b), Shapley steps, each analysis's own horizon: the same bars as the explorer's default view."
+#| fig-cap: "Output (b), Shapley steps, each analysis's own horizon."
 library(ggplot2)
 B <- build_series(ex, "Model difference")$own$b$shapley
 run <- 0; rows <- list()
@@ -641,10 +642,11 @@ cd comparison/site && quarto render repro.qmd
 ```
 
 ::: {.site-nav}
-The comparison of California Proposition 40:
-[Open Output: Explorer](explorer/index.html) &middot; Open Analysis: Report (here) &middot;
-[Open Materials](https://github.com/fhoces/opa-prop40/tree/main/comparison) &middot;
-[Overview](../../index.html)
+Comparison of the two analyses of California Proposition 40:
+[Overview](../../index.html) &middot; Open Output: [Explorer](explorer/index.html) &middot; Open Analysis: Report (here) &middot;
+[Open Materials](https://github.com/fhoces/opa-prop40/tree/main/comparison)
+
+Also in this project: [BSZ analysis overview](../../bsz-analysis/site/) &middot; [JR analysis overview](../../rjkdc-analysis/site/)
 :::
 
 ::: {.credit}

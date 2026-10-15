@@ -63,6 +63,8 @@
   .site-nav { font-family: var(--mono); font-size: 11.5px; color: var(--ink-3); margin: 0 0 16px; }
   .site-nav a { color: var(--series-1); text-decoration: none; }
   .site-nav a:hover { text-decoration: underline; }
+  .site-nav .nav-row { display: block; }
+  .site-nav .nav-row + .nav-row { margin-top: 2px; }
 
   /* The header: title and standfirst on the left, the two main estimates on the right,
      the same layout as the BSZ explorer and the OPA code review page. */
@@ -101,76 +103,13 @@
        text-transform: uppercase; color: var(--ink-3); margin: 0 0 14px; }
   h3 { font-family: var(--serif); font-weight: 600; font-size: 17px; margin: 26px 0 8px; }
 
-  /* The settings, drawn like the BSZ explorer's dials. */
-  .rack { display: flex; flex-direction: column; gap: 3px; }
-  .dial { padding: 10px 0; border-bottom: 1px solid var(--rule-2); }
-  .dial:last-child { border-bottom: 0; }
-  .dial .label { font-weight: 500; font-size: 14.5px; }
-  .dial .desc { font-size: 12.5px; color: var(--ink-2); line-height: 1.4; margin-top: 2px; }
-  .levels { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 8px; }
-  .levels button {
-    font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 13px;
-    color: var(--ink-2); background: var(--chip); border: 1px solid transparent;
-    border-radius: 2px; padding: 6px 9px; min-width: 48px; cursor: pointer;
-    transition: background 120ms ease, color 120ms ease;
-  }
-  .levels button:hover { border-color: var(--ink-3); }
-  .levels button.is-default { box-shadow: inset 0 -2px 0 var(--pref); }
-  .levels button[aria-pressed="true"] { background: var(--chip-on); color: var(--chip-on-tx); font-weight: 500; }
-  .levels button:focus-visible { outline: 2px solid var(--series-1); outline-offset: 2px; }
-  .dial.is-off .levels { opacity: .45; }
-  .legend-default { font-size: 12px; color: var(--ink-3); margin-top: 6px; }
-  .legend-default i { display: inline-block; width: 16px; height: 2px; background: var(--pref); vertical-align: 3px; margin-right: 4px; }
 
   p.fn { font-size: 13.5px; color: var(--ink-2); line-height: 1.45; margin: 4px 0 0; }
   p.fn + p.fn { margin-top: 8px; }
   p.fn a { color: var(--series-1); }
-  p.fn span[id], .bridge b { white-space: nowrap; }
+  p.fn b { white-space: nowrap; }
 
-  /* The bridge. */
-  .bridge { margin-top: 36px; border-top: 1px solid var(--rule); padding-top: 22px; }
-  .bridge p { margin: 0 0 12px; max-width: 62em; }
-  .bridge a { color: var(--series-1); }
-  .bridge code, .note code { font-family: var(--mono); font-size: 0.9em; background: var(--chip); padding: 1px 4px; border-radius: 3px; }
-  .chart-box { position: relative; margin: 8px 0 0; }
-  svg.waterfall { width: 100%; height: auto; display: block; }
-  .chart-scroll { overflow-x: auto; }
-  @media (max-width: 640px) { svg.waterfall { min-width: 640px; } }
-  svg.waterfall text { font-family: var(--sans); font-size: 11px; fill: var(--ink-2); }
-  svg.waterfall text.val { font-family: var(--mono); font-size: 10.5px; fill: var(--ink); }
-  svg.waterfall .grid { stroke: var(--rule); stroke-width: 1; }
-  svg.waterfall .zero { stroke: var(--ink-3); stroke-width: 1; }
-  svg.waterfall .up { fill: var(--up); }
-  svg.waterfall .down { fill: var(--down); }
-  svg.waterfall .total { fill: var(--total); }
-  svg.waterfall .model { fill: var(--model); }
-  svg.waterfall .conn { stroke: var(--ink-3); stroke-width: 1; stroke-dasharray: 2 2; }
-  svg.waterfall .hit { fill: transparent; cursor: default; }
-  .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--ink-2); margin: 6px 0 0; }
-  .legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; background: var(--c); }
-  .tip {
-    position: absolute; pointer-events: none; background: var(--panel); color: var(--ink);
-    border: 1px solid var(--rule); border-radius: 8px; padding: 8px 10px; font-size: 13px;
-    max-width: 280px; box-shadow: 0 4px 14px rgba(0,0,0,.12); display: none; z-index: 5;
-  }
-  .tip b { font-weight: 600; }
-  .small { font-size: 13px; color: var(--ink-2); }
-  .table-scroll { overflow-x: auto; margin-top: 12px; }
-  .table-scroll::before, .chart-scroll::before { content: "Scroll sideways for the rest \2192"; display: none; font: 11px var(--sans); color: var(--ink-3); margin-bottom: 4px; }
-  @media (max-width: 640px) { .table-scroll::before, .chart-scroll::before { display: block; } }
-  table { border-collapse: collapse; font-size: 12.5px; min-width: 640px; width: 100%; }
-  th, td { text-align: left; padding: 6px 10px 6px 0; border-bottom: 1px solid var(--rule-2); vertical-align: top; }
-  thead th { color: var(--ink-3); font-weight: 500; font-size: 12px; }
-  td.num, th.num { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
-  tr.total td { font-weight: 600; }
-  tr.model td { color: var(--ink-2); font-style: italic; }
-  #bridge-table td:first-child { min-width: 11em; }
-  .step-pos { color: var(--up); }
-  .step-neg { color: var(--down); }
-  .kind { font-family: var(--mono); font-size: 11px; background: var(--chip);
-    border-radius: 4px; padding: 1px 6px; white-space: nowrap; color: var(--ink-2); }
-  ul.findings { padding-left: 20px; max-width: 62em; font-size: 14px; }
-  ul.findings li { margin: 0 0 8px; }
+  .note code { font-family: var(--mono); font-size: 0.9em; background: var(--chip); padding: 1px 4px; border-radius: 3px; }
 
   details.fold.notes { margin-top: 28px; border-top: 1px solid var(--rule); padding-top: 10px; }
   details.fold > summary { cursor: pointer; font-size: 13.5px; font-weight: 500; padding: 6px 0; }
@@ -213,7 +152,7 @@
   .sl-head span:first-child { color: var(--series-1); }
   .sl-head span:last-child { color: var(--pref); }
   .sl-list { list-style: none; margin: 0; padding: 0; }
-  .sl { padding: 7px 0 2px; border-bottom: 1px solid var(--rule-2); }
+  .sl { position: relative; padding: 7px 0 2px; border-bottom: 1px solid var(--rule-2); }
   .sl:last-child { border-bottom: 0; }
   .sl label { display: block; font-size: 13.5px; line-height: 1.3; }
   .sl label b { font-weight: 600; }
@@ -244,6 +183,14 @@
     font-size: 11.5px; line-height: 15px; color: var(--ink); font-weight: 500; white-space: nowrap; }
   .sl-note { display: block; font-size: 11.5px; color: var(--ink-3); font-style: italic; line-height: 1.35; }
   .sl-note:empty { display: none; }
+  /* The explanation of a slider: shown while the pointer is over it or a key has focus in it. */
+  .sl-tip { position: absolute; left: 0; right: 0; bottom: calc(100% - 4px); z-index: 6;
+    background: var(--panel); color: var(--ink); border: 1px solid var(--rule); border-radius: 6px;
+    padding: 8px 10px; font-size: 12.5px; line-height: 1.45; box-shadow: 0 4px 14px rgba(0,0,0,.14);
+    pointer-events: none; visibility: hidden; opacity: 0;
+    transition: opacity 120ms ease 250ms, visibility 0s linear 370ms; }
+  .sl:hover .sl-tip, .sl:focus-within .sl-tip { visibility: visible; opacity: 1; transition-delay: 250ms, 0s; }
+  .sl-tip b { font-weight: 600; }
   .sl.is-inert .sl-cur { color: var(--ink-3); font-weight: 400; }
   .panel-note { font-size: 12px; color: var(--ink-2); margin: 8px 0 0; line-height: 1.45; }
   .mid { margin: 0; position: sticky; top: 16px; text-align: center; }
@@ -253,11 +200,12 @@
   svg.bars2 text.val { font-family: var(--mono); font-size: 13px; fill: var(--ink); font-weight: 500;
     paint-order: stroke; stroke: var(--paper); stroke-width: 4px; }
   svg.bars2 .zero { stroke: var(--ink-3); stroke-width: 1.5; }
+  svg.bars2 .grid { stroke: var(--rule-2); stroke-width: 1; }
+  svg.bars2 text.tick { font-family: var(--mono); font-size: 10.5px; fill: var(--ink-3); }
   svg.bars2 .bar-bsz { fill: var(--series-1); }
   svg.bars2 .bar-rjkdc { fill: var(--pref); }
   .mid figcaption { font-size: 12px; color: var(--ink-3); line-height: 1.4; margin-top: 4px; }
   .rev-note { font-size: 12.5px; color: var(--ink-2); margin: 0 0 12px; line-height: 1.5; max-width: 62em; }
-  #controls-bridge { margin: 4px 0 6px; }
   @media (max-width: 980px) {
     .panels { grid-template-columns: minmax(0, 1fr); }
     .mid { position: static; order: 0; }
@@ -274,11 +222,14 @@
 
 <div class="wrap">
   <p class="site-nav">
-    Comparison of the two analyses of California Proposition 40:
+    <span class="nav-row">Comparison of the two analyses of California Proposition 40:
+    <a href="../../../index.html">Overview</a> &middot;
     Open Output (here) &middot;
     Open Analysis: <a href="../repro.html">Report</a> &middot;
-    <a href="https://github.com/fhoces/opa-prop40/tree/main/comparison">Open Materials</a> &middot;
-    <a href="../../../index.html">Overview</a>
+    <a href="https://github.com/fhoces/opa-prop40/tree/main/comparison">Open Materials</a></span>
+    <span class="nav-row">Also in this project:
+    <a href="../../../bsz-analysis/site/">BSZ analysis overview</a> &middot;
+    <a href="../../../rjkdc-analysis/site/">JR analysis overview</a></span>
   </p>
   <header>
     <div class="hero-left">
@@ -287,14 +238,11 @@
         The <a href="../../../bsz-analysis/site/">BSZ analysis</a> (Boll, Saez and Zucman, August
         2026) finds that the one-time billionaire tax raises money for California, net of the
         income tax it changes. The <a href="../../../rjkdc-analysis/site/">JR analysis</a>
-        (Jaros and Rauh, NBER, September 2026; NBER is the National Bureau of Economic Research,
-        which circulates working papers) finds that it loses money, because it counts the
-        income tax lost to billionaires who leave for ever. This page puts both on one definition,
-        the net fiscal effect, and lists the assumptions the two analyses disagree on in two
-        panels. The BSZ panel starts from the BSZ analysis's values and the JR panel from the
-        JR analysis's. Each slider moves one assumption part of the way, or all the way, from
-        one analysis's value to the other's. The bars between the panels show what one estimating
-        function, used for both analyses, returns for each panel.
+        (Jaros and Rauh, September 2026, a working paper of the National Bureau of Economic
+        Research, NBER) finds that it loses money, because it counts the income tax lost to
+        billionaires who leave for ever. This page puts both on one definition, the net fiscal
+        effect. Each slider moves one disputed assumption from one analysis's value towards the
+        other's. The bars show what one estimating function returns for each panel.
       </p>
     </div>
     <div class="headline">
@@ -303,12 +251,12 @@
         <div class="hl">
           <span class="name">BSZ main estimate<sup>1</sup></span>
           <span class="value" id="hl-bsz">$106.8B</span>
-          <span class="def">Net total: the wealth tax plus the income tax it changes, over 5 years, in today's dollars</span>
+          <span class="def">Net total over 5 years: the wealth tax plus the income tax it changes, in today's dollars</span>
         </div>
         <div class="hl">
           <span class="name">JR main estimate<sup>1</sup></span>
           <span class="value" id="hl-rjkdc">−$38.9B</span>
-          <span class="def">Net present value: the wealth tax minus the income tax lost for ever, in today's dollars, averaged over the authors' model runs (Jaros and Rauh, September 2026)</span>
+          <span class="def">Net present value: the wealth tax minus the income tax lost for ever, in today's dollars, averaged over the authors' model runs</span>
         </div>
       </div>
       <p class="def">Today's dollars (present value): what money received or lost in future years is worth now.</p>
@@ -317,30 +265,18 @@
 
   <section class="board" id="panels" aria-labelledby="board-title">
     <h2 id="board-title">Two panels, one estimating function</h2>
-    <p class="board-lead">Each panel lists every assumption the two analyses disagree on (this page
-    calls them the disputed inputs), plus the JR analysis's September 2026 revision. The BSZ
-    panel on the left starts every slider at the BSZ analysis's value. The JR panel on the
-    right starts every slider at the JR analysis's value. A slider has five positions: its own
-    analysis's value, the other analysis's value, and three evenly spaced steps between them. For
-    the loss horizon the five positions are 5, 10, 20 and 50 years, and a perpetuity. In both panels the BSZ value is
-    printed at a slider's left end and the JR value at its right end. The filled dot is where
-    the slider is now, the hollow dot the other analysis's value, and the value under the filled
-    dot is the one in use.</p>
-    <p class="board-lead">The bars in the middle show what the common estimating function returns
-    for each panel. One formula, used for both analyses, computes both: every disputed input is
-    one of its arguments, and it returns the net fiscal effect. The two panels
-    are independent. The left sliders move only the left bar, and the right sliders only the
-    right bar. Move every slider in the BSZ panel to its JR end and the left bar meets the
-    right one; the reverse works too. Your browser does the arithmetic with a copy of the
-    pipeline's function, and a test checks that the copy returns the pipeline's values (the
-    names and files are under Notes and data).</p>
-    <p class="board-lead">In words, the two parts of the formula that are not obvious: the JR
-    revenue is read as the midpoint of a range between a ceiling (the base left after the
-    confirmed departures) and a floor (the base left after the elasticity response), so the
-    permanent-rate and elasticity sliders act only through that floor; and the share of
-    billionaire income tax lost combines the BSZ movers' share with the JR proportional
-    loss. The <a href="../repro.html#the-two-ends">report</a> states the whole function line by
-    line.</p>
+    <p class="board-lead">Each panel holds the assumptions the two analyses disagree on, plus
+    the JR analysis's September 2026 revision. The BSZ panel starts every slider at the BSZ
+    value, the JR panel at the JR value. A slider has five positions: the two analyses' values
+    and three steps between them. The BSZ value is printed at the left end and the JR value at
+    the right end. Hover over a slider, or tap it, for what it changes and why the two analyses
+    differ. Three inputs that barely move the estimate (non-US-citizen residents, the
+    real-estate deduction, extra income tax from asset sales) share one switch.</p>
+    <p class="board-lead">The bars show what the common estimating function returns for each
+    panel. The left sliders move only the left bar and the right sliders only the right bar.
+    Move every slider in one panel to its far end and the two bars meet. The
+    <a href="../repro.html#the-two-ends">report</a> states the function line by line; your
+    browser runs a copy of it, which a test checks against the pipeline.</p>
 
     <div class="panels">
       <div class="panel bsz" id="panel-bsz" role="group" aria-labelledby="pbsz-h">
@@ -352,69 +288,68 @@
         </div>
         <div class="sl-head" aria-hidden="true"><span>BSZ value</span><span>JR value</span></div>
         <ul class="sl-list" aria-label="The BSZ panel's sliders">
-        <li class="sl" data-id="noncitizens" title="DISPUTES row 8, data">
-          <label for="bsz-noncitizens"><b>Non-citizens</b> <span class="sl-title">Non-US-citizen residents</span></label>
-          <div class="sl-row"><span class="sl-end sl-lo">$150B</span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-noncitizens" min="0" max="4" step="1" value="0" data-panel="bsz" data-id="noncitizens"><output class="sl-cur" for="bsz-noncitizens">$150B</output></span><span class="sl-end sl-hi">$0B</span></div>
-          <span class="sl-note"></span>
-        </li>
-        <li class="sl" data-id="base_list" title="DISPUTES row 7, data">
+        <li class="sl" data-id="base_list">
           <label for="bsz-base_list"><b>Base list, date</b> <span class="sl-title">Base list and valuation date</span></label>
-          <div class="sl-row"><span class="sl-end sl-lo">$2,157B</span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-base_list" min="0" max="4" step="1" value="0" data-panel="bsz" data-id="base_list"><output class="sl-cur" for="bsz-base_list">$2,157B</output></span><span class="sl-end sl-hi">$1,894.8B</span></div>
+          <span class="sl-tip" role="tooltip" id="bsz-base_list-tip">The wealth the tax applies to, before departures and behaviour. The BSZ analysis values the Forbes list on 1 July 2026 (250 people), less the non-US citizens. The JR analysis uses the 2025 Forbes list (212 people), removing Ellison, Houston and Snyder and adding Sacks. DISPUTES row 7, data.</span>
+          <div class="sl-row"><span class="sl-end sl-lo">$2,157B</span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-base_list" min="0" max="4" step="1" value="0" data-panel="bsz" data-id="base_list" aria-describedby="bsz-base_list-tip"><output class="sl-cur" for="bsz-base_list">$2,157B</output></span><span class="sl-end sl-hi">$1,894.8B</span></div>
           <span class="sl-note"></span>
         </li>
-        <li class="sl" data-id="real_estate" title="DISPUTES row 7, data">
-          <label for="bsz-real_estate"><b>Real estate</b> <span class="sl-title">Real-estate deduction</span></label>
-          <div class="sl-row"><span class="sl-end sl-lo">0.0%</span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-real_estate" min="0" max="4" step="1" value="0" data-panel="bsz" data-id="real_estate"><output class="sl-cur" for="bsz-real_estate">0.0%</output></span><span class="sl-end sl-hi">0.5%</span></div>
-          <span class="sl-note"></span>
-        </li>
-        <li class="sl" data-id="confirmed_departures" title="DISPUTES row 3, guesswork on data">
+        <li class="sl" data-id="confirmed_departures">
           <label for="bsz-confirmed_departures"><b>Departed</b> <span class="sl-title">Billionaires already departed</span></label>
-          <div class="sl-row"><span class="sl-end sl-lo">0.0%</span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-confirmed_departures" min="0" max="4" step="1" value="0" data-panel="bsz" data-id="confirmed_departures"><output class="sl-cur" for="bsz-confirmed_departures">0.0%</output></span><span class="sl-end sl-hi">28.4%</span></div>
+          <span class="sl-tip" role="tooltip" id="bsz-confirmed_departures-tip">The share of the base counted as already gone before the 1 January 2026 residency date. The BSZ analysis taxes every resident on that date, since an announced move is not a legal change of residence. The JR analysis drops six confirmed departures (Page, Brin, Thiel, Hankey, Spielberg, Sacks), 28% of its base. DISPUTES row 3, guesswork on data.</span>
+          <div class="sl-row"><span class="sl-end sl-lo">0.0%</span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-confirmed_departures" min="0" max="4" step="1" value="0" data-panel="bsz" data-id="confirmed_departures" aria-describedby="bsz-confirmed_departures-tip"><output class="sl-cur" for="bsz-confirmed_departures">0.0%</output></span><span class="sl-end sl-hi">28.4%</span></div>
           <span class="sl-note"></span>
         </li>
-        <li class="sl" data-id="avoidance" title="not a DISPUTES row, guesswork">
+        <li class="sl" data-id="avoidance">
           <label for="bsz-avoidance"><b>No avoidance</b> <span class="sl-title">Avoidance and evasion allowance</span></label>
-          <div class="sl-row"><span class="sl-end sl-lo">10.0%</span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-avoidance" min="0" max="4" step="1" value="0" data-panel="bsz" data-id="avoidance"><output class="sl-cur" for="bsz-avoidance">10.0%</output></span><span class="sl-end sl-hi">0.0%</span></div>
+          <span class="sl-tip" role="tooltip" id="bsz-avoidance-tip">The share of the tax lost to avoidance and evasion other than leaving. The BSZ analysis allows 10%. The JR analysis allows none: its mobility response stands in for all behaviour. Not a DISPUTES row, guesswork.</span>
+          <div class="sl-row"><span class="sl-end sl-lo">10.0%</span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-avoidance" min="0" max="4" step="1" value="0" data-panel="bsz" data-id="avoidance" aria-describedby="bsz-avoidance-tip"><output class="sl-cur" for="bsz-avoidance">10.0%</output></span><span class="sl-end sl-hi">0.0%</span></div>
           <span class="sl-note"></span>
         </li>
-        <li class="sl" data-id="one_time_as_permanent" title="DISPUTES row 1, scenario + guesswork">
+        <li class="sl" data-id="one_time_as_permanent">
           <label for="bsz-one_time_as_permanent"><b>Permanent-rate</b> <span class="sl-title">One-time tax estimated as a permanent 5 pp rate</span></label>
-          <div class="sl-row"><span class="sl-end sl-lo">none applied</span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-one_time_as_permanent" min="0" max="4" step="1" value="0" data-panel="bsz" data-id="one_time_as_permanent"><output class="sl-cur" for="bsz-one_time_as_permanent">none applied</output></span><span class="sl-end sl-hi">5 pp</span></div>
+          <span class="sl-tip" role="tooltip" id="bsz-one_time_as_permanent-tip">Whether the one-time 5% tax is estimated as if it were a permanent yearly rate. The BSZ analysis applies no mobility response, because a tax paid once cannot be escaped by leaving later. The JR analysis applies the response measured for recurring wealth taxes to the full 5 points, arguing that a constitutional amendment with no sunset is priced as recurring. DISPUTES row 1, scenario and guesswork.</span>
+          <div class="sl-row"><span class="sl-end sl-lo">none applied</span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-one_time_as_permanent" min="0" max="4" step="1" value="0" data-panel="bsz" data-id="one_time_as_permanent" aria-describedby="bsz-one_time_as_permanent-tip"><output class="sl-cur" for="bsz-one_time_as_permanent">none applied</output></span><span class="sl-end sl-hi">5 pp</span></div>
           <span class="sl-note"></span>
         </li>
-        <li class="sl" data-id="elasticity_size" title="DISPUTES row 4, research + guesswork">
+        <li class="sl" data-id="elasticity_size">
           <label for="bsz-elasticity_size"><b>Elasticity size</b> <span class="sl-title">Size of the mobility semi-elasticity</span></label>
-          <div class="sl-row"><span class="sl-end sl-lo">10.00</span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-elasticity_size" min="0" max="4" step="1" value="0" data-panel="bsz" data-id="elasticity_size"><output class="sl-cur" for="bsz-elasticity_size">10.00</output></span><span class="sl-end sl-hi">12.58</span></div>
+          <span class="sl-tip" role="tooltip" id="bsz-elasticity_size-tip">How strongly the base shrinks per point of a permanent tax rate (the semi-elasticity: percent of the base lost per point). The BSZ analysis uses 10, and only for a permanent tax. The JR analysis uses about 12.6, above the 10.3 its literature source implies. Acts only once the permanent-rate slider is on. DISPUTES row 4, research and guesswork.</span>
+          <div class="sl-row"><span class="sl-end sl-lo">10.00</span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-elasticity_size" min="0" max="4" step="1" value="0" data-panel="bsz" data-id="elasticity_size" aria-describedby="bsz-elasticity_size-tip"><output class="sl-cur" for="bsz-elasticity_size">10.00</output></span><span class="sl-end sl-hi">12.58</span></div>
           <span class="sl-note"></span>
         </li>
-        <li class="sl" data-id="income_proportional" title="DISPUTES row 6, data vs guesswork">
+        <li class="sl" data-id="income_proportional">
           <label for="bsz-income_proportional"><b>Proportional loss</b> <span class="sl-title">Lost income tax proportional to lost wealth</span></label>
-          <div class="sl-row"><span class="sl-end sl-lo">0.33</span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-income_proportional" min="0" max="4" step="1" value="0" data-panel="bsz" data-id="income_proportional"><output class="sl-cur" for="bsz-income_proportional">0.33</output></span><span class="sl-end sl-hi">1.00</span></div>
+          <span class="sl-tip" role="tooltip" id="bsz-income_proportional-tip">Whether the income tax lost scales one for one with the wealth that leaves. The BSZ analysis uses the leavers' own tax from SEC filings: per dollar of wealth, the largest leavers pay about a third of the billionaire average. The JR analysis assumes full proportionality. DISPUTES row 6, data vs guesswork.</span>
+          <div class="sl-row"><span class="sl-end sl-lo">0.33</span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-income_proportional" min="0" max="4" step="1" value="0" data-panel="bsz" data-id="income_proportional" aria-describedby="bsz-income_proportional-tip"><output class="sl-cur" for="bsz-income_proportional">0.33</output></span><span class="sl-end sl-hi">1.00</span></div>
           <span class="sl-note"></span>
         </li>
-        <li class="sl" data-id="income_level" title="DISPUTES row 5, research vs guesswork">
+        <li class="sl" data-id="income_level">
           <label for="bsz-income_level"><b>Income tax level</b> <span class="sl-title">Billionaires' annual CA income tax</span></label>
-          <div class="sl-row"><span class="sl-end sl-lo">$3.06B/yr</span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-income_level" min="0" max="4" step="1" value="0" data-panel="bsz" data-id="income_level"><output class="sl-cur" for="bsz-income_level">$3.06B/yr</output></span><span class="sl-end sl-hi">$4.55B/yr</span></div>
+          <span class="sl-tip" role="tooltip" id="bsz-income_level-tip">Billionaires' yearly California income tax, the amount at risk each year. The BSZ analysis: about $3.1 billion from tax data, since top wealth holders earn about half of what top earners do. The JR analysis: $4.55 billion, the midpoint of a $3.3 billion to $5.8 billion range from two model bounds. DISPUTES row 5, research vs guesswork.</span>
+          <div class="sl-row"><span class="sl-end sl-lo">$3.06B/yr</span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-income_level" min="0" max="4" step="1" value="0" data-panel="bsz" data-id="income_level" aria-describedby="bsz-income_level-tip"><output class="sl-cur" for="bsz-income_level">$3.06B/yr</output></span><span class="sl-end sl-hi">$4.55B/yr</span></div>
           <span class="sl-note"></span>
         </li>
-        <li class="sl" data-id="horizon" title="DISPUTES row 2, scenario">
-          <label for="bsz-horizon"><b>Horizon</b> <span class="sl-title">How long the income tax loss lasts (five settings: 5, 10, 20 and 50 years, and a perpetuity)</span></label>
-          <div class="sl-row"><span class="sl-end sl-lo">5 years</span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-horizon" min="0" max="4" step="1" value="0" data-panel="bsz" data-id="horizon"><output class="sl-cur" for="bsz-horizon">5 years</output></span><span class="sl-end sl-hi">perpetuity</span></div>
+        <li class="sl" data-id="horizon">
+          <label for="bsz-horizon"><b>Horizon</b> <span class="sl-title">How long the income tax loss lasts</span></label>
+          <span class="sl-tip" role="tooltip" id="bsz-horizon-tip">How many years the income tax loss is counted. The BSZ analysis: 5 years, about the payment period, with responses temporary. The JR analysis: for ever, discounted at 1.5% to 4.5%. The slider's five settings are 5, 10, 20 and 50 years, and a perpetuity. DISPUTES row 2, scenario.</span>
+          <div class="sl-row"><span class="sl-end sl-lo">5 years</span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-horizon" min="0" max="4" step="1" value="0" data-panel="bsz" data-id="horizon" aria-describedby="bsz-horizon-tip"><output class="sl-cur" for="bsz-horizon">5 years</output></span><span class="sl-end sl-hi">perpetuity</span></div>
           <span class="sl-note"></span>
         </li>
-        <li class="sl" data-id="asset_sales" title="not a DISPUTES row, guesswork">
-          <label for="bsz-asset_sales"><b>Asset sales</b> <span class="sl-title">Extra income tax from selling assets to pay</span></label>
-          <div class="sl-row"><span class="sl-end sl-lo">1/3</span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-asset_sales" min="0" max="4" step="1" value="0" data-panel="bsz" data-id="asset_sales"><output class="sl-cur" for="bsz-asset_sales">1/3</output></span><span class="sl-end sl-hi">0%</span></div>
+        <li class="sl" data-id="minor_inputs">
+          <label for="bsz-minor_inputs"><b>Three minor inputs</b> <span class="sl-title">Non-citizens, real-estate deduction, asset-sale tax</span></label>
+          <span class="sl-tip" role="tooltip" id="bsz-minor_inputs-tip">Three inputs that each move the estimate by less than $7 billion when moved alone: the 24 non-US-citizen residents ($150 billion of wealth; the BSZ analysis taxes them, the JR analysis omits them), the real-estate deduction (none in the BSZ analysis; the JR analysis deducts directly held homes, about 0.5% of the base) and the extra income tax from assets sold to pay the tax (the BSZ analysis counts it, the JR analysis does not). Off keeps this panel's own values; on takes the other analysis's values for all three.</span>
+          <div class="sl-row"><span class="sl-end sl-lo">BSZ values</span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0"></i><i style="--t:1"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-minor_inputs" min="0" max="1" step="1" value="0" data-panel="bsz" data-id="minor_inputs" aria-describedby="bsz-minor_inputs-tip"><output class="sl-cur" for="bsz-minor_inputs">BSZ values</output></span><span class="sl-end sl-hi">JR values</span></div>
           <span class="sl-note"></span>
         </li>
-        <li class="sl" data-id="revision" title="the JR analysis's September 2026 revision">
+        <li class="sl" data-id="revision">
           <label for="bsz-revision"><b>September 2026 revision</b> <span class="sl-title">Not an input of the common function: see the note under the panels</span></label>
-          <div class="sl-row"><span class="sl-end sl-lo">not applied</span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0"></i><i style="--t:1"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-revision" min="0" max="1" step="1" value="0" data-panel="bsz" data-id="revision"><output class="sl-cur" for="bsz-revision">not applied</output></span><span class="sl-end sl-hi">applied</span></div>
+          <span class="sl-tip" role="tooltip" id="bsz-revision-tip">The JR analysis's September 2026 revision (Jaros and Rauh, NBER). It weights the revenue by the chance that the tax survives litigation, grows the base 7% to the end of 2026 and draws the share who leave independently of the revenue. Not an input of the common function: on, it adds a fixed step at this panel's horizon setting (see the note under the panels).</span>
+          <div class="sl-row"><span class="sl-end sl-lo">not applied</span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0"></i><i style="--t:1"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-revision" min="0" max="1" step="1" value="0" data-panel="bsz" data-id="revision" aria-describedby="bsz-revision-tip"><output class="sl-cur" for="bsz-revision">not applied</output></span><span class="sl-end sl-hi">applied</span></div>
           <span class="sl-note"></span>
         </li>
         </ul>
-        <p class="panel-note">Every slider starts at the BSZ value, so the panel starts at the BSZ
-        analysis's net total, $106.8B.</p>
+        <p class="panel-note">Starts at the BSZ analysis's net total, $106.8B.</p>
       </div>
 
       <figure class="mid" id="mid">
@@ -429,219 +364,108 @@
           <h3 id="prj-h"><span class="ph-name">JR:</span> <span id="ph-rjkdc-main">−$38.9B</span></h3>
           <button type="button" class="reset" data-panel="rjkdc">Reset</button>
           <p class="ph-src">The JR analysis's main estimate<sup>1</sup> (Jaros and Rauh, NBER, September 2026)</p>
-          <p class="ph-now">With these sliders <b id="now-rjkdc" aria-live="polite">−$39.0B</b> <span class="small">(the model's exact average; the authors' published run gives −$38.9B)</span></p>
+          <p class="ph-now">With these sliders <b id="now-rjkdc" aria-live="polite">−$39.0B</b></p>
         </div>
         <div class="sl-head" aria-hidden="true"><span>BSZ value</span><span>JR value</span></div>
         <ul class="sl-list" aria-label="The JR panel's sliders">
-        <li class="sl" data-id="noncitizens" title="DISPUTES row 8, data">
-          <label for="rjkdc-noncitizens"><b>Non-citizens</b> <span class="sl-title">Non-US-citizen residents</span></label>
-          <div class="sl-row"><span class="sl-end sl-lo">$150B</span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-noncitizens" min="0" max="4" step="1" value="0" data-panel="rjkdc" data-id="noncitizens" dir="rtl"><output class="sl-cur" for="rjkdc-noncitizens">$0B</output></span><span class="sl-end sl-hi">$0B</span></div>
-          <span class="sl-note"></span>
-        </li>
-        <li class="sl" data-id="base_list" title="DISPUTES row 7, data">
+        <li class="sl" data-id="base_list">
           <label for="rjkdc-base_list"><b>Base list, date</b> <span class="sl-title">Base list and valuation date</span></label>
-          <div class="sl-row"><span class="sl-end sl-lo">$2,157B</span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-base_list" min="0" max="4" step="1" value="0" data-panel="rjkdc" data-id="base_list" dir="rtl"><output class="sl-cur" for="rjkdc-base_list">$1,894.8B</output></span><span class="sl-end sl-hi">$1,894.8B</span></div>
+          <span class="sl-tip" role="tooltip" id="rjkdc-base_list-tip">The wealth the tax applies to, before departures and behaviour. The BSZ analysis values the Forbes list on 1 July 2026 (250 people), less the non-US citizens. The JR analysis uses the 2025 Forbes list (212 people), removing Ellison, Houston and Snyder and adding Sacks. DISPUTES row 7, data.</span>
+          <div class="sl-row"><span class="sl-end sl-lo">$2,157B</span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-base_list" min="0" max="4" step="1" value="0" data-panel="rjkdc" data-id="base_list" aria-describedby="rjkdc-base_list-tip" dir="rtl"><output class="sl-cur" for="rjkdc-base_list">$1,894.8B</output></span><span class="sl-end sl-hi">$1,894.8B</span></div>
           <span class="sl-note"></span>
         </li>
-        <li class="sl" data-id="real_estate" title="DISPUTES row 7, data">
-          <label for="rjkdc-real_estate"><b>Real estate</b> <span class="sl-title">Real-estate deduction</span></label>
-          <div class="sl-row"><span class="sl-end sl-lo">0.0%</span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-real_estate" min="0" max="4" step="1" value="0" data-panel="rjkdc" data-id="real_estate" dir="rtl"><output class="sl-cur" for="rjkdc-real_estate">0.5%</output></span><span class="sl-end sl-hi">0.5%</span></div>
-          <span class="sl-note"></span>
-        </li>
-        <li class="sl" data-id="confirmed_departures" title="DISPUTES row 3, guesswork on data">
+        <li class="sl" data-id="confirmed_departures">
           <label for="rjkdc-confirmed_departures"><b>Departed</b> <span class="sl-title">Billionaires already departed</span></label>
-          <div class="sl-row"><span class="sl-end sl-lo">0.0%</span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-confirmed_departures" min="0" max="4" step="1" value="0" data-panel="rjkdc" data-id="confirmed_departures" dir="rtl"><output class="sl-cur" for="rjkdc-confirmed_departures">28.4%</output></span><span class="sl-end sl-hi">28.4%</span></div>
+          <span class="sl-tip" role="tooltip" id="rjkdc-confirmed_departures-tip">The share of the base counted as already gone before the 1 January 2026 residency date. The BSZ analysis taxes every resident on that date, since an announced move is not a legal change of residence. The JR analysis drops six confirmed departures (Page, Brin, Thiel, Hankey, Spielberg, Sacks), 28% of its base. DISPUTES row 3, guesswork on data.</span>
+          <div class="sl-row"><span class="sl-end sl-lo">0.0%</span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-confirmed_departures" min="0" max="4" step="1" value="0" data-panel="rjkdc" data-id="confirmed_departures" aria-describedby="rjkdc-confirmed_departures-tip" dir="rtl"><output class="sl-cur" for="rjkdc-confirmed_departures">28.4%</output></span><span class="sl-end sl-hi">28.4%</span></div>
           <span class="sl-note"></span>
         </li>
-        <li class="sl" data-id="avoidance" title="not a DISPUTES row, guesswork">
+        <li class="sl" data-id="avoidance">
           <label for="rjkdc-avoidance"><b>No avoidance</b> <span class="sl-title">Avoidance and evasion allowance</span></label>
-          <div class="sl-row"><span class="sl-end sl-lo">10.0%</span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-avoidance" min="0" max="4" step="1" value="0" data-panel="rjkdc" data-id="avoidance" dir="rtl"><output class="sl-cur" for="rjkdc-avoidance">0.0%</output></span><span class="sl-end sl-hi">0.0%</span></div>
+          <span class="sl-tip" role="tooltip" id="rjkdc-avoidance-tip">The share of the tax lost to avoidance and evasion other than leaving. The BSZ analysis allows 10%. The JR analysis allows none: its mobility response stands in for all behaviour. Not a DISPUTES row, guesswork.</span>
+          <div class="sl-row"><span class="sl-end sl-lo">10.0%</span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-avoidance" min="0" max="4" step="1" value="0" data-panel="rjkdc" data-id="avoidance" aria-describedby="rjkdc-avoidance-tip" dir="rtl"><output class="sl-cur" for="rjkdc-avoidance">0.0%</output></span><span class="sl-end sl-hi">0.0%</span></div>
           <span class="sl-note"></span>
         </li>
-        <li class="sl" data-id="one_time_as_permanent" title="DISPUTES row 1, scenario + guesswork">
+        <li class="sl" data-id="one_time_as_permanent">
           <label for="rjkdc-one_time_as_permanent"><b>Permanent-rate</b> <span class="sl-title">One-time tax estimated as a permanent 5 pp rate</span></label>
-          <div class="sl-row"><span class="sl-end sl-lo">none applied</span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-one_time_as_permanent" min="0" max="4" step="1" value="0" data-panel="rjkdc" data-id="one_time_as_permanent" dir="rtl"><output class="sl-cur" for="rjkdc-one_time_as_permanent">5 pp</output></span><span class="sl-end sl-hi">5 pp</span></div>
+          <span class="sl-tip" role="tooltip" id="rjkdc-one_time_as_permanent-tip">Whether the one-time 5% tax is estimated as if it were a permanent yearly rate. The BSZ analysis applies no mobility response, because a tax paid once cannot be escaped by leaving later. The JR analysis applies the response measured for recurring wealth taxes to the full 5 points, arguing that a constitutional amendment with no sunset is priced as recurring. DISPUTES row 1, scenario and guesswork.</span>
+          <div class="sl-row"><span class="sl-end sl-lo">none applied</span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-one_time_as_permanent" min="0" max="4" step="1" value="0" data-panel="rjkdc" data-id="one_time_as_permanent" aria-describedby="rjkdc-one_time_as_permanent-tip" dir="rtl"><output class="sl-cur" for="rjkdc-one_time_as_permanent">5 pp</output></span><span class="sl-end sl-hi">5 pp</span></div>
           <span class="sl-note"></span>
         </li>
-        <li class="sl" data-id="elasticity_size" title="DISPUTES row 4, research + guesswork">
+        <li class="sl" data-id="elasticity_size">
           <label for="rjkdc-elasticity_size"><b>Elasticity size</b> <span class="sl-title">Size of the mobility semi-elasticity</span></label>
-          <div class="sl-row"><span class="sl-end sl-lo">10.00</span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-elasticity_size" min="0" max="4" step="1" value="0" data-panel="rjkdc" data-id="elasticity_size" dir="rtl"><output class="sl-cur" for="rjkdc-elasticity_size">12.58</output></span><span class="sl-end sl-hi">12.58</span></div>
+          <span class="sl-tip" role="tooltip" id="rjkdc-elasticity_size-tip">How strongly the base shrinks per point of a permanent tax rate (the semi-elasticity: percent of the base lost per point). The BSZ analysis uses 10, and only for a permanent tax. The JR analysis uses about 12.6, above the 10.3 its literature source implies. Acts only once the permanent-rate slider is on. DISPUTES row 4, research and guesswork.</span>
+          <div class="sl-row"><span class="sl-end sl-lo">10.00</span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-elasticity_size" min="0" max="4" step="1" value="0" data-panel="rjkdc" data-id="elasticity_size" aria-describedby="rjkdc-elasticity_size-tip" dir="rtl"><output class="sl-cur" for="rjkdc-elasticity_size">12.58</output></span><span class="sl-end sl-hi">12.58</span></div>
           <span class="sl-note"></span>
         </li>
-        <li class="sl" data-id="income_proportional" title="DISPUTES row 6, data vs guesswork">
+        <li class="sl" data-id="income_proportional">
           <label for="rjkdc-income_proportional"><b>Proportional loss</b> <span class="sl-title">Lost income tax proportional to lost wealth</span></label>
-          <div class="sl-row"><span class="sl-end sl-lo">0.33</span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-income_proportional" min="0" max="4" step="1" value="0" data-panel="rjkdc" data-id="income_proportional" dir="rtl"><output class="sl-cur" for="rjkdc-income_proportional">1.00</output></span><span class="sl-end sl-hi">1.00</span></div>
+          <span class="sl-tip" role="tooltip" id="rjkdc-income_proportional-tip">Whether the income tax lost scales one for one with the wealth that leaves. The BSZ analysis uses the leavers' own tax from SEC filings: per dollar of wealth, the largest leavers pay about a third of the billionaire average. The JR analysis assumes full proportionality. DISPUTES row 6, data vs guesswork.</span>
+          <div class="sl-row"><span class="sl-end sl-lo">0.33</span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-income_proportional" min="0" max="4" step="1" value="0" data-panel="rjkdc" data-id="income_proportional" aria-describedby="rjkdc-income_proportional-tip" dir="rtl"><output class="sl-cur" for="rjkdc-income_proportional">1.00</output></span><span class="sl-end sl-hi">1.00</span></div>
           <span class="sl-note"></span>
         </li>
-        <li class="sl" data-id="income_level" title="DISPUTES row 5, research vs guesswork">
+        <li class="sl" data-id="income_level">
           <label for="rjkdc-income_level"><b>Income tax level</b> <span class="sl-title">Billionaires' annual CA income tax</span></label>
-          <div class="sl-row"><span class="sl-end sl-lo">$3.06B/yr</span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-income_level" min="0" max="4" step="1" value="0" data-panel="rjkdc" data-id="income_level" dir="rtl"><output class="sl-cur" for="rjkdc-income_level">$4.55B/yr</output></span><span class="sl-end sl-hi">$4.55B/yr</span></div>
+          <span class="sl-tip" role="tooltip" id="rjkdc-income_level-tip">Billionaires' yearly California income tax, the amount at risk each year. The BSZ analysis: about $3.1 billion from tax data, since top wealth holders earn about half of what top earners do. The JR analysis: $4.55 billion, the midpoint of a $3.3 billion to $5.8 billion range from two model bounds. DISPUTES row 5, research vs guesswork.</span>
+          <div class="sl-row"><span class="sl-end sl-lo">$3.06B/yr</span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-income_level" min="0" max="4" step="1" value="0" data-panel="rjkdc" data-id="income_level" aria-describedby="rjkdc-income_level-tip" dir="rtl"><output class="sl-cur" for="rjkdc-income_level">$4.55B/yr</output></span><span class="sl-end sl-hi">$4.55B/yr</span></div>
           <span class="sl-note"></span>
         </li>
-        <li class="sl" data-id="horizon" title="DISPUTES row 2, scenario">
-          <label for="rjkdc-horizon"><b>Horizon</b> <span class="sl-title">How long the income tax loss lasts (five settings: 5, 10, 20 and 50 years, and a perpetuity)</span></label>
-          <div class="sl-row"><span class="sl-end sl-lo">5 years</span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-horizon" min="0" max="4" step="1" value="0" data-panel="rjkdc" data-id="horizon" dir="rtl"><output class="sl-cur" for="rjkdc-horizon">perpetuity</output></span><span class="sl-end sl-hi">perpetuity</span></div>
+        <li class="sl" data-id="horizon">
+          <label for="rjkdc-horizon"><b>Horizon</b> <span class="sl-title">How long the income tax loss lasts</span></label>
+          <span class="sl-tip" role="tooltip" id="rjkdc-horizon-tip">How many years the income tax loss is counted. The BSZ analysis: 5 years, about the payment period, with responses temporary. The JR analysis: for ever, discounted at 1.5% to 4.5%. The slider's five settings are 5, 10, 20 and 50 years, and a perpetuity. DISPUTES row 2, scenario.</span>
+          <div class="sl-row"><span class="sl-end sl-lo">5 years</span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-horizon" min="0" max="4" step="1" value="0" data-panel="rjkdc" data-id="horizon" aria-describedby="rjkdc-horizon-tip" dir="rtl"><output class="sl-cur" for="rjkdc-horizon">perpetuity</output></span><span class="sl-end sl-hi">perpetuity</span></div>
           <span class="sl-note"></span>
         </li>
-        <li class="sl" data-id="asset_sales" title="not a DISPUTES row, guesswork">
-          <label for="rjkdc-asset_sales"><b>Asset sales</b> <span class="sl-title">Extra income tax from selling assets to pay</span></label>
-          <div class="sl-row"><span class="sl-end sl-lo">1/3</span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-asset_sales" min="0" max="4" step="1" value="0" data-panel="rjkdc" data-id="asset_sales" dir="rtl"><output class="sl-cur" for="rjkdc-asset_sales">0%</output></span><span class="sl-end sl-hi">0%</span></div>
+        <li class="sl" data-id="minor_inputs">
+          <label for="rjkdc-minor_inputs"><b>Three minor inputs</b> <span class="sl-title">Non-citizens, real-estate deduction, asset-sale tax</span></label>
+          <span class="sl-tip" role="tooltip" id="rjkdc-minor_inputs-tip">Three inputs that each move the estimate by less than $7 billion when moved alone: the 24 non-US-citizen residents ($150 billion of wealth; the BSZ analysis taxes them, the JR analysis omits them), the real-estate deduction (none in the BSZ analysis; the JR analysis deducts directly held homes, about 0.5% of the base) and the extra income tax from assets sold to pay the tax (the BSZ analysis counts it, the JR analysis does not). Off keeps this panel's own values; on takes the other analysis's values for all three.</span>
+          <div class="sl-row"><span class="sl-end sl-lo">BSZ values</span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0"></i><i style="--t:1"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-minor_inputs" min="0" max="1" step="1" value="0" data-panel="rjkdc" data-id="minor_inputs" aria-describedby="rjkdc-minor_inputs-tip" dir="rtl"><output class="sl-cur" for="rjkdc-minor_inputs">JR values</output></span><span class="sl-end sl-hi">JR values</span></div>
           <span class="sl-note"></span>
         </li>
-        <li class="sl" data-id="revision" title="the JR analysis's September 2026 revision">
+        <li class="sl" data-id="revision">
           <label for="rjkdc-revision"><b>September 2026 revision</b> <span class="sl-title">Not an input of the common function: see the note under the panels</span></label>
-          <div class="sl-row"><span class="sl-end sl-lo">not applied</span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0"></i><i style="--t:1"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-revision" min="0" max="1" step="1" value="0" data-panel="rjkdc" data-id="revision" dir="rtl"><output class="sl-cur" for="rjkdc-revision">applied</output></span><span class="sl-end sl-hi">applied</span></div>
+          <span class="sl-tip" role="tooltip" id="rjkdc-revision-tip">The JR analysis's September 2026 revision (Jaros and Rauh, NBER). It weights the revenue by the chance that the tax survives litigation, grows the base 7% to the end of 2026 and draws the share who leave independently of the revenue. Not an input of the common function: on, it adds a fixed step at this panel's horizon setting (see the note under the panels).</span>
+          <div class="sl-row"><span class="sl-end sl-lo">not applied</span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0"></i><i style="--t:1"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-revision" min="0" max="1" step="1" value="0" data-panel="rjkdc" data-id="revision" aria-describedby="rjkdc-revision-tip" dir="rtl"><output class="sl-cur" for="rjkdc-revision">applied</output></span><span class="sl-end sl-hi">applied</span></div>
           <span class="sl-note"></span>
         </li>
         </ul>
-        <p class="panel-note">Every slider starts at the JR value, so the panel starts at
-        −$38.98B, the exact expectation of the authors' Monte Carlo simulation. In a Monte
-        Carlo simulation the authors draw each uncertain input at random many times, 100,000
-        here, and average the result; the exact expectation is that average computed by formula
-        rather than by drawing. Their seeded run gives −$38.9B, the main estimate in the
-        header: one run of those random draws started from a fixed seed number (2026), so it
-        gives the same draws every time; its mean differs from the exact expectation by sampling
-        error.</p>
+        <p class="panel-note">Starts at −$38.98B, the exact average of the authors' Monte
+        Carlo simulation (a model run many times with its uncertain inputs drawn at random). The
+        authors' own run of it gives −$38.9B, the main estimate in the header; the two differ
+        by sampling error.</p>
       </div>
     </div>
 
-    <p class="rev-note" id="rev-note"><b>The September 2026 revision slider.</b> The JR values
-    on the other sliders are those of the JR analysis's March 2026 version (Rauh, Jaros,
-    Kearney, Doran and Cosso, SSRN, a preprint site), the version whose inputs the common
-    function can take one by one. The September 2026 revision (Jaros and Rauh, NBER; its code
-    and person-level file are in the same public repository) changes things the common
-    function cannot take as inputs. It weights the revenue by the chance that the tax survives
-    litigation. It grows the
-    base 7% to the end of 2026. It also draws the share of billionaires who leave
-    independently of the revenue. So this slider has two positions, not five. When it is on, it
-    adds the revision step plus the model difference. The model difference is the small gap
-    between the common function at the March 2026 inputs and that version's own Monte Carlo,
-    which uses rounded numbers. Both depend on the horizon, and each panel adds them at its own
-    horizon slider's setting. At a perpetuity they are −$14.3B and +$0.10B.</p>
+    <p class="rev-note" id="rev-note"><b>The September 2026 revision switch.</b> The JR values on
+    the sliders are those of the JR analysis's March 2026 version (Rauh, Jaros, Kearney, Doran
+    and Cosso, SSRN), the version whose inputs the common function takes one by one. The
+    September 2026 revision changes things the function cannot take as inputs. It weights the
+    revenue by the chance that the tax survives litigation, grows the base 7% to
+    the end of 2026, and draws the share of billionaires who leave independently of the revenue.
+    So the switch is off or on. On, it adds the revision step plus the small model difference,
+    both at the panel's horizon setting. At a perpetuity they are −$14.3B and
+    +$0.10B.</p>
 
     <p class="fn"><sup>1</sup> Each analysis's own main estimate, defined its own way. The BSZ
-    analysis's is a net total over 5 years: the wealth tax (Table 5 row 1), plus extra income tax from assets sold to pay it, minus the present value of
-    the income tax lost to billionaires who leave, counted for 5 years and discounted at 3%. BSZ's
-    own headline is the wealth tax alone; the net total is this OPA's choice, explained on the
-    <a href="../../../bsz-analysis/site/">BSZ analysis overview</a>. The JR analysis's is a
-    perpetuity net present value: the wealth tax minus the income tax lost for ever, averaged
-    over the authors' Monte Carlo draws (Jaros and Rauh, NBER chapter c15504, Tax Policy and the Economy vol. 41, September 2026).</p>
-    <p class="fn">The net fiscal effect puts both on one definition, and the two panels start at
-    its two ends. The BSZ end is the same
-    <span id="fn-bsz-end">$106.8B</span>, with the 5 years discounted over the JR
-    analysis's 1.5% to 4.5% rate range instead of at 3%. The JR end is
-    <span id="fn-rjkdc-end">−$39.0B</span>, the exact expectation of the same Monte Carlo,
-    of which the authors' seeded run gives <span id="fn-rjkdc-main">−$38.9B</span>.</p>
+    analysis's is a net total over 5 years: the wealth tax (Table 5 row 1), plus extra income
+    tax from assets sold to pay it, minus the income tax lost to billionaires who leave, for 5
+    years at 3%. BSZ's own headline is the wealth tax alone; the net total is this OPA's choice,
+    explained on the <a href="../../../bsz-analysis/site/">BSZ analysis overview</a>. The JR
+    analysis's is a perpetuity net present value, averaged over the authors' Monte Carlo draws
+    (Jaros and Rauh, NBER chapter c15504, Tax Policy and the Economy vol. 41, September 2026).</p>
+    <p class="fn">The net fiscal effect puts both on one definition, and the panels start at its
+    two ends. The BSZ end is <b>$106.8B</b> and the JR end <b>−$39.0B</b>, a gap of <b>$145.8B</b>.
+    The BSZ end discounts the same 5 years over the JR analysis's 1.5% to 4.5% rate
+    range instead of at 3%. The JR end is the exact average of the Monte Carlo whose own run
+    gives −$38.9B.</p>
     <p class="fn">Conventions. All amounts are nominal billions of dollars. The wealth tax is
-    counted at its face value when assessed (the BSZ analysis values the base on 1 July 2026;
-    the JR analysis's September version grows the base it used in March, the 2025 Forbes
-    list, by 7% to 31 December 2026), undiscounted although the Act collects it
-    in five yearly installments; both analyses do this, so the comparison follows them.
-    Present values are at the assessment date. The 1.5% to 4.5% range is what the
-    JR code draws; its code labels the draw (r − g), the rate less the growth of the lost
-    income tax, and its text r (the JR analysis's <a href="../../../rjkdc-analysis/site/materials.html#mismatches">mismatch 3</a>).</p>
+    counted at face value when assessed and undiscounted, as both analyses do (the BSZ analysis
+    values the base on 1 July 2026; the JR analysis grows its 2025 Forbes base by 7%
+    to 31 December 2026). Present values are at the assessment date. The 1.5% to 4.5%
+    range is what the JR code draws; the code labels it r − g and the text r (the JR
+    analysis's <a href="../../../rjkdc-analysis/site/materials.html#mismatches">mismatch 3</a>).</p>
   </section>
 
-  <section class="bridge" id="the-bridge">
-    <h2>The bridge: how much each assumption moves the estimate</h2>
-    <p>The panels show one mix of slider positions at a time. The bridge below adds up the whole
-    move, from the BSZ end to the JR end, as a waterfall chart. The BSZ end is
-    <b>$106.8B</b> and the JR end <b>−$39.0B</b>, a gap of <b>$145.8B</b>. Each
-    bar between the two ends is the effect of moving one assumption all the way from the BSZ
-    value to the JR value. The last two bars belong to the revision slider: the model
-    difference and the September 2026 revision. Together the bars add up to −$145.8B.</p>
-    <p>The bridge uses the same formula. With every input at the BSZ value the function returns
-    the BSZ end exactly. With every input at the JR value it returns the Monte Carlo
-    expectation of the
-    JR version those values come from (the note on the revision slider says which), up to a
-    $0.10B model difference. The bridge runs in the direction of Figure 2 of Hoopes
-    (2026), the existing comparison
-    <a href="../../../index.html#hoopes">described on the overview</a>.</p>
-    <p>What a step adds depends on which other inputs have already moved, because the inputs
-    interact: a departure matters more when the base is larger. So the bars can be sized two
-    ways. The default bars are <b>Shapley values</b>: each step's effect averaged over all
-    39,916,800 orders in which the inputs could be moved, so the bars add up exactly to the gap
-    whatever the reading order. Because the inputs interact, a Shapley bar is an average that
-    includes each input's share of those interactions; it is not the effect of moving that input
-    alone. "One order" shows a single sequence instead, the one Hoopes reads in, where each
-    bar is that input's effect at its place in the sequence. The bridge uses each analysis's own horizon (5 years for
-    the BSZ analysis, a perpetuity
-    for the JR analysis), so the horizon is one of its steps. This setting changes the bridge
-    only, not the panels.</p>
-
-    <div class="rack" id="controls-bridge">
-      <div class="dial" role="group" aria-label="Step sizes">
-        <div class="label">How each bar is sized</div>
-        <div class="desc">Averaged over every order the inputs could be moved in (Shapley
-        values), or the one order Hoopes (2026) reads in.</div>
-        <div class="levels">
-          <button type="button" data-method="shapley" class="is-default" aria-pressed="true">Shapley (all orders)</button>
-          <button type="button" data-method="sequential" aria-pressed="false">One order</button>
-        </div>
-      </div>
-    </div>
-    <p class="legend-default"><i></i>the setting the explorer opens on</p>
-
-    <div class="chart-box" id="chart-box">
-      <div class="chart-scroll">
-      <svg class="waterfall" id="waterfall" viewBox="0 0 900 420" role="img" aria-labelledby="wf-title wf-desc">
-        <title id="wf-title">Waterfall from the BSZ analysis to the JR analysis</title>
-        <desc id="wf-desc">Each bar is one step of the bridge; grey bars are the two analyses' estimates, light grey bars are model differences, blue bars raise and orange bars lower the estimate. The same numbers are in the table below.</desc>
-      </svg>
-      </div>
-      <div class="tip" id="tip"></div>
-    </div>
-    <div class="legend">
-      <span style="--c: var(--total)">an analysis's estimate</span>
-      <span style="--c: var(--up)">step that raises it</span>
-      <span style="--c: var(--down)">step that lowers it</span>
-      <span style="--c: var(--model)">model difference</span>
-    </div>
-
-    <p class="small" style="margin-top:14px">In the table, the DISPUTES row is the row of
-    <code>comparison/DISPUTES.md</code>, this project's list of the inputs the two analyses
-    disagree on; pp means percentage points; p. and pp. mean pages.</p>
-    <div class="table-scroll">
-    <table id="bridge-table">
-      <thead><tr><th>Step</th><th>DISPUTES row</th><th>Kind</th><th class="num">BSZ value</th><th class="num">JR value</th><th class="num" id="bt-col">Step, $B</th><th class="num">Running total</th></tr></thead>
-      <tbody>
-    <tr data-id="bsz" class="total"><td>BSZ analysis (August 2026): Table 5 row 1 net of its own extra income tax and lost income tax (5 years)</td><td></td><td></td><td class="num"></td><td class="num"></td><td class="num"></td><td class="num">$106.8B</td></tr>
-    <tr data-id="noncitizens"><td>Non-US-citizen residents</td><td>8</td><td><span class="kind">data</span></td><td class="num">$150B</td><td class="num">$0B</td><td class="num step-neg">−$5.5B</td><td class="num">$101.3B</td></tr>
-    <tr data-id="base_list"><td>Base list and valuation date</td><td>7</td><td><span class="kind">data</span></td><td class="num">$2,157B</td><td class="num">$1,894.8B</td><td class="num step-neg">−$9.6B</td><td class="num">$91.8B</td></tr>
-    <tr data-id="real_estate"><td>Real-estate deduction</td><td>7</td><td><span class="kind">data</span></td><td class="num">0.0%</td><td class="num">0.5%</td><td class="num step-neg">−$0.4B</td><td class="num">$91.4B</td></tr>
-    <tr data-id="confirmed_departures"><td>Billionaires already departed</td><td>3</td><td><span class="kind">guesswork on data</span></td><td class="num">0.0%</td><td class="num">28.4%</td><td class="num step-neg">−$33.2B</td><td class="num">$58.2B</td></tr>
-    <tr data-id="avoidance"><td>Avoidance and evasion allowance</td><td>(not a row)</td><td><span class="kind">guesswork</span></td><td class="num">10.0%</td><td class="num">0.0%</td><td class="num step-pos">+$11.2B</td><td class="num">$69.5B</td></tr>
-    <tr data-id="one_time_as_permanent"><td>One-time tax estimated as a permanent 5 pp rate</td><td>1</td><td><span class="kind">scenario + guesswork</span></td><td class="num">none applied</td><td class="num">5 pp</td><td class="num step-neg">−$33.6B</td><td class="num">$35.9B</td></tr>
-    <tr data-id="elasticity_size"><td>Size of the mobility semi-elasticity</td><td>4</td><td><span class="kind">research + guesswork</span></td><td class="num">10.00</td><td class="num">12.58</td><td class="num step-neg">−$6.1B</td><td class="num">$29.8B</td></tr>
-    <tr data-id="income_proportional"><td>Lost income tax proportional to lost wealth</td><td>6</td><td><span class="kind">data vs guesswork</span></td><td class="num">0.33</td><td class="num">1.00</td><td class="num step-neg">−$16.9B</td><td class="num">$13.0B</td></tr>
-    <tr data-id="income_level"><td>Billionaires' annual CA income tax</td><td>5</td><td><span class="kind">research vs guesswork</span></td><td class="num">$3.06B/yr</td><td class="num">$4.55B/yr</td><td class="num step-neg">−$8.0B</td><td class="num">$4.9B</td></tr>
-    <tr data-id="horizon"><td>How long the income tax loss lasts</td><td>2</td><td><span class="kind">scenario</span></td><td class="num">5 years</td><td class="num">perpetuity</td><td class="num step-neg">−$27.1B</td><td class="num">−$22.1B</td></tr>
-    <tr data-id="asset_sales"><td>Extra income tax from selling assets to pay</td><td>(not a row)</td><td><span class="kind">guesswork</span></td><td class="num">1/3</td><td class="num">0%</td><td class="num step-neg">−$2.7B</td><td class="num">−$24.8B</td></tr>
-    <tr data-id="rauh_resid" class="model"><td>Model difference: the JR Monte Carlo that the input values come from uses the rounded literals 94.2 and 67.51 where the model uses the workbook's own 94.304 and 67.511</td><td></td><td></td><td class="num"></td><td class="num"></td><td class="num">+$0.1B</td><td class="num">−$24.7B</td></tr>
-    <tr data-id="nber_step"><td>September 2026 revision of the JR analysis: litigation-survival weight, 7% grown base, departure fraction drawn separately (the steps before it reach the March 2026 version, whose inputs the common function takes one by one)</td><td></td><td></td><td class="num"></td><td class="num"></td><td class="num step-neg">−$14.3B</td><td class="num">−$39.0B</td></tr>
-    <tr data-id="nber" class="total"><td>JR analysis (Jaros and Rauh, NBER, September 2026): mean NPV</td><td></td><td></td><td class="num"></td><td class="num"></td><td class="num"></td><td class="num">−$39.0B</td></tr>
-      </tbody>
-    </table>
-    </div>
-    <p class="small" style="margin-top:8px">Step values in this table follow the setting above;
-    with JavaScript off they show the Shapley steps. Kinds follow the OPA
-    input taxonomy: <b>data</b> (settled by observable facts), <b>research</b> (a published
-    estimate), <b>guesswork</b> (asserted without data or a study behind it) and <b>scenario</b>
-    (a choice of which world is estimated). "A vs B" reads the BSZ value's kind against the
-    JR value's; "A + B" means one value rests on both; "guesswork on data" means a judgement
-    applied to observed facts. The inputs and every page reference are in
-    <a href="../../export/r/inputs.csv"><code>comparison/export/r/inputs.csv</code></a>.</p>
-
-    <h3>What the Shapley and one-order steps say</h3>
-    <ul class="findings">
-  <li>The net fiscal effect falls from $106.8B at the BSZ end to −$39.0B at the JR end, a gap of $145.8B. The three largest Shapley steps are one-time tax estimated as a permanent 5 pp rate (−$33.6B, scenario + guesswork); billionaires already departed (−$33.2B, guesswork on data); how long the income tax loss lasts (−$27.1B, scenario).</li>
-  <li>The horizon is the single largest step read in Hoopes's order (−$66.5B, the last step, when the loss is already JR-sized) but only −$27.1B averaged over orders, because a perpetuity multiplies whatever annual loss the other inputs imply. The annual loss runs from $0.15B (BSZ) to $2.05B (JR, September 2026).</li>
-  <li>One step raises the estimate: the JR analysis applies no avoidance or evasion allowance beyond migration (its semi-elasticity is the migration share of Brulhart et al.'s response), so dropping the BSZ analysis's 10% adds +$11.2B (Shapley). DISPUTES.md does not list this as a row.</li>
-  <li>Order matters most for estimating the one-time tax as a permanent 5-percentage-point rate: −$33.6B averaged over all orders and −$11.1B in the one order shown. The JR revenue is uniform between a confirmed-departures ceiling and an elasticity floor, so the elasticity bites only on top of whatever departures are already in. The step is large when it is taken early and smaller when it comes after the departures.</li>
-  <li>Model differences are small and shown, not hidden: +$0.10B, from the rounded literals in the JR Monte Carlo code (MISMATCHES #6 in rjkdc-analysis).</li>
-  <li>The September 2026 revision is the last step, −$14.3B. The JR analysis prints its mean NPV as −$38.9B, from one seeded Monte Carlo run; the exact expectation of the same Monte Carlo, the bridge's JR end, is −$38.98B.</li>
-    </ul>
-  </section>
 
   <details class="fold notes">
     <summary>Notes and data</summary>
@@ -649,29 +473,22 @@
       <p><strong>Where the numbers come from.</strong> Every number on this page is computed by
       <code>comparison/R/</code> from the two analyses' export contracts
       (<code>bsz-analysis/export/r/</code>, <code>rjkdc-analysis/export/r/</code>: the files each
-      analysis's pipeline writes for others to read) and the page-referenced transcriptions in
-      <code>comparison/data/</code>. The estimating function is <code>score_common()</code> in
-      <code>comparison/R/model.R</code>, with a Python twin; the browser runs
-      <a href="model.js"><code>model.js</code></a>, a copy of it. A Python twin reproduces them (R and Python agree to 1e-9 on every exported number; see comparison/tests). The panels'
-      values are computed in the browser by <a href="model.js"><code>model.js</code></a> from the
-      inputs in the data file; a test runs it with node over 600 slider mixes and checks it
-      against the R values to 1e-9. The
-      <a href="../repro.html">reproduction report</a> derives each number step by step, and the
-      <a href="../materials.html">materials page</a> is a guide to the code, tests and files.</p>
-      <p><strong>Data.</strong> <a href="../../export/r/bridge.csv">bridge.csv</a> (every step,
-      for each output and horizon setting), <a href="../../export/r/ends.csv">ends.csv</a> (the two
-      ends of every bridge, and the two constants the revision slider adds),
+      pipeline writes for others to read) and the transcriptions in <code>comparison/data/</code>.
+      The estimating function is <code>score_common()</code> in <code>comparison/R/model.R</code>,
+      with a Python twin (R and Python agree to 1e-9 on every exported number; see comparison/tests). The browser runs <a href="model.js"><code>model.js</code></a>,
+      a copy of it, and a test runs that copy with node over 600 slider mixes
+      against the R values, to 1e-9. The <a href="../repro.html">report</a> derives each number
+      step by step and shows the bridge from the BSZ end to the JR end; the
+      <a href="../materials.html">materials page</a> lists the code, tests and files.</p>
+      <p><strong>Data.</strong> <a href="../../export/r/ends.csv">ends.csv</a> (the two ends and
+      the two constants the revision switch adds),
       <a href="../../export/r/slider_sample.csv">slider_sample.csv</a> (300 slider mixes per
       panel with their values, the sample the tests run <code>model.js</code> on),
-      <a href="../../export/r/switchboard.csv">switchboard.csv</a> (the value for every mix of
-      inputs at one analysis's value or the other's, which the Shapley values average over: bit
-      <i>i</i> of <code>mask</code> is the <i>i</i>-th input, in the bridge's order),
       <a href="../../export/r/inputs.csv">inputs.csv</a> (every disputed input and its sources),
+      <a href="../../export/r/bridge.csv">bridge.csv</a> (the bridge, step by step),
       <a href="../../../assets/comparison-data.js">comparison-data.js</a> (what this page reads).
-      The pipeline writes all of them; a test fails if <code>comparison-data.js</code> or this
-      page differs from its output.</p>
-      <p><strong>Links.</strong> The bridge's setting can be set from the address, for example
-      <code>#method=sequential</code>.</p>
+      A test fails if <code>comparison-data.js</code> or this page differs from the generator's
+      output.</p>
     </div>
   </details>
 
@@ -692,20 +509,12 @@
   "use strict";
   // D is the data file (assets/comparison-data.js), M the estimating function (model.js).
   // D.sliders: the two input vectors, the horizon settings, the revision constants and, per
-  // slider, the argument it moves and its two printed values. M.panelValue(D.sliders, panel,
-  // positions) is slider_value() of comparison/R/model.R.
-  // D.series.own.b[method] is the list of bars of one view of the bridge: the BSZ end, the
-  // steps, the model difference, the September 2026 revision and the JR end.
-  // D.headline holds the two main estimates.
+  // input, the argument it moves and its two printed values. M.panelValue(D.sliders, panel,
+  // positions) is slider_value() of comparison/R/model.R. D.sliders.minor lists the inputs
+  // the page folds into one switch. D.headline holds the two main estimates.
   var D = window.__BRIDGE__, M = window.ComparisonModel;
   if (!D || !M) return;
   var S = D.sliders;
-  var state = { method: "shapley" };
-  // Deep link, e.g. index.html#method=sequential
-  (location.hash || "").replace(/^#/, "").split("&").forEach(function (kv) {
-    var p = kv.split("=");
-    if (p[0] === "method" && (p[1] === "shapley" || p[1] === "sequential")) state.method = p[1];
-  });
   var SVGNS = "http://www.w3.org/2000/svg";
   function el(tag, attrs, text) {
     var e = document.createElementNS(SVGNS, tag);
@@ -713,24 +522,20 @@
     if (text != null) e.textContent = text;
     return e;
   }
-  function money(v, signed) {
+  function money(v) {
     var a = Math.abs(v);
     var s = a === 0 ? "0.0" : a < 0.005 ? a.toFixed(4) : a < 0.05 ? a.toFixed(2) : a.toFixed(1);
-    var sign = v < 0 ? "−" : (signed ? "+" : "");
-    return sign + "$" + s + "B";
+    return (v < 0 ? "−" : "") + "$" + s + "B";
   }
   function money1(v) { return (v < 0 ? "−" : "") + "$" + Math.abs(v).toFixed(1) + "B"; }
   function $(id) { return document.getElementById(id); }
 
-  // ---- the headline and the footnote, from the data file, not typed ----
+  // ---- the headline, from the data file, not typed ----
   var H = D.headline;
   $("hl-bsz").textContent = money(H.bsz);
   $("hl-rjkdc").textContent = money(H.rjkdc);
   $("ph-bsz-main").textContent = money(H.bsz);
   $("ph-rjkdc-main").textContent = money(H.rjkdc);
-  $("fn-bsz-end").textContent = money(H.bsz_end_b);
-  $("fn-rjkdc-end").textContent = money(H.rjkdc_end_b);
-  $("fn-rjkdc-main").textContent = money(H.rjkdc);
 
   // ---- the two panels ----
   // How an input value between the two ends is printed (the ends use the page's own wording,
@@ -755,16 +560,31 @@
   PANELS.forEach(function (p) {
     SL[p] = Array.prototype.slice.call(document.querySelectorAll('input.sl-in[data-panel="' + p + '"]'));
   });
+  // The page's positions, keyed by slider id. The "minor_inputs" switch stands for the
+  // inputs in S.minor: off (0) keeps the panel's own values, on (1) takes the other
+  // analysis's values for all of them. expand() turns it into model.js positions.
   function positions(panel) {
     var pos = {};
     SL[panel].forEach(function (inp) { pos[inp.dataset.id] = +inp.value; });
     return pos;
   }
+  function expand(pos) {
+    var x = {};
+    for (var k in pos) x[k] = pos[k];
+    if ("minor_inputs" in x) {
+      var at = x.minor_inputs ? S.steps : 0;
+      S.minor.forEach(function (id) { x[id] = at; });
+      delete x.minor_inputs;
+    }
+    return x;
+  }
+  function value(panel, pos) { return M.panelValue(S, panel, expand(pos)); }
   // The printed value of slider `id` at position p of `panel`. Position 0 is the panel's own
   // analysis, the far end the other's.
   function valueText(panel, id, p, x) {
     var other = panel === "bsz" ? "rjkdc" : "bsz";
     if (id === "revision") return S.revision_text[(p === 0) === (panel === "bsz") ? "bsz" : "rjkdc"];
+    if (id === "minor_inputs") return (p === 0) === (panel === "bsz") ? "BSZ values" : "JR values";
     var e = INPUT[id];
     if (p === 0) return e[panel + "_text"];
     if (p === S.steps) return e[other + "_text"];
@@ -783,7 +603,7 @@
   }
   var current = {};
   function updatePanel(panel) {
-    var pos = positions(panel), r = M.panelValue(S, panel, pos);
+    var pos = positions(panel), r = value(panel, pos);
     current[panel] = r.value;
     $("now-" + panel).textContent = money1(r.value);
     SL[panel].forEach(function (inp) {
@@ -803,7 +623,7 @@
         if (q === p) continue;
         var alt = {}; for (var k in pos) alt[k] = pos[k];
         alt[id] = q;
-        if (Math.abs(M.panelValue(S, panel, alt).value - r.value) > 1e-9) dead = false;
+        if (Math.abs(value(panel, alt).value - r.value) > 1e-9) dead = false;
       }
       var li = inp.closest(".sl");
       li.classList.toggle("is-inert", dead);
@@ -812,26 +632,47 @@
     });
   }
 
-  // ---- the bars: the two panels' estimates on one vertical scale with a zero line ----
+  // ---- the bars: the two panels' estimates on one fixed vertical scale ----
+  // The scale is set once, from every combination of the sliders' two ends in both panels,
+  // so the zero line and the gridlines stay where they are while a slider moves.
+  var RANGE = (function () {
+    var ids = SL.bsz.map(function (inp) { return inp.dataset.id; });
+    var lo = 0, hi = 0;
+    PANELS.forEach(function (panel) {
+      for (var m = 0; m < (1 << ids.length); m++) {
+        var pos = {};
+        ids.forEach(function (id, i) { pos[id] = (m >> i) & 1 ? +SL[panel][i].max : 0; });
+        var v = value(panel, pos).value;
+        if (v < lo) lo = v;
+        if (v > hi) hi = v;
+      }
+    });
+    var step = 20;
+    return { lo: Math.floor(lo / step) * step, hi: Math.ceil(hi / step) * step, step: step };
+  })();
   function drawBars() {
     var svg = $("bars");
     Array.prototype.slice.call(svg.querySelectorAll("rect, text, line")).forEach(function (n) { svg.removeChild(n); });
     var vb = current.bsz, vr = current.rjkdc;
-    var W = 240, top = 44, bottom = 352;
-    var hi = Math.max(0, vb, vr), lo = Math.min(0, vb, vr);
-    if (hi - lo < 1e-9) hi = lo + 1;
-    var y = function (v) { return top + (hi - v) / (hi - lo) * (bottom - top); };
-    var bars = [["BSZ panel", vb, "bar-bsz", 68], ["JR panel", vr, "bar-rjkdc", 172]];
+    var W = 240, top = 44, bottom = 352, left = 44;
+    var y = function (v) { return top + (RANGE.hi - v) / (RANGE.hi - RANGE.lo) * (bottom - top); };
+    // gridlines and labels every second step, on multiples of 2 * step, so zero is one
+    var first = Math.ceil(RANGE.lo / (2 * RANGE.step)) * 2 * RANGE.step;
+    for (var g = first; g <= RANGE.hi + 1e-9; g += 2 * RANGE.step) {
+      if (g !== 0) svg.appendChild(el("line", { x1: left, x2: W - 4, y1: y(g), y2: y(g), "class": "grid" }));
+      svg.appendChild(el("text", { x: left - 6, y: y(g) + 4, "text-anchor": "end", "class": "tick" },
+                        (g < 0 ? "−" : "") + "$" + Math.abs(g)));
+    }
+    svg.appendChild(el("line", { x1: left, x2: W - 4, y1: y(0), y2: y(0), "class": "zero" }));
+    var bars = [["BSZ panel", vb, "bar-bsz", 96], ["JR panel", vr, "bar-rjkdc", 184]];
     bars.forEach(function (b) {
-      var x = b[3], bw = 64, y0 = y(0), y1 = y(b[1]);
+      var x = b[3], bw = 56, y0 = y(0), y1 = y(b[1]);
       svg.appendChild(el("text", { x: x, y: 16, "text-anchor": "middle", "class": "name" }, b[0]));
       svg.appendChild(el("rect", { x: x - bw / 2, y: Math.min(y0, y1), width: bw,
                                    height: Math.max(1, Math.abs(y1 - y0)), rx: 2, "class": b[2] }));
-      var ly = b[1] >= 0 ? y1 - 8 : y1 + 20;
+      var ly = b[1] >= 0 ? y1 - 8 : y1 + 18;
       svg.appendChild(el("text", { x: x, y: ly, "text-anchor": "middle", "class": "val" }, money1(b[1])));
     });
-    svg.appendChild(el("line", { x1: 20, x2: W - 20, y1: y(0), y2: y(0), "class": "zero" }));
-    svg.appendChild(el("text", { x: W - 18, y: y(0) + 4, "text-anchor": "start" }, "0"));
     $("bars-title").textContent = "The BSZ panel's estimate is " + money1(vb) +
       " and the JR panel's is " + money1(vr) + " (net fiscal effect).";
     svg.setAttribute("data-bsz", vb.toFixed(9));
@@ -847,88 +688,7 @@
       renderPanels();
     });
   });
-
-  // ---- the waterfall (the bridge, each analysis's own horizon) ----
-  function bars() { return D.series.own.b[state.method]; }
-  function draw() {
-    var svg = $("waterfall");
-    while (svg.childNodes.length > 2) svg.removeChild(svg.lastChild);
-    var B = bars();
-    var W = 900, H = 420, left = 46, right = 10, top = 16, bottom = 96;
-    var lo = 0, hi = 0, run = 0;
-    B.forEach(function (b) {
-      if (b.type === "total") run = b.value; else run += b.value;
-      lo = Math.min(lo, run, b.type === "total" ? b.value : run - b.value);
-      hi = Math.max(hi, run, b.type === "total" ? b.value : run - b.value);
-    });
-    var step = 20; lo = Math.floor((lo - (lo < 0 ? 6 : 0)) / step) * step; hi = Math.ceil(hi / step) * step;
-    var y = function (v) { return top + (hi - v) / (hi - lo) * (H - top - bottom); };
-    for (var g = lo; g <= hi + 1e-9; g += step) {
-      svg.appendChild(el("line", { x1: left, x2: W - right, y1: y(g), y2: y(g), "class": g === 0 ? "zero" : "grid" }));
-      svg.appendChild(el("text", { x: left - 6, y: y(g) + 4, "text-anchor": "end" }, (g < 0 ? "−" : "") + "$" + Math.abs(g)));
-    }
-    var n = B.length, slot = (W - left - right) / n, bw = Math.max(8, slot * 0.62);
-    run = 0;
-    var tip = $("tip"), box = $("chart-box");
-    function run_at(k) { var r = 0; for (var j = 0; j <= k; j++) { if (B[j].type === "total") r = B[j].value; else r += B[j].value; } return r; }
-    B.forEach(function (b, i) {
-      var x = left + i * slot + (slot - bw) / 2, v0, v1, cls;
-      if (b.type === "total") { v0 = 0; v1 = b.value; run = b.value; cls = "total"; }
-      else { v0 = run; v1 = run + b.value; run = v1; cls = b.type === "model" ? "model" : (b.value >= 0 ? "up" : "down"); }
-      var yt = Math.min(y(v0), y(v1)), hgt = Math.max(1.5, Math.abs(y(v0) - y(v1)));
-      svg.appendChild(el("rect", { x: x, y: yt, width: bw, height: hgt, rx: 2, "class": cls, "data-id": b.id }));
-      if (i < n - 1) {
-        svg.appendChild(el("line", { x1: x + bw, x2: x + slot, y1: y(run), y2: y(run), "class": "conn" }));
-      }
-      var lab = b.type === "total" ? money(b.value) : money(b.value, true);
-      var ly = b.value >= 0 ? yt - 4 : yt + hgt + 11;
-      svg.appendChild(el("text", { x: x + bw / 2, y: ly, "text-anchor": "middle", "class": "val" }, lab));
-      svg.appendChild(el("text", { x: x + bw / 2, y: H - bottom + 12, "text-anchor": "end",
-                                   transform: "rotate(-40 " + (x + bw / 2) + " " + (H - bottom + 12) + ")" }, b.short));
-      var hit = el("rect", { x: left + i * slot, y: top, width: slot, height: H - top - 20, "class": "hit" });
-      hit.addEventListener("mousemove", function (ev) {
-        var r = box.getBoundingClientRect();
-        tip.innerHTML = "<b>" + b.label + "</b><br>" + (b.type === "total" ? money(b.value) : money(b.value, true) + " (running total " + money(run_at(i)) + ")") + (b.kind ? "<br>" + b.kind : "");
-        tip.style.display = "block";
-        var tx = ev.clientX - r.left + 12; if (tx > r.width - 290) tx = ev.clientX - r.left - 290;
-        tip.style.left = Math.max(0, tx) + "px"; tip.style.top = (ev.clientY - r.top + 12) + "px";
-      });
-      hit.addEventListener("mouseleave", function () { tip.style.display = "none"; });
-      svg.appendChild(hit);
-    });
-  }
-
-  // ---- the bridge table: the rows are on the page, the values follow the setting ----
-  function table() {
-    var B = bars(), run = 0;
-    document.querySelectorAll("#bridge-table tbody tr").forEach(function (tr) {
-      var b = B.filter(function (x) { return x.id === tr.getAttribute("data-id"); })[0];
-      tr.style.display = b ? "" : "none";
-    });
-    B.forEach(function (b) {
-      var tr = document.querySelector('#bridge-table tbody tr[data-id="' + b.id + '"]');
-      if (b.type === "total") run = b.value; else run += b.value;
-      if (!tr) return;
-      var c = tr.querySelectorAll("td");
-      c[5].textContent = b.type === "total" ? "" : money(b.value, true);
-      c[5].className = "num " + (b.type === "total" || b.type === "model" ? "" : (b.value >= 0 ? "step-pos" : "step-neg"));
-      c[6].textContent = money(run);
-      c[0].textContent = b.label;
-    });
-  }
-
-  var SETTINGS = Array.prototype.slice.call(document.querySelectorAll("#controls-bridge button"));
-  function renderBridge() {
-    SETTINGS.forEach(function (btn) {
-      btn.setAttribute("aria-pressed", btn.dataset.method === state.method ? "true" : "false");
-    });
-    draw(); table();
-  }
-  SETTINGS.forEach(function (btn) {
-    btn.addEventListener("click", function () { state.method = btn.dataset.method; renderBridge(); });
-  });
   renderPanels();
-  renderBridge();
 })();
 </script>
 

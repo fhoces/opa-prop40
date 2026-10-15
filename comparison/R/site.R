@@ -44,6 +44,15 @@ short_labels <- c(
   horizon = "Horizon", asset_sales = "Asset sales", rauh_resid = "Model diff.",
   nber_step = "Sep 2026 revision", nber = "JR Sep 2026")
 
+# The explorer's sliders. Three inputs move a main estimate by less than $7B each when moved
+# alone (measured 2026-10-14 on the BSZ / JR panel: non-citizens -7.0 / +4.1, real estate
+# -0.5 / +0.2, asset sales -3.7 / +1.8), so the page folds them into one switch,
+# "minor_inputs": off keeps the panel's own values, on takes the other analysis's values for
+# all three. The other inputs get a slider each. The data file lists the three under
+# sliders.minor and the page script expands the switch before calling model.js.
+EXPLORER_MINOR <- c("noncitizens", "real_estate", "asset_sales")
+explorer_slider_ids <- function() setdiff(bridge_steps()$step_id, EXPLORER_MINOR)
+
 # The bars of every view of the bridge, in display order. The page shows each analysis in
 # its latest version only: the first bar is the BSZ analysis (August 2026, Table 5 row 1),
 # the last the JR analysis (Jaros and Rauh, NBER, September 2026). Between them: one
@@ -121,11 +130,10 @@ render_site <- function(root = comparison_root(),
   tok$rauh_a <- money(epv("rauh_ssrn_revenue_mc"), 2)
   tok$r_min <- pct(pick(k$rjkdc$inputs, "rauh_mc_r_min"), 1)
   tok$r_max <- pct(pick(k$rjkdc$inputs, "rauh_mc_r_max"), 1)
+  tok$nber_growth <- pct(pick(k$rjkdc$inputs, "nber_growth_rate"))
   tok$x_sup <- money(mv("X_bsz"), 2)
   tok$pv_sup <- money(mv("PV_bsz_own"), 2)
   tok$loss_sup <- money(ex$loss$annual_loss[ex$loss$source_id == "bsz_row1"], 2)
-  tok$rauh_resid_b <- money(eb$rauh_residual, 2)
-  tok$n_orders <- format(factorial(nrow(steps)), big.mark = ",")
 
   # ---- the headline: the two analyses' main estimates, next to each other ----
   # The BSZ main estimate is the net total over 5 years, which is also the BSZ end of the
@@ -139,10 +147,9 @@ render_site <- function(root = comparison_root(),
   tok$nber_end_b <- money(eb$nber_own, 1)
   tok$nber_end_b2 <- money(eb$nber_own, 2)
   tok$bsz_end_b <- money(eb$bsz_model, 1)
-  # The gap on (b), stated in the explorer's bridge text, not in the headline.
+  # The gap on (b), stated in the explorer's footnote, not in the headline.
   gap_b <- eb$bsz_model - eb$nber_own
   tok$gap_b <- money(gap_b, 1)
-  tok$gap_b_signed <- money(-gap_b, 1)
   # Output (a), the secondary setting.
   gap <- ea$bsz_model - ea$nber_own
   tok$gap_a <- money(gap, 1)
@@ -164,57 +171,49 @@ render_site <- function(root = comparison_root(),
                money(as.numeric(d$value[d$input_id == "nber_headline_revenue"]), 0)))
   ), collapse = "\n")
 
-  # ---- bridge table (static default: (b), Shapley, own horizon) ----
+  # ---- the bridge series for the data file (the report draws the chart) ----
   resid_label <- sprintf(
     "Model difference: the JR Monte Carlo that the input values come from uses the rounded literals %s and %s where the model uses the workbook's own %s and %s",
     opp("revenue_baseline"), opp("revenue_confirmed6"),
     formatC(pick(k$rjkdc$outputs, "revenue_baseline"), format = "f", digits = 3),
     formatC(pick(k$rjkdc$outputs, "revenue_confirmed6"), format = "f", digits = 3))
   series <- build_series(ex, resid_label)
-  def <- series$own$b$shapley
-  all_ids <- c("bsz", steps$step_id, "rauh_resid", "nber_step", "nber")
-  in_def <- vapply(def, `[[`, "", "id")
-  run <- 0; runs <- list()
-  for (b in def) { run <- if (b$type == "total") b$value else run + b$value; runs[[b$id]] <- run }
-  row_html <- vapply(all_ids, function(id) {
-    b <- def[in_def == id]
-    stp <- steps[steps$step_id == id, ]
-    ii <- inp[inp$step_id == id, ]
-    lab <- if (length(b)) b[[1]]$label else if (nrow(stp)) stp$title else id
-    type <- if (length(b)) b[[1]]$type else if (nrow(stp)) "step" else if (id == "rauh_resid") "model" else "total"
-    cls <- switch(type, total = ' class="total"', model = ' class="model"', "")
-    hide <- if (length(b)) "" else ' style="display:none"'
-    val <- if (length(b) && type != "total") money(b[[1]]$value, if (abs(b[[1]]$value) < 0.05) 2 else 1, TRUE) else ""
-    vcl <- if (length(b) && type == "step") (if (b[[1]]$value >= 0) "num step-pos" else "num step-neg") else "num"
-    sprintf('    <tr data-id="%s"%s%s><td>%s</td><td>%s</td><td>%s</td><td class="num">%s</td><td class="num">%s</td><td class="%s">%s</td><td class="num">%s</td></tr>',
-            id, cls, hide, esc(lab),
-            if (nrow(stp)) esc(stp$disputes_row) else "",
-            if (nrow(stp)) sprintf('<span class="kind">%s</span>', stp$kind) else "",
-            if (nrow(ii)) fmt_input(ii$input, ii$supporting_value) else "",
-            if (nrow(ii)) fmt_input(ii$input, ii$rauh_value) else "",
-            vcl, val, if (length(b)) money(runs[[id]], 1) else "")
-  }, "")
-  tok$bridge_rows <- paste(row_html, collapse = "\n")
 
-  # ---- the two slider panels: one slider per disputed input, in the bridge's order, plus
-  # the September 2026 revision. In both panels a slider prints the BSZ value at its left end
-  # and the JR value at its right end, in the wording of the disputed-inputs table
-  # (fmt_input). The value of a slider is its position as slider_inputs() (model.R) defines
-  # it, 0 = the panel's own analysis: the BSZ panel's sliders run left to right, the JR
-  # panel's right to left (dir="rtl"). The page script reads the rest from D.sliders.
+  # ---- the two slider panels: one slider per disputed input that moves the estimate, in
+  # the bridge's order, then the minor-inputs switch and the September 2026 revision switch.
+  # In both panels a slider prints the BSZ value at its left end and the JR value at its
+  # right end, in the wording of the disputed-inputs table (fmt_input). The value of a slider
+  # is its position as slider_inputs() (model.R) defines it, 0 = the panel's own analysis: the
+  # BSZ panel's sliders run left to right, the JR panel's right to left (dir="rtl"). Each
+  # slider carries an explanation (slider_tips), shown while the pointer is over it. The page
+  # script reads the rest from D.sliders.
   dis0 <- inp[match(steps$step_id, inp$step_id), ]
   hz_fin <- SLIDER_HORIZONS[is.finite(SLIDER_HORIZONS)]
   hz_words <- paste0(paste(head(hz_fin, -1), collapse = ", "), " and ", tail(hz_fin, 1),
                      " years, and a perpetuity")
+  slider_tips <- c(
+    base_list = "The wealth the tax applies to, before departures and behaviour. The BSZ analysis values the Forbes list on 1 July 2026 (250 people), less the non-US citizens. The JR analysis uses the 2025 Forbes list (212 people), removing Ellison, Houston and Snyder and adding Sacks. DISPUTES row 7, data.",
+    confirmed_departures = "The share of the base counted as already gone before the 1 January 2026 residency date. The BSZ analysis taxes every resident on that date, since an announced move is not a legal change of residence. The JR analysis drops six confirmed departures (Page, Brin, Thiel, Hankey, Spielberg, Sacks), 28% of its base. DISPUTES row 3, guesswork on data.",
+    avoidance = "The share of the tax lost to avoidance and evasion other than leaving. The BSZ analysis allows 10%. The JR analysis allows none: its mobility response stands in for all behaviour. Not a DISPUTES row, guesswork.",
+    one_time_as_permanent = "Whether the one-time 5% tax is estimated as if it were a permanent yearly rate. The BSZ analysis applies no mobility response, because a tax paid once cannot be escaped by leaving later. The JR analysis applies the response measured for recurring wealth taxes to the full 5 points, arguing that a constitutional amendment with no sunset is priced as recurring. DISPUTES row 1, scenario and guesswork.",
+    elasticity_size = "How strongly the base shrinks per point of a permanent tax rate (the semi-elasticity: percent of the base lost per point). The BSZ analysis uses 10, and only for a permanent tax. The JR analysis uses about 12.6, above the 10.3 its literature source implies. Acts only once the permanent-rate slider is on. DISPUTES row 4, research and guesswork.",
+    income_proportional = "Whether the income tax lost scales one for one with the wealth that leaves. The BSZ analysis uses the leavers' own tax from SEC filings: per dollar of wealth, the largest leavers pay about a third of the billionaire average. The JR analysis assumes full proportionality. DISPUTES row 6, data vs guesswork.",
+    income_level = "Billionaires' yearly California income tax, the amount at risk each year. The BSZ analysis: about $3.1 billion from tax data, since top wealth holders earn about half of what top earners do. The JR analysis: $4.55 billion, the midpoint of a $3.3 billion to $5.8 billion range from two model bounds. DISPUTES row 5, research vs guesswork.",
+    horizon = sprintf("How many years the income tax loss is counted. The BSZ analysis: 5 years, about the payment period, with responses temporary. The JR analysis: for ever, discounted at %s to %s. The slider's five settings are %s. DISPUTES row 2, scenario.",
+                      tok$r_min, tok$r_max, hz_words),
+    minor_inputs = "Three inputs that each move the estimate by less than $7 billion when moved alone: the 24 non-US-citizen residents ($150 billion of wealth; the BSZ analysis taxes them, the JR analysis omits them), the real-estate deduction (none in the BSZ analysis; the JR analysis deducts directly held homes, about 0.5% of the base) and the extra income tax from assets sold to pay the tax (the BSZ analysis counts it, the JR analysis does not). Off keeps this panel's own values; on takes the other analysis's values for all three.",
+    revision = sprintf("The JR analysis's September 2026 revision (Jaros and Rauh, NBER). It weights the revenue by the chance that the tax survives litigation, grows the base %s to the end of 2026 and draws the share who leave independently of the revenue. Not an input of the common function: on, it adds a fixed step at this panel's horizon setting (see the note under the panels).",
+                       tok$nber_growth))
   slider_row <- function(panel, id, name, title, tip, bsz_txt, rj_txt, max) {
     rtl <- panel == "rjkdc"
     ticks <- paste(sprintf('<i style="--t:%s"></i>', format((0:max) / max)), collapse = "")
     sprintf(paste0(
-      '        <li class="sl" data-id="%2$s" title="%5$s">\n',
+      '        <li class="sl" data-id="%2$s">\n',
       '          <label for="%1$s-%2$s"><b>%3$s</b> <span class="sl-title">%4$s</span></label>\n',
+      '          <span class="sl-tip" role="tooltip" id="%1$s-%2$s-tip">%5$s</span>\n',
       '          <div class="sl-row"><span class="sl-end sl-lo">%6$s</span><span class="sl-track',
       '%9$s"><span class="sl-ticks" aria-hidden="true">%10$s</span><span class="sl-other" aria-hidden="true"></span>',
-      '<input type="range" class="sl-in" id="%1$s-%2$s" min="0" max="%8$d" step="1" value="0" data-panel="%1$s" data-id="%2$s"%11$s>',
+      '<input type="range" class="sl-in" id="%1$s-%2$s" min="0" max="%8$d" step="1" value="0" data-panel="%1$s" data-id="%2$s" aria-describedby="%1$s-%2$s-tip"%11$s>',
       '<output class="sl-cur" for="%1$s-%2$s">%12$s</output></span><span class="sl-end sl-hi">%7$s</span></div>\n',
       '          <span class="sl-note"></span>\n',
       '        </li>'),
@@ -222,17 +221,18 @@ render_site <- function(root = comparison_root(),
       if (rtl) " is-rtl" else "", ticks, if (rtl) ' dir="rtl"' else "",
       if (rtl) rj_txt else bsz_txt)
   }
-  slider_rows <- function(panel) paste(c(vapply(seq_len(nrow(steps)), function(i) {
-    rowlab <- if (grepl("^\\d", steps$disputes_row[i])) paste0("DISPUTES row ", steps$disputes_row[i]) else "not a DISPUTES row"
-    title <- steps$title[i]
-    if (steps$step_id[i] == "horizon") title <- paste0(title, " (five settings: ", hz_words, ")")
-    slider_row(panel, steps$step_id[i], unname(short_labels[steps$step_id[i]]), title,
-               paste0(rowlab, ", ", steps$kind[i]),
+  shown <- match(explorer_slider_ids(), steps$step_id)
+  slider_rows <- function(panel) paste(c(vapply(shown, function(i) {
+    slider_row(panel, steps$step_id[i], unname(short_labels[steps$step_id[i]]), steps$title[i],
+               slider_tips[[steps$step_id[i]]],
                fmt_input(dis0$input[i], dis0$supporting_value[i]), fmt_input(dis0$input[i], dis0$rauh_value[i]),
                SLIDER_STEPS)
-  }, ""), slider_row(panel, "revision", "September 2026 revision",
-                     "Not an input of the common function: see the note under the panels",
-                     "the JR analysis's September 2026 revision", "not applied", "applied", 1)),
+  }, ""),
+    slider_row(panel, "minor_inputs", "Three minor inputs", "Non-citizens, real-estate deduction, asset-sale tax",
+               slider_tips[["minor_inputs"]], "BSZ values", "JR values", 1),
+    slider_row(panel, "revision", "September 2026 revision",
+               "Not an input of the common function: see the note under the panels",
+               slider_tips[["revision"]], "not applied", "applied", 1)),
     collapse = "\n")
   tok$sliders_bsz <- slider_rows("bsz")
   tok$sliders_rjkdc <- slider_rows("rjkdc")
@@ -242,30 +242,6 @@ render_site <- function(root = comparison_root(),
   tok$n_slider_per_panel <- format(sum(ss$panel == "bsz"), big.mark = ",")
   tok$rev_step_b <- money(eb$nber_step, 1, TRUE)
   tok$rev_model_b <- money(eb$rauh_residual, 2, TRUE)
-  tok$nber_growth <- pct(pick(k$rjkdc$inputs, "nber_growth_rate"))
-
-  # ---- findings, computed; output (b) first ----
-  bb <- br[br$horizon_setting == "own" & br$output == "b", ]
-  v <- function(df, id, col = "shapley") df[[col]][df$step_id == id]
-  top3 <- function(df) { t <- df[order(df$shapley), ][1:3, ]
-    paste(sprintf("%s (%s, %s)", tolower(t$title), money(t$shapley, 1, TRUE), t$kind), collapse = "; ") }
-  tok$bridge_findings <- paste(sprintf("  <li>%s</li>", c(
-    sprintf("The net fiscal effect falls from %s at the BSZ end to %s at the JR end, a gap of %s. The three largest Shapley steps are %s.",
-            money(eb$bsz_model, 1), money(eb$nber_own, 1), money(gap_b, 1), top3(bb)),
-    sprintf("The horizon is the single largest step read in Hoopes's order (%s, the last step, when the loss is already JR-sized) but only %s averaged over orders, because a perpetuity multiplies whatever annual loss the other inputs imply. The annual loss runs from %s (BSZ) to %s (JR, September 2026).",
-            money(v(bb, "horizon", "sequential"), 1, TRUE), money(v(bb, "horizon"), 1, TRUE),
-            money(ex$loss$annual_loss[ex$loss$source_id == "bsz_row1"], 2),
-            money(ex$loss$annual_loss[ex$loss$source_id == "rauh_nber"], 2)),
-    sprintf("One step raises the estimate: the JR analysis applies no avoidance or evasion allowance beyond migration (its semi-elasticity is the migration share of Brulhart et al.'s response), so dropping the BSZ analysis's 10%% adds %s (Shapley). DISPUTES.md does not list this as a row.",
-            money(v(bb, "avoidance"), 1, TRUE)),
-    sprintf("Order matters most for estimating the one-time tax as a permanent 5-percentage-point rate: %s averaged over all orders and %s in the one order shown. The JR revenue is uniform between a confirmed-departures ceiling and an elasticity floor, so the elasticity bites only on top of whatever departures are already in. The step is large when it is taken early and smaller when it comes after the departures.",
-            money(v(bb, "one_time_as_permanent"), 1, TRUE), money(v(bb, "one_time_as_permanent", "sequential"), 1, TRUE)),
-    sprintf("Model differences are small and shown, not hidden: %s, from the rounded literals in the JR Monte Carlo code (MISMATCHES #6 in rjkdc-analysis).",
-            money(eb$rauh_residual, 2, TRUE)),
-    sprintf("The September 2026 revision is the last step, %s. The JR analysis prints its mean NPV as %s, from one seeded Monte Carlo run; the exact expectation of the same Monte Carlo, the bridge's JR end, is %s.",
-            money(eb$nber_step, 1, TRUE),
-            money(ep$printed_value[ep$endpoint_id == "rauh_nber_npv"], 1), money(eb$nber_own, 2))
-  )), collapse = "\n")
 
   # ---- anchors (output (a) candidates; default decided in PLAN.md) ----
   an <- ex$anchors
@@ -394,9 +370,9 @@ render_site <- function(root = comparison_root(),
   # The sliders: the two input vectors (bridge_inputs(), full precision; the perpetuity is
   # written "Inf"), the horizon settings and the number of steps of slider_inputs(), the two
   # revision constants at each horizon setting (slider_revision(), from ends.csv), and for
-  # each slider the argument it moves and its two values as the page prints them. The page's
-  # model.js computes every panel value from these; test-site checks it against
-  # export/r/slider_sample.csv.
+  # each slider the argument it moves and its two values as the page prints them, and the
+  # inputs the page folds into one switch. The page's model.js computes every panel value
+  # from these; test-site checks it against export/r/slider_sample.csv.
   bi <- bridge_inputs(k)
   sl_vec <- function(v) lapply(v, function(z) if (is.infinite(z)) "Inf" else z)
   rt <- slider_revision(en)
@@ -409,7 +385,8 @@ render_site <- function(root = comparison_root(),
       short = unname(short_labels[steps$step_id[i]]),
       bsz_text = fmt_input(dis0$input[i], dis0$supporting_value[i]),
       rjkdc_text = fmt_input(dis0$input[i], dis0$rauh_value[i]))),
-    revision_text = list(bsz = "not applied", rjkdc = "applied"))
+    revision_text = list(bsz = "not applied", rjkdc = "applied"),
+    minor = EXPLORER_MINOR)
   # The explorer shows the net fiscal effect, output (b), only, and the bridge at each
   # analysis's own horizon; output (a) and the common horizons stay in the exports, the
   # report and the tests, not in the data file the explorer reads.

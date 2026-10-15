@@ -66,6 +66,8 @@
   .site-nav { font-family: var(--mono); font-size: 11.5px; color: var(--ink-3); margin: 0 0 16px; }
   .site-nav a { color: var(--accent); text-decoration: none; }
   .site-nav a:hover { text-decoration: underline; }
+  .site-nav .nav-row { display: block; }
+  .site-nav .nav-row + .nav-row { margin-top: 2px; }
   h2 {
     font-family: var(--serif); font-weight: 600; font-size: 21px;
     margin: 44px 0 14px; letter-spacing: -0.01em;
@@ -278,13 +280,14 @@
 <div class="wrap">
 
 <p class="site-nav">
-  Comparison of the two analyses of California Proposition 40:
+  <span class="nav-row">Comparison of the two analyses of California Proposition 40:
   Overview (here) &middot;
   Open Output: <a href="comparison/site/explorer/">Explorer</a> &middot;
   Open Analysis: <a href="comparison/site/repro.html">Report</a> &middot;
-  <a href="https://github.com/fhoces/opa-prop40/tree/main/comparison">Open Materials</a> &middot;
+  <a href="https://github.com/fhoces/opa-prop40/tree/main/comparison">Open Materials</a></span>
+  <span class="nav-row">Also in this project:
   <a href="bsz-analysis/site/">BSZ analysis overview</a> &middot;
-  <a href="rjkdc-analysis/site/">JR analysis overview</a>
+  <a href="rjkdc-analysis/site/">JR analysis overview</a></span>
 </p>
 
 <header>
@@ -311,9 +314,6 @@
     Analysis of its own; this page adds a comparison layer on top, following the
     <a href="https://doi.org/10.1093/scipol/scaa067">Open Policy Analysis</a> (OPA) framework.
   </p>
-  <p class="byline" style="margin-top:6px">OPA by <a href="https://fhoces.github.io">Fernando Hoces de la Guardia</a>.
-    This site recommends no vote and favours neither analysis: it reproduces both analyses'
-    arithmetic and shows where their assumptions differ.</p>
 </header>
 
 <div class="headline">
@@ -361,10 +361,10 @@
         <span class="kicker">Open Output</span>
         <h3>Explore the main estimate and its assumptions &rarr;</h3>
         <p>The explorer: the two main estimates on one definition, the net fiscal effect, in
-        two panels of sliders, one per disputed input, and the bridge between them, a waterfall
-        from the BSZ analysis to the JR analysis with one bar per input. Its one setting
-        sizes the bars, averaged over every order or in one order; the horizon is a slider in
-        each panel. Gross revenue, output (a), is in the report.</p>
+        two panels of sliders, one per disputed input that moves the estimate. Move a slider
+        from one analysis's value towards the other's and watch that panel's estimate move;
+        hover over a slider for what it changes. The step-by-step bridge and gross revenue,
+        output (a), are in the report.</p>
       </div>
       <div class="card-icon-box" aria-hidden="true">
         <img src="assets/opa/opa-assumptions-solo.png" alt="">
@@ -672,15 +672,13 @@ original authors have not reviewed it.</p>
 </div>
 <script>
   // A link into a folded section (index.html#hoopes, or an anchor inside one) opens it.
-  // The bridge moved to the explorer: an old link to it (index.html#the-bridge, or a deep
-  // link such as index.html#out=b&method=sequential&h=common_20) goes there, with the same
-  // settings.
+  // The bridge chart now lives in the report: an old link to it here (index.html#the-bridge)
+  // goes to the report's bridge section, and an old deep link into the explorer's settings
+  // (index.html#out=b&method=sequential&h=common_20) goes to the explorer.
   (function () {
     var h = location.hash.slice(1);
-    if (h === "the-bridge" || h.indexOf("=") >= 0) {
-      location.replace("comparison/site/explorer/index.html" + (h.indexOf("=") >= 0 ? "#" + h : ""));
-      return;
-    }
+    if (h === "the-bridge") { location.replace("comparison/site/repro.html#the-bridge"); return; }
+    if (h.indexOf("=") >= 0) { location.replace("comparison/site/explorer/index.html"); return; }
     function reveal(id) {
       if (!id) return;
       var el = document.getElementById(id);

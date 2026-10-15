@@ -30,8 +30,8 @@ test_that("key numbers appear on the pages as computed", {
   expect_true(grepl(money(v("bsz_tab5_row1"), 1), html, fixed = TRUE))
   expect_true(grepl(money(eb$nber_own, 2), html, fixed = TRUE))       # the (b) table
   expect_true(grepl(money(ea$nber_own, 1), html, fixed = TRUE))
-  # the explorer's bridge text: both ends and the gap on the net fiscal effect, output (b)
-  expect_true(grepl(sprintf("The BSZ end is\n    <b>%s</b> and the JR end <b>%s</b>, a gap of <b>%s</b>.",
+  # the explorer's footnote: both ends and the gap on the net fiscal effect, output (b)
+  expect_true(grepl(sprintf("The BSZ end is <b>%s</b> and the JR end <b>%s</b>, a gap of <b>%s</b>.",
                             money(eb$bsz_model, 1), money(eb$nber_own, 1), money(eb$bsz_model - eb$nber_own, 1)),
                     ex_html, fixed = TRUE))
   # the explorer shows the net fiscal effect only: no output setting, no gross revenue
@@ -65,22 +65,31 @@ test_that("the switchboard: all off is the BSZ end, all on plus the revision is 
   }
 })
 
-test_that("the slider panels: one slider per disputed input in the bridge's order plus the revision, both panels", {
+test_that("the slider panels: one slider per disputed input that moves the estimate, in the bridge's order, then the minor switch and the revision, both panels", {
   ids <- bridge_steps()$step_id
+  shown <- explorer_slider_ids()
+  expect_identical(shown, setdiff(ids, c("noncitizens", "real_estate", "asset_sales")))
   ex_html <- read_page(explorer)
   txt <- read_page(file.path(root, "assets", "comparison-data.js"))
   D <- jsonlite::fromJSON(sub(";\\s*$", "", sub("^[^{]*", "", txt)), simplifyVector = FALSE)
   for (panel in c("bsz", "rjkdc")) {
     sl <- regmatches(ex_html, gregexpr(sprintf('<input type="range" class="sl-in" id="%s-[a-z_]+" min="0" max="[0-9]" step="1" value="0" data-panel="%s" data-id="[a-z_]+"', panel, panel), ex_html))[[1]]
-    expect_identical(sub('.*data-id="([a-z_]+)"$', "\\1", sl), c(ids, "revision"), label = panel)
-    expect_identical(sub('.*max="([0-9])".*', "\\1", sl), c(rep(as.character(SLIDER_STEPS), length(ids)), "1"), label = panel)
+    expect_identical(sub('.*data-id="([a-z_]+)"$', "\\1", sl), c(shown, "minor_inputs", "revision"), label = panel)
+    expect_identical(sub('.*max="([0-9])".*', "\\1", sl), c(rep(as.character(SLIDER_STEPS), length(shown)), "1", "1"), label = panel)
+    # every slider carries its explanation, and the input points at it
+    for (id in c(shown, "minor_inputs", "revision")) {
+      expect_true(grepl(sprintf('<span class="sl-tip" role="tooltip" id="%s-%s-tip">[^<]{80,}</span>', panel, id), ex_html), label = paste(panel, id, "tip"))
+      expect_true(grepl(sprintf('data-id="%s" aria-describedby="%s-%s-tip"', id, panel, id), ex_html, fixed = TRUE), label = paste(panel, id, "describedby"))
+    }
   }
   # the JR panel's sliders run right to left, so position 0 sits at the JR end
-  expect_equal(length(gregexpr('data-panel="rjkdc" data-id="[a-z_]+" dir="rtl"', ex_html)[[1]]), length(ids) + 1)
-  expect_false(grepl('data-panel="bsz" data-id="[a-z_]+" dir="rtl"', ex_html))
-  # the data file: the inputs in the bridge's order, the argument each moves, both vectors
+  expect_equal(length(gregexpr('data-panel="rjkdc" data-id="[a-z_]+" aria-describedby="[a-z_-]+" dir="rtl"', ex_html)[[1]]), length(shown) + 2)
+  expect_false(grepl('data-panel="bsz" data-id="[a-z_]+" aria-describedby="[a-z_-]+" dir="rtl"', ex_html))
+  # the data file: every input in the bridge's order (the switch stands for three of them),
+  # the argument each moves, both vectors, and the three the switch covers
   bi <- bridge_inputs(read_contracts(root))
   expect_identical(vapply(D$sliders$inputs, `[[`, "", "id"), ids)
+  expect_identical(unlist(D$sliders$minor), EXPLORER_MINOR)
   expect_identical(vapply(D$sliders$inputs, `[[`, "", "input"), unname(unlist(step_inputs[ids])))
   num <- function(z) if (identical(z, "Inf")) Inf else z
   for (nm in names(bi$sup)) {
