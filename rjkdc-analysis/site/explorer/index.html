@@ -112,6 +112,13 @@
   }
   .presets button:hover { border-color: var(--ink-3); }
   .presets button.main { border-color: var(--ink-2); }
+  .presets-h { font-size: 12px; color: var(--ink-3); margin: 14px 0 6px; }
+  dl.scen-key { margin: 10px 0 0; font-size: 12.5px; color: var(--ink-2); line-height: 1.45; }
+  dl.scen-key dt { display: inline; font-weight: 600; color: var(--ink); }
+  dl.scen-key dd { display: inline; margin: 0; }
+  dl.scen-key dd::after { content: ""; display: block; margin-bottom: 4px; }
+  dl.scen-key a.more { color: var(--link); text-decoration: none; }
+  dl.scen-key a.more:hover { text-decoration: underline; }
 
   /* ---- the outcomes chart: this setting against the main estimate, bars drawn
      from a zero line (negative to the left, positive to the right) ---------- */
@@ -194,9 +201,11 @@
     <section>
       <h2>The inputs</h2>
       <div class="rack" id="rack"></div>
-      <!-- One preset button per key in G.named; edit or add data-preset values
-           to match the named scenarios the real grid exports. -->
+      <!-- One button per setting in ORDER (named in R/site.R::site_named()), then the
+           grid's highest and lowest mean NPV; the key explains the paper's scenarios. -->
+      <p class="presets-h">Jump to a setting</p>
       <div class="presets" id="presets"></div>
+      <dl class="scen-key" id="scen-key"></dl>
 
       <details class="fold notes">
         <summary>Notes</summary>
@@ -250,14 +259,27 @@
   "use strict";
   var G = window.__GRID__;
   // The main estimate is the NBER setting (Jaros and Rauh, September 2026); the page opens
-  // on it and cites only that version. The grid keeps its other named settings for the
-  // pipeline and the comparison; this page shows none of them.
+  // on it and cites only that version. ORDER adds the paper's own scenarios on that setting
+  // (the rate fixed at 1.5% or 4.5%, PDF p.32; q = 0.5, PDF p.33). The grid's first-version
+  // setting (ssrn) stays for the pipeline and the report; this page does not show it.
   var MAIN = "nber";
-  var ORDER = [MAIN];
+  var ORDER = [MAIN, "rate15", "rate45", "q50"];
   var HEAD = { nber: "NBER September 2026" };
-  var ROLE = { nber: "main estimate" };
-  // The outcomes table's column header for the main estimate (the preset button keeps nlabel()).
+  // The preset button and the outcomes table's column header for the main estimate.
   var COLHEAD = { nber: "Main estimate (NBER, September 2026)" };
+  // The headline's name for each paper scenario, and its one-line key under the buttons.
+  var SCEN = { rate15: "Rate 1.5% scenario (PDF p.32)", rate45: "Rate 4.5% scenario (PDF p.32)",
+               q50: "Litigation weight q = 0.5 (PDF p.33)" };
+  var KEY = {
+    rate15: "the main setting with the discount rate fixed at 1.5%, the S&P 500 dividend yield. " +
+      "The paper presents it as a scenario, with 3.0% and 4.5% (PDF p.32).",
+    rate45: "the main setting with the discount rate fixed at 4.5%, the highest of the paper's " +
+      "three scenario rates (PDF p.32).",
+    q50: "the main setting with the wealth tax multiplied by a 0.50 chance that the Act survives " +
+      "in court, as the paper's text states (PDF p.33). The revenue floor rises to 35, so the 0 " +
+      "floor does not count the litigation risk a second time."
+  };
+  var KEY_REPORT = { rate15: "perpetuity", rate45: "perpetuity", q50: "monte-carlo" };
   function nlabel(k) { return (G.named_labels && G.named_labels[k]) || (k.charAt(0).toUpperCase() + k.slice(1)); }
   var state = G.named[MAIN].slice();
   var SIZES = G.dials.map(function (d) { return d.levels.length; });
@@ -347,15 +369,44 @@
   });
   document.addEventListener("click", function () { closeTips(null); });
 
-  // ---- preset buttons, one per named scenario in the grid ---------------
+  // ---- preset buttons: the settings in ORDER, then the grid's highest and lowest
+  // mean NPV; a key line for each paper scenario, linked to the report -----
   var presets = document.getElementById("presets");
   ORDER.forEach(function (name) {
     var b = document.createElement("button");
     b.type = "button";
     if (name === MAIN) b.className = "main";
-    b.textContent = "Load " + nlabel(name) + (ROLE[name] ? " (" + ROLE[name] + ")" : "");
+    b.textContent = COLHEAD[name] || nlabel(name);
+    if (KEY[name]) b.title = KEY[name];
     b.addEventListener("click", function () { state = G.named[name].slice(); render(); });
     presets.appendChild(b);
+  });
+  function levelsOf(i) {
+    var l = [];
+    for (var k = SIZES.length - 1; k >= 0; k--) { l[k] = i % SIZES[k]; i = Math.floor(i / SIZES[k]); }
+    return l;
+  }
+  var iMax = 0, iMin = 0;
+  G.snap.forEach(function (s, i) {
+    if (s[0] > G.snap[iMax][0]) iMax = i;
+    if (s[0] < G.snap[iMin][0]) iMin = i;
+  });
+  [["Highest NPV", iMax], ["Lowest NPV", iMin]].forEach(function (e) {
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "ext";
+    b.textContent = e[0] + " (" + usd(G.snap[e[1]][0]) + "B)";
+    b.addEventListener("click", function () { state = levelsOf(e[1]); render(); });
+    presets.appendChild(b);
+  });
+  var keyEl = document.getElementById("scen-key");
+  ORDER.forEach(function (n) {
+    if (!KEY[n]) return;
+    var dt = document.createElement("dt"); dt.textContent = nlabel(n) + ": ";
+    var dd = document.createElement("dd"); dd.textContent = KEY[n] + " ";
+    var a = document.createElement("a");
+    a.className = "more"; a.href = "../repro.html#" + KEY_REPORT[n]; a.textContent = "more";
+    dd.appendChild(a);
+    keyEl.appendChild(dt); keyEl.appendChild(dd);
   });
 
   // ---- table header + body, one column per named scenario plus "this
@@ -433,10 +484,13 @@
     });
 
     var name = i === namedIdx[MAIN] ? MAIN : null;
+    var scen = null;
+    ORDER.forEach(function (k) { if (SCEN[k] && i === namedIdx[k]) scen = k; });
     // The headline: at the NBER setting, the authors' printed mean (the overview's number);
     // anywhere else, this grid's exact expectation for the setting on screen.
     document.getElementById("cell-name").innerHTML = name
       ? "Main estimate<sup>1</sup>, " + HEAD[name] + ", as printed"
+      : scen ? SCEN[scen] + ", not printed by the authors"
       : "This setting (not published by the authors)";
     var p = name ? P[name] : null;
     var shown = usd(npvOf(i)) + "B";

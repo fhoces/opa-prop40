@@ -147,9 +147,14 @@ test_that("the explorer draws the outcomes chart above the table and cites only 
   expect_true(grepl('<title id="bars-title">', html, fixed = TRUE))
   render_body <- sub(".*function render\\(\\) \\{(.*?)\\n  render\\(\\);.*", "\\1", html)
   expect_true(grepl("drawBars(i);", render_body, fixed = TRUE))
-  # the main estimate is the NBER setting; the page has no SSRN cards, preset or column
+  # the main estimate is the NBER setting; the presets add the paper's own scenarios on it
+  # (rate 1.5%, rate 4.5%, q = 0.5); the page has no SSRN cards, preset or column
   expect_true(grepl('var MAIN = "nber";', html, fixed = TRUE))
-  expect_true(grepl("var ORDER = [MAIN];", html, fixed = TRUE))
+  expect_true(grepl('var ORDER = [MAIN, "rate15", "rate45", "q50"];', html, fixed = TRUE))
+  expect_true(all(c("rate15", "rate45", "q50") %in% names(site_named())))
+  expect_equal(unname(site_named()$rate15[c("rate", "q", "wt_lo")]), c(1, 0, 0))
+  expect_equal(unname(site_named()$rate45[c("rate", "q", "wt_lo")]), c(2, 0, 0))
+  expect_equal(unname(site_named()$q50[c("rate", "q", "wt_lo")]), c(0, 2, 1))
   expect_false(grepl("pref-card", html, fixed = TRUE))
   expect_false(grepl("SSRN March 2026", html, fixed = TRUE))
 })

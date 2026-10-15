@@ -137,15 +137,25 @@ site_dials <- function(revenue_chain) {
   )
 }
 
+# Named settings (level indices into site_dials()). ssrn and nber are the two printed
+# versions; ssrn stays for the pipeline and the report but the explorer does not show it.
+# The other three are the paper's own scenarios on the main (nber) setting: the rate fixed
+# at each end of its draw, the two single rates the paper presents with 3.0% (PDF p.32),
+# and the litigation weight q = 0.5 the text states (PDF p.33), applied as a multiplier
+# with the 35 revenue floor so the 0 floor does not count the risk a second time.
 site_named <- function() {
   list(
     ssrn = c(wt_lo = 1, wt_hi = 1, q = 0, c = 0, rate = 0, f = 0, g = 0),
-    nber = c(wt_lo = 0, wt_hi = 2, q = 0, c = 0, rate = 0, f = 1, g = 0)
+    nber = c(wt_lo = 0, wt_hi = 2, q = 0, c = 0, rate = 0, f = 1, g = 0),
+    rate15 = c(wt_lo = 0, wt_hi = 2, q = 0, c = 0, rate = 1, f = 1, g = 0),
+    rate45 = c(wt_lo = 0, wt_hi = 2, q = 0, c = 0, rate = 2, f = 1, g = 0),
+    q50 = c(wt_lo = 1, wt_hi = 2, q = 2, c = 0, rate = 0, f = 1, g = 0)
   )
 }
 
 site_named_labels <- function() {
-  c(ssrn = "First version, March 2026", nber = "NBER, Sept 2026")
+  c(ssrn = "First version, March 2026", nber = "NBER, Sept 2026",
+    rate15 = "Rate 1.5%", rate45 = "Rate 4.5%", q50 = "Litigation weight q = 0.5")
 }
 
 # One cell of the grid: the analysis's own closed form and exact share
@@ -222,7 +232,8 @@ site_grid_payload <- function(site_grid, revenue_chain, site_headlines) {
   named <- site_named()
   outcome_cols <- c("mean_npv", "pct_negative", "wt_collected", "pv_lost")
   hl <- function(v, qn, col) site_headlines[[col]][site_headlines$version == v & site_headlines$quantity == qn]
-  pref <- lapply(names(named), function(v) list(
+  # Printed values exist only for the two published versions.
+  pref <- lapply(intersect(names(named), unique(site_headlines$version)), function(v) list(
     key = v, label = unname(site_named_labels()[v]),
     printed_npv = hl(v, "mc_mean_npv", "printed"),
     printed_pct_negative = hl(v, "mc_pct_negative", "printed"),
