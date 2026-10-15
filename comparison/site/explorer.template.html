@@ -183,16 +183,23 @@
     font-size: 11.5px; line-height: 15px; color: var(--ink); font-weight: 500; white-space: nowrap; }
   .sl-note { display: block; font-size: 11.5px; color: var(--ink-3); font-style: italic; line-height: 1.35; }
   .sl-note:empty { display: none; }
-  /* The explanation of a slider: shown while the mouse is over it or a key has focus in it.
-     A touch screen has no hover, so there a tap shows it and a second tap hides it (.tip-on). */
-  .sl-tip { position: absolute; left: 0; right: 0; bottom: calc(100% - 4px); z-index: 6;
+  /* A dial's explanation shows while the mouse is over its symbol or a key has focus in it;
+     what an end means shows while the mouse is over that end. A touch screen has no hover,
+     so there a tap shows a tip and a second tap hides it (.tip-on). */
+  .sl-tip, .end-tip { position: absolute; left: 0; right: 0; bottom: calc(100% - 4px); z-index: 6;
     background: var(--panel); color: var(--ink); border: 1px solid var(--rule); border-radius: 6px;
     padding: 8px 10px; font-size: 12.5px; line-height: 1.45; box-shadow: 0 4px 14px rgba(0,0,0,.14);
     pointer-events: none; visibility: hidden; opacity: 0;
     transition: opacity 120ms ease 250ms, visibility 0s linear 370ms; }
-  @media (hover: hover) { .sl:hover .sl-tip, .sl:focus-within .sl-tip { visibility: visible; opacity: 1; transition-delay: 250ms, 0s; } }
-  .sl:has(:focus-visible) .sl-tip, .sl.tip-on .sl-tip { visibility: visible; opacity: 1; transition-delay: 0s, 0s; }
-  .sl.tip-on .sl-tip, .info.tip-on .info-tip { pointer-events: auto; }
+  .end-tip { font-family: var(--sans); color: var(--ink); text-align: left; }
+  .sl > label, .sl-end.has-tip { cursor: help; }
+  .sl-end.has-tip .sl-end-v { border-bottom: 1px dotted var(--ink-3); }
+  @media (hover: hover) {
+    .sl > label:hover + .sl-tip, .sl-end.has-tip:hover .end-tip { visibility: visible; opacity: 1; transition-delay: 250ms, 0s; }
+  }
+  .sl:has(.sl-in:focus-visible) .sl-tip, .sl-end:focus-visible .end-tip,
+  .sl > label.tip-on + .sl-tip, .sl-end.tip-on .end-tip { visibility: visible; opacity: 1; transition-delay: 0s, 0s; }
+  .sl > label.tip-on + .sl-tip, .sl-end.tip-on .end-tip, .info.tip-on .info-tip { pointer-events: auto; }
   .sl-tip b { font-weight: 600; }
   .sl.is-inert .sl-cur { color: var(--ink-3); font-weight: 400; }
   .panel-note { font-size: 12px; color: var(--ink-2); margin: 8px 0 0; line-height: 1.45; }
@@ -543,8 +550,8 @@
       out.textContent = txt;
       if (id === "income_loss_share") {
         var fe = fEnds(panel), row = inp.closest(".sl-row");
-        row.querySelector(".sl-lo").textContent = pct(fe.bsz);
-        row.querySelector(".sl-hi").textContent = pct(fe.rjkdc);
+        row.querySelector(".sl-lo .sl-end-v").textContent = pct(fe.bsz);
+        row.querySelector(".sl-hi .sl-end-v").textContent = pct(fe.rjkdc);
       }
       // under the thumb: the JR panel's sliders run right to left
       var frac = panel === "bsz" ? p / max : 1 - p / max;
@@ -637,8 +644,9 @@
   });
   renderPanels();
 
-  // A touch screen has no hover. A tap on a dial, or on "more", shows its explanation; a second
-  // tap, or a tap anywhere else, hides it. Sliding a dial is not a tap, so it leaves tips alone.
+  // A touch screen has no hover. A tap on a dial's symbol, on a dial end that has a tip, or on
+  // "more" shows that tip; a second tap, or a tap anywhere else, hides it. Sliding a dial is not
+  // a tap, so it leaves tips alone.
   var tapAt = null;
   document.addEventListener("pointerdown", function (e) {
     tapAt = e.pointerType === "touch" ? { x: e.clientX, y: e.clientY } : null;
@@ -649,7 +657,7 @@
     var moved = Math.abs(e.clientX - tapAt.x) + Math.abs(e.clientY - tapAt.y) > 10;
     tapAt = null;
     if (moved) return;
-    var host = e.target.closest ? e.target.closest(".info, .sl") : null;
+    var host = e.target.closest ? e.target.closest(".info, .sl-end.has-tip, .sl > label") : null;
     var show = host && !host.classList.contains("tip-on");
     Array.prototype.slice.call(document.querySelectorAll(".tip-on")).forEach(function (h) { h.classList.remove("tip-on"); });
     if (show) host.classList.add("tip-on");

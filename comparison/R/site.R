@@ -257,17 +257,26 @@ render_site <- function(root = comparison_root(),
       money(bi0$ladder$dep_b[2], 0), money(bi0$ladder$dep_b[3], 0), money(bi0$ladder$dep_j[3], 0)),
     avoidance = "The share of the tax lost to avoidance and evasion other than leaving. The BSZ analysis allows 10%. The JR analysis allows none. Kind: guesswork.",
     litigation_survival = "The chance that the Act survives a constitutional challenge, applied to the revenue. The BSZ analysis takes the Act as written and collected in full. The JR analysis weights the revenue by 50%, the accounting threshold for a tax that is more likely than not to stand; its simulation draws the revenue anywhere between zero and the ceiling, which has the same average. Kind: guesswork.",
-    income_loss_share = sprintf(paste0(
-      "The share of billionaires' income tax lost because people leave California.\n",
-      "BSZ: what the leavers paid. %s with nobody gone (the half of avoidance done by moving), %s with D at its middle stop.\n",
-      "JR: %s of all of it, whoever leaves (the middle of a 30%% to 60%% guess).\n",
-      "Each end shows f where the other dials stand, so moving D or a changes it."),
-      pct(score_common(bi0$sup)[["f"]]),
-      pct(bi0$sup$alpha * bi0$sup$m + bi0$ladder$L[2] / bi0$sup$C), pct(bi0$rauh$f0)),
+    income_loss_share = "The share of billionaires' California income tax lost because people leave the state.",
     income_level = "Billionaires' yearly California income tax, the amount at risk each year. The BSZ analysis: about $3.1 billion from tax data, since top wealth holders earn about half of what top earners do. The JR analysis: $4.55 billion, the midpoint of a $3.3 billion to $5.8 billion range from two model bounds. Kind: research (BSZ) against guesswork (JR).",
     horizon = sprintf("How many years the income tax loss is counted. The BSZ analysis: 5 years, about the payment period, with responses temporary. The JR analysis: for ever, discounted at %s to %s. The slider's five settings are %s. Kind: scenario.",
                       tok$r_min, tok$r_max, hz_words),
     minor_inputs = "Three inputs that each move the estimate by less than $7 billion when moved alone: the non-US-citizen residents ($150 billion of wealth; the BSZ analysis taxes them, the JR analysis leaves its 28 international billionaires out), the real-estate deduction (none in the BSZ analysis; the JR analysis nets out directly held homes, about 0.5% of the base) and the extra income tax from assets sold to pay the tax (the BSZ analysis counts it, the JR analysis does not). Off keeps this panel's own values; on takes the other analysis's values for all three.")
+  # What each dial end means, shown while the pointer is over that end (or on a tap). A dial
+  # without one keeps only the explanation on its symbol.
+  end_tips <- list(
+    income_loss_share = c(
+      bsz = "The BSZ rule: the state loses only the income tax of those who leave, the people in D and the half of avoiders (a) who move away.",
+      rjkdc = sprintf("The JR rule: the state loses %s of all billionaires' income tax, whoever leaves (the middle of a 30%% to 60%% guess), plus any movers from a.",
+                      pct(bi0$rauh$f0))))
+  end_span <- function(panel, id, side, txt) {
+    tp <- end_tips[[id]][side]
+    if (is.null(tp) || is.na(tp))
+      return(sprintf('<span class="sl-end sl-%s"><span class="sl-end-v">%s</span></span>', if (side == "bsz") "lo" else "hi", txt))
+    sprintf(paste0('<span class="sl-end sl-%1$s has-tip" tabindex="0" aria-describedby="%2$s-%3$s-%4$s-tip">',
+                   '<span class="sl-end-v">%5$s</span><span class="end-tip" role="tooltip" id="%2$s-%3$s-%4$s-tip">%6$s</span></span>'),
+            if (side == "bsz") "lo" else "hi", panel, id, side, txt, esc(tp))
+  }
   slider_row <- function(panel, id, name, title, tip, bsz_txt, rj_txt, max, sym = FALSE) {
     rtl <- panel == "rjkdc"
     ticks <- paste(sprintf('<i style="--t:%s"></i>', format((0:max) / max)), collapse = "")
@@ -275,16 +284,17 @@ render_site <- function(root = comparison_root(),
       '        <li class="sl%13$s" data-id="%2$s">\n',
       '          <label for="%1$s-%2$s"><b>%3$s</b> <span class="sl-title">%4$s</span></label>\n',
       '          <span class="sl-tip" role="tooltip" id="%1$s-%2$s-tip">%5$s</span>\n',
-      '          <div class="sl-row"><span class="sl-end sl-lo">%6$s</span><span class="sl-track',
+      '          <div class="sl-row">%6$s<span class="sl-track',
       '%9$s"><span class="sl-ticks" aria-hidden="true">%10$s</span><span class="sl-other" aria-hidden="true"></span>',
       '<input type="range" class="sl-in" id="%1$s-%2$s" min="0" max="%8$d" step="1" value="0" data-panel="%1$s" data-id="%2$s" aria-describedby="%1$s-%2$s-tip"%11$s>',
-      '<output class="sl-cur" for="%1$s-%2$s">%12$s</output></span><span class="sl-end sl-hi">%7$s</span></div>\n',
+      '<output class="sl-cur" for="%1$s-%2$s">%12$s</output></span>%7$s</div>\n',
       '          <span class="sl-note"></span>\n',
       '        </li>'),
       panel, id, if (sym) paste0('<span class="sym">', esc(name), '</span>',
                                  if (!is.na(DIAL_WORDS[id])) paste0('<span class="sym-word">', DIAL_WORDS[[id]], '</span>') else "")
                  else esc(name),
-      if (sym) paste0('<span class="sr">', esc(title), '</span>') else esc(title), gsub("\n", "<br>", esc(tip), fixed = TRUE), bsz_txt, rj_txt, as.integer(max),
+      if (sym) paste0('<span class="sr">', esc(title), '</span>') else esc(title), gsub("\n", "<br>", esc(tip), fixed = TRUE),
+      end_span(panel, id, "bsz", bsz_txt), end_span(panel, id, "rjkdc", rj_txt), as.integer(max),
       if (rtl) " is-rtl" else "", ticks, if (rtl) ' dir="rtl"' else "",
       if (rtl) rj_txt else bsz_txt, if (sym) " has-sym" else "")
   }
