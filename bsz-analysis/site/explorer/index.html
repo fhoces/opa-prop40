@@ -388,7 +388,11 @@
       b.setAttribute("aria-label", dial.label + ", " + fmtLevel(dial, value));
       var tip = document.createElement("div");
       tip.className = "tip"; tip.setAttribute("role", "tooltip");
-      tip.id = "tip-" + dial.key + "-" + li; tip.textContent = dial.tips[li];
+      tip.id = "tip-" + dial.key + "-" + li;
+      // The authors' value closes with its kind. On the two yes/no dials both levels are rows of
+      // the authors' Table 5; elsewhere the other levels are this OPA's, with no kind of their own.
+      var authors = dial.fmt === "bool" || li === DEFAULT[di];
+      tip.textContent = dial.tips[li] + (authors ? " Kind: " + dial.origin + "." : "");
       b.setAttribute("aria-describedby", tip.id);
       // A touch tap toggles this button's tip and closes any other; a mouse click does not
       // (hover already shows the tip). The tap still selects the level.
