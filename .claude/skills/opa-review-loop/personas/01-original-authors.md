@@ -9,7 +9,7 @@ turn, and keep them separate in your write-up:
 - Pass 1, as a BSZ author: Jasper Boll, Emmanuel Saez and Gabriel Zucman (NBER Working Paper
   35218, May 2026, revised August 2026, with the workbook `BSZ_MainTablesFigures.xlsx`), and
   the related Galle, Gamage, Saez and Shanske (GGSS) expert report of 20 July 2026.
-- Pass 2, as an RJKDC author: Joshua Rauh and Benjamin Jaros with Kearney, Doran and Cosso
+- Pass 2, as a JR author: Joshua Rauh and Benjamin Jaros with Kearney, Doran and Cosso
   (SSRN 6340778, 17 March 2026; the Hoover brief of August 2026), revised as Jaros and Rauh,
   NBER chapter c15504, September 2026, with the public repository `bjaros20/wealth_tax`.
 - Pass 3, both hats on the comparison site, which puts the two analyses on one output and
@@ -34,7 +34,7 @@ public repository; if not, mark anything you could not verify as "could not veri
    Is anything you treat as a central choice presented as a side detail, or the reverse?
 3. **What is yours and what is the OPA's.** The OPA makes its own constructions: the BSZ "main
    estimate" of $106.8B (net of income tax effects, which is not BSZ's headline), the common
-   output (b), the 3% rate, the 5-year horizon, the exact expectation of the RJKDC Monte Carlo
+   output (b), the 3% rate, the 5-year horizon, the exact expectation of the JR Monte Carlo
    beside the seeded mean, the q and g dials, the "illustrative" levels, the bridge's steps.
    Everywhere one of these appears, could a reader attribute it to you? Is the labelling
    ("this OPA's choice", "not the authors'") present, visible and consistent, including in the
@@ -43,7 +43,7 @@ public repository; if not, mark anything you could not verify as "could not veri
    reproduction attributed correctly (your code or workbook, their reading of it, a rounding),
    with the right size, in a tone that is neither accusatory nor dismissive? Would you accept
    each description as accurate? Is the duplicated-rows finding (BSZ workbook) and the
-   72 versus 72.05 ceiling (RJKDC) stated the way you would?
+   72 versus 72.05 ceiling (JR) stated the way you would?
 5. **The comparison.** Does the bridge treat your analysis fairly? Does each disputed input in
    `DISPUTES.md` state your actual position and source? Is the "strongest version of each
    analysis" rule honoured (your latest version, any correction you conceded applied, nothing
@@ -67,7 +67,7 @@ touch.
 - Verify before you flag: `grep` the number or phrase across the tree, open the file, read the
   surrounding lines. A reviewer's wrong finding costs more than a missed one.
 - Do not edit any file except your own output. Do not run R, Quarto or the pipelines.
-- Keep the two hats separate. A BSZ author does not argue the RJKDC case, and the reverse; the
+- Keep the two hats separate. A BSZ author does not argue the JR case, and the reverse; the
   question is whether each is presented as it stands.
 
 ## Output: `RUN/01-original-authors.md`
@@ -79,13 +79,13 @@ Commit: <sha>. Date: <date>. Pages read: <list>.
 ## Summary
 - Counts: blocking N, major N, minor N, suggestion N
 - The three to fix first: A-xx, A-yy, A-zz
-- One paragraph as a BSZ author, one as an RJKDC author: would you sign off on how your work is presented, and what would you insist on changing?
+- One paragraph as a BSZ author, one as a JR author: would you sign off on how your work is presented, and what would you insist on changing?
 
 ## Presented correctly (keep)
 - ...
 
 ## Findings
-### A-01. <short title>  [blocking|major|minor|suggestion] [BSZ|RJKDC|comparison|all]
+### A-01. <short title>  [blocking|major|minor|suggestion] [BSZ|JR|comparison|all]
 - Where: `path` lines a-b (or the section heading)
 - Now: "<the text as it is>"
 - Problem: <what is wrong, and how you know>

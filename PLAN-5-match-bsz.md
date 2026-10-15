@@ -1,11 +1,11 @@
-# Plan 5: bring the RJKDC analysis and the comparison up to BSZ's shape
+# Plan 5: bring the JR analysis and the comparison up to BSZ's shape
 
 Written 2026-10-14 after a review of the BSZ analysis (overview, explorer, report, slides,
 repository, review chain). The BSZ analysis is the reference. Two agents implement this plan:
-agent A does Part A (RJKDC), agent B does Part B (comparison). Part C lists the rules both
+agent A does Part A (JR), agent B does Part B (comparison). Part C lists the rules both
 follow. Decisions taken with the author on 2026-10-14:
 
-- The RJKDC headline is the NBER September 2026 number alone (mean NPV -38.9). The SSRN
+- The JR headline is the NBER September 2026 number alone (mean NPV -38.9). The SSRN
   March 2026 estimate stays as a scenario in the explorer and as the comparison page's anchor.
 - The comparison gets three layers with a report and a materials page, no slides.
 - Both analyses get a review chain on the code review page, linked first in the README.
@@ -61,7 +61,7 @@ Each lesson names the BSZ file that shows it. Read that file before writing the 
 9. **Materials page** (`bsz-analysis/site/materials.qmd`): sections "Rebuild everything",
    "Tests", "Scripts", "Data files the site publishes", "Sources", "What the checks found".
 10. **Slides** (`bsz-analysis/site/slides/slides.Rmd`): xaringan, every number read from the
-    pipeline's CSVs, a "Deck Map" slide, parts. The RJKDC deck already follows this; only its
+    pipeline's CSVs, a "Deck Map" slide, parts. The JR deck already follows this; only its
     card wording changes. The comparison gets no deck.
 11. **Review chain** (`review/seed_bsz.py`, `review/bsz.json`): six to eight layers from the
     number on the page down to the raw source, each with `what`, `inputs_from` (with `tokens`
@@ -76,7 +76,7 @@ Each lesson names the BSZ file that shows it. Read that file before writing the 
 13. **Language rules.** No em-dashes anywhere (pages, qmd, README, commit messages). Repo
     coinages get a gloss at first use ("export contract", "targets", "dial"). Short sentences.
 
-## Part A: the RJKDC analysis (agent A, works in the main working tree)
+## Part A: the JR analysis (agent A, works in the main working tree)
 
 Headline: NBER September 2026 mean NPV, printed -38.9, reproduction -38.886
 (`site/explorer/grid.js` `preferred[key=="nber"]`, `site/data/headlines.csv`). Label
@@ -90,7 +90,7 @@ comparison page.
 1. **Overview** `rjkdc-analysis/site/index.html`: title "California Proposition 40, Analysis
    From Rauh, Jaros, Kearney, Doran, Cosso (RJKDC)"; headline block after the header reading
    both numbers from `explorer/grid.js` (copy the BSZ script, adapt the keys); section title
-   "Three layers to understand the analysis"; card wording per lesson 3 (the RJKDC card texts
+   "Three layers to understand the analysis"; card wording per lesson 3 (the JR card texts
    can keep their own descriptions under the new headers); "What the model says" reworded so
    the NBER number is the main estimate and the SSRN one the earlier version (the "two
    estimates side by side" sentence goes); credit table blank per Part C; meters only.
@@ -103,7 +103,7 @@ comparison page.
    `test-site.R` green (it pins the preferred cells, the dial origins and every typed number
    on the landing page: update its expectations where the wording changes, never loosen the
    numeric checks).
-3. **Report** `site/repro.qmd`: title "Prop 40, RJKDC analysis: the reproduction"; a short section
+3. **Report** `site/repro.qmd`: title "Prop 40, JR analysis: the reproduction"; a short section
    at the top that derives the headline (-38.9) step by step from the pipeline's targets, the
    way BSZ's Table 5 section does; keep the rest. Re-render `repro.html` and `materials.html`
    (quarto 1.9 is installed; the targets store is in `_targets/`).
@@ -123,7 +123,7 @@ comparison page.
    `chains/rjkdc` and `layers/rjkdc-1` ... from the files `review/store_push.py` writes (new
    docs, no `if_version`). If `ArtifactData` is unavailable, leave the push files under
    `review/push-rjkdc/` and say so.
-7. **AUDIT.md**: update only the RJKDC section (step 1 now has one unified output).
+7. **AUDIT.md**: update only the JR section (step 1 now has one unified output).
 8. Run `Rscript -e 'testthat::test_dir("rjkdc-analysis/tests/testthat")'` from the analysis's
    folder as its CI does (`.github/workflows/rjkdc-ci.yml` shows the exact commands), fix what
    breaks, commit in small commits with the attribution lines, do not push.
@@ -216,9 +216,9 @@ Decisions from the author's list, in their order:
    first, the layer image on the right, then the three parts of the project as numbered
    components, each linking its subfolder and its live overview page.
 3. The reconciliation page's headline block shows the two main estimates side by side,
-   $106.8B (BSZ, net total) and -$38.9B (RJKDC, NBER September 2026), not the gap. The gap
+   $106.8B (BSZ, net total) and -$38.9B (JR, NBER September 2026), not the gap. The gap
    stays inside the bridge. The comparison review chain's headline follows.
-4. The RJKDC explorer gets the BSZ outcomes chart: two horizontal bars, "This setting" and
+4. The JR explorer gets the BSZ outcomes chart: two horizontal bars, "This setting" and
    "Main estimate" (the NBER setting), values printed at the end of each bar, drawn by the
    same SVG approach as `bsz-analysis/site/explorer/index.html` (the `bars` SVG and the
    `drawBars` code). It sits above the outcomes table.
@@ -231,11 +231,11 @@ Decisions from the author's list, in their order:
    the footer. `assets/comparison-data.js` stays where it is (the explorer reads it with a
    relative path). The root page's Open Output card links to the explorer; the bridge section
    on the root page goes (the fold's text moves to the explorer or the report).
-7. The word "side" or "sides" is never used for the BSZ or RJKDC work. Wording: "the BSZ
-   analysis", "the RJKDC analysis", "BSZ analysis overview", "the two analyses". Sweep every
+7. The word "side" or "sides" is never used for the BSZ or JR work. Wording: "the BSZ
+   analysis", "the JR analysis", "BSZ analysis overview", "the two analyses". Sweep every
    page, explorer, report, slide deck, README, AUDIT.md, the review ledgers and the review page.
 
-Split: agent A does item 4 (RJKDC explorer and its tests) in the main working tree; agent B
+Split: agent A does item 4 (JR explorer and its tests) in the main working tree; agent B
 does items 3, 5 and 6 (comparison) in a worktree; the root README (item 2), the links (item 1)
 and the sweep (item 7) are done after the merge, except that each agent already writes its own
 new text without "side" and with the paper link.

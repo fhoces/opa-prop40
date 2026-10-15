@@ -2,12 +2,12 @@
 """Seed review/comparison.json: the chain of code behind the comparison's two main estimates.
 
 The headline is the two analyses' main estimates, shown next to each other on the comparison
-explorer: the BSZ analysis's net total over 5 years and the RJKDC analysis's NBER (September
+explorer: the BSZ analysis's net total over 5 years and the JR analysis's NBER (September
 2026) mean NPV. Under the common output (b), the net fiscal effect, they are the bridge's two
 ends, and the chain traces those two ends: the BSZ end is score_common() at the all-BSZ inputs,
-the RJKDC end is the exact expectation of the NBER Monte Carlo. (The RJKDC main estimate as
-printed, -38.9, is the authors' seeded run, which the RJKDC pipeline reproduces as -38.886;
-its own chain is the RJKDC one.) The layers are written by hand below, top (the numbers on
+the JR end is the exact expectation of the NBER Monte Carlo. (The JR main estimate as
+printed, -38.9, is the authors' seeded run, which the JR pipeline reproduces as -38.886;
+its own chain is the JR one.) The layers are written by hand below, top (the numbers on
 the explorer) to bottom (the two analyses' export contracts). Snippets are cut from the files
 at the line ranges given, so re-running this script after a code edit refreshes them. The
 user's fields (state, understanding, missing, feedback) are kept from an existing
@@ -118,11 +118,11 @@ def main():
             what=("This layer is the explorer's own JavaScript, not R or Python; the R and Python "
                   "code starts at layer 3. The page loads the bridge's data file and prints the two "
                   "main estimates from its headline object: headline.bsz, the BSZ net total, and "
-                  "headline.rjkdc, the RJKDC NBER mean NPV as the RJKDC pipeline reproduces the "
+                  "headline.rjkdc, the JR NBER mean NPV as the JR pipeline reproduces the "
                   "authors' seeded run. The two-bar chart below them takes the first and last bars "
                   "of the current view (endsOf); in the default view, output (b) at each analysis's "
                   "own horizon, these are the bridge's two ends. The BSZ end is the same number as "
-                  "the BSZ main estimate; the RJKDC end is the exact expectation of the same Monte "
+                  "the BSZ main estimate; the JR end is the exact expectation of the same Monte "
                   "Carlo, a little below the seeded run. The two panels below the header each list the "
                   "disputed inputs with a five-position slider; the page reads every slider, builds the "
                   "input vector with model.js (a JavaScript copy of score_common(), layer 6, checked "
@@ -131,10 +131,10 @@ def main():
             inputs="D = window.__BRIDGE__ from assets/comparison-data.js (D.headline, D.sliders: the two input vectors and the revision constants); M = model.js",
             inputs_from=[dict(layer="comparison-2", what="window.__BRIDGE__: the headline object and every bar of every view; the default view is series.own.b.shapley")],
             other_inputs="none",
-            outputs=(f"headline: '{m(H['bsz'])}' (BSZ main estimate) and '{m(rj_main)}' (RJKDC main estimate); "
-                     f"bars: '{m(bsz_end)}' (BSZ analysis) and '{m(nber_end)}' (RJKDC analysis)"),
+            outputs=(f"headline: '{m(H['bsz'])}' (BSZ main estimate) and '{m(rj_main)}' (JR main estimate); "
+                     f"bars: '{m(bsz_end)}' (BSZ analysis) and '{m(nber_end)}' (JR analysis)"),
             method_ref=("Display only. The definitions are the method: BSZ's net total, wealth tax plus "
-                        "extra income tax from asset sales minus 5 years of lost income tax; RJKDC's mean "
+                        "extra income tax from asset sales minus 5 years of lost income tax; JR's mean "
                         "NPV in perpetuity. The footnote on the explorer says the common output (b) puts "
                         "both on one definition, of which the two bars are the ends."),
             method_status="plumbing",
@@ -151,7 +151,7 @@ def main():
                   "under (b). series has one entry per horizon setting (own, then a common 5, 10, 20, "
                   "30, 50 years or a perpetuity), each with outputs b and a and two ways of sizing the "
                   "steps (shapley, sequential). Each is a list of bars: the BSZ end, one step per "
-                  "disputed input, the model difference, the September 2026 revision and the RJKDC end."),
+                  "disputed input, the model difference, the September 2026 revision and the JR end."),
             inputs="nothing at run time; the file is written by the next layer",
             inputs_from=[dict(layer="comparison-3", what="the text of comparison-data.js, written as raw UTF-8 bytes")],
             other_inputs="",
@@ -169,9 +169,9 @@ def main():
             n=3, name="Writing the pages and the data file",
             what=("build_series() turns the exported tables into the bars of every view, in "
                   "display order: the BSZ end (the 'bsz' bar), the eleven steps, the model "
-                  "difference, the September 2026 revision and the RJKDC end (the 'nber' bar). "
+                  "difference, the September 2026 revision and the JR end (the 'nber' bar). "
                   "render_site() fills the two pages' tokens, including the two main estimates "
-                  "(hl_bsz = ends$bsz_model on (b); hl_rjkdc = the RJKDC contract's npv_mc_nber_mean), "
+                  "(hl_bsz = ends$bsz_model on (b); hl_rjkdc = the JR contract's npv_mc_nber_mean), "
                   "and serializes the headline object and the bars to JSON; write_site() writes "
                   "index.html, the explorer and the data file."),
             inputs="ex: the eight exported tables read back from comparison/export/r/ (ends, bridge, endpoints, ...)",
@@ -189,13 +189,13 @@ def main():
             n=4, name="The bridge's ends and steps",
             what=("build_all() estimates everything the pages show. For each horizon setting it "
                   "estimates the model at the all-BSZ inputs (the BSZ end), runs the two "
-                  "decompositions of layer 5 for outputs (b) and (a), and computes the RJKDC "
+                  "decompositions of layer 5 for outputs (b) and (a), and computes the JR "
                   "analysis's own expectations: its March 2026 version, where the disputed-input "
-                  "steps end, and the NBER September 2026 one, the RJKDC end. Each ends row records "
+                  "steps end, and the NBER September 2026 one, the JR end. Each ends row records "
                   "the BSZ end, the model at the March 2026 inputs, that version's expectation, the "
                   "model difference (rauh_residual), the NBER end (nber_own) and the September "
                   "revision (nber_step)."),
-            inputs="bi: the two input vectors; and the RJKDC Monte Carlo ranges (wt_min/max, f_min/max, c_min/max, r_min/max)",
+            inputs="bi: the two input vectors; and the JR Monte Carlo ranges (wt_min/max, f_min/max, c_min/max, r_min/max)",
             inputs_from=[dict(layer="comparison-5", what="the Shapley and one-order step values for each output and setting"),
                          dict(layer="comparison-6", what="score_common() at the all-BSZ inputs (v_sup) and rauh_nber_expectation() (own_n)"),
                          dict(layer="comparison-7", what="bi: sup and rauh, the two input vectors")],
@@ -214,14 +214,14 @@ def main():
         ),
         dict(
             n=5, name="Splitting the gap into steps",
-            what=("Each step switches one disputed input from the BSZ value to the RJKDC value of "
+            what=("Each step switches one disputed input from the BSZ value to the JR value of "
                   "its March 2026 version, where the inputs are published. Because inputs interact, "
                   "a step's size depends on when it is switched. shapley_bridge() averages each "
                   "switch over every order, exactly: it estimates the model at all 2^11 = 2,048 "
                   "subsets of switched inputs and weights each difference by how many orders produce "
                   "it. sequential_bridge() switches them in one order, Hoopes's. Both sets of steps "
                   "add up to the model gap between the two input vectors; the model difference and "
-                  "the September revision close the rest of the gap to the RJKDC end."),
+                  "the September revision close the rest of the gap to the JR end."),
             inputs="sup, rauh (the two input vectors) and the list of steps",
             inputs_from=[dict(layer="comparison-6", what="score_common(): output (b) or (a) at any mix of the two input vectors"),
                          dict(layer="comparison-7", what="sup and rauh, the two input vectors")],
@@ -237,7 +237,7 @@ def main():
             targets=None,
         ),
         dict(
-            n=6, name="The estimating function and the RJKDC end",
+            n=6, name="The estimating function and the JR end",
             what=("score_common() is the one function that estimates both analyses. The wealth tax "
                   "is 5% x base x (1 - real-estate share) x (1 - avoidance) x S, where S is the share "
                   "of the base still taxed after departures and the mobility response. At the "
@@ -245,7 +245,7 @@ def main():
                   f"Table 5 row 1; output (b) adds {meta['X_bsz']:.3f} of income tax from asset sales and "
                   f"subtracts {meta['PV_bsz_own']:.3f}, five years of lost income tax, giving {bsz_end:.3f}, "
                   "the BSZ end. rauh_nber_expectation() (model.R lines 134-138, bridge.py lines "
-                  "156-160) is the RJKDC end: with the revenue uniform on [0, 72], the departing "
+                  "156-160) is the JR end: with the revenue uniform on [0, 72], the departing "
                   "share f on [0.30, 0.60], the income tax C on [3.3, 5.8] and r on [1.5%, 4.5%], all "
                   f"independent, the mean NPV is 36 - 0.45 x 4.55 x {meta['A_inf']:.3f} = {nber_end:.3f}. "
                   "This is the last layer that computes: its two outputs are the two ends."),
@@ -268,7 +268,7 @@ def main():
             what=("bridge_inputs() builds the two settings of every disputed input, each value read "
                   "from a contract row or a transcribed document input. The BSZ base is the "
                   "contract's 2,307 split into 150 of non-US-citizen residents and the rest; the "
-                  "RJKDC values are those of its March 2026 version, from the RJKDC contract's "
+                  "JR values are those of its March 2026 version, from the JR contract's "
                   "workbook sums and Monte Carlo ranges."),
             inputs="k: the two contracts and the document inputs",
             inputs_from=[dict(layer="comparison-8", what="k$bsz, k$rjkdc (inputs and outputs tables) and k$docs, looked up row by row with pick()")],
@@ -292,9 +292,9 @@ def main():
             inputs_from=[],
             other_inputs="bsz-analysis/export/r/{inputs,outputs}.csv, rjkdc-analysis/export/r/{inputs,outputs}.csv, comparison/data/*.csv",
             outputs=("for the two ends: BSZ baseline_net_worth 2307, avoidance_rate 0.1, tax_rate 0.05, "
-                     "tab5_row1 extra income tax and annual loss; RJKDC nber_ceiling_hardcoded 72, "
+                     "tab5_row1 extra income tax and annual loss; JR nber_ceiling_hardcoded 72, "
                      "nber_mc_f_min/max 0.30/0.60, rauh_mc_c_min/max 3.3/5.8, rauh_mc_r_min/max 0.015/0.045, "
-                     "npv_mc_nber_mean -38.886 (the RJKDC main estimate); document input "
+                     "npv_mc_nber_mean -38.886 (the JR main estimate); document input "
                      "ggss_noncitizen_wealth 150"),
             method_ref="Plumbing: base R read.csv / Python csv, no transformation.",
             method_status="plumbing",
@@ -420,14 +420,14 @@ names(k)                                         # bsz, rjkdc, docs, hoopes
 head(k$bsz$inputs[, c("input_id", "value", "label", "source")])
 pick(k$bsz$inputs, "baseline_net_worth"); pick(k$bsz$inputs, "avoidance_rate"); pick(k$bsz$inputs, "tax_rate")
 pick(k$rjkdc$inputs, "nber_ceiling_hardcoded"); pick(k$rjkdc$inputs, "nber_mc_f_min"); pick(k$rjkdc$inputs, "nber_mc_f_max")
-pick(k$rjkdc$outputs, "npv_mc_nber_mean")       # -38.886, the RJKDC main estimate
+pick(k$rjkdc$outputs, "npv_mc_nber_mean")       # -38.886, the JR main estimate
 pick(k$docs, "ggss_noncitizen_wealth")""",
                 py="""# Layer 8: the contracts and the rows the two ends read.
 list(k)                                          # bsz, rjkdc, docs, hoopes
 k["bsz"]["inputs"][:3]
 b.pick(k["bsz"]["inputs"], "baseline_net_worth"), b.pick(k["bsz"]["inputs"], "avoidance_rate"), b.pick(k["bsz"]["inputs"], "tax_rate")
 b.pick(k["rjkdc"]["inputs"], "nber_ceiling_hardcoded"), b.pick(k["rjkdc"]["inputs"], "nber_mc_f_min"), b.pick(k["rjkdc"]["inputs"], "nber_mc_f_max")
-b.pick(k["rjkdc"]["outputs"], "npv_mc_nber_mean")   # -38.886, the RJKDC main estimate
+b.pick(k["rjkdc"]["outputs"], "npv_mc_nber_mean")   # -38.886, the JR main estimate
 b.pick(k["docs"], "ggss_noncitizen_wealth")"""),
     }
     for L in layers:
@@ -440,7 +440,7 @@ while (!dir.exists("comparison")) setwd("..")
 invisible(lapply(list.files("comparison/R", pattern = "\\.R$", full.names = TRUE), source))   # every function on the chain
 k  <- read_contracts()          # layer 8: the two contracts and the document inputs
 bi <- bridge_inputs(k)          # layer 7: the two input vectors
-cat("ready: BSZ base", bi$sup$W_core + bi$sup$W_noncit, "; RJKDC base", bi$rauh$W_core, "\n")""",
+cat("ready: BSZ base", bi$sup$W_core + bi$sup$W_noncit, "; JR base", bi$rauh$W_core, "\n")""",
         py="""# Environment for the comparison chain, Python. In Positron open the opa-prop40 folder, then run this once.
 # Needs scipy (pip install scipy); nothing downloaded.
 import os, sys
@@ -450,7 +450,7 @@ sys.path.insert(0, "comparison/py")
 import bridge as b                       # the Python twin: every function on the chain
 k = b.read_contracts(os.getcwd())        # layer 8: the two contracts and the document inputs
 sup, rauh = b.bridge_inputs(k)           # layer 7: the two input vectors
-print("ready: BSZ base", sup["W_core"] + sup["W_noncit"], "; RJKDC base", rauh["W_core"])""",
+print("ready: BSZ base", sup["W_core"] + sup["W_noncit"], "; JR base", rauh["W_core"])""",
     )
 
     old = {}
@@ -471,12 +471,12 @@ print("ready: BSZ base", sup["W_core"] + sup["W_noncit"], "; RJKDC base", rauh["
         "opa": "comparison",
         "title": "The comparison: the two main estimates",
         "headline": {
-            "label": "BSZ main estimate and RJKDC main estimate, on the common output (b)",
+            "label": "BSZ main estimate and JR main estimate, on the common output (b)",
             "value": f"{m(H['bsz'])} and {m(rj_main)}",
             "computed": {"bsz": H["bsz"], "rjkdc": rj_main, "bsz_end_b": bsz_end, "rjkdc_end_b": nber_end},
             "definition": ("the two analyses' own main estimates, next to each other: BSZ's net total "
                            "(wealth tax + extra income tax from selling assets - income tax lost to "
-                           "leavers, present value of 5 years) and RJKDC's NBER September 2026 mean NPV "
+                           "leavers, present value of 5 years) and JR's NBER September 2026 mean NPV "
                            "(perpetuity). Under the common output (b), the net fiscal effect, they are "
                            f"the bridge's two ends, {m(bsz_end)} and {m(nber_end)} (the exact expectation "
                            f"of the Monte Carlo whose seeded run is {m(rj_main, 3)}); the gap between the "
@@ -489,8 +489,8 @@ print("ready: BSZ base", sup["W_core"] + sup["W_noncit"], "; RJKDC base", rauh["
                         f"= {bsz_end:.3f} and rauh_nber_expectation(0, 72, 0.30, 0.60, 3.3, 5.8, 0.015, 0.045)[['b']] "
                         f"= {nber_end:.3f}; the same from export/r/ends.csv (bsz_model, nber_own on (b)), from "
                         "export/py/ends.csv, and from the headline and the end bars in assets/comparison-data.js. "
-                        f"The RJKDC main estimate as shown, {m(rj_main, 3)}, is the RJKDC contract row "
-                        "npv_mc_nber_mean (the authors' seeded run), traced by the RJKDC chain"),
+                        f"The JR main estimate as shown, {m(rj_main, 3)}, is the JR contract row "
+                        "npv_mc_nber_mean (the authors' seeded run), traced by the JR chain"),
         "runs_for_a_stranger": ("AUDIT.md step 8, level 2: .github/workflows/comparison-ci.yml rebuilds "
                                 "the comparison in R and Python on a clean runner; no one-click (Binder) yet."),
         "environment": ENVIRONMENT,

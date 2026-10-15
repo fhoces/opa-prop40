@@ -92,7 +92,7 @@ switch_inputs <- function(sup, rauh, on) {
 
 # ---- the explorer's sliders ---------------------------------------------------------
 # The explorer has two panels. The BSZ panel starts every disputed input at the BSZ value and
-# moves it towards the RJKDC value; the RJKDC panel starts at the RJKDC value and moves towards
+# moves it towards the JR value; the JR panel starts at the JR value and moves towards
 # the BSZ value. Each input has five positions, 0 to 4: 0 is the panel's own analysis's value,
 # 4 the other analysis's. This is the one definition of what positions 1 to 3 mean; the
 # Python twin (slider_inputs in py/bridge.py) and the page (site/explorer/model.js) mirror it,
@@ -100,7 +100,7 @@ switch_inputs <- function(sup, rauh, on) {
 #   numeric inputs: linear in the parameter, (1 - p/4) * own + (p/4) * other, so 0 and 4 are
 #                   the two values exactly;
 #   the horizon:    the five settings 5, 10, 20, 50 years and perpetuity, in that order from
-#                   the BSZ analysis's 5 years (or in reverse from the RJKDC perpetuity);
+#                   the BSZ analysis's 5 years (or in reverse from the JR perpetuity);
 #   the revision:   two positions only (see slider_value()).
 SLIDER_STEPS <- 4
 SLIDER_HORIZONS <- c(5, 10, 20, 50, Inf)
@@ -139,7 +139,7 @@ slider_revision <- function(ends) {
 # One panel's value: output (b) of score_common() at the slider positions, plus the two
 # revision constants (at the sliders' horizon) when the panel's revision slider is on. The
 # revision slider has positions 0 and 1, 0 being the panel's own analysis: off for the BSZ
-# panel, on for the RJKDC panel.
+# panel, on for the JR panel.
 slider_value <- function(bi, panel = c("bsz", "rjkdc"), positions, rev_table) {
   panel <- match.arg(panel)
   from <- if (panel == "bsz") bi$sup else bi$rauh
@@ -184,8 +184,8 @@ slider_sample <- function(bi, rev_table, n = 300, seed = 20261014) {
 }
 
 # The value of every coalition: v[mask + 1] is score_common() with the players whose bit
-# is set in `mask` (bit i-1 = players[i]) at the RJKDC value and the rest at the BSZ value.
-# mask 0 is the all-BSZ setting, mask 2^n - 1 the all-RJKDC one. The explorer's switchboard
+# is set in `mask` (bit i-1 = players[i]) at the JR value and the rest at the BSZ value.
+# mask 0 is the all-BSZ setting, mask 2^n - 1 the all-JR one. The explorer's switchboard
 # reads these values (comparison/export/r/switchboard.csv).
 coalition_values <- function(sup, rauh, players, output = c("a", "b")) {
   output <- match.arg(output)

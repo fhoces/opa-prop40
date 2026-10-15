@@ -188,7 +188,7 @@ def slider_sample(sup, rauh, rev_table, n=300, seed=20261014):
 
 def coalition_values(sup, rauh, players, output):
     """v[mask]: score_common() with the players whose bit is set (bit i = players[i]) at the
-    RJKDC value and the rest at the BSZ value. The explorer's switchboard reads these."""
+    JR value and the rest at the BSZ value. The explorer's switchboard reads these."""
     n = len(players)
     v = []
     for mask in range(2 ** n):

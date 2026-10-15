@@ -142,7 +142,7 @@ def main():
                      f"= {main_est:.6f}"),
             method_ref=("The sum is this OPA's definition (comment at lines 52-57; the deck). BSZ "
                         "PDF p.27 gives the 5-year horizon; the 3% rate is the middle of the "
-                        "RJKDC report's 1.5-4.5% range. BSZ give no rate."),
+                        "JR report's 1.5-4.5% range. BSZ give no rate."),
             method_status="opa_definition",
             r=loc("bsz-analysis/R/site_exports.R", "site_pv_factor(), build_site_grid()", [52, 94]),
             py=loc("bsz-analysis/py/site_exports.py", "site_pv_factor(), build_site_grid()", [17, 97]),

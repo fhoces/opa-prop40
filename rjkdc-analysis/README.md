@@ -1,6 +1,6 @@
-# RJKDC analysis of California Proposition 40: Open Materials
+# JR analysis of California Proposition 40: Open Materials
 
-This folder is the RJKDC analysis of [opa-prop40](https://fhoces.github.io/opa-prop40/rjkdc-analysis/site/), an Open Policy Analysis of California's
+This folder is the JR analysis of [opa-prop40](https://fhoces.github.io/opa-prop40/rjkdc-analysis/site/), an Open Policy Analysis of California's
 2026 Proposition 40 (the Billionaire Tax Act). The [comparison overview](https://fhoces.github.io/opa-prop40/)
 sets this analysis next to the BSZ analysis. This folder reproduces the net present value estimate
 of Jaros and Rauh (NBER chapter c15504, Tax Policy and the Economy vol. 41, September 2026), the revision of the first version by Rauh, Jaros, Kearney, Doran and Cosso (SSRN 6340778, March 2026), and opens every input, every line of code and every number behind it. The aim is
@@ -27,7 +27,7 @@ and [`site/slides/`](site/slides/).
 full. The authors' papers and repository are not redistributed: see [how to run](#how-to-run) and
 `DATA-SOURCES.csv`.
 
-The [RJKDC overview page](https://fhoces.github.io/opa-prop40/rjkdc-analysis/site/) links all three. The [comparison overview](https://fhoces.github.io/opa-prop40/)
+The [JR overview page](https://fhoces.github.io/opa-prop40/rjkdc-analysis/site/) links all three. The [comparison overview](https://fhoces.github.io/opa-prop40/)
 compares this analysis with the BSZ analysis.
 
 This project follows the [Open Policy Analysis (OPA) framework](https://doi.org/10.1093/scipol/scaa067) (Hoces de la
@@ -38,7 +38,7 @@ each page against the Guidelines' nine steps.
 
 ## The reproduction
 
-Open Policy Analysis replication of the RJKDC revenue and net-present-value estimates
+Open Policy Analysis replication of the JR revenue and net-present-value estimates
 for California's Proposition 40 (Billionaire Tax Act):
 
 > Jaros, B., & Rauh, J. (2026, September). *The Net Present Value of the California Billionaire Tax Act*.

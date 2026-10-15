@@ -27,7 +27,7 @@ generated, how to read a page, and the project's style.
 3. Never retype a number that a page reads from a data file, and never change a number. If the
    package asks for a number to change, stop that item and report it.
 4. Style: plain sentences; no em dashes or en dashes in prose; "the BSZ analysis" and "the
-   RJKDC analysis", never "side"; the authors by their initials as the pages do; numbers and
+   JR analysis", never "side"; the authors by their initials as the pages do; numbers and
    dates as the pages print them; the spelling and the footnote and table markup the page
    already uses; no new frameworks, fonts or external scripts. Match the voice of the
    surrounding text: direct, specific, no hedging and no marketing.

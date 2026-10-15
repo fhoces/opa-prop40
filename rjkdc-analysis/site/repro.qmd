@@ -1,5 +1,5 @@
 ---
-title: "Prop 40, RJKDC analysis: the reproduction"
+title: "Prop 40, JR analysis: the reproduction"
 subtitle: "Jaros and Rauh (NBER, September 2026; first version by Rauh, Jaros, Kearney, Doran and Cosso, March 2026), reproduced step by step from the authors' own public code and data"
 date: today
 format:
@@ -23,7 +23,7 @@ execute:
 ---
 
 ::: {.site-nav}
-RJKDC analysis of California Proposition 40:
+JR analysis of California Proposition 40:
 [Open Output (the explorer)](explorer/) &middot; Open Analysis: Report (here) and
 [Slides](slides/slides.html) &middot;
 [Open Materials](https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis) &middot;
@@ -79,7 +79,7 @@ scroll <- function(x) cat("\n\n```{=html}\n<div class=\"table-scroll\">\n",
 ::: {.report-intro}
 ![](assets/opa/opa-details.png){.opa-figure}
 
-This report rebuilds, step by step, RJKDC's fiscal estimate of California's
+This report rebuilds, step by step, JR's fiscal estimate of California's
 Proposition 40 (the Billionaire Tax Act): a one-time 5% tax on the net worth of billionaires
 resident in California on 1 January 2026. The authors argue that the tax would collect far less
 than the [BSZ report](../../bsz-analysis/site/) estimates, and that billionaires who leave take their income tax with them for
@@ -775,7 +775,7 @@ scroll(kable(checks1, caption = "First version: internal identities"))
 ```
 
 ::: {.site-nav}
-RJKDC analysis of California Proposition 40:
+JR analysis of California Proposition 40:
 [Open Output (the explorer)](explorer/) &middot; Open Analysis: Report (here) and
 [Slides](slides/slides.html) &middot;
 [Open Materials](https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis) &middot;

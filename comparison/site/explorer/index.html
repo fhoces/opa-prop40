@@ -286,13 +286,13 @@
       <p class="standfirst">
         The <a href="../../../bsz-analysis/site/">BSZ analysis</a> (Boll, Saez and Zucman, August
         2026) finds that the one-time billionaire tax raises money for California, net of the
-        income tax it changes. The <a href="../../../rjkdc-analysis/site/">RJKDC analysis</a>
+        income tax it changes. The <a href="../../../rjkdc-analysis/site/">JR analysis</a>
         (Jaros and Rauh, NBER, September 2026; NBER is the National Bureau of Economic Research,
         which circulates working papers) finds that it loses money, because it counts the
         income tax lost to billionaires who leave for ever. This page puts both on one definition,
         the net fiscal effect, and lists the assumptions the two analyses disagree on in two
-        panels. The BSZ panel starts from the BSZ analysis's values and the RJKDC panel from the
-        RJKDC analysis's. Each slider moves one assumption part of the way, or all the way, from
+        panels. The BSZ panel starts from the BSZ analysis's values and the JR panel from the
+        JR analysis's. Each slider moves one assumption part of the way, or all the way, from
         one analysis's value to the other's. The bars between the panels show what one estimating
         function, used for both analyses, returns for each panel.
       </p>
@@ -306,7 +306,7 @@
           <span class="def">Net total: the wealth tax plus the income tax it changes, over 5 years, in today's dollars</span>
         </div>
         <div class="hl">
-          <span class="name">RJKDC main estimate<sup>1</sup></span>
+          <span class="name">JR main estimate<sup>1</sup></span>
           <span class="value" id="hl-rjkdc">−$38.9B</span>
           <span class="def">Net present value: the wealth tax minus the income tax lost for ever, in today's dollars, averaged over the authors' model runs (Jaros and Rauh, September 2026)</span>
         </div>
@@ -318,27 +318,27 @@
   <section class="board" id="panels" aria-labelledby="board-title">
     <h2 id="board-title">Two panels, one estimating function</h2>
     <p class="board-lead">Each panel lists every assumption the two analyses disagree on (this page
-    calls them the disputed inputs), plus the RJKDC analysis's September 2026 revision. The BSZ
-    panel on the left starts every slider at the BSZ analysis's value. The RJKDC panel on the
-    right starts every slider at the RJKDC analysis's value. A slider has five positions: its own
+    calls them the disputed inputs), plus the JR analysis's September 2026 revision. The BSZ
+    panel on the left starts every slider at the BSZ analysis's value. The JR panel on the
+    right starts every slider at the JR analysis's value. A slider has five positions: its own
     analysis's value, the other analysis's value, and three evenly spaced steps between them. For
     the loss horizon the five positions are 5, 10, 20 and 50 years, and a perpetuity. In both panels the BSZ value is
-    printed at a slider's left end and the RJKDC value at its right end. The filled dot is where
+    printed at a slider's left end and the JR value at its right end. The filled dot is where
     the slider is now, the hollow dot the other analysis's value, and the value under the filled
     dot is the one in use.</p>
     <p class="board-lead">The bars in the middle show what the common estimating function returns
     for each panel. One formula, used for both analyses, computes both: every disputed input is
     one of its arguments, and it returns the net fiscal effect. The two panels
     are independent. The left sliders move only the left bar, and the right sliders only the
-    right bar. Move every slider in the BSZ panel to its RJKDC end and the left bar meets the
+    right bar. Move every slider in the BSZ panel to its JR end and the left bar meets the
     right one; the reverse works too. Your browser does the arithmetic with a copy of the
     pipeline's function, and a test checks that the copy returns the pipeline's values (the
     names and files are under Notes and data).</p>
-    <p class="board-lead">In words, the two parts of the formula that are not obvious: the RJKDC
+    <p class="board-lead">In words, the two parts of the formula that are not obvious: the JR
     revenue is read as the midpoint of a range between a ceiling (the base left after the
     confirmed departures) and a floor (the base left after the elasticity response), so the
     permanent-rate and elasticity sliders act only through that floor; and the share of
-    billionaire income tax lost combines the BSZ movers' share with the RJKDC proportional
+    billionaire income tax lost combines the BSZ movers' share with the JR proportional
     loss. The <a href="../repro.html#the-two-ends">report</a> states the whole function line by
     line.</p>
 
@@ -350,7 +350,7 @@
           <p class="ph-src">The BSZ analysis's main estimate<sup>1</sup> (Boll, Saez and Zucman, August 2026)</p>
           <p class="ph-now">With these sliders <b id="now-bsz" aria-live="polite">$106.8B</b></p>
         </div>
-        <div class="sl-head" aria-hidden="true"><span>BSZ value</span><span>RJKDC value</span></div>
+        <div class="sl-head" aria-hidden="true"><span>BSZ value</span><span>JR value</span></div>
         <ul class="sl-list" aria-label="The BSZ panel's sliders">
         <li class="sl" data-id="noncitizens" title="DISPUTES row 8, data">
           <label for="bsz-noncitizens"><b>Non-citizens</b> <span class="sl-title">Non-US-citizen residents</span></label>
@@ -407,7 +407,7 @@
           <div class="sl-row"><span class="sl-end sl-lo">1/3</span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-asset_sales" min="0" max="4" step="1" value="0" data-panel="bsz" data-id="asset_sales"><output class="sl-cur" for="bsz-asset_sales">1/3</output></span><span class="sl-end sl-hi">0%</span></div>
           <span class="sl-note"></span>
         </li>
-        <li class="sl" data-id="revision" title="the RJKDC analysis's September 2026 revision">
+        <li class="sl" data-id="revision" title="the JR analysis's September 2026 revision">
           <label for="bsz-revision"><b>September 2026 revision</b> <span class="sl-title">Not an input of the common function: see the note under the panels</span></label>
           <div class="sl-row"><span class="sl-end sl-lo">not applied</span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0"></i><i style="--t:1"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-revision" min="0" max="1" step="1" value="0" data-panel="bsz" data-id="revision"><output class="sl-cur" for="bsz-revision">not applied</output></span><span class="sl-end sl-hi">applied</span></div>
           <span class="sl-note"></span>
@@ -419,20 +419,20 @@
 
       <figure class="mid" id="mid">
         <svg class="bars2" id="bars" viewBox="0 0 240 380" role="img" aria-labelledby="bars-title">
-          <title id="bars-title">The BSZ panel's estimate is $106.8B and the RJKDC panel's is −$39.0B.</title>
+          <title id="bars-title">The BSZ panel's estimate is $106.8B and the JR panel's is −$39.0B.</title>
         </svg>
-        <figcaption>Net fiscal effect, $ billions. Left bar: the BSZ panel. Right bar: the RJKDC panel.</figcaption>
+        <figcaption>Net fiscal effect, $ billions. Left bar: the BSZ panel. Right bar: the JR panel.</figcaption>
       </figure>
 
       <div class="panel rjkdc" id="panel-rjkdc" role="group" aria-labelledby="prj-h">
         <div class="panel-head">
-          <h3 id="prj-h"><span class="ph-name">RJKDC:</span> <span id="ph-rjkdc-main">−$38.9B</span></h3>
+          <h3 id="prj-h"><span class="ph-name">JR:</span> <span id="ph-rjkdc-main">−$38.9B</span></h3>
           <button type="button" class="reset" data-panel="rjkdc">Reset</button>
-          <p class="ph-src">The RJKDC analysis's main estimate<sup>1</sup> (Jaros and Rauh, NBER, September 2026)</p>
+          <p class="ph-src">The JR analysis's main estimate<sup>1</sup> (Jaros and Rauh, NBER, September 2026)</p>
           <p class="ph-now">With these sliders <b id="now-rjkdc" aria-live="polite">−$39.0B</b> <span class="small">(the model's exact average; the authors' published run gives −$38.9B)</span></p>
         </div>
-        <div class="sl-head" aria-hidden="true"><span>BSZ value</span><span>RJKDC value</span></div>
-        <ul class="sl-list" aria-label="The RJKDC panel's sliders">
+        <div class="sl-head" aria-hidden="true"><span>BSZ value</span><span>JR value</span></div>
+        <ul class="sl-list" aria-label="The JR panel's sliders">
         <li class="sl" data-id="noncitizens" title="DISPUTES row 8, data">
           <label for="rjkdc-noncitizens"><b>Non-citizens</b> <span class="sl-title">Non-US-citizen residents</span></label>
           <div class="sl-row"><span class="sl-end sl-lo">$150B</span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-noncitizens" min="0" max="4" step="1" value="0" data-panel="rjkdc" data-id="noncitizens" dir="rtl"><output class="sl-cur" for="rjkdc-noncitizens">$0B</output></span><span class="sl-end sl-hi">$0B</span></div>
@@ -488,13 +488,13 @@
           <div class="sl-row"><span class="sl-end sl-lo">1/3</span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-asset_sales" min="0" max="4" step="1" value="0" data-panel="rjkdc" data-id="asset_sales" dir="rtl"><output class="sl-cur" for="rjkdc-asset_sales">0%</output></span><span class="sl-end sl-hi">0%</span></div>
           <span class="sl-note"></span>
         </li>
-        <li class="sl" data-id="revision" title="the RJKDC analysis's September 2026 revision">
+        <li class="sl" data-id="revision" title="the JR analysis's September 2026 revision">
           <label for="rjkdc-revision"><b>September 2026 revision</b> <span class="sl-title">Not an input of the common function: see the note under the panels</span></label>
           <div class="sl-row"><span class="sl-end sl-lo">not applied</span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0"></i><i style="--t:1"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-revision" min="0" max="1" step="1" value="0" data-panel="rjkdc" data-id="revision" dir="rtl"><output class="sl-cur" for="rjkdc-revision">applied</output></span><span class="sl-end sl-hi">applied</span></div>
           <span class="sl-note"></span>
         </li>
         </ul>
-        <p class="panel-note">Every slider starts at the RJKDC value, so the panel starts at
+        <p class="panel-note">Every slider starts at the JR value, so the panel starts at
         −$38.98B, the exact expectation of the authors' Monte Carlo simulation. In a Monte
         Carlo simulation the authors draw each uncertain input at random many times, 100,000
         here, and average the result; the exact expectation is that average computed by formula
@@ -505,8 +505,8 @@
       </div>
     </div>
 
-    <p class="rev-note" id="rev-note"><b>The September 2026 revision slider.</b> The RJKDC values
-    on the other sliders are those of the RJKDC analysis's March 2026 version (Rauh, Jaros,
+    <p class="rev-note" id="rev-note"><b>The September 2026 revision slider.</b> The JR values
+    on the other sliders are those of the JR analysis's March 2026 version (Rauh, Jaros,
     Kearney, Doran and Cosso, SSRN, a preprint site), the version whose inputs the common
     function can take one by one. The September 2026 revision (Jaros and Rauh, NBER; its code
     and person-level file are in the same public repository) changes things the common
@@ -523,37 +523,37 @@
     analysis's is a net total over 5 years: the wealth tax (Table 5 row 1), plus extra income tax from assets sold to pay it, minus the present value of
     the income tax lost to billionaires who leave, counted for 5 years and discounted at 3%. BSZ's
     own headline is the wealth tax alone; the net total is this OPA's choice, explained on the
-    <a href="../../../bsz-analysis/site/">BSZ analysis overview</a>. The RJKDC analysis's is a
+    <a href="../../../bsz-analysis/site/">BSZ analysis overview</a>. The JR analysis's is a
     perpetuity net present value: the wealth tax minus the income tax lost for ever, averaged
     over the authors' Monte Carlo draws (Jaros and Rauh, NBER chapter c15504, Tax Policy and the Economy vol. 41, September 2026).</p>
     <p class="fn">The net fiscal effect puts both on one definition, and the two panels start at
     its two ends. The BSZ end is the same
-    <span id="fn-bsz-end">$106.8B</span>, with the 5 years discounted over the RJKDC
-    analysis's 1.5% to 4.5% rate range instead of at 3%. The RJKDC end is
+    <span id="fn-bsz-end">$106.8B</span>, with the 5 years discounted over the JR
+    analysis's 1.5% to 4.5% rate range instead of at 3%. The JR end is
     <span id="fn-rjkdc-end">−$39.0B</span>, the exact expectation of the same Monte Carlo,
     of which the authors' seeded run gives <span id="fn-rjkdc-main">−$38.9B</span>.</p>
     <p class="fn">Conventions. All amounts are nominal billions of dollars. The wealth tax is
     counted at its face value when assessed (the BSZ analysis values the base on 1 July 2026;
-    the RJKDC analysis's September version grows the base it used in March, the 2025 Forbes
+    the JR analysis's September version grows the base it used in March, the 2025 Forbes
     list, by 7% to 31 December 2026), undiscounted although the Act collects it
     in five yearly installments; both analyses do this, so the comparison follows them.
     Present values are at the assessment date. The 1.5% to 4.5% range is what the
-    RJKDC code draws; its code labels the draw (r − g), the rate less the growth of the lost
-    income tax, and its text r (the RJKDC analysis's <a href="../../../rjkdc-analysis/site/materials.html#mismatches">mismatch 3</a>).</p>
+    JR code draws; its code labels the draw (r − g), the rate less the growth of the lost
+    income tax, and its text r (the JR analysis's <a href="../../../rjkdc-analysis/site/materials.html#mismatches">mismatch 3</a>).</p>
   </section>
 
   <section class="bridge" id="the-bridge">
     <h2>The bridge: how much each assumption moves the estimate</h2>
     <p>The panels show one mix of slider positions at a time. The bridge below adds up the whole
-    move, from the BSZ end to the RJKDC end, as a waterfall chart. The BSZ end is
-    <b>$106.8B</b> and the RJKDC end <b>−$39.0B</b>, a gap of <b>$145.8B</b>. Each
+    move, from the BSZ end to the JR end, as a waterfall chart. The BSZ end is
+    <b>$106.8B</b> and the JR end <b>−$39.0B</b>, a gap of <b>$145.8B</b>. Each
     bar between the two ends is the effect of moving one assumption all the way from the BSZ
-    value to the RJKDC value. The last two bars belong to the revision slider: the model
+    value to the JR value. The last two bars belong to the revision slider: the model
     difference and the September 2026 revision. Together the bars add up to −$145.8B.</p>
     <p>The bridge uses the same formula. With every input at the BSZ value the function returns
-    the BSZ end exactly. With every input at the RJKDC value it returns the Monte Carlo
+    the BSZ end exactly. With every input at the JR value it returns the Monte Carlo
     expectation of the
-    RJKDC version those values come from (the note on the revision slider says which), up to a
+    JR version those values come from (the note on the revision slider says which), up to a
     $0.10B model difference. The bridge runs in the direction of Figure 2 of Hoopes
     (2026), the existing comparison
     <a href="../../../index.html#hoopes">described on the overview</a>.</p>
@@ -566,7 +566,7 @@
     alone. "One order" shows a single sequence instead, the one Hoopes reads in, where each
     bar is that input's effect at its place in the sequence. The bridge uses each analysis's own horizon (5 years for
     the BSZ analysis, a perpetuity
-    for the RJKDC analysis), so the horizon is one of its steps. This setting changes the bridge
+    for the JR analysis), so the horizon is one of its steps. This setting changes the bridge
     only, not the panels.</p>
 
     <div class="rack" id="controls-bridge">
@@ -585,7 +585,7 @@
     <div class="chart-box" id="chart-box">
       <div class="chart-scroll">
       <svg class="waterfall" id="waterfall" viewBox="0 0 900 420" role="img" aria-labelledby="wf-title wf-desc">
-        <title id="wf-title">Waterfall from the BSZ analysis to the RJKDC analysis</title>
+        <title id="wf-title">Waterfall from the BSZ analysis to the JR analysis</title>
         <desc id="wf-desc">Each bar is one step of the bridge; grey bars are the two analyses' estimates, light grey bars are model differences, blue bars raise and orange bars lower the estimate. The same numbers are in the table below.</desc>
       </svg>
       </div>
@@ -603,7 +603,7 @@
     disagree on; pp means percentage points; p. and pp. mean pages.</p>
     <div class="table-scroll">
     <table id="bridge-table">
-      <thead><tr><th>Step</th><th>DISPUTES row</th><th>Kind</th><th class="num">BSZ value</th><th class="num">RJKDC value</th><th class="num" id="bt-col">Step, $B</th><th class="num">Running total</th></tr></thead>
+      <thead><tr><th>Step</th><th>DISPUTES row</th><th>Kind</th><th class="num">BSZ value</th><th class="num">JR value</th><th class="num" id="bt-col">Step, $B</th><th class="num">Running total</th></tr></thead>
       <tbody>
     <tr data-id="bsz" class="total"><td>BSZ analysis (August 2026): Table 5 row 1 net of its own extra income tax and lost income tax (5 years)</td><td></td><td></td><td class="num"></td><td class="num"></td><td class="num"></td><td class="num">$106.8B</td></tr>
     <tr data-id="noncitizens"><td>Non-US-citizen residents</td><td>8</td><td><span class="kind">data</span></td><td class="num">$150B</td><td class="num">$0B</td><td class="num step-neg">−$5.5B</td><td class="num">$101.3B</td></tr>
@@ -617,9 +617,9 @@
     <tr data-id="income_level"><td>Billionaires' annual CA income tax</td><td>5</td><td><span class="kind">research vs guesswork</span></td><td class="num">$3.06B/yr</td><td class="num">$4.55B/yr</td><td class="num step-neg">−$8.0B</td><td class="num">$4.9B</td></tr>
     <tr data-id="horizon"><td>How long the income tax loss lasts</td><td>2</td><td><span class="kind">scenario</span></td><td class="num">5 years</td><td class="num">perpetuity</td><td class="num step-neg">−$27.1B</td><td class="num">−$22.1B</td></tr>
     <tr data-id="asset_sales"><td>Extra income tax from selling assets to pay</td><td>(not a row)</td><td><span class="kind">guesswork</span></td><td class="num">1/3</td><td class="num">0%</td><td class="num step-neg">−$2.7B</td><td class="num">−$24.8B</td></tr>
-    <tr data-id="rauh_resid" class="model"><td>Model difference: the RJKDC Monte Carlo that the input values come from uses the rounded literals 94.2 and 67.51 where the model uses the workbook's own 94.304 and 67.511</td><td></td><td></td><td class="num"></td><td class="num"></td><td class="num">+$0.1B</td><td class="num">−$24.7B</td></tr>
-    <tr data-id="nber_step"><td>September 2026 revision of the RJKDC analysis: litigation-survival weight, 7% grown base, departure fraction drawn separately (the steps before it reach the March 2026 version, whose inputs the common function takes one by one)</td><td></td><td></td><td class="num"></td><td class="num"></td><td class="num step-neg">−$14.3B</td><td class="num">−$39.0B</td></tr>
-    <tr data-id="nber" class="total"><td>RJKDC analysis (Jaros and Rauh, NBER, September 2026): mean NPV</td><td></td><td></td><td class="num"></td><td class="num"></td><td class="num"></td><td class="num">−$39.0B</td></tr>
+    <tr data-id="rauh_resid" class="model"><td>Model difference: the JR Monte Carlo that the input values come from uses the rounded literals 94.2 and 67.51 where the model uses the workbook's own 94.304 and 67.511</td><td></td><td></td><td class="num"></td><td class="num"></td><td class="num">+$0.1B</td><td class="num">−$24.7B</td></tr>
+    <tr data-id="nber_step"><td>September 2026 revision of the JR analysis: litigation-survival weight, 7% grown base, departure fraction drawn separately (the steps before it reach the March 2026 version, whose inputs the common function takes one by one)</td><td></td><td></td><td class="num"></td><td class="num"></td><td class="num step-neg">−$14.3B</td><td class="num">−$39.0B</td></tr>
+    <tr data-id="nber" class="total"><td>JR analysis (Jaros and Rauh, NBER, September 2026): mean NPV</td><td></td><td></td><td class="num"></td><td class="num"></td><td class="num"></td><td class="num">−$39.0B</td></tr>
       </tbody>
     </table>
     </div>
@@ -628,18 +628,18 @@
     input taxonomy: <b>data</b> (settled by observable facts), <b>research</b> (a published
     estimate), <b>guesswork</b> (asserted without data or a study behind it) and <b>scenario</b>
     (a choice of which world is estimated). "A vs B" reads the BSZ value's kind against the
-    RJKDC value's; "A + B" means one value rests on both; "guesswork on data" means a judgement
+    JR value's; "A + B" means one value rests on both; "guesswork on data" means a judgement
     applied to observed facts. The inputs and every page reference are in
     <a href="../../export/r/inputs.csv"><code>comparison/export/r/inputs.csv</code></a>.</p>
 
     <h3>What the Shapley and one-order steps say</h3>
     <ul class="findings">
-  <li>The net fiscal effect falls from $106.8B at the BSZ end to −$39.0B at the RJKDC end, a gap of $145.8B. The three largest Shapley steps are one-time tax estimated as a permanent 5 pp rate (−$33.6B, scenario + guesswork); billionaires already departed (−$33.2B, guesswork on data); how long the income tax loss lasts (−$27.1B, scenario).</li>
-  <li>The horizon is the single largest step read in Hoopes's order (−$66.5B, the last step, when the loss is already RJKDC-sized) but only −$27.1B averaged over orders, because a perpetuity multiplies whatever annual loss the other inputs imply. The annual loss runs from $0.15B (BSZ) to $2.05B (RJKDC, September 2026).</li>
-  <li>One step raises the estimate: the RJKDC analysis applies no avoidance or evasion allowance beyond migration (its semi-elasticity is the migration share of Brulhart et al.'s response), so dropping the BSZ analysis's 10% adds +$11.2B (Shapley). DISPUTES.md does not list this as a row.</li>
-  <li>Order matters most for estimating the one-time tax as a permanent 5-percentage-point rate: −$33.6B averaged over all orders and −$11.1B in the one order shown. The RJKDC revenue is uniform between a confirmed-departures ceiling and an elasticity floor, so the elasticity bites only on top of whatever departures are already in. The step is large when it is taken early and smaller when it comes after the departures.</li>
-  <li>Model differences are small and shown, not hidden: +$0.10B, from the rounded literals in the RJKDC Monte Carlo code (MISMATCHES #6 in rjkdc-analysis).</li>
-  <li>The September 2026 revision is the last step, −$14.3B. The RJKDC analysis prints its mean NPV as −$38.9B, from one seeded Monte Carlo run; the exact expectation of the same Monte Carlo, the bridge's RJKDC end, is −$38.98B.</li>
+  <li>The net fiscal effect falls from $106.8B at the BSZ end to −$39.0B at the JR end, a gap of $145.8B. The three largest Shapley steps are one-time tax estimated as a permanent 5 pp rate (−$33.6B, scenario + guesswork); billionaires already departed (−$33.2B, guesswork on data); how long the income tax loss lasts (−$27.1B, scenario).</li>
+  <li>The horizon is the single largest step read in Hoopes's order (−$66.5B, the last step, when the loss is already JR-sized) but only −$27.1B averaged over orders, because a perpetuity multiplies whatever annual loss the other inputs imply. The annual loss runs from $0.15B (BSZ) to $2.05B (JR, September 2026).</li>
+  <li>One step raises the estimate: the JR analysis applies no avoidance or evasion allowance beyond migration (its semi-elasticity is the migration share of Brulhart et al.'s response), so dropping the BSZ analysis's 10% adds +$11.2B (Shapley). DISPUTES.md does not list this as a row.</li>
+  <li>Order matters most for estimating the one-time tax as a permanent 5-percentage-point rate: −$33.6B averaged over all orders and −$11.1B in the one order shown. The JR revenue is uniform between a confirmed-departures ceiling and an elasticity floor, so the elasticity bites only on top of whatever departures are already in. The step is large when it is taken early and smaller when it comes after the departures.</li>
+  <li>Model differences are small and shown, not hidden: +$0.10B, from the rounded literals in the JR Monte Carlo code (MISMATCHES #6 in rjkdc-analysis).</li>
+  <li>The September 2026 revision is the last step, −$14.3B. The JR analysis prints its mean NPV as −$38.9B, from one seeded Monte Carlo run; the exact expectation of the same Monte Carlo, the bridge's JR end, is −$38.98B.</li>
     </ul>
   </section>
 
@@ -680,7 +680,7 @@
     Analysis of the two analyses of California Proposition 40 (the Billionaire Tax Act).
     <a href="../../../index.html">Comparison overview</a> &middot;
     <a href="../../../bsz-analysis/site/">BSZ analysis overview</a> &middot;
-    <a href="../../../rjkdc-analysis/site/">RJKDC analysis overview</a>.
+    <a href="../../../rjkdc-analysis/site/">JR analysis overview</a>.
     <p class="credit">OPA done by <a href="https://fhoces.github.io">Fernando Hoces de la Guardia</a>, using <a href="../../../index.html#how-ai-was-used">agentic coding tools</a></p>
   </footer>
 </div>
@@ -695,7 +695,7 @@
   // slider, the argument it moves and its two printed values. M.panelValue(D.sliders, panel,
   // positions) is slider_value() of comparison/R/model.R.
   // D.series.own.b[method] is the list of bars of one view of the bridge: the BSZ end, the
-  // steps, the model difference, the September 2026 revision and the RJKDC end.
+  // steps, the model difference, the September 2026 revision and the JR end.
   // D.headline holds the two main estimates.
   var D = window.__BRIDGE__, M = window.ComparisonModel;
   if (!D || !M) return;
@@ -791,12 +791,12 @@
       var txt = valueText(panel, id, p, r.x);
       var out = inp.parentNode.querySelector(".sl-cur");
       out.textContent = txt;
-      // under the thumb: the RJKDC panel's sliders run right to left
+      // under the thumb: the JR panel's sliders run right to left
       var frac = panel === "bsz" ? p / max : 1 - p / max;
       out.style.left = "calc(9px + " + frac + " * (100% - 18px))";
       out.style.transform = frac === 0 ? "translateX(-9px)" : frac === 1 ? "translateX(calc(-100% + 9px))" : "translateX(-50%)";
       inp.setAttribute("aria-valuetext", txt + ", position " + p + " of " + max +
-        " from the " + (panel === "bsz" ? "BSZ" : "RJKDC") + " value");
+        " from the " + (panel === "bsz" ? "BSZ" : "JR") + " value");
       // a slider with no effect at the other sliders' current positions says so
       var dead = true;
       for (var q = 0; q <= max && dead; q++) {
@@ -821,7 +821,7 @@
     var hi = Math.max(0, vb, vr), lo = Math.min(0, vb, vr);
     if (hi - lo < 1e-9) hi = lo + 1;
     var y = function (v) { return top + (hi - v) / (hi - lo) * (bottom - top); };
-    var bars = [["BSZ panel", vb, "bar-bsz", 68], ["RJKDC panel", vr, "bar-rjkdc", 172]];
+    var bars = [["BSZ panel", vb, "bar-bsz", 68], ["JR panel", vr, "bar-rjkdc", 172]];
     bars.forEach(function (b) {
       var x = b[3], bw = 64, y0 = y(0), y1 = y(b[1]);
       svg.appendChild(el("text", { x: x, y: 16, "text-anchor": "middle", "class": "name" }, b[0]));
@@ -833,7 +833,7 @@
     svg.appendChild(el("line", { x1: 20, x2: W - 20, y1: y(0), y2: y(0), "class": "zero" }));
     svg.appendChild(el("text", { x: W - 18, y: y(0) + 4, "text-anchor": "start" }, "0"));
     $("bars-title").textContent = "The BSZ panel's estimate is " + money1(vb) +
-      " and the RJKDC panel's is " + money1(vr) + " (net fiscal effect).";
+      " and the JR panel's is " + money1(vr) + " (net fiscal effect).";
     svg.setAttribute("data-bsz", vb.toFixed(9));
     svg.setAttribute("data-rjkdc", vr.toFixed(9));
   }

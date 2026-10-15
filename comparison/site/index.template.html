@@ -284,7 +284,7 @@
   Open Analysis: <a href="comparison/site/repro.html">Report</a> &middot;
   <a href="https://github.com/fhoces/opa-prop40/tree/main/comparison">Open Materials</a> &middot;
   <a href="bsz-analysis/site/">BSZ analysis overview</a> &middot;
-  <a href="rjkdc-analysis/site/">RJKDC analysis overview</a>
+  <a href="rjkdc-analysis/site/">JR analysis overview</a>
 </p>
 
 <header>
@@ -299,14 +299,14 @@
     35218, August 2026; NBER is the National Bureau of Economic Research, which circulates
     working papers) estimates about $100 billion of wealth tax ($104 billion in its Table 5,
     reproduced here as {{bsz_row1}}), and {{hl_bsz}} once the income tax the tax changes is added
-    in. The <a href="rjkdc-analysis/site/">RJKDC analysis</a> (Jaros and Rauh, NBER, September
+    in. The <a href="rjkdc-analysis/site/">JR analysis</a> (Jaros and Rauh, NBER, September
     2026, revising the March 2026 version by Rauh, Jaros, Kearney, Doran and Cosso) finds that
     the tax would collect about $30 billion by its own account but leave the state $38.9 billion
     poorer in today's dollars ({{nber_npv}}, a net present value), because billionaires who leave
     stop paying California income tax for ever. The three inputs that separate the two most:
     whether a one-time tax changes behaviour the way a permanent one would, how many
     billionaires had already left, and whether the lost income tax is counted for five years
-    (BSZ) or for ever (RJKDC). This page puts both on one common output and walks from one
+    (BSZ) or for ever (JR). This page puts both on one common output and walks from one
     number to the other, one disputed input at a time. Each analysis is also a full Open Policy
     Analysis of its own; this page adds a comparison layer on top, following the
     <a href="https://doi.org/10.1093/scipol/scaa067">Open Policy Analysis</a> (OPA) framework.
@@ -324,7 +324,7 @@
       <span class="def">Net total: the wealth tax plus the income tax it changes, over 5 years, in today's dollars</span>
     </div>
     <div class="hl">
-      <span class="name">RJKDC main estimate<sup>1</sup></span>
+      <span class="name">JR main estimate<sup>1</sup></span>
       <span class="value" id="hl-rjkdc">{{hl_rjkdc}}</span>
       <span class="def">Net present value: the wealth tax minus the income tax lost for ever, in today's dollars, averaged over the authors' model runs (Jaros and Rauh, September 2026)</span>
     </div>
@@ -335,15 +335,15 @@
     prints {{bsz_printed}}, Table 5 row 1), plus extra income tax from assets sold to pay it, minus
     the present value of the income tax lost to billionaires who leave, counted for 5 years.
     BSZ's own headline is the wealth tax alone; the net total is this OPA's choice, explained on
-    the <a href="bsz-analysis/site/">BSZ analysis overview</a>. The RJKDC analysis's is a
+    the <a href="bsz-analysis/site/">BSZ analysis overview</a>. The JR analysis's is a
     perpetuity net present value: the wealth tax minus the income tax lost for ever, averaged
     over the authors' Monte Carlo draws (the authors draw each uncertain input at random
     100,000 times and average the result; Jaros and Rauh, NBER chapter c15504, Tax Policy and the Economy vol. 41, September 2026). The net
     fiscal effect, one shared definition explained under "A common output definition" below,
     puts both on the same footing, and the <a href="comparison/site/explorer/">explorer</a>
     walks from one to the other. On it the BSZ end is the same {{bsz_end_b}}, with the 5 years
-    discounted over the RJKDC analysis's {{r_min}} to {{r_max}} rate range instead of at 3% (a
-    discount rate turns future dollars into today's dollars; both give {{bsz_end_b}}). The RJKDC
+    discounted over the JR analysis's {{r_min}} to {{r_max}} rate range instead of at 3% (a
+    discount rate turns future dollars into today's dollars; both give {{bsz_end_b}}). The JR
     end is {{nber_end_b}}, the exact expectation of the same Monte Carlo, its average computed by
     formula; the authors' seeded run (one run of the random draws started from a fixed seed
     number, so it gives the same draws every time) gives {{hl_rjkdc}}.</p>
@@ -362,7 +362,7 @@
         <h3>Explore the main estimate and its assumptions &rarr;</h3>
         <p>The explorer: the two main estimates on one definition, the net fiscal effect, in
         two panels of sliders, one per disputed input, and the bridge between them, a waterfall
-        from the BSZ analysis to the RJKDC analysis with one bar per input. Its one setting
+        from the BSZ analysis to the JR analysis with one bar per input. Its one setting
         sizes the bars, averaged over every order or in one order; the horizon is a slider in
         each panel. Gross revenue, output (a), is in the report.</p>
       </div>
@@ -412,7 +412,7 @@
   <summary><h2>A common output definition</h2> <span class="teaser">one definition both numbers can be put on, and the conventions behind it</span></summary>
   <div class="fold-body">
 <p>The two headlines answer different questions. The BSZ analysis (Boll, Saez and Zucman)
-reports how much the one-time tax collects. The RJKDC analysis reports a net present value that
+reports how much the one-time tax collects. The JR analysis reports a net present value that
 subtracts income tax lost for ever. Before any step of a bridge means anything, both are put on
 the same two outputs. The explorer opens on (b), the net fiscal effect, because it is the
 question both main estimates answer; (a) is the secondary output, shown in the report.</p>
@@ -427,18 +427,18 @@ number of years (the two analyses disagree on how many).</p>
 
 <p>The horizon H is itself disputed (row 2 of the project's list of 8 disputed inputs,
 <a href="comparison/DISPUTES.md">comparison/DISPUTES.md</a>). The BSZ analysis counts the
-losses for about the 5 payment years, the RJKDC analysis for ever. It is therefore a slider in
+losses for about the 5 payment years, the JR analysis for ever. It is therefore a slider in
 each panel of the <a href="comparison/site/explorer/">explorer</a>, not a fixed choice; the
 bridge uses each analysis's own horizon and shows the switch as one of its steps. Discounting
-uses the RJKDC analysis's own range for the discount rate, r uniform between {{r_min}} and
+uses the JR analysis's own range for the discount rate, r uniform between {{r_min}} and
 {{r_max}}. The BSZ analysis takes no position on r.</p>
 <p><strong>Conventions.</strong> All amounts are nominal billions of dollars. The wealth tax is
 counted at its face value when assessed (the BSZ analysis values the base on 1 July 2026; the
-RJKDC analysis's September version grows the base it used in March, the 2025 Forbes list, by 7%
+JR analysis's September version grows the base it used in March, the 2025 Forbes list, by 7%
 to 31 December 2026), undiscounted although the Act collects it in five yearly installments;
 both analyses do this, so the comparison follows them. Present values are at the assessment
-date. The {{r_min}} to {{r_max}} range is what the RJKDC code draws; its code labels the draw
-(r &minus; g), the rate less the growth of the lost income tax, and its text r (the RJKDC
+date. The {{r_min}} to {{r_max}} range is what the JR code draws; its code labels the draw
+(r &minus; g), the rate less the growth of the lost income tax, and its text r (the JR
 analysis's <a href="rjkdc-analysis/site/materials.html#mismatches">mismatch 3</a>).</p>
 <p><strong>What this OPA does not estimate.</strong> Both analyses, and so this OPA, take the
 measure as written (full text in <a href="docs/initiative/README.md">docs/initiative/</a>): the
@@ -447,7 +447,7 @@ five yearly installments, with the wealth tax counted at its face value, not dis
 five years. Neither analysis estimates the day-to-day movement of the Forbes base (GGSS, the
 Galle, Gamage, Saez and Shanske expert report written in support of the measure, note a range of
 $87 billion to $107 billion between January and July 2026, p.4 fn.8). The BSZ analysis alone
-adds the income tax from assets sold to pay the tax; the RJKDC analysis alone weights the revenue
+adds the income tax from assets sold to pay the tax; the JR analysis alone weights the revenue
 by the chance the Act survives in court. Nothing is added to either here.</p>
   </div>
 </details>
@@ -465,7 +465,7 @@ by the chance the Act survives in court. Nothing is added to either here.</p>
     <div class="card-icon-box" aria-hidden="true"><img src="assets/opa/opa-assumptions-solo.png" alt=""></div>
   </a>
   <a class="subopa-card" href="rjkdc-analysis/site/">
-    <span class="kicker">RJKDC analysis: a net present value estimate</span>
+    <span class="kicker">JR analysis: a net present value estimate</span>
     <h3>Jaros and Rauh, NBER c15504 (Sep 2026) &rarr;</h3>
     <p>Person-by-person base, observed departures, literature elasticities, lost income tax.</p>
     <span class="headline">Main estimate, mean NPV: {{nber_npv}}</span>
@@ -484,7 +484,7 @@ by the chance the Act survives in court. Nothing is added to either here.</p>
 <p class="small">(b) for the BSZ analysis is not printed by the paper. It is Table 5 row 1's own
 three columns combined here: the {{bsz_row1}} revenue, plus {{x_sup}} of extra income tax from asset
 sales, minus {{pv_sup}}, the present value of five years of its {{loss_sup}} annual income tax loss.
-For the RJKDC analysis both outputs are the exact expectations of the authors' Monte Carlo,
+For the JR analysis both outputs are the exact expectations of the authors' Monte Carlo,
 whose revenue is drawn uniformly between zero and {{nber_wt_max}}.</p>
   </div>
 </details>
@@ -496,7 +496,7 @@ whose revenue is drawn uniformly between zero and {{nber_wt_max}}.</p>
 Taxation" (SSRN 6428578, 7 pages), is the one published comparison of the two estimates. It
 compares their earlier versions: the February 2026 text of the GGSS expert report (Galle,
 Gamage, Saez and Shanske, written in support of the measure), on which the BSZ analysis builds,
-and the March 2026 version of the RJKDC analysis (Rauh et al., SSRN, a preprint site). His Figure 2 (p.6) is a waterfall from the "Galle estimate" to "Rauh net fiscal effect". It prints no
+and the March 2026 version of the JR analysis (Rauh et al., SSRN, a preprint site). His Figure 2 (p.6) is a waterfall from the "Galle estimate" to "Rauh net fiscal effect". It prints no
 values, so the numbers in its column below are <b>read off the chart</b>: bar edges measured in a
 300 dpi raster against the y-axis ticks (tick fit within {{hoopes_fit}}; reading uncertainty about
 {{hoopes_unc}} per bar; script <code>comparison/tools/digitize_hoopes_fig2.py</code>). Beside them
@@ -550,23 +550,23 @@ residents); others are not.</p>
   <div class="fold-body">
 <p>One bridge step per row of <a href="comparison/DISPUTES.md">comparison/DISPUTES.md</a>, where
 every page reference was checked against the PDFs; row 7 is split into its two parts, and two
-steps cover inputs the crosswalk does not list as rows. The RJKDC values are those of its March
+steps cover inputs the crosswalk does not list as rows. The JR values are those of its March
 2026 version (Rauh, Jaros, Kearney, Doran and Cosso, SSRN), the version whose inputs the common
 function can take one by one; the September 2026 revision (Jaros and Rauh, NBER; its code and
 person-level file are in the same public repository) is the bridge's last step.</p>
 <div class="table-scroll">
 <table>
-  <thead><tr><th>Row</th><th>Dispute</th><th>Kind</th><th>BSZ value and source</th><th>RJKDC value and source</th></tr></thead>
+  <thead><tr><th>Row</th><th>Dispute</th><th>Kind</th><th>BSZ value and source</th><th>JR value and source</th></tr></thead>
   <tbody>
 {{disputes_rows}}
   </tbody>
 </table>
 </div>
 <p class="small">Row 3: the {{dconf_page}} already departed is 1 &minus; {{conf6_value}} / {{baseline_value}}, from
-the RJKDC workbook values. DISPUTES row 3 and the RJKDC f dial show {{dconf_printed}}: they divide by the
+the JR workbook values. DISPUTES row 3 and the JR f dial show {{dconf_printed}}: they divide by the
 rounded {{baseline_printed}} rather than {{baseline_value}}.</p>
 <p class="small">Kinds follow the OPA input taxonomy, defined on the explorer: data, research, guesswork,
-scenario. "A vs B" reads the BSZ value's kind against the RJKDC value's; "A + B" means one value
+scenario. "A vs B" reads the BSZ value's kind against the JR value's; "A + B" means one value
 rests on both; "guesswork on data" means a judgement applied to observed facts.</p>
   </div>
 </details>
@@ -578,22 +578,22 @@ rests on both; "guesswork on data" means a judgement applied to observed facts.<
 context).</b> Its ballot analysis gives no point estimate:
 the tax "probably would collect tens of billions of dollars", and responses "probably would reduce
 state revenues by less than $1 billion per year" (LAO p.2). It enters here only as context.
-<b>Walczak / California Tax Foundation (22 Apr 2026)</b> points the same way as the RJKDC
+<b>Walczak / California Tax Foundation (22 Apr 2026)</b> points the same way as the JR
 analysis and is credited as an alternative dial on the annual loss, never merged into its
 headline: his {{walczak_range}} per year includes spillovers to sales and other taxes (p.1). On one scale,
 where E[&middot;] is an average over the Monte Carlo draws, WT the one-time wealth tax revenue, f
 the share of the income tax base that leaves and C the annual income tax it pays:</p>
 <div class="table-scroll">
 <table>
-  <thead><tr><th>Annual income tax loss</th><th>Analysis</th><th class="num">Per year</th><th class="num">PV, 5 years</th><th class="num">PV, perpetuity</th><th class="num">Net of the RJKDC analysis's expected revenue, {{nber_a}} (this OPA's arithmetic)</th></tr></thead>
+  <thead><tr><th>Annual income tax loss</th><th>Analysis</th><th class="num">Per year</th><th class="num">PV, 5 years</th><th class="num">PV, perpetuity</th><th class="num">Net of the JR analysis's expected revenue, {{nber_a}} (this OPA's arithmetic)</th></tr></thead>
   <tbody>
 {{loss_rows}}
   </tbody>
 </table>
 </div>
 <p class="small">Present values use the same r range as the bridge. The last column puts each
-loss against the RJKDC analysis's expected revenue (September 2026), {{nber_a}}, in perpetuity.
-The Walczak rows are not an RJKDC number: they are credited to Walczak and set against the RJKDC
+loss against the JR analysis's expected revenue (September 2026), {{nber_a}}, in perpetuity.
+The Walczak rows are not an JR number: they are credited to Walczak and set against the JR
 analysis's revenue for scale, as the other rows are.</p>
   </div>
 </details>
@@ -603,7 +603,7 @@ analysis's revenue for scale, as the other rows are.</p>
   <div class="fold-body">
 <ul>
   <li><a href="bsz-analysis/site/">BSZ analysis</a>: Boll, Saez and Zucman (August 2026) reproduced from the authors' workbook, with an explorer over Table 5's guesswork inputs, a report, slides and materials.</li>
-  <li><a href="rjkdc-analysis/site/">RJKDC analysis</a>: Jaros and Rauh (NBER, September 2026) reproduced from the authors' public code.</li>
+  <li><a href="rjkdc-analysis/site/">JR analysis</a>: Jaros and Rauh (NBER, September 2026) reproduced from the authors' public code.</li>
   <li>The <a href="comparison/site/explorer/">comparison explorer</a>, <a href="comparison/DISPUTES.md">the disputes crosswalk</a> and the reconciliation's code, tests and exports in <code>comparison/</code>, with a guide on the <a href="comparison/site/materials.html">materials page</a>.</li>
 </ul>
   </div>
@@ -665,7 +665,7 @@ original authors have not reviewed it.</p>
   Part of <a href="https://github.com/fhoces/opa-prop40">opa-prop40</a>, an Open Policy
   Analysis of the two analyses of California Proposition 40 (the Billionaire Tax Act).
   <a href="bsz-analysis/site/">BSZ analysis overview</a> &middot;
-  <a href="rjkdc-analysis/site/">RJKDC analysis overview</a>.
+  <a href="rjkdc-analysis/site/">JR analysis overview</a>.
   <p class="credit">OPA done by <a href="https://fhoces.github.io">Fernando Hoces de la Guardia</a>, using <a href="#how-ai-was-used">agentic coding tools</a></p>
 </footer>
 

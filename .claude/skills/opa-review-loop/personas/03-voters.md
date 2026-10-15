@@ -11,7 +11,7 @@ understanding, not whether its economics are right.
 ## The two readers
 
 **The 10-minute reader.** Open each of the three overviews (the site root, the BSZ overview,
-the RJKDC overview) on a phone and on a laptop: take the screenshots at width 390 and 1280
+the JR overview) on a phone and on a laptop: take the screenshots at width 390 and 1280
 with the screenshot tool, look at them with the Read tool, and read only what is on the first
 screen and the first paragraph or two below it. Then write down, honestly, before reading
 anything else:
@@ -70,7 +70,7 @@ Commit: <sha>. Date: <date>. Pages read: <list>. Screenshots taken: yes/no.
 - Two sentences: what the site told you, and whether you would come back.
 
 ## What I understood in ten minutes
-One paragraph per overview (root, BSZ, RJKDC): what you took away, in your own words, and
+One paragraph per overview (root, BSZ, JR): what you took away, in your own words, and
 what you got wrong (check after, against the deep dive).
 
 ## Where the deep dive lost me
@@ -80,7 +80,7 @@ A list, in reading order: page, the sentence, why, the sentence that would have 
 - ...
 
 ## Findings
-### V-01. <short title>  [blocking|major|minor|suggestion] [BSZ|RJKDC|comparison|all]
+### V-01. <short title>  [blocking|major|minor|suggestion] [BSZ|JR|comparison|all]
 - Where: `path` lines a-b (or the section heading), and the screen (phone/laptop) if it matters
 - Now: "<the text as it is>"
 - Problem: <what a reader like you experiences>

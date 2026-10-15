@@ -67,7 +67,7 @@ For the bridge, the Rauh anchor to use (an anchor: the published number an end o
 is checked against) is the Monte Carlo mean (−$24.7B). Table 9's central cell
 (−$126.1B) is a separate, more pessimistic reading.
 
-## The second RJKDC estimate (NBER, Sept 2026)
+## The second JR estimate (NBER, Sept 2026)
 
 Jaros and Rauh, NBER chapter c15504 (Tax Policy and the Economy, vol. 41), cover dated 22 Sept 2026: about $30B in revenue (range $28-36B),
 mean NPV −$38.9B, 85% of draws negative (abstract, PDF p.1; restated p.3). The simulation reproduces

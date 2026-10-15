@@ -2,7 +2,7 @@
 
 This folder is the BSZ analysis of [opa-prop40](https://fhoces.github.io/opa-prop40/bsz-analysis/site/), an Open Policy Analysis of California's
 2026 Proposition 40 (the Billionaire Tax Act). The [comparison overview](https://fhoces.github.io/opa-prop40/)
-sets this analysis next to the RJKDC analysis. This folder reproduces the revenue estimate of Boll, Saez and
+sets this analysis next to the JR analysis. This folder reproduces the revenue estimate of Boll, Saez and
 Zucman (2026) and opens every input, every line of code and every number behind it. The aim is a
 transparent and reproducible analysis that anyone can check, and a shared basis for discussing the
 policy.
@@ -28,7 +28,7 @@ full. The authors' paper and workbook are not redistributed: see
 [what is and is not in the repo](#what-is-and-is-not-in-the-repo).
 
 The [BSZ overview page](https://fhoces.github.io/opa-prop40/bsz-analysis/site/) links all three. The [comparison overview](https://fhoces.github.io/opa-prop40/)
-compares this analysis with the RJKDC analysis.
+compares this analysis with the JR analysis.
 
 This project follows the [Open Policy Analysis (OPA) framework](https://doi.org/10.1093/scipol/scaa067) (Hoces de la
 Guardia, Grant and Miguel, 2021). [`AUDIT.md`](../AUDIT.md) scores

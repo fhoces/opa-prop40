@@ -113,6 +113,9 @@ credited to us.
    construction, labelled so); BSZ's own $104B stays as the benchmark row.
 7. 2026-10-14: the RJKDC main estimate is the NBER mean NPV (Jaros and Rauh, September 2026,
    -$38.9B); the SSRN estimate stays as a scenario and as the bridge's anchor.
+8. 2026-10-14: in prose the analysis is called JR (Jaros and Rauh, the authors of the version
+   reproduced); the five authors of the March 2026 version are named where it is cited. The
+   folder `rjkdc-analysis/`, URLs, CSV keys and code identifiers keep `rjkdc`.
 
 **Same format as the previous OPA (user requirement 2026-09-23).** Every public surface (overview
 page, interactive explorer, Quarto reproduction report, teaching deck, reproduction-materials links,

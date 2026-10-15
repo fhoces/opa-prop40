@@ -90,7 +90,7 @@ Commit: <sha>. Date: <date>. Pages read: <list>.
 |---|---|---|---|
 
 ## Findings
-### E-01. <short title>  [blocking|major|minor|suggestion] [BSZ|RJKDC|comparison|all]
+### E-01. <short title>  [blocking|major|minor|suggestion] [BSZ|JR|comparison|all]
 - Where: `path` lines a-b (or the section heading)
 - Now: "<the text as it is>"
 - Problem: <what is wrong or missing, and how you know>

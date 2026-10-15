@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Seed review/rjkdc.json: the chain of code behind the RJKDC main estimate (-$38.9B).
+"""Seed review/rjkdc.json: the chain of code behind the JR main estimate (-$38.9B).
 
 The main estimate is the NBER September 2026 mean net present value (Jaros and Rauh, NBER
 chapter c15504, PDF p.1 and p.35), printed -38.9; the pipeline's seeded rerun gives -38.886.
@@ -293,7 +293,7 @@ def main():
     # code has been run (see ENVIRONMENT below). Keys: r, py, or js (browser console).
     # Every snippet below was run end to end from the repo root on the commit this seeds.
     INTERACTIVE = {
-        1: dict(js="""// In the browser: open the RJKDC overview (or the explorer), then paste this in the developer console.
+        1: dict(js="""// In the browser: open the JR overview (or the explorer), then paste this in the developer console.
 G = window.__GRID__
 G.preferred.find(p => p.key === "nber")          // printed_npv -38.9, mc_npv -38.886
 document.querySelector(".headline .value").textContent   // the number on the page
@@ -382,7 +382,7 @@ print("".join(open(rauh_path("NBER_2026_litigation_weighted", "NPV_data", "NPV_d
         L["interactive"] = INTERACTIVE[L["n"]]
 
     ENVIRONMENT = dict(
-        r=r"""# Environment for the RJKDC chain, R. In Positron open the opa-prop40 folder, then run this once.
+        r=r"""# Environment for the JR chain, R. In Positron open the opa-prop40 folder, then run this once.
 # Needs the pipeline run once (Rscript -e 'targets::tar_make()' in rjkdc-analysis/) and the authors'
 # repository (github.com/bjaros20/wealth_tax at 25e84dd) where RAUH_REPO_DIR points (README, "How to run").
 if (basename(getwd()) != "rjkdc-analysis") setwd("rjkdc-analysis")
@@ -395,7 +395,7 @@ grid <- tar_read(site_grid)                                       # layer 6: the
 hl   <- tar_read(site_headlines)                                  # layer 4: the headline table
 cat("ready:", nrow(grid), "grid rows; NBER mean as printed:",
     hl$printed[hl$version == "nber" & hl$quantity == "mc_mean_npv"], "\n")""",
-        py=r"""# Environment for the RJKDC chain, Python. In Positron open the opa-prop40 folder, then run this once.
+        py=r"""# Environment for the JR chain, Python. In Positron open the opa-prop40 folder, then run this once.
 # Needs the authors' repository where RAUH_REPO_DIR points (README, "How to run"); nothing precomputed.
 import os, sys
 if os.path.basename(os.getcwd()) != "rjkdc-analysis": os.chdir("rjkdc-analysis")
@@ -423,7 +423,7 @@ print("ready: authors' repository available:", rauh_available())""",
 
     chain = {
         "opa": "rjkdc",
-        "title": "RJKDC: the main estimate",
+        "title": "JR: the main estimate",
         "headline": {
             "label": "Main estimate, NBER September 2026",
             "value": f"−${abs(nber['printed_npv']):.1f}B",

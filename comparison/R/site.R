@@ -42,12 +42,12 @@ short_labels <- c(
   one_time_as_permanent = "Permanent-rate", elasticity_size = "Elasticity size",
   income_proportional = "Proportional loss", income_level = "Income tax level",
   horizon = "Horizon", asset_sales = "Asset sales", rauh_resid = "Model diff.",
-  nber_step = "Sep 2026 revision", nber = "RJKDC Sep 2026")
+  nber_step = "Sep 2026 revision", nber = "JR Sep 2026")
 
 # The bars of every view of the bridge, in display order. The page shows each analysis in
 # its latest version only: the first bar is the BSZ analysis (August 2026, Table 5 row 1),
-# the last the RJKDC analysis (Jaros and Rauh, NBER, September 2026). Between them: one
-# step per disputed input (BSZ value to the RJKDC value of its March 2026 version, the one
+# the last the JR analysis (Jaros and Rauh, NBER, September 2026). Between them: one
+# step per disputed input (BSZ value to the JR value of its March 2026 version, the one
 # whose inputs the common function takes one by one), the model difference, and the
 # September 2026 revision. The
 # export tables still carry the GGSS and March 2026 totals; the page shows neither as an end.
@@ -81,11 +81,11 @@ build_series <- function(ex, resid_label) {
         }
         add("rauh_resid", "model", e$rauh_residual, resid_label, "model difference")
         add("nber_step", "step", e$nber_step,
-            "September 2026 revision of the RJKDC analysis: litigation-survival weight, 7% grown base, departure fraction drawn separately (the steps before it reach the March 2026 version, whose inputs the common function takes one by one)",
+            "September 2026 revision of the JR analysis: litigation-survival weight, 7% grown base, departure fraction drawn separately (the steps before it reach the March 2026 version, whose inputs the common function takes one by one)",
             "guesswork (litigation risk) + data")
         add("nber", "total", e$nber_own,
-            if (o == "a") "RJKDC analysis (Jaros and Rauh, NBER, September 2026): expected revenue in the Monte Carlo"
-            else paste0("RJKDC analysis (Jaros and Rauh, NBER, September 2026): mean NPV", Hlab))
+            if (o == "a") "JR analysis (Jaros and Rauh, NBER, September 2026): expected revenue in the Monte Carlo"
+            else paste0("JR analysis (Jaros and Rauh, NBER, September 2026): mean NPV", Hlab))
         out[[st]][[o]][[m]] <- L
       }
     }
@@ -129,9 +129,9 @@ render_site <- function(root = comparison_root(),
 
   # ---- the headline: the two analyses' main estimates, next to each other ----
   # The BSZ main estimate is the net total over 5 years, which is also the BSZ end of the
-  # bridge under the common output (b). The RJKDC main estimate is the NBER mean NPV as the
-  # RJKDC pipeline reproduces the authors' seeded Monte Carlo (its contract row
-  # npv_mc_nber_mean); the bridge's RJKDC end is the exact expectation of the same Monte
+  # bridge under the common output (b). The JR main estimate is the NBER mean NPV as the
+  # JR pipeline reproduces the authors' seeded Monte Carlo (its contract row
+  # npv_mc_nber_mean); the bridge's JR end is the exact expectation of the same Monte
   # Carlo. The explorer reads the same values from assets/comparison-data.js.
   rj_main <- ep$contract_value[ep$endpoint_id == "rauh_nber_npv"]
   tok$hl_bsz <- money(eb$bsz_model, 1)
@@ -159,14 +159,14 @@ render_site <- function(root = comparison_root(),
     hr("BSZ analysis: Boll, Saez and Zucman, NBER WP 35218, Table 5 row 1 (Aug 2026)",
        money(eb$bsz_model, 1), money(ea$bsz_model, 1),
        sprintf("%s revenue (PDF p.39); no net figure", money(ep$printed_value[ep$endpoint_id == "bsz_tab5_row1"], 0))),
-    hr("RJKDC analysis: Jaros and Rauh, NBER c15504 (Sep 2026)", money(eb$nber_own, 2), money(ea$nber_own, 1),
+    hr("JR analysis: Jaros and Rauh, NBER c15504 (Sep 2026)", money(eb$nber_own, 2), money(ea$nber_own, 1),
        sprintf("mean NPV %s; revenue 'approximately %s' (p.1)", money(ep$printed_value[ep$endpoint_id == "rauh_nber_npv"], 1),
                money(as.numeric(d$value[d$input_id == "nber_headline_revenue"]), 0)))
   ), collapse = "\n")
 
   # ---- bridge table (static default: (b), Shapley, own horizon) ----
   resid_label <- sprintf(
-    "Model difference: the RJKDC Monte Carlo that the input values come from uses the rounded literals %s and %s where the model uses the workbook's own %s and %s",
+    "Model difference: the JR Monte Carlo that the input values come from uses the rounded literals %s and %s where the model uses the workbook's own %s and %s",
     opp("revenue_baseline"), opp("revenue_confirmed6"),
     formatC(pick(k$rjkdc$outputs, "revenue_baseline"), format = "f", digits = 3),
     formatC(pick(k$rjkdc$outputs, "revenue_confirmed6"), format = "f", digits = 3))
@@ -198,9 +198,9 @@ render_site <- function(root = comparison_root(),
 
   # ---- the two slider panels: one slider per disputed input, in the bridge's order, plus
   # the September 2026 revision. In both panels a slider prints the BSZ value at its left end
-  # and the RJKDC value at its right end, in the wording of the disputed-inputs table
+  # and the JR value at its right end, in the wording of the disputed-inputs table
   # (fmt_input). The value of a slider is its position as slider_inputs() (model.R) defines
-  # it, 0 = the panel's own analysis: the BSZ panel's sliders run left to right, the RJKDC
+  # it, 0 = the panel's own analysis: the BSZ panel's sliders run left to right, the JR
   # panel's right to left (dir="rtl"). The page script reads the rest from D.sliders.
   dis0 <- inp[match(steps$step_id, inp$step_id), ]
   hz_fin <- SLIDER_HORIZONS[is.finite(SLIDER_HORIZONS)]
@@ -232,7 +232,7 @@ render_site <- function(root = comparison_root(),
                SLIDER_STEPS)
   }, ""), slider_row(panel, "revision", "September 2026 revision",
                      "Not an input of the common function: see the note under the panels",
-                     "the RJKDC analysis's September 2026 revision", "not applied", "applied", 1)),
+                     "the JR analysis's September 2026 revision", "not applied", "applied", 1)),
     collapse = "\n")
   tok$sliders_bsz <- slider_rows("bsz")
   tok$sliders_rjkdc <- slider_rows("rjkdc")
@@ -250,19 +250,19 @@ render_site <- function(root = comparison_root(),
   top3 <- function(df) { t <- df[order(df$shapley), ][1:3, ]
     paste(sprintf("%s (%s, %s)", tolower(t$title), money(t$shapley, 1, TRUE), t$kind), collapse = "; ") }
   tok$bridge_findings <- paste(sprintf("  <li>%s</li>", c(
-    sprintf("The net fiscal effect falls from %s at the BSZ end to %s at the RJKDC end, a gap of %s. The three largest Shapley steps are %s.",
+    sprintf("The net fiscal effect falls from %s at the BSZ end to %s at the JR end, a gap of %s. The three largest Shapley steps are %s.",
             money(eb$bsz_model, 1), money(eb$nber_own, 1), money(gap_b, 1), top3(bb)),
-    sprintf("The horizon is the single largest step read in Hoopes's order (%s, the last step, when the loss is already RJKDC-sized) but only %s averaged over orders, because a perpetuity multiplies whatever annual loss the other inputs imply. The annual loss runs from %s (BSZ) to %s (RJKDC, September 2026).",
+    sprintf("The horizon is the single largest step read in Hoopes's order (%s, the last step, when the loss is already JR-sized) but only %s averaged over orders, because a perpetuity multiplies whatever annual loss the other inputs imply. The annual loss runs from %s (BSZ) to %s (JR, September 2026).",
             money(v(bb, "horizon", "sequential"), 1, TRUE), money(v(bb, "horizon"), 1, TRUE),
             money(ex$loss$annual_loss[ex$loss$source_id == "bsz_row1"], 2),
             money(ex$loss$annual_loss[ex$loss$source_id == "rauh_nber"], 2)),
-    sprintf("One step raises the estimate: the RJKDC analysis applies no avoidance or evasion allowance beyond migration (its semi-elasticity is the migration share of Brulhart et al.'s response), so dropping the BSZ analysis's 10%% adds %s (Shapley). DISPUTES.md does not list this as a row.",
+    sprintf("One step raises the estimate: the JR analysis applies no avoidance or evasion allowance beyond migration (its semi-elasticity is the migration share of Brulhart et al.'s response), so dropping the BSZ analysis's 10%% adds %s (Shapley). DISPUTES.md does not list this as a row.",
             money(v(bb, "avoidance"), 1, TRUE)),
-    sprintf("Order matters most for estimating the one-time tax as a permanent 5-percentage-point rate: %s averaged over all orders and %s in the one order shown. The RJKDC revenue is uniform between a confirmed-departures ceiling and an elasticity floor, so the elasticity bites only on top of whatever departures are already in. The step is large when it is taken early and smaller when it comes after the departures.",
+    sprintf("Order matters most for estimating the one-time tax as a permanent 5-percentage-point rate: %s averaged over all orders and %s in the one order shown. The JR revenue is uniform between a confirmed-departures ceiling and an elasticity floor, so the elasticity bites only on top of whatever departures are already in. The step is large when it is taken early and smaller when it comes after the departures.",
             money(v(bb, "one_time_as_permanent"), 1, TRUE), money(v(bb, "one_time_as_permanent", "sequential"), 1, TRUE)),
-    sprintf("Model differences are small and shown, not hidden: %s, from the rounded literals in the RJKDC Monte Carlo code (MISMATCHES #6 in rjkdc-analysis).",
+    sprintf("Model differences are small and shown, not hidden: %s, from the rounded literals in the JR Monte Carlo code (MISMATCHES #6 in rjkdc-analysis).",
             money(eb$rauh_residual, 2, TRUE)),
-    sprintf("The September 2026 revision is the last step, %s. The RJKDC analysis prints its mean NPV as %s, from one seeded Monte Carlo run; the exact expectation of the same Monte Carlo, the bridge's RJKDC end, is %s.",
+    sprintf("The September 2026 revision is the last step, %s. The JR analysis prints its mean NPV as %s, from one seeded Monte Carlo run; the exact expectation of the same Monte Carlo, the bridge's JR end, is %s.",
             money(eb$nber_step, 1, TRUE),
             money(ep$printed_value[ep$endpoint_id == "rauh_nber_npv"], 1), money(eb$nber_own, 2))
   )), collapse = "\n")
@@ -329,7 +329,7 @@ render_site <- function(root = comparison_root(),
     "<b>Steps he does not have.</b> The non-US-citizen residents, the BSZ analysis's avoidance allowance being dropped, the asset-sale income tax, and the September 2026 revision (which postdates his note)."
   )), collapse = "\n")
   tok$hoopes_fit <- money(as.numeric(hraw$tick_fit_max_resid[1]), 1)
-  # Row 3 departure share, page (workbook values) vs DISPUTES / RJKDC f dial (printed 94.2)
+  # Row 3 departure share, page (workbook values) vs DISPUTES / JR f dial (printed 94.2)
   oval <- function(id) pick(k$rjkdc$outputs, id)
   tok$dconf_page <- pct(1 - oval("revenue_confirmed6") / oval("revenue_baseline"), 1)
   tok$dconf_printed <- pct(1 - opp("revenue_confirmed6") / opp("revenue_baseline"), 1)
@@ -362,8 +362,8 @@ render_site <- function(root = comparison_root(),
 
   # ---- loss table ----
   ls <- ex$loss[ex$loss$source_id != "rauh_ssrn", ]
-  who <- c(bsz = "BSZ", rjkdc = "RJKDC", neutral = "neutral", "rjkdc (credited dial)" = "Walczak / CalTax (alternative dial; same direction as RJKDC)")
-  ls$label[ls$source_id == "rauh_nber"] <- "RJKDC, Jaros and Rauh NBER: E[f] x E[C]"
+  who <- c(bsz = "BSZ", rjkdc = "JR", neutral = "neutral", "rjkdc (credited dial)" = "Walczak / CalTax (alternative dial; same direction as JR)")
+  ls$label[ls$source_id == "rauh_nber"] <- "JR, Jaros and Rauh NBER: E[f] x E[C]"
   tok$loss_rows <- paste(sprintf(
     '    <tr><td>%s <span class="small">(%s)</span></td><td>%s</td><td class="num">%s</td><td class="num">%s</td><td class="num">%s</td><td class="num">%s</td></tr>',
     esc(ls$label), esc(ls$where), unname(who[ls$side]), vapply(ls$annual_loss, money, "", digits = 2),

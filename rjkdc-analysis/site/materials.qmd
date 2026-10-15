@@ -1,5 +1,5 @@
 ---
-title: "Prop 40, RJKDC analysis: the materials"
+title: "Prop 40, JR analysis: the materials"
 subtitle: "Every script, test, data file and source behind the explorer, the report and the slides, and what did not match"
 date: today
 format:
@@ -20,7 +20,7 @@ execute:
 ---
 
 ::: {.site-nav}
-RJKDC analysis of California Proposition 40:
+JR analysis of California Proposition 40:
 [Open Output (the explorer)](explorer/) &middot; Open Analysis: [Report](repro.html) and
 [Slides](slides/slides.html) &middot;
 [Open Materials](https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis) (this page is its guide) &middot;
@@ -58,7 +58,7 @@ ts <- read.csv("data/test-summary.csv")
 ::: {.report-intro}
 ![](assets/opa/opa-materials.png){.opa-figure}
 
-This page is a guide to the **Open Materials** layer (the repository) of the RJKDC analysis (Jaros and Rauh,
+This page is a guide to the **Open Materials** layer (the repository) of the JR analysis (Jaros and Rauh,
 NBER chapter c15504, Tax Policy and the Economy vol. 41, September 2026; first version by Rauh, Jaros, Kearney, Doran and Cosso, March 2026): everything needed to rebuild every number on this
 site, in the repository [github.com/fhoces/opa-prop40](https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis),
 folder `rjkdc-analysis/`. The analysis is an R [`{targets}`](https://docs.ropensci.org/targets/)
@@ -196,7 +196,7 @@ cat(mm, sep = "\n")
 ```
 
 ::: {.site-nav}
-RJKDC analysis of California Proposition 40:
+JR analysis of California Proposition 40:
 [Open Output (the explorer)](explorer/) &middot; Open Analysis: [Report](repro.html) and
 [Slides](slides/slides.html) &middot;
 [Open Materials](https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis) (this page is its guide) &middot;

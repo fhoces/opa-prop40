@@ -31,7 +31,7 @@ test_that("key numbers appear on the pages as computed", {
   expect_true(grepl(money(eb$nber_own, 2), html, fixed = TRUE))       # the (b) table
   expect_true(grepl(money(ea$nber_own, 1), html, fixed = TRUE))
   # the explorer's bridge text: both ends and the gap on the net fiscal effect, output (b)
-  expect_true(grepl(sprintf("The BSZ end is\n    <b>%s</b> and the RJKDC end <b>%s</b>, a gap of <b>%s</b>.",
+  expect_true(grepl(sprintf("The BSZ end is\n    <b>%s</b> and the JR end <b>%s</b>, a gap of <b>%s</b>.",
                             money(eb$bsz_model, 1), money(eb$nber_own, 1), money(eb$bsz_model - eb$nber_own, 1)),
                     ex_html, fixed = TRUE))
   # the explorer shows the net fiscal effect only: no output setting, no gross revenue
@@ -47,7 +47,7 @@ test_that("key numbers appear on the pages as computed", {
   expect_null(D$switchboard)
 })
 
-test_that("the switchboard: all off is the BSZ end, all on plus the revision is the RJKDC end", {
+test_that("the switchboard: all off is the BSZ end, all on plus the revision is the JR end", {
   en <- read_csv_plain(file.path(root, "comparison", "export", "r", "ends.csv"))
   sb <- read_csv_plain(file.path(root, "comparison", "export", "r", "switchboard.csv"))
   ids <- bridge_steps()$step_id
@@ -75,7 +75,7 @@ test_that("the slider panels: one slider per disputed input in the bridge's orde
     expect_identical(sub('.*data-id="([a-z_]+)"$', "\\1", sl), c(ids, "revision"), label = panel)
     expect_identical(sub('.*max="([0-9])".*', "\\1", sl), c(rep(as.character(SLIDER_STEPS), length(ids)), "1"), label = panel)
   }
-  # the RJKDC panel's sliders run right to left, so position 0 sits at the RJKDC end
+  # the JR panel's sliders run right to left, so position 0 sits at the JR end
   expect_equal(length(gregexpr('data-panel="rjkdc" data-id="[a-z_]+" dir="rtl"', ex_html)[[1]]), length(ids) + 1)
   expect_false(grepl('data-panel="bsz" data-id="[a-z_]+" dir="rtl"', ex_html))
   # the data file: the inputs in the bridge's order, the argument each moves, both vectors
@@ -153,7 +153,7 @@ test_that("the headline is the two main estimates; the bridge's two ends under (
   eb <- en[en$horizon_setting == "own" & en$output == "b", ]
   ep <- read_csv_plain(file.path(root, "comparison", "export", "r", "endpoints.csv"))
   rj <- ep$contract_value[ep$endpoint_id == "rauh_nber_npv"]
-  # the two values, pinned: BSZ net total over 5 years; RJKDC NBER mean NPV (seeded run)
+  # the two values, pinned: BSZ net total over 5 years; JR NBER mean NPV (seeded run)
   expect_equal(round(eb$bsz_model, 4), 106.7956)
   expect_equal(round(rj, 3), -38.886)
   expect_equal(round(rj, 1), ep$printed_value[ep$endpoint_id == "rauh_nber_npv"])   # printed -38.9
@@ -171,7 +171,7 @@ test_that("the headline is the two main estimates; the bridge's two ends under (
     expect_true(grepl(sprintf('id="hl-bsz">%s<', money(eb$bsz_model, 1)), html, fixed = TRUE), label = p)
     expect_true(grepl(sprintf('id="hl-rjkdc">%s<', money(rj, 1)), html, fixed = TRUE), label = p)
     expect_true(grepl("BSZ main estimate<sup>1</sup>", html, fixed = TRUE), label = p)
-    expect_true(grepl("RJKDC main estimate<sup>1</sup>", html, fixed = TRUE), label = p)
+    expect_true(grepl("JR main estimate<sup>1</sup>", html, fixed = TRUE), label = p)
     expect_false(grepl("the gap on the common output", html, fixed = TRUE), label = p)
   }
   # the explorer reads the same values from the data file: the headline object, and the

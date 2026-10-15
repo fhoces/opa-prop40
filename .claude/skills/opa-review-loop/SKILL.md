@@ -1,6 +1,6 @@
 ---
 name: opa-review-loop
-description: Review-and-update loop for the Prop 40 OPA (the BSZ analysis, the RJKDC analysis, the comparison). Three reviewer agents read every public page from three audiences (the original authors, outside policy experts, California voters), a coordinator agent triages their findings into a plan, implementer agents carry it out, and the coordinator reviews the result. Repeatable with a chosen number of iterations, models and effort levels, in the cloud or on a local machine. Use for "run the review loop", "review the OPA from the three audiences", or /opa-review-loop.
+description: Review-and-update loop for the Prop 40 OPA (the BSZ analysis, the JR analysis, the comparison). Three reviewer agents read every public page from three audiences (the original authors, outside policy experts, California voters), a coordinator agent triages their findings into a plan, implementer agents carry it out, and the coordinator reviews the result. Repeatable with a chosen number of iterations, models and effort levels, in the cloud or on a local machine. Use for "run the review loop", "review the OPA from the three audiences", or /opa-review-loop.
 argument-hint: "[--iterations N] [--review-model M] [--review-effort E] [--coord-model M] [--coord-effort E] [--impl-model M] [--impl-effort E] [--max-implementers N] [--ask] [--review-only] [--no-commit] [--push] [--focus \"text\"]"
 ---
 
@@ -177,7 +177,7 @@ Run from ROOT and append the results to `RUN/00-run.md` under `## Checks`:
    `comparison/site/`). If R and the xaringan package are present:
    `Rscript -e 'rmarkdown::render("<deck>.Rmd")'` for every changed deck. Run
    `cd bsz-analysis && Rscript tests/testthat.R` only if `bsz-analysis/original-materials/`
-   holds the workbook, and the RJKDC suite only if `RAUH_REPO_DIR` is set. Record what ran,
+   holds the workbook, and the JR suite only if `RAUH_REPO_DIR` is set. Record what ran,
    what passed, what was skipped and why. A failure goes to the coordinator in Phase 5; do not
    fix it yourself.
 4. Without R or Quarto (the cloud container has neither), skip step 3 and record that.

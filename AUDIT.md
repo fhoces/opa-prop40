@@ -18,7 +18,7 @@ step that requires sharing (1 to 5, and 8 at level 1) was then Level 0, and so w
 
 | # | Step | Level | Evidence | What the next level needs |
 |---|---|---|---|---|
-| 1 | Unified output | 1 | "One table or graph is highlighted as the best reflection": the main estimate in `site/explorer/index.html` (Table 5 row 1, base scenario: wealth tax plus extra income tax from sales minus income tax lost to leavers, present value over 5 years at 3%), shown as the headline number in the explorer's header with its definition, and a footnote that it is not the authors' choice. It replaced a preferred-estimate box (`c1c411c`, `b646791`) | Level 2 needs "a sample output published pre-release". The output was fixed in `PLAN.md` (`0b07ce7`, "Pre-specified output") and pushed in `9adcd2f` before any RJKDC result, but only to a private repo, and after this analysis's own reproduction (imported from May). Publish the spec before the next round's results |
+| 1 | Unified output | 1 | "One table or graph is highlighted as the best reflection": the main estimate in `site/explorer/index.html` (Table 5 row 1, base scenario: wealth tax plus extra income tax from sales minus income tax lost to leavers, present value over 5 years at 3%), shown as the headline number in the explorer's header with its definition, and a footnote that it is not the authors' choice. It replaced a preferred-estimate box (`c1c411c`, `b646791`) | Level 2 needs "a sample output published pre-release". The output was fixed in `PLAN.md` (`0b07ce7`, "Pre-specified output") and pushed in `9adcd2f` before any JR result, but only to a private repo, and after this analysis's own reproduction (imported from May). Publish the spec before the next round's results |
 | 2 | Input-output link | 3 | "An interactive tool allowing for adjusted inputs is provided, and its underlying code shares the same key sections of code behind the analysis section": the 6-dial explorer's grid is computed by `score_tab5_cell()` in `R/compute_tab5.R`, the function `compute_tab5()` itself uses for the reproduction (commit `6219268`; `test-site.R` asserts both call it) | None (top level) |
 | 3 | Methodological accounts | 3 | "Code is clearly documented into a dynamic document": `site/repro.qmd` (knitr, folded code, every number computed) | None (top level) |
 | 4 | Data | 3 | Analytic data in the repo (`site/data/*.csv`, `export/r/*.csv`; `outputs/` is generated and gitignored). The raw workbook is not redistributed, but `DATA-SOURCES.csv` gives the URL, date and SHA-256, and `site/materials.qmd` gives the download command | None. Note that the author-shared bundle is confidential and not used by anything published |
@@ -28,7 +28,7 @@ step that requires sharing (1 to 5, and 8 at level 1) was then Level 0, and so w
 | 8 | Reproducible code | 2 | "Possible to run regardless of software dependencies": `.github/workflows/bsz-ci.yml` rebuilds the pipeline from `DESCRIPTION` on a clean runner and runs the suite (green on `9dc34f9`) | Level 3 needs "just one click": a Binder or Codespaces devcontainer. A lockfile (none exists) would also stop runner-vs-local package drift |
 | 9 | Version control | 3 | Git plus the shared GitHub repository, all work committed | None |
 
-## RJKDC OPA (`rjkdc-analysis/`)
+## JR OPA (`rjkdc-analysis/`)
 
 | # | Step | Level | Evidence | What the next level needs |
 |---|---|---|---|---|
@@ -52,7 +52,7 @@ version only.
 
 | # | Step | Level | Evidence | What the next level needs |
 |---|---|---|---|---|
-| 1 | Unified output | 1 | "One table or graph is highlighted as the best reflection": the explorer (`comparison/site/explorer/index.html`) is the unified output. Its header shows the two main estimates next to each other, BSZ $106.8B (net total, 5 years) and RJKDC -$38.9B (NBER September 2026 mean NPV); the root page repeats the block. Below it, two slider panels (BSZ on the left, RJKDC on the right) start at the two analyses' estimates on the net fiscal effect, and a two-bar chart between them shows each panel's current estimate against a zero line; no gross revenue figure appears (updated 2026-10-14) | Level 2: a sample output published pre-release, as for the two analyses |
+| 1 | Unified output | 1 | "One table or graph is highlighted as the best reflection": the explorer (`comparison/site/explorer/index.html`) is the unified output. Its header shows the two main estimates next to each other, BSZ $106.8B (net total, 5 years) and JR -$38.9B (NBER September 2026 mean NPV); the root page repeats the block. Below it, two slider panels (BSZ on the left, JR on the right) start at the two analyses' estimates on the net fiscal effect, and a two-bar chart between them shows each panel's current estimate against a zero line; no gross revenue figure appears (updated 2026-10-14) | Level 2: a sample output published pre-release, as for the two analyses |
 | 2 | Input-output link | 3 | Interactive sliders on the explorer, in two independent panels: one per disputed input plus the September 2026 revision. Each has five positions, from the panel's own analysis's value to the other's (numeric inputs evenly spaced; the horizon 5 / 10 / 20 / 50 years / perpetuity; the revision off or on), as defined once by `slider_inputs()` in `comparison/R/model.R` and mirrored in the Python twin. The browser computes each panel with `comparison/site/explorer/model.js`, a port of `score_common()` that reads its inputs from the generated data file; `test-site.R` runs it with node over the 600 mixes in `comparison/export/r/slider_sample.csv` and checks every value against R to 1e-9, and `test-parity.R` checks the Python sample. The bridge chart below keeps its Shapley / one-order setting (`switchboard.csv` holds the grid the Shapley values average over) | None (top level) |
 | 3 | Methodological accounts | 3 | "Code is clearly documented into a dynamic document": `comparison/site/repro.qmd` (knitr) reads the exports, derives the main estimate step by step, and folds the R source and its Python twin under each exhibit | None (top level) |
 | 4 | Data | 3 | Analytic data: `comparison/export/{r,py}/`, listed with rows and contents on `comparison/site/materials.html`. Inputs: the two analyses' committed export contracts, `comparison/data/document-inputs.csv` and `hoopes-fig2.csv` (digitized). The two third-party PDFs only the comparison uses are in `comparison/DATA-SOURCES.csv` with URL and SHA-256 | None |
@@ -65,7 +65,7 @@ version only.
 ## Headline
 
 - **Level 1** for all three pages (the minimum across steps; step 1 sets it everywhere).
-  Before the repository went public on 2026-10-01, every page was Level 0. Vectors: BSZ `1-3-3-3-3-3-3-2-3`, RJKDC `1-3-3-3-3-3-3-2-3`,
+  Before the repository went public on 2026-10-01, every page was Level 0. Vectors: BSZ `1-3-3-3-3-3-3-2-3`, JR `1-3-3-3-3-3-3-2-3`,
   reconciliation `1-3-3-3-3-3-3-2-3`, so the three vectors are now identical.
 
 ## Best credibility per unit of effort
@@ -82,7 +82,7 @@ version only.
    redirects to its claimed document (1436128 in the BITSS RPubs account, 1436129 in `fhoces`), so
    a leftover copy of a token cannot claim anything.
 2. **One estimating function per analysis (step 2 to Level 3).** Done 2026-09-23: each explorer grid now calls the
-   analysis's own functions (BSZ `6219268`; RJKDC `e899ae9`), with grids and
+   analysis's own functions (BSZ `6219268`; JR `e899ae9`), with grids and
    exports byte-identical before and after.
 3. **Step 1 to Level 2 for the next round.** It cannot be met retroactively for this round. For
    any update, publish the output spec (the `PLAN.md` section) to the public repo before

@@ -10,8 +10,8 @@ Proposition 40, the Billionaire Tax Act (a one-time 5% tax on the whole net wort
 worth $1 billion or more).
 The BSZ analysis (Boll, Saez and Zucman, NBER Working Paper 35218, August 2026, with the
 Galle, Gamage, Saez and Shanske expert report of July 2026) estimates about $100 billion. The
-RJKDC analysis (Rauh, Jaros, Kearney, Doran and Cosso, SSRN March 2026; revised as Jaros and
-Rauh, NBER chapter c15504, September 2026) estimates a net present value to the state of about
+JR analysis (Jaros and Rauh, NBER chapter c15504, September 2026, revising the SSRN March 2026
+version by Rauh, Jaros, Kearney, Doran and Cosso) estimates a net present value to the state of about
 -$39 billion. Each analysis is reproduced in full and published as an OPA site with three
 layers: Open Output (an explorer over a precomputed grid, the main estimate highlighted), Open
 Analysis (a reproduction report and a slide deck) and Open Materials (the repository). A third
@@ -104,7 +104,7 @@ loop. Read-only: kept untouched by decision (PLAN-5).
 | `export/r/*.csv`, `export/py/**` | generated | the export contract the comparison reads |
 | `R/`, `py/`, `sql/`, `tests/`, `_targets.R` | code | the reproduction; not a content edit |
 
-### The RJKDC analysis, `rjkdc-analysis/`
+### The JR analysis, `rjkdc-analysis/`
 
 Same shape as BSZ: `README.md` (source, no include block), `site/index.html` and
 `site/explorer/index.html` (source), `site/explorer/grid.js` and `site/data/*.csv` (generated
@@ -152,7 +152,7 @@ repository at the pinned commit), `site/slides/slides.Rmd` (source), `site/credi
    the report notes it as a change to the shared kit.
 6. Prose style: plain sentences, no em dashes or en dashes in prose (commas, colons and
    parentheses instead; the minus sign in a formula stays as the page has it); "the BSZ
-   analysis" and "the RJKDC analysis", never "side"; "supporting" and "opposing" only where a
+   analysis" and "the JR analysis", never "side"; "supporting" and "opposing" only where a
    page explains which analysis is which; the authors by their initials as the pages do;
    numbers as the pages print them ($106.8B in a headline block, $106.8 billion in prose);
    dates as `2026-10-14` in records and "September 2026" in prose; the spelling the page

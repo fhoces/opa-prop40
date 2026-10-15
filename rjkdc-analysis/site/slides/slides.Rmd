@@ -1,6 +1,6 @@
 ---
 title: "The Net Present Value of the California Billionaire Tax Act"
-subtitle: "Teaching deck: RJKDC's fiscal estimate of California Proposition 40 (Jaros and Rauh, NBER, September 2026; first version by Rauh, Jaros, Kearney, Doran and Cosso)"
+subtitle: "Teaching deck: JR's fiscal estimate of California Proposition 40 (Jaros and Rauh, NBER, September 2026; first version by Rauh, Jaros, Kearney, Doran and Cosso)"
 output:
   xaringan::moon_reader:
     self_contained: true
@@ -58,7 +58,7 @@ class: center, middle, opa-slide
 
 .opa-intro[
 The estimate of California's Billionaire Tax Act by Jaros and Rauh (NBER, September 2026),
-revising the first version by Rauh, Jaros, Kearney, Doran and Cosso (RJKDC), rebuilt from the
+revising the first version by Rauh, Jaros, Kearney, Doran and Cosso, rebuilt from the
 authors' own code and data and taught step by step, following the
 [Open Policy Analysis](https://doi.org/10.1093/scipol/scaa067) framework.
 ]
@@ -136,7 +136,7 @@ table.dt td:first-child, table.dt th:first-child { text-align: left; }
 ```
 
 .site-nav[
-Part of an Open Policy Analysis of the RJKDC analysis (Jaros and Rauh, 2026) of California Proposition 40:
+Part of an Open Policy Analysis of the JR analysis (Jaros and Rauh, 2026) of California Proposition 40:
 [Open Output (the explorer)](../explorer/) &middot; Open Analysis:
 [Report](../repro.html) and Slides (here) &middot;
 [Open Materials](https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis) &middot;
@@ -175,7 +175,7 @@ class: center, middle, inverse
 **Proposition 40** taxes, once, 5% of the net worth of billionaires who lived in California on
 1 January 2026 (payable over five years). The [BSZ report](../../../bsz-analysis/site/) estimates it at about $100 billion.
 
-The RJKDC analysis asks a different question: **is the state better off, counting what it loses?**
+The JR analysis asks a different question: **is the state better off, counting what it loses?**
 
 $$NPV = WT - f \cdot \frac{C}{r}$$
 

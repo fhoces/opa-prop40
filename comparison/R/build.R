@@ -62,9 +62,9 @@ bridge_input_table <- function(bi) {
       "BSZ export sell_share (BSZ PDF p.24)"),
     rauh_source = c(
       "omitted: Forbes CA-residence field (Rauh p.4; DISPUTES row 8)",
-      "RJKDC export baseline_net_worth (212 billionaires, 2025 Forbes list; Rauh pp.4-5)",
-      "1 - revenue_baseline / (5% x base) from the RJKDC export (Rauh p.8 Table 5, $8.19B among stayers)",
-      "1 - revenue_confirmed6 / revenue_baseline from the RJKDC export (Rauh p.11, 6 departures)",
+      "JR export baseline_net_worth (212 billionaires, 2025 Forbes list; Rauh pp.4-5)",
+      "1 - revenue_baseline / (5% x base) from the JR export (Rauh p.8 Table 5, $8.19B among stayers)",
+      "1 - revenue_confirmed6 / revenue_baseline from the JR export (Rauh p.11, 6 departures)",
       "none: the elasticity replaces any avoidance allowance (Rauh pp.13-14)",
       "the recurring-tax semi-elasticity applied to the 5 pp rate, because the authors argue taxpayers price a constitutional amendment with no sunset as a recurring tax (Rauh p.14; Sec. 6, p.21; eq.7-8 p.11, eq.13 p.14)",
       "the Monte Carlo floor of $35B (Rauh p.20 eq.22; 'approximately 12.6', p.19)",

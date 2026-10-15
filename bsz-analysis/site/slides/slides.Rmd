@@ -330,7 +330,7 @@ $$L = -\alpha \, m \, C = -`r bn(a, 2)` \times `r m` \times `r bn(C, 2)` = -`r b
 
 .highlight-box[
 The minus sign means revenue lost. $L$ is **per year**, and Table 5 does not say for how many
-years. BSZ argue about 5; the [RJKDC report](../../../rjkdc-analysis/site/) (Rauh, Jaros,
+years. BSZ argue about 5; the [JR report](../../../rjkdc-analysis/site/) (Rauh, Jaros,
 Kearney, Doran and Cosso) counts it forever. That horizon is the biggest dispute between the two.
 ]
 
@@ -470,7 +470,7 @@ name: bottom-line
 
 ```{r bottom-line-tab}
 # Present value of the yearly loss over BSZ's 5-year horizon at one rate, 3%, the middle
-# of the RJKDC report's 1.5%-4.5% range. The comparison overview averages over that range
+# of the JR report's 1.5%-4.5% range. The comparison overview averages over that range
 # instead (comparison/R/model.R); the two agree to within $0.01B, checked here.
 ann <- function(r, H = 5) (1 - (1 + r)^(-H)) / r
 f5  <- ann(0.03)
@@ -501,7 +501,7 @@ knitr::kable(d, format = "html", escape = FALSE, align = "lrrrr",
 
 .highlight-box[
 The income tax loss recurs every year the leavers stay away, so it is a **present value** over BSZ's
-horizon of about 5 years at **3% a year**, the middle of the [RJKDC report](../../../rjkdc-analysis/site/)'s 1.5% to 4.5% range (BSZ give no rate).
+horizon of about 5 years at **3% a year**, the middle of the [JR report](../../../rjkdc-analysis/site/)'s 1.5% to 4.5% range (BSZ give no rate).
 ]
 
 **Change any assumption and watch the main estimate move: [the explorer](../explorer/).**
@@ -509,7 +509,7 @@ horizon of about 5 years at **3% a year**, the middle of the [RJKDC report](../.
 .small[<sup>1</sup> Not the authors' choice: BSZ's headline is the wealth tax alone, about $100 billion (Table 5 prints
 $`r bn(wt_printed, 0)` billion; reproduced as $`r bn(t5$wealth_tax_revenue[1])` billion).
 This OPA uses the total as its main estimate because it compares more directly with
-the [RJKDC analysis](../../../rjkdc-analysis/site/)'s net present value; the [comparison overview](../../../index.html) puts both on one definition.]
+the [JR analysis](../../../rjkdc-analysis/site/)'s net present value; the [comparison overview](../../../index.html) puts both on one definition.]
 
 ---
 name: part-guess

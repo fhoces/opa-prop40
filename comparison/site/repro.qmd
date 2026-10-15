@@ -1,6 +1,6 @@
 ---
 title: "Prop 40, the comparison: the reproduction"
-subtitle: "The BSZ analysis and the RJKDC analysis put on one common output, and the gap between them explained one disputed input at a time"
+subtitle: "The BSZ analysis and the JR analysis put on one common output, and the gap between them explained one disputed input at a time"
 date: today
 format:
   html:
@@ -120,7 +120,7 @@ This report cites each in its latest version. The [BSZ analysis](../../bsz-analy
 Research, which circulates working papers) estimates about \$100 billion of wealth
 tax (`r usd(epv("bsz_tab5_row1", "printed_value"), 0)` in its Table 5 row 1, reproduced here
 as **`r usd(epv("bsz_tab5_row1"))`**), and **`r usd(eb$bsz_model)`** once the income tax the
-tax changes is added in. The [RJKDC analysis](../../rjkdc-analysis/site/) (Jaros and Rauh,
+tax changes is added in. The [JR analysis](../../rjkdc-analysis/site/) (Jaros and Rauh,
 NBER chapter c15504, Tax Policy and the Economy vol. 41, September 2026, revising the March 2026 version by Rauh, Jaros, Kearney, Doran
 and Cosso) finds that the tax would collect about
 `r usd(pick(k$docs, "nber_headline_revenue"), 0)` by its own account but leave the state
@@ -130,7 +130,7 @@ paying California income tax for ever. Today's dollars (present value): what mon
 or lost in future years is worth now. The three inputs that separate the two most: whether a
 one-time tax changes behaviour the way a permanent one would, how many billionaires had
 already left, and whether the lost income tax is counted for five years (BSZ) or for ever
-(RJKDC). The two numbers answer different questions, so neither can be read against the other
+(JR). The two numbers answer different questions, so neither can be read against the other
 directly. This report puts both on one common output and walks from one to the other, one
 disputed input at a time.
 
@@ -146,13 +146,13 @@ This report is part of the comparison's [Open Policy Analysis](https://doi.org/1
 :::
 
 **The two main estimates** are each analysis's own: the BSZ analysis's net total over 5
-years, **`r usd(eb$bsz_model)`**, and the RJKDC analysis's mean net present value in
+years, **`r usd(eb$bsz_model)`**, and the JR analysis's mean net present value in
 perpetuity, **`r usd(epv("rauh_nber_npv", "contract_value"))`** (NBER, September 2026). On
 the common output (b), the net fiscal effect, they are the bridge's two ends. The BSZ end is
 the same `r usd(eb$bsz_model)`. Jaros and Rauh print
 `r usd(epv("rauh_nber_npv", "printed_value"))` from one seeded run of their Monte Carlo (a run
 of the random draws started from a fixed seed number, so it gives the same draws every time);
-the RJKDC end, `r usd(eb$nber_own, 2)`, is its exact expectation, the average computed by
+the JR end, `r usd(eb$nber_own, 2)`, is its exact expectation, the average computed by
 formula. The gap between the two ends,
 `r usd(eb$bsz_model - eb$nber_own)`, is what the bridge explains. The arithmetic is in
 [The two main estimates](#the-main-estimate).
@@ -178,7 +178,7 @@ is first used, in [The bridge](#the-bridge).
 
 # The common output, and what each analysis reports {#the-common-output}
 
-The BSZ report says how much the one-time tax collects. The RJKDC report says what the state
+The BSZ report says how much the one-time tax collects. The JR report says what the state
 gains or loses in present value once income tax lost to billionaires who leave is subtracted.
 Before any step of a bridge means anything, both are put on the same two outputs. Output (b)
 comes first, because it is the question both main estimates answer:
@@ -190,19 +190,19 @@ comes first, because it is the question both main estimates answer:
 
 The horizon H is itself disputed. The BSZ report counts the losses for about the
 `r fmt_input("H", inp$supporting_value[inp$input == "H"])` of payments (BSZ PDF p.27). The
-RJKDC report counts them forever. Discounting uses the RJKDC report's own range, a rate
+JR report counts them forever. Discounting uses the JR report's own range, a rate
 drawn uniformly between `r pct(pick(k$rjkdc$inputs, "rauh_mc_r_min"), 1)` and
 `r pct(pick(k$rjkdc$inputs, "rauh_mc_r_max"), 1)`. The BSZ analysis takes no position on the
 rate; its overview discounts at 3%, the middle of that range.
 
 **Conventions.** All amounts are nominal billions of dollars. The wealth tax is counted at its
-face value when assessed (the BSZ analysis values the base on 1 July 2026; the RJKDC
+face value when assessed (the BSZ analysis values the base on 1 July 2026; the JR
 analysis's September version grows the base it used in March, the 2025 Forbes list, by
 `r pct(pick(k$rjkdc$inputs, "nber_growth_rate"))` to 31 December 2026), undiscounted although
 the Act collects it in five yearly installments; both analyses do this, so the comparison
 follows them. Present values are at the assessment date. The discount-rate range is the one
-the RJKDC code draws; its code labels the draw (r &minus; g), the rate less the growth of the
-lost income tax, while its text uses both (r &minus; g) and the plain rate r (the RJKDC
+the JR code draws; its code labels the draw (r &minus; g), the rate less the growth of the
+lost income tax, while its text uses both (r &minus; g) and the plain rate r (the JR
 analysis's mismatch 3).
 
 ```{r}
@@ -216,7 +216,7 @@ d <- k$docs
 dv <- function(id) as.numeric(d$value[d$input_id == id])
 tab <- data.frame(
   Analysis = c("BSZ analysis: Boll, Saez and Zucman, NBER WP 35218, Table 5 row 1 (Aug 2026)",
-               "RJKDC analysis: Jaros and Rauh, NBER c15504 (Sep 2026)"),
+               "JR analysis: Jaros and Rauh, NBER c15504 (Sep 2026)"),
   `(b) net fiscal effect` = c(money(eb$bsz_model, 1), money(eb$nber_own, 2)),
   `(a) gross revenue` = c(money(ea$bsz_model, 1), money(ea$nber_own, 1)),
   `What the authors print` = c(
@@ -230,17 +230,17 @@ Output (b) for the BSZ analysis is not printed by the paper. It is Table 5 row 1
 columns combined here: the `r usd(ea$bsz_model)` revenue, plus
 `r usd(ex$meta$value[ex$meta$key == "X_bsz"], 2)` of extra income tax from asset sales, minus
 `r usd(ex$meta$value[ex$meta$key == "PV_bsz_own"], 2)`, the present value of five years of
-its income tax loss. For the RJKDC analysis, both outputs are the expectations of the
+its income tax loss. For the JR analysis, both outputs are the expectations of the
 authors' own Monte Carlo, computed exactly rather than by drawing.
 
 # The two ends, estimated on it {#the-two-ends}
 
 One estimating function, `score_common()`, takes every disputed input as an argument. Each
-argument takes either the BSZ analysis's value or the RJKDC analysis's. At the all-BSZ setting
-the function must return the BSZ end: Table 5 row 1 on (a), and its net on (b). The RJKDC
+argument takes either the BSZ analysis's value or the JR analysis's. At the all-BSZ setting
+the function must return the BSZ end: Table 5 row 1 on (a), and its net on (b). The JR
 values are those of its March 2026 version, the one whose inputs the common function can take
 one by one (the September version's code and person-level file are in the same public
-repository), and the September 2026 revision is the last step of the bridge, to the RJKDC end.
+repository), and the September 2026 revision is the last step of the bridge, to the JR end.
 
 In words, the function computes seven quantities in order. Each argument is written as
 `score_common()` names it and, where a step of the bridge switches it, followed by that step's
@@ -257,7 +257,7 @@ both ends.
    departed"); `eps` is the mobility semi-elasticity, the percent of the tax base that leaves
    for each percentage point of tax ("Size of the mobility semi-elasticity"); `dtau` is the
    permanent rate change it is applied to, in percentage points ("One-time tax estimated as a
-   permanent 5 pp rate"). The RJKDC revenue is uniform between a ceiling, the base left after
+   permanent 5 pp rate"). The JR revenue is uniform between a ceiling, the base left after
    the confirmed departures (`d_conf`), and a floor, the base left after the elasticity
    response (`eps * dtau`); `S` is the mean of that range, which is why the permanent-rate and
    elasticity steps act only through the floor.
@@ -268,13 +268,13 @@ both ends.
    capital-gain share of a sale and `t_cg` the top California rate on realized gains.
 5. `f = alpha*m + kappa * (1 - S) * (1 - alpha*m)`: the share of billionaire income tax lost.
    The first term is the BSZ movers' share (`m` is the part of the avoidance allowance that is
-   people leaving California); the second is the RJKDC proportional loss on the base that
+   people leaving California); the second is the JR proportional loss on the base that
    left, where `kappa` is the leavers' income tax per dollar of wealth relative to the
    average, a ratio ("Lost income tax proportional to lost wealth").
 6. `PV = f * C * E_r[annuity(r, H)]`: the present value of the lost income tax. `C` is
    billionaires' annual California income tax, in billions of dollars a year ("Billionaires'
    annual CA income tax"), lost for `H` years ("How long the income tax loss lasts"; for ever
-   at the RJKDC end); `annuity(r, H)` is what 1 a year for `H` years is worth today at the
+   at the JR end); `annuity(r, H)` is what 1 a year for `H` years is worth today at the
    discount rate `r`, averaged over the rate range.
 7. `NET = WT + X - PV`: output (b), the net fiscal effect.
 
@@ -312,7 +312,7 @@ nber <- rauh_nber_expectation(wt_min = 0, wt_max = pick(oi, "nber_ceiling_hardco
                               f_min = pick(oi, "nber_mc_f_min"), f_max = pick(oi, "nber_mc_f_max"),
                               c_min = pick(oi, "rauh_mc_c_min"), c_max = pick(oi, "rauh_mc_c_max"),
                               r_min = pick(oi, "rauh_mc_r_min"), r_max = pick(oi, "rauh_mc_r_max"))
-rj_main <- epv("rauh_nber_npv", "contract_value")   # the RJKDC main estimate (seeded run)
+rj_main <- epv("rauh_nber_npv", "contract_value")   # the JR main estimate (seeded run)
 f_mid <- (pick(oi, "nber_mc_f_min") + pick(oi, "nber_mc_f_max")) / 2
 c_mid <- (pick(oi, "rauh_mc_c_min") + pick(oi, "rauh_mc_c_max")) / 2
 a_inf <- expected_annuity(Inf, pick(oi, "rauh_mc_r_min"), pick(oi, "rauh_mc_r_max"))
@@ -337,7 +337,7 @@ income tax loss discounted over the rate range: **`r usd(v_sup[["b"]], 3)`**, sh
 `r usd(v_sup[["b"]])`. The BSZ analysis overview discounts at 3% instead and gets the same
 `r usd(v_sup[["b"]])`.
 
-**Step 2: the RJKDC main estimate, and the RJKDC end on (b).** In the Monte Carlo of Jaros and
+**Step 2: the JR main estimate, and the JR end on (b).** In the Monte Carlo of Jaros and
 Rauh's NBER version the revenue is drawn uniformly between zero and
 `r usd(pick(oi, "nber_ceiling_hardcoded"), 0)`, the share of the income tax base that leaves
 between `r pick(oi, "nber_mc_f_min")` and `r pick(oi, "nber_mc_f_max")`, the annual income tax
@@ -345,9 +345,9 @@ between `r usd(pick(oi, "rauh_mc_c_min"))` and `r usd(pick(oi, "rauh_mc_c_max"))
 discount rate as above, all independently. The mean net present value is therefore
 `r usd(nber[["a"]], 1)` &minus; `r f_mid` &times; `r usd(c_mid, 3)` &times;
 `r formatC(a_inf, format = "f", digits = 3)` (the average of 1/r) =
-**`r usd(nber[["b"]], 3)`**, the bridge's RJKDC end. The authors print
+**`r usd(nber[["b"]], 3)`**, the bridge's JR end. The authors print
 `r usd(epv("rauh_nber_npv", "printed_value"))` from one seeded run of the same Monte Carlo,
-which the RJKDC pipeline reproduces as `r usd(rj_main, 3)`. That run is the RJKDC main
+which the JR pipeline reproduces as `r usd(rj_main, 3)`. That run is the JR main
 estimate, shown as `r usd(rj_main)`.
 
 **Step 3: the gap on (b).** `r usd(v_sup[["b"]], 3)` &minus; (`r usd(nber[["b"]], 3)`) =
@@ -384,7 +384,7 @@ twin_fold("the two main estimates", c("bridge_inputs", "score_common", "rauh_nbe
 
 # The bridge, step by step {#the-bridge}
 
-Each step switches one input from the BSZ value to the RJKDC value of its March 2026
+Each step switches one input from the BSZ value to the JR value of its March 2026
 version, the one whose inputs the common function takes one by one. Because the inputs interact (a departure matters more when the base is larger), the size of a step depends on
 the order in which the inputs are switched. The report shows two answers:
 
@@ -411,20 +411,20 @@ bt <- function(o) {
   rows <- data.frame(
     Step = esc(b$title), `DISPUTES row` = b$disputes_row, Kind = b$kind,
     `BSZ value` = mapply(fmt_input, ii$input, ii$supporting_value),
-    `RJKDC value` = mapply(fmt_input, ii$input, ii$rauh_value),
+    `JR value` = mapply(fmt_input, ii$input, ii$rauh_value),
     Shapley = vapply(b$shapley, money, "", digits = 2, signed = TRUE),
     `One order` = vapply(b$sequential, money, "", digits = 2, signed = TRUE),
     check.names = FALSE)
   extra <- data.frame(
     Step = c("Sum of the steps", "Model difference (rounded literals)", "September 2026 revision"),
-    `DISPUTES row` = "", Kind = c("", "model", "guesswork + data"), `BSZ value` = "", `RJKDC value` = "",
+    `DISPUTES row` = "", Kind = c("", "model", "guesswork + data"), `BSZ value` = "", `JR value` = "",
     Shapley = c(money(sum(b$shapley), 2, TRUE), money(e$rauh_residual, 4, TRUE), money(e$nber_step, 2, TRUE)),
     `One order` = c(money(sum(b$sequential), 2, TRUE), money(e$rauh_residual, 4, TRUE), money(e$nber_step, 2, TRUE)),
     check.names = FALSE)
   top <- data.frame(Step = sprintf("<b>BSZ end, (%s)</b>", o), `DISPUTES row` = "", Kind = "", `BSZ value` = "",
-                    `RJKDC value` = "", Shapley = money(e$bsz_model, 2), `One order` = money(e$bsz_model, 2), check.names = FALSE)
-  bot <- data.frame(Step = sprintf("<b>RJKDC end, (%s)</b>", o), `DISPUTES row` = "", Kind = "", `BSZ value` = "",
-                    `RJKDC value` = "", Shapley = money(e$nber_own, 2), `One order` = money(e$nber_own, 2), check.names = FALSE)
+                    `JR value` = "", Shapley = money(e$bsz_model, 2), `One order` = money(e$bsz_model, 2), check.names = FALSE)
+  bot <- data.frame(Step = sprintf("<b>JR end, (%s)</b>", o), `DISPUTES row` = "", Kind = "", `BSZ value` = "",
+                    `JR value` = "", Shapley = money(e$nber_own, 2), `One order` = money(e$nber_own, 2), check.names = FALSE)
   scroll(show(rbind(top, rows, extra, bot)))
 }
 cat("\n**Output (b), net fiscal effect, each analysis's own horizon.** The horizon step switches from the BSZ analysis's 5 years to a perpetuity.\n\n"); bt("b")
@@ -439,9 +439,9 @@ cat(paste(sprintf("%s (%s)", tolower(top3b$title), usd(top3b$shapley, 1, TRUE)),
 ```
 The horizon is the largest step read in Hoopes's order
 (`r usd(b_b$sequential[b_b$step_id == "horizon"], 1, TRUE)`, switched last, when the loss is
-already RJKDC-sized) but `r usd(b_b$shapley[b_b$step_id == "horizon"], 1, TRUE)` averaged over
+already JR-sized) but `r usd(b_b$shapley[b_b$step_id == "horizon"], 1, TRUE)` averaged over
 orders, because a perpetuity multiplies whatever annual loss the other inputs imply.
-One step raises the number: the RJKDC analysis applies no avoidance allowance beyond migration,
+One step raises the number: the JR analysis applies no avoidance allowance beyond migration,
 so dropping the BSZ analysis's `r pct(sup$alpha)` adds
 `r usd(b_b$shapley[b_b$step_id == "avoidance"], 1, TRUE)` on (b) and
 `r usd(b_a$shapley[b_a$step_id == "avoidance"], 1, TRUE)` on (a).
@@ -490,7 +490,7 @@ ggplot(wf) +
 
 ## Which revenue of the March 2026 version the steps reach {#which-revenue}
 
-The disputed-input steps end at the RJKDC analysis's March 2026 version, before the September
+The disputed-input steps end at the JR analysis's March 2026 version, before the September
 revision. That version prints four different revenue figures. On output (a) the steps reach
 the one consistent with its mean NPV, the expected revenue in the same Monte Carlo, because it
 is the revenue that NPV assumes. Using any of the others would add a further step of the size
@@ -531,7 +531,7 @@ dis <- dis[match(steps$step_id, dis$step_id), ]
 scroll(show(data.frame(
   Row = dis$disputes_row, Dispute = esc(dis$title), Kind = dis$kind,
   `BSZ value and source` = paste0("<b>", mapply(fmt_input, dis$input, dis$supporting_value), "</b>. ", esc(dis$supporting_source)),
-  `RJKDC value and source` = paste0("<b>", mapply(fmt_input, dis$input, dis$rauh_value), "</b>. ", esc(dis$rauh_source)),
+  `JR value and source` = paste0("<b>", mapply(fmt_input, dis$input, dis$rauh_value), "</b>. ", esc(dis$rauh_source)),
   check.names = FALSE)))
 ```
 
@@ -540,7 +540,7 @@ scroll(show(data.frame(
 Jeffrey Hoopes, "Galle v Rauh: Comparing Two Revenue Estimates for California Billionaire
 Taxation" (SSRN 6428578; SSRN is a preprint site), is the one published comparison of the two
 estimates. It compares their earlier versions: the February 2026 text of the GGSS expert
-report, on which the BSZ analysis builds, and the March 2026 version of the RJKDC analysis. His Figure 2 (p.6) is a
+report, on which the BSZ analysis builds, and the March 2026 version of the JR analysis. His Figure 2 (p.6) is a
 waterfall from the "Galle estimate" to "Rauh net fiscal effect". It
 prints no values, so his column below is read off the chart
 (`comparison/tools/digitize_hoopes_fig2.py`, tick fit within
@@ -614,10 +614,10 @@ maxdiff <- if (py_ok) max(vapply(c("ends", "bridge", "endpoints"), function(f) {
 
 - **Both ends.** At the all-BSZ inputs the estimating function returns BSZ Table 5 row 1
   exactly (`r usd(ea$bsz_model, 3)`), and its net on (b) (`r usd(eb$bsz_model, 3)`). With the
-  inputs of the RJKDC analysis's March 2026 version it returns that version's Monte Carlo
+  inputs of the JR analysis's March 2026 version it returns that version's Monte Carlo
   expectation up to a model difference of `r usd(eb$rauh_residual, 2, TRUE)` on (b) and
   `r usd(ea$rauh_residual, 4, TRUE)` on (a), from the rounded literals in the authors' code.
-  The September 2026 revision then reaches the RJKDC end, the exact expectation of the NBER
+  The September 2026 revision then reaches the JR end, the exact expectation of the NBER
   Monte Carlo (`r usd(eb$nber_own, 3)` against the printed
   `r usd(epv("rauh_nber_npv", "printed_value"))`).
 - **The code does what the method says.** Shapley values sum to the gap by construction;

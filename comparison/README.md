@@ -5,13 +5,13 @@ This folder is the comparison layer of [opa-prop40](https://fhoces.github.io/opa
 Tax Act). The [comparison overview](https://fhoces.github.io/opa-prop40/) is the repository's front page, and this
 folder builds it and the [comparison explorer](https://fhoces.github.io/opa-prop40/comparison/site/explorer/). It
 puts the [BSZ analysis](https://fhoces.github.io/opa-prop40/bsz-analysis/site/) (August 2026) and the
-[RJKDC analysis](https://fhoces.github.io/opa-prop40/rjkdc-analysis/site/) (Jaros and Rauh, September 2026) on one
+[JR analysis](https://fhoces.github.io/opa-prop40/rjkdc-analysis/site/) (Jaros and Rauh, September 2026) on one
 common output, the net fiscal effect, and explains the gap between their numbers one disputed input at a time. The aim is a transparent account of why the two
 estimates differ, which anyone can check.
 
 ### [Review the code behind the two main estimates, $106.8 billion and -$38.9 billion](https://claude.ai/artifact/6VZEezoAsCNACjmgPLEvah)
 
-($106.8 billion is this OPA's net total for the BSZ analysis, whose own headline is the wealth tax alone; -$38.9 billion is the RJKDC analysis's own headline.)
+($106.8 billion is this OPA's net total for the BSZ analysis, whose own headline is the wealth tax alone; -$38.9 billion is the JR analysis's own headline.)
 
 A layer-by-layer walk from the two numbers on the explorer down to the two analyses' export
 contracts. Each layer is marked reviewed, lightly reviewed or not reviewed. Work in progress; the
@@ -20,7 +20,7 @@ record is also kept in [`review/`](../review/README.md).
 <img align="right" width="340" src="site/assets/opa/opa-materials-wordmark.png" alt="Open Policy Analysis, Materials layer">
 
 1 - **Open Output.** [The explorer](https://fhoces.github.io/opa-prop40/comparison/site/explorer/): the two main
-estimates and the bridge between them, an interactive waterfall from the BSZ analysis to the RJKDC analysis on the
+estimates and the bridge between them, an interactive waterfall from the BSZ analysis to the JR analysis on the
 net fiscal effect, with one setting, how the bars are sized (averaged over every order, or one order); the loss
 horizon is a slider in each panel, and gross revenue is in the report. Materials can be found in
 [`site/explorer.template.html`](site/explorer.template.html) and [`R/site.R`](R/site.R).
@@ -37,7 +37,7 @@ from the two analyses' committed export contracts (the two CSV files, `inputs.cs
 
 The [comparison overview](https://fhoces.github.io/opa-prop40/) links all three, and the
 [BSZ overview](https://fhoces.github.io/opa-prop40/bsz-analysis/site/) and the
-[RJKDC overview](https://fhoces.github.io/opa-prop40/rjkdc-analysis/site/) each analysis on its own.
+[JR overview](https://fhoces.github.io/opa-prop40/rjkdc-analysis/site/) each analysis on its own.
 
 This project follows the [Open Policy Analysis (OPA) framework](https://doi.org/10.1093/scipol/scaa067) (Hoces de la
 Guardia, Grant and Miguel, 2021). [`AUDIT.md`](../AUDIT.md) rates
@@ -48,8 +48,8 @@ each page against the Guidelines' nine steps.
 ## The reproduction
 
 The reconciliation layer: puts the BSZ analysis (Boll, Saez and Zucman, August 2026) and the
-RJKDC analysis (Jaros and Rauh, NBER, September 2026) on one common output and one
-input-by-input bridge. The disputed inputs on the RJKDC end are those of its March 2026
+JR analysis (Jaros and Rauh, NBER, September 2026) on one common output and one
+input-by-input bridge. The disputed inputs on the JR end are those of its March 2026
 version, the one whose inputs the common function takes one by one (the September revision's
 code and data are in the same public repository), and the September revision is the bridge's
 last step. It
@@ -97,4 +97,4 @@ with every internal link resolving.
   abstract's "about $40 billion" are exported as alternatives (`export/r/anchors.csv`; an anchor is
   the published number an end of the bridge is checked against).
 - The Monte Carlo ranges (WT floor 35, C in [3.3, 5.8], r in [1.5%, 4.5%], NBER f in
-  [0.30, 0.60]) are read from the RJKDC contract (`rauh_mc_*`, `nber_mc_*` rows).
+  [0.30, 0.60]) are read from the JR contract (`rauh_mc_*`, `nber_mc_*` rows).

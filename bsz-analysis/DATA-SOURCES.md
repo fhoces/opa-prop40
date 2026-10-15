@@ -27,7 +27,7 @@ items have arrived, both on 2026-09-23 and both recorded in both analyses' `DATA
 - BSZ analysis: a confidential replication bundle of code and data
   (`author-shared/2026-09-23_bsz-replication-code-data/`, `obtained_via=author-shared`; re-analysis
   permitted, no public sharing). Not yet wired into any `tar_target`.
-- RJKDC analysis: the authors' public GitHub repository `bjaros20/wealth_tax` (MIT licence), cloned at
+- JR analysis: the authors' public GitHub repository `bjaros20/wealth_tax` (MIT licence), cloned at
   commit `25e84dd` (`author-shared/2026-09-23_wealth_tax-repo/`, `obtained_via=git-clone`). It is
   public, not author-shared in the sense above; it sits in the author-shared slot only for
   convenience, because the authors pointed us to it and the pipeline resolves it from there

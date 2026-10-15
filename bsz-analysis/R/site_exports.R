@@ -52,7 +52,7 @@ site_named_rows <- function() {
 # The main estimate: the one-time wealth tax, plus the one-time extra income tax from
 # selling assets, minus the present value of the yearly income tax lost to leavers over
 # BSZ's horizon of about 5 years (PDF p.27), discounted at 3% a year (the middle of the
-# 1.5%-4.5% range the RJKDC report uses; BSZ give no rate). Same definition as the deck.
+# 1.5%-4.5% range the JR report uses; BSZ give no rate). Same definition as the deck.
 site_pv_rate  <- 0.03
 site_pv_years <- 5
 site_pv_factor <- function(r = site_pv_rate, H = site_pv_years) (1 - (1 + r)^(-H)) / r
