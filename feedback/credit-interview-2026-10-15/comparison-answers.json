@@ -1,0 +1,17 @@
+{
+  "contributors": {
+    "human": "Fernando Hoces de la Guardia",
+    "ai": "Claude Code (Opus, Sonnet)"
+  },
+  "version": "full",
+  "date": "2026-10-15",
+  "objects": [
+    "Explorer",
+    "Report",
+    "Slides",
+    "Repository",
+    "Overview page"
+  ],
+  "answers": {},
+  "notes": {}
+}

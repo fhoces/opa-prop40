@@ -1,0 +1,86 @@
+{
+  "contributors": {
+    "human": "Fernando Hoces de la Guardia",
+    "ai": "Claude Code (Opus, Sonnet)"
+  },
+  "version": "full",
+  "date": "2026-10-15",
+  "objects": [
+    "Explorer",
+    "Report",
+    "Slides",
+    "Repository",
+    "Overview page"
+  ],
+  "answers": {
+    "Explorer": {
+      "Conceptualization": "Human only",
+      "Data curation": "AI lead",
+      "Formal analysis": "AI lead",
+      "Funding acquisition": "N/A",
+      "Investigation": "Equal",
+      "Methodology": "AI lead",
+      "Project administration": "AI lead",
+      "Resources": "N/A",
+      "Software": "AI lead",
+      "Supervision": "Human lead",
+      "Validation": "AI lead",
+      "Visualization": "Human lead",
+      "Writing \u2013 original draft": "Equal",
+      "Writing \u2013 review & editing": "Equal",
+      "Human verification": "Understood"
+    },
+    "Report": {
+      "Conceptualization": "AI only",
+      "Data curation": "AI only",
+      "Formal analysis": "AI only",
+      "Funding acquisition": "N/A",
+      "Investigation": "AI only",
+      "Methodology": "AI only",
+      "Project administration": "AI only",
+      "Resources": "N/A",
+      "Software": "AI only",
+      "Supervision": "AI only",
+      "Validation": "AI only",
+      "Visualization": "AI only",
+      "Writing \u2013 original draft": "AI only",
+      "Writing \u2013 review & editing": "AI only",
+      "Human verification": "No human review"
+    },
+    "Slides": {
+      "Conceptualization": "AI lead",
+      "Data curation": "AI lead",
+      "Formal analysis": "AI lead",
+      "Funding acquisition": "AI lead",
+      "Investigation": "AI lead",
+      "Methodology": "AI lead",
+      "Project administration": "AI lead",
+      "Resources": "AI lead",
+      "Software": "AI only",
+      "Supervision": "AI lead",
+      "Validation": "AI lead",
+      "Visualization": "AI lead",
+      "Writing \u2013 original draft": "AI lead",
+      "Writing \u2013 review & editing": "AI lead",
+      "Human verification": "Lightly checked"
+    },
+    "Repository": {
+      "Conceptualization": "AI only",
+      "Data curation": "AI only",
+      "Formal analysis": "AI only",
+      "Funding acquisition": "AI only",
+      "Investigation": "AI only",
+      "Methodology": "AI only",
+      "Project administration": "AI only",
+      "Resources": "AI only",
+      "Software": "AI only",
+      "Supervision": "AI only",
+      "Validation": "AI only",
+      "Visualization": "AI only",
+      "Writing \u2013 original draft": "AI only",
+      "Writing \u2013 review & editing": "AI only",
+      "Human verification": "No human review"
+    }
+  },
+  "notes": {}
+}
