@@ -517,7 +517,7 @@ test_that("the quantities section: one row per group of dials, credibility from 
   expect_true(grepl('<h3 id="q-title">But what are the actual quantities?</h3>', html, fixed = TRUE))
   expect_gt(at('<section class="quantities"'), at('<div class="pseudo-eq apply-eq"'))
   expect_lt(at('<section class="quantities"'), at('<details class="fold notes" id="notes-estimates">'))
-  expect_true(grepl("All these are empirical quantities. An expert should be able to appraise each value\n    from more to less credible.", html, fixed = TRUE))
+  expect_true(grepl("All these are empirical quantities. Their values should not depend on whether one\n    supports or opposes a wealth tax. An expert should be able to appraise each value from more to less\n    credible.", html, fixed = TRUE))
   # the four columns
   head <- regmatches(html, regexpr("<thead><tr>.*?</tr></thead>", html, perl = TRUE))
   th <- regmatches(head, gregexpr("(?<=<th>)[^<]*(?=</th>)", head, perl = TRUE))[[1]]

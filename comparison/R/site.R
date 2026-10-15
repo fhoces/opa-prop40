@@ -509,8 +509,9 @@ render_site <- function(root = comparison_root(),
   # The same table on the explorer and in the overview's "The differences" fold (author request
   # 2026-10-15); only the link to the report differs by page.
   q_table <- function(report) paste0(
-    '    <p class="q-sub">All these are empirical quantities. An expert should be able to appraise each value\n',
-    '    from more to less credible.</p>\n',
+    '    <p class="q-sub">All these are empirical quantities. Their values should not depend on whether one\n',
+    '    supports or opposes a wealth tax. An expert should be able to appraise each value from more to less\n',
+    '    credible.</p>\n',
     '    <table class="q-table">\n',
     '      <thead><tr>', tok$quantity_heads, '</tr></thead>\n',
     '      <tbody>\n', tok$quantity_rows, '\n      </tbody>\n',
