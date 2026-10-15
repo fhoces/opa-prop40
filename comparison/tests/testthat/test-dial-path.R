@@ -1,24 +1,26 @@
-# The dial path (author decision 2026-10-15): the eight steps are what the BSZ panel's dials
+# The dial path (author decision 2026-10-15): the nine steps are what the BSZ panel's dials
 # change when moved top to bottom, each to its far end. The pseudo-equation shows the three
-# largest and the other five added up (eq_terms() in R/site.R).
+# largest and the other six added up (eq_terms() in R/site.R).
 root <- comparison_root()
 rdir <- file.path(root, "comparison", "export", "r")
 pdir <- file.path(root, "comparison", "export", "py")
 
-test_that("the eight changes add up to the JR end (one 3% rate) minus the BSZ end", {
+test_that("the nine changes add up to the JR estimate minus the BSZ estimate", {
   dp <- read_csv_plain(file.path(rdir, "dial_path.csv"))
   en <- read_csv_plain(file.path(rdir, "ends.csv"))
   eb <- en[en$horizon_setting == "own" & en$output == "b", ]
   expect_identical(dp$step_id, EXPLORER_DIAL_ORDER)
-  expect_equal(nrow(dp), 8L)
-  expect_equal(sum(dp$change), eb$rauh_model - eb$bsz_model, tolerance = 1e-9)
+  expect_equal(nrow(dp), 9L)
+  expect_equal(sum(dp$change), eb$rauh_own - eb$bsz_model, tolerance = 1e-9)
   expect_lt(abs(dp$from[1] - eb$bsz_model), 1e-9)
-  expect_lt(abs(dp$to[8] - eb$rauh_model), 1e-9)
-  # the path ends at the JR end at 3%, not at the JR headline: the JR rate gap apart
-  expect_lt(abs(dp$to[8] - eb$jr_rate_gap - eb$rauh_own), 1e-9)
-  expect_gt(eb$jr_rate_gap, 6)
+  # the path ends at the JR analysis's own expectation, -38.98
+  expect_lt(abs(dp$to[9] - eb$rauh_own), 1e-9)
+  expect_equal(money(dp$to[9], 1), "\u2212$39.0B")
+  # the rate step sits after H in the loss box, and is what the authors' random rate is worth
+  expect_identical(dp$symbol[8], "r")
+  expect_equal(round(dp$change[8], 2), -6.73)
   # the steps chain: each starts where the previous one ends
-  expect_equal(dp$from[-1], dp$to[-8], tolerance = 1e-12)
+  expect_equal(dp$from[-1], dp$to[-9], tolerance = 1e-12)
   expect_equal(dp$to - dp$from, dp$change, tolerance = 1e-12)
 })
 

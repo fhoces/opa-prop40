@@ -6,4 +6,5 @@
 5,"income_loss_share","f","Share of billionaire income tax lost",40.1311777145627,35.092120423884,-5.0390572906787
 6,"income_level","C","Billionaires' annual CA income tax",35.092120423884,32.0242373145617,-3.06788310932234
 7,"horizon","H","How long the income tax loss lasts",32.0242373145617,-26.8488122196575,-58.8730495342192
-8,"minor_inputs","minor","Three minor inputs",-26.8488122196575,-32.25,-5.4011877803425
+8,"discount_rate","r","Discount rate for the lost income tax",-26.8488122196575,-33.579100921256,-6.7302887015985
+9,"minor_inputs","minor","Three minor inputs",-33.579100921256,-38.9802887015985,-5.4011877803425

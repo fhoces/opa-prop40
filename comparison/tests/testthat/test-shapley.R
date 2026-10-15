@@ -19,16 +19,15 @@ test_that("the full chain closes: GGSS printed -> BSZ -> the steps -> JR Septemb
     e <- en[en$horizon_setting == "own" & en$output == o, ]
     ggss <- res$endpoints$value[res$endpoints$endpoint_id == "ggss_headline"]
     b <- br[br$horizon_setting == "own" & br$output == o, ]
-    # the steps reach the JR end at one rate; the JR rate gap separates it from the JR headline
-    chain <- e$bsz_model + sum(b$shapley)
-    expect_equal(chain, e$rauh_model, tolerance = 1e-12, label = o)
-    expect_equal(chain - e$jr_rate_gap, e$rauh_own, tolerance = 1e-12, label = o)
+    chain <- e$bsz_model + sum(b$shapley) + e$rauh_residual
+    expect_equal(chain, e$rauh_own, tolerance = 1e-12, label = o)
+    expect_lt(abs(e$rauh_residual), 1e-9)
   }
 })
 
 test_that("inputs that do not enter output (a) get exactly zero", {
   b <- br[br$horizon_setting == "own" & br$output == "a", ]
-  for (id in c("income_loss_share", "income_level", "horizon", "asset_sales"))
+  for (id in c("income_loss_share", "income_level", "horizon", "discount_rate", "asset_sales"))
     expect_equal(b$shapley[b$step_id == id], 0, label = id)
 })
 
@@ -53,11 +52,15 @@ test_that("every step is labelled and tied to a DISPUTES row or flagged as not o
   expect_true(all(nzchar(st$kind)))
   # rows 1 and 4 are disputes with the March 2026 version only (the September headline predicts
   # no departures from an elasticity), so they are not steps; row 9 is the litigation weight
-  expect_setequal(setdiff(st$disputes_row, "(not a row)"), as.character(c(2, 3, 5, 6, 7, 8, 9)))
+  # row 10 is the discount rate (a dial since 2026-10-15)
+  expect_setequal(setdiff(st$disputes_row, "(not a row)"), as.character(c(2, 3, 5, 6, 7, 8, 9, 10)))
   dis <- readLines(file.path(comparison_root(), "comparison", "DISPUTES.md"), encoding = "UTF-8")
   for (r in setdiff(st$disputes_row, "(not a row)"))
     expect_true(any(startsWith(dis, paste0("| ", r, " | "))), label = paste("DISPUTES row", r))
   expect_true(all(grepl("data|research|guesswork|scenario", st$kind)))
+  # every kind is one of the kinds the pages define, or "A vs B" of two of them
+  kinds <- c("data", "research", "guesswork", "guesswork on data", "scenario", "derived")
+  expect_true(all(unlist(strsplit(st$kind, " vs ", fixed = TRUE)) %in% kinds))
 })
 
 test_that("the switchboard grid is score_common() at every mix of switches", {
@@ -66,7 +69,7 @@ test_that("the switchboard grid is score_common() at every mix of switches", {
   g <- sb[sb$horizon_setting == "own" & sb$output == "b", ]
   # bit i-1 of the mask is input i in the bridge's order
   full <- 2L^length(ids) - 1L
-  for (m in c(0L, 1L, 16L, 5L, full, 734L)) {
+  for (m in c(0L, 1L, 16L, 5L, full, 734L, 512L, 1536L)) {
     on <- ids[bitwAnd(m, 2^(seq_along(ids) - 1)) > 0]
     expect_equal(g$value[g$mask == m], score_common(switch_inputs(bi$sup, bi$rauh, on))[["b"]],
                  tolerance = 1e-12, label = paste("mask", m))

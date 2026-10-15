@@ -8,9 +8,9 @@ HORIZONS <- c(5, 10, 20, 30, 50, Inf)
 # confirmed departures, the litigation-survival weight and the independently drawn share of
 # the income tax base that leaves. The ceiling is the script's literal, 72 (the person-level
 # file gives 72.05; the JR analysis's mismatch 4), so that the function returns the authors'
-# expected revenue exactly. Both ends discount at the one common rate (COMMON_RATE_ID in
-# model.R), so the JR end's net fiscal effect differs from the authors' mean NPV by
-# jr_rate_gap (see build_all()).
+# own expectation exactly. The discount rate is 3% at the BSZ end (BSZ_RATE_ID in model.R) and,
+# at the JR end, the one rate worth the same as the authors' draw r ~ U[r_min, r_max]:
+# r_jr = 1 / E_r[1/r], computed here from the JR contract (jr_discount_rate() in model.R).
 bridge_inputs <- function(k) {
   si <- k$bsz$inputs; so <- k$bsz$outputs
   oi <- k$rjkdc$inputs;   oo <- k$rjkdc$outputs
@@ -40,18 +40,19 @@ bridge_inputs <- function(k) {
   L_seven <- pick(si, "pre2026_leavers_annual_inctax") + pick(si, "brin_annual_inctax") +
     pick(si, "resid_inctax_rate") * pick(oi, "nber_spielberg_sacks_net_worth")
   shared <- list(tau = tau, m = pick(si, "mobility_share"), g = pick(si, "gains_share"),
-                 t_cg = pick(si, "ca_cg_rate"), r = pick(d, COMMON_RATE_ID))
+                 t_cg = pick(si, "ca_cg_rate"))
   sup <- c(shared, list(
     W_noncit = noncit, W_core = W0 - noncit, lam = 0, re = 0, dep_b = 0, dep_j = 0, L = 0,
     alpha = pick(si, "avoidance_rate"), q = 1,
-    own = 1, f0 = 0, C = C_sup, H = pick(d, "bsz_loss_horizon"),
+    own = 1, f0 = 0, C = C_sup, H = pick(d, "bsz_loss_horizon"), r = pick(d, BSZ_RATE_ID),
     s = pick(si, "sell_share")))
   rauh <- c(shared, list(
     W_noncit = 0, W_core = base_r, lam = 1, re = 1 - R0_r / (tau * base_r),
     dep_b = seven_b, dep_j = seven_j, L = L_seven, alpha = 0, q = pick(oi, "q_litigation_survival"),
     own = 0, f0 = (pick(oi, "nber_mc_f_min") + pick(oi, "nber_mc_f_max")) / 2,
     C = (pick(oi, "rauh_mc_c_min") + pick(oi, "rauh_mc_c_max")) / 2,
-    H = pick(d, "rauh_loss_horizon"), s = 0))
+    H = pick(d, "rauh_loss_horizon"),
+    r = jr_discount_rate(pick(oi, "rauh_mc_r_min"), pick(oi, "rauh_mc_r_max")), s = 0))
   list(sup = sup, rauh = rauh,
        ladder = list(dep_b = c(0, four_b, seven_b), dep_j = c(0, four_j, seven_j), L = c(0, L_bsz, L_seven)))
 }
@@ -63,14 +64,14 @@ bridge_input_table <- function(bi) {
   data.frame(
     step_id = c("noncitizens", "base_list", "base_list", "real_estate", "confirmed_departures", "confirmed_departures", "confirmed_departures", "avoidance",
                 "litigation_survival", "income_loss_share", "income_loss_share",
-                "income_level", "horizon", "asset_sales"),
-    input = c("W_noncit", "W_core", "lam", "re", "dep_b", "dep_j", "L", "alpha", "q", "own", "f0", "C", "H", "s"),
+                "income_level", "horizon", "discount_rate", "asset_sales"),
+    input = c("W_noncit", "W_core", "lam", "re", "dep_b", "dep_j", "L", "alpha", "q", "own", "f0", "C", "H", "r", "s"),
     supporting_value = c(s$W_noncit, s$W_core, s$lam, s$re, s$dep_b, s$dep_j, s$L, s$alpha, s$q, s$own, s$f0,
-                         s$C, s$H, s$s),
+                         s$C, s$H, s$r, s$s),
     rauh_value = c(r$W_noncit, r$W_core, r$lam, r$re, r$dep_b, r$dep_j, r$L, r$alpha, r$q, r$own, r$f0,
-                   r$C, r$H, r$s),
+                   r$C, r$H, r$r, r$s),
     unit = c("$B", "$B", "list", "share", "$B", "$B", "$B/yr", "share", "probability", "rule", "share",
-             "$B/yr", "years", "share"),
+             "$B/yr", "years", "rate", "share"),
     supporting_source = c(
       "GGSS 20 Jul 2026 p.2 fn.1 (24 people, about $150B); BSZ PDF p.54 ($132B at 1 Jan)",
       "BSZ export baseline_net_worth ($2,307B, 1 Jul 2026; BSZ PDF p.24, GGSS p.4) minus the non-citizens",
@@ -85,6 +86,7 @@ bridge_input_table <- function(bi) {
       "no flat share: the loss follows the people who leave",
       "BSZ export ca_inctax_billionaires (Tab2!C14; BSZ PDF p.11): research, top wealth holders' income is 50% of top earners' (Balkir et al. 2025)",
       "BSZ PDF p.27 ('If they last say only 5 years')",
+      "no rate in the BSZ analysis: 3%, the rate this OPA's BSZ overview uses for the 5-year loss (bsz-analysis/R/site_exports.R, site_pv_rate), the middle of the JR draw (scenario)",
       "BSZ export sell_share (BSZ PDF p.24)"),
     rauh_source = c(
       "omitted: 28 international billionaires, $146.3B, excluded from the domestic base (JR export nber_international_net_worth; NBER chapter Sec. 3.5)",
@@ -100,6 +102,7 @@ bridge_input_table <- function(bi) {
       "midpoint of f ~ U[0.30, 0.60], drawn independently of the revenue (NPV_dist_v8.R; chapter Sec. 5.4): guesswork",
       "midpoint of C ~ U[3.3, 5.8] (NPV_dist_v8.R:21; chapter pp.29-31): guesswork, the K = 500 floor is the authors' judgement",
       "perpetuity (chapter Sec. 5.4, eq. 18-19)",
+      "the one rate worth the same as the draw r ~ U[1.5%, 4.5%] (JR export rauh_mc_r_min and rauh_mc_r_max; NPV_dist_v8.R:22; chapter p.32): 1 / E[1/r] = 0.03 / ln(3) (derived)",
       "not modelled"),
     stringsAsFactors = FALSE)
 }
@@ -150,12 +153,14 @@ build_all <- function(k = read_contracts()) {
         shapley = unname(full_sh), sequential = unname(full_sq),
         sequential_rank = match(ids, sequential_order()), stringsAsFactors = FALSE)
       # rauh_own is the JR analysis's own expectation (its rate drawn between r_min and
-      # r_max); jr_rate_gap = rauh_model - rauh_own is what discounting at the one common
-      # rate adds: f0 C (E_r[annuity(r, H)] - annuity(r_common, H)) on (b), zero on (a)
+      # r_max); rauh_residual, what the common function at the JR inputs misses of it, is
+      # zero in perpetuity (the JR rate r_jr is defined so) and kept so the identity is
+      # tested, not assumed. At a finite common horizon it is what one rate misses of the
+      # annuity averaged over the draw, f0 C (annuity(r_jr, H) - E_r[annuity(r, H)]).
       ends[[length(ends) + 1]] <- data.frame(
         horizon_setting = st, output = out,
         bsz_model = v_sup[[out]], rauh_model = v_rauh[[out]],
-        rauh_own = own_n[[out]], jr_rate_gap = v_rauh[[out]] - own_n[[out]],
+        rauh_own = own_n[[out]], rauh_residual = own_n[[out]] - v_rauh[[out]],
         stringsAsFactors = FALSE)
     }
   }
@@ -173,25 +178,24 @@ build_all <- function(k = read_contracts()) {
   ea <- own[own$output == "a", ]; eb <- own[own$output == "b", ]
   endpoints <- data.frame(
     endpoint_id = c("ggss_headline", "ggss_scoring", "bsz_tab5_row1", "bsz_net_constructed",
-                    "rauh_nber_revenue_mc", "rauh_nber_npv", "rauh_common_end"),
+                    "rauh_nber_revenue_mc", "rauh_nber_npv"),
     description = c(
       "GGSS headline: BSZ model + their rounding step",
       "GGSS estimate before rounding (p.4, '$104 billion')",
       "BSZ Table 5 row 1 wealth tax revenue = model at all-BSZ inputs",
       "BSZ row 1 net of its own extra income tax and 5 years of losses (not printed by BSZ; constructed here)",
       "JR expected revenue in the Monte Carlo, E[WT] = (0 + 72)/2 = model at all-JR inputs",
-      "JR mean NPV, analytic expectation of the Monte Carlo (its discount rate drawn at random)",
-      "JR end of the common function: the JR inputs at the one common rate (JR mean NPV + jr_rate_gap; not printed by JR)"),
+      "JR mean NPV, analytic expectation of the Monte Carlo = model at all-JR inputs (the rate at 1 / E[1/r])"),
     value = c(ea$bsz_model + (ggss_printed - ea$bsz_model),
               ea$bsz_model, ea$bsz_model, eb$bsz_model,
-              ea$rauh_own, eb$rauh_own, eb$rauh_model),
+              ea$rauh_own, eb$rauh_own),
     printed_value = c(ggss_printed, pick(so, "ggss_scoring", "printed_value"),
                       pick(so, "tab5_row1_wealth_tax_revenue", "printed_value"), NA,
-                      NA, pick(oo, "npv_mc_nber_mean", "printed_value"), NA),
+                      NA, pick(oo, "npv_mc_nber_mean", "printed_value")),
     printed_where = c("GGSS p.4", "GGSS p.4", "BSZ Table 5, PDF p.39", "",
-                      "", "Jaros-Rauh NBER p.1, p.35", ""),
+                      "", "Jaros-Rauh NBER p.1, p.35"),
     contract_value = c(pick(so, "ggss_headline"), pick(so, "ggss_scoring"), bsz_row1, NA,
-                       NA, pick(oo, "npv_mc_nber_mean"), NA),
+                       NA, pick(oo, "npv_mc_nber_mean")),
     stringsAsFactors = FALSE)
   endpoints$abs_diff_printed <- abs(endpoints$value - endpoints$printed_value)
 
@@ -208,8 +212,9 @@ build_all <- function(k = read_contracts()) {
   anchors$residual_vs_model <- anchors$value - ea$rauh_model
 
   # ---- annual income tax loss: every source on one scale ------------------------
-  # every present value on the page is at the one common rate
-  A5 <- annuity(sup$r, 5); Ainf <- annuity(sup$r, Inf)
+  # 5-year values at the BSZ end's rate (3%), perpetuities at the JR end's (r_jr, 2.73%), so
+  # the JR row in perpetuity is the JR analysis's own present value
+  A5 <- annuity(sup$r, 5); Ainf <- annuity(rauh$r, Inf)
   loss <- data.frame(
     source_id = c("bsz_row1", "bsz_row3", "lao_upper", "rauh_nber", "walczak_low", "walczak_high"),
     label = c("BSZ Table 5 row 1 (benchmark)", "BSZ Table 5 row 3 (aggressive leavers)",
@@ -239,7 +244,7 @@ build_all <- function(k = read_contracts()) {
             additional_movers = NA,
             additional_behavioral_response = sq(c("avoidance", "litigation_survival")),
             real_estate_exclusion = sq("real_estate"),
-            rauh_rounding = ea$jr_rate_gap,
+            rauh_rounding = ea$rauh_residual,
             income_tax_loss = eb$rauh_model - ea$rauh_model)
   hoopes <- data.frame(step_id = names(ours), ours = unname(ours), stringsAsFactors = FALSE)
   hoopes$hoopes <- hz$delta[match(hoopes$step_id, hz$step_id)]
@@ -249,8 +254,8 @@ build_all <- function(k = read_contracts()) {
                         "Billionaires already departed",
                         "(none: Rauh's Monte Carlo headline does not use the ten 'expanded' departures)",
                         "Avoidance allowance + chance the tax survives litigation (his bar is the March 2026 version's elasticity response, which the September version does not use)",
-                        "Real-estate deduction", "(none: on revenue the common function's JR end is the September version's expected revenue)",
-                        "The JR end at one 3% rate minus its expected revenue (all income-tax steps together; the authors' random rate makes the loss larger by the JR rate gap)")
+                        "Real-estate deduction", "(none: the common function returns the September version's expectation exactly)",
+                        "The JR analysis's own NPV minus its own expected revenue (all income-tax steps together)")
 
   list(inputs = bridge_input_table(bi), bridge = bridge, ends = ends, endpoints = endpoints,
        anchors = anchors, loss = loss, hoopes = hoopes, switchboard = board,
@@ -258,13 +263,12 @@ build_all <- function(k = read_contracts()) {
        dial_path = dial_path(bi),
        meta = data.frame(key = c("A_5", "A_inf", "L_bsz_aggressive", "R0_rauh", "S_rauh",
                                  "X_bsz", "PV_bsz_own", "f_rauh", "C_rauh",
-                                 "r_common", "r_min_jr", "r_max_jr", "A_inf_jr_draw", "jr_rate_gap"),
+                                 "r_bsz", "r_jr", "r_min_jr", "r_max_jr", "A_inf_jr_draw"),
                          value = c(A5, Ainf, bi$ladder$L[2], score_common(rauh)[["R0"]],
                                    score_common(rauh)[["S"]], score_common(sup)[["X"]],
                                    score_common(sup)[["PV"]], score_common(rauh)[["f"]], rauh$C,
-                                   sup$r, nber_args$r_min, nber_args$r_max,
-                                   expected_annuity(Inf, nber_args$r_min, nber_args$r_max),
-                                   eb$jr_rate_gap)))
+                                   sup$r, rauh$r, nber_args$r_min, nber_args$r_max,
+                                   expected_annuity(Inf, nber_args$r_min, nber_args$r_max))))
 }
 
 write_exports <- function(res, dir) {

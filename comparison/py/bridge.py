@@ -64,9 +64,10 @@ def read_contracts(root: str) -> dict:
 
 
 # ---- model ---------------------------------------------------------------------
-# One discount rate for both ends (author decision 2026-10-15): the row common_discount_rate of
-# comparison/data/document-inputs.csv, read by R and by this twin (COMMON_RATE_ID in R/model.R).
-COMMON_RATE_ID = "common_discount_rate"
+# The discount rate is a bridge step (author decision 2026-10-15). The BSZ end: the row
+# common_discount_rate of comparison/data/document-inputs.csv (BSZ_RATE_ID in R/model.R). The JR
+# end: r_jr = 1 / E_r[1/r] over the authors' draw (jr_discount_rate() below).
+BSZ_RATE_ID = "common_discount_rate"
 
 
 def annuity(r: float, H: float) -> float:
@@ -103,17 +104,18 @@ STEPS = [
     ("income_loss_share", "6", "Share of billionaire income tax lost", "data vs guesswork"),
     ("income_level", "5", "Billionaires' annual CA income tax", "research vs guesswork"),
     ("horizon", "2", "How long the income tax loss lasts", "scenario"),
+    ("discount_rate", "10", "Discount rate for the lost income tax", "scenario vs derived"),
     ("asset_sales", "(not a row)", "Extra income tax from selling assets to pay", "guesswork"),
 ]
 IDS = [s[0] for s in STEPS]
 STEP_INPUTS = {"noncitizens": ["W_noncit"], "base_list": ["W_core", "lam"], "real_estate": ["re"],
                "confirmed_departures": ["dep_b", "dep_j", "L"], "avoidance": ["alpha"],
                "litigation_survival": ["q"], "income_loss_share": ["own", "f0"],
-               "income_level": ["C"], "horizon": ["H"],
+               "income_level": ["C"], "horizon": ["H"], "discount_rate": ["r"],
                "asset_sales": ["s"]}
 SEQUENTIAL = ["noncitizens", "base_list", "confirmed_departures", "avoidance",
               "litigation_survival", "real_estate", "asset_sales", "income_loss_share",
-              "income_level", "horizon"]
+              "income_level", "horizon", "discount_rate"]
 
 
 def switch_inputs(sup: dict, rauh: dict, on) -> dict:
@@ -195,10 +197,11 @@ def slider_sample(sup, rauh, ladder, n=300, seed=20261014):
 # inputs together. A term is what one move changes.
 EXPLORER_MINOR = ["noncitizens", "real_estate", "asset_sales"]
 EXPLORER_DIAL_ORDER = ["base_list", "confirmed_departures", "avoidance", "litigation_survival",
-                       "income_loss_share", "income_level", "horizon", "minor_inputs"]
+                       "income_loss_share", "income_level", "horizon", "discount_rate",
+                       "minor_inputs"]
 DIAL_PATH_SYMBOLS = {"base_list": "W", "confirmed_departures": "D", "avoidance": "a",
                      "litigation_survival": "q", "income_loss_share": "f", "income_level": "C",
-                     "horizon": "H", "minor_inputs": "minor"}
+                     "horizon": "H", "discount_rate": "r", "minor_inputs": "minor"}
 
 
 def dial_path(sup, rauh, ladder, order=EXPLORER_DIAL_ORDER):
@@ -256,8 +259,9 @@ def sequential_bridge(sup, rauh, order, output):
     return out
 
 
-# The JR analysis's own expectation draws the rate r ~ U[r_min, r_max] and averages the annuity;
-# the common function uses one rate. The difference is jr_rate_gap (see R/model.R).
+# The JR analysis's own expectation draws the rate r ~ U[r_min, r_max] and averages the annuity.
+# The JR end of the rate dial is the one rate worth the same in perpetuity, 1 / E_r[1/r]
+# (see R/model.R).
 def expected_annuity(H: float, r_min: float, r_max: float) -> float:
     if math.isinf(H):
         return math.log(r_max / r_min) / (r_max - r_min)
@@ -265,6 +269,10 @@ def expected_annuity(H: float, r_min: float, r_max: float) -> float:
         return 0.0
     val, _ = quad(lambda r: (1 - (1 + r) ** (-H)) / r, r_min, r_max, epsabs=0, epsrel=1e-12)
     return val / (r_max - r_min)
+
+
+def jr_discount_rate(r_min: float, r_max: float) -> float:
+    return 1 / expected_annuity(math.inf, r_min, r_max)
 
 
 def rauh_nber_expectation(wt_min, wt_max, f_min, f_max, c_min, c_max, r_min, r_max, H=math.inf):
@@ -298,17 +306,18 @@ def bridge_inputs(k):
     L_seven = (pick(si, "pre2026_leavers_annual_inctax") + pick(si, "brin_annual_inctax") +
                pick(si, "resid_inctax_rate") * pick(oi, "nber_spielberg_sacks_net_worth"))
     shared = {"tau": tau, "m": pick(si, "mobility_share"), "g": pick(si, "gains_share"),
-              "t_cg": pick(si, "ca_cg_rate"), "r": pick(d, COMMON_RATE_ID)}
+              "t_cg": pick(si, "ca_cg_rate")}
     sup = dict(shared, W_noncit=noncit, W_core=W0 - noncit, lam=0.0, re=0.0,
                dep_b=0.0, dep_j=0.0, L=0.0,
                alpha=pick(si, "avoidance_rate"), q=1.0,
                own=1.0, f0=0.0, C=C_sup,
-               H=pick(d, "bsz_loss_horizon"), s=pick(si, "sell_share"))
+               H=pick(d, "bsz_loss_horizon"), r=pick(d, BSZ_RATE_ID), s=pick(si, "sell_share"))
     rauh = dict(shared, W_noncit=0.0, W_core=base_r, lam=1.0, re=1 - R0_r / (tau * base_r),
                 dep_b=seven_b, dep_j=seven_j, L=L_seven, alpha=0.0, q=pick(oi, "q_litigation_survival"),
                 own=0.0, f0=(pick(oi, "nber_mc_f_min") + pick(oi, "nber_mc_f_max")) / 2,
                 C=(pick(oi, "rauh_mc_c_min") + pick(oi, "rauh_mc_c_max")) / 2,
-                H=pick(d, "rauh_loss_horizon"), s=0.0)
+                H=pick(d, "rauh_loss_horizon"),
+                r=jr_discount_rate(pick(oi, "rauh_mc_r_min"), pick(oi, "rauh_mc_r_max")), s=0.0)
     ladder = {"dep_b": [0.0, four_b, seven_b], "dep_j": [0.0, four_j, seven_j],
               "L": [0.0, L_bsz, L_seven]}
     return sup, rauh, ladder
@@ -353,7 +362,7 @@ def build_all(k):
                                "disputes_row": row, "title": title, "kind": kind})
             ends.append({"horizon_setting": st, "output": out,
                          "bsz_model": v_sup[out], "rauh_model": v_rauh[out],
-                         "rauh_own": own_n[out], "jr_rate_gap": v_rauh[out] - own_n[out]})
+                         "rauh_own": own_n[out], "rauh_residual": own_n[out] - v_rauh[out]})
     bridge.sort(key=lambda r: (r["horizon_setting"], r["output"], IDS.index(r["step_id"])))
     board.sort(key=lambda r: (r["output"], settings.index(r["horizon_setting"]), r["mask"]))
     ea = [e for e in ends if e["horizon_setting"] == "own" and e["output"] == "a"][0]
@@ -366,8 +375,7 @@ def build_all(k):
             ("bsz_tab5_row1", ea["bsz_model"], pick(so, "tab5_row1_wealth_tax_revenue", "printed_value")),
             ("bsz_net_constructed", eb["bsz_model"], math.nan),
             ("rauh_nber_revenue_mc", ea["rauh_own"], math.nan),
-            ("rauh_nber_npv", eb["rauh_own"], pick(oo, "npv_mc_nber_mean", "printed_value")),
-            ("rauh_common_end", eb["rauh_model"], math.nan)]
+            ("rauh_nber_npv", eb["rauh_own"], pick(oo, "npv_mc_nber_mean", "printed_value"))]
     for eid, v, p in vals:
         endpoints.append({"endpoint_id": eid, "value": v, "printed_value": p,
                           "abs_diff_printed": abs(v - p)})
@@ -376,9 +384,9 @@ def build_all(k):
         ("mc_expected", ea["rauh_own"]),
         ("preferred_about_30", pick(d, "nber_headline_revenue"))]]
 
-    # every present value on the page is at the one common rate
+    # 5-year values at the BSZ end's rate, perpetuities at the JR end's (see R/build.R)
     A5 = annuity(sup["r"], 5)
-    Ainf = annuity(sup["r"], math.inf)
+    Ainf = annuity(rauh["r"], math.inf)
     loss = []
     for sid, al in [("bsz_row1", -pick(so, "tab5_row1_annual_ca_inctax_loss")),
                     ("bsz_row3", -pick(so, "tab5_row3_annual_ca_inctax_loss")),
@@ -401,7 +409,7 @@ def build_all(k):
             ("additional_behavioral_response",
              sqa["avoidance"] + sqa["litigation_survival"]),
             ("real_estate_exclusion", sqa["real_estate"]),
-            ("rauh_rounding", ea["jr_rate_gap"]),
+            ("rauh_rounding", ea["rauh_residual"]),
             ("income_tax_loss", eb["rauh_model"] - ea["rauh_model"])]
     hoopes = [{"step_id": sid, "ours": v,
                "hoopes": num(hz[sid]["delta"]) if sid in hz else math.nan,
@@ -415,10 +423,9 @@ def build_all(k):
             {"key": "X_bsz", "value": score_common(sup)["X"]},
             {"key": "PV_bsz_own", "value": score_common(sup)["PV"]},
             {"key": "f_rauh", "value": s_r["f"]}, {"key": "C_rauh", "value": rauh["C"]},
-            {"key": "r_common", "value": sup["r"]}, {"key": "r_min_jr", "value": na["r_min"]},
-            {"key": "r_max_jr", "value": na["r_max"]},
-            {"key": "A_inf_jr_draw", "value": expected_annuity(math.inf, na["r_min"], na["r_max"])},
-            {"key": "jr_rate_gap", "value": eb["jr_rate_gap"]}]
+            {"key": "r_bsz", "value": sup["r"]}, {"key": "r_jr", "value": rauh["r"]},
+            {"key": "r_min_jr", "value": na["r_min"]}, {"key": "r_max_jr", "value": na["r_max"]},
+            {"key": "A_inf_jr_draw", "value": expected_annuity(math.inf, na["r_min"], na["r_max"])}]
     return {"bridge": bridge, "ends": ends, "endpoints": endpoints, "anchors": anchors,
             "loss": loss, "hoopes": hoopes, "meta": meta, "switchboard": board,
             "slider_sample": slider_sample(sup, rauh, ladder),

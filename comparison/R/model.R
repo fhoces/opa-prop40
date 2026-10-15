@@ -3,10 +3,11 @@
 # ONE function estimates both analyses. Every disputed input is an argument that takes
 # either the BSZ analysis's value (GGSS July 2026 / BSZ August 2026, which share their
 # benchmark) or the JR analysis's (Jaros and Rauh, NBER, September 2026). At the all-BSZ
-# setting it must return BSZ Table 5 row 1. At the all-JR setting it returns the JR analysis's
-# expected revenue exactly; its net fiscal effect differs from the JR headline (the exact mean of
-# the authors' Monte Carlo) by jr_rate_gap only, because the common function discounts at one
-# rate where the Monte Carlo draws the rate (see annuity() and rauh_nber_expectation()).
+# setting it must return BSZ Table 5 row 1; at the all-JR setting it must return the
+# expectation of the JR analysis's own Monte Carlo (its inputs are independent uniforms,
+# so the expectation has a closed form and needs no random draws). The discount rate r is an
+# input like the others: 3% at the BSZ end, and at the JR end the one rate worth the same as
+# the authors' random draw of it (see bridge_inputs() and rauh_nber_expectation()).
 #
 #   Wn  = (W_core + W_noncit) * (1 - re)                   the base, net of real estate
 #   D   = (1 - lam) * dep_b + lam * dep_j                  wealth already departed, valued on the
@@ -29,15 +30,15 @@
 #   NET = WT + X - PV                                      output (b), net fiscal effect
 #
 # annuity(r, H) = (1 - (1 + r)^-H) / r, the value of 1 per year for H years; H = Inf
-# gives the perpetuity 1/r and r -> 0 gives H. r is ONE rate, 3% (author decision 2026-10-15),
-# shared by both ends: the rate the BSZ overview uses and the middle of the JR analysis's
-# 1.5% to 4.5% draw. It is the row common_discount_rate of comparison/data/document-inputs.csv,
-# the one place R, Python and the pages read it from (COMMON_RATE_ID). The BSZ analysis takes
-# no position on r and the JR analysis draws it at random, a method, not an input; so r is not
-# a bridge step, and the JR end of the common function differs from the JR headline by
-# jr_rate_gap (rauh_nber_expectation() below).
+# gives the perpetuity 1/r and r -> 0 gives H. r is a bridge step (author decision 2026-10-15,
+# the rate dial). The BSZ end takes 3%, the row common_discount_rate of
+# comparison/data/document-inputs.csv (BSZ_RATE_ID; the BSZ analysis gives no rate, and 3% is
+# the rate the BSZ overview uses for its 5-year loss). The JR end takes r_jr = 1 / E_r[1/r],
+# the one rate whose perpetuity equals the average perpetuity over the authors' draw
+# r ~ U[r_min, r_max]: (r_max - r_min) / ln(r_max / r_min) = 0.03 / ln(3) = 2.73%, computed in
+# bridge_inputs() from the JR contract's rauh_mc_r_min and rauh_mc_r_max.
 
-COMMON_RATE_ID <- "common_discount_rate"
+BSZ_RATE_ID <- "common_discount_rate"
 
 annuity <- function(r, H) {
   if (is.infinite(H)) return(1 / r)
@@ -64,15 +65,15 @@ score_common <- function(x) {
 # September 2026 version's headline uses (rows 1 and 4, the permanent-rate framing and the
 # size of the elasticity, do not: that version predicts no departures from an elasticity),
 # row 7 split into its two parts, row 9 (the litigation weight) added for that version, plus
-# the two inputs DISPUTES.md does not list as rows (the 10% avoidance allowance and the
-# asset-sale income tax). `step_inputs` are the score_common() arguments a step switches
+# row 10 (the discount rate, a dial since 2026-10-15), plus the two inputs DISPUTES.md does not
+# list as rows (the 10% avoidance allowance and the asset-sale income tax). `step_inputs` are the score_common() arguments a step switches
 # from the BSZ to the JR value; the share-lost step switches two together.
 bridge_steps <- function() {
   data.frame(
     step_id = c("noncitizens", "base_list", "real_estate", "confirmed_departures",
                 "avoidance", "litigation_survival", "income_loss_share", "income_level",
-                "horizon", "asset_sales"),
-    disputes_row = c("8", "7", "7", "3", "(not a row)", "9", "6", "5", "2", "(not a row)"),
+                "horizon", "discount_rate", "asset_sales"),
+    disputes_row = c("8", "7", "7", "3", "(not a row)", "9", "6", "5", "2", "10", "(not a row)"),
     title = c(
       "Non-US-citizen residents",
       "Forbes source: which list and valuation date",
@@ -83,22 +84,25 @@ bridge_steps <- function() {
       "Share of billionaire income tax lost",
       "Billionaires' annual CA income tax",
       "How long the income tax loss lasts",
+      "Discount rate for the lost income tax",
       "Extra income tax from selling assets to pay"),
     kind = c("data", "data", "data", "guesswork on data", "guesswork", "guesswork",
-             "data vs guesswork", "research vs guesswork", "scenario", "guesswork"),
+             "data vs guesswork", "research vs guesswork", "scenario", "scenario vs derived",
+             "guesswork"),
     stringsAsFactors = FALSE)
 }
 
 step_inputs <- list(
   noncitizens = "W_noncit", base_list = c("W_core", "lam"), real_estate = "re",
   confirmed_departures = c("dep_b", "dep_j", "L"), avoidance = "alpha", litigation_survival = "q",
-  income_loss_share = c("own", "f0"), income_level = "C", horizon = "H", asset_sales = "s")
+  income_loss_share = c("own", "f0"), income_level = "C", horizon = "H", discount_rate = "r",
+  asset_sales = "s")
 
 # The order Hoopes (2026) Figure 2 reads in: base and residency, departures,
 # behaviour, real estate, then everything about income tax last.
 sequential_order <- function() {
   c("noncitizens", "base_list", "confirmed_departures", "avoidance", "litigation_survival",
-    "real_estate", "asset_sales", "income_loss_share", "income_level", "horizon")
+    "real_estate", "asset_sales", "income_loss_share", "income_level", "horizon", "discount_rate")
 }
 
 switch_inputs <- function(sup, rauh, on) {
@@ -115,7 +119,8 @@ switch_inputs <- function(sup, rauh, on) {
 # (slider_inputs in py/bridge.py) and the page (site/explorer/model.js) mirror it, and
 # test-parity / test-site check both against the values written here.
 #   most numeric inputs: five positions, linear in the parameter, (1 - p/4) own + (p/4)
-#                   other, so 0 and 4 are the two values exactly;
+#                   other, so 0 and 4 are the two values exactly (the rate r among them:
+#                   3%, 2.93%, 2.87%, 2.80%, 2.73% from the BSZ end);
 #   the Forbes source: two positions, one list or the other (no blend of the two lists);
 #   the share lost: five positions like the other numeric inputs; own and f0 move together,
 #                   so f between the ends is a weighted mix of the two rules (author
@@ -202,10 +207,11 @@ slider_sample <- function(bi, n = 300, seed = 20261014) {
 # is the page's order. The JR panel walks the same states in reverse.
 EXPLORER_MINOR <- c("noncitizens", "real_estate", "asset_sales")
 EXPLORER_DIAL_ORDER <- c("base_list", "confirmed_departures", "avoidance", "litigation_survival",
-                         "income_loss_share", "income_level", "horizon", "minor_inputs")
+                         "income_loss_share", "income_level", "horizon", "discount_rate",
+                         "minor_inputs")
 DIAL_PATH_SYMBOLS <- c(base_list = "W", confirmed_departures = "D", avoidance = "a",
                        litigation_survival = "q", income_loss_share = "f", income_level = "C",
-                       horizon = "H", minor_inputs = "minor")
+                       horizon = "H", discount_rate = "r", minor_inputs = "minor")
 DIAL_PATH_TITLES <- c(minor_inputs = "Three minor inputs")
 dial_ids <- function(id) if (id == "minor_inputs") EXPLORER_MINOR else id
 dial_path <- function(bi, order = EXPLORER_DIAL_ORDER) {
@@ -238,7 +244,7 @@ coalition_values <- function(sup, rauh, players, output = c("a", "b")) {
   vapply(0:(2^n - 1), function(mk) score_common(switch_inputs(sup, rauh, inset(mk)))[[output]], 0)
 }
 
-# Exact Shapley values by enumerating all 2^n coalitions (n = 10: 1,024 scorings).
+# Exact Shapley values by enumerating all 2^n coalitions (n = 11: 2,048 scorings).
 # `players` can exclude steps (e.g. the horizon when both ends share one horizon).
 # `v` can pass coalition_values() already computed for the same players and output.
 shapley_bridge <- function(sup, rauh, players, output = c("a", "b"), v = NULL) {
@@ -274,18 +280,20 @@ sequential_bridge <- function(sup, rauh, order, output = c("a", "b")) {
 # all independent, so E[NPV] = E[WT] - E[f] E[C] E_r[annuity(r, H)]. At H = Inf this is
 # -38.980, which rounds to the printed -38.9 (one seeded run of the same draws, p.1 and p.35).
 #
-# The JR rate gap. The common function discounts at one rate r (3%); the JR Monte Carlo draws
-# r uniformly between 1.5% and 4.5% and averages. Averaging over the rate is worth more than
-# the middle rate, because 1/r is convex: a perpetuity is ln(3)/0.03 = 36.6 averaged over the
-# draw and 1/0.03 = 33.3 at 3%. So the JR end of the common function exceeds the JR headline by
-#   jr_rate_gap = f0 * C * (E_r[annuity(r, H)] - annuity(0.03, H)),
-# about +6.7 in perpetuity. build_all() exports it (ends.csv, meta.csv, endpoints.csv).
+# The JR rate. Averaging the perpetuity over the draw gives E_r[1/r] = ln(3)/0.03 = 36.6, more
+# than 1/0.03 = 33.3 at the middle rate, because 1/r is convex. The one rate worth the same is
+# r_jr = 1 / E_r[1/r] = 2.73% (jr_discount_rate()), the JR end of the rate dial; with it and
+# H = Inf the common function returns this expectation exactly. At a finite common horizon
+# annuity(r_jr, H) is close to, not equal to, E_r[annuity(r, H)]: ends.csv reports the
+# difference as rauh_residual.
 expected_annuity <- function(H, r_min, r_max) {
   if (is.infinite(H)) return(log(r_max / r_min) / (r_max - r_min))
   if (H == 0) return(0)
   f <- function(r) (1 - (1 + r)^(-H)) / r
   stats::integrate(f, r_min, r_max, rel.tol = 1e-12, abs.tol = 0)$value / (r_max - r_min)
 }
+
+jr_discount_rate <- function(r_min, r_max) 1 / expected_annuity(Inf, r_min, r_max)
 
 rauh_nber_expectation <- function(wt_min, wt_max, f_min, f_max, c_min, c_max, r_min, r_max, H = Inf) {
   e_wt <- (wt_min + wt_max) / 2

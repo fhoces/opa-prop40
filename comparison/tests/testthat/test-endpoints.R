@@ -1,5 +1,4 @@
-# Endpoints: the common estimating function returns the BSZ number and the JR revenue exactly;
-# its JR net fiscal effect is the JR headline plus the JR rate gap (one 3% rate vs a drawn rate).
+# Endpoints: the common estimating function must reproduce each analysis's own number.
 k   <- read_contracts()
 res <- build_all(k)
 ep  <- res$endpoints
@@ -32,21 +31,29 @@ test_that("JR NBER: analytic -38.98 vs printed -38.9 (one Monte Carlo run)", {
   expect_equal(val("rauh_nber_revenue_mc"), 36)
 })
 
-test_that("one discount rate, 3%, at both ends: the BSZ overview's rate and the middle of the JR draw", {
-  r <- pick(k$docs, COMMON_RATE_ID)
+test_that("the rate dial: 3% at the BSZ end (the BSZ overview's rate), 1 / E[1/r] over the JR draw at the JR end", {
+  r <- pick(k$docs, BSZ_RATE_ID)
   expect_equal(r, 0.03)
-  expect_identical(bi$sup$r, r); expect_identical(bi$rauh$r, r)
+  expect_identical(bi$sup$r, r)
   oi <- k$rjkdc$inputs
-  expect_equal(r, (pick(oi, "rauh_mc_r_min") + pick(oi, "rauh_mc_r_max")) / 2, tolerance = 1e-12)
+  rmin <- pick(oi, "rauh_mc_r_min"); rmax <- pick(oi, "rauh_mc_r_max")
+  expect_equal(r, (rmin + rmax) / 2, tolerance = 1e-12)                 # the middle of the JR draw
   grid <- paste(readLines(file.path(comparison_root(), "bsz-analysis", "export", "py", "site", "grid.js"),
                           warn = FALSE, encoding = "UTF-8"), collapse = "")
   expect_equal(as.numeric(sub('.*"pv_rate":([0-9.]+).*', "\\1", grid)), r)
+  # the JR rate is computed from the contract's draw range, never typed
+  expect_equal(bi$rauh$r, (rmax - rmin) / log(rmax / rmin), tolerance = 1e-14)
+  expect_equal(bi$rauh$r, 0.03 / log(3), tolerance = 1e-14)
+  expect_equal(round(bi$rauh$r, 6), 0.027307)
+  expect_equal(1 / bi$rauh$r, expected_annuity(Inf, rmin, rmax), tolerance = 1e-14)
   # the rate range is not an argument of score_common(): neither input vector carries it
   expect_false(any(c("r_min", "r_max") %in% c(names(bi$sup), names(bi$rauh))))
   m <- res$meta; mv <- function(key) m$value[m$key == key]
-  expect_equal(mv("r_common"), r)
-  expect_equal(mv("A_inf"), 1 / r, tolerance = 1e-12)
-  expect_equal(mv("A_5"), (1 - (1 + r)^-5) / r, tolerance = 1e-12)
+  expect_equal(mv("r_bsz"), r); expect_equal(mv("r_jr"), bi$rauh$r)
+  expect_equal(mv("A_5"), (1 - (1 + r)^-5) / r, tolerance = 1e-12)       # 5 years at 3%: 4.58
+  expect_equal(mv("A_inf"), 1 / bi$rauh$r, tolerance = 1e-12)            # for ever at 2.73%: 36.62
+  expect_equal(mv("A_inf"), mv("A_inf_jr_draw"), tolerance = 1e-12)
+  expect_false("jr_rate_gap" %in% m$key)
 })
 
 test_that("BSZ end still exact: the net total over 5 years at 3% is 106.80", {
@@ -55,33 +62,27 @@ test_that("BSZ end still exact: the net total over 5 years at 3% is 106.80", {
   expect_equal(eb$bsz_model, val("bsz_net_constructed"))
 })
 
-test_that("the JR end is the JR headline plus the JR rate gap; revenue (a) has no gap", {
+test_that("the common function at the all-JR inputs returns the JR analysis's own expectation, to 1e-9", {
+  expect_lt(abs(score_common(bi$rauh)[["b"]] - val("rauh_nber_npv")), 1e-9)
+  expect_lt(abs(score_common(bi$rauh)[["a"]] - val("rauh_nber_revenue_mc")), 1e-9)
   en <- res$ends
-  expect_equal(en$rauh_model, en$rauh_own + en$jr_rate_gap, tolerance = 1e-12)   # every setting
-  expect_lt(max(abs(en$jr_rate_gap[en$output == "a"])), 1e-10)
-  eb <- en[en$horizon_setting == "own" & en$output == "b", ]
-  expect_equal(score_common(bi$rauh)[["b"]], eb$rauh_model, tolerance = 1e-12)
-  expect_equal(eb$rauh_own, val("rauh_nber_npv"), tolerance = 1e-12)
-  expect_equal(eb$rauh_model, val("rauh_common_end"), tolerance = 1e-12)
-  expect_equal(round(eb$rauh_model, 2), -32.25)
-  expect_equal(round(eb$jr_rate_gap, 2), 6.73)
-  expect_equal(res$meta$value[res$meta$key == "jr_rate_gap"], eb$jr_rate_gap)
+  inf <- en[en$horizon_setting %in% c("own", "common_Inf"), ]
+  expect_lt(max(abs(inf$rauh_residual)), 1e-9)                     # in perpetuity: exact
+  expect_lt(max(abs(en$rauh_residual[en$output == "a"])), 1e-9)    # revenue: exact everywhere
+  expect_equal(round(val("rauh_nber_npv"), 2), -38.98)
+  expect_false(any(c("jr_rate_gap") %in% names(en)))
+  expect_false("rauh_common_end" %in% ep$endpoint_id)
 })
 
-test_that("the gap is f0 x C x (E[1/r] - 1/0.03) at the JR inputs, to 1e-9", {
-  oi <- k$rjkdc$inputs; r <- bi$rauh$r
+test_that("at a finite common horizon, one rate misses f0 x C x (annuity(r_jr, H) - E[annuity]) of the authors' average", {
+  oi <- k$rjkdc$inputs; rj <- bi$rauh$r
   rmin <- pick(oi, "rauh_mc_r_min"); rmax <- pick(oi, "rauh_mc_r_max")
-  e_inv_r <- log(rmax / rmin) / (rmax - rmin)                  # ln(3) / 0.03 = 36.6
-  expect_equal(e_inv_r, log(3) / 0.03, tolerance = 1e-12)
-  expect_equal(res$meta$value[res$meta$key == "A_inf_jr_draw"], e_inv_r, tolerance = 1e-12)
-  eb <- res$ends[res$ends$horizon_setting == "own" & res$ends$output == "b", ]
   expect_equal(bi$rauh$alpha, 0); expect_equal(bi$rauh$own, 0)   # so f = f0 at the JR inputs
-  expect_lt(abs(eb$jr_rate_gap - bi$rauh$f0 * bi$rauh$C * (e_inv_r - 1 / r)), 1e-9)
-  # at every finite common horizon, the same formula with the annuities
   for (H in c(5, 10, 20, 30, 50)) {
     e <- res$ends[res$ends$horizon_setting == paste0("common_", H) & res$ends$output == "b", ]
-    expect_lt(abs(e$jr_rate_gap - bi$rauh$f0 * bi$rauh$C * (expected_annuity(H, rmin, rmax) - annuity(r, H))), 1e-9,
+    expect_lt(abs(e$rauh_residual - bi$rauh$f0 * bi$rauh$C * (annuity(rj, H) - expected_annuity(H, rmin, rmax))), 1e-9,
               label = paste("H =", H))
+    expect_gt(e$rauh_residual, 0)
   }
 })
 
@@ -104,7 +105,7 @@ test_that("the annuity at one rate has the right limits", {
   expect_true(all(diff(sapply(c(5, 10, 20, 30, 50, 500), annuity, r = 0.03)) > 0))
 })
 
-test_that("the expected annuity over the JR draw (used by the gap) has the right limits", {
+test_that("the expected annuity over the JR draw (used for the JR rate) has the right limits", {
   expect_equal(expected_annuity(Inf, 0.015, 0.045), log(3) / 0.03)
   expect_lt(expected_annuity(5, 0.015, 0.045), 5)
   expect_equal(expected_annuity(5, 1e-4, 2e-4), 5, tolerance = 1e-3)   # r -> 0 gives H

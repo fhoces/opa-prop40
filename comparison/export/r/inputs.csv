@@ -12,4 +12,5 @@
 "income_loss_share","f0",0,0.45,"share","no flat share: the loss follows the people who leave","midpoint of f ~ U[0.30, 0.60], drawn independently of the revenue (NPV_dist_v8.R; chapter Sec. 5.4): guesswork"
 "income_level","C",3.06136377457079,4.55,"$B/yr","BSZ export ca_inctax_billionaires (Tab2!C14; BSZ PDF p.11): research, top wealth holders' income is 50% of top earners' (Balkir et al. 2025)","midpoint of C ~ U[3.3, 5.8] (NPV_dist_v8.R:21; chapter pp.29-31): guesswork, the K = 500 floor is the authors' judgement"
 "horizon","H",5,Inf,"years","BSZ PDF p.27 ('If they last say only 5 years')","perpetuity (chapter Sec. 5.4, eq. 18-19)"
+"discount_rate","r",0.03,0.0273071767988051,"rate","no rate in the BSZ analysis: 3%, the rate this OPA's BSZ overview uses for the 5-year loss (bsz-analysis/R/site_exports.R, site_pv_rate), the middle of the JR draw (scenario)","the one rate worth the same as the draw r ~ U[1.5%, 4.5%] (JR export rauh_mc_r_min and rauh_mc_r_max; NPV_dist_v8.R:22; chapter p.32): 1 / E[1/r] = 0.03 / ln(3) (derived)"
 "asset_sales","s",0.333333333333333,0,"share","BSZ export sell_share (BSZ PDF p.24)","not modelled"

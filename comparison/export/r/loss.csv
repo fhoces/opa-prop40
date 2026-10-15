@@ -1,7 +1,7 @@
 "source_id","label","side","annual_loss","where","pv_5yr","pv_perpetuity","net_at_nber_revenue_perpetuity"
-"bsz_row1","BSZ Table 5 row 1 (benchmark)","bsz",0.15306818872854,"BSZ PDF p.39",0.701007484050944,5.102272957618,30.897727042382
-"bsz_row3","BSZ Table 5 row 3 (aggressive leavers)","bsz",0.515403091792489,"BSZ PDF p.39",2.36039524378435,17.1801030597496,18.8198969402504
-"lao_upper","LAO ballot analysis (upper bound, 'less than $1 billion')","neutral",1,"LAO p.2",4.57970718719454,33.3333333333333,2.66666666666666
-"rauh_nber","JR, Jaros and Rauh NBER: E[f] x E[C]","rjkdc",2.0475,"NBER p.35",9.37695046578081,68.25,-32.25
-"walczak_low","Walczak / CalTax, low (incl. spillovers)","walczak (credited dial)",3.53,"Walczak p.1",16.1663663707967,117.666666666667,-81.6666666666667
-"walczak_high","Walczak / CalTax, high (incl. spillovers)","walczak (credited dial)",4.49,"Walczak p.1",20.5628852705035,149.666666666667,-113.666666666667
+"bsz_row1","BSZ Table 5 row 1 (benchmark)","bsz",0.15306818872854,"BSZ PDF p.39",0.701007484050944,5.60541977137812,30.3945802286219
+"bsz_row3","BSZ Table 5 row 3 (aggressive leavers)","bsz",0.515403091792489,"BSZ PDF p.39",2.36039524378435,18.8742723420255,17.1257276579745
+"lao_upper","LAO ballot analysis (upper bound, 'less than $1 billion')","neutral",1,"LAO p.2",4.57970718719454,36.6204096222703,-0.62040962227033
+"rauh_nber","JR, Jaros and Rauh NBER: E[f] x E[C]","rjkdc",2.0475,"NBER p.35",9.37695046578081,74.9802887015985,-38.9802887015985
+"walczak_low","Walczak / CalTax, low (incl. spillovers)","walczak (credited dial)",3.53,"Walczak p.1",16.1663663707967,129.270045966614,-93.2700459666142
+"walczak_high","Walczak / CalTax, high (incl. spillovers)","walczak (credited dial)",4.49,"Walczak p.1",20.5628852705035,164.425639203994,-128.425639203994
