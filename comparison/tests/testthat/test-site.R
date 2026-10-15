@@ -16,24 +16,31 @@ test_that("the explorer loads the data file with the hash of its content", {
   expect_true(grepl(sprintf('comparison-data.js?v=%s"', h), read_page(explorer), fixed = TRUE))
 })
 
-test_that("the BSZ panel's Apply block repeats the equation's labels in words, each button with its term's dials", {
+test_that("the Apply block, after the two panels, is the top equation's grid with labels and buttons", {
   dp <- read_csv_plain(file.path(root, "comparison", "export", "r", "dial_path.csv"))
   html <- read_page(explorer)
   eq <- regmatches(html, regexpr('<div class="pseudo-eq".*?</div>', html))
-  ap <- regmatches(html, regexpr('<div class="apply-eq".*?</div>', html))
+  ap <- regmatches(html, regexpr('<div class="pseudo-eq apply-eq".*?</div>', html))
   expect_length(ap, 1)
-  # inside the BSZ panel, after its head and before its first box; the JR panel has none
+  # after both panels (the JR panel's last line), before the notes fold; no longer in the BSZ panel
   at <- function(x) regexpr(x, html, fixed = TRUE)[[1]]
-  expect_gt(at('<div class="apply-eq"'), at('<p class="ph-now">With these sliders <b id="now-bsz"'))
-  expect_lt(at('<div class="apply-eq"'), at('<span id="bsz-revenue-head">Wealth tax collected</span>'))
-  expect_identical(lengths(regmatches(html, gregexpr('class="apply-eq"', html, fixed = TRUE))), 1L)
-  # the same six labels as the top equation, in order, and no amounts
+  expect_gt(at('<div class="pseudo-eq apply-eq"'), at("<p class=\"panel-note\">Starts at the JR analysis's main estimate"))
+  expect_lt(at('<div class="pseudo-eq apply-eq"'), at('<details class="fold notes" id="notes-estimates">'))
+  expect_identical(lengths(regmatches(html, gregexpr('class="pseudo-eq apply-eq"', html, fixed = TRUE))), 1L)
+  # its one-line lead names the panel the buttons act on, once
+  expect_identical(lengths(regmatches(html, gregexpr("Apply to the BSZ panel", html, fixed = TRUE))), 1L)
+  expect_gt(at("Apply to the BSZ panel"), at("<p class=\"panel-note\">Starts at the JR analysis's main estimate"))
+  # the top equation's markup: six terms, the same signs, each label in a <small> where the top
+  # equation has its caption, then the term's button directly under it; no amounts
   top <- regmatches(eq, gregexpr("(?<=<small>)[^<]*(?=</small>)", eq, perl = TRUE))[[1]]
-  terms <- regmatches(ap, gregexpr('<span class="ap-term">.*?</button></span></span>', ap))[[1]]
-  words <- trimws(gsub("&nbsp;", " ", gsub("<[^>]*>", "", sub("<button.*$", "", terms)), fixed = TRUE))
+  terms <- regmatches(ap, gregexpr('<span class="term"><small>[^<]*</small><button[^>]*>[^<]*</button></span>', ap))[[1]]
+  expect_length(terms, 6)
+  words <- sub('^<span class="term"><small>([^<]*)</small>.*$', "\\1", terms)
   expect_length(top, 6)
   expect_identical(words, top)
   expect_false(grepl("$", ap, fixed = TRUE))
+  sig <- function(x) gsub('<span class="term"[^>]*>.*?</span></span>|<span class="term"[^>]*>.*?</span>', "T", x)
+  expect_identical(sig(ap), sub('class="pseudo-eq" role="img" aria-label="[^"]*"', 'class="pseudo-eq apply-eq" role="group" aria-label="The equation above in words: each button moves those dials of the BSZ panel to the JR values, or back"', sig(eq)))
   # the buttons: Reset, one Apply per middle term, Apply all
   btn <- regmatches(ap, gregexpr("<button[^>]*>[^<]*</button>", ap))[[1]]
   expect_identical(sub(".*>([^<]*)</button>$", "\\1", btn), c("Reset", rep("Apply", 4), "Apply all"))
@@ -55,7 +62,7 @@ test_that("the BSZ panel's Apply block repeats the equation's labels in words, e
   expect_setequal(dials[[1]], setdiff(ids, "minor_inputs"))
   # each sign in the block is its term's sign: the remainder (W, a and the minor switch) raises
   # the estimate, so its sign is a plus
-  ops <- regmatches(ap, gregexpr('(?<=<span class="ap-op">)[^<]*(?=</span>)', ap, perl = TRUE))[[1]]
+  ops <- regmatches(ap, gregexpr('(?<=<span class="op">)[^<]*(?=</span>)', ap, perl = TRUE))[[1]]
   ch <- c(dp$change[main], sum(dp$change[loss]), sum(dp$change[rest]))
   expect_identical(ops, c(ifelse(ch < 0, "&minus;", "+"), "&asymp;"))
   expect_gt(ch[4], 0)
@@ -70,7 +77,7 @@ test_that("pressing the Apply buttons left to right gives each printed term exac
   skip_if(!nzchar(node), "node is not on PATH: model.js not checked")
   dp <- read_csv_plain(file.path(root, "comparison", "export", "r", "dial_path.csv"))
   html <- read_page(explorer)
-  ap <- regmatches(html, regexpr('<div class="apply-eq".*?</div>', html))
+  ap <- regmatches(html, regexpr('<div class="pseudo-eq apply-eq".*?</div>', html))
   eq <- regmatches(html, regexpr('<div class="pseudo-eq".*?</div>', html))
   btn <- regmatches(ap, gregexpr('<button[^>]*data-act="term"[^>]*>', ap))[[1]]
   dials <- lapply(strsplit(sub('.*data-dials="([^"]*)".*', "\\1", btn), " ", fixed = TRUE), identity)

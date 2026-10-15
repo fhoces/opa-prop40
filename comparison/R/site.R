@@ -549,53 +549,51 @@ render_site <- function(root = comparison_root(),
   dp <- read_csv_plain(file.path(root, "comparison", "export", "r", "dial_path.csv"))
   stopifnot(identical(dp$step_id, DIAL_PATH_ORDER))
   et <- eq_terms(dp)
-  term <- function(j) {
-    x <- et$terms[j, ]
-    sprintf(
-      '<span class="eq-step"><span class="op">%s</span><span class="term" data-steps="%s"><b>%s</b><small>%s</small></span></span>',
-      if (x$change < 0) "&minus;" else "+", x$steps, money(abs(x$change), 1), esc(x$label))
-  }
   jr_label <- "JR estimate"
   # the six labels, left to right; the top equation and the Apply block both print these
   eq_labels <- c("BSZ estimate", et$terms$label, jr_label)
+  eq_ops <- c("", ifelse(et$terms$change < 0, "&minus;", "+"), "&asymp;")
+  # One builder for both equations (author request 2026-10-15: the Apply block mirrors the top
+  # equation, so both share this markup and its CSS). `inner` is each term's content, `attrs`
+  # each term's attributes; the first term has no sign, and each later sign sits in one
+  # .eq-step with its term, so a line never ends with a sign.
+  eq_html <- function(class, attrs, inner, term_attrs) paste0(
+    '<div class="', class, '"', attrs, '>\n',
+    paste(vapply(seq_along(inner), function(j) if (j == 1)
+      sprintf('  <span class="term"%s>%s</span>', term_attrs[j], inner[j]) else
+      sprintf('  <span class="eq-step"><span class="op">%s</span><span class="term"%s>%s</span></span>',
+              eq_ops[j], term_attrs[j], inner[j]), ""), collapse = "\n"), "\n",
+    '</div>')
   say <- function(j) sprintf("%s %s for %s", if (et$terms$change[j] < 0) "minus" else "plus",
                              money(abs(et$terms$change[j]), 1), tolower(et$terms$label[j]))
-  pseudo_eq <- function(page) paste0(
-    '<div class="pseudo-eq" role="img" aria-label="', esc(sprintf(
+  eq_amounts <- c(money(eb$bsz_model, 1), money(abs(et$terms$change), 1), money(eb$rauh_model, 1))
+  pseudo_eq <- function(page) eq_html(
+    "pseudo-eq",
+    paste0(' role="img" aria-label="', esc(sprintf(
       "The BSZ estimate, %s, %s, gives about the JR estimate, %s.",
       money(eb$bsz_model, 1), paste(vapply(seq_len(nrow(et$terms)), say, ""), collapse = ", "),
-      money(eb$rauh_model, 1))), '">\n',
-    sprintf('  <span class="term" data-steps="0"><b>%s</b><small>%s</small></span>\n', money(eb$bsz_model, 1), eq_labels[1]),
-    paste(vapply(seq_len(nrow(et$terms)), function(j) paste0("  ", term(j)), ""), collapse = "\n"), "\n",
-    sprintf('  <span class="eq-step"><span class="op">&asymp;</span><span class="term" data-end="%d"><b>%s</b><small>%s</small></span></span>\n', nrow(dp), money(eb$rauh_model, 1), eq_labels[length(eq_labels)]),
-    '</div>')
+      money(eb$rauh_model, 1))), '"'),
+    sprintf("<b>%s</b><small>%s</small>", eq_amounts, esc(eq_labels)),
+    c(' data-steps="0"', sprintf(' data-steps="%s"', et$terms$steps), sprintf(' data-end="%d"', nrow(dp))))
   tok$pseudo_eq_x <- pseudo_eq("x")
-  # The Apply block (author request 2026-10-15): inside the BSZ panel, above its first box, the
-  # same equation in words, no amounts. Under each middle term a button moves that term's dials
-  # (data-dials: eq_term_dials(), the minor switch read as its three dials) to the JR end, or
-  # back; "Reset" under the BSZ estimate and "Apply all" under the JR estimate move every dial.
-  # The label's last word and its button sit in one unbroken span (.ap-tie), and a no-break
-  # space ties each sign to its term, so a line never starts with a button or ends with a sign.
+  # The Apply block (author requests 2026-10-15): after the two panels, the top equation's grid
+  # with each term's label where the top equation shows its caption, and a small button under
+  # it. A middle term's button moves that term's dials of the BSZ panel (data-dials:
+  # eq_term_dials(), the minor switch read as its three dials) to the JR end, or back; "Reset"
+  # under the BSZ estimate and "Apply all" under the JR estimate move every dial.
   td <- eq_term_dials(dp, et)
-  ap_term <- function(label, btn) {
-    w <- strsplit(label, " ", fixed = TRUE)[[1]]
-    sprintf('<span class="ap-term">%s<span class="ap-tie">%s&nbsp;%s</span></span>',
-            if (length(w) > 1) paste0(esc(paste(head(w, -1), collapse = " ")), " ") else "", esc(tail(w, 1)), btn)
-  }
   ap_btn <- function(act, dials, text, extra = "") sprintf(
     '<button type="button" class="ap-btn" data-act="%s" data-dials="%s"%s>%s</button>',
     act, paste(dials, collapse = " "), extra, text)
   all_dials <- unlist(td)
-  tok$apply_eq <- paste0(
-    '        <div class="apply-eq" role="group" aria-label="The equation above in words: each button moves those dials of the BSZ panel to the JR values, or back">\n',
-    '          ', ap_term(eq_labels[1], ap_btn("reset", all_dials, "Reset")), '\n',
-    paste(vapply(seq_len(nrow(et$terms)), function(j) paste0(
-      '          <span class="ap-op">', if (et$terms$change[j] < 0) "&minus;" else "+", '</span>&nbsp;',
-      ap_term(eq_labels[j + 1], ap_btn("term", td[[j]], "Apply",
-                                       sprintf(' data-steps="%s" aria-pressed="false"', et$terms$steps[j])))), ""),
-      collapse = "\n"), '\n',
-    '          <span class="ap-op">&asymp;</span>&nbsp;', ap_term(eq_labels[length(eq_labels)], ap_btn("all", all_dials, "Apply all")), '\n',
-    '        </div>')
+  ap_btns <- c(ap_btn("reset", all_dials, "Reset"),
+               vapply(seq_len(nrow(et$terms)), function(j) ap_btn("term", td[[j]], "Apply",
+                      sprintf(' data-steps="%s" aria-pressed="false"', et$terms$steps[j])), ""),
+               ap_btn("all", all_dials, "Apply all"))
+  tok$apply_eq <- eq_html(
+    "pseudo-eq apply-eq",
+    ' role="group" aria-label="The equation above in words: each button moves those dials of the BSZ panel to the JR values, or back"',
+    sprintf("<small>%s</small>%s", esc(eq_labels), ap_btns), rep("", length(eq_labels)))
   tok$pseudo_eq <- pseudo_eq("root")
   # The note reads the same on both pages (author item 2026-10-15), except that the overview
   # has no Walk the path button, so it drops that sentence, and links "BSZ panel" to the explorer.

@@ -225,15 +225,15 @@
   .pseudo-eq[data-walk="rjkdc"] { --walk: var(--jr); }
   /* A term the BSZ panel's Apply block has applied (all its dials at the JR values). */
   .pseudo-eq .term.is-applied { outline: 2px solid var(--bsz); outline-offset: 3px; }
-  /* The Apply block: the equation above in words, inside the BSZ panel above its first box,
-     a small button after each term (paper look: text face, square corners, ink and link only). */
-  .apply-eq { margin: 0 0 6px; padding: 0 0 7px; border-bottom: 1px solid var(--rule-2);
-    font-family: var(--serif); font-size: 12.5px; line-height: 1.8; color: var(--ink); }
-  .ap-op { color: var(--ink); margin: 0 1px; }
-  .ap-tie { white-space: nowrap; }
+  /* The Apply block: after the two panels, the top equation's grid (.pseudo-eq, same terms and
+     signs), each label in the caption's place and a small button under it (paper look: text
+     face, square corners, ink and link only). The buttons act on the BSZ panel's dials. */
+  .apply-box { margin-top: 22px; }
+  .ap-lead { margin: 0 0 10px; font-size: 13px; color: var(--ink-2); text-align: center; }
+  .pseudo-eq .term .ap-btn { margin-top: 5px; align-self: center; }
   .ap-btn { font-family: var(--serif); font-size: 12px; line-height: 1.25; padding: 0 5px; margin: 0 2px 0 1px;
     color: var(--link); background: transparent; border: 1px solid var(--link); border-radius: 0;
-    cursor: pointer; white-space: nowrap; vertical-align: 1px; touch-action: manipulation;
+    cursor: pointer; white-space: nowrap; touch-action: manipulation;
     -webkit-tap-highlight-color: transparent; }
   .ap-btn[aria-pressed="true"] { color: var(--ink); border-color: var(--ink); font-weight: 600; }
   @media (hover: hover) { .ap-btn:hover { text-decoration: underline; } }
@@ -341,14 +341,6 @@
           <div class="ph-btns"><button type="button" class="reset walk" data-panel="bsz">Walk the path</button><button type="button" class="reset" data-panel="bsz">Reset</button></div>
           <p class="ph-src">The BSZ analysis's main estimate<sup>1</sup> (Boll, Saez and Zucman, August 2026)</p>
           <p class="ph-now">With these sliders <b id="now-bsz" aria-live="polite">$106.8B</b></p>
-        </div>
-        <div class="apply-eq" role="group" aria-label="The equation above in words: each button moves those dials of the BSZ panel to the JR values, or back">
-          <span class="ap-term">BSZ <span class="ap-tie">estimate&nbsp;<button type="button" class="ap-btn" data-act="reset" data-dials="confirmed_departures litigation_survival income_loss_share income_level horizon discount_rate base_list avoidance noncitizens real_estate asset_sales">Reset</button></span></span>
-          <span class="ap-op">&minus;</span>&nbsp;<span class="ap-term">Billionaires already departed <span class="ap-tie">(D)&nbsp;<button type="button" class="ap-btn" data-act="term" data-dials="confirmed_departures" data-steps="1" aria-pressed="false">Apply</button></span></span>
-          <span class="ap-op">&minus;</span>&nbsp;<span class="ap-term">Chance the tax does not survive litigation <span class="ap-tie">(q)&nbsp;<button type="button" class="ap-btn" data-act="term" data-dials="litigation_survival" data-steps="2" aria-pressed="false">Apply</button></span></span>
-          <span class="ap-op">&minus;</span>&nbsp;<span class="ap-term">Lost income tax (H, f, C, <span class="ap-tie">r)&nbsp;<button type="button" class="ap-btn" data-act="term" data-dials="income_loss_share income_level horizon discount_rate" data-steps="3 4 5 6" aria-pressed="false">Apply</button></span></span>
-          <span class="ap-op">+</span>&nbsp;<span class="ap-term">The other three steps together (W, a, three minor <span class="ap-tie">inputs)&nbsp;<button type="button" class="ap-btn" data-act="term" data-dials="base_list avoidance noncitizens real_estate asset_sales" data-steps="7 8 9" aria-pressed="false">Apply</button></span></span>
-          <span class="ap-op">&asymp;</span>&nbsp;<span class="ap-term">JR <span class="ap-tie">estimate&nbsp;<button type="button" class="ap-btn" data-act="all" data-dials="confirmed_departures litigation_survival income_loss_share income_level horizon discount_rate base_list avoidance noncitizens real_estate asset_sales">Apply all</button></span></span>
         </div>
         <ul class="sl-list" aria-label="The BSZ panel's sliders">
         <li class="sl-box" role="group" aria-labelledby="bsz-revenue-head">
@@ -561,6 +553,18 @@
       </div>
     </div>
 
+  </section>
+
+  <section class="eq-box apply-box" id="apply" aria-label="Apply the equation's terms to the BSZ panel">
+    <p class="ap-lead">Apply to the BSZ panel: each button moves its term's dials to the JR values, or back.</p>
+<div class="pseudo-eq apply-eq" role="group" aria-label="The equation above in words: each button moves those dials of the BSZ panel to the JR values, or back">
+  <span class="term"><small>BSZ estimate</small><button type="button" class="ap-btn" data-act="reset" data-dials="confirmed_departures litigation_survival income_loss_share income_level horizon discount_rate base_list avoidance noncitizens real_estate asset_sales">Reset</button></span>
+  <span class="eq-step"><span class="op">&minus;</span><span class="term"><small>Billionaires already departed (D)</small><button type="button" class="ap-btn" data-act="term" data-dials="confirmed_departures" data-steps="1" aria-pressed="false">Apply</button></span></span>
+  <span class="eq-step"><span class="op">&minus;</span><span class="term"><small>Chance the tax does not survive litigation (q)</small><button type="button" class="ap-btn" data-act="term" data-dials="litigation_survival" data-steps="2" aria-pressed="false">Apply</button></span></span>
+  <span class="eq-step"><span class="op">&minus;</span><span class="term"><small>Lost income tax (H, f, C, r)</small><button type="button" class="ap-btn" data-act="term" data-dials="income_loss_share income_level horizon discount_rate" data-steps="3 4 5 6" aria-pressed="false">Apply</button></span></span>
+  <span class="eq-step"><span class="op">+</span><span class="term"><small>The other three steps together (W, a, three minor inputs)</small><button type="button" class="ap-btn" data-act="term" data-dials="base_list avoidance noncitizens real_estate asset_sales" data-steps="7 8 9" aria-pressed="false">Apply</button></span></span>
+  <span class="eq-step"><span class="op">&asymp;</span><span class="term"><small>JR estimate</small><button type="button" class="ap-btn" data-act="all" data-dials="confirmed_departures litigation_survival income_loss_share income_level horizon discount_rate base_list avoidance noncitizens real_estate asset_sales">Apply all</button></span></span>
+</div>
   </section>
 
   <details class="fold notes" id="notes-estimates">
