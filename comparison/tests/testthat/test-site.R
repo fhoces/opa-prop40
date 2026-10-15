@@ -510,14 +510,28 @@ test_that("every relative link on both pages resolves to a file in the repo (sub
   }
 })
 
-test_that("the quantities section: one row per group of dials, credibility from the author's file", {
+test_that("the explorer's quantities section: the subtitle and the survey button, no table (author request 2026-10-15)", {
   html <- read_page(explorer)
   at <- function(x) regexpr(x, html, fixed = TRUE)[[1]]
-  # after the panels and the Apply block, before the notes fold
   expect_true(grepl('<h3 id="q-title">But what are the actual quantities?</h3>', html, fixed = TRUE))
   expect_gt(at('<section class="quantities"'), at('<div class="pseudo-eq apply-eq"'))
   expect_lt(at('<section class="quantities"'), at('<details class="fold notes" id="notes-estimates">'))
   expect_true(grepl("All these are empirical quantities. Their values should not depend on whether one\n    supports or opposes a wealth tax. An expert should be able to appraise each value from more to less\n    credible.", html, fixed = TRUE))
+  expect_false(grepl('<table class="q-table">', html, fixed = TRUE))
+  expect_true(grepl('<p class="q-cta">', html, fixed = TRUE))
+  expect_true(grepl("Take the survey: what do you think these values are?", html, fixed = TRUE))
+  expect_true(grepl("Share this survey with people you think have expertise in this area, to learn what they think these values are.", html, fixed = TRUE))
+  # the button's links come from the survey file: with none yet it is shown disabled
+  sv <- read_csv_plain(file.path(root, "comparison", "data", "survey-links.csv"))
+  urls <- sv$url[!is.na(sv$url) & nzchar(sv$url)]
+  if (length(urls)) expect_true(grepl(sprintf('data-links="%s"', paste(urls, collapse = " ")), html, fixed = TRUE))
+  else expect_true(grepl('<span class="q-survey is-off" aria-disabled="true">', html, fixed = TRUE))
+})
+
+test_that("the quantities table (on the overview's differences fold): one row per group of dials, credibility from the author's file", {
+  page <- read_page(file.path(root, "index.html"))
+  # the table and the line under it, nothing else of the page
+  html <- regmatches(page, regexpr('<table class="q-table">.*?<p class="q-foot">.*?</p>', page))
   # the four columns
   head <- regmatches(html, regexpr("<thead><tr>.*?</tr></thead>", html, perl = TRUE))
   th <- regmatches(head, gregexpr("(?<=<th>)[^<]*(?=</th>)", head, perl = TRUE))[[1]]
@@ -564,16 +578,15 @@ test_that("the quantities section: one row per group of dials, credibility from 
     }
   }
   # the line under the table links to the report's differences table
-  expect_true(grepl("Each value's full source is in the <a href=\"../repro.html#the-disputed-inputs\">report's table of differences</a>.", html, fixed = TRUE))
+  expect_true(grepl("Each value's full source is in the <a href=\"comparison/site/repro.html#the-disputed-inputs\">report's table of differences</a>.", html, fixed = TRUE))
 })
 
-test_that("the overview's \"The differences\" fold repeats the explorer's quantities table (author request 2026-10-15)", {
+test_that("the overview's \"The differences\" fold holds the quantities table; the explorer links the survey instead", {
   ex <- read_page(explorer); ov <- read_page(file.path(root, "index.html"))
-  tb <- function(h) regmatches(h, regexpr('<table class="q-table">.*?</table>', h))
-  expect_identical(tb(ov), tb(ex))
   fold <- regmatches(ov, regexpr('<details class="fold" id="differences">.*?</details>', ov))
   expect_true(grepl('<table class="q-table">', fold, fixed = TRUE))
   expect_true(grepl('href="comparison/site/repro.html#the-disputed-inputs"', fold, fixed = TRUE))
+  expect_false(grepl('<table class="q-table">', ex, fixed = TRUE))
 })
 
 test_that("an assessment in the author's file shows in the table, and an unknown one stops the build", {
@@ -581,7 +594,7 @@ test_that("an assessment in the author's file shows in the table, and an unknown
   old <- readLines(f); on.exit(writeLines(old, f), add = TRUE)
   writeLines(sub("^horizon_rate,H r,Not yet assessed,,$", "horizon_rate,H r,About equally credible,test note,2026-10-15", old), f)
   s <- render_site(root)
-  expect_true(grepl('<tr data-id="horizon_rate">.*?<td data-label="Which is more credible \\(the author of this OPA\\)" class="q-cred">About equally credible. test note \\(2026-10-15\\)</td></tr>', s$explorer))
+  expect_true(grepl('<tr data-id="horizon_rate">.*?<td data-label="Which is more credible \\(the author of this OPA\\)" class="q-cred">About equally credible. test note \\(2026-10-15\\)</td></tr>', s$html))
   writeLines(sub("^horizon_rate,H r,Not yet assessed,,$", "horizon_rate,H r,Probably BSZ,,", old), f)
   expect_error(render_site(root))
 })

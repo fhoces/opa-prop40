@@ -377,7 +377,7 @@
 
   <section class="quantities" id="quantities" aria-labelledby="q-title">
     <h3 id="q-title">But what are the actual quantities?</h3>
-{{quantity_table_x}}
+{{quantity_survey_x}}
   </section>
 
   <details class="fold notes" id="notes-estimates">
@@ -741,6 +741,14 @@
     });
   });
   renderPanels();
+
+  // The survey button: each click opens one of the two survey versions at random, so about half
+  // the readers see each (the versions swap Value A and Value B).
+  var SV = document.querySelector("a.q-survey[data-links]");
+  if (SV) SV.addEventListener("click", function () {
+    var links = SV.getAttribute("data-links").split(" ");
+    SV.href = links[Math.floor(Math.random() * links.length)];
+  });
 
   // The narrow-screen result bar: shown once the header's two estimates have scrolled out of
   // view (CSS hides it on wide screens).
