@@ -501,7 +501,13 @@
   // analysis, the far end the other's.
   function valueText(panel, id, p, x) {
     var other = panel === "bsz" ? "rjkdc" : "bsz";
-    if (id === "minor_inputs") return (p === 0) === (panel === "bsz") ? "BSZ values" : "JR values";
+    if (id === "minor_inputs") {   // named by where the three dials stand, the same in both panels
+      var ds = minorDials(panel), own = function (d) { return +d.value === 0; },
+          far = function (d) { return +d.value === +d.max; };
+      if (ds.every(panel === "bsz" ? own : far)) return "BSZ values";
+      if (ds.every(panel === "bsz" ? far : own)) return "JR values";
+      return "mixed";
+    }
     var e = INPUT[id];
     if (id === "income_loss_share") return pct(fEnds(panel)[p === 0 ? panel : other]);
     if (p === 0) return e[panel + "_text"];
