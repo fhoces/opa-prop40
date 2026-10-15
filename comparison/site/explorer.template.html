@@ -744,6 +744,16 @@
 
   // The survey button: each click opens one of the two survey versions at random, so about half
   // the readers see each (the versions swap Value A and Value B).
+  // "Copy link": copies the survey's share address (a page that opens one version at random).
+  Array.prototype.slice.call(document.querySelectorAll("button.q-copy")).forEach(function (b) {
+    b.addEventListener("click", function () {
+      var url = b.getAttribute("data-url");
+      var done = function () { b.textContent = "Link copied"; b.classList.add("is-done");
+        setTimeout(function () { b.textContent = "Copy link"; b.classList.remove("is-done"); }, 2500); };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, function () { window.prompt("Copy this link:", url); });
+      else window.prompt("Copy this link:", url);
+    });
+  });
   var SV = document.querySelector("a.q-survey[data-links]");
   if (SV) SV.addEventListener("click", function () {
     var links = SV.getAttribute("data-links").split(" ");

@@ -577,7 +577,7 @@
     supports or opposes a wealth tax. An expert should be able to appraise each value from more to less
     credible.</p>
     <p class="q-cta"><a class="q-survey" href="https://docs.google.com/forms/d/e/1FAIpQLSc2Jcz7e269a5QNjTOBnD7L1ijqgvM3VOg5ISB1z3-X61u9nQ/viewform" data-links="https://docs.google.com/forms/d/e/1FAIpQLSc2Jcz7e269a5QNjTOBnD7L1ijqgvM3VOg5ISB1z3-X61u9nQ/viewform https://docs.google.com/forms/d/e/1FAIpQLSfV2d4FBLeJx0dm2BpL3PO_EoKV8xppiKGxh-Ag8n61-MwAWA/viewform" target="_blank" rel="noopener">Take the survey: what do you think these values are?</a></p>
-    <p class="q-share">Share this survey with people you think have expertise in this area, to learn what they think these values are.</p>
+    <p class="q-share">Share this survey with people you think have expertise in this area, to learn what they think these values are. <button type="button" class="q-copy" data-url="https://fhoces.github.io/opa-prop40/comparison/site/survey/">Copy link</button></p>
   </section>
 
   <details class="fold notes" id="notes-estimates">
@@ -944,6 +944,16 @@
 
   // The survey button: each click opens one of the two survey versions at random, so about half
   // the readers see each (the versions swap Value A and Value B).
+  // "Copy link": copies the survey's share address (a page that opens one version at random).
+  Array.prototype.slice.call(document.querySelectorAll("button.q-copy")).forEach(function (b) {
+    b.addEventListener("click", function () {
+      var url = b.getAttribute("data-url");
+      var done = function () { b.textContent = "Link copied"; b.classList.add("is-done");
+        setTimeout(function () { b.textContent = "Copy link"; b.classList.remove("is-done"); }, 2500); };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, function () { window.prompt("Copy this link:", url); });
+      else window.prompt("Copy this link:", url);
+    });
+  });
   var SV = document.querySelector("a.q-survey[data-links]");
   if (SV) SV.addEventListener("click", function () {
     var links = SV.getAttribute("data-links").split(" ");

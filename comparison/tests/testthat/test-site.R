@@ -591,6 +591,16 @@ test_that("the overview's \"The differences\" fold holds the quantities table; t
   btn <- function(h) regmatches(h, regexpr('<p class="q-cta">.*?</p>', h))
   expect_true(grepl('<p class="q-cta">', fold, fixed = TRUE))
   expect_identical(btn(ov), btn(ex))
+  # a "Copy link" button next to the share line on both pages, and the share page that picks a
+  # version at random (author request 2026-10-15)
+  sv <- read_csv_plain(file.path(root, "comparison", "data", "survey-links.csv"))
+  urls <- sv$url[!is.na(sv$url) & nzchar(sv$url)]
+  if (length(urls)) {
+    for (h in list(ov, ex)) expect_true(grepl(sprintf('<button type="button" class="q-copy" data-url="%s">Copy link</button>', SURVEY_SHARE_URL), h, fixed = TRUE))
+    sp <- read_page(file.path(root, "comparison", "site", "survey", "index.html"))
+    for (u in urls) expect_true(grepl(u, sp, fixed = TRUE))
+    expect_true(grepl("location.replace(L[Math.floor(Math.random() * L.length)])", sp, fixed = TRUE))
+  }
 })
 
 test_that("an assessment in the author's file shows in the table, and an unknown one stops the build", {
