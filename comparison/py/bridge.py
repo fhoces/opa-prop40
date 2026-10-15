@@ -100,7 +100,7 @@ STEPS = [
     ("real_estate", "7", "Real-estate deduction", "data"),
     ("confirmed_departures", "3", "Billionaires already departed", "guesswork on data"),
     ("avoidance", "(not a row)", "Avoidance and evasion allowance", "guesswork"),
-    ("litigation_survival", "9", "Chance the tax survives litigation", "guesswork"),
+    ("litigation_survival", "9", "Chance the tax does not survive litigation", "guesswork"),
     ("income_loss_share", "6", "Share of billionaire income tax lost", "data vs guesswork"),
     ("income_level", "5", "Billionaires' annual CA income tax", "research vs guesswork"),
     ("horizon", "2", "How long the income tax loss lasts", "scenario"),

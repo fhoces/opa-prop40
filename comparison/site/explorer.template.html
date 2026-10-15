@@ -336,15 +336,15 @@
           <h3 id="prj-h"><span class="ph-name">JR:</span> <span id="ph-rjkdc-main">{{hl_rjkdc}}</span></h3>
           <div class="ph-btns"><button type="button" class="reset walk" data-panel="rjkdc">Walk the path</button><button type="button" class="reset" data-panel="rjkdc">Reset</button></div>
           <p class="ph-src">The JR analysis's main estimate<sup>1</sup> (Jaros and Rauh, NBER, September 2026)</p>
-          <p class="ph-src ph-gap">{{jr_gap_note}}</p>
           <p class="ph-now">With these sliders <b id="now-rjkdc" aria-live="polite">{{jr_end_b}}</b></p>
         </div>
         <div class="sl-head" aria-hidden="true"><span>BSZ value</span><span>JR value</span></div>
         <ul class="sl-list" aria-label="The JR panel's sliders">
 {{sliders_rjkdc}}
         </ul>
-        <p class="panel-note">Starts at {{jr_end_b}}, the JR inputs with the lost income tax
-        discounted at one {{r_common}} rate, the JR end of the equation above.</p>
+        <p class="panel-note">Starts at {{jr_end_b2}}, the exact average of the authors' Monte
+        Carlo (their model run many times with random inputs). Their own seeded run prints
+        {{hl_rjkdc}}, the header number.</p>
       </div>
     </div>
 
@@ -356,18 +356,18 @@
     <p class="fn"><sup>1</sup> Each analysis's own main estimate, defined its own way. The BSZ
     analysis's is a net total over 5 years: the wealth tax (Table 5 row 1), plus extra income
     tax from assets sold to pay it, minus the income tax lost to billionaires who leave, for 5
-    years at 3%. BSZ's own headline is the wealth tax alone; the net total is this OPA's choice,
+    years at {{r_bsz}}. BSZ's own headline is the wealth tax alone; the net total is this OPA's choice,
     explained on the <a href="../../../bsz-analysis/site/">BSZ analysis overview</a>. The JR
     analysis's is a perpetuity net present value, averaged over the authors' Monte Carlo draws
     (Jaros and Rauh, NBER chapter c15504, Tax Policy and the Economy vol. 41, September 2026).</p>
     <p class="fn">The net fiscal effect puts both on one definition, and the panels start at its
     two ends. The BSZ end is <b>{{bsz_end_b}}</b> and the JR end <b>{{jr_end_b}}</b>, a gap of <b>{{gap_b}}</b>.
-    Both ends discount the lost income tax at one rate, {{r_common}} a year, the rate the BSZ
-    overview uses. {{jr_gap_note}}</p>
+    The discount rate is a dial: {{r_bsz}} at the BSZ end, the rate the BSZ overview uses, and
+    {{r_jr}} at the JR end, the one rate worth the same as the authors' random draw of it.</p>
     <p class="fn">Conventions. All amounts are nominal billions of dollars. The wealth tax is
     counted at face value when assessed and undiscounted, as both analyses do (the BSZ analysis
     values the base on 1 July 2026; the JR analysis grows its 2025 Forbes base by {{nber_growth}}
-    to 31 December 2026). Present values are at the assessment date, at {{r_common}} a year.
+    to 31 December 2026). Present values are at the assessment date, at the rate dial's value.
     The JR code labels its rate r − g and the text r (the JR
     analysis's <a href="../../../rjkdc-analysis/site/materials.html#mismatches">mismatch 3</a>).</p>
     </div>
@@ -401,8 +401,8 @@
       <p><strong>Kinds.</strong> Each slider's explanation ends with the kind of its two values:
       <b>data</b> (settled by observable facts), <b>research</b> (a published estimate),
       <b>guesswork</b> (asserted without data or a study behind it), <b>guesswork on data</b> (a
-      judgement applied to observed facts) and <b>scenario</b> (a choice of which world is
-      estimated). "A vs B" reads the BSZ value's kind against the JR value's.</p>
+      judgement applied to observed facts), <b>scenario</b> (a choice of which world is
+      estimated) and <b>derived</b> (computed from the analysis's own inputs). "A vs B" reads the BSZ value's kind against the JR value's.</p>
       <p><strong>The function.</strong> The <a href="../repro.html#the-two-ends">report</a> states
       the estimating function line by line. The left sliders move only the left bar and the right
       sliders only the right bar.</p>
@@ -472,6 +472,7 @@
       case "own": return v.toFixed(2);
       case "C": return "$" + v.toFixed(2) + "B/yr";
       case "H": return v === Infinity ? "perpetuity" : v + " years";
+      case "r": return Math.abs(100 * v - Math.round(100 * v)) < 1e-9 ? Math.round(100 * v) + "%" : (100 * v).toFixed(2) + "%";
       default: return String(v);
     }
   }

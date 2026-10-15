@@ -253,7 +253,7 @@ build_all <- function(k = read_contracts()) {
                         "Non-US-citizen residents + base list and valuation date",
                         "Billionaires already departed",
                         "(none: Rauh's Monte Carlo headline does not use the ten 'expanded' departures)",
-                        "Avoidance allowance + chance the tax survives litigation (his bar is the March 2026 version's elasticity response, which the September version does not use)",
+                        "Avoidance allowance + chance the tax does not survive litigation (his bar is the March 2026 version's elasticity response, which the September version does not use)",
                         "Real-estate deduction", "(none: the common function returns the September version's expectation exactly)",
                         "The JR analysis's own NPV minus its own expected revenue (all income-tax steps together)")
 

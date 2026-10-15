@@ -80,7 +80,7 @@ bridge_steps <- function() {
       "Real-estate deduction",
       "Billionaires already departed",
       "Avoidance and evasion allowance",
-      "Chance the tax survives litigation",
+      "Chance the tax does not survive litigation",
       "Share of billionaire income tax lost",
       "Billionaires' annual CA income tax",
       "How long the income tax loss lasts",

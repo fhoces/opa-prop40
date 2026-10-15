@@ -5,8 +5,9 @@
 # comparison/site/explorer.template.html) hold prose and {{tokens}} only.
 
 # Halves round away from zero, with a 1e-9 tolerance (formatC alone rounds a tie to even, and
-# the explorer's JavaScript rounds it up): the JR end at 3% is -32.25 in exact arithmetic and
-# -32.249999999999993 in floating point, and both pages must print it the same way.
+# the explorer's JavaScript rounds it up), so a value that is a tie in exact arithmetic but
+# falls just below it in floating point (-32.25 held as -32.249999999999993) prints the same
+# on both pages.
 round_half_out <- function(a, digits) { m <- 10^digits; floor(a * m + 0.5 + 1e-9) / m }
 money <- function(v, digits = 1, signed = FALSE) {
   if (length(v) != 1) return(vapply(v, money, "", digits = digits, signed = signed))
@@ -16,6 +17,9 @@ money <- function(v, digits = 1, signed = FALSE) {
   paste0(sign, "$", s, "B")
 }
 pct <- function(v, digits = 0) paste0(formatC(100 * v, format = "f", digits = digits), "%")
+# A discount rate: whole percentages as "3%", the rest to two decimals ("2.73%"), as the
+# explorer's script prints the rate dial's stops.
+rate_txt <- function(v) if (abs(100 * v - round(100 * v)) < 1e-9) pct(v, 0) else pct(v, 2)
 esc <- function(x) {
   x <- gsub("&", "&amp;", x, fixed = TRUE)
   x <- gsub("<", "&lt;", x, fixed = TRUE)
@@ -37,6 +41,7 @@ fmt_input <- function(input, v) {
     f0 = pct(v, 0),
     C = paste0(money(v, 2), "/yr"),
     H = if (is.infinite(v)) "perpetuity" else paste0(v, " years"),
+    r = rate_txt(v),
     s = if (abs(v - 1/3) < 1e-9) "1/3" else pct(v, 0),
     format(v))
 }
@@ -45,7 +50,8 @@ short_labels <- c(
   bsz = "BSZ Aug 2026", noncitizens = "Non-citizens", base_list = "Forbes source",
   real_estate = "Real estate", confirmed_departures = "Departed wealth", avoidance = "No avoidance",
   litigation_survival = "Litigation", income_loss_share = "Share lost",
-  income_level = "Income tax level", horizon = "Horizon", asset_sales = "Asset sales",
+  income_level = "Income tax level", horizon = "Horizon", discount_rate = "Discount rate",
+  asset_sales = "Asset sales",
   nber = "JR Sep 2026")
 
 # The two values of a step as the pages print them (the share-lost step switches two
@@ -131,29 +137,29 @@ EXPLORER_BOXES <- list(
                  eq = "Wealth tax collected = 5% &times; (W &minus; D) &times; (1 &minus; a) &times; q",
                  lead = "5% is the tax rate. W is the wealth on the list, D the part already gone, a the share lost to avoidance, q the chance the tax survives in court.",
                  more = "The four dials multiply, so one dial's effect depends on the others. W and D are valued on the same Forbes list."),
-  loss = list(ids = c("income_loss_share", "income_level", "horizon"),
+  loss = list(ids = c("income_loss_share", "income_level", "horizon", "discount_rate"),
               report = "step-loss",      # the report's steps 5 and 6
-              eq = "Income tax lost = f &times; C &times; A(H)",
-              lead = "f is the share of billionaires' income tax lost, C that tax per year, and H the years it is counted.",
-              more = "The three dials multiply, and f also moves with D and a."))
+              eq = "Income tax lost = f &times; C &times; A(H, r)",
+              lead = "f is the share of billionaires' income tax lost, C that tax per year, H the years it is counted, and r the rate that discounts it.",
+              more = "f, C and A(H, r) multiply, so one dial's effect depends on the others. f also moves with D and a."))
 # Each dial shows only its symbol; the name and the explanation are in its hover box.
 DIAL_SYMBOLS <- c(base_list = "W", confirmed_departures = "D", avoidance = "a",
                   litigation_survival = "q", income_loss_share = "f", income_level = "C",
-                  horizon = "H")
+                  horizon = "H", discount_rate = "r")
 # One or two words shown under a symbol (author instruction: f, C and H).
-DIAL_WORDS <- c(income_loss_share = "share lost", income_level = "yearly tax", horizon = "years")
+DIAL_WORDS <- c(income_loss_share = "share lost", income_level = "yearly tax", horizon = "years",
+                discount_rate = "rate")
 # What each symbol stands for, at the start of its tip. The bridge's step names (short_labels)
 # name a step, not the dial: "No avoidance" is the JR end of the a dial, not the dial.
 DIAL_NAMES <- c(base_list = "wealth on the list", confirmed_departures = "wealth already gone",
                 avoidance = "avoidance share", litigation_survival = "chance it survives court",
                 income_loss_share = "share lost", income_level = "yearly income tax",
-                horizon = "years counted")
+                horizon = "years counted", discount_rate = "discount rate")
 
 # The bars of every view of the bridge, in display order: the BSZ analysis (August 2026,
 # Table 5 row 1), one step per disputed input (BSZ value to the JR value of its September
-# 2026 version), and the JR end of the common function (Jaros and Rauh, NBER, September 2026,
-# at the one common rate). The steps add up to the JR end exactly; the JR analysis's own mean
-# NPV differs from it by jr_rate_gap (the rate draw), stated beside the bridge, not as a bar.
+# 2026 version), and the JR analysis (Jaros and Rauh, NBER, September 2026). The common
+# function returns both ends exactly, so there is no model-difference bar.
 build_series <- function(ex) {
   br <- ex$bridge; en <- ex$ends; steps <- bridge_steps()
   settings <- unique(en$horizon_setting)
@@ -184,8 +190,7 @@ build_series <- function(ex) {
         }
         add("nber", "total", e$rauh_model,
             if (o == "a") "JR analysis (Jaros and Rauh, NBER, September 2026): expected revenue in the Monte Carlo"
-            else paste0("JR analysis (Jaros and Rauh, NBER, September 2026): the JR inputs at one ",
-                        pct(ex$meta$value[ex$meta$key == "r_common"]), " rate", Hlab))
+            else paste0("JR analysis (Jaros and Rauh, NBER, September 2026): mean NPV", Hlab))
         out[[st]][[o]][[m]] <- L
       }
     }
@@ -240,9 +245,9 @@ hoopes_differences <- function(ex, k) {
             money(0.05 * dv("hoopes_real_estate_base"), 1), money(ho("real_estate_exclusion"), 2, TRUE)),
     sprintf("<b>Level before income tax.</b> His revenue level before the income-tax bar is about %s, near the March 2026 version's preferred 'about %s' (p.14). Ours ends at %s, the expected revenue in the Monte Carlo behind the September 2026 version's mean NPV (its text prefers 'approximately %s', p.1).",
             money(hz_pre, 1), money(dv("rauh_headline_revenue"), 0), money(ea$rauh_own, 2), money(dv("nber_headline_revenue"), 0)),
-    sprintf("<b>Income tax.</b> His single bar, %s, ends at %s, close to the March 2026 version's %s. Ours is %s, the September 2026 version's present value of lost income tax at one %s rate against %s of revenue (the authors' random rate makes it larger by the JR rate gap, %s), and we split it into four labelled steps (the share lost, the income tax level, the horizon, asset-sale tax), which interact with the base steps.",
+    sprintf("<b>Income tax.</b> His single bar, %s, ends at %s, close to the March 2026 version's %s. Ours is %s, the September 2026 version's present value of lost income tax against %s of revenue, and we split it into five labelled steps (the share lost, the income tax level, the horizon, the discount rate, asset-sale tax), which interact with the base steps.",
             hfmt(hs_("income_tax_loss"), NA), money(hz_end, 1), money(opp("npv_mc_ssrn_mean"), 1), money(ho("income_tax_loss"), 2, TRUE),
-            pct(ex$meta$value[ex$meta$key == "r_common"]), money(ea$rauh_own, 2), money(ex$meta$value[ex$meta$key == "jr_rate_gap"], 2)),
+            money(ea$rauh_own, 2)),
     "<b>Order and labels.</b> His is one sequential order, with no provenance labels. Ours follows the explorer's dials in the order the page prints them, with each step labelled data, research, guesswork or scenario. The Shapley average (a step's effect averaged over every order the inputs could be switched in) checks it without choosing an order, and the column here reads our steps in his order.",
     "<b>Steps he does not have.</b> The non-US-citizen residents, the BSZ analysis's avoidance allowance being dropped, the asset-sale income tax, and the litigation weight of the September 2026 version (which postdates his note)."
   )
@@ -273,9 +278,9 @@ render_site <- function(root = comparison_root(),
   tok$bsz_row1_exact <- money(epv("bsz_tab5_row1"), 3)
   tok$nber_npv <- money(ep$printed_value[ep$endpoint_id == "rauh_nber_npv"], 1)
   tok$nber_npv_abs <- money(-ep$printed_value[ep$endpoint_id == "rauh_nber_npv"], 1)
-  # One discount rate for both ends (author decision 2026-10-15), from the exports. The JR
-  # analysis's draw range appears on the pages in one place only, the JR gap note.
-  tok$r_common <- pct(mv("r_common"))
+  # The discount rate at each end (the rate dial, author decision 2026-10-15), from the exports:
+  # 3% at the BSZ end, 1 / E[1/r] over the JR draw at the JR end.
+  tok$r_bsz <- rate_txt(mv("r_bsz")); tok$r_jr <- rate_txt(mv("r_jr"))
   r_min <- pct(mv("r_min_jr"), 1); r_max <- pct(mv("r_max_jr"), 1)
   tok$nber_growth <- pct(pick(k$rjkdc$inputs, "nber_growth_rate"))
 
@@ -283,20 +288,18 @@ render_site <- function(root = comparison_root(),
   # The BSZ main estimate is the net total over 5 years, which is also the BSZ end of the
   # bridge under the common output (b). The JR main estimate is the NBER mean NPV as the
   # JR pipeline reproduces the authors' seeded Monte Carlo (its contract row
-  # npv_mc_nber_mean). The bridge's JR end is the JR inputs at the one common rate; it
-  # differs from the exact mean of the same Monte Carlo by jr_rate_gap, because the
-  # authors draw the rate at random. The explorer reads the same values from
-  # assets/comparison-data.js.
+  # npv_mc_nber_mean); the bridge's JR end is the exact expectation of the same Monte
+  # Carlo. The explorer reads the same values from assets/comparison-data.js.
   rj_main <- ep$contract_value[ep$endpoint_id == "rauh_nber_npv"]
   tok$hl_bsz <- money(eb$bsz_model, 1)
   tok$hl_rjkdc <- money(rj_main, 1)
   tok$jr_end_b <- money(eb$rauh_model, 1)
   tok$bsz_end_b <- money(eb$bsz_model, 1)
-  tok$jr_gap <- money(eb$jr_rate_gap, 1)
-  # The JR gap note, the one place the pages state the JR analysis's rate range.
-  tok$jr_gap_note <- sprintf(
-    "The JR analysis's own headline is %s: the authors draw the discount rate at random between %s and %s and average, which is worth about %s more than one %s rate.",
-    tok$hl_rjkdc, r_min, r_max, tok$jr_gap, tok$r_common)
+  tok$jr_end_b2 <- money(eb$rauh_model, 2)
+  # The JR estimate on the pages is the exact mean of the authors' Monte Carlo; the header
+  # prints their seeded run. One sentence says so wherever the two sit together.
+  tok$mc_note <- sprintf("The JR estimate is the exact mean of the authors' Monte Carlo. Their seeded run prints %s, the header number.",
+                         tok$hl_rjkdc)
   # The gap on (b), stated in the explorer's footnote, not in the headline.
   gap_b <- eb$bsz_model - eb$rauh_model
   tok$gap_b <- money(gap_b, 1)
@@ -331,8 +334,9 @@ render_site <- function(root = comparison_root(),
     litigation_survival = "The chance that the tax survives a court challenge, applied to the revenue.",
     income_loss_share = "The share of billionaires' income tax California loses to people leaving. Under the BSZ rule it depends on the number of leavers.",
     income_level = "Billionaires' yearly California income tax, the amount at risk each year.",
-    horizon = sprintf("How many years the lost income tax is counted, discounted at %s a year. Middle stops: %s years.",
-                      tok$r_common, paste(hz_fin[-1], collapse = ", ") |> sub(pattern = ", ([^,]*)$", replacement = " and \\1")),
+    horizon = sprintf("How many years the lost income tax is counted. Middle stops: %s years.",
+                      paste(hz_fin[-1], collapse = ", ") |> sub(pattern = ", ([^,]*)$", replacement = " and \\1")),
+    discount_rate = "The discount rate that turns a yearly loss into today's dollars.",
     minor_inputs = "One switch for three inputs that each move the estimate by less than $7 billion. Open the fold below to set them one by one.",
     noncitizens = "Wealth of California billionaires who are not US citizens.",
     real_estate = "The share of the base deducted for directly held homes.",
@@ -362,6 +366,11 @@ render_site <- function(root = comparison_root(),
     horizon = c(
       bsz = "BSZ: about the payment period, treating the responses as temporary.",
       rjkdc = "JR: for ever, so the loss never ends."),
+    discount_rate = c(
+      bsz = sprintf("%s: the rate this OPA applies to the BSZ analysis's 5-year loss, the middle of the JR range. BSZ give no rate.",
+                    tok$r_bsz),
+      rjkdc = sprintf("%s: the one rate worth the same as the JR analysis's random draw between %s and %s ($1 a year for ever is worth $%s).",
+                      tok$r_jr, r_min, r_max, formatC(mv("A_inf_jr_draw"), format = "f", digits = 1))),
     minor_inputs = c(
       bsz = "BSZ: non-citizens taxed, no real-estate deduction, the extra tax from asset sales counted.",
       rjkdc = "JR: non-citizens left out, homes deducted, no extra tax from asset sales."),
@@ -418,17 +427,17 @@ render_site <- function(root = comparison_root(),
                paste0(DIAL_SYMBOLS[[id]], ", ", DIAL_NAMES[[id]], ". ", slider_tips[[id]]),
                tx$bsz, tx$rjkdc, slider_max(id), sym = TRUE)
   }
-  # A(H) in the loss formula gets its own tip, with the two values the dial's ends give.
-  ah_tip <- sprintf("What $1 a year for H years is worth today at %s: about %s for 5 years, %s for ever.",
-                    tok$r_common,
-                    formatC(annuity(bi0$rauh$r, 5), format = "f", digits = 1),
-                    formatC(annuity(bi0$rauh$r, Inf), format = "f", digits = 0))
+  # A(H, r) in the loss formula gets its own tip, with the values at the two ends of the H and
+  # r dials (meta.csv: A_5 at the BSZ rate, A_inf at the JR rate).
+  ah_tip <- sprintf("What $1 a year for H years is worth today at the rate r: about %s for 5 years at %s, %s for ever at %s.",
+                    formatC(mv("A_5"), format = "f", digits = 1), tok$r_bsz,
+                    formatC(mv("A_inf"), format = "f", digits = 1), tok$r_jr)
   info_span <- function(id, label, tip) sprintf(
     '<span class="info" tabindex="0" aria-describedby="%1$s">%2$s<span class="info-tip" role="tooltip" id="%1$s">%3$s</span></span>',
     id, label, tip)
   box <- function(panel, key) {
     bx <- EXPLORER_BOXES[[key]]
-    eq <- sub("A(H)", info_span(paste0(panel, "-ah-tip"), "A(H)", ah_tip), bx$eq, fixed = TRUE)
+    eq <- sub("A(H, r)", info_span(paste0(panel, "-ah-tip"), "A(H, r)", ah_tip), bx$eq, fixed = TRUE)
     paste0(
       '        <li class="sl-box" role="group" aria-labelledby="', panel, '-', key, '-head">\n',
       '          <div class="sl-box-head">\n',
@@ -471,9 +480,8 @@ render_site <- function(root = comparison_root(),
   # order, one term for the other steps added up, the JR estimate (author decisions 2026-10-15:
   # everything from the explorer's own dials; three main terms plus the rest combined). The dial
   # path moves the BSZ panel's dials top to bottom, each to its far end (dial_path() in model.R,
-  # export/r/dial_path.csv). The terms take the BSZ end to the JR
-  # end at the one common rate exactly; the JR gap note under the equation gives the authors' own
-  # headline. eq_terms() is shared with the deck (slides.Rmd).
+  # export/r/dial_path.csv). The terms take the BSZ end to the JR end exactly. eq_terms() is
+  # shared with the deck (slides.Rmd).
   stopifnot(identical(EXPLORER_DIAL_ORDER, c(explorer_slider_ids(), "minor_inputs")))
   dp <- read_csv_plain(file.path(root, "comparison", "export", "r", "dial_path.csv"))
   stopifnot(identical(dp$step_id, EXPLORER_DIAL_ORDER))
@@ -485,26 +493,25 @@ render_site <- function(root = comparison_root(),
       '<span class="eq-step"><span class="op">%s</span><span class="term" data-steps="%s"><b>%s</b><small>%s</small></span></span>',
       if (x$change < 0) "&minus;" else "+", x$steps, money(abs(x$change), 1), esc(x$label))
   }
-  jr_label <- sprintf("JR estimate at one %s rate", tok$r_common)
+  jr_label <- "JR estimate"
   say <- function(j) sprintf("%s %s for %s", if (et$terms$change[j] < 0) "minus" else "plus",
                              money(abs(et$terms$change[j]), 1), tolower(et$terms$label[j]))
   pseudo_eq <- function(page) paste0(
     '<div class="pseudo-eq" role="img" aria-label="', esc(sprintf(
-      "The BSZ estimate, %s, %s, gives about the JR estimate at one %s rate, %s.",
-      money(eb$bsz_model, 1), paste(vapply(seq_len(nrow(et$terms)), say, ""), collapse = ", "), tok$r_common,
+      "The BSZ estimate, %s, %s, gives about the JR estimate, %s.",
+      money(eb$bsz_model, 1), paste(vapply(seq_len(nrow(et$terms)), say, ""), collapse = ", "),
       money(eb$rauh_model, 1))), '">\n',
     sprintf('  <span class="term" data-steps="0"><b>%s</b><small>BSZ estimate</small></span>\n', money(eb$bsz_model, 1)),
     paste(vapply(seq_len(nrow(et$terms)), function(j) paste0("  ", term(j)), ""), collapse = "\n"), "\n",
     sprintf('  <span class="eq-step"><span class="op">&asymp;</span><span class="term" data-end="%d"><b>%s</b><small>%s</small></span></span>\n', nrow(dp), money(eb$rauh_model, 1), jr_label),
-    '</div>\n',
-    sprintf('<p class="eq-note eq-gap">%s</p>', esc(tok$jr_gap_note)))
+    '</div>')
   tok$pseudo_eq_x <- pseudo_eq("x")
   tok$pseudo_eq <- pseudo_eq("root")
   # The note reads the same on both pages (author item 2026-10-15), except that the overview
   # has no Walk the path button, so it drops that sentence, and links "BSZ panel" to the explorer.
   eq_note <- function(href, panel, walk) paste0(
     "Move the ", panel, "'s dials top to bottom, each to its far end. ", esc(et$note), " ",
-    walk,
+    walk, esc(tok$mc_note), " ",
     sprintf("The <a href=\"%s\">report</a> gives all %s steps.", href, et$n_words))
   tok$pseudo_eq_note_x <- eq_note("../repro.html#the-bridge", "BSZ panel",
                                   "The Walk the path button in each panel does it for you. ")
@@ -561,12 +568,11 @@ render_site <- function(root = comparison_root(),
     paste0(html, "\n")
   }
   # headline: the two main estimates the explorer prints (bsz, rjkdc), and the bridge's
-  # two ends under the common output (b), each analysis's own horizon (bsz_end_b, rjkdc_end_b,
-  # the JR end at the one common rate), and the JR rate gap between rjkdc_end_b and the
-  # authors' exact mean.
+  # two ends under the common output (b), each analysis's own horizon and rate (bsz_end_b,
+  # rjkdc_end_b).
   headline <- list(bsz = eb$bsz_model, rjkdc = rj_main,
                    rjkdc_printed = ep$printed_value[ep$endpoint_id == "rauh_nber_npv"],
-                   bsz_end_b = eb$bsz_model, rjkdc_end_b = eb$rauh_model, jr_rate_gap = eb$jr_rate_gap)
+                   bsz_end_b = eb$bsz_model, rjkdc_end_b = eb$rauh_model)
   # The sliders: the two input vectors (bridge_inputs(), full precision; the perpetuity is
   # written "Inf"), the horizon settings and the number of steps of slider_inputs(), and for
   # each slider the arguments it moves (one, or two for the share-lost step) and its two

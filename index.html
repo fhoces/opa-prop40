@@ -324,16 +324,15 @@
 
 <section class="eq-box" id="what-separates" aria-labelledby="eq-title">
   <h2 id="eq-title">What separates the two numbers</h2>
-<div class="pseudo-eq" role="img" aria-label="The BSZ estimate, $106.8B, minus $28.2B for billionaires already departed (d), minus $41.4B for chance the tax survives litigation (q), minus $58.9B for how long the income tax loss lasts (h), minus $10.6B for the other five steps together, gives about the JR estimate at one 3% rate, −$32.3B.">
+<div class="pseudo-eq" role="img" aria-label="The BSZ estimate, $106.8B, minus $28.2B for billionaires already departed (d), minus $41.4B for chance the tax does not survive litigation (q), minus $58.9B for how long the income tax loss lasts (h), minus $17.3B for the other six steps together, gives about the JR estimate, −$39.0B.">
   <span class="term" data-steps="0"><b>$106.8B</b><small>BSZ estimate</small></span>
   <span class="eq-step"><span class="op">&minus;</span><span class="term" data-steps="2"><b>$28.2B</b><small>Billionaires already departed (D)</small></span></span>
-  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-steps="4"><b>$41.4B</b><small>Chance the tax survives litigation (q)</small></span></span>
+  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-steps="4"><b>$41.4B</b><small>Chance the tax does not survive litigation (q)</small></span></span>
   <span class="eq-step"><span class="op">&minus;</span><span class="term" data-steps="7"><b>$58.9B</b><small>How long the income tax loss lasts (H)</small></span></span>
-  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-steps="1 3 5 6 8"><b>$10.6B</b><small>The other five steps together</small></span></span>
-  <span class="eq-step"><span class="op">&asymp;</span><span class="term" data-end="8"><b>−$32.3B</b><small>JR estimate at one 3% rate</small></span></span>
+  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-steps="1 3 5 6 8 9"><b>$17.3B</b><small>The other six steps together</small></span></span>
+  <span class="eq-step"><span class="op">&asymp;</span><span class="term" data-end="9"><b>−$39.0B</b><small>JR estimate</small></span></span>
 </div>
-<p class="eq-note eq-gap">The JR analysis's own headline is −$38.9B: the authors draw the discount rate at random between 1.5% and 4.5% and average, which is worth about $6.7B more than one 3% rate.</p>
-  <p class="eq-note">Move the <a href="comparison/site/explorer/">BSZ panel</a>'s dials top to bottom, each to its far end. The three terms with a symbol are the steps for D, q and H of that walk, and the fourth is the other five steps added up (W, a, f, C and three minor inputs). The <a href="comparison/site/repro.html#the-bridge">report</a> gives all eight steps.</p>
+  <p class="eq-note">Move the <a href="comparison/site/explorer/">BSZ panel</a>'s dials top to bottom, each to its far end. The three terms with a symbol are the steps for D, q and H of that walk, and the fourth is the other six steps added up (W, a, f, C, r and three minor inputs). The JR estimate is the exact mean of the authors' Monte Carlo. Their seeded run prints −$38.9B, the header number. The <a href="comparison/site/repro.html#the-bridge">report</a> gives all nine steps.</p>
 </section>
 
 <div class="section-title">
@@ -485,7 +484,7 @@ versions than this site. So the two do not line up step for step.</p>
   <summary><h2>The differences <a class="fold-link" href="#differences" aria-label="Link to this section">#</a></h2> <span class="teaser">every input the two estimates differ on, with both values</span></summary>
   <div class="fold-body">
 <p>The table has one row per input on which the two estimates differ. It gives what each
-analysis assumes and what kind of claim it is (data, research, guesswork or scenario). Each row
+analysis assumes and what kind of claim it is (data, research, guesswork, scenario or derived). Each row
 is one step of the <a href="comparison/site/repro.html#the-bridge">bridge</a> and one dial of the
 <a href="comparison/site/explorer/">explorer</a>. The first column gives the input's row in the project's crosswalk,
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/DISPUTES.md">DISPUTES.md</a>,
@@ -500,19 +499,21 @@ which quotes both analyses on each point. The sources for each value are in
     <tr><td>7</td><td>Real-estate deduction</td><td><span class="kind">data</span></td><td class="small"><b>0.0%</b></td><td class="small"><b>0.5%</b></td></tr>
     <tr><td>3</td><td>Billionaires already departed</td><td><span class="kind">guesswork on data</span></td><td class="small"><b>none</b></td><td class="small"><b>the JR seven: $614B on the BSZ list, $578B on the JR list</b></td></tr>
     <tr><td>(not a row)</td><td>Avoidance and evasion allowance</td><td><span class="kind">guesswork</span></td><td class="small"><b>10.0%</b></td><td class="small"><b>0.0%</b></td></tr>
-    <tr><td>9</td><td>Chance the tax survives litigation</td><td><span class="kind">guesswork</span></td><td class="small"><b>100%</b></td><td class="small"><b>50%</b></td></tr>
+    <tr><td>9</td><td>Chance the tax does not survive litigation</td><td><span class="kind">guesswork</span></td><td class="small"><b>100%</b></td><td class="small"><b>50%</b></td></tr>
     <tr><td>6</td><td>Share of billionaire income tax lost</td><td><span class="kind">data vs guesswork</span></td><td class="small"><b>what leavers paid</b></td><td class="small"><b>45% of all</b></td></tr>
     <tr><td>5</td><td>Billionaires' annual CA income tax</td><td><span class="kind">research vs guesswork</span></td><td class="small"><b>$3.06B/yr</b></td><td class="small"><b>$4.55B/yr</b></td></tr>
     <tr><td>2</td><td>How long the income tax loss lasts</td><td><span class="kind">scenario</span></td><td class="small"><b>5 years</b></td><td class="small"><b>perpetuity</b></td></tr>
+    <tr><td>10</td><td>Discount rate for the lost income tax</td><td><span class="kind">scenario vs derived</span></td><td class="small"><b>3%</b></td><td class="small"><b>2.73%</b></td></tr>
     <tr><td>(not a row)</td><td>Extra income tax from selling assets to pay</td><td><span class="kind">guesswork</span></td><td class="small"><b>1/3</b></td><td class="small"><b>0%</b></td></tr>
   </tbody>
 </table>
 </div>
 <p class="small">Row 3: % = 1 &minus; 72 / 100.906, the authors' ceiling after seven
 departures over the grown base. Their person-level file gives 72.05 (mismatch 4); the
-script's 72 is used so the comparison returns their expected revenue exactly.</p>
+script's 72 is used so the comparison returns their mean exactly.</p>
 <p class="small">"A vs B" reads the BSZ value's kind against the JR value's; "guesswork on data" is a
-judgement applied to observed facts.</p>
+judgement applied to observed facts. "Derived" is a value computed from the analysis's own inputs:
+the JR discount rate is the one rate worth the same as the authors' random draw of it.</p>
   </div>
 </details>
 
