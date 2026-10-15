@@ -16,6 +16,21 @@ test_that("the explorer loads the data file with the hash of its content", {
   expect_true(grepl(sprintf('comparison-data.js?v=%s"', h), read_page(explorer), fixed = TRUE))
 })
 
+test_that("both pages carry the pseudo-equation, and its terms add up to the BSZ end", {
+  en <- read_csv_plain(file.path(root, "comparison", "export", "r", "ends.csv"))
+  eb <- en[en$horizon_setting == "own" & en$output == "b", ]
+  br <- read_csv_plain(file.path(root, "comparison", "export", "r", "bridge.csv"))
+  b <- br[br$horizon_setting == "own" & br$output == "b", ]
+  b <- b[order(-abs(b$shapley)), ]
+  expect_equal(eb$rauh_own - sum(b$shapley[1:3]) - sum(b$shapley[-(1:3)]), eb$bsz_model, tolerance = 1e-9)
+  for (p in pages) {
+    html <- read_page(p)
+    expect_true(grepl('<div class="pseudo-eq" role="img"', html, fixed = TRUE), label = p)
+    for (i in 1:3) expect_true(grepl(sprintf("<b>%s</b><small>%s</small>", money(abs(b$shapley[i]), 1), b$title[i]),
+                                     html, fixed = TRUE), label = paste(p, b$step_id[i]))
+  }
+})
+
 test_that("no unfilled tokens, no em-dashes on either page", {
   for (p in pages) {
     html <- read_page(p)
@@ -33,16 +48,16 @@ test_that("key numbers appear on the pages as computed", {
   ea <- en[en$horizon_setting == "own" & en$output == "a", ]
   v <- function(id) ep$value[ep$endpoint_id == id]
   expect_true(grepl(money(v("bsz_tab5_row1"), 1), html, fixed = TRUE))
-  expect_true(grepl(money(eb$nber_own, 2), html, fixed = TRUE))       # the (b) table
-  expect_true(grepl(money(ea$nber_own, 1), html, fixed = TRUE))
+  expect_true(grepl(money(eb$rauh_own, 2), html, fixed = TRUE))       # the (b) table
+  expect_true(grepl(money(ea$rauh_own, 1), html, fixed = TRUE))
   # the explorer's footnote: both ends and the gap on the net fiscal effect, output (b)
   expect_true(grepl(sprintf("The BSZ end is <b>%s</b> and the JR end <b>%s</b>, a gap of <b>%s</b>.",
-                            money(eb$bsz_model, 1), money(eb$nber_own, 1), money(eb$bsz_model - eb$nber_own, 1)),
+                            money(eb$bsz_model, 1), money(eb$rauh_own, 1), money(eb$bsz_model - eb$rauh_own, 1)),
                     ex_html, fixed = TRUE))
   # the explorer shows the net fiscal effect only: no output setting, no gross revenue
   # number (the two ends on output (a), its gap, Table 5 row 1), no output (a) in its data file
   expect_false(grepl("data-out=", ex_html, fixed = TRUE))
-  for (x in c(money(ea$bsz_model, 1), money(ea$nber_own, 1), money(ea$bsz_model - ea$nber_own, 1),
+  for (x in c(money(ea$bsz_model, 1), money(ea$rauh_own, 1), money(ea$bsz_model - ea$rauh_own, 1),
               money(ea$bsz_model, 3)))
     expect_false(grepl(x, ex_html, fixed = TRUE), label = paste("explorer shows", x))
   txt <- read_page(file.path(root, "assets", "comparison-data.js"))
@@ -52,7 +67,7 @@ test_that("key numbers appear on the pages as computed", {
   expect_null(D$switchboard)
 })
 
-test_that("the switchboard: all off is the BSZ end, all on plus the revision is the JR end", {
+test_that("the switchboard: all off is the BSZ end, all on is the JR end", {
   en <- read_csv_plain(file.path(root, "comparison", "export", "r", "ends.csv"))
   sb <- read_csv_plain(file.path(root, "comparison", "export", "r", "switchboard.csv"))
   ids <- bridge_steps()$step_id
@@ -64,13 +79,13 @@ test_that("the switchboard: all off is the BSZ end, all on plus the revision is 
       g <- g[order(g$mask), ]
       expect_equal(nrow(g), 2^n, label = paste(st, o, "rows"))
       expect_equal(g$value[g$mask == 0], e$bsz_model, tolerance = 1e-9, label = paste(st, o, "all off"))
-      expect_equal(g$value[nrow(g)] + e$rauh_residual + e$nber_step, e$nber_own, tolerance = 1e-9,
+      expect_equal(g$value[nrow(g)], e$rauh_own, tolerance = 1e-9,
                    label = paste(st, o, "all on"))
     }
   }
 })
 
-test_that("the slider panels: one slider per disputed input that moves the estimate, in the bridge's order, then the minor switch and the revision, both panels", {
+test_that("the slider panels: the dials in their two boxes in the bridge's order, then the minor switch, both panels", {
   ids <- bridge_steps()$step_id
   shown <- explorer_slider_ids()
   expect_identical(shown, setdiff(ids, c("noncitizens", "real_estate", "asset_sales")))
@@ -79,23 +94,25 @@ test_that("the slider panels: one slider per disputed input that moves the estim
   D <- jsonlite::fromJSON(sub(";\\s*$", "", sub("^[^{]*", "", txt)), simplifyVector = FALSE)
   for (panel in c("bsz", "rjkdc")) {
     sl <- regmatches(ex_html, gregexpr(sprintf('<input type="range" class="sl-in" id="%s-[a-z_]+" min="0" max="[0-9]" step="1" value="0" data-panel="%s" data-id="[a-z_]+"', panel, panel), ex_html))[[1]]
-    expect_identical(sub('.*data-id="([a-z_]+)"$', "\\1", sl), c(shown, "minor_inputs", "revision"), label = panel)
-    expect_identical(sub('.*max="([0-9])".*', "\\1", sl), c(rep(as.character(SLIDER_STEPS), length(shown)), "1", "1"), label = panel)
+    expect_identical(sub('.*data-id="([a-z_]+)"$', "\\1", sl), c(shown, "minor_inputs"), label = panel)
+    expect_identical(sub('.*max="([0-9])".*', "\\1", sl), c(rep(as.character(SLIDER_STEPS), length(shown)), "1"), label = panel)
     # every slider carries its explanation, and the input points at it
-    for (id in c(shown, "minor_inputs", "revision")) {
+    # the two boxes hold the shown dials, in order
+    expect_equal(length(gregexpr(sprintf('<li class="sl-box" role="group" aria-labelledby="%s-', panel), ex_html)[[1]]), 2L, label = panel)
+    for (id in c(shown, "minor_inputs")) {
       expect_true(grepl(sprintf('<span class="sl-tip" role="tooltip" id="%s-%s-tip">[^<]{80,}</span>', panel, id), ex_html), label = paste(panel, id, "tip"))
       expect_true(grepl(sprintf('data-id="%s" aria-describedby="%s-%s-tip"', id, panel, id), ex_html, fixed = TRUE), label = paste(panel, id, "describedby"))
     }
   }
   # the JR panel's sliders run right to left, so position 0 sits at the JR end
-  expect_equal(length(gregexpr('data-panel="rjkdc" data-id="[a-z_]+" aria-describedby="[a-z_-]+" dir="rtl"', ex_html)[[1]]), length(shown) + 2)
+  expect_equal(length(gregexpr('data-panel="rjkdc" data-id="[a-z_]+" aria-describedby="[a-z_-]+" dir="rtl"', ex_html)[[1]]), length(shown) + 1)
   expect_false(grepl('data-panel="bsz" data-id="[a-z_]+" aria-describedby="[a-z_-]+" dir="rtl"', ex_html))
   # the data file: every input in the bridge's order (the switch stands for three of them),
   # the argument each moves, both vectors, and the three the switch covers
   bi <- bridge_inputs(read_contracts(root))
   expect_identical(vapply(D$sliders$inputs, `[[`, "", "id"), ids)
   expect_identical(unlist(D$sliders$minor), EXPLORER_MINOR)
-  expect_identical(vapply(D$sliders$inputs, `[[`, "", "input"), unname(unlist(step_inputs[ids])))
+  expect_identical(lapply(D$sliders$inputs, function(x) unlist(x$input)), unname(step_inputs[ids]))
   num <- function(z) if (identical(z, "Inf")) Inf else z
   for (nm in names(bi$sup)) {
     expect_equal(num(D$sliders$values$bsz[[nm]]), bi$sup[[nm]], tolerance = 1e-14, label = paste("bsz", nm))
@@ -103,30 +120,27 @@ test_that("the slider panels: one slider per disputed input that moves the estim
   }
   expect_equal(vapply(D$sliders$horizons, num, 0), SLIDER_HORIZONS)
   en <- read_csv_plain(file.path(root, "comparison", "export", "r", "ends.csv"))
-  rt <- slider_revision(en)
-  expect_equal(unlist(D$sliders$revision$model), rt$model, tolerance = 1e-14)
-  expect_equal(unlist(D$sliders$revision$revision), rt$revision, tolerance = 1e-14)
+  expect_null(D$sliders$revision)
 })
 
 test_that("the sliders' ends are the two analyses and position 2 lies between its neighbours", {
   k <- read_contracts(root); bi <- bridge_inputs(k)
   en <- read_csv_plain(file.path(root, "comparison", "export", "r", "ends.csv"))
   eb <- en[en$horizon_setting == "own" & en$output == "b", ]
-  rt <- slider_revision(en)
   ids <- bridge_steps()$step_id
-  all_at <- function(p, rev) stats::setNames(as.list(c(rep(p, length(ids)), rev)), c(ids, "revision"))
-  expect_equal(slider_value(bi, "bsz", all_at(0, 0), rt), eb$bsz_model, tolerance = 1e-12)
-  expect_equal(slider_value(bi, "rjkdc", all_at(0, 0), rt), eb$nber_own, tolerance = 1e-12)
-  expect_equal(slider_value(bi, "bsz", all_at(SLIDER_STEPS, 1), rt), eb$nber_own, tolerance = 1e-12)
-  expect_equal(slider_value(bi, "rjkdc", all_at(SLIDER_STEPS, 1), rt), eb$bsz_model, tolerance = 1e-12)
+  all_at <- function(p) stats::setNames(as.list(rep(p, length(ids))), ids)
+  expect_equal(slider_value(bi, "bsz", all_at(0)), eb$bsz_model, tolerance = 1e-12)
+  expect_equal(slider_value(bi, "rjkdc", all_at(0)), eb$rauh_own, tolerance = 1e-12)
+  expect_equal(slider_value(bi, "bsz", all_at(SLIDER_STEPS)), eb$rauh_own, tolerance = 1e-12)
+  expect_equal(slider_value(bi, "rjkdc", all_at(SLIDER_STEPS)), eb$bsz_model, tolerance = 1e-12)
   # position 0 and 4 are the two values exactly; the horizon steps through the five settings
-  x4 <- slider_inputs(bi$sup, bi$rauh, all_at(SLIDER_STEPS, 0))
+  x4 <- slider_inputs(bi$sup, bi$rauh, all_at(SLIDER_STEPS))
   for (nm in names(bi$rauh)) expect_identical(x4[[nm]], bi$rauh[[nm]], label = nm)
   expect_equal(vapply(0:4, function(p) slider_inputs(bi$rauh, bi$sup, list(horizon = p))$H, 0),
                rev(SLIDER_HORIZONS))
   # one input at 1, 2, 3 with the rest at 0: the middle value lies strictly between
   for (panel in c("bsz", "rjkdc")) for (id in c("base_list", "income_level", "confirmed_departures")) {
-    v <- vapply(1:3, function(p) slider_value(bi, panel, stats::setNames(list(p), id), rt), 0)
+    v <- vapply(1:3, function(p) slider_value(bi, panel, stats::setNames(list(p), id)), 0)
     expect_true((v[2] - v[1]) * (v[3] - v[2]) > 0, label = paste(panel, id))
   }
 })
@@ -157,8 +171,8 @@ test_that("model.js returns the R values on every slider mix of the sample, to 1
   en <- read_csv_plain(file.path(root, "comparison", "export", "r", "ends.csv"))
   eb <- en[en$horizon_setting == "own" & en$output == "b", ]
   expect_lt(abs(v[ss$panel == "bsz" & ss$draw == 1] - eb$bsz_model), 1e-9)
-  expect_lt(abs(v[ss$panel == "rjkdc" & ss$draw == 1] - eb$nber_own), 1e-9)
-  expect_lt(abs(v[ss$panel == "bsz" & ss$draw == 2] - eb$nber_own), 1e-9)
+  expect_lt(abs(v[ss$panel == "rjkdc" & ss$draw == 1] - eb$rauh_own), 1e-9)
+  expect_lt(abs(v[ss$panel == "bsz" & ss$draw == 2] - eb$rauh_own), 1e-9)
   expect_lt(abs(v[ss$panel == "rjkdc" & ss$draw == 2] - eb$bsz_model), 1e-9)
 })
 
@@ -173,19 +187,19 @@ test_that("the headline is the two main estimates; the bridge's two ends under (
   expect_equal(round(rj, 1), ep$printed_value[ep$endpoint_id == "rauh_nber_npv"])   # printed -38.9
   # under (b) the two ends are the BSZ net constructed from Table 5 row 1 and the NBER expectation
   expect_equal(eb$bsz_model, ep$value[ep$endpoint_id == "bsz_net_constructed"])
-  expect_equal(eb$nber_own, ep$value[ep$endpoint_id == "rauh_nber_npv"])
-  expect_equal(round(eb$nber_own, 2), -38.98)
-  # the steps between them (Shapley, the model difference, the September revision) add up
+  expect_equal(eb$rauh_own, ep$value[ep$endpoint_id == "rauh_nber_npv"])
+  expect_equal(round(eb$rauh_own, 2), -38.98)
+  # the Shapley steps between them add up
   br <- read_csv_plain(file.path(root, "comparison", "export", "r", "bridge.csv"))
   b <- br[br$horizon_setting == "own" & br$output == "b", ]
-  expect_equal(sum(b$shapley) + eb$rauh_residual + eb$nber_step, eb$nber_own - eb$bsz_model,
+  expect_equal(sum(b$shapley), eb$rauh_own - eb$bsz_model,
                tolerance = 1e-9)
   for (p in pages) {
     html <- read_page(p)
     expect_true(grepl(sprintf('id="hl-bsz">%s<', money(eb$bsz_model, 1)), html, fixed = TRUE), label = p)
     expect_true(grepl(sprintf('id="hl-rjkdc">%s<', money(rj, 1)), html, fixed = TRUE), label = p)
-    expect_true(grepl("BSZ main estimate<sup>1</sup>", html, fixed = TRUE), label = p)
-    expect_true(grepl("JR main estimate<sup>1</sup>", html, fixed = TRUE), label = p)
+    expect_true(grepl("BSZ main estimate<sup>(<a [^>]*>)?1(</a>)?</sup>", html), label = p)
+    expect_true(grepl("JR main estimate<sup>(<a [^>]*>)?1(</a>)?</sup>", html), label = p)
     expect_false(grepl("the gap on the common output", html, fixed = TRUE), label = p)
   }
   # the explorer reads the same values from the data file: the headline object, and the
@@ -196,7 +210,7 @@ test_that("the headline is the two main estimates; the bridge's two ends under (
   expect_equal(D$headline$rjkdc, rj)
   B <- D$series$own$b$shapley
   expect_equal(B[[1]]$id, "bsz"); expect_equal(B[[1]]$value, eb$bsz_model)
-  expect_equal(B[[length(B)]]$id, "nber"); expect_equal(B[[length(B)]]$value, eb$nber_own)
+  expect_equal(B[[length(B)]]$id, "nber"); expect_equal(B[[length(B)]]$value, eb$rauh_own)
   # neither the GGSS headline nor the March 2026 version is an end on the pages
   ids <- vapply(B, `[[`, "", "id")
   expect_false(any(c("ggss", "ggss_rounding", "rauh") %in% ids))

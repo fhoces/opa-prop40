@@ -24,34 +24,29 @@ test_that("BSZ-side net components equal BSZ Table 5 row 1's own columns", {
   expect_equal(-x[["annual_loss"]], pick(k$bsz$outputs, "tab5_row1_annual_ca_inctax_loss"), tolerance = 1e-10)
 })
 
-test_that("Rauh SSRN: analytic expectation is -24.707 and rounds to the printed -24.7", {
-  expect_equal(val("rauh_ssrn_npv"), -24.707, tolerance = 5e-4 / 24.707)
-  expect_equal(round(val("rauh_ssrn_npv"), 1), val("rauh_ssrn_npv", "printed_value"))
-  # JR's own seeded run is within Monte Carlo error of the expectation
-  expect_lt(abs(val("rauh_ssrn_npv", "contract_value") - val("rauh_ssrn_npv")), 0.5)
-  expect_equal(val("rauh_ssrn_revenue_mc"), (35 + 67.51) / 2)
-})
-
-test_that("Rauh NBER: analytic -38.98 vs printed -38.9 (one Monte Carlo run)", {
+test_that("JR NBER: analytic -38.98 vs printed -38.9 (one Monte Carlo run)", {
   expect_equal(round(val("rauh_nber_npv"), 2), -38.98)
   expect_lt(abs(val("rauh_nber_npv") - val("rauh_nber_npv", "printed_value")), 0.5)
   expect_lt(abs(val("rauh_nber_npv", "contract_value") - val("rauh_nber_npv", "printed_value")), 0.05)
   expect_equal(val("rauh_nber_revenue_mc"), 36)
 })
 
-test_that("the model at all-Rauh inputs differs from Rauh's own number only by a small, labelled residual", {
+test_that("the common function at the all-JR inputs returns the JR analysis's own expectation exactly", {
   own <- res$ends[res$ends$horizon_setting == "own", ]
-  expect_lt(abs(own$rauh_residual[own$output == "a"]), 0.001)
-  expect_lt(abs(own$rauh_residual[own$output == "b"]), 0.15)
-  expect_equal(own$rauh_model + own$rauh_residual, own$rauh_own, tolerance = 1e-12)
+  expect_equal(own$rauh_model, own$rauh_own, tolerance = 1e-12)
+  expect_lt(max(abs(res$ends$rauh_residual)), 1e-10)          # every horizon setting
+  expect_equal(score_common(bi$rauh)[["b"]], val("rauh_nber_npv"), tolerance = 1e-12)
 })
 
-test_that("Rauh's MC ceiling and floor are reproduced by the switched inputs", {
-  r <- bi$rauh
-  R0 <- score_common(r)[["R0"]]
-  expect_equal(R0, pick(k$rjkdc$outputs, "revenue_baseline"), tolerance = 1e-12)
-  expect_equal(R0 * (1 - r$d_conf), pick(k$rjkdc$outputs, "revenue_confirmed6"), tolerance = 1e-12)
-  expect_equal(R0 * (1 - r$eps * r$dtau), 35, tolerance = 1e-12)
+test_that("the JR inputs rebuild the September version's base, ceiling and weights from its contract", {
+  r <- bi$rauh; oi <- k$rjkdc$inputs; oo <- k$rjkdc$outputs
+  x <- score_common(r)
+  expect_equal(r$W_core, pick(oi, "baseline_net_worth") * 1.07, tolerance = 1e-12)
+  expect_equal(x[["R0"]], pick(oo, "nber_domestic_grown"), tolerance = 1e-12)       # 100.906
+  expect_equal(x[["R0"]] * x[["S"]], pick(oi, "nber_ceiling_hardcoded"), tolerance = 1e-12)  # 72
+  expect_equal(x[["a"]], 36, tolerance = 1e-12)                                       # 0.5 x 72
+  expect_equal(x[["f"]], 0.45, tolerance = 1e-12)                                     # E[U(0.30, 0.60)]
+  expect_equal(r$q, 0.5); expect_equal(r$kappa, 0); expect_equal(bi$sup$q, 1); expect_equal(bi$sup$f0, 0)
 })
 
 test_that("the expected annuity has the right limits", {
@@ -61,11 +56,10 @@ test_that("the expected annuity has the right limits", {
   expect_true(all(diff(sapply(c(5, 10, 20, 30, 50, 500), expected_annuity, 0.015, 0.045)) > 0))
 })
 
-test_that("output (a): every candidate for Rauh's output (a) is reported, MC mean is the default", {
+test_that("output (a): both JR revenue figures are reported, the Monte Carlo mean is the default", {
   a <- res$anchors
-  expect_equal(nrow(a), 4)
+  expect_equal(nrow(a), 2)
   expect_equal(a$anchor_id[a$default], "mc_expected")
-  expect_equal(a$value[a$anchor_id == "literature_calibrated"], 45.59)
-  expect_equal(a$value[a$anchor_id == "table9_central"], 42)
-  expect_equal(a$value[a$anchor_id == "preferred_about_40"], 40)
+  expect_equal(a$value[a$anchor_id == "mc_expected"], 36)
+  expect_equal(a$value[a$anchor_id == "preferred_about_30"], 30)
 })

@@ -205,7 +205,20 @@
   svg.bars2 .bar-bsz { fill: var(--series-1); }
   svg.bars2 .bar-rjkdc { fill: var(--pref); }
   .mid figcaption { font-size: 12px; color: var(--ink-3); line-height: 1.4; margin-top: 4px; }
-  .rev-note { font-size: 12.5px; color: var(--ink-2); margin: 0 0 12px; line-height: 1.5; max-width: 62em; }
+  /* Dials that act together share a box. */
+  .sl-box { list-style: none; border: 1px solid var(--rule); border-radius: 6px; padding: 4px 10px 2px;
+    margin: 8px 0 10px; background: var(--paper); }
+  .sl-box .sl-list { margin: 0; }
+  .sl-box-head { margin: 4px 0 0; font-size: 12px; line-height: 1.4; color: var(--ink-2); }
+  /* The pseudo-equation: BSZ estimate = JR estimate + the three largest steps + the rest. */
+  .eq-box { margin: 26px 0 6px; padding: 14px 16px; border: 1px solid var(--rule); border-radius: 6px; background: var(--panel); }
+  .pseudo-eq { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 6px 10px; }
+  .pseudo-eq .term { display: inline-flex; flex-direction: column; align-items: center; min-width: 5.5em; max-width: 12em; text-align: center; }
+  .pseudo-eq .term b { font-family: var(--serif); font-size: 21px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .pseudo-eq .term small { font-size: 11.5px; color: var(--ink-2); line-height: 1.3; }
+  .pseudo-eq .op { font-family: var(--serif); font-size: 21px; color: var(--ink-3); padding-top: 1px; }
+  .eq-note { font-size: 12.5px; color: var(--ink-2); margin: 10px 0 0; line-height: 1.45; max-width: 62em; }
+  .eq-note a { color: var(--series-1); }
   @media (max-width: 980px) {
     .panels { grid-template-columns: minmax(0, 1fr); }
     .mid { position: static; order: 0; }
@@ -263,15 +276,22 @@
     </div>
   </header>
 
+  <section class="eq-box" id="what-separates" aria-labelledby="eq-title">
+    <h2 id="eq-title">What separates the two numbers</h2>
+{{pseudo_eq}}
+    <p class="eq-note">{{pseudo_eq_note_x}}</p>
+  </section>
+
   <section class="board" id="panels" aria-labelledby="board-title">
     <h2 id="board-title">Two panels, one estimating function</h2>
-    <p class="board-lead">Each panel holds the assumptions the two analyses disagree on, plus
-    the JR analysis's September 2026 revision. The BSZ panel starts every slider at the BSZ
-    value, the JR panel at the JR value. A slider has five positions: the two analyses' values
-    and three steps between them. The BSZ value is printed at the left end and the JR value at
-    the right end. Hover over a slider, or tap it, for what it changes and why the two analyses
-    differ. Three inputs that barely move the estimate (non-US-citizen residents, the
-    real-estate deduction, extra income tax from asset sales) share one switch.</p>
+    <p class="board-lead">Each panel holds the assumptions the two analyses disagree on, with
+    the JR values taken from its latest version (September 2026). The BSZ panel starts every
+    slider at the BSZ value, the JR panel at the JR value. A slider has five positions: the two
+    analyses' values and three steps between them. The BSZ value is printed at the left end and
+    the JR value at the right end. Hover over a slider, or tap it, for what it changes and why
+    the two analyses differ. Dials in the same box multiply each other, so the effect of one
+    depends on where the others stand. Three inputs that barely move the estimate (non-US-citizen
+    residents, the real-estate deduction, extra income tax from asset sales) share one switch.</p>
     <p class="board-lead">The bars show what the common estimating function returns for each
     panel. The left sliders move only the left bar and the right sliders only the right bar.
     Move every slider in one panel to its far end and the two bars meet. The
@@ -318,16 +338,11 @@
       </div>
     </div>
 
-    <p class="rev-note" id="rev-note"><b>The September 2026 revision switch.</b> The JR values on
-    the sliders are those of the JR analysis's March 2026 version (Rauh, Jaros, Kearney, Doran
-    and Cosso, SSRN), the version whose inputs the common function takes one by one. The
-    September 2026 revision changes things the function cannot take as inputs. It weights the
-    revenue by the chance that the tax survives litigation, grows the base {{nber_growth}} to
-    the end of 2026, and draws the share of billionaires who leave independently of the revenue.
-    So the switch is off or on. On, it adds the revision step plus the small model difference,
-    both at the panel's horizon setting. At a perpetuity they are {{rev_step_b}} and
-    {{rev_model_b}}.</p>
+  </section>
 
+  <details class="fold notes" id="notes-estimates">
+    <summary>Notes on the two estimates and the conventions</summary>
+    <div class="note">
     <p class="fn"><sup>1</sup> Each analysis's own main estimate, defined its own way. The BSZ
     analysis's is a net total over 5 years: the wealth tax (Table 5 row 1), plus extra income
     tax from assets sold to pay it, minus the income tax lost to billionaires who leave, for 5
@@ -346,7 +361,8 @@
     to 31 December 2026). Present values are at the assessment date. The {{r_min}} to {{r_max}}
     range is what the JR code draws; the code labels it r − g and the text r (the JR
     analysis's <a href="../../../rjkdc-analysis/site/materials.html#mismatches">mismatch 3</a>).</p>
-  </section>
+    </div>
+  </details>
 
 
   <details class="fold notes">
@@ -362,8 +378,8 @@
       against the R values, to 1e-9. The <a href="../repro.html">report</a> derives each number
       step by step and shows the bridge from the BSZ end to the JR end; the
       <a href="../materials.html">materials page</a> lists the code, tests and files.</p>
-      <p><strong>Data.</strong> <a href="../../export/r/ends.csv">ends.csv</a> (the two ends and
-      the two constants the revision switch adds),
+      <p><strong>Data.</strong> <a href="../../export/r/ends.csv">ends.csv</a> (the two ends, at
+      each horizon setting),
       <a href="../../export/r/slider_sample.csv">slider_sample.csv</a> ({{n_slider_per_panel}} slider mixes per
       panel with their values, the sample the tests run <code>model.js</code> on),
       <a href="../../export/r/inputs.csv">inputs.csv</a> (every disputed input and its sources),
@@ -396,7 +412,7 @@
 (function () {
   "use strict";
   // D is the data file (assets/comparison-data.js), M the estimating function (model.js).
-  // D.sliders: the two input vectors, the horizon settings, the revision constants and, per
+  // D.sliders: the two input vectors, the horizon settings and, per
   // input, the argument it moves and its two printed values. M.panelValue(D.sliders, panel,
   // positions) is slider_value() of comparison/R/model.R. D.headline holds the two main
   // estimates.
@@ -434,8 +450,8 @@
     switch (input) {
       case "W_noncit": case "W_core": return "$" + withCommas(v.toFixed(1)) + "B";
       case "re": case "d_conf": case "alpha": case "s": return (100 * v).toFixed(1) + "%";
-      case "dtau": return v === 0 ? "none applied" : trim((100 * v).toFixed(2)) + " pp";
-      case "eps": case "kappa": return v.toFixed(2);
+      case "q": case "f0": return (100 * v).toFixed(0) + "%";
+      case "kappa": return v.toFixed(2);
       case "C": return "$" + v.toFixed(2) + "B/yr";
       case "H": return v === Infinity ? "perpetuity" : v + " years";
       default: return String(v);
@@ -475,24 +491,17 @@
   // analysis, the far end the other's.
   function valueText(panel, id, p, x) {
     var other = panel === "bsz" ? "rjkdc" : "bsz";
-    if (id === "revision") return S.revision_text[(p === 0) === (panel === "bsz") ? "bsz" : "rjkdc"];
     if (id === "minor_inputs") return (p === 0) === (panel === "bsz") ? "BSZ values" : "JR values";
     var e = INPUT[id];
     if (p === 0) return e[panel + "_text"];
     if (p === S.steps) return e[other + "_text"];
-    return fmtValue(e.input, x[e.input]);
+    if (e.input.length > 1)   // the share-lost step: the leavers' ratio and the flat share
+      return fmtValue("kappa", x.kappa) + " \u00d7 dep. + " + fmtValue("f0", x.f0);
+    return fmtValue(e.input[0], x[e.input[0]]);
   }
-  // Why a slider has no effect, named where one other slider explains it: in model.js the
-  // elasticity enters only through eps * dtau (none while the permanent rate is at its BSZ
-  // value, 0), and the proportional loss only through the share of the base that leaves,
-  // which is 0 while no billionaire has departed (d_conf) and no permanent rate applies (dtau).
-  function deadNote(id, x) {
-    if (id === "elasticity_size" && x.dtau === 0)
-      return "No effect until the permanent-rate slider above moves off its BSZ value.";
-    if (id === "income_proportional" && x.d_conf === 0 && x.dtau === 0)
-      return "No effect until some billionaires leave in this panel (the departed slider or the permanent-rate slider).";
-    return "No effect while the other sliders stay where they are.";
-  }
+  // A slider can have no effect at the other sliders' positions (the inputs of a box
+  // multiply each other, so one at zero silences the others); it then says so.
+  function deadNote() { return "No effect while the other dials in its box stay where they are."; }
   var current = {};
   function updatePanel(panel) {
     var pos = positions(panel), r = value(panel, pos);

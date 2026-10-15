@@ -49,10 +49,8 @@ each page against the Guidelines' nine steps.
 
 The reconciliation layer: puts the BSZ analysis (Boll, Saez and Zucman, August 2026) and the
 JR analysis (Jaros and Rauh, NBER, September 2026) on one common output and one
-input-by-input bridge. The disputed inputs on the JR end are those of its March 2026
-version, the one whose inputs the common function takes one by one (the September revision's
-code and data are in the same public repository), and the September revision is the bridge's
-last step. It
+input-by-input bridge. The disputed inputs on the JR end are those of its latest version,
+September 2026, so the common function returns that version's exact Monte Carlo mean. It
 renders the site-root page, `../index.html`, and the explorer, `site/explorer/index.html`.
 
 ## What it reads (and nothing else)
@@ -92,9 +90,11 @@ with every internal link resolving.
 
 ## Settled items (2026-09-23, see PLAN.md)
 
-- Rauh's output (a) is the Monte Carlo's expected revenue (51.26 SSRN, 36 NBER), the only choice
-  consistent with the -24.7 headline. The literature-calibrated 45.59, Table 9's 42 and the
-  abstract's "about $40 billion" are exported as alternatives (`export/r/anchors.csv`; an anchor is
-  the published number an end of the bridge is checked against).
+- The JR output (a) is the Monte Carlo's expected revenue (36, the September 2026 version), the
+  only choice consistent with its -38.9 headline. The text's "approximately $30 billion" is
+  exported as the alternative (`export/r/anchors.csv`; an anchor is the published number an end
+  of the bridge is checked against). Until 2026-10-14 the bridge ended at the March 2026
+  version (51.26, -24.7) and reached September in one extra step; it now uses September's
+  values directly.
 - The Monte Carlo ranges (WT floor 35, C in [3.3, 5.8], r in [1.5%, 4.5%], NBER f in
   [0.30, 0.60]) are read from the JR contract (`rauh_mc_*`, `nber_mc_*` rows).

@@ -67,6 +67,15 @@
   .site-nav a { color: var(--accent); text-decoration: none; }
   .site-nav a:hover { text-decoration: underline; }
   .site-nav .nav-row { display: block; }
+  .eq-box { margin: 22px 0 6px; padding: 14px 16px; border: 1px solid var(--rule); border-radius: 6px; background: var(--panel, #fff); }
+  .eq-box h2 { margin-top: 0; }
+  .pseudo-eq { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 6px 10px; }
+  .pseudo-eq .term { display: inline-flex; flex-direction: column; align-items: center; min-width: 5.5em; max-width: 12em; text-align: center; }
+  .pseudo-eq .term b { font-family: var(--serif); font-size: 21px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .pseudo-eq .term small { font-size: 11.5px; color: var(--ink-2); line-height: 1.3; }
+  .pseudo-eq .op { font-family: var(--serif); font-size: 21px; color: var(--ink-3); padding-top: 1px; }
+  .eq-note { font-size: 12.5px; color: var(--ink-2); margin: 10px 0 0; line-height: 1.45; max-width: 62em; }
+  .eq-note a { color: var(--accent); }
   .site-nav .nav-row + .nav-row { margin-top: 2px; }
   h2 {
     font-family: var(--serif); font-weight: 600; font-size: 21px;
@@ -236,8 +245,9 @@
   .headline .value { font-family: var(--serif); font-size: 40px; font-weight: 600; line-height: 1;
     color: var(--ink); font-variant-numeric: tabular-nums; }
   .headline .def { font-size: 15px; color: var(--ink-2); line-height: 1.45; margin-top: 2px; max-width: 46em; }
-  .headline .fn { font-size: 13.5px; color: var(--ink-2); line-height: 1.45; margin: 8px 0 0; max-width: 60em; }
-  .headline .fn a { color: var(--accent); }
+  .footnotes { margin-top: 32px; border-top: 1px solid var(--rule); padding-top: 12px; }
+  .footnotes .fn { font-size: 13px; color: var(--ink-2); line-height: 1.45; margin: 0; max-width: 60em; }
+  .footnotes .fn a, .headline sup a { color: var(--accent); text-decoration: none; }
 
   /* The three layer cards, as on the analysis overviews. z-index:0 gives each card its own
      stacking context, so the watermark icon (z-index:-1) paints behind the card's text
@@ -307,9 +317,9 @@
     the tax would collect about $30 billion by its own account but leave the state $38.9 billion
     poorer in today's dollars (−$38.9B, a net present value), because billionaires who leave
     stop paying California income tax for ever. The three inputs that separate the two most:
-    whether a one-time tax changes behaviour the way a permanent one would, how many
-    billionaires had already left, and whether the lost income tax is counted for five years
-    (BSZ) or for ever (JR). This page puts both on one common output and walks from one
+    the chance that the tax survives a court challenge (counted in full by BSZ, at one half by
+    JR), whether the lost income tax is counted for five years (BSZ) or for ever (JR), and how
+    much of billionaires' income tax leaves with those who go. This page puts both on one common output and walks from one
     number to the other, one disputed input at a time. Each analysis is also a full Open Policy
     Analysis of its own; this page adds a comparison layer on top, following the
     <a href="https://doi.org/10.1093/scipol/scaa067">Open Policy Analysis</a> (OPA) framework.
@@ -319,35 +329,30 @@
 <div class="headline">
   <div class="hl-pair">
     <div class="hl">
-      <span class="name">BSZ main estimate<sup>1</sup></span>
+      <span class="name">BSZ main estimate<sup><a href="#fn1" id="fnref1-bsz">1</a></sup></span>
       <span class="value" id="hl-bsz">$106.8B</span>
       <span class="def">Net total: the wealth tax plus the income tax it changes, over 5 years, in today's dollars</span>
     </div>
     <div class="hl">
-      <span class="name">JR main estimate<sup>1</sup></span>
+      <span class="name">JR main estimate<sup><a href="#fn1" id="fnref1-jr">1</a></sup></span>
       <span class="value" id="hl-rjkdc">−$38.9B</span>
       <span class="def">Net present value: the wealth tax minus the income tax lost for ever, in today's dollars, averaged over the authors' model runs (Jaros and Rauh, September 2026)</span>
     </div>
   </div>
   <p class="def" style="margin:6px 0 0">Today's dollars (present value): what money received or lost in future years is worth now.</p>
-  <p class="fn"><sup>1</sup> Each analysis's own main estimate, defined its own way. The BSZ
-    analysis's is a net total over 5 years: the wealth tax ($103.8B as reproduced; the paper
-    prints $104B, Table 5 row 1), plus extra income tax from assets sold to pay it, minus
-    the present value of the income tax lost to billionaires who leave, counted for 5 years.
-    BSZ's own headline is the wealth tax alone; the net total is this OPA's choice, explained on
-    the <a href="bsz-analysis/site/">BSZ analysis overview</a>. The JR analysis's is a
-    perpetuity net present value: the wealth tax minus the income tax lost for ever, averaged
-    over the authors' Monte Carlo draws (the authors draw each uncertain input at random
-    100,000 times and average the result; Jaros and Rauh, NBER chapter c15504, Tax Policy and the Economy vol. 41, September 2026). The net
-    fiscal effect, one shared definition explained under "A common output definition" below,
-    puts both on the same footing, and the <a href="comparison/site/explorer/">explorer</a>
-    walks from one to the other. On it the BSZ end is the same $106.8B, with the 5 years
-    discounted over the JR analysis's 1.5% to 4.5% rate range instead of at 3% (a
-    discount rate turns future dollars into today's dollars; both give $106.8B). The JR
-    end is −$39.0B, the exact expectation of the same Monte Carlo, its average computed by
-    formula; the authors' seeded run (one run of the random draws started from a fixed seed
-    number, so it gives the same draws every time) gives −$38.9B.</p>
 </div>
+
+<section class="eq-box" id="what-separates" aria-labelledby="eq-title">
+  <h2 id="eq-title">What separates the two numbers</h2>
+<div class="pseudo-eq" role="img" aria-label="The BSZ estimate, $106.8B, is about the JR estimate, −$39.0B, plus +$44.8B for chance the tax survives litigation, plus +$33.5B for how long the income tax loss lasts, plus +$31.3B for share of billionaire income tax lost, plus +$36.1B for the 7 other inputs.">
+  <span class="term"><b>$106.8B</b><small>BSZ estimate</small></span><span class="op">&asymp;</span><span class="term"><b>−$39.0B</b><small>JR estimate</small></span>
+  <span class="op">+</span><span class="term"><b>$44.8B</b><small>Chance the tax survives litigation</small></span>
+  <span class="op">+</span><span class="term"><b>$33.5B</b><small>How long the income tax loss lasts</small></span>
+  <span class="op">+</span><span class="term"><b>$31.3B</b><small>Share of billionaire income tax lost</small></span>
+  <span class="op">+</span><span class="term"><b>$36.1B</b><small>the 7 other inputs together</small></span>
+</div>
+  <p class="eq-note">Each term is that input's effect on the net fiscal effect, averaged over every order the inputs could be switched in (its Shapley value), read from the JR end to the BSZ end; the terms add up exactly. The JR estimate here is the exact mean of the authors' Monte Carlo, −$39.0B; their seeded run prints −$38.9B. The <a href="comparison/site/repro.html#the-bridge">report</a> gives every step.</p>
+</section>
 
 <div class="section-title">
   <img class="section-title-icon" src="assets/opa/opa-all.png" alt="" aria-hidden="true">
@@ -425,8 +430,8 @@ number of years (the two analyses disagree on how many).</p>
                         - present value of income tax lost to departures, over a horizon of H years
 (a) gross revenue     = one-time wealth tax collected</div>
 
-<p>The horizon H is itself disputed (row 2 of the project's list of 8 disputed inputs,
-<a href="comparison/DISPUTES.md">comparison/DISPUTES.md</a>). The BSZ analysis counts the
+<p>The horizon H is itself disputed (row 2 of the
+<a href="#disputed-inputs">disputed inputs</a> below). The BSZ analysis counts the
 losses for about the 5 payment years, the JR analysis for ever. It is therefore a slider in
 each panel of the <a href="comparison/site/explorer/">explorer</a>, not a fixed choice; the
 bridge uses each analysis's own horizon and shows the switch as one of its steps. Discounting
@@ -502,7 +507,7 @@ values, so the numbers in its column below are <b>read off the chart</b>: bar ed
 300 dpi raster against the y-axis ticks (tick fit within $0.1B; reading uncertainty about
 $0.6B per bar; script <code>comparison/tools/digitize_hoopes_fig2.py</code>). Beside them
 is our bridge read in the same order, starting at the same printed $100B and ending at the
-March 2026 version, before the September revision.</p>
+JR analysis's September 2026 version, which postdates his note.</p>
 <p class="small">Disclosures from the note itself: Hoopes states his priors, "To lay my cards on
 the table, I believe that the world is complicated, and that when possible, empirical analysis
 should be done in as detailed a way as possible" (p.2), and thanks "David Gamage for encouraging
@@ -514,14 +519,14 @@ me to read both of these analyses carefully and compare the two" (p.1); Gamage i
   <tbody>
     <tr><td>Galle estimate</td><td class="num">$100B</td><td class="num">$100B</td><td class="small">GGSS printed headline</td></tr>
     <tr><td>(no bar)</td><td class="num">none</td><td class="num">+$3.8B</td><td class="small">GGSS's own rounding of their estimate</td></tr>
-    <tr><td>Residency correction</td><td class="num">−$12.6B &plusmn; 0.6</td><td class="num">−$18.5B</td><td class="small">Non-US-citizen residents + base list and valuation date</td></tr>
-    <tr><td>Confirmed departures</td><td class="num">−$17.0B &plusmn; 0.6</td><td class="num">−$24.2B</td><td class="small">Billionaires already departed</td></tr>
+    <tr><td>Residency correction</td><td class="num">−$12.6B &plusmn; 0.6</td><td class="num">−$12.6B</td><td class="small">Non-US-citizen residents + base list and valuation date</td></tr>
+    <tr><td>Confirmed departures</td><td class="num">−$17.0B &plusmn; 0.6</td><td class="num">−$26.1B</td><td class="small">Billionaires already departed</td></tr>
     <tr><td>Additional movers</td><td class="num">−$12.5B &plusmn; 0.6</td><td class="num">none</td><td class="small">(none: Rauh's Monte Carlo headline does not use the ten 'expanded' departures)</td></tr>
-    <tr><td>Additional behavioral response</td><td class="num">−$9.2B &plusmn; 0.6</td><td class="num">−$9.5B</td><td class="small">Avoidance allowance + one-time tax as a permanent rate + elasticity size</td></tr>
+    <tr><td>Additional behavioral response</td><td class="num">−$9.2B &plusmn; 0.6</td><td class="num">−$28.9B</td><td class="small">Avoidance allowance + chance the tax survives litigation (his bar is the March 2026 version's elasticity response, which the September version does not use)</td></tr>
     <tr><td>Real estate exclusion</td><td class="num">−$1.1B &plusmn; 0.8</td><td class="num">−$0.2B</td><td class="small">Real-estate deduction</td></tr>
-    <tr><td>(no bar)</td><td class="num">none</td><td class="num">−$0.0003B</td><td class="small">Model difference (Rauh's rounded literals)</td></tr>
-    <tr><td>Income tax loss</td><td class="num">−$71.5B &plusmn; 0.6</td><td class="num">−$76.0B</td><td class="small">Rauh's own NPV minus his own expected revenue (all income-tax steps together)</td></tr>
-    <tr class="total"><td>End: Rauh net fiscal effect</td><td class="num">−$24.3B</td><td class="num">−$24.71B</td><td class="small">the March 2026 version&rsquo;s mean NPV</td></tr>
+    <tr><td>(no bar)</td><td class="num">none</td><td class="num">+$0.0000B</td><td class="small">(none: the common function returns the September version's expectation exactly)</td></tr>
+    <tr><td>Income tax loss</td><td class="num">−$71.5B &plusmn; 0.6</td><td class="num">−$75.0B</td><td class="small">The JR analysis's own NPV minus its own expected revenue (all income-tax steps together)</td></tr>
+    <tr class="total"><td>End: Rauh net fiscal effect</td><td class="num">−$24.3B</td><td class="num">−$38.98B</td><td class="small">his: the March 2026 version&rsquo;s mean NPV; ours: the September 2026 version&rsquo;s</td></tr>
   </tbody>
 </table>
 </div>
@@ -531,15 +536,15 @@ from the note's text (p.3).</p>
 <h3>Every difference</h3>
 <ul>
   <li><b>Vintage.</b> Hoopes's estimate uses the February GGSS text: 213 billionaires, $2,182B of wealth, $109B gross, $99B after 10% avoidance, rounded up to $100B (p.3 fn.1). The July GGSS text covers 250 billionaires and $2,307B: $103.8B after avoidance, rounded down to $100B. The same printed headline hides a rounding of +$1B in one vintage and of −$3.8B in the other.</li>
-  <li><b>Residency.</b> His bar is −$12.6B, close to Rauh's own −$12.84B for dropping Ellison, Houston and Snyder and adding Sacks (Rauh p.5). By July the BSZ analysis has itself dropped Ellison, so our step is a different quantity: the $150B of non-US-citizen residents Rauh omits plus the list and valuation-date difference, −$18.5B in one order.</li>
-  <li><b>Confirmed departures.</b> His bar is −$17.0B; Rauh's own step is −$26.69B before avoidance (94.2 to 67.51, p.11), and ours is −$24.2B at that point of the order. We could not trace his figure to a number in Rauh et al.</li>
+  <li><b>Residency.</b> His bar is −$12.6B, close to Rauh's own −$12.84B for dropping Ellison, Houston and Snyder and adding Sacks (Rauh p.5). By July the BSZ analysis has itself dropped Ellison, so our step is a different quantity: the $150B of non-US-citizen residents Rauh omits plus the list and valuation-date difference, −$12.6B in one order.</li>
+  <li><b>Confirmed departures.</b> His bar is −$17.0B; Rauh's own step is −$26.69B before avoidance (94.2 to 67.51, p.11), and ours is −$26.1B at that point of the order. We could not trace his figure to a number in Rauh et al.</li>
   <li><b>Additional movers.</b> His −$12.5B matches Rauh's expanded ten-departure estimate (67.51 to 55.1, a step of −$12.41B, pp.12-13). The March 2026 version's own −$24.7B mean NPV does not use that estimate, so our bridge has no such step.</li>
-  <li><b>Behaviour.</b> His −$9.2B is close to Rauh's step from the expanded estimate to the literature calibration (55.1 to 45.59, −$9.51B, p.14). Ours, −$9.5B in one order, nets three labelled steps: dropping the 10.0% avoidance allowance (up), estimating the one-time tax as a permanent rate (down) and the elasticity from 10.00 to 12.58 (down).</li>
-  <li><b>Real estate.</b> His bar is drawn near zero (−$1.1B &plusmn; 0.8 read off the chart), while his text says the exclusion reduces the base by about $8B (p.4). The two are consistent: $8B of base is about $0.4B of revenue at 5%. Ours is −$0.24B.</li>
-  <li><b>Level before income tax.</b> His revenue level before the income-tax bar is about $47.2B; Rauh's preferred estimate is 'about $40B' (p.14) and the expected revenue in the Monte Carlo behind its mean NPV is $51.26B. Our bridge uses the last, $51.26B.</li>
-  <li><b>Income tax.</b> His single bar, −$71.5B, ends at −$24.3B, close to the March 2026 version's −$24.7B. That version's own expected present value of lost income tax is −$75.96B against $51.26B of revenue, so with a different starting level his bar works as a plug. We split it into four labelled steps (proportionality, the income tax level, the horizon, asset-sale tax), which interact with the base steps.</li>
+  <li><b>Behaviour.</b> His −$9.2B is close to the March 2026 version's step from the expanded estimate to the literature calibration (55.1 to 45.59, −$9.51B, p.14), a mobility response from a European elasticity. The September 2026 version predicts no such departures; in their place it weights the revenue by the chance the tax survives litigation. Ours, −$28.9B in one order, nets two labelled steps: dropping the 10.0% avoidance allowance (up) and the litigation weight (down).</li>
+  <li><b>Real estate.</b> His bar is drawn near zero (−$1.1B &plusmn; 0.8 read off the chart), while his text says the exclusion reduces the base by about $8B (p.4). The two are consistent: $8B of base is about $0.4B of revenue at 5%. Ours is −$0.17B.</li>
+  <li><b>Level before income tax.</b> His revenue level before the income-tax bar is about $47.2B, near the March 2026 version's preferred 'about $40B' (p.14). Ours ends at $36.00B, the expected revenue in the Monte Carlo behind the September 2026 version's mean NPV (its text prefers 'approximately $30B', p.1).</li>
+  <li><b>Income tax.</b> His single bar, −$71.5B, ends at −$24.3B, close to the March 2026 version's −$24.7B. Ours is −$74.98B, the September 2026 version's expected present value of lost income tax against $36.00B of revenue, and we split it into four labelled steps (the share lost, the income tax level, the horizon, asset-sale tax), which interact with the base steps.</li>
   <li><b>Order and labels.</b> His is one sequential order, with no provenance labels; ours shows Shapley averages over all orders (a Shapley value: a step's effect averaged over every order the inputs could be switched in, so the steps add up to the gap) as well as one order, with each step labelled data, research, guesswork or scenario.</li>
-  <li><b>Steps he does not have.</b> The non-US-citizen residents, the BSZ analysis's avoidance allowance being dropped, the asset-sale income tax, and the September 2026 revision (which postdates his note).</li>
+  <li><b>Steps he does not have.</b> The non-US-citizen residents, the BSZ analysis's avoidance allowance being dropped, the asset-sale income tax, and the litigation weight of the September 2026 version (which postdates his note).</li>
 </ul>
   </div>
 </details>
@@ -557,7 +562,7 @@ residents); others are not.</p>
 <table>
   <thead><tr><th>Document</th><th>Date</th><th>Base it uses</th></tr></thead>
   <tbody>
-    <tr><td>Rauh et al., SSRN 6340778</td><td>17 Mar 2026</td><td>212 billionaires, $1,894.8B, 2025 Forbes list</td></tr>
+    <tr><td>Rauh et al., SSRN 6340778</td><td>17 Mar 2026</td><td>212 billionaires, $2,027.4B, 2025 Forbes list</td></tr>
     <tr><td>Galle, Gamage, Saez, Shanske, response to Rauh</td><td>17 Mar 2026</td><td>answers Rauh's 4 Mar version, not the 17 Mar copy used here</td></tr>
     <tr><td>Hoopes, SSRN 6428578</td><td>2026 (uses the February GGSS text)</td><td>213 billionaires, $2,182B (p.3 fn.1)</td></tr>
     <tr><td>GGSS expert report</td><td>updated 20 Jul 2026</td><td>250 billionaires, $2,307B at 1 Jul 2026, non-citizens included, Ellison excluded</td></tr>
@@ -573,33 +578,37 @@ residents); others are not.</p>
 <details class="fold" id="disputed-inputs">
   <summary><h2>The disputed inputs</h2> <span class="teaser">the eight inputs the two analyses disagree on, with both values and sources</span></summary>
   <div class="fold-body">
-<p>One bridge step per row of <a href="comparison/DISPUTES.md">comparison/DISPUTES.md</a>, where
-every page reference was checked against the PDFs; row 7 is split into its two parts, and two
-steps cover inputs the crosswalk does not list as rows. The JR values are those of its March
-2026 version (Rauh, Jaros, Kearney, Doran and Cosso, SSRN), the version whose inputs the common
-function can take one by one; the September 2026 revision (Jaros and Rauh, NBER; its code and
-person-level file are in the same public repository) is the bridge's last step.</p>
+<p>This table tracks, one row at a time, every input on which the two estimates differ. Each
+row names the input, what kind of claim each side makes about it (data, research, guesswork or
+scenario), the value each analysis uses and the page or file it comes from. The JR values are
+those of its latest version (Jaros and Rauh, NBER, September 2026). Each row is also one step of
+the bridge in the <a href="comparison/site/repro.html#the-bridge">report</a> and one dial in the
+<a href="comparison/site/explorer/">explorer</a>, so the three use the same list.</p>
+<p class="small">The Row column numbers the disagreements as the project's crosswalk does
+(<a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/DISPUTES.md">DISPUTES.md</a>,
+which quotes each analysis on each point). Row 7 has two parts here, and two rows, avoidance and
+asset sales, are inputs the crosswalk does not list.</p>
 <div class="table-scroll">
 <table>
   <thead><tr><th>Row</th><th>Dispute</th><th>Kind</th><th>BSZ value and source</th><th>JR value and source</th></tr></thead>
   <tbody>
-    <tr><td>8</td><td>Non-US-citizen residents</td><td><span class="kind">data</span></td><td class="small"><b>$150B</b>. GGSS 20 Jul 2026 p.2 fn.1 (24 people, about $150B); BSZ PDF p.54 ($132B at 1 Jan)</td><td class="small"><b>$0B</b>. omitted: Forbes CA-residence field (Rauh p.4; DISPUTES row 8)</td></tr>
-    <tr><td>7</td><td>Base list and valuation date</td><td><span class="kind">data</span></td><td class="small"><b>$2,157B</b>. BSZ export baseline_net_worth ($2,307B, 1 Jul 2026; BSZ PDF p.24, GGSS p.4) minus the non-citizens</td><td class="small"><b>$1,894.8B</b>. JR export baseline_net_worth (212 billionaires, 2025 Forbes list; Rauh pp.4-5)</td></tr>
-    <tr><td>7</td><td>Real-estate deduction</td><td><span class="kind">data</span></td><td class="small"><b>0.0%</b>. no separate deduction (BSZ PDF p.24: 90% x 5% x $2,307B)</td><td class="small"><b>0.5%</b>. 1 - revenue_baseline / (5% x base) from the JR export (Rauh p.8 Table 5, $8.19B among stayers)</td></tr>
-    <tr><td>3</td><td>Billionaires already departed</td><td><span class="kind">guesswork on data</span></td><td class="small"><b>0.0%</b>. benchmark taxes all 1 Jan 2026 residents (BSZ PDF p.23); aggressive row 3 is a checkpoint</td><td class="small"><b>28.4%</b>. 1 - revenue_confirmed6 / revenue_baseline from the JR export (Rauh p.11, 6 departures)</td></tr>
-    <tr><td>(not a row)</td><td>Avoidance and evasion allowance</td><td><span class="kind">guesswork</span></td><td class="small"><b>10.0%</b>. BSZ export avoidance_rate (GGSS p.4; BSZ PDF p.24)</td><td class="small"><b>0.0%</b>. none: the elasticity replaces any avoidance allowance (Rauh pp.13-14)</td></tr>
-    <tr><td>1</td><td>One-time tax estimated as a permanent 5 pp rate</td><td><span class="kind">scenario + guesswork</span></td><td class="small"><b>none applied</b>. one-time tax, responses temporary: no elasticity applied (BSZ PDF p.22 fn.29; GGSS response to Rauh, 17 Mar 2026, pp.1-3)</td><td class="small"><b>5 pp</b>. the recurring-tax semi-elasticity applied to the 5 pp rate, because the authors argue taxpayers price a constitutional amendment with no sunset as a recurring tax (Rauh p.14; Sec. 6, p.21; eq.7-8 p.11, eq.13 p.14)</td></tr>
-    <tr><td>4</td><td>Size of the mobility semi-elasticity</td><td><span class="kind">research + guesswork</span></td><td class="small"><b>10.00</b>. BSZ export semi_elasticity_permanent (BSZ PDF p.28; Fig8!B8), used only for a permanent tax</td><td class="small"><b>12.58</b>. the Monte Carlo floor of $35B (Rauh p.20 eq.22; 'approximately 12.6', p.19)</td></tr>
-    <tr><td>6</td><td>Lost income tax proportional to lost wealth</td><td><span class="kind">data vs guesswork</span></td><td class="small"><b>0.33</b>. leavers' tax per $ of wealth / average, from BSZ export leavers_annual_inctax, leavers_wealth, ca_inctax_billionaires (data: SEC filings for the top 3 and a wealth-proportional rate for the rest, BSZ PDF p.26, Table 4 p.38)</td><td class="small"><b>1.00</b>. f = 1 - WT/94.20 (Rauh p.19, p.20): guesswork, full proportionality assumed</td></tr>
-    <tr><td>5</td><td>Billionaires' annual CA income tax</td><td><span class="kind">research vs guesswork</span></td><td class="small"><b>$3.06B/yr</b>. BSZ export ca_inctax_billionaires (Tab2!C14; BSZ PDF p.11): research, top wealth holders' income is 50% of top earners' (Balkir et al. 2025)</td><td class="small"><b>$4.55B/yr</b>. midpoint of C ~ U[3.3, 5.8] (Rauh p.20 eq.23): guesswork, the K = 500 floor is the authors' judgement</td></tr>
-    <tr><td>2</td><td>How long the income tax loss lasts</td><td><span class="kind">scenario</span></td><td class="small"><b>5 years</b>. BSZ PDF p.27 ('If they last say only 5 years')</td><td class="small"><b>perpetuity</b>. perpetuity (Rauh p.18 eq.17-18)</td></tr>
+    <tr><td>8</td><td>Non-US-citizen residents</td><td><span class="kind">data</span></td><td class="small"><b>$150B</b>. GGSS 20 Jul 2026 p.2 fn.1 (24 people, about $150B); BSZ PDF p.54 ($132B at 1 Jan)</td><td class="small"><b>$0B</b>. omitted: 28 international billionaires, $146.3B, excluded from the domestic base (JR export nber_international_net_worth; NBER chapter Sec. 3.5)</td></tr>
+    <tr><td>7</td><td>Base list and valuation date</td><td><span class="kind">data</span></td><td class="small"><b>$2,157B</b>. BSZ export baseline_net_worth ($2,307B, 1 Jul 2026; BSZ PDF p.24, GGSS p.4) minus the non-citizens</td><td class="small"><b>$2,027.4B</b>. JR export baseline_net_worth (212 billionaires, 2025 Forbes list) grown 7% to 31 Dec 2026 (JR export nber_growth_rate; NBER README, chapter p.19)</td></tr>
+    <tr><td>7</td><td>Real-estate deduction</td><td><span class="kind">data</span></td><td class="small"><b>0.0%</b>. no separate deduction (BSZ PDF p.24: 90% x 5% x $2,307B)</td><td class="small"><b>0.5%</b>. 1 - nber_domestic_grown / (5% x grown base) from the JR export: the person-level file nets out directly held real estate (NBER README; chapter p.19)</td></tr>
+    <tr><td>3</td><td>Billionaires already departed</td><td><span class="kind">guesswork on data</span></td><td class="small"><b>0.0%</b>. benchmark taxes all 1 Jan 2026 residents (BSZ PDF p.23); aggressive row 3 is a checkpoint</td><td class="small"><b>28.6%</b>. 1 - 72 / nber_domestic_grown from the JR export: seven confirmed departures (the March version's six plus Kalanick), the script's ceiling literal (NPV_dist_v8.R:19; 72.05 from final.csv, mismatch 4)</td></tr>
+    <tr><td>(not a row)</td><td>Avoidance and evasion allowance</td><td><span class="kind">guesswork</span></td><td class="small"><b>10.0%</b>. BSZ export avoidance_rate (GGSS p.4; BSZ PDF p.24)</td><td class="small"><b>0.0%</b>. none: no avoidance allowance (NBER chapter Secs. 4-5)</td></tr>
+    <tr><td>9</td><td>Chance the tax survives litigation</td><td><span class="kind">guesswork</span></td><td class="small"><b>100%</b>. the Act as written, collected in full: neither BSZ nor GGSS discounts for litigation</td><td class="small"><b>50%</b>. q = 0.50, the ASC 740-10 'more likely than not' threshold (NBER README assumptions table; the script draws WT ~ U[0, 72], whose mean is 0.5 x 72; mismatch 5)</td></tr>
+    <tr><td>6</td><td>Share of billionaire income tax lost</td><td><span class="kind">data vs guesswork</span></td><td class="small"><b>0.33 × departed</b>. leavers' tax per $ of wealth / average, from BSZ export leavers_annual_inctax, leavers_wealth, ca_inctax_billionaires (data: SEC filings for the top 3 and a wealth-proportional rate for the rest, BSZ PDF p.26, Table 4 p.38), applied to the departed base; no flat share: the loss follows the people who leave</td><td class="small"><b>45% flat</b>. midpoint of f ~ U[0.30, 0.60], drawn independently of the revenue (NPV_dist_v8.R; chapter Sec. 5.4): guesswork; none: the share lost does not follow the departed base</td></tr>
+    <tr><td>5</td><td>Billionaires' annual CA income tax</td><td><span class="kind">research vs guesswork</span></td><td class="small"><b>$3.06B/yr</b>. BSZ export ca_inctax_billionaires (Tab2!C14; BSZ PDF p.11): research, top wealth holders' income is 50% of top earners' (Balkir et al. 2025)</td><td class="small"><b>$4.55B/yr</b>. midpoint of C ~ U[3.3, 5.8] (NPV_dist_v8.R:21; chapter pp.29-31): guesswork, the K = 500 floor is the authors' judgement</td></tr>
+    <tr><td>2</td><td>How long the income tax loss lasts</td><td><span class="kind">scenario</span></td><td class="small"><b>5 years</b>. BSZ PDF p.27 ('If they last say only 5 years')</td><td class="small"><b>perpetuity</b>. perpetuity (chapter Sec. 5.4, eq. 18-19)</td></tr>
     <tr><td>(not a row)</td><td>Extra income tax from selling assets to pay</td><td><span class="kind">guesswork</span></td><td class="small"><b>1/3</b>. BSZ export sell_share (BSZ PDF p.24)</td><td class="small"><b>0%</b>. not modelled</td></tr>
   </tbody>
 </table>
 </div>
-<p class="small">Row 3: the 28.4% already departed is 1 &minus; 67.51 / 94.304, from
-the JR workbook values. DISPUTES row 3 and the JR f dial show 28.3%: they divide by the
-rounded 94.2 rather than 94.304.</p>
+<p class="small">Row 3: the 28.6% already departed is 1 &minus; 72 / 100.906: the
+authors' script ceiling after the seven departures over the grown domestic face value. Their
+person-level file gives a ceiling of 72.05 (the JR analysis's mismatch 4); the comparison uses
+the script's 72 so that it returns the authors' own mean exactly.</p>
 <p class="small">Kinds follow the OPA input taxonomy, defined on the explorer: data, research, guesswork,
 scenario. "A vs B" reads the BSZ value's kind against the JR value's; "A + B" means one value
 rests on both; "guesswork on data" means a judgement applied to observed facts.</p>
@@ -700,6 +709,26 @@ mechanical checks, not an outside review. No other person has verified this work
 original authors have not reviewed it.</p>
   </div>
 </details>
+
+<section class="footnotes" aria-label="Footnotes">
+  <p class="fn" id="fn1"><sup>1</sup> Each analysis's own main estimate, defined its own way. The BSZ
+    analysis's is a net total over 5 years: the wealth tax ($103.8B as reproduced; the paper
+    prints $104B, Table 5 row 1), plus extra income tax from assets sold to pay it, minus
+    the present value of the income tax lost to billionaires who leave, counted for 5 years.
+    BSZ's own headline is the wealth tax alone; the net total is this OPA's choice, explained on
+    the <a href="bsz-analysis/site/">BSZ analysis overview</a>. The JR analysis's is a
+    perpetuity net present value: the wealth tax minus the income tax lost for ever, averaged
+    over the authors' Monte Carlo draws (the authors draw each uncertain input at random
+    100,000 times and average the result; Jaros and Rauh, NBER chapter c15504, Tax Policy and the Economy vol. 41, September 2026). The net
+    fiscal effect, one shared definition explained under "A common output definition" below,
+    puts both on the same footing, and the <a href="comparison/site/explorer/">explorer</a>
+    walks from one to the other. On it the BSZ end is the same $106.8B, with the 5 years
+    discounted over the JR analysis's 1.5% to 4.5% rate range instead of at 3% (a
+    discount rate turns future dollars into today's dollars; both give $106.8B). The JR
+    end is −$39.0B, the exact expectation of the same Monte Carlo, its average computed by
+    formula; the authors' seeded run (one run of the random draws started from a fixed seed
+    number, so it gives the same draws every time) gives −$38.9B.</p>
+</section>
 
 <footer>
   Part of <a href="https://github.com/fhoces/opa-prop40">opa-prop40</a>, an Open Policy

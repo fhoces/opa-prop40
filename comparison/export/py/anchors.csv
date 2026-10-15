@@ -1,5 +1,3 @@
 "anchor_id","value","residual_vs_model"
-"mc_expected","51.255","-0.00032484473849336837"
-"literature_calibrated","45.59","-5.6653248447384925"
-"table9_central","42.0","-9.255324844738496"
-"preferred_about_40","40.0","-11.255324844738496"
+"mc_expected","36.0","0.0"
+"preferred_about_30","30.0","-6.0"

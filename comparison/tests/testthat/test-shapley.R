@@ -14,18 +14,19 @@ test_that("Shapley steps sum exactly to the total gap, every setting and output"
   }
 })
 
-test_that("the full chain closes: GGSS printed -> ... -> Rauh SSRN -> NBER", {
-  e <- en[en$horizon_setting == "own" & en$output == "a", ]
-  ggss <- res$endpoints$value[res$endpoints$endpoint_id == "ggss_headline"]
-  b <- br[br$horizon_setting == "own" & br$output == "a", ]
-  chain <- ggss + (e$bsz_model - ggss) + sum(b$shapley) + e$rauh_residual
-  expect_equal(chain, e$rauh_own, tolerance = 1e-12)
-  expect_equal(chain + e$nber_step, e$nber_own, tolerance = 1e-12)
+test_that("the full chain closes: GGSS printed -> BSZ -> the steps -> JR September 2026", {
+  for (o in c("a", "b")) {
+    e <- en[en$horizon_setting == "own" & en$output == o, ]
+    ggss <- res$endpoints$value[res$endpoints$endpoint_id == "ggss_headline"]
+    b <- br[br$horizon_setting == "own" & br$output == o, ]
+    chain <- e$bsz_model + sum(b$shapley) + e$rauh_residual
+    expect_equal(chain, e$rauh_own, tolerance = 1e-12, label = o)
+  }
 })
 
 test_that("inputs that do not enter output (a) get exactly zero", {
   b <- br[br$horizon_setting == "own" & br$output == "a", ]
-  for (id in c("income_proportional", "income_level", "horizon", "asset_sales"))
+  for (id in c("income_loss_share", "income_level", "horizon", "asset_sales"))
     expect_equal(b$shapley[b$step_id == id], 0, label = id)
 })
 
@@ -37,7 +38,7 @@ test_that("with a common horizon the horizon is not a step", {
 
 test_that("Shapley matches a brute-force average over all orders on a small game", {
   bi <- bridge_inputs(k)
-  pl <- c("noncitizens", "confirmed_departures", "one_time_as_permanent", "avoidance")
+  pl <- c("noncitizens", "confirmed_departures", "litigation_survival", "avoidance")
   sh <- shapley_bridge(bi$sup, bi$rauh, pl, "a")
   perms <- function(v) if (length(v) <= 1) list(v) else
     do.call(c, lapply(seq_along(v), function(i) lapply(perms(v[-i]), function(p) c(v[i], p))))
@@ -48,8 +49,12 @@ test_that("Shapley matches a brute-force average over all orders on a small game
 test_that("every step is labelled and tied to a DISPUTES row or flagged as not one", {
   st <- bridge_steps()
   expect_true(all(nzchar(st$kind)))
-  expect_setequal(setdiff(st$disputes_row, "(not a row)"),
-                  as.character(1:8))
+  # rows 1 and 4 are disputes with the March 2026 version only (the September headline predicts
+  # no departures from an elasticity), so they are not steps; row 9 is the litigation weight
+  expect_setequal(setdiff(st$disputes_row, "(not a row)"), as.character(c(2, 3, 5, 6, 7, 8, 9)))
+  dis <- readLines(file.path(comparison_root(), "comparison", "DISPUTES.md"), encoding = "UTF-8")
+  for (r in setdiff(st$disputes_row, "(not a row)"))
+    expect_true(any(startsWith(dis, paste0("| ", r, " | "))), label = paste("DISPUTES row", r))
   expect_true(all(grepl("data|research|guesswork|scenario", st$kind)))
 })
 
@@ -58,16 +63,18 @@ test_that("the switchboard grid is score_common() at every mix of switches", {
   sb <- res$switchboard
   g <- sb[sb$horizon_setting == "own" & sb$output == "b", ]
   # bit i-1 of the mask is input i in the bridge's order
-  for (m in c(0L, 1L, 16L, 5L, 2047L, 1234L)) {
+  full <- 2L^length(ids) - 1L
+  for (m in c(0L, 1L, 16L, 5L, full, 734L)) {
     on <- ids[bitwAnd(m, 2^(seq_along(ids) - 1)) > 0]
     expect_equal(g$value[g$mask == m], score_common(switch_inputs(bi$sup, bi$rauh, on))[["b"]],
                  tolerance = 1e-12, label = paste("mask", m))
   }
-  # with a common horizon the horizon bit (512) is never set
+  # with a common horizon the horizon bit is never set
+  hbit <- 2L^(match("horizon", ids) - 1L)
   c20 <- sb[sb$horizon_setting == "common_20", ]
-  expect_true(all(bitwAnd(c20$mask, 512L) == 0))
+  expect_true(all(bitwAnd(c20$mask, hbit) == 0))
   # the Shapley steps are the average marginal effects over this same grid: they add up to
   # the difference between its two corners
   b <- br[br$horizon_setting == "own" & br$output == "b", ]
-  expect_equal(sum(b$shapley), g$value[g$mask == 2047] - g$value[g$mask == 0], tolerance = 1e-10)
+  expect_equal(sum(b$shapley), g$value[g$mask == full] - g$value[g$mask == 0], tolerance = 1e-10)
 })

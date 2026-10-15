@@ -75,10 +75,10 @@ def expected_annuity(H: float, r_min: float, r_max: float) -> float:
 
 def score_common(x: dict) -> dict:
     R0 = x["tau"] * (x["W_core"] + x["W_noncit"]) * (1 - x["re"])
-    S = 1 - (x["d_conf"] + max(x["d_conf"], x["eps"] * x["dtau"])) / 2
-    WT = R0 * (1 - x["alpha"]) * S
+    S = 1 - x["d_conf"]
+    WT = R0 * (1 - x["alpha"]) * S * x["q"]
     X = WT * x["s"] * x["g"] * x["t_cg"]
-    f = x["alpha"] * x["m"] + x["kappa"] * (1 - S) * (1 - x["alpha"] * x["m"])
+    f = x["alpha"] * x["m"] + (1 - x["alpha"] * x["m"]) * (x["kappa"] * x["d_conf"] + x["f0"])
     A = expected_annuity(x["H"], x["r_min"], x["r_max"])
     PV = f * x["C"] * A
     return {"a": WT, "b": WT + X - PV, "R0": R0, "S": S, "X": X, "f": f,
@@ -91,9 +91,8 @@ STEPS = [
     ("real_estate", "7", "Real-estate deduction", "data"),
     ("confirmed_departures", "3", "Billionaires already departed", "guesswork on data"),
     ("avoidance", "(not a row)", "Avoidance and evasion allowance", "guesswork"),
-    ("one_time_as_permanent", "1", "One-time tax estimated as a permanent 5 pp rate", "scenario + guesswork"),
-    ("elasticity_size", "4", "Size of the mobility semi-elasticity", "research + guesswork"),
-    ("income_proportional", "6", "Lost income tax proportional to lost wealth", "data vs guesswork"),
+    ("litigation_survival", "9", "Chance the tax survives litigation", "guesswork"),
+    ("income_loss_share", "6", "Share of billionaire income tax lost", "data vs guesswork"),
     ("income_level", "5", "Billionaires' annual CA income tax", "research vs guesswork"),
     ("horizon", "2", "How long the income tax loss lasts", "scenario"),
     ("asset_sales", "(not a row)", "Extra income tax from selling assets to pay", "guesswork"),
@@ -101,12 +100,12 @@ STEPS = [
 IDS = [s[0] for s in STEPS]
 STEP_INPUTS = {"noncitizens": ["W_noncit"], "base_list": ["W_core"], "real_estate": ["re"],
                "confirmed_departures": ["d_conf"], "avoidance": ["alpha"],
-               "one_time_as_permanent": ["dtau"], "elasticity_size": ["eps"],
-               "income_proportional": ["kappa"], "income_level": ["C"], "horizon": ["H"],
+               "litigation_survival": ["q"], "income_loss_share": ["kappa", "f0"],
+               "income_level": ["C"], "horizon": ["H"],
                "asset_sales": ["s"]}
 SEQUENTIAL = ["noncitizens", "base_list", "confirmed_departures", "avoidance",
-              "one_time_as_permanent", "elasticity_size", "real_estate", "asset_sales",
-              "income_proportional", "income_level", "horizon"]
+              "litigation_survival", "real_estate", "asset_sales", "income_loss_share",
+              "income_level", "horizon"]
 
 
 def switch_inputs(sup: dict, rauh: dict, on) -> dict:
@@ -120,7 +119,7 @@ def switch_inputs(sup: dict, rauh: dict, on) -> dict:
 # ---- the explorer's sliders (twin of slider_inputs() etc. in R/model.R) ---------------
 # Positions 0 to 4 per input, 0 = the panel's own analysis's value, 4 = the other's: linear in
 # the parameter for numeric inputs, the five settings 5/10/20/50 years/perpetuity for the
-# horizon; the revision has positions 0 and 1 (0 = the panel's own analysis).
+# horizon; a step with two inputs moves both.
 SLIDER_STEPS = 4
 SLIDER_HORIZONS = [5, 10, 20, 50, math.inf]
 
@@ -141,29 +140,12 @@ def slider_inputs(frm: dict, to: dict, positions: dict) -> dict:
     return x
 
 
-def slider_revision(ends):
-    out = []
-    for H in SLIDER_HORIZONS:
-        st = "common_Inf" if math.isinf(H) else f"common_{H}"
-        e = [r for r in ends if r["horizon_setting"] == st and r["output"] == "b"][0]
-        out.append({"H": H, "model": e["rauh_residual"], "revision": e["nber_step"]})
-    return out
-
-
-def slider_value(sup, rauh, panel, positions, rev_table):
+def slider_value(sup, rauh, panel, positions):
     frm, to = (sup, rauh) if panel == "bsz" else (rauh, sup)
-    x = slider_inputs(frm, to, positions)
-    rp = positions.get("revision", 0)
-    assert rp in (0, 1)
-    rev_on = rp == 1 if panel == "bsz" else rp == 0
-    v = score_common(x)["b"]
-    if rev_on:
-        r = [r for r in rev_table if r["H"] == x["H"]][0]
-        v = v + r["model"] + r["revision"]
-    return v
+    return score_common(slider_inputs(frm, to, positions))["b"]
 
 
-def slider_sample(sup, rauh, rev_table, n=300, seed=20261014):
+def slider_sample(sup, rauh, n=300, seed=20261014):
     """Per panel: all at 0, all at the far end, then n - 2 Park-Miller draws (same as R)."""
     state = [seed]
 
@@ -175,14 +157,14 @@ def slider_sample(sup, rauh, rev_table, n=300, seed=20261014):
     for panel in ("bsz", "rjkdc"):
         for i in range(1, n + 1):
             if i == 1:
-                pos = [0] * len(IDS) + [0]
+                pos = [0] * len(IDS)
             elif i == 2:
-                pos = [SLIDER_STEPS] * len(IDS) + [1]
+                pos = [SLIDER_STEPS] * len(IDS)
             else:
-                pos = [draw(SLIDER_STEPS + 1) for _ in IDS] + [draw(2)]
-            p = dict(zip(IDS + ["revision"], pos))
+                pos = [draw(SLIDER_STEPS + 1) for _ in IDS]
+            p = dict(zip(IDS, pos))
             rows.append({"panel": panel, "draw": i, **p,
-                         "value": slider_value(sup, rauh, panel, p, rev_table)})
+                         "value": slider_value(sup, rauh, panel, p)})
     return rows
 
 
@@ -225,12 +207,6 @@ def sequential_bridge(sup, rauh, order, output):
     return out
 
 
-def rauh_ssrn_expectation(wt_min, wt_max, baseline, c_min, c_max, r_min, r_max, H=math.inf):
-    e_wt = (wt_min + wt_max) / 2
-    return {"a": e_wt, "b": e_wt - (1 - e_wt / baseline) * (c_min + c_max) / 2 *
-            expected_annuity(H, r_min, r_max)}
-
-
 def rauh_nber_expectation(wt_min, wt_max, f_min, f_max, c_min, c_max, r_min, r_max, H=math.inf):
     e_wt = (wt_min + wt_max) / 2
     return {"a": e_wt, "b": e_wt - (f_min + f_max) / 2 * (c_min + c_max) / 2 *
@@ -248,20 +224,20 @@ def bridge_inputs(k):
     kappa_s = (pick(si, "leavers_annual_inctax") / pick(si, "leavers_wealth")) / (C_sup / W0)
     tau = pick(oi, "tax_rate")
     assert abs(tau - pick(si, "tax_rate")) < 1e-12
-    base_r = pick(oi, "baseline_net_worth")
-    R0_r = pick(oo, "revenue_baseline")
-    conf6 = pick(oo, "revenue_confirmed6")
-    wt_min = pick(oi, "rauh_mc_wt_min")
+    base_r = pick(oi, "baseline_net_worth") * (1 + pick(oi, "nber_growth_rate"))
+    R0_r = pick(oo, "nber_domestic_grown")
+    ceiling = pick(oi, "nber_ceiling_hardcoded")
     shared = {"tau": tau, "m": pick(si, "mobility_share"), "g": pick(si, "gains_share"),
               "t_cg": pick(si, "ca_cg_rate"),
               "r_min": pick(oi, "rauh_mc_r_min"), "r_max": pick(oi, "rauh_mc_r_max")}
     sup = dict(shared, W_noncit=noncit, W_core=W0 - noncit, re=0.0, d_conf=0.0,
-               alpha=pick(si, "avoidance_rate"), dtau=0.0,
-               eps=pick(si, "semi_elasticity_permanent"), kappa=kappa_s, C=C_sup,
+               alpha=pick(si, "avoidance_rate"), q=1.0,
+               kappa=kappa_s, f0=0.0, C=C_sup,
                H=pick(d, "bsz_loss_horizon"), s=pick(si, "sell_share"))
     rauh = dict(shared, W_noncit=0.0, W_core=base_r, re=1 - R0_r / (tau * base_r),
-                d_conf=1 - conf6 / R0_r, alpha=0.0, dtau=tau, eps=(1 - wt_min / R0_r) / tau,
-                kappa=1.0, C=(pick(oi, "rauh_mc_c_min") + pick(oi, "rauh_mc_c_max")) / 2,
+                d_conf=1 - ceiling / R0_r, alpha=0.0, q=pick(oi, "q_litigation_survival"),
+                kappa=0.0, f0=(pick(oi, "nber_mc_f_min") + pick(oi, "nber_mc_f_max")) / 2,
+                C=(pick(oi, "rauh_mc_c_min") + pick(oi, "rauh_mc_c_max")) / 2,
                 H=pick(d, "rauh_loss_horizon"), s=0.0)
     return sup, rauh
 
@@ -271,13 +247,11 @@ def build_all(k):
     so, oo, d = k["bsz"]["outputs"], k["rjkdc"]["outputs"], k["docs"]
     oi = k["rjkdc"]["inputs"]
     ggss_printed = pick(so, "ggss_headline", "printed_value")
-    ra = dict(wt_min=pick(oi, "rauh_mc_wt_min"), wt_max=pick(oo, "revenue_confirmed6", "printed_value"),
-              baseline=pick(oo, "revenue_baseline", "printed_value"),
+    # The JR analysis's own Monte Carlo (NPV_dist_v8.R), as the authors ship it.
+    na = dict(wt_min=0.0, wt_max=pick(oi, "nber_ceiling_hardcoded"),
+              f_min=pick(oi, "nber_mc_f_min"), f_max=pick(oi, "nber_mc_f_max"),
               c_min=pick(oi, "rauh_mc_c_min"), c_max=pick(oi, "rauh_mc_c_max"),
               r_min=pick(oi, "rauh_mc_r_min"), r_max=pick(oi, "rauh_mc_r_max"))
-    na = dict(wt_min=0.0, wt_max=pick(k["rjkdc"]["inputs"], "nber_ceiling_hardcoded"),
-              f_min=pick(oi, "nber_mc_f_min"), f_max=pick(oi, "nber_mc_f_max"),
-              c_min=ra["c_min"], c_max=ra["c_max"], r_min=ra["r_min"], r_max=ra["r_max"])
 
     settings = ["own"] + [f"common_{'Inf' if math.isinf(h) else h}" for h in HORIZONS]
     bridge, ends, board = [], [], []
@@ -288,7 +262,6 @@ def build_all(k):
             s2["H"] = r2["H"] = H
             players = [p for p in IDS if p != "horizon"]
         v_sup, v_rauh = score_common(s2), score_common(r2)
-        own_r = rauh_ssrn_expectation(**ra, H=r2["H"])
         own_n = rauh_nber_expectation(**na, H=r2["H"])
         # bit i of a switchboard mask = input i in the bridge's order (IDS); with a common
         # horizon the horizon is not a player, so only masks with its bit off are listed
@@ -308,47 +281,40 @@ def build_all(k):
                                "disputes_row": row, "title": title, "kind": kind})
             ends.append({"horizon_setting": st, "output": out,
                          "bsz_model": v_sup[out], "rauh_model": v_rauh[out],
-                         "rauh_own": own_r[out], "rauh_residual": own_r[out] - v_rauh[out],
-                         "nber_own": own_n[out], "nber_step": own_n[out] - own_r[out]})
+                         "rauh_own": own_n[out], "rauh_residual": own_n[out] - v_rauh[out]})
     bridge.sort(key=lambda r: (r["horizon_setting"], r["output"], IDS.index(r["step_id"])))
     board.sort(key=lambda r: (r["output"], settings.index(r["horizon_setting"]), r["mask"]))
     ea = [e for e in ends if e["horizon_setting"] == "own" and e["output"] == "a"][0]
     eb = [e for e in ends if e["horizon_setting"] == "own" and e["output"] == "b"][0]
 
     endpoints = []
-    vals = [("ggss_headline", ggss_printed, pick(so, "ggss_headline", "printed_value")),
+    vals = [("ggss_headline", ea["bsz_model"] + (ggss_printed - ea["bsz_model"]),
+             pick(so, "ggss_headline", "printed_value")),
             ("ggss_scoring", ea["bsz_model"], pick(so, "ggss_scoring", "printed_value")),
             ("bsz_tab5_row1", ea["bsz_model"], pick(so, "tab5_row1_wealth_tax_revenue", "printed_value")),
             ("bsz_net_constructed", eb["bsz_model"], math.nan),
-            ("rauh_ssrn_revenue_mc", ea["rauh_own"], math.nan),
-            ("rauh_ssrn_npv", eb["rauh_own"], pick(oo, "npv_mc_ssrn_mean", "printed_value")),
-            ("rauh_nber_revenue_mc", ea["nber_own"], math.nan),
-            ("rauh_nber_npv", eb["nber_own"], pick(oo, "npv_mc_nber_mean", "printed_value"))]
+            ("rauh_nber_revenue_mc", ea["rauh_own"], math.nan),
+            ("rauh_nber_npv", eb["rauh_own"], pick(oo, "npv_mc_nber_mean", "printed_value"))]
     for eid, v, p in vals:
         endpoints.append({"endpoint_id": eid, "value": v, "printed_value": p,
                           "abs_diff_printed": abs(v - p)})
 
     anchors = [{"anchor_id": a, "value": v, "residual_vs_model": v - ea["rauh_model"]} for a, v in [
         ("mc_expected", ea["rauh_own"]),
-        ("literature_calibrated", pick(oo, "revenue_literature_calibrated", "printed_value")),
-        ("table9_central", pick(k["rjkdc"]["inputs"], "wt_central_scenario")),
-        ("preferred_about_40", pick(d, "rauh_headline_revenue"))]]
+        ("preferred_about_30", pick(d, "nber_headline_revenue"))]]
 
     A5 = expected_annuity(5, sup["r_min"], sup["r_max"])
     Ainf = expected_annuity(math.inf, sup["r_min"], sup["r_max"])
-    cmid = (ra["c_min"] + ra["c_max"]) / 2
     loss = []
     for sid, al in [("bsz_row1", -pick(so, "tab5_row1_annual_ca_inctax_loss")),
                     ("bsz_row3", -pick(so, "tab5_row3_annual_ca_inctax_loss")),
                     ("lao_upper", pick(d, "lao_loss_upper")),
-                    ("rauh_ssrn", (1 - ea["rauh_own"] / ra["baseline"]) * cmid),
-                    ("rauh_nber", (na["f_min"] + na["f_max"]) / 2 * cmid),
+                    ("rauh_nber", (na["f_min"] + na["f_max"]) / 2 * (na["c_min"] + na["c_max"]) / 2),
                     ("walczak_low", pick(d, "walczak_loss_low")),
                     ("walczak_high", pick(d, "walczak_loss_high"))]:
         loss.append({"source_id": sid, "annual_loss": al, "pv_5yr": al * A5,
                      "pv_perpetuity": al * Ainf,
-                     "net_at_rauh_revenue_perpetuity": ea["rauh_own"] - al * Ainf,
-                     "net_at_nber_revenue_perpetuity": ea["nber_own"] - al * Ainf})
+                     "net_at_nber_revenue_perpetuity": ea["rauh_own"] - al * Ainf})
 
     hz = {r["step_id"]: r for r in k["hoopes"]}
     sqa = {r["step_id"]: r["sequential"] for r in bridge
@@ -359,7 +325,7 @@ def build_all(k):
             ("confirmed_departures", sqa["confirmed_departures"]),
             ("additional_movers", math.nan),
             ("additional_behavioral_response",
-             sqa["avoidance"] + sqa["one_time_as_permanent"] + sqa["elasticity_size"]),
+             sqa["avoidance"] + sqa["litigation_survival"]),
             ("real_estate_exclusion", sqa["real_estate"]),
             ("rauh_rounding", ea["rauh_residual"]),
             ("income_tax_loss", eb["rauh_own"] - ea["rauh_own"])]
@@ -377,7 +343,7 @@ def build_all(k):
             {"key": "f_rauh", "value": s_r["f"]}, {"key": "C_rauh", "value": rauh["C"]}]
     return {"bridge": bridge, "ends": ends, "endpoints": endpoints, "anchors": anchors,
             "loss": loss, "hoopes": hoopes, "meta": meta, "switchboard": board,
-            "slider_sample": slider_sample(sup, rauh, slider_revision(ends))}
+            "slider_sample": slider_sample(sup, rauh)}
 
 
 def fmt(v):

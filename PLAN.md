@@ -116,6 +116,13 @@ credited to us.
 8. 2026-10-14: in prose the analysis is called JR (Jaros and Rauh, the authors of the version
    reproduced); the five authors of the March 2026 version are named where it is cited. The
    folder `rjkdc-analysis/`, URLs, CSV keys and code identifiers keep `rjkdc`.
+9. 2026-10-14: the comparison's bridge and explorer use the JR analysis's September 2026 values
+   directly (author decision: always the latest analysis). The March 2026 version is no longer
+   the bridge's anchor and the "September 2026 revision" step is gone. The common function gains
+   the litigation-survival weight q and a flat share of income tax lost f0, drops the elasticity
+   and permanent-rate inputs (the September headline predicts no departures from an
+   elasticity), and returns the September version's exact mean (-$38.98B) with no model
+   difference. DISPUTES.md gains row 9 (litigation). Supersedes the "Rauh anchor" lines above.
 
 **Same format as the previous OPA (user requirement 2026-09-23).** Every public surface (overview
 page, interactive explorer, Quarto reproduction report, teaching deck, reproduction-materials links,

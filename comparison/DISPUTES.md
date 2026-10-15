@@ -44,6 +44,7 @@ that were open in March are settled on the BSZ analysis by August (rows 7 and 8)
 | 6 | **Is the income tax lost proportional to the wealth lost?** | f = 1 − WT/94.20 is used as the lost share of the **income tax** base (p.19; Monte Carlo p.20), so income tax lost scales with wealth departed. Page + Brin + Zuckerberg are ~90% of departed wealth (Tables 6-7) | The top 4 (Page, Brin, Zuckerberg, Huang) pay $0.27B/yr on company wealth, 2019-25, = 0.07% of wealth (BSZ Table 4, p.38; GGSS p.9). Resp p.5: Page + Brin + Zuckerberg paid $269M in 2025, 0.04% of wealth; $222M/yr average 2019-25. With leavers valued from SEC data, BSZ's aggressive scenario loses $0.51B/yr (p.26) | data (SEC filings) vs guesswork (proportionality) | Partial: $0.27B and 0.07% verified in BSZ Aug; Resp's $269M / $222M figures for the top 3 are not restated in the Aug text; check against the workbook `top4taxes` sheet |
 | 7 | **Base definition** | 212 billionaires, $1,894.8B, 2025 Forbes list (p.4-5, Table 2). Removes Ellison, Houston, Snyder; adds Sacks (p.4-5). Deducts directly held residential real estate, $8.19B among stayers (p.8, Table 5). Real-estate-free baseline WT $94.20B (p.5, p.10) | **Ellison now excluded by BSZ too** (p.5 fn.3; p.54; p.54 fn.40, "Rauh et al. 2026 also choose to exclude Larry Ellison"). GGSS removed him relative to the Feb 16 version (GGSS p.2 fn.1). BSZ: 240 billionaires, $2,055B at 1 Jan 2026, adding Amodei, Kardashian, Powell Jobs, Winfrey (+$22.8B) (p.54); 250 and $2,307B at 1 Jul 2026 (p.24, Table 5 p.39). Estimate = 90% × 5% × $2,307B = $104B (p.24), with no separate real-estate deduction | data (list membership, valuation date) | Y. The March dispute over Ellison is closed in the strongest version; what remains is Houston, Snyder, Sacks, the 4 added names, non-citizens (row 8), valuation date, and the real-estate deduction |
 | 8 | **The 24-25 non-US-citizen residents** | Omitted: Rauh starts from Forbes' CA-residence field (p.4), which Resp p.6 fn.5 says covers residence only for US and Chinese residents | Resp p.6: both analyses omitted 24 people, $110B, "an omission we will correct in our next iteration". **Corrected by August:** BSZ includes 25 non-US citizens, $132B at 1 Jan 2026 (p.54; "We include both US and non-US citizens", p.5). GGSS July: 24 people, about $150B (p.2 fn.1) | data | Y. Conceded fix applied on the BSZ analysis. Rauh still omits them, and the NBER version (Sept 2026) now does so explicitly: 28 "international" rows, $146.3B, excluded from the collectible base (`NBER_2026_litigation_weighted/NPV_data/final.csv`, "Section 3.5") |
+| 9 | **Chance the Act survives litigation** (September 2026 version only) | q = 0.50, the ASC 740-10 "more likely than not" threshold, applied to the recognized base (NBER README assumptions table; chapter Sec. 4.3, PDF pp.22-23, eq.6). The Monte Carlo draws WT ~ U[0, 72] (0 = Act struck down; 72 = ceiling), whose mean equals 0.5 x 72; the script has no explicit q (`NPV_dist_v8.R:19`; JR mismatch 5) | The Act as written, collected in full: neither BSZ nor GGSS discounts the revenue for litigation risk (BSZ Table 5, PDF p.39; GGSS p.4) | guesswork (legal judgment) | Y |
 
 ## Rauh's headline: where −$24.7B comes from (open item, resolved)
 
@@ -75,8 +76,16 @@ exactly from `NBER_2026_litigation_weighted/NPV_data/NPV_dist_v8.R` (mean −38.
 negative). Compared with SSRN, it keeps the same 212-person base, grows it 7% to the 31 Dec 2026
 valuation date, removes **7** confirmed departures (SSRN's 6 plus Travis Kalanick, $3.5B), applies a
 litigation-survival probability q = 0.50, drops Zuckerberg from the central base, and draws the
-departure fraction f ~ U[0.30, 0.60] independently of WT. On the bridge it enters as one step, the
-September 2026 revision, after the SSRN anchor.
+departure fraction f ~ U[0.30, 0.60] independently of WT.
+
+Since 2026-10-14 the bridge and the explorer use this version's values directly (author
+decision: always the latest analysis). What that changes in the table above: row 9 is added
+for the litigation weight; rows 1 and 4 (the one-time tax read as a permanent rate, and the size
+of the elasticity) are disputes with the March version only, because the September headline
+predicts no departures from an elasticity, so they are not bridge steps; row 6 becomes the
+share of income tax lost (the BSZ leavers' own tax on the departed base against the JR flat
+draw of 30% to 60%); row 3 counts seven departures at the grown vintage. The common function
+returns this version's exact mean, −$38.98B, with no model difference.
 
 ## Handled outside the table
 

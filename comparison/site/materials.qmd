@@ -150,9 +150,9 @@ scroll(show(data.frame(
 desc <- c(
   "inputs.csv" = "the disputed inputs: one row per bridge step, both analyses' values and sources",
   "bridge.csv" = "every step's Shapley value and one-order value, for each output and horizon setting",
-  "ends.csv" = "the two ends of every bridge (BSZ, Jaros and Rauh NBER), the point where the disputed-input steps end, the model difference and the September revision",
+  "ends.csv" = "the two ends of every bridge (BSZ, Jaros and Rauh NBER) for each output and horizon setting, and the model difference at the JR end (zero by construction, kept as a check)",
   "endpoints.csv" = "each end against the number its authors print",
-  "anchors.csv" = "the four revenue numbers of the JR analysis's March 2026 version, as candidates for where the steps end on output (a) (an anchor: the published number an end of the bridge is checked against)",
+  "anchors.csv" = "the two revenue numbers of the JR analysis's September 2026 version, as candidates for where the steps end on output (a) (an anchor: the published number an end of the bridge is checked against)",
   "loss.csv" = "every annual income tax loss on one scale, with present values",
   "hoopes.csv" = "Hoopes (2026) Figure 2 beside the bridge read in his order",
   "meta.csv" = "intermediate values the page quotes (annuity factors, the BSZ net terms)",
@@ -168,11 +168,10 @@ scroll(show(data.frame(
 own_a <- subset(rd("ends.csv"), horizon_setting == "own" & output == "a")
 ```
 
-`loss.csv`'s two last columns net each loss against the JR analysis's expected revenue:
-`net_at_rauh_revenue_perpetuity` against the March 2026 version's (`r usd(own_a$rauh_own)`, in
-`ends.csv` and `anchors.csv`, the bridge's anchor) and `net_at_nber_revenue_perpetuity` against
-the September 2026 version's (`r usd(own_a$nber_own)`), which is the last column of the
-comparison overview's [table of yearly income tax losses](../../index.html#neutral-material).
+`loss.csv`'s last column, `net_at_nber_revenue_perpetuity`, nets each loss in perpetuity
+against the JR analysis's expected revenue (`r usd(own_a$rauh_own)`, in `ends.csv` and
+`anchors.csv`); it is the last column of the comparison overview's
+[table of yearly income tax losses](../../index.html#neutral-material).
 
 `comparison/export/py/` holds the same files from the Python twin (without `inputs.csv`).
 The explorer reads `assets/comparison-data.js`, written by `R/site.R`
@@ -224,17 +223,16 @@ oo <- k$rjkdc$outputs
 The full crosswalk of disputed inputs, with every page reference checked against the PDFs, is
 `r link("comparison/DISPUTES.md")`. The checks behind the bridge found:
 
-- **Equation 22 of the March 2026 version has a typo.** It prints the revenue ceiling as
-  67.1; the text (p.11) and the authors' code use
-  `r formatC(pick(oo, "revenue_confirmed6", "printed_value"), format = "f", digits = 2)`.
-  Only the latter reproduces that version's printed mean NPV.
-- **The March 2026 version's Monte Carlo uses rounded literals.** It divides by
-  `r formatC(pick(oo, "revenue_baseline", "printed_value"), format = "f", digits = 1)` where
-  the workbook sum is `r formatC(pick(oo, "revenue_baseline"), format = "f", digits = 3)`.
-  The bridge shows the effect as its own model-difference step:
-  `r usd(eb$rauh_residual, 2, TRUE)` on (b) and `r usd(ea$rauh_residual, 4, TRUE)` on (a).
+- **The September 2026 ceiling has three values.** The script draws revenue up to the literal
+  72; the README prints 72.06; the person-level file sums to
+  `r formatC(pick(oo, "nber_ceiling", "value"), format = "f", digits = 2)` (the JR analysis's
+  mismatch 4). The comparison uses the script's 72, so the common function returns the
+  authors' own mean exactly and the bridge has no model-difference step.
+- **The litigation weight has no multiplier in the code.** The README applies q = 0.50 to the
+  recognized base; the script instead draws revenue uniformly between 0 and the ceiling, whose
+  mean is the same half (mismatch 5). The comparison reads that mean as the weight `q`.
 - **The printed NPV is one run, not the expectation.** The exact expectation of the NBER
-  Monte Carlo, the bridge's JR end, is `r usd(eb$nber_own, 2)` against a printed
+  Monte Carlo, the bridge's JR end, is `r usd(eb$rauh_own, 2)` against a printed
   `r usd(ep$printed_value[ep$endpoint_id == "rauh_nber_npv"])`. The JR pipeline reproduces
   the seeded run as `r usd(ep$contract_value[ep$endpoint_id == "rauh_nber_npv"], 3)`, the JR
   main estimate.

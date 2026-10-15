@@ -4,8 +4,8 @@
  * score_common(), slider_inputs() and slider_value(). The R code is the definition; the
  * Python twin (comparison/py/bridge.py) mirrors it, and comparison/tests/testthat/test-site.R
  * runs this file with node over comparison/export/r/slider_sample.csv and checks every value
- * to 1e-9. Every number it uses (the two input vectors, the horizon settings, the revision
- * constants, which argument each slider moves) comes from assets/comparison-data.js, the
+ * to 1e-9. Every number it uses (the two input vectors, the horizon settings, which
+ * arguments each slider moves) comes from assets/comparison-data.js, the
  * data file comparison/R/site.R writes; nothing is typed here.
  *
  * No modules and no build step: the page loads it with <script src="model.js">, and it puts
@@ -54,10 +54,10 @@
   // score_common(x): the same formulas as model.R, line for line.
   function scoreCommon(x) {
     var R0 = x.tau * (x.W_core + x.W_noncit) * (1 - x.re);
-    var S = 1 - (x.d_conf + Math.max(x.d_conf, x.eps * x.dtau)) / 2;
-    var WT = R0 * (1 - x.alpha) * S;
+    var S = 1 - x.d_conf;
+    var WT = R0 * (1 - x.alpha) * S * x.q;
     var X = WT * x.s * x.g * x.t_cg;
-    var f = x.alpha * x.m + x.kappa * (1 - S) * (1 - x.alpha * x.m);
+    var f = x.alpha * x.m + (1 - x.alpha * x.m) * (x.kappa * x.d_conf + x.f0);
     var A = expectedAnnuity(x.H, x.r_min, x.r_max);
     var PV = f * x.C * A;
     return { a: WT, b: WT + X - PV, R0: R0, S: S, X: X, f: f, annual_loss: f * x.C,
@@ -69,37 +69,30 @@
   function vec(o) { var x = {}; for (var k in o) x[k] = num(o[k]); return x; }
 
   // slider_inputs(from, to, positions): positions[id] in 0..steps, 0 = from's value,
-  // steps = to's value. Numeric inputs: (1 - p/steps) * from + (p/steps) * to. The horizon:
-  // the horizon settings in order from from's horizon to to's.
+  // steps = to's value. Numeric inputs: (1 - p/steps) * from + (p/steps) * to; a slider that
+  // moves two arguments moves both. The horizon: the horizon settings in order from from's
+  // horizon to to's.
   function sliderInputs(S, from, to, positions) {
     var x = {}, k;
     for (k in from) x[k] = from[k];
     var lad = S.horizons.map(num);
     if (!(from.H <= to.H)) lad = lad.slice().reverse();
     S.inputs.forEach(function (inp) {
-      var p = positions[inp.id] || 0, t = p / S.steps, nm = inp.input;
-      if (nm === "H") x.H = lad[p];
-      else x[nm] = (1 - t) * from[nm] + t * to[nm];
+      var p = positions[inp.id] || 0, t = p / S.steps;
+      inp.input.forEach(function (nm) {
+        if (nm === "H") x.H = lad[p];
+        else x[nm] = (1 - t) * from[nm] + t * to[nm];
+      });
     });
     return x;
   }
 
-  // slider_value(panel, positions): output (b) at the positions, plus the model difference
-  // and the September 2026 revision step at the sliders' horizon when the panel's revision
-  // slider is on. Revision position 0 is the panel's own analysis: off for "bsz", on for
-  // "rjkdc".
+  // slider_value(panel, positions): output (b) at the positions.
   function panelValue(S, panel, positions) {
     var bsz = vec(S.values.bsz), rj = vec(S.values.rjkdc);
     var from = panel === "bsz" ? bsz : rj, to = panel === "bsz" ? rj : bsz;
     var x = sliderInputs(S, from, to, positions);
-    var rp = positions.revision || 0;
-    var revOn = panel === "bsz" ? rp === 1 : rp === 0;
-    var v = scoreCommon(x).b;
-    if (revOn) {
-      var lad = S.horizons.map(num), k = lad.indexOf(x.H);
-      v += S.revision.model[k] + S.revision.revision[k];
-    }
-    return { value: v, x: x, revision: revOn };
+    return { value: scoreCommon(x).b, x: x };
   }
 
   root.ComparisonModel = {
