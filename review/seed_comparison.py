@@ -315,7 +315,7 @@ def main():
                   "switches them in one order, Hoopes's (sequential_order()). Both sets of steps add "
                   "up to the model gap between the two input vectors, the gap between the two ends of "
                   "the common function, which returns both analyses' own numbers exactly. "
-                  "The pages show dial_path() instead: one order, the explorer's dial order, so each "
+                  "The pages show dial_path() instead: one order, the equation's order (D, q, the loss box, the rest), so each "
                   "term is what one dial changes; the Shapley average is kept as an order-free check."),
             inputs="sup, rauh (the two input vectors) and the list of steps",
             inputs_from=[dict(layer="comparison-6", what="score_common(): output (b) or (a) at any mix of the two input vectors"),
