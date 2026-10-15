@@ -7,4 +7,4 @@
 "additional_behavioral_response",-28.986495838534,-9.16,0.6,"Avoidance allowance + chance the tax survives litigation (his bar is the March 2026 version's elasticity response, which the September version does not use)"
 "real_estate_exclusion",-0.233119798167493,-1.05,0.8,"Real-estate deduction"
 "rauh_rounding",7.105427357601e-15,NA,NA,"(none: on revenue the common function's JR end is the September version's expected revenue)"
-"income_tax_loss",-74.9802887015985,-71.51,0.6,"The JR analysis's own NPV minus its own expected revenue (all income-tax steps together)"
+"income_tax_loss",-68.25,-71.51,0.6,"The JR end at one 3% rate minus its expected revenue (all income-tax steps together; the authors' random rate makes the loss larger by the JR rate gap)"

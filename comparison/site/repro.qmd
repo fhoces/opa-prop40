@@ -45,8 +45,11 @@ own <- en[en$horizon_setting == "own", ]
 ea <- own[own$output == "a", ]; eb <- own[own$output == "b", ]
 epv <- function(id, col = "value") ep[[col]][ep$endpoint_id == id]
 steps <- bridge_steps()
-# A(H): what 1 a year for H years is worth today, averaged over the JR rate range
-ann <- function(H) expected_annuity(H, pick(k$rjkdc$inputs, "rauh_mc_r_min"), pick(k$rjkdc$inputs, "rauh_mc_r_max"))
+# The one discount rate (author decision 2026-10-15) and the JR analysis's draw range, from the export
+mv <- function(key) ex$meta$value[ex$meta$key == key]
+r3 <- pct(mv("r_common")); r_lo <- pct(mv("r_min_jr"), 1); r_hi <- pct(mv("r_max_jr"), 1)
+# A(H): what 1 a year for H years is worth today at the one rate
+ann <- function(H) annuity(mv("r_common"), H)
 # Money in running text: a dollar sign in markdown starts a formula, so escape it.
 usd <- function(x, d = 1, signed = FALSE) gsub("$", "\\$", money(x, d, signed), fixed = TRUE)
 # Two pandoc traps in raw HTML tables: a bare dollar sign can pair with the next one into
@@ -154,9 +157,12 @@ the common output (b), the net fiscal effect, they are the bridge's two ends. Th
 the same `r usd(eb$bsz_model)`. Jaros and Rauh print
 `r usd(epv("rauh_nber_npv", "printed_value"))` from one seeded run of their Monte Carlo (a run
 of the random draws started from a fixed seed number, so it gives the same draws every time);
-the JR end, `r usd(eb$rauh_own, 2)`, is its exact expectation, the average computed by
-formula. The gap between the two ends,
-`r usd(eb$bsz_model - eb$rauh_own)`, is what the bridge explains. The arithmetic is in
+the exact expectation of that Monte Carlo, the average computed by formula, is
+`r usd(eb$rauh_own, 2)`. The JR end of the bridge is the JR inputs with the lost income tax
+discounted at one `r r3` rate, `r usd(eb$rauh_model, 2)`. It is
+`r usd(eb$jr_rate_gap, 2)` above the exact expectation, because the authors draw the rate at
+random instead (the JR rate gap, [below](#the-two-ends)). The gap between the two ends,
+`r usd(eb$bsz_model - eb$rauh_model)`, is what the bridge explains. The arithmetic is in
 [The two main estimates](#the-main-estimate).
 
 **Neither analysis reports the other's number, or the gap.** Each keeps its own main estimate
@@ -192,24 +198,25 @@ comes first, because it is the question both main estimates answer:
 
 The horizon H is itself disputed. The BSZ report counts the losses for about the
 `r fmt_input("H", inp$supporting_value[inp$input == "H"])` of payments (BSZ PDF p.27). The
-JR report counts them forever. Discounting uses the JR report's own range, a rate
-drawn uniformly between `r pct(pick(k$rjkdc$inputs, "rauh_mc_r_min"), 1)` and
-`r pct(pick(k$rjkdc$inputs, "rauh_mc_r_max"), 1)`. The BSZ analysis takes no position on the
-rate; its overview discounts at 3%, the middle of that range.
+JR report counts them forever. Both ends are discounted at one rate, `r r3` a year (author
+decision, 15 October 2026). It is the rate the BSZ analysis overview uses, and the middle of
+the range the JR analysis draws from. One rate keeps the comparison to one definition: the
+BSZ analysis takes no position on the rate, and the JR analysis's random draw of it is a
+method of that analysis, not an input the two analyses dispute. What the draw is worth is
+reported as a separate number, the JR rate gap, in [One function, both ends](#the-two-ends).
 
 **Conventions.** All amounts are nominal billions of dollars. The wealth tax is counted at its
 face value when assessed (the BSZ analysis values the base on 1 July 2026; the JR
 analysis's September version grows the base it used in March, the 2025 Forbes list, by
 `r pct(pick(k$rjkdc$inputs, "nber_growth_rate"))` to 31 December 2026), undiscounted although
 the Act collects it in five yearly installments; both analyses do this, so the comparison
-follows them. Present values are at the assessment date. The discount-rate range is the one
-the JR code draws; its code labels the draw (r &minus; g), the rate less the growth of the
-lost income tax, while its text uses both (r &minus; g) and the plain rate r (the JR
-analysis's mismatch 3).
+follows them. Present values are at the assessment date. The JR code labels the rate it
+draws (r &minus; g), the rate less the growth of the lost income tax, while its text uses both
+(r &minus; g) and the plain rate r (the JR analysis's mismatch 3).
 
 ```{r}
 #| results: asis
-twin_fold("the two analyses on the common output", c("score_common", "rauh_nber_expectation", "expected_annuity"))
+twin_fold("the two analyses on the common output", c("annuity", "score_common", "expected_annuity", "rauh_nber_expectation"))
 ```
 
 ```{r}
@@ -218,12 +225,13 @@ d <- k$docs
 dv <- function(id) as.numeric(d$value[d$input_id == id])
 tab <- data.frame(
   Analysis = c("BSZ analysis: Boll, Saez and Zucman, NBER WP 35218, Table 5 row 1 (Aug 2026)",
-               "JR analysis: Jaros and Rauh, NBER c15504 (Sep 2026)"),
-  `(b) net fiscal effect` = c(money(eb$bsz_model, 1), money(eb$rauh_own, 2)),
+               sprintf("JR analysis: Jaros and Rauh, NBER c15504 (Sep 2026), at one %s rate", r3)),
+  `(b) net fiscal effect` = c(money(eb$bsz_model, 1), money(eb$rauh_model, 2)),
   `(a) gross revenue` = c(money(ea$bsz_model, 1), money(ea$rauh_own, 1)),
   `What the authors print` = c(
     sprintf("%s revenue (PDF p.39); no net figure", money(epv("bsz_tab5_row1", "printed_value"), 0)),
-    sprintf("mean NPV %s; revenue 'approximately %s' (p.1)", money(epv("rauh_nber_npv", "printed_value"), 1), money(dv("nber_headline_revenue"), 0))),
+    sprintf("mean NPV %s, with a random rate: %s below the one-rate value (the JR rate gap); revenue 'approximately %s' (p.1)",
+            money(epv("rauh_nber_npv", "printed_value"), 1), money(eb$jr_rate_gap, 2), money(dv("nber_headline_revenue"), 0))),
   check.names = FALSE)
 scroll(show(tab))
 ```
@@ -232,20 +240,41 @@ Output (b) for the BSZ analysis is not printed by the paper. It is Table 5 row 1
 columns combined here: the `r usd(ea$bsz_model)` revenue, plus
 `r usd(ex$meta$value[ex$meta$key == "X_bsz"], 2)` of extra income tax from asset sales, minus
 `r usd(ex$meta$value[ex$meta$key == "PV_bsz_own"], 2)`, the present value of five years of
-its income tax loss. For the JR analysis, both outputs are the expectations of the
-authors' own Monte Carlo, computed exactly rather than by drawing.
+its income tax loss. For the JR analysis, (a) is the expectation of the authors' own Monte
+Carlo, computed exactly rather than by drawing. Its (b) is the JR inputs discounted at one
+`r r3` rate; the authors' own mean NPV is the JR rate gap, `r usd(eb$jr_rate_gap, 2)`, lower.
 
 # One function, both ends {#the-two-ends}
 
-One function returns both analyses' numbers exactly: **`r usd(eb$bsz_model)`** at the BSZ
-inputs and **`r usd(eb$rauh_own)`** at the JR inputs, on the net fiscal effect.
+One function gives both ends of the net fiscal effect: **`r usd(eb$bsz_model)`** at the BSZ
+inputs and **`r usd(eb$rauh_model)`** at the JR inputs, both discounted at `r r3`. The JR
+analysis's own headline is the second minus the JR rate gap, `r usd(eb$jr_rate_gap)`.
 
 One estimating function, `score_common()`, takes every disputed input as an argument. Each
 argument takes either the BSZ analysis's value or the JR analysis's. At the all-BSZ setting
 the function must return the BSZ end: Table 5 row 1 on (a), and its net on (b). At the all-JR
-setting it must return the JR end, the exact mean of the September 2026 version's Monte Carlo.
-The JR values are those of that version, the latest (its code and person-level file are in the
-authors' public repository).
+setting it returns the JR end. On (a) that is the exact mean revenue of the September 2026
+version's Monte Carlo. On (b) it is the same Monte Carlo's inputs at their means, discounted at
+one rate. The JR values are those of that version, the latest (its code and person-level file
+are in the authors' public repository).
+
+[]{#the-jr-rate-gap}**The JR rate gap.** The JR Monte Carlo does not discount at one rate. It
+draws the rate uniformly between `r r_lo` and `r r_hi` and averages the results. A perpetuity of
+1 a year is worth 1/r, and the average of 1/r over that draw is ln(3)/0.03 =
+`r formatC(mv("A_inf_jr_draw"), format = "f", digits = 1)`, more than the
+`r formatC(mv("A_inf"), format = "f", digits = 1)` it is worth at `r r3` (1/r curves upward,
+so low rates add more than high rates take away). The JR end at one rate therefore exceeds the
+authors' exact mean by
+
+  jr_rate_gap = f0 &times; C &times; (E[1/r] &minus; 1/0.03) =
+  `r formatC(mv("f_rauh"), format = "f", digits = 2)` &times; `r usd(mv("C_rauh"), 2)` &times;
+  (`r formatC(mv("A_inf_jr_draw"), format = "f", digits = 3)` &minus;
+  `r formatC(mv("A_inf"), format = "f", digits = 3)`) = **`r usd(eb$jr_rate_gap, 3)`**,
+
+so `r usd(eb$rauh_model, 3)` &minus; `r usd(eb$jr_rate_gap, 3)` = `r usd(eb$rauh_own, 3)`, the
+authors' exact mean. The comparison exports this number (`jr_rate_gap` in `ends.csv` and
+`meta.csv`) and the tests check the formula to 1e-9. It is not a step of the bridge: the BSZ
+analysis has no rate of its own to switch from.
 
 In words, the function computes seven quantities in order.
 
@@ -253,8 +282,8 @@ In words, the function computes seven quantities in order.
 
 Each argument is written as
 `score_common()` names it and, where a step of the bridge switches it, followed by that step's
-title in quotation marks; `tau`, `m`, `g`, `t_cg` and the discount-rate range are shared by
-both ends.
+title in quotation marks; `tau`, `m`, `g`, `t_cg` and the one discount rate `r` are shared
+by both ends.
 
 []{#step-revenue}Steps 1 to 3 give the wealth tax collected, the explorer's
 5% × (W − D) × (1 − a) × q. In the code, 5% is `tau`, and W is
@@ -281,7 +310,7 @@ their names, and a is `alpha`.
    the tax paid by selling assets ("Extra income tax from selling assets to pay"), `g` the
    capital-gain share of a sale and `t_cg` the top California rate on realized gains.
 []{#step-loss}Steps 5 and 6 give the income tax lost, the explorer's f × C × A(H). A(H) is
-`E_r[annuity(r, H)]`, about `r formatC(ann(5), format = "f", digits = 1)` for 5 years and
+`annuity(r, H)` at r = `r r3`, about `r formatC(ann(5), format = "f", digits = 1)` for 5 years and
 `r formatC(ann(Inf), format = "f", digits = 0)` for ever.
 
 5. `f = alpha*m + own * L / C + f0`: the share of billionaire income tax lost ("Share of
@@ -291,17 +320,19 @@ their names, and a is `alpha`.
    the departures stop, is lost. Under the JR rule (`own = 0`) a flat share `f0` is lost
    whoever leaves (the JR analysis's independent draw of 30% to 60%). At the aggressive stop
    the BSZ end reproduces Table 5 row 3 in all three columns.
-6. `PV = f * C * E_r[annuity(r, H)]`: the present value of the lost income tax. `C` is
+6. `PV = f * C * annuity(r, H)`: the present value of the lost income tax. `C` is
    billionaires' annual California income tax, in billions of dollars a year ("Billionaires'
    annual CA income tax"), lost for `H` years ("How long the income tax loss lasts"; for ever
-   at the JR end); `annuity(r, H)` is what 1 a year for `H` years is worth today at the
-   discount rate `r`, averaged over the rate range.
+   at the JR end); `annuity(r, H) = (1 - (1 + r)^-H) / r` is what 1 a year for `H` years is
+   worth today at the one discount rate `r`, `r r3`.
 7. `NET = WT + X - PV`: output (b), the net fiscal effect.
 
 </details>
 
-Each end matches the number its authors print, up to rounding and, for the JR end, the
-sampling error of one Monte Carlo run.
+The BSZ end matches the number its authors print, up to rounding. The JR end's revenue
+matches the authors' expected revenue exactly; its net fiscal effect is the authors' exact mean
+plus the JR rate gap, and that mean matches their printed number up to the sampling error of
+one Monte Carlo run.
 
 <details class="report-fold"><summary>The endpoint checks</summary>
 
@@ -313,7 +344,7 @@ twin_fold("the endpoint checks", c("bridge_inputs", "score_common"))
 
 ```{r}
 #| results: asis
-e2 <- ep[match(c("bsz_net_constructed", "bsz_tab5_row1", "rauh_nber_npv", "rauh_nber_revenue_mc"), ep$endpoint_id), ]
+e2 <- ep[match(c("bsz_net_constructed", "bsz_tab5_row1", "rauh_common_end", "rauh_nber_npv", "rauh_nber_revenue_mc"), ep$endpoint_id), ]
 scroll(show(data.frame(
   End = esc(e2$description),
   `Computed here` = vapply(e2$value, function(v) formatC(v, format = "f", digits = 3), ""),
@@ -325,7 +356,9 @@ scroll(show(data.frame(
 
 Every difference is a rounding of the printed number. The NBER mean NPV is the expectation
 of the Monte Carlo (`r usd(eb$rauh_own, 2)`), while the authors print one run of it
-(`r usd(epv("rauh_nber_npv", "printed_value"))`).
+(`r usd(epv("rauh_nber_npv", "printed_value"))`). The JR end of the common function,
+`r usd(eb$rauh_model, 2)`, is not printed by the authors: it is that expectation plus the JR
+rate gap, `r usd(eb$jr_rate_gap, 2)`.
 
 </details>
 
@@ -340,19 +373,25 @@ nber <- rauh_nber_expectation(wt_min = 0, wt_max = pick(oi, "nber_ceiling_hardco
                               f_min = pick(oi, "nber_mc_f_min"), f_max = pick(oi, "nber_mc_f_max"),
                               c_min = pick(oi, "rauh_mc_c_min"), c_max = pick(oi, "rauh_mc_c_max"),
                               r_min = pick(oi, "rauh_mc_r_min"), r_max = pick(oi, "rauh_mc_r_max"))
+v_rj <- score_common(bi$rauh)                 # the JR end at the one rate, both outputs
 rj_main <- epv("rauh_nber_npv", "contract_value")   # the JR main estimate (seeded run)
 f_mid <- (pick(oi, "nber_mc_f_min") + pick(oi, "nber_mc_f_max")) / 2
 c_mid <- (pick(oi, "rauh_mc_c_min") + pick(oi, "rauh_mc_c_max")) / 2
-a_inf <- expected_annuity(Inf, pick(oi, "rauh_mc_r_min"), pick(oi, "rauh_mc_r_max"))
-gap_b <- v_sup[["b"]] - nber[["b"]]
-gap <- v_sup[["a"]] - nber[["a"]]
-stopifnot(isTRUE(all.equal(v_sup[["b"]], eb$bsz_model)), isTRUE(all.equal(nber[["b"]], eb$rauh_own)),
-          isTRUE(all.equal(v_sup[["a"]], ea$bsz_model)), isTRUE(all.equal(nber[["a"]], ea$rauh_own)))
+a_inf <- expected_annuity(Inf, pick(oi, "rauh_mc_r_min"), pick(oi, "rauh_mc_r_max"))   # E[1/r] over the draw
+a_one <- annuity(bi$rauh$r, Inf)                                                        # 1/r at the one rate
+gap_b <- v_sup[["b"]] - v_rj[["b"]]
+gap <- v_sup[["a"]] - v_rj[["a"]]
+stopifnot(isTRUE(all.equal(v_sup[["b"]], eb$bsz_model)), isTRUE(all.equal(v_rj[["b"]], eb$rauh_model)),
+          isTRUE(all.equal(nber[["b"]], eb$rauh_own)), isTRUE(all.equal(v_rj[["b"]] - nber[["b"]], eb$jr_rate_gap)),
+          isTRUE(all.equal(v_sup[["a"]], ea$bsz_model)), isTRUE(all.equal(nber[["a"]], ea$rauh_own)),
+          isTRUE(all.equal(v_rj[["a"]], nber[["a"]])))
 ```
 
 The BSZ main estimate is **`r usd(eb$bsz_model)`** and the JR main estimate
 **`r usd(epv("rauh_nber_npv", "contract_value"))`**. On the common output the two ends are
-`r usd(eb$bsz_model)` and `r usd(eb$rauh_own)`, a gap of **`r usd(eb$bsz_model - eb$rauh_own)`**.
+`r usd(eb$bsz_model)` and `r usd(eb$rauh_model)`, a gap of **`r usd(eb$bsz_model - eb$rauh_model)`**.
+The JR end is the JR main estimate's inputs at one `r r3` rate; the JR rate gap,
+`r usd(eb$jr_rate_gap)`, separates it from the authors' exact mean.
 
 <details class="report-fold"><summary>Steps 1 to 4, and output (a)</summary>
 
@@ -367,29 +406,32 @@ one-time tax. So the wealth tax is `r pct(sup$tau)` &times;
 `r usd(epv("bsz_tab5_row1", "printed_value"), 0)`, PDF p.39). Output (b) adds
 `r usd(v_sup[["X"]], 3)` of extra income tax from assets sold to pay and subtracts
 `r usd(v_sup[["PV"]], 3)`, five years of the `r usd(v_sup[["annual_loss"]], 3)` annual
-income tax loss discounted over the rate range: **`r usd(v_sup[["b"]], 3)`**, shown as
-`r usd(v_sup[["b"]])`. The BSZ analysis overview discounts at 3% instead and gets the same
-`r usd(v_sup[["b"]])`.
+income tax loss discounted at `r r3`: **`r usd(v_sup[["b"]], 3)`**, shown as
+`r usd(v_sup[["b"]])`, the BSZ analysis overview's main estimate.
 
 **Step 2: the JR main estimate, and the JR end on (b).** In the Monte Carlo of Jaros and
 Rauh's NBER version the revenue is drawn uniformly between zero and
 `r usd(pick(oi, "nber_ceiling_hardcoded"), 0)`, the share of the income tax base that leaves
 between `r pick(oi, "nber_mc_f_min")` and `r pick(oi, "nber_mc_f_max")`, the annual income tax
 between `r usd(pick(oi, "rauh_mc_c_min"))` and `r usd(pick(oi, "rauh_mc_c_max"))`, and the
-discount rate as above, all independently. The mean net present value is therefore
-`r usd(nber[["a"]], 1)` &minus; `r f_mid` &times; `r usd(c_mid, 3)` &times;
-`r formatC(a_inf, format = "f", digits = 3)` (the average of 1/r) =
-**`r usd(nber[["b"]], 3)`**, the bridge's JR end. The authors print
-`r usd(epv("rauh_nber_npv", "printed_value"))` from one seeded run of the same Monte Carlo,
-which the JR pipeline reproduces as `r usd(rj_main, 3)`. That run is the JR main
-estimate, shown as `r usd(rj_main)`.
+discount rate as in [the JR rate gap](#the-jr-rate-gap), all independently. The mean net
+present value is therefore `r usd(nber[["a"]], 1)` &minus; `r f_mid` &times;
+`r usd(c_mid, 3)` &times; `r formatC(a_inf, format = "f", digits = 3)` (the average of 1/r) =
+`r usd(nber[["b"]], 3)`. The authors print `r usd(epv("rauh_nber_npv", "printed_value"))`
+from one seeded run of the same Monte Carlo, which the JR pipeline reproduces as
+`r usd(rj_main, 3)`. That run is the JR main estimate, shown as `r usd(rj_main)`. The
+bridge's JR end discounts at one `r r3` rate instead: `r usd(nber[["a"]], 1)` &minus;
+`r f_mid` &times; `r usd(c_mid, 3)` &times; `r formatC(a_one, format = "f", digits = 3)` (1/r
+at `r r3`) = **`r usd(v_rj[["b"]], 3)`**, the exact mean plus the JR rate gap,
+`r usd(eb$jr_rate_gap, 3)`.
 
-**Step 3: the gap on (b).** `r usd(v_sup[["b"]], 3)` &minus; (`r usd(nber[["b"]], 3)`) =
+**Step 3: the gap on (b).** `r usd(v_sup[["b"]], 3)` &minus; (`r usd(v_rj[["b"]], 3)`) =
 **`r usd(gap_b, 3)`**, shown as `r usd(gap_b)`.
 
 **Step 4: where the gap comes from.** The next section splits it into one step per dial of
 the explorer. The steps add up to `r usd(sum(dp$change), 3, TRUE)`, the gap read from the BSZ
-end, because the common function returns both ends exactly.
+end: the common function returns the BSZ end and the JR end at one rate, and the steps go
+from one to the other.
 
 **On output (a)**, the secondary setting, the two ends are the wealth tax alone:
 `r usd(v_sup[["a"]], 3)` and the NBER expected revenue, `r usd(nber[["a"]], 1)` (the midpoint
@@ -403,7 +445,8 @@ check at the end of the next section splits it too.
 b_a <- br[br$horizon_setting == "own" & br$output == "a", ]
 b_b <- br[br$horizon_setting == "own" & br$output == "b", ]
 stopifnot(abs(sum(b_b$shapley) + gap_b) < 1e-9, abs(sum(b_a$shapley) + gap) < 1e-9,
-          abs(sum(dp$change) + gap_b) < 1e-9, max(abs(en$rauh_residual)) < 1e-9)
+          abs(sum(dp$change) + gap_b) < 1e-9,
+          max(abs(en$rauh_model - en$rauh_own - en$jr_rate_gap)) < 1e-9)
 # The introduction names the three largest steps of the dial path in words; stop if they change.
 top3p <- dp[order(-abs(dp$change)), ][1:3, ]
 stopifnot(identical(top3p$step_id, c("horizon", "litigation_survival", "confirmed_departures")))
@@ -418,8 +461,8 @@ twin_fold("the two main estimates", c("bridge_inputs", "score_common", "rauh_nbe
 
 The bridge follows the explorer's dials. Start from the BSZ panel, where every dial is at the
 BSZ value, and move the dials top to bottom, each to its far end (the JR value). Each step is
-what one dial changes. The eight steps take the BSZ end, `r usd(dp$from[1])`, to the JR end,
-`r usd(dp$to[nrow(dp)])`, exactly. Three of them make most of the `r usd(gap_b)` gap: how long
+what one dial changes. The eight steps take the BSZ end, `r usd(dp$from[1])`, to the JR end
+at one `r r3` rate, `r usd(dp$to[nrow(dp)])`, exactly. Three of them make most of the `r usd(gap_b)` gap: how long
 the lost income tax is counted (`r usd(dp$change[dp$step_id == "horizon"], 1, TRUE)`), the
 chance the tax survives litigation
 (`r usd(dp$change[dp$step_id == "litigation_survival"], 1, TRUE)`) and the billionaires already
@@ -463,7 +506,9 @@ blank <- function(label, change, run) data.frame(Dial = label, `DISPUTES row` = 
 cat("\n**Output (b), net fiscal effect, each analysis's own horizon.** The horizon dial moves from the BSZ analysis's 5 years to a perpetuity.\n\n")
 scroll(show(rbind(blank("<b>BSZ end, (b)</b>", "", nobr(money(dp$from[1], 2))), path_rows,
                   blank("Sum of the steps", nobr(money(sum(dp$change), 2, TRUE)), ""),
-                  blank("<b>JR end, (b)</b>", "", nobr(money(eb$rauh_own, 2))))))
+                  blank(sprintf("<b>JR end, (b), at one %s rate</b>", r3), "", nobr(money(eb$rauh_model, 2))),
+                  blank("JR rate gap (the authors draw the rate at random)", nobr(money(-eb$jr_rate_gap, 2, TRUE)), ""),
+                  blank("<b>JR main estimate's exact mean, (b)</b>", "", nobr(money(eb$rauh_own, 2))))))
 ```
 
 Reading the table: the horizon step is the largest because it moves after the other dials,
@@ -484,7 +529,7 @@ wf <- rbind(
   data.frame(i = 1, short = unname(short_labels["bsz"]), y0 = 0, y1 = dp$from[1], fill = "an analysis's estimate"),
   data.frame(i = 1 + seq_len(nrow(dp)), short = wf_short, y0 = dp$from, y1 = dp$to,
              fill = ifelse(dp$change >= 0, "step that raises it", "step that lowers it")),
-  data.frame(i = nrow(dp) + 2, short = unname(short_labels["nber"]), y0 = 0, y1 = eb$rauh_own, fill = "an analysis's estimate"))
+  data.frame(i = nrow(dp) + 2, short = paste0(unname(short_labels["nber"]), ", ", r3), y0 = 0, y1 = eb$rauh_model, fill = "an analysis's estimate"))
 ggplot(wf) +
   geom_rect(aes(xmin = i - 0.38, xmax = i + 0.38, ymin = pmin(y0, y1), ymax = pmax(y0, y1), fill = fill)) +
   scale_fill_manual(values = c("an analysis's estimate" = "#222222",
@@ -539,8 +584,8 @@ bt <- function(o) {
     check.names = FALSE)
   top <- data.frame(Step = sprintf("<b>BSZ end, (%s)</b>", o), `DISPUTES row` = "", Kind = "", `BSZ value` = "",
                     `JR value` = "", Shapley = money(e$bsz_model, 2), `One order` = money(e$bsz_model, 2), check.names = FALSE)
-  bot <- data.frame(Step = sprintf("<b>JR end, (%s)</b>", o), `DISPUTES row` = "", Kind = "", `BSZ value` = "",
-                    `JR value` = "", Shapley = money(e$rauh_own, 2), `One order` = money(e$rauh_own, 2), check.names = FALSE)
+  bot <- data.frame(Step = sprintf("<b>JR end, (%s), at one %s rate</b>", o, r3), `DISPUTES row` = "", Kind = "", `BSZ value` = "",
+                    `JR value` = "", Shapley = money(e$rauh_model, 2), `One order` = money(e$rauh_model, 2), check.names = FALSE)
   scroll(show(rbind(top, rows, extra, bot)))
 }
 cat("\n**Output (b), net fiscal effect, each analysis's own horizon.** The horizon step switches from the BSZ analysis's 5 years to a perpetuity.\n\n"); bt("b")
@@ -737,11 +782,13 @@ maxdiff <- if (py_ok) max(vapply(c("ends", "bridge", "endpoints", "dial_path"), 
 
 - **Both ends.** At the all-BSZ inputs the estimating function returns BSZ Table 5 row 1
   exactly (`r usd(ea$bsz_model, 3)`), and its net on (b) (`r usd(eb$bsz_model, 3)`). At the
-  inputs of the JR analysis's September 2026 version it returns that version's exact Monte
-  Carlo mean, `r usd(eb$rauh_own, 3)` on (b) and `r usd(ea$rauh_own, 3)` on (a), against the
-  printed `r usd(epv("rauh_nber_npv", "printed_value"))` from one seeded run. It uses the
-  script's ceiling literal, 72, rather than the 72.05 the person-level file sums to (the JR
-  analysis's mismatch 4), so that the two agree exactly.
+  inputs of the JR analysis's September 2026 version it returns that version's exact expected
+  revenue on (a), `r usd(ea$rauh_own, 3)`. It uses the script's ceiling literal, 72, rather
+  than the 72.05 the person-level file sums to (the JR analysis's mismatch 4), so that the two
+  agree exactly. On (b) it returns `r usd(eb$rauh_model, 3)` at one `r r3` rate. The JR rate
+  gap, `r usd(eb$jr_rate_gap, 3)`, takes it to the authors' exact Monte Carlo mean,
+  `r usd(eb$rauh_own, 3)`, against the printed `r usd(epv("rauh_nber_npv", "printed_value"))`
+  from one seeded run. `test-endpoints.R` checks the gap against its formula.
 - **The bridge is the explorer's own.** `test-dial-path.R` checks that the eight steps of the
   dial path add up to the gap, and that each equals the difference between two explorer values
   in both panels, in R and in `model.js`.

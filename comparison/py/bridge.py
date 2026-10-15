@@ -402,7 +402,7 @@ def build_all(k):
              sqa["avoidance"] + sqa["litigation_survival"]),
             ("real_estate_exclusion", sqa["real_estate"]),
             ("rauh_rounding", ea["jr_rate_gap"]),
-            ("income_tax_loss", eb["rauh_own"] - ea["rauh_own"])]
+            ("income_tax_loss", eb["rauh_model"] - ea["rauh_model"])]
     hoopes = [{"step_id": sid, "ours": v,
                "hoopes": num(hz[sid]["delta"]) if sid in hz else math.nan,
                "hoopes_uncertainty": num(hz[sid]["uncertainty"]) if sid in hz else math.nan}

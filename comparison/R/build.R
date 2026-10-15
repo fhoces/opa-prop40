@@ -180,8 +180,7 @@ build_all <- function(k = read_contracts()) {
       "BSZ Table 5 row 1 wealth tax revenue = model at all-BSZ inputs",
       "BSZ row 1 net of its own extra income tax and 5 years of losses (not printed by BSZ; constructed here)",
       "JR expected revenue in the Monte Carlo, E[WT] = (0 + 72)/2 = model at all-JR inputs",
-      sprintf("JR mean NPV, analytic expectation of the Monte Carlo (the rate drawn between %.1f%% and %.1f%%)",
-              100 * nber_args$r_min, 100 * nber_args$r_max),
+      "JR mean NPV, analytic expectation of the Monte Carlo (its discount rate drawn at random)",
       "JR end of the common function: the JR inputs at the one common rate (JR mean NPV + jr_rate_gap; not printed by JR)"),
     value = c(ea$bsz_model + (ggss_printed - ea$bsz_model),
               ea$bsz_model, ea$bsz_model, eb$bsz_model,
@@ -241,7 +240,7 @@ build_all <- function(k = read_contracts()) {
             additional_behavioral_response = sq(c("avoidance", "litigation_survival")),
             real_estate_exclusion = sq("real_estate"),
             rauh_rounding = ea$jr_rate_gap,
-            income_tax_loss = eb$rauh_own - ea$rauh_own)
+            income_tax_loss = eb$rauh_model - ea$rauh_model)
   hoopes <- data.frame(step_id = names(ours), ours = unname(ours), stringsAsFactors = FALSE)
   hoopes$hoopes <- hz$delta[match(hoopes$step_id, hz$step_id)]
   hoopes$hoopes_uncertainty <- hz$uncertainty[match(hoopes$step_id, hz$step_id)]
@@ -251,7 +250,7 @@ build_all <- function(k = read_contracts()) {
                         "(none: Rauh's Monte Carlo headline does not use the ten 'expanded' departures)",
                         "Avoidance allowance + chance the tax survives litigation (his bar is the March 2026 version's elasticity response, which the September version does not use)",
                         "Real-estate deduction", "(none: on revenue the common function's JR end is the September version's expected revenue)",
-                        "The JR analysis's own NPV minus its own expected revenue (all income-tax steps together)")
+                        "The JR end at one 3% rate minus its expected revenue (all income-tax steps together; the authors' random rate makes the loss larger by the JR rate gap)")
 
   list(inputs = bridge_input_table(bi), bridge = bridge, ends = ends, endpoints = endpoints,
        anchors = anchors, loss = loss, hoopes = hoopes, switchboard = board,

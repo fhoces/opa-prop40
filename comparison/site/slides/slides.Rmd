@@ -57,8 +57,12 @@ sh  <- function(id, b = bb) b$shapley[b$step_id == id]
 sq  <- function(id, b = bb) b$sequential[b$step_id == id]
 bb_sorted <- bb[order(-abs(bb$shapley)), ]
 top3 <- bb_sorted[1:3, ]; rest <- bb_sorted[-(1:3), ]
-gap_b <- eb$bsz_model - eb$rauh_own
+gap_b <- eb$bsz_model - eb$rauh_model
 steps <- bridge_steps()
+# One discount rate at both ends (author decision 2026-10-15), and the JR analysis's draw range,
+# which the deck states in one place only, the JR rate gap note on the two-ends slide.
+r3 <- pct(mv("r_common")); r_lo <- pct(mv("r_min_jr"), 1); r_hi <- pct(mv("r_max_jr"), 1)
+jr_gap <- eb$jr_rate_gap
 # The dial path (R/model.R dial_path()): the explorer's dials moved top to bottom, each to its
 # far end. The pseudo-equation reads it, as the explorer and the overview do.
 dp <- read_csv_plain(file.path(root, "comparison", "export", "r", "dial_path.csv"))
@@ -66,19 +70,15 @@ dp <- read_csv_plain(file.path(root, "comparison", "export", "r", "dial_path.csv
 # Ties to the pipeline: a drift fails the render instead of shipping.
 stopifnot(
   isTRUE(all.equal(vs[["a"]], ea$bsz_model)), isTRUE(all.equal(vs[["b"]], eb$bsz_model)),
-  isTRUE(all.equal(vr[["a"]], ea$rauh_own)),  isTRUE(all.equal(vr[["b"]], eb$rauh_own)),
+  isTRUE(all.equal(vr[["a"]], ea$rauh_own)),  isTRUE(all.equal(vr[["b"]], eb$rauh_model)),
+  isTRUE(all.equal(eb$rauh_model - jr_gap, eb$rauh_own)),
   abs(sum(bb$shapley) + gap_b) < 1e-9,
   abs(sum(bb$sequential) + gap_b) < 1e-9,
   abs(sum(dp$change) + gap_b) < 1e-9, identical(dp$step_id, EXPLORER_DIAL_ORDER),
   # the deck names these three as the main differences, in this order
-  identical(top3$step_id, c("litigation_survival", "horizon", "income_loss_share")),
+  identical(top3$step_id, c("litigation_survival", "income_loss_share", "horizon")),
   round(rj_main, 1) == rj_print,
-  isTRUE(all.equal(mv("A_5"), expected_annuity(5, sup$r_min, sup$r_max))))
-
-# The BSZ overview discounts at one rate, the middle of the range; the two agree to $0.01B.
-r_mid <- (sup$r_min + sup$r_max) / 2
-bsz_mid <- vs[["a"]] + vs[["X"]] - vs[["annual_loss"]] * (1 - (1 + r_mid)^(-sup$H)) / r_mid
-stopifnot(abs(bsz_mid - eb$bsz_model) < 0.01)
+  isTRUE(all.equal(mv("A_5"), annuity(sup$r, 5))))
 
 # R against the Python twin (comparison/export/py/), as in the report's "What reproduces".
 pdir <- file.path(root, "comparison", "export", "py")
@@ -242,7 +242,7 @@ value today (discounted). One analysis says the state
 gains about `r usd(eb$bsz_model, 0)`. The other says it loses about `r usd(-rj_main, 0)`.
 ]
 
-.footnote[<sup>1</sup> BSZ's own headline is the wealth tax alone. The net total is this OPA's choice, so both main estimates answer the same question. The BSZ overview discounts at `r pct(r_mid, 0)`; this deck averages over a rate range ([the common output](#common-output)); both give `r usd(eb$bsz_model)`.]
+.footnote[<sup>1</sup> BSZ's own headline is the wealth tax alone. The net total is this OPA's choice, so both main estimates answer the same question. The BSZ overview discounts at `r r3`, and so does this deck ([the common output](#common-output)): both give `r usd(eb$bsz_model)`.]
 
 ---
 name: common-output
@@ -263,18 +263,18 @@ common outputs and estimates both analyses on each:
 cat('<table class="dt"><tr><th>Analysis</th><th>(a) gross revenue</th><th>(b) net fiscal effect</th><th>What the authors print</th></tr>')
 cat(sprintf('<tr><td>BSZ analysis</td><td>%s</td><td><b>%s</b></td><td>%s revenue (Table 5 row 1); no net figure</td></tr>',
             usd(ea$bsz_model), usd(eb$bsz_model), usd(bsz_print, 0)))
-cat(sprintf('<tr><td>JR analysis</td><td>%s</td><td><b>%s</b></td><td>mean NPV %s; revenue "approximately %s"</td></tr>',
-            usd(ea$rauh_own), usd(eb$rauh_own), usd(rj_print), usd(pick(k$docs, "nber_headline_revenue"), 0)))
+cat(sprintf('<tr><td>JR analysis, at one %s rate</td><td>%s</td><td><b>%s</b></td><td>mean NPV %s, with a random rate; revenue "approximately %s"</td></tr>',
+            r3, usd(ea$rauh_own), usd(eb$rauh_model), usd(rj_print), usd(pick(k$docs, "nber_headline_revenue"), 0)))
 cat("</table>")
 ```
 
 .small[
 The horizon H is itself disputed: 5 years for the BSZ analysis, for ever for the JR analysis.
-Discounting uses the JR analysis's rate, drawn between `r pct(sup$r_min, 1)` and
-`r pct(sup$r_max, 1)`; the BSZ analysis takes no position on the rate. Output (b) is the one both
-main estimates answer, so the rest of the deck uses it. For the JR analysis both outputs are exact
-averages of the authors' Monte Carlo, so (b) is `r usd(eb$rauh_own)` against the `r usd(rj_print)`
-of their one seeded run.
+Both ends are discounted at one rate, `r r3` a year, the rate the BSZ overview uses. The BSZ
+analysis takes no position on the rate. The JR analysis draws it at random, a method of that
+analysis rather than a disputed input, so its effect is reported as one number, the JR rate gap
+([the two ends](#two-ends)). Output (b) is the one both main estimates answer, so the rest of the
+deck uses it. For the JR analysis, (a) is the exact average of the authors' Monte Carlo.
 ]
 
 ---
@@ -320,7 +320,7 @@ name: term-loss
 # One function, term 2: the income tax lost
 
 .highlight-box[
-**Income tax lost** = share lost &times; yearly income tax &times; years counted, discounted
+**Income tax lost** = share lost &times; yearly income tax &times; years counted, discounted at `r r3`
 ]
 
 ```{r tab-loss, results="asis"}
@@ -342,9 +342,9 @@ cat("</table>")
   those who move. BSZ: `r pct(sup$m, 0)` of their `r pct(sup$alpha, 0)` avoidance allowance is people moving,
   so `r pct(vs[["f"]], 0)` of the income tax leaves. JR: a flat `r pct(rj$f0, 0)`, the middle of a random draw between
   `r pct(f_lo, 0)` and `r pct(f_hi, 0)`.
-- **Value today of 1 dollar a year**: a dollar a year for 5 years is worth `r num(mv("A_5"))` dollars
+- **Value today of 1 dollar a year**, at `r r3`: a dollar a year for 5 years is worth `r num(mv("A_5"))` dollars
   today. A **perpetuity**, a dollar every year for ever, is worth 1/r at rate r: `r num(mv("A_inf"))`
-  dollars, averaged over the `r pct(sup$r_min, 1)` to `r pct(sup$r_max, 1)` rates.
+  dollars.
 ]
 
 ---
@@ -370,14 +370,16 @@ cat("</table>")
 - **Assets sold to pay.** BSZ assume `r fmt_input("s", sup$s)` of the tax is paid by selling
   assets, `r pct(sup$g, 0)` of each sale is a taxable gain, and California taxes gains at
   `r pct(sup$t_cg, 1)`. The JR analysis does not model it.
-- **The JR end** is `r usd(eb$rauh_own, 2)`, the exact average of the authors' Monte Carlo,
-  computed by formula. The authors print `r usd(rj_print)` from one run of the random draws
-  started from a fixed seed, which the JR reproduction gives as `r usd(rj_main, 2)`.
+- **The JR end** is `r usd(eb$rauh_model, 2)`, the JR inputs at one `r r3` rate. The JR
+  analysis's own headline is `r usd(rj_print)`: the authors draw the discount rate at random
+  between `r r_lo` and `r r_hi` and average, which is worth about `r usd(jr_gap)` more than one
+  `r r3` rate (the JR rate gap, `r usd(jr_gap, 2)`, takes the JR end to the exact average of
+  their Monte Carlo, `r usd(eb$rauh_own, 2)`).
 ]
 
 .blue-box[
-The same function returns both ends exactly. The gap to explain is
-`r usd(eb$bsz_model, 2)` &minus; (`r usd(eb$rauh_own, 2)`) = **`r usd(gap_b, 2)`**.
+The same function gives both ends at one rate. The gap to explain is
+`r usd(eb$bsz_model, 2)` &minus; (`r usd(eb$rauh_model, 2)`) = **`r usd(gap_b, 2)`**.
 ]
 
 ---
@@ -437,7 +439,7 @@ for (i in seq_along(B)) {
                                  else if (b$value >= 0) "step that raises it" else "step that lowers it")
 }
 wf <- do.call(rbind, rows)
-stopifnot(abs(wf$y1[nrow(wf) - 1] - eb$rauh_own) < 1e-9)
+stopifnot(abs(wf$y1[nrow(wf) - 1] - eb$rauh_model) < 1e-9)
 wf$lab <- ifelse(wf$type == "total", vapply(wf$v, money, "", digits = 1),
                  vapply(wf$v, money, "", digits = 1, signed = TRUE))
 wf$ly <- ifelse(wf$type == "total", ifelse(wf$v >= 0, wf$y1, wf$y1), pmin(wf$y0, wf$y1))
@@ -477,14 +479,15 @@ term <- function(i) sprintf('<span class="eq-step"><span class="op">%s</span><sp
 cat('<div class="pseudo-eq">',
     sprintf('<span class="term"><b>%s</b><small>BSZ estimate</small></span>', money(eb$bsz_model, 1)),
     paste(vapply(seq_len(nrow(dp)), term, ""), collapse = ""),
-    sprintf('<span class="eq-step"><span class="op">&asymp;</span><span class="term"><b>%s</b><small>JR estimate</small></span></span>', money(eb$rauh_own, 1)),
+    sprintf('<span class="eq-step"><span class="op">&asymp;</span><span class="term"><b>%s</b><small>JR estimate at one %s rate</small></span></span>', money(eb$rauh_model, 1), r3),
     '</div>', sep = "")
 ```
 
 .small[
 Move the BSZ panel's dials top to bottom, each to its far end: each term is what that dial
 changes. The terms add up exactly; "about equal" is only rounding. The JR estimate here is the
-exact average, `r usd(eb$rauh_own, 2)`. The printed seeded run is `r usd(rj_print)`.
+JR inputs at one `r r3` rate. The JR headline, `r usd(rj_print)`, is about `r usd(jr_gap)` lower
+because the authors draw the rate at random ([the two ends](#two-ends)).
 ]
 
 The next three slides take the three inputs with the largest Shapley values, which do not
@@ -538,9 +541,43 @@ On (a), the revenue alone: `r usd(sh("litigation_survival", ba), 1, TRUE)`.
 ]
 
 ---
+name: diff-share
+
+# Difference 2: how much of the income tax leaves?
+
+```{r claims-sh, results="asis"}
+claim_table(
+  sprintf("<b>The loss follows the people who leave.</b> What is lost is the leavers' own income tax, from SEC filings for the largest fortunes and a wealth-proportional rate for the rest (BSZ PDF p.26, Table 4): %s a year in its aggressive scenario. With no departures at the BSZ end, only the movers count: %s of the %s allowance, so %s.",
+          usd(bi$ladder$L[2], 2), pct(sup$m), pct(sup$alpha), pct(vs[["f"]])),
+  sprintf("<b>A flat %s.</b> The middle of a random draw between %s and %s, independent of how much revenue is collected (NPV_dist_v8.R; chapter Sec. 5.4). It does not depend on who leaves.",
+          pct(rj$f0), pct(f_lo), pct(f_hi)))
+```
+
+.pull-left[
+
+**Kind of claim:** <span class="og data">data</span> against <span class="og guesswork">guesswork</span>.
+The BSZ ratio rests on tax filings. The JR range is asserted.
+
+**Share lost** is the share of billionaires' yearly California income tax that leaves the state
+with those who move.
+
+]
+
+.pull-right[
+
+.highlight-box[
+**Dollars moved, on (b):** `r usd(sh("income_loss_share"), 1, TRUE)` (Shapley).
+]
+
+.small[In one fixed order (the order of [Hoopes 2026](#hoopes)) this step comes before the horizon,
+while the loss still lasts 5 years, and moves only `r usd(sq("income_loss_share"), 1, TRUE)`.]
+
+]
+
+---
 name: diff-horizon
 
-# Difference 2: for how long is the income tax lost?
+# Difference 3: for how long is the income tax lost?
 
 ```{r claims-hz, results="asis"}
 claim_table(
@@ -569,40 +606,6 @@ long a departure lasts.
 **Dollars moved, on (b):** `r usd(sh("horizon"), 1, TRUE)` (Shapley). The perpetuity multiplies
 whatever yearly loss the other inputs imply. So the step lies between the two rows of the table.
 ]
-
-]
-
----
-name: diff-share
-
-# Difference 3: how much of the income tax leaves?
-
-```{r claims-sh, results="asis"}
-claim_table(
-  sprintf("<b>The loss follows the people who leave.</b> What is lost is the leavers' own income tax, from SEC filings for the largest fortunes and a wealth-proportional rate for the rest (BSZ PDF p.26, Table 4): %s a year in its aggressive scenario. With no departures at the BSZ end, only the movers count: %s of the %s allowance, so %s.",
-          usd(bi$ladder$L[2], 2), pct(sup$m), pct(sup$alpha), pct(vs[["f"]])),
-  sprintf("<b>A flat %s.</b> The middle of a random draw between %s and %s, independent of how much revenue is collected (NPV_dist_v8.R; chapter Sec. 5.4). It does not depend on who leaves.",
-          pct(rj$f0), pct(f_lo), pct(f_hi)))
-```
-
-.pull-left[
-
-**Kind of claim:** <span class="og data">data</span> against <span class="og guesswork">guesswork</span>.
-The BSZ ratio rests on tax filings. The JR range is asserted.
-
-**Share lost** is the share of billionaires' yearly California income tax that leaves the state
-with those who move.
-
-]
-
-.pull-right[
-
-.highlight-box[
-**Dollars moved, on (b):** `r usd(sh("income_loss_share"), 1, TRUE)` (Shapley).
-]
-
-.small[In one fixed order (the order of [Hoopes 2026](#hoopes)) this step comes before the horizon,
-while the loss still lasts 5 years, and moves only `r usd(sq("income_loss_share"), 1, TRUE)`.]
 
 ]
 
@@ -642,7 +645,7 @@ name: hoopes
 Jeffrey Hoopes, "Galle v Rauh" (SSRN 6428578), compares **earlier versions**: the February 2026
 GGSS expert report, on which the BSZ analysis builds, and the March 2026 version by Rauh, Jaros,
 Kearney, Doran and Cosso. His Figure 2 is a waterfall that prints no values, so his column is read
-off the chart. Ours follows his order and ends at the September 2026 version.
+off the chart. Ours follows his order and ends at the September 2026 version, at one `r r3` rate.
 ]
 
 ```{r tab-hoopes, results="asis"}
@@ -658,7 +661,7 @@ for (i in which(keep)) {
 cat(sprintf('<tr class="tot"><td>Where the waterfall ends</td><td>%s</td><td>%s</td></tr>',
             money(sum(hz$hoopes, na.rm = TRUE), 1), money(sum(hz$ours, na.rm = TRUE), 1)))
 cat("</table>")
-stopifnot(abs(sum(hz$ours, na.rm = TRUE) - eb$rauh_own) < 1e-9)
+stopifnot(abs(sum(hz$ours, na.rm = TRUE) - eb$rauh_model) < 1e-9)
 ```
 
 .small[
@@ -678,8 +681,9 @@ name: next
 
 .small[
 - At the BSZ inputs the function returns Table 5 row 1, `r usd(ea$bsz_model, 3)` (printed `r usd(bsz_print, 0)`).
-- At the JR inputs it returns the exact average of the authors' Monte Carlo, `r usd(eb$rauh_own, 3)`
-  (printed `r usd(rj_print)` from one seeded run).
+- At the JR inputs it returns the authors' expected revenue exactly, and `r usd(eb$rauh_model, 3)` at one
+  `r r3` rate. Less the JR rate gap, `r usd(jr_gap, 3)`, that is the exact average of their Monte Carlo,
+  `r usd(eb$rauh_own, 3)` (printed `r usd(rj_print)` from one seeded run).
 - The Shapley steps add up to the gap, and a test checks them against a brute-force average over orders.
 - A Python twin writes the same tables. The largest difference from R is `r if (py_ok) formatC(maxdiff, format = "e", digits = 1) else "not checked"`; the tests require 1e-9.
 - **Not reproduced here:** the comparison takes each analysis's exported inputs and outputs as

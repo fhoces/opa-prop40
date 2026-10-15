@@ -228,13 +228,16 @@ The full crosswalk of disputed inputs, with every page reference checked against
   72; the README prints 72.06; the person-level file sums to
   `r formatC(pick(oo, "nber_ceiling", "value"), format = "f", digits = 2)` (the JR analysis's
   mismatch 4). The comparison uses the script's 72, so the common function returns the
-  authors' own mean exactly and the bridge has no model-difference step.
+  authors' own expected revenue exactly and the bridge has no model-difference step.
 - **The litigation weight has no multiplier in the code.** The README applies q = 0.50 to the
   recognized base; the script instead draws revenue uniformly between 0 and the ceiling, whose
   mean is the same half (mismatch 5). The comparison reads that mean as the weight `q`.
 - **The printed NPV is one run, not the expectation.** The exact expectation of the NBER
-  Monte Carlo, the bridge's JR end, is `r usd(eb$rauh_own, 2)` against a printed
-  `r usd(ep$printed_value[ep$endpoint_id == "rauh_nber_npv"])`. The JR pipeline reproduces
+  Monte Carlo is `r usd(eb$rauh_own, 2)` against a printed
+  `r usd(ep$printed_value[ep$endpoint_id == "rauh_nber_npv"])`. The bridge's JR end discounts
+  at one `r pct(ex$meta$value[ex$meta$key == "r_common"])` rate instead, `r usd(eb$rauh_model, 2)`; the JR rate gap,
+  `r usd(eb$jr_rate_gap, 2)`, is what drawing the rate at random is worth
+  ([the report](repro.html#the-jr-rate-gap)). The JR pipeline reproduces
   the seeded run as `r usd(ep$contract_value[ep$endpoint_id == "rauh_nber_npv"], 3)`, the JR
   main estimate.
 - **Both analyses' discount factors are right.** One reading magnifies the loss by a factor
