@@ -2,6 +2,7 @@
 "ggss_headline","GGSS headline: BSZ model + their rounding step",100,100,"GGSS p.4",103.815,0
 "ggss_scoring","GGSS estimate before rounding (p.4, '$104 billion')",103.815,104,"GGSS p.4",103.815,0.184999999999988
 "bsz_tab5_row1","BSZ Table 5 row 1 wealth tax revenue = model at all-BSZ inputs",103.815,104,"BSZ Table 5, PDF p.39",103.815,0.184999999999988
-"bsz_net_constructed","BSZ row 1 net of its own extra income tax and 5 years of losses (not printed by BSZ; constructed here)",106.795627680481,NA,"",NA,NA
+"bsz_net_constructed","BSZ row 1 net of its own extra income tax and 5 years of losses (not printed by BSZ; constructed here)",106.795964515949,NA,"",NA,NA
 "rauh_nber_revenue_mc","JR expected revenue in the Monte Carlo, E[WT] = (0 + 72)/2 = model at all-JR inputs",36,NA,"",NA,NA
-"rauh_nber_npv","JR mean NPV, analytic expectation of the Monte Carlo = model at all-JR inputs",-38.9802887015985,-38.9,"Jaros-Rauh NBER p.1, p.35",-38.8863482422633,0.0802887015984979
+"rauh_nber_npv","JR mean NPV, analytic expectation of the Monte Carlo (the rate drawn between 1.5% and 4.5%)",-38.9802887015985,-38.9,"Jaros-Rauh NBER p.1, p.35",-38.8863482422633,0.0802887015984979
+"rauh_common_end","JR end of the common function: the JR inputs at the one common rate (JR mean NPV + jr_rate_gap; not printed by JR)",-32.25,NA,"",NA,NA

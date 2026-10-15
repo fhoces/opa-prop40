@@ -19,8 +19,10 @@ test_that("the full chain closes: GGSS printed -> BSZ -> the steps -> JR Septemb
     e <- en[en$horizon_setting == "own" & en$output == o, ]
     ggss <- res$endpoints$value[res$endpoints$endpoint_id == "ggss_headline"]
     b <- br[br$horizon_setting == "own" & br$output == o, ]
-    chain <- e$bsz_model + sum(b$shapley) + e$rauh_residual
-    expect_equal(chain, e$rauh_own, tolerance = 1e-12, label = o)
+    # the steps reach the JR end at one rate; the JR rate gap separates it from the JR headline
+    chain <- e$bsz_model + sum(b$shapley)
+    expect_equal(chain, e$rauh_model, tolerance = 1e-12, label = o)
+    expect_equal(chain - e$jr_rate_gap, e$rauh_own, tolerance = 1e-12, label = o)
   }
 })
 

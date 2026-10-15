@@ -64,13 +64,18 @@ def read_contracts(root: str) -> dict:
 
 
 # ---- model ---------------------------------------------------------------------
-def expected_annuity(H: float, r_min: float, r_max: float) -> float:
+# One discount rate for both ends (author decision 2026-10-15): the row common_discount_rate of
+# comparison/data/document-inputs.csv, read by R and by this twin (COMMON_RATE_ID in R/model.R).
+COMMON_RATE_ID = "common_discount_rate"
+
+
+def annuity(r: float, H: float) -> float:
+    """The value of 1 a year for H years at rate r; H = inf gives the perpetuity 1/r."""
     if math.isinf(H):
-        return math.log(r_max / r_min) / (r_max - r_min)
+        return 1 / r
     if H == 0:
         return 0.0
-    val, _ = quad(lambda r: (1 - (1 + r) ** (-H)) / r, r_min, r_max, epsabs=0, epsrel=1e-12)
-    return val / (r_max - r_min)
+    return (1 - (1 + r) ** (-H)) / r
 
 
 def score_common(x: dict) -> dict:
@@ -82,7 +87,7 @@ def score_common(x: dict) -> dict:
     WT = R0 * (1 - x["alpha"]) * S * x["q"]
     X = WT * x["s"] * x["g"] * x["t_cg"]
     f = x["alpha"] * x["m"] + x["own"] * x["L"] / x["C"] + x["f0"]
-    A = expected_annuity(x["H"], x["r_min"], x["r_max"])
+    A = annuity(x["r"], x["H"])
     PV = f * x["C"] * A
     return {"a": WT, "b": WT + X - PV, "R0": R0, "S": S, "d_conf": d_conf, "D": D, "X": X,
             "f": f, "annual_loss": f * x["C"], "annuity": A, "PV": PV}
@@ -251,6 +256,17 @@ def sequential_bridge(sup, rauh, order, output):
     return out
 
 
+# The JR analysis's own expectation draws the rate r ~ U[r_min, r_max] and averages the annuity;
+# the common function uses one rate. The difference is jr_rate_gap (see R/model.R).
+def expected_annuity(H: float, r_min: float, r_max: float) -> float:
+    if math.isinf(H):
+        return math.log(r_max / r_min) / (r_max - r_min)
+    if H == 0:
+        return 0.0
+    val, _ = quad(lambda r: (1 - (1 + r) ** (-H)) / r, r_min, r_max, epsabs=0, epsrel=1e-12)
+    return val / (r_max - r_min)
+
+
 def rauh_nber_expectation(wt_min, wt_max, f_min, f_max, c_min, c_max, r_min, r_max, H=math.inf):
     e_wt = (wt_min + wt_max) / 2
     return {"a": e_wt, "b": e_wt - (f_min + f_max) / 2 * (c_min + c_max) / 2 *
@@ -282,8 +298,7 @@ def bridge_inputs(k):
     L_seven = (pick(si, "pre2026_leavers_annual_inctax") + pick(si, "brin_annual_inctax") +
                pick(si, "resid_inctax_rate") * pick(oi, "nber_spielberg_sacks_net_worth"))
     shared = {"tau": tau, "m": pick(si, "mobility_share"), "g": pick(si, "gains_share"),
-              "t_cg": pick(si, "ca_cg_rate"),
-              "r_min": pick(oi, "rauh_mc_r_min"), "r_max": pick(oi, "rauh_mc_r_max")}
+              "t_cg": pick(si, "ca_cg_rate"), "r": pick(d, COMMON_RATE_ID)}
     sup = dict(shared, W_noncit=noncit, W_core=W0 - noncit, lam=0.0, re=0.0,
                dep_b=0.0, dep_j=0.0, L=0.0,
                alpha=pick(si, "avoidance_rate"), q=1.0,
@@ -338,7 +353,7 @@ def build_all(k):
                                "disputes_row": row, "title": title, "kind": kind})
             ends.append({"horizon_setting": st, "output": out,
                          "bsz_model": v_sup[out], "rauh_model": v_rauh[out],
-                         "rauh_own": own_n[out], "rauh_residual": own_n[out] - v_rauh[out]})
+                         "rauh_own": own_n[out], "jr_rate_gap": v_rauh[out] - own_n[out]})
     bridge.sort(key=lambda r: (r["horizon_setting"], r["output"], IDS.index(r["step_id"])))
     board.sort(key=lambda r: (r["output"], settings.index(r["horizon_setting"]), r["mask"]))
     ea = [e for e in ends if e["horizon_setting"] == "own" and e["output"] == "a"][0]
@@ -351,7 +366,8 @@ def build_all(k):
             ("bsz_tab5_row1", ea["bsz_model"], pick(so, "tab5_row1_wealth_tax_revenue", "printed_value")),
             ("bsz_net_constructed", eb["bsz_model"], math.nan),
             ("rauh_nber_revenue_mc", ea["rauh_own"], math.nan),
-            ("rauh_nber_npv", eb["rauh_own"], pick(oo, "npv_mc_nber_mean", "printed_value"))]
+            ("rauh_nber_npv", eb["rauh_own"], pick(oo, "npv_mc_nber_mean", "printed_value")),
+            ("rauh_common_end", eb["rauh_model"], math.nan)]
     for eid, v, p in vals:
         endpoints.append({"endpoint_id": eid, "value": v, "printed_value": p,
                           "abs_diff_printed": abs(v - p)})
@@ -360,8 +376,9 @@ def build_all(k):
         ("mc_expected", ea["rauh_own"]),
         ("preferred_about_30", pick(d, "nber_headline_revenue"))]]
 
-    A5 = expected_annuity(5, sup["r_min"], sup["r_max"])
-    Ainf = expected_annuity(math.inf, sup["r_min"], sup["r_max"])
+    # every present value on the page is at the one common rate
+    A5 = annuity(sup["r"], 5)
+    Ainf = annuity(sup["r"], math.inf)
     loss = []
     for sid, al in [("bsz_row1", -pick(so, "tab5_row1_annual_ca_inctax_loss")),
                     ("bsz_row3", -pick(so, "tab5_row3_annual_ca_inctax_loss")),
@@ -384,7 +401,7 @@ def build_all(k):
             ("additional_behavioral_response",
              sqa["avoidance"] + sqa["litigation_survival"]),
             ("real_estate_exclusion", sqa["real_estate"]),
-            ("rauh_rounding", ea["rauh_residual"]),
+            ("rauh_rounding", ea["jr_rate_gap"]),
             ("income_tax_loss", eb["rauh_own"] - ea["rauh_own"])]
     hoopes = [{"step_id": sid, "ours": v,
                "hoopes": num(hz[sid]["delta"]) if sid in hz else math.nan,
@@ -397,7 +414,11 @@ def build_all(k):
             {"key": "R0_rauh", "value": s_r["R0"]}, {"key": "S_rauh", "value": s_r["S"]},
             {"key": "X_bsz", "value": score_common(sup)["X"]},
             {"key": "PV_bsz_own", "value": score_common(sup)["PV"]},
-            {"key": "f_rauh", "value": s_r["f"]}, {"key": "C_rauh", "value": rauh["C"]}]
+            {"key": "f_rauh", "value": s_r["f"]}, {"key": "C_rauh", "value": rauh["C"]},
+            {"key": "r_common", "value": sup["r"]}, {"key": "r_min_jr", "value": na["r_min"]},
+            {"key": "r_max_jr", "value": na["r_max"]},
+            {"key": "A_inf_jr_draw", "value": expected_annuity(math.inf, na["r_min"], na["r_max"])},
+            {"key": "jr_rate_gap", "value": eb["jr_rate_gap"]}]
     return {"bridge": bridge, "ends": ends, "endpoints": endpoints, "anchors": anchors,
             "loss": loss, "hoopes": hoopes, "meta": meta, "switchboard": board,
             "slider_sample": slider_sample(sup, rauh, ladder),

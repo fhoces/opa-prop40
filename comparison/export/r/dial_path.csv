@@ -1,9 +1,9 @@
 "step","step_id","symbol","title","from","to","change"
-1,"base_list","W","Forbes source: which list and valuation date",106.795627680481,100.758463536481,-6.03716414400002
-2,"confirmed_departures","D","Billionaires already departed",100.758463536481,72.5501733769964,-28.2082901594849
-3,"avoidance","a","Avoidance and evasion allowance",72.5501733769964,81.5317552525836,8.98158187558718
-4,"litigation_survival","q","Chance the tax survives litigation",81.5317552525836,40.1305674722411,-41.4011877803425
-5,"income_loss_share","f","Share of billionaire income tax lost",40.1305674722411,35.0890889046744,-5.04147856756673
-6,"income_level","C","Billionaires' annual CA income tax",35.0890889046744,32.0197316715151,-3.06935723315925
-7,"horizon","H","How long the income tax loss lasts",32.0197316715151,-33.579100921256,-65.5988325927711
-8,"minor_inputs","minor","Three minor inputs",-33.579100921256,-38.9802887015985,-5.4011877803425
+1,"base_list","W","Forbes source: which list and valuation date",106.795964515949,100.758800371949,-6.03716414400002
+2,"confirmed_departures","D","Billionaires already departed",100.758800371949,72.5511204547858,-28.2076799171632
+3,"avoidance","a","Avoidance and evasion allowance",72.5511204547858,81.5323654949052,8.98124504011943
+4,"litigation_survival","q","Chance the tax survives litigation",81.5323654949052,40.1311777145627,-41.4011877803425
+5,"income_loss_share","f","Share of billionaire income tax lost",40.1311777145627,35.092120423884,-5.0390572906787
+6,"income_level","C","Billionaires' annual CA income tax",35.092120423884,32.0242373145617,-3.06788310932234
+7,"horizon","H","How long the income tax loss lasts",32.0242373145617,-26.8488122196575,-58.8730495342192
+8,"minor_inputs","minor","Three minor inputs",-26.8488122196575,-32.25,-5.4011877803425

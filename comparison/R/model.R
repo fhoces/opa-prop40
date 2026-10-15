@@ -3,9 +3,10 @@
 # ONE function estimates both analyses. Every disputed input is an argument that takes
 # either the BSZ analysis's value (GGSS July 2026 / BSZ August 2026, which share their
 # benchmark) or the JR analysis's (Jaros and Rauh, NBER, September 2026). At the all-BSZ
-# setting it must return BSZ Table 5 row 1; at the all-JR setting it must return the
-# expectation of the JR analysis's own Monte Carlo (its inputs are independent uniforms,
-# so the expectation has a closed form and needs no random draws).
+# setting it must return BSZ Table 5 row 1. At the all-JR setting it returns the JR analysis's
+# expected revenue exactly; its net fiscal effect differs from the JR headline (the exact mean of
+# the authors' Monte Carlo) by jr_rate_gap only, because the common function discounts at one
+# rate where the Monte Carlo draws the rate (see annuity() and rauh_nber_expectation()).
 #
 #   Wn  = (W_core + W_noncit) * (1 - re)                   the base, net of real estate
 #   D   = (1 - lam) * dep_b + lam * dep_j                  wealth already departed, valued on the
@@ -24,19 +25,24 @@
 #         L dollars a year, as BSZ Table 5 counts it for the people who leave; with own = 0
 #         (the JR analysis) none of that, and
 #         a flat share (f0, the JR analysis's independent draw)
-#   PV  = f * C * E_r[ annuity(r, H) ]                     present value of the lost income tax
+#   PV  = f * C * annuity(r, H)                          present value of the lost income tax
 #   NET = WT + X - PV                                      output (b), net fiscal effect
 #
 # annuity(r, H) = (1 - (1 + r)^-H) / r, the value of 1 per year for H years; H = Inf
-# gives the JR perpetuity 1/r and r -> 0 gives H. r ~ U[r_min, r_max] as in the JR code;
-# the BSZ analysis takes no position on r (it disputes the horizon), so r is a shared
-# input, not a bridge step.
+# gives the perpetuity 1/r and r -> 0 gives H. r is ONE rate, 3% (author decision 2026-10-15),
+# shared by both ends: the rate the BSZ overview uses and the middle of the JR analysis's
+# 1.5% to 4.5% draw. It is the row common_discount_rate of comparison/data/document-inputs.csv,
+# the one place R, Python and the pages read it from (COMMON_RATE_ID). The BSZ analysis takes
+# no position on r and the JR analysis draws it at random, a method, not an input; so r is not
+# a bridge step, and the JR end of the common function differs from the JR headline by
+# jr_rate_gap (rauh_nber_expectation() below).
 
-expected_annuity <- function(H, r_min, r_max) {
-  if (is.infinite(H)) return(log(r_max / r_min) / (r_max - r_min))
+COMMON_RATE_ID <- "common_discount_rate"
+
+annuity <- function(r, H) {
+  if (is.infinite(H)) return(1 / r)
   if (H == 0) return(0)
-  f <- function(r) (1 - (1 + r)^(-H)) / r
-  stats::integrate(f, r_min, r_max, rel.tol = 1e-12, abs.tol = 0)$value / (r_max - r_min)
+  (1 - (1 + r)^(-H)) / r
 }
 
 score_common <- function(x) {
@@ -48,7 +54,7 @@ score_common <- function(x) {
   WT  <- R0 * (1 - x$alpha) * S * x$q
   X   <- WT * x$s * x$g * x$t_cg
   f   <- x$alpha * x$m + x$own * x$L / x$C + x$f0
-  A   <- expected_annuity(x$H, x$r_min, x$r_max)
+  A   <- annuity(x$r, x$H)
   PV  <- f * x$C * A
   c(a = WT, b = WT + X - PV, R0 = R0, S = S, d_conf = d_conf, D = D, X = X, f = f,
     annual_loss = f * x$C, annuity = A, PV = PV)
@@ -265,8 +271,22 @@ sequential_bridge <- function(sup, rauh, order, output = c("a", "b")) {
 
 # The JR analysis's own expectation (Jaros and Rauh, NBER, September 2026, NPV_dist_v8.R):
 # WT ~ U[0, 72], f ~ U[0.30, 0.60] independent of WT, C ~ U[3.3, 5.8], r ~ U[1.5%, 4.5%],
-# all independent, so E[NPV] = E[WT] - E[f] E[C] E[annuity]. At H = Inf this is -38.980,
-# which rounds to the printed -38.9 (one seeded run of the same draws, p.1 and p.35).
+# all independent, so E[NPV] = E[WT] - E[f] E[C] E_r[annuity(r, H)]. At H = Inf this is
+# -38.980, which rounds to the printed -38.9 (one seeded run of the same draws, p.1 and p.35).
+#
+# The JR rate gap. The common function discounts at one rate r (3%); the JR Monte Carlo draws
+# r uniformly between 1.5% and 4.5% and averages. Averaging over the rate is worth more than
+# the middle rate, because 1/r is convex: a perpetuity is ln(3)/0.03 = 36.6 averaged over the
+# draw and 1/0.03 = 33.3 at 3%. So the JR end of the common function exceeds the JR headline by
+#   jr_rate_gap = f0 * C * (E_r[annuity(r, H)] - annuity(0.03, H)),
+# about +6.7 in perpetuity. build_all() exports it (ends.csv, meta.csv, endpoints.csv).
+expected_annuity <- function(H, r_min, r_max) {
+  if (is.infinite(H)) return(log(r_max / r_min) / (r_max - r_min))
+  if (H == 0) return(0)
+  f <- function(r) (1 - (1 + r)^(-H)) / r
+  stats::integrate(f, r_min, r_max, rel.tol = 1e-12, abs.tol = 0)$value / (r_max - r_min)
+}
+
 rauh_nber_expectation <- function(wt_min, wt_max, f_min, f_max, c_min, c_max, r_min, r_max, H = Inf) {
   e_wt <- (wt_min + wt_max) / 2
   c(a = e_wt, b = e_wt - (f_min + f_max) / 2 * (c_min + c_max) / 2 *
