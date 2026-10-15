@@ -144,6 +144,10 @@ test_that("the sliders' ends are the two analyses, and the departures dial stops
   expect_equal(vapply(0:4, function(p) slider_inputs(bi$rauh, bi$sup, list(horizon = p), bi$ladder)$H, 0),
                rev(SLIDER_HORIZONS))
   expect_identical(slider_max("base_list"), 1L); expect_identical(slider_max("confirmed_departures"), 2L)
+  expect_identical(slider_max("income_loss_share"), 4L)
+  # f at the middle stop of the share-lost dial is halfway between the two rules' f
+  fx <- function(p) score_common(slider_inputs(bi$sup, bi$rauh, list(income_loss_share = p), bi$ladder))[["f"]]
+  expect_equal(fx(2), (fx(0) + fx(4)) / 2, tolerance = 1e-12)
   # the middle stop of the departures dial in the BSZ panel is the BSZ analysis's own Table 5 row 3
   x1 <- slider_inputs(bi$sup, bi$rauh, list(confirmed_departures = 1), bi$ladder)
   expect_equal(score_common(x1)[["a"]], pick(k$bsz$outputs, "tab5_row3_wealth_tax_revenue"), tolerance = 1e-9)

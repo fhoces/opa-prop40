@@ -130,7 +130,7 @@ SLIDER_HORIZONS = [5, 10, 20, 50, math.inf]
 
 
 def slider_max(id: str) -> int:
-    return {"base_list": 1, "confirmed_departures": 2, "income_loss_share": 1}.get(id, SLIDER_STEPS)
+    return {"base_list": 1, "confirmed_departures": 2}.get(id, SLIDER_STEPS)
 
 
 def slider_inputs(frm: dict, to: dict, positions: dict, ladder: dict | None = None) -> dict:

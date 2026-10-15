@@ -252,7 +252,7 @@ render_site <- function(root = comparison_root(),
     confirmed_departures = "Wealth gone by the 1 January 2026 residency date, out of reach. Middle stop: the four leavers of the BSZ aggressive case.",
     avoidance = "The share of the tax lost to avoidance and evasion other than leaving.",
     litigation_survival = "The chance that the tax survives a court challenge, applied to the revenue.",
-    income_loss_share = "The share of billionaires' California income tax lost because people leave the state.",
+    income_loss_share = "The share of billionaires' income tax California loses to people leaving. Under the BSZ rule it depends on the number of leavers.",
     income_level = "Billionaires' yearly California income tax, the amount at risk each year.",
     horizon = sprintf("How many years the lost income tax is counted, discounted at %s to %s a year. Middle stops: %s years.",
                       tok$r_min, tok$r_max, paste(hz_fin[-1], collapse = ", ") |> sub(pattern = ", ([^,]*)$", replacement = " and \\1")),
@@ -276,7 +276,7 @@ render_site <- function(root = comparison_root(),
       rjkdc = "JR: the revenue weighted by 50%, the accounting threshold for a tax more likely than not to stand."),
     income_loss_share = c(
       bsz = "The BSZ rule: the state loses only the income tax of those who leave, the people in D and the half of avoiders (a) who move away.",
-      rjkdc = sprintf("The JR rule: the state loses %s of all billionaires' income tax, whoever leaves (the middle of a 30%% to 60%% guess), plus any movers from a.",
+      rjkdc = sprintf("The JR rule: %s of all billionaires' income tax, whoever leaves (the middle of a 30%% to 60%% guess), plus movers from a.",
                       pct(bi0$rauh$f0))),
     income_level = c(
       bsz = "BSZ: from tax data, since top wealth holders earn about half of what top earners do.",
@@ -296,8 +296,17 @@ render_site <- function(root = comparison_root(),
     asset_sales = c(
       bsz = "BSZ: one third, an assumption (BSZ p.24: \"paid one-third by selling assets\").",
       rjkdc = "JR: does not count this extra income tax."))
+  # Each end's tip closes with the kind of that analysis's value (bridge_steps()$kind; a step
+  # whose kind reads "X vs Y" is X in the BSZ analysis and Y in the JR analysis).
+  end_kind <- function(id, side) {
+    k <- steps$kind[steps$step_id == id]
+    if (!length(k)) return("")
+    k <- strsplit(k, " vs ", fixed = TRUE)[[1]]
+    paste0(" Kind: ", if (side == "bsz") k[1] else k[length(k)], ".")
+  }
   end_span <- function(panel, id, side, txt) {
     tp <- end_tips[[id]][side]
+    if (!is.null(tp) && !is.na(tp)) tp <- paste0(tp, end_kind(id, side))
     if (is.null(tp) || is.na(tp))
       return(sprintf('<span class="sl-end sl-%s"><span class="sl-end-v">%s</span></span>', if (side == "bsz") "lo" else "hi", txt))
     sprintf(paste0('<span class="sl-end sl-%1$s has-tip" tabindex="0" aria-describedby="%2$s-%3$s-%4$s-tip">',

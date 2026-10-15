@@ -518,7 +518,7 @@
       return "mixed";
     }
     var e = INPUT[id];
-    if (id === "income_loss_share") return pct(fEnds(panel)[p === 0 ? panel : other]);
+    if (id === "income_loss_share") return pct(M.scoreCommon(x).f);   // the ends and the stops between
     if (p === 0) return e[panel + "_text"];
     if (p === e.max) return e[other + "_text"];
     if (id === "confirmed_departures")   // the middle stop: the BSZ analysis's own four leavers
