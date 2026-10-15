@@ -182,6 +182,17 @@ DIAL_WORDS <- c(base_list = "wealth", confirmed_departures = "departed", avoidan
 # take, the longest a value-and-why cell may run, and the short source a cell cites, cut from the
 # source columns of export/r/inputs.csv (the first page, section or script line they name).
 CREDIBILITY_LEVELS <- c("BSZ more credible", "JR more credible", "About equally credible", "Not yet assessed")
+# Dials the author assesses as one group (author request 2026-10-15): one row each in the
+# quantities table, in the order of each group's first dial on the page. D, a and f go together
+# because under the BSZ rule f is built from the leavers in D and the movers among the avoiders
+# in a; H and r together set A(H, r); the three minor inputs share their switch.
+QUANTITY_GROUPS <- list(
+  base_list = "base_list",
+  departures_share = c("confirmed_departures", "avoidance", "income_loss_share"),
+  litigation_survival = "litigation_survival",
+  income_level = "income_level",
+  horizon_rate = c("horizon", "discount_rate"),
+  minor_inputs = c("noncitizens", "real_estate", "asset_sales"))
 QUANTITY_WORDS <- 25
 QUANTITY_SOURCE_PATTERN <- paste0(
   "BSZ PDF pp?\\.[0-9]+(-[0-9]+)?|GGSS( [0-9]+ [A-Z][a-z]+ [0-9]{4})? pp?\\.[0-9]+|BSZ Table [0-9]+|",
@@ -439,17 +450,18 @@ render_site <- function(root = comparison_root(),
     paste0(" Kind: ", if (side == "bsz") k[1] else k[length(k)], ".")
   }
   # ---- "But what are the actual quantities?" (author request 2026-10-15): after the panels and
-  # the Apply block, one row per dial in the boxes' visual order (the revenue box, the loss box,
-  # then the three minor inputs one by one). Each analysis's cell is its value as the dial's end
-  # prints it, the end's tip (end_tips above, without its "BSZ:" or "JR:" lead), a short source
+  # the Apply block, one row per group of dials the author assesses together (QUANTITY_GROUPS).
+  # Each analysis's cell holds one line per dial: its value as the dial's end prints it, the end's tip (end_tips above, without its "BSZ:" or "JR:" lead), a short source
   # cut from the dial's source column of export/r/inputs.csv, and the tip's "Kind:" label, so a
   # cell cannot drift from the tip it repeats. If a cell runs past QUANTITY_WORDS words it drops
   # the tip's parentheses, then keeps its first sentence only. The last column is the OPA
   # author's own judgement, read from comparison/data/author-credibility.csv; no code or agent
   # writes an assessment.
   q_ids <- c(unlist(lapply(EXPLORER_BOXES, `[[`, "ids"), use.names = FALSE), EXPLORER_MINOR)
+  stopifnot(setequal(unlist(QUANTITY_GROUPS, use.names = FALSE), q_ids),
+            !anyDuplicated(unlist(QUANTITY_GROUPS, use.names = FALSE)))
   cred <- read_csv_plain(file.path(root, "comparison", "data", "author-credibility.csv"))
-  stopifnot(setequal(cred$step_id, q_ids), !anyDuplicated(cred$step_id),
+  stopifnot(setequal(cred$group_id, names(QUANTITY_GROUPS)), !anyDuplicated(cred$group_id),
             all(cred$assessment %in% CREDIBILITY_LEVELS))
   q_cell <- function(id, side) {
     ii <- inp[inp$step_id == id, ]
@@ -475,15 +487,23 @@ render_site <- function(root = comparison_root(),
     sprintf('<span class="q-word">%s</span>', esc(unname(short_labels[id])))
   q_heads <- c("Dial", "The BSZ analysis's value and why", "The JR analysis's value and why",
                "Which is more credible (the author of this OPA)")
-  tok$quantity_rows <- paste(vapply(q_ids, function(id) {
-    cr <- cred[cred$step_id == id, ]
+  # one row per group: the dial column names every dial in it, and each analysis's cell holds one
+  # line per dial, led by the dial's symbol when the group has more than one
+  q_line <- function(id, side, many) paste0(
+    '<span class="q-line" data-id="', id, '">',
+    if (many) paste0(q_dial(id), " ") else "", q_cell(id, side)$html, "</span>")
+  tok$quantity_rows <- paste(vapply(names(QUANTITY_GROUPS), function(g) {
+    ids <- QUANTITY_GROUPS[[g]]; many <- length(ids) > 1
+    cr <- cred[cred$group_id == g, ]
     has <- function(x) length(x) == 1 && !is.na(x) && nzchar(as.character(x))
     verdict <- paste0(esc(cr$assessment), if (has(cr$note)) paste0(". ", esc(cr$note)) else "",
                       if (has(cr$date)) paste0(" (", esc(as.character(cr$date)), ")") else "")
     sprintf(paste0('      <tr data-id="%s"><td data-label="%s">%s</td><td data-label="%s">%s</td>',
                    '<td data-label="%s">%s</td><td data-label="%s" class="q-cred">%s</td></tr>'),
-            id, q_heads[1], q_dial(id), esc(q_heads[2]), q_cell(id, "bsz")$html,
-            esc(q_heads[3]), q_cell(id, "rjkdc")$html, esc(q_heads[4]), verdict)
+            g, q_heads[1], paste(vapply(ids, q_dial, ""), collapse = "<br>"),
+            esc(q_heads[2]), paste(vapply(ids, q_line, "", "bsz", many), collapse = ""),
+            esc(q_heads[3]), paste(vapply(ids, q_line, "", "rjkdc", many), collapse = ""),
+            esc(q_heads[4]), verdict)
   }, ""), collapse = "\n")
   tok$quantity_heads <- paste(sprintf("<th>%s</th>", esc(q_heads)), collapse = "")
   # Which analysis's value sits at the left end of dial `id` in `panel`: the smaller one (ties

@@ -501,7 +501,7 @@ test_that("every relative link on both pages resolves to a file in the repo (sub
   }
 })
 
-test_that("the quantities section: eleven dials in the boxes' order, credibility from the author's file", {
+test_that("the quantities section: one row per group of dials, credibility from the author's file", {
   html <- read_page(explorer)
   at <- function(x) regexpr(x, html, fixed = TRUE)[[1]]
   # after the panels and the Apply block, before the notes fold
@@ -514,37 +514,45 @@ test_that("the quantities section: eleven dials in the boxes' order, credibility
   th <- regmatches(head, gregexpr("(?<=<th>)[^<]*(?=</th>)", head, perl = TRUE))[[1]]
   expect_identical(th, esc(c("Dial", "The BSZ analysis's value and why", "The JR analysis's value and why",
                              "Which is more credible (the author of this OPA)")))
-  expect_length(th, 4)
-  # one row per dial, the boxes' visual order, then the three minor inputs one by one
+  # one row per group the author assesses together (author request 2026-10-15), covering every
+  # dial once: W; D, a and f; q; C; H and r; the three minor inputs
+  expect_identical(QUANTITY_GROUPS, list(
+    base_list = "base_list",
+    departures_share = c("confirmed_departures", "avoidance", "income_loss_share"),
+    litigation_survival = "litigation_survival", income_level = "income_level",
+    horizon_rate = c("horizon", "discount_rate"),
+    minor_inputs = c("noncitizens", "real_estate", "asset_sales")))
+  expect_setequal(unlist(QUANTITY_GROUPS, use.names = FALSE),
+                  c(unlist(lapply(EXPLORER_BOXES, `[[`, "ids"), use.names = FALSE), EXPLORER_MINOR))
   rows <- regmatches(html, gregexpr('<tr data-id="[a-z_]+">.*?</tr>', html))[[1]]
-  ids <- sub('^<tr data-id="([a-z_]+)">.*$', "\\1", rows)
-  expect_length(rows, 11)
-  expect_identical(ids, c("base_list", "confirmed_departures", "avoidance", "litigation_survival",
-                          "income_loss_share", "income_level", "horizon", "discount_rate",
-                          "noncitizens", "real_estate", "asset_sales"))
-  expect_identical(ids, c(unlist(lapply(EXPLORER_BOXES, `[[`, "ids"), use.names = FALSE), EXPLORER_MINOR))
-  # the credibility column is the author's file, row by row; today every row is "Not yet assessed"
+  gids <- sub('^<tr data-id="([a-z_]+)">.*$', "\\1", rows)
+  expect_identical(gids, names(QUANTITY_GROUPS))
+  # the credibility column is the author's file, one line per group; today every row is "Not yet assessed"
   cred <- read_csv_plain(file.path(root, "comparison", "data", "author-credibility.csv"))
-  expect_identical(names(cred), c("step_id", "assessment", "note", "date"))
+  expect_identical(names(cred), c("group_id", "dials", "assessment", "note", "date"))
   expect_true(all(cred$assessment %in% CREDIBILITY_LEVELS))
   expect_true(all(cred$assessment == "Not yet assessed"))
   cell <- function(r, k) regmatches(r, gregexpr("<td[^>]*>.*?</td>", r))[[1]][k]
   txt <- function(x) gsub("&#39;", "'", gsub("&amp;", "&", gsub("<[^>]*>", "", x), fixed = TRUE), fixed = TRUE)
   for (i in seq_along(rows))
-    expect_identical(txt(cell(rows[i], 4)), cred$assessment[cred$step_id == ids[i]], label = ids[i])
-  # every value-and-why cell: within 25 words, and it carries its Kind label
-  for (i in seq_along(rows)) for (k in 2:3) {
-    x <- txt(cell(rows[i], k))
-    expect_lte(length(strsplit(x, " ")[[1]]), 25, label = paste(ids[i], k, x))
-    expect_true(grepl("Kind: (data|research|guesswork|scenario|derived|guesswork on data)\\.$", x), label = paste(ids[i], k))
-  }
-  # a cell starts with the value its dial's end prints
+    expect_identical(txt(cell(rows[i], 4)), cred$assessment[cred$group_id == gids[i]], label = gids[i])
+  # each analysis's cell has one line per dial of the group; every line within 25 words (plus the
+  # symbol lead in a group), starts with the value its dial's end prints, and ends with its Kind
   inp <- read_csv_plain(file.path(root, "comparison", "export", "r", "inputs.csv"))
   bi <- bridge_inputs(read_contracts(root))
-  for (i in seq_along(rows)) {
-    dt <- dial_texts(inp, ids[i], bi)
-    expect_true(startsWith(txt(cell(rows[i], 2)), paste0(dt$bsz, ".")), label = ids[i])
-    expect_true(startsWith(txt(cell(rows[i], 3)), paste0(dt$rjkdc, ".")), label = ids[i])
+  for (i in seq_along(rows)) for (k in 2:3) {
+    ids <- QUANTITY_GROUPS[[gids[i]]]
+    lines <- regmatches(cell(rows[i], k), gregexpr('<span class="q-line" data-id="[a-z_]+">.*?</span>(?=<span class="q-line"|</td>)', cell(rows[i], k), perl = TRUE))[[1]]
+    expect_identical(sub('^<span class="q-line" data-id="([a-z_]+)">.*$', "\\1", lines), ids, label = paste(gids[i], k))
+    for (j in seq_along(ids)) {
+      body <- sub('^<span class="q-line" data-id="[a-z_]+">(<i>[^<]*</i> <span class="q-word">[^<]*</span> |<span class="q-word">[^<]*</span> )?', "",
+                  if (length(ids) > 1) lines[j] else lines[j])
+      x <- txt(body)
+      expect_lte(length(strsplit(x, " ")[[1]]), 25, label = paste(ids[j], k, x))
+      expect_true(grepl("Kind: (data|research|guesswork|scenario|derived|guesswork on data)\\.$", x), label = paste(ids[j], k))
+      dt <- dial_texts(inp, ids[j], bi)
+      expect_true(startsWith(x, paste0(if (k == 2) dt$bsz else dt$rjkdc, ".")), label = paste(ids[j], k))
+    }
   }
   # the line under the table links to the report's differences table
   expect_true(grepl("Each value's full source is in the <a href=\"../repro.html#the-disputed-inputs\">report's table of differences</a>.", html, fixed = TRUE))
@@ -553,9 +561,9 @@ test_that("the quantities section: eleven dials in the boxes' order, credibility
 test_that("an assessment in the author's file shows in the table, and an unknown one stops the build", {
   f <- file.path(root, "comparison", "data", "author-credibility.csv")
   old <- readLines(f); on.exit(writeLines(old, f), add = TRUE)
-  writeLines(sub("^horizon,Not yet assessed,,$", "horizon,About equally credible,test note,2026-10-15", old), f)
+  writeLines(sub("^horizon_rate,H r,Not yet assessed,,$", "horizon_rate,H r,About equally credible,test note,2026-10-15", old), f)
   s <- render_site(root)
-  expect_true(grepl('<tr data-id="horizon">.*?<td data-label="Which is more credible \\(the author of this OPA\\)" class="q-cred">About equally credible. test note \\(2026-10-15\\)</td></tr>', s$explorer))
-  writeLines(sub("^horizon,Not yet assessed,,$", "horizon,Probably BSZ,,", old), f)
+  expect_true(grepl('<tr data-id="horizon_rate">.*?<td data-label="Which is more credible \\(the author of this OPA\\)" class="q-cred">About equally credible. test note \\(2026-10-15\\)</td></tr>', s$explorer))
+  writeLines(sub("^horizon_rate,H r,Not yet assessed,,$", "horizon_rate,H r,Probably BSZ,,", old), f)
   expect_error(render_site(root))
 })
