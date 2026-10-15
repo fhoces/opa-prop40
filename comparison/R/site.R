@@ -272,34 +272,29 @@ render_site <- function(root = comparison_root(),
   ss <- read_csv_plain(file.path(root, "comparison", "export", "r", "slider_sample.csv"))
   tok$n_slider_sample <- format(nrow(ss), big.mark = ",")
   tok$n_slider_per_panel <- format(sum(ss$panel == "bsz"), big.mark = ",")
-  # ---- the pseudo-equation: BSZ estimate = JR estimate + the three largest steps + the rest.
-  # Each term is a Shapley step on (b) read from the JR end to the BSZ end (sign flipped),
-  # so the terms add up to the BSZ end exactly.
+  # ---- the pseudo-equation: BSZ estimate - the three largest steps - the rest = JR estimate.
+  # Each term is a Shapley step on (b), read from the BSZ end to the JR end, so the terms take
+  # the BSZ end to the JR end exactly.
   bb <- br[br$horizon_setting == "own" & br$output == "b", ]
   bb <- bb[order(-abs(bb$shapley)), ]
   top <- bb[1:3, ]; rest <- sum(bb$shapley[-(1:3)])
   term <- function(v, label) sprintf('<span class="op">%s</span><span class="term"><b>%s</b><small>%s</small></span>',
                                      if (v < 0) "&minus;" else "+", money(abs(v), 1), esc(label))
+  say <- function(v, what) sprintf("%s %s for %s", if (v < 0) "minus" else "plus", money(abs(v), 1), what)
   tok$pseudo_eq <- paste0(
     '<div class="pseudo-eq" role="img" aria-label="', esc(sprintf(
-      "The BSZ estimate, %s, is about the JR estimate, %s, plus %s, plus %s, plus %s, plus %s for the %d other inputs.",
-      money(eb$bsz_model, 1), money(eb$rauh_own, 1),
-      sprintf("%s for %s", money(-top$shapley[1], 1, TRUE), tolower(top$title[1])),
-      sprintf("%s for %s", money(-top$shapley[2], 1, TRUE), tolower(top$title[2])),
-      sprintf("%s for %s", money(-top$shapley[3], 1, TRUE), tolower(top$title[3])),
-      money(-rest, 1, TRUE), nrow(bb) - 3)), '">
-',
-    sprintf('  <span class="term"><b>%s</b><small>BSZ estimate</small></span><span class="op">&asymp;</span><span class="term"><b>%s</b><small>JR estimate</small></span>
-',
-            money(eb$bsz_model, 1), money(eb$rauh_own, 1)),
-    paste(vapply(1:3, function(i) paste0("  ", term(-top$shapley[i], top$title[i])), ""), collapse = "
-"), "
-",
-    "  ", term(-rest, sprintf("the %d other inputs together", nrow(bb) - 3)), "
-",
+      "The BSZ estimate, %s, %s, %s, %s, and %s, gives about the JR estimate, %s.",
+      money(eb$bsz_model, 1),
+      say(top$shapley[1], tolower(top$title[1])), say(top$shapley[2], tolower(top$title[2])),
+      say(top$shapley[3], tolower(top$title[3])),
+      say(rest, sprintf("the %d other inputs", nrow(bb) - 3)), money(eb$rauh_own, 1))), '">\n',
+    sprintf('  <span class="term"><b>%s</b><small>BSZ estimate</small></span>\n', money(eb$bsz_model, 1)),
+    paste(vapply(1:3, function(i) paste0("  ", term(top$shapley[i], top$title[i])), ""), collapse = "\n"), "\n",
+    "  ", term(rest, sprintf("the %d other inputs together", nrow(bb) - 3)), "\n",
+    sprintf('  <span class="op">&asymp;</span><span class="term"><b>%s</b><small>JR estimate</small></span>\n', money(eb$rauh_own, 1)),
     '</div>')
   tok$pseudo_eq_note <- sprintf(paste0(
-    "Each term is that input's effect on the net fiscal effect, averaged over every order the inputs could be switched in (its Shapley value), read from the JR end to the BSZ end; the terms add up exactly. ",
+    "Start from the BSZ estimate and take away what each disagreement costs: each term is that input's effect on the net fiscal effect when switched from the BSZ value to the JR value, averaged over every order the inputs could be switched in (its Shapley value). The terms add up exactly. ",
     "The JR estimate here is the exact mean of the authors' Monte Carlo, %s; their seeded run prints %s. The <a href=\"%s\">report</a> gives every step."),
     money(eb$rauh_own, 1), tok$hl_rjkdc, "%s")
   tok$pseudo_eq_note_x <- sub("%s", "../repro.html#the-bridge", tok$pseudo_eq_note, fixed = TRUE)

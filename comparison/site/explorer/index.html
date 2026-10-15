@@ -278,14 +278,15 @@
 
   <section class="eq-box" id="what-separates" aria-labelledby="eq-title">
     <h2 id="eq-title">What separates the two numbers</h2>
-<div class="pseudo-eq" role="img" aria-label="The BSZ estimate, $106.8B, is about the JR estimate, −$39.0B, plus +$44.8B for chance the tax survives litigation, plus +$33.5B for how long the income tax loss lasts, plus +$31.3B for share of billionaire income tax lost, plus +$36.1B for the 7 other inputs.">
-  <span class="term"><b>$106.8B</b><small>BSZ estimate</small></span><span class="op">&asymp;</span><span class="term"><b>−$39.0B</b><small>JR estimate</small></span>
-  <span class="op">+</span><span class="term"><b>$44.8B</b><small>Chance the tax survives litigation</small></span>
-  <span class="op">+</span><span class="term"><b>$33.5B</b><small>How long the income tax loss lasts</small></span>
-  <span class="op">+</span><span class="term"><b>$31.3B</b><small>Share of billionaire income tax lost</small></span>
-  <span class="op">+</span><span class="term"><b>$36.1B</b><small>the 7 other inputs together</small></span>
+<div class="pseudo-eq" role="img" aria-label="The BSZ estimate, $106.8B, minus $44.8B for chance the tax survives litigation, minus $33.5B for how long the income tax loss lasts, minus $31.3B for share of billionaire income tax lost, and minus $36.1B for the 7 other inputs, gives about the JR estimate, −$39.0B.">
+  <span class="term"><b>$106.8B</b><small>BSZ estimate</small></span>
+  <span class="op">&minus;</span><span class="term"><b>$44.8B</b><small>Chance the tax survives litigation</small></span>
+  <span class="op">&minus;</span><span class="term"><b>$33.5B</b><small>How long the income tax loss lasts</small></span>
+  <span class="op">&minus;</span><span class="term"><b>$31.3B</b><small>Share of billionaire income tax lost</small></span>
+  <span class="op">&minus;</span><span class="term"><b>$36.1B</b><small>the 7 other inputs together</small></span>
+  <span class="op">&asymp;</span><span class="term"><b>−$39.0B</b><small>JR estimate</small></span>
 </div>
-    <p class="eq-note">Each term is that input's effect on the net fiscal effect, averaged over every order the inputs could be switched in (its Shapley value), read from the JR end to the BSZ end; the terms add up exactly. The JR estimate here is the exact mean of the authors' Monte Carlo, −$39.0B; their seeded run prints −$38.9B. The <a href="../repro.html#the-bridge">report</a> gives every step.</p>
+    <p class="eq-note">Start from the BSZ estimate and take away what each disagreement costs: each term is that input's effect on the net fiscal effect when switched from the BSZ value to the JR value, averaged over every order the inputs could be switched in (its Shapley value). The terms add up exactly. The JR estimate here is the exact mean of the authors' Monte Carlo, −$39.0B; their seeded run prints −$38.9B. The <a href="../repro.html#the-bridge">report</a> gives every step.</p>
   </section>
 
   <section class="board" id="panels" aria-labelledby="board-title">
