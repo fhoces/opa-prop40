@@ -53,10 +53,6 @@ num <- function(x, d = 2) formatC(x, format = "f", digits = d, big.mark = ",")
 # The bridge on output (b) at each analysis's own horizon, and on (a).
 bb <- br[br$horizon_setting == "own" & br$output == "b", ]
 ba <- br[br$horizon_setting == "own" & br$output == "a", ]
-sh  <- function(id, b = bb) b$shapley[b$step_id == id]
-sq  <- function(id, b = bb) b$sequential[b$step_id == id]
-bb_sorted <- bb[order(-abs(bb$shapley)), ]
-top3 <- bb_sorted[1:3, ]; rest <- bb_sorted[-(1:3), ]
 gap_b <- eb$bsz_model - eb$rauh_model
 steps <- bridge_steps()
 # One discount rate at both ends (author decision 2026-10-15), and the JR analysis's draw range,
@@ -66,6 +62,13 @@ jr_gap <- eb$jr_rate_gap
 # The dial path (R/model.R dial_path()): the explorer's dials moved top to bottom, each to its
 # far end. The pseudo-equation reads it, as the explorer and the overview do.
 dp <- read_csv_plain(file.path(root, "comparison", "export", "r", "dial_path.csv"))
+# The three main differences are the path's three largest steps, in dial order, as in the
+# equation; the other steps are the smaller ones (eq_terms() in R/site.R).
+et <- eq_terms(dp)
+top3 <- dp[et$main, ]; rest <- dp[et$rest, ]
+ps <- function(id) dp$change[dp$step_id == id]     # a dial's step on the path, output (b)
+three_syms <- sprintf("*%s*, *%s* and *%s*", top3$symbol[1], top3$symbol[2], top3$symbol[3])
+rest_n <- c("one", "two", "three", "four", "five", "six", "seven")[nrow(rest)]
 
 # Ties to the pipeline: a drift fails the render instead of shipping.
 stopifnot(
@@ -76,7 +79,7 @@ stopifnot(
   abs(sum(bb$sequential) + gap_b) < 1e-9,
   abs(sum(dp$change) + gap_b) < 1e-9, identical(dp$step_id, EXPLORER_DIAL_ORDER),
   # the deck names these three as the main differences, in this order
-  identical(top3$step_id, c("litigation_survival", "income_loss_share", "horizon")),
+  identical(top3$step_id, c("confirmed_departures", "litigation_survival", "horizon")),
   round(rj_main, 1) == rj_print,
   isTRUE(all.equal(mv("A_5"), annuity(sup$r, 5))))
 
@@ -196,8 +199,8 @@ Part of the comparison of the two analyses of California Proposition 40:
 <tr><th style="text-align:left; padding:6px;">Part</th><th style="text-align:left; padding:6px;">What it covers</th><th style="padding:6px;">Starts at</th></tr>
 <tr><td style="padding:6px;"><b>1. Two estimates</b></td><td style="padding:6px;">The two main estimates, and why they cannot be read against each other as printed</td><td style="text-align:center;"><a href="#estimates">go</a></td></tr>
 <tr><td style="padding:6px;"><b>2. One function</b></td><td style="padding:6px;">The common output, and one estimating function built up one term at a time</td><td style="text-align:center;"><a href="#term-wealth">go</a></td></tr>
-<tr><td style="padding:6px;"><b>3. The bridge</b></td><td style="padding:6px;">Switching one input at a time, Shapley values, and the waterfall</td><td style="text-align:center;"><a href="#shapley-toy">go</a></td></tr>
-<tr><td style="padding:6px;"><b>4. The main differences</b></td><td style="padding:6px;">Litigation, the horizon and the share of income tax lost, then the smaller steps</td><td style="text-align:center;"><a href="#pseudo-eq">go</a></td></tr>
+<tr><td style="padding:6px;"><b>3. The bridge</b></td><td style="padding:6px;">Switching one input at a time along the dial path, and the waterfall</td><td style="text-align:center;"><a href="#one-at-a-time">go</a></td></tr>
+<tr><td style="padding:6px;"><b>4. The main differences</b></td><td style="padding:6px;">Departed wealth, litigation and the horizon, then the smaller steps</td><td style="text-align:center;"><a href="#pseudo-eq">go</a></td></tr>
 <tr><td style="padding:6px;"><b>5. Checks</b></td><td style="padding:6px;">The one published comparison (Hoopes 2026), what reproduces, where to go next</td><td style="text-align:center;"><a href="#hoopes">go</a></td></tr>
 </table>
 
@@ -383,7 +386,7 @@ The same function gives both ends at one rate. The gap to explain is
 ]
 
 ---
-name: shapley-toy
+name: one-at-a-time
 
 # The bridge: switch one input at a time
 
@@ -394,8 +397,7 @@ toy <- function(d, q) toy_base * (1 - d) * q
 t_start <- toy(d_from, q_from); t_end <- toy(d_to, q_to)
 o1_d <- toy(d_to, q_from) - t_start; o1_q <- t_end - toy(d_to, q_from)   # departures first
 o2_q <- toy(d_from, q_to) - t_start; o2_d <- t_end - toy(d_from, q_to)   # litigation first
-phi_d <- (o1_d + o2_d) / 2; phi_q <- (o1_q + o2_q) / 2
-stopifnot(abs(phi_d + phi_q - (t_end - t_start)) < 1e-12)
+stopifnot(abs(o1_d + o1_q - (t_end - t_start)) < 1e-12, abs(o2_d + o2_q - (t_end - t_start)) < 1e-12)
 tm <- function(x) paste0(if (x < 0) "&minus;" else "", "$", formatC(abs(x), format = "f", digits = 1), "B")
 ```
 
@@ -407,7 +409,6 @@ nobody departed and *q* = `r q_from`: `r tm(t_start)`. The other has `r pct(d_to
 cat('<table class="dt"><tr><th>Order of the switches</th><th>Departures step</th><th>Litigation step</th><th>Sum</th></tr>')
 cat(sprintf('<tr><td>Departures first, then litigation</td><td>%s</td><td>%s</td><td>%s</td></tr>', tm(o1_d), tm(o1_q), tm(o1_d + o1_q)))
 cat(sprintf('<tr><td>Litigation first, then departures</td><td>%s</td><td>%s</td><td>%s</td></tr>', tm(o2_d), tm(o2_q), tm(o2_d + o2_q)))
-cat(sprintf('<tr class="tot"><td>Average over the two orders</td><td>%s</td><td>%s</td><td>%s</td></tr>', tm(phi_d), tm(phi_q), tm(phi_d + phi_q)))
 cat("</table>")
 ```
 
@@ -417,38 +418,35 @@ halves `r tm(toy_base)` if it goes first, but only `r tm(toy(d_to, q_from))` if 
 ]
 
 .blue-box[
-The **Shapley value** of an input is its step averaged over every order of the switches. The
-averages always add up to the whole gap. The real bridge has `r nrow(steps)` inputs, so
-`r format(factorial(nrow(steps)), big.mark = ",")` orders; the code computes the average exactly
-by running the function at all `r format(2^nrow(steps), big.mark = ",")` mixes of BSZ and JR values.
+So the deck fixes one order, the **dial path**: the explorer's BSZ panel dials moved top to
+bottom, each to its far end. Its `r nrow(dp)` steps add up to the whole gap.
 ]
 
 ---
 name: waterfall
 
-# The bridge on output (b): `r sum(abs(bb$shapley) > 1e-12)` Shapley steps
+# The bridge on (b): the dial path, step by step
 
-```{r waterfall, fig.height=3.75}
-B <- build_series(ex)$own$b$shapley
-run <- 0; rows <- list()
-for (i in seq_along(B)) {
-  b <- B[[i]]
-  if (b$type == "total") { y0 <- 0; y1 <- b$value; run <- b$value } else { y0 <- run; y1 <- run + b$value; run <- y1 }
-  rows[[i]] <- data.frame(i = i, short = b$short, y0 = y0, y1 = y1, v = b$value, type = b$type,
-                          fill = if (b$type == "total") "an analysis's estimate" else if (b$type == "model") "model difference"
-                                 else if (b$value >= 0) "step that raises it" else "step that lowers it")
-}
-wf <- do.call(rbind, rows)
-stopifnot(abs(wf$y1[nrow(wf) - 1] - eb$rauh_model) < 1e-9)
+```{r waterfall, fig.height=3.6}
+# The BSZ end, the path's steps in dial order (export/r/dial_path.csv), the JR end at one rate.
+lab_of <- function(id) if (id == "minor_inputs") "Minor inputs" else unname(short_labels[id])
+wf <- rbind(
+  data.frame(short = short_labels[["bsz"]], y0 = 0, y1 = dp$from[1], v = dp$from[1], type = "total"),
+  data.frame(short = vapply(dp$step_id, lab_of, ""), y0 = dp$from, y1 = dp$to, v = dp$change, type = "step"),
+  data.frame(short = sprintf("JR, one %s rate", r3), y0 = 0, y1 = eb$rauh_model, v = eb$rauh_model, type = "total"))
+stopifnot(abs(dp$from[1] - eb$bsz_model) < 1e-9, abs(dp$to[nrow(dp)] - eb$rauh_model) < 1e-9)
+wf$i <- seq_len(nrow(wf))
+wf$fill <- ifelse(wf$type == "total", "an analysis's estimate",
+                  ifelse(wf$v >= 0, "step that raises it", "step that lowers it"))
 wf$lab <- ifelse(wf$type == "total", vapply(wf$v, money, "", digits = 1),
                  vapply(wf$v, money, "", digits = 1, signed = TRUE))
-wf$ly <- ifelse(wf$type == "total", ifelse(wf$v >= 0, wf$y1, wf$y1), pmin(wf$y0, wf$y1))
+wf$ly <- ifelse(wf$type == "total", wf$y1, pmin(wf$y0, wf$y1))
 wf$vj <- ifelse(wf$type == "total" & wf$v >= 0, -0.4, 1.4)
 ggplot(wf) +
   geom_hline(yintercept = 0, colour = "#5b6873", linewidth = 0.4) +
   geom_rect(aes(xmin = i - 0.38, xmax = i + 0.38, ymin = pmin(y0, y1), ymax = pmax(y0, y1), fill = fill)) +
   geom_text(aes(x = i, y = ly, label = lab, vjust = vj), size = 3.6) +
-  scale_fill_manual(values = c("an analysis's estimate" = "#222222", "model difference" = "#c8c8c8",
+  scale_fill_manual(values = c("an analysis's estimate" = "#222222",
                                "step that raises it" = "#555555", "step that lowers it" = "#9a9a9a"), name = NULL) +
   scale_x_continuous(breaks = wf$i, labels = wf$short) +
   scale_y_continuous(expand = expansion(mult = c(0.12, 0.08))) +
@@ -459,9 +457,9 @@ ggplot(wf) +
 ```
 
 .small[
-Each bar switches one input from the BSZ value to the JR value, at its Shapley value. Every step
-but one lowers the estimate. Dropping the BSZ `r pct(sup$alpha, 0)` avoidance allowance raises it, because the
-JR analysis applies none.
+Each bar moves one dial of the BSZ panel to its JR end, top to bottom. The equation on the next
+slide shows three of these steps, `r three_syms`, and combines the other `r rest_n` there. Only dropping the BSZ `r pct(sup$alpha, 0)` avoidance allowance raises the estimate,
+because the JR analysis applies none.
 ]
 
 ---
@@ -489,8 +487,8 @@ JR inputs at one `r r3` rate. The JR headline, `r usd(rj_print)`, is about `r us
 because the authors draw the rate at random ([the two ends](#two-ends)).
 ]
 
-The next three slides take the three inputs with the largest Shapley values, which do not
-depend on an order. Each says what both analyses assume, why, and what kind of claim it is:
+The next three slides take these three steps, `r three_syms`, in dial
+order. Each says what both analyses assume, why, and what kind of claim it is:
 
 .small[
 - **data**: settled by observable facts (lists, filings, tax statistics)
@@ -500,9 +498,9 @@ depend on an order. Each says what both analyses assume, why, and what kind of c
 ]
 
 ---
-name: diff-litigation
+name: diff-departed
 
-# Difference 1: will the tax survive in court?
+# Difference 1: who has already left?
 
 ```{r claims-fn}
 claim_table <- function(bsz, jr) {
@@ -511,6 +509,37 @@ claim_table <- function(bsz, jr) {
   cat("</table>")
 }
 ```
+
+```{r claims-dep, results="asis"}
+claim_table(
+  "<b>Nobody counts as departed.</b> The benchmark taxes everyone resident in California on 1 January 2026 (BSZ PDF p.23). Its aggressive scenario (Table 5 row 3) assumes four of them left: Page, Thiel, Hankey and Kalanick.",
+  sprintf("<b>Seven confirmed departures</b> (Page, Brin, Thiel, Hankey, Spielberg, Kalanick and Sacks) are taken out of the base before the tax: %s of its wealth (NPV_dist_v8.R:19).", pct(dshare(rj), 1)))
+```
+
+.pull-left[
+
+**Kind of claim:** <span class="og guesswork">guesswork</span> on <span class="og data">data</span>.
+Who announced a move is observed. Whether that move ended legal residence before 1 January is a
+legal judgement.
+
+**Why it is large:** the 5% tax falls only on wealth still in the state, and the seven hold
+`r pct(dshare(rj), 1)` of it. *D* moves second on the path, while *q* is still 1, so that share
+of the revenue is lost in full.
+
+]
+
+.pull-right[
+
+.highlight-box[
+**Dollars moved, on (b):** `r usd(ps("confirmed_departures"), 1, TRUE)`, step `r dp$step[dp$step_id == "confirmed_departures"]` of the dial path.
+]
+
+]
+
+---
+name: diff-litigation
+
+# Difference 2: will the tax survive in court?
 
 ```{r claims-lit, results="asis"}
 claim_table(
@@ -531,45 +560,10 @@ leave.
 .pull-right[
 
 .highlight-box[
-**Dollars moved, on (b):** `r usd(sh("litigation_survival"), 1, TRUE)` (Shapley), the largest step.
-On (a), the revenue alone: `r usd(sh("litigation_survival", ba), 1, TRUE)`.
+**Dollars moved, on (b):** `r usd(ps("litigation_survival"), 1, TRUE)`, step `r dp$step[dp$step_id == "litigation_survival"]` of the dial path.
 ]
 
 .small[The lost income tax is not scaled by *q*: people who left do not come back if the Act is struck down.]
-
-]
-
----
-name: diff-share
-
-# Difference 2: how much of the income tax leaves?
-
-```{r claims-sh, results="asis"}
-claim_table(
-  sprintf("<b>The loss follows the people who leave.</b> What is lost is the leavers' own income tax, from SEC filings for the largest fortunes and a wealth-proportional rate for the rest (BSZ PDF p.26, Table 4): %s a year in its aggressive scenario. With no departures at the BSZ end, only the movers count: %s of the %s allowance, so %s.",
-          usd(bi$ladder$L[2], 2), pct(sup$m), pct(sup$alpha), pct(vs[["f"]])),
-  sprintf("<b>A flat %s.</b> The middle of a random draw between %s and %s, independent of how much revenue is collected (NPV_dist_v8.R; chapter Sec. 5.4). It does not depend on who leaves.",
-          pct(rj$f0), pct(f_lo), pct(f_hi)))
-```
-
-.pull-left[
-
-**Kind of claim:** <span class="og data">data</span> against <span class="og guesswork">guesswork</span>.
-The BSZ ratio rests on tax filings. The JR range is asserted.
-
-**Share lost** is the share of billionaires' yearly California income tax that leaves the state
-with those who move.
-
-]
-
-.pull-right[
-
-.highlight-box[
-**Dollars moved, on (b):** `r usd(sh("income_loss_share"), 1, TRUE)` (Shapley).
-]
-
-.small[In one fixed order (the order of [Hoopes 2026](#hoopes)) this step comes before the horizon,
-while the loss still lasts 5 years, and moves only `r usd(sq("income_loss_share"), 1, TRUE)`.]
 
 ]
 
@@ -590,6 +584,8 @@ cat('<table class="dt"><tr><th>Income tax lost, in today&#39;s dollars</th><th>5
 cat(sprintf('<tr><td>BSZ yearly loss, %s</td><td>%s</td><td>%s</td><td>%s</td></tr>', usd(l_b$annual_loss, 2), usd(l_b$pv_5yr), usd(l_b$pv_perpetuity), usd(l_b$pv_5yr - l_b$pv_perpetuity, 1, TRUE)))
 cat(sprintf('<tr><td>JR yearly loss, %s</td><td>%s</td><td>%s</td><td>%s</td></tr>', usd(l_r$annual_loss, 2), usd(l_r$pv_5yr), usd(l_r$pv_perpetuity), usd(l_r$pv_5yr - l_r$pv_perpetuity, 1, TRUE)))
 cat("</table>")
+# on the path the horizon moves after the share lost and the yearly tax, so the loss is JR-sized
+stopifnot(abs(ps("horizon") - (l_r$pv_5yr - l_r$pv_perpetuity)) < 1e-9)
 ```
 
 .pull-left[
@@ -602,8 +598,9 @@ long a departure lasts.
 .pull-right[
 
 .highlight-box[
-**Dollars moved, on (b):** `r usd(sh("horizon"), 1, TRUE)` (Shapley). The perpetuity multiplies
-whatever yearly loss the other inputs imply. So the step lies between the two rows of the table.
+**Dollars moved, on (b):** `r usd(ps("horizon"), 1, TRUE)`, step `r dp$step[dp$step_id == "horizon"]` of the dial path, the largest.
+The horizon moves after the share lost and the yearly tax, so the loss is already JR-sized and
+the step equals the JR row's last column.
 ]
 
 ]
@@ -614,21 +611,25 @@ name: smaller
 # The smaller steps
 
 ```{r tab-rest, results="asis"}
-cat('<table class="dt"><tr><th>Input</th><th>BSZ value</th><th>JR value</th><th class="l">Kind of claim</th><th>Shapley on (b)</th></tr>')
+# the other path steps in dial order; the minor switch's row joins its three inputs
+cat('<table class="dt"><tr><th>Input</th><th>BSZ value</th><th>JR value</th><th class="l">Kind of claim</th><th>Step on the path, (b)</th></tr>')
 for (i in seq_len(nrow(rest))) {
-  tx <- step_texts(inp, rest$step_id[i])
+  ids <- dial_ids(rest$step_id[i]); tx <- lapply(ids, function(x) step_texts(inp, x))
+  kind <- paste(unique(steps$kind[match(ids, steps$step_id)]), collapse = ", ")
+  name <- if (rest$step_id[i] == "minor_inputs") esc(rest$title[i]) else sprintf("<i>%s</i>, %s", rest$symbol[i], esc(rest$title[i]))
   cat(sprintf('<tr><td>%s</td><td>%s</td><td>%s</td><td class="l">%s</td><td>%s</td></tr>',
-              esc(rest$title[i]), tx$bsz, tx$rjkdc, rest$kind[i], money(rest$shapley[i], 1, TRUE)))
+              name, paste(vapply(tx, `[[`, "", "bsz"), collapse = "; "), paste(vapply(tx, `[[`, "", "rjkdc"), collapse = "; "),
+              kind, money(rest$change[i], 1, TRUE)))
 }
-cat(sprintf('<tr class="tot"><td>The %d together</td><td></td><td></td><td></td><td>%s</td></tr>', nrow(rest), money(sum(rest$shapley), 1, TRUE)))
+cat(sprintf('<tr class="tot"><td>The %s together</td><td></td><td></td><td></td><td>%s</td></tr>', rest_n, money(sum(rest$change), 1, TRUE)))
 cat("</table>")
 ```
 
 .small[
-- **Billionaires already departed** is close to the three above. The JR analysis removes seven
-  confirmed departures, `r pct(dshare(rj), 1)` of its base; the BSZ analysis taxes everyone resident
-  on 1 January 2026. "Guesswork on data" means a legal judgement about residency applied to who
-  announced a move.
+- **Share of income tax lost**: the BSZ analysis counts what the leavers paid, from tax filings.
+  The JR analysis takes a flat `r pct(rj$f0)` of all billionaires' income tax, the middle of a draw
+  between `r pct(f_lo)` and `r pct(f_hi)`. It moves little on the path because it comes before the
+  horizon, while the loss still lasts 5 years.
 - **Yearly income tax**: BSZ take the 2019 to 2025 average from tax statistics and published
   research. JR take the middle of a range whose floor is the authors' judgement.
 - **Avoidance and evasion allowance** is the one step that raises the estimate. The JR analysis
@@ -683,7 +684,7 @@ name: next
 - At the JR inputs it returns the authors' expected revenue exactly, and `r usd(eb$rauh_model, 3)` at one
   `r r3` rate. Less the JR rate gap, `r usd(jr_gap, 3)`, that is the exact average of their Monte Carlo,
   `r usd(eb$rauh_own, 3)` (printed `r usd(rj_print)` from one seeded run).
-- The Shapley steps add up to the gap, and a test checks them against a brute-force average over orders.
+- The dial path's steps add up to the gap. The report's order-free check, each input's Shapley value, adds up too, and a test checks it against a brute-force average over orders.
 - A Python twin writes the same tables. The largest difference from R is `r if (py_ok) formatC(maxdiff, format = "e", digits = 1) else "not checked"`; the tests require 1e-9.
 - **Not reproduced here:** the comparison takes each analysis's exported inputs and outputs as
   given. Each analysis's own reproduction is on its overview page.
