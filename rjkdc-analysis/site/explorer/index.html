@@ -5,43 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="Move the guesswork behind the JR analysis's -$38.9 billion net present value of California's one-time billionaire tax and watch the estimate move.">
 <title>Prop 40, JR analysis: Explorer</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@400;600&display=swap">
 
 <style>
-  :root {
-    --paper:      #fbfcfd;
-    --panel:      #ffffff;
-    --ink:        #101519;
-    --ink-2:      #5b6873;
-    --ink-3:      #6b7682;
-    --rule:       #e2e7ec;
-    --rule-2:     #eef1f5;
-    --series-1:   #2a78d6;
-    --pref:       #eb6834;
-    --ref:        #a8b2bb;
-    --chip:       #f1f4f7;
-    --chip-on:    #101519;
-    --chip-on-tx: #ffffff;
-    --serif: "IBM Plex Serif", Georgia, "Times New Roman", serif;
-    --sans:  "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    --mono:  "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --paper: #14171a; --panel: #1a1e22; --ink: #eef1f4; --ink-2: #9aa6b2;
-      --ink-3: #6f7b87; --rule: #262c33; --rule-2: #1f242a;
-      --series-1: #3987e5; --pref: #f07b4a; --ref: #6f7b87; --chip: #232930;
-      --chip-on: #eef1f4; --chip-on-tx: #14171a;
-    }
-  }
-  :root[data-theme="dark"] {
-    --paper: #14171a; --panel: #1a1e22; --ink: #eef1f4; --ink-2: #9aa6b2;
-    --ink-3: #6f7b87; --rule: #262c33; --rule-2: #1f242a;
-    --series-1: #3987e5; --pref: #f07b4a; --ref: #6f7b87; --chip: #232930;
-    --chip-on: #eef1f4; --chip-on-tx: #14171a;
-  }
 
   * { box-sizing: border-box; }
   body {
@@ -57,8 +22,8 @@
   html { overflow-x: clip; }
   .wrap { max-width: 1180px; margin: 0 auto; padding-inline: 16px; padding-block: 32px 48px; }
 
-  .site-nav { font-family: var(--mono); font-size: 11.5px; color: var(--ink-3); margin: 0 0 16px; }
-  .site-nav a { color: var(--series-1); text-decoration: none; }
+  .site-nav { font-family: var(--serif); font-size: 11.5px; color: var(--ink-3); margin: 0 0 16px; }
+  .site-nav a { color: var(--link); text-decoration: none; }
   .site-nav a:hover { text-decoration: underline; }
   .site-nav .nav-row { display: block; }
   .site-nav .nav-row + .nav-row { margin-top: 2px; }
@@ -77,7 +42,7 @@
     line-height: 1; color: var(--ink); font-variant-numeric: tabular-nums; }
   .headline .def { font-size: 15px; color: var(--ink-2); line-height: 1.45; margin-top: 2px; }
   .headline .sub { font-size: 12px; color: var(--ink-3); line-height: 1.45; margin-top: 4px; }
-  .headline .sub a { color: var(--series-1); }
+  .headline .sub a { color: var(--link); }
   .header-layer { height: 110px; width: auto; opacity: 0.218; align-self: flex-end;
     margin-bottom: 8px; pointer-events: none; }
   @media (max-width: 860px) {
@@ -93,7 +58,7 @@
   }
   .standfirst { font-family: var(--serif); color: var(--ink-2); margin: 0; font-size: 15.5px; max-width: 46em; }
   .standfirst + .standfirst { margin-top: 14px; }
-  .standfirst a { color: var(--series-1); text-decoration: none; }
+  .standfirst a { color: var(--link); text-decoration: none; }
   .standfirst a:hover { text-decoration: underline; }
 
   .cols { display: grid; grid-template-columns: minmax(0, 400px) minmax(0, 1fr); gap: 34px; margin-top: 28px; align-items: start; }
@@ -107,9 +72,9 @@
   .dial { padding: 10px 0; border-bottom: 1px solid var(--rule-2); position: relative; }
   .dial:last-child { border-bottom: 0; }
   .dial .label { font-weight: 500; font-size: 14.5px; }
-  .dial .label .sym { font-family: var(--mono); font-size: 12.5px; color: var(--ink-3); margin-left: 6px; }
+  .dial .label .sym { font-family: var(--serif); font-size: 12.5px; color: var(--ink-3); margin-left: 6px; }
   .dial .desc { font-size: 12.5px; color: var(--ink-2); line-height: 1.4; margin-top: 2px; }
-  .dial .desc a.more { color: var(--series-1); text-decoration: none; margin-left: 4px; }
+  .dial .desc a.more { color: var(--link); text-decoration: none; margin-left: 4px; }
   .dial .desc a.more:hover { text-decoration: underline; }
   .levels { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 8px; position: relative; }
   /* Each level button has its own short tip, as on the BSZ explorer. A mouse opens it by
@@ -125,40 +90,36 @@
   @media (hover: hover) { .levels button:hover + .tip { display: block; } }
   .levels button:focus-visible + .tip, .levels .tip.open { display: block; }
   .levels button {
-    font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 13px;
+    font-family: var(--serif); font-variant-numeric: tabular-nums; font-size: 13px;
     color: var(--ink-2); background: var(--chip); border: 1px solid transparent;
     border-radius: 2px; padding: 6px 9px; min-width: 48px; cursor: pointer;
     transition: background 120ms ease, color 120ms ease;
   }
   .levels button:hover { border-color: var(--ink-3); }
   .levels button[aria-pressed="true"] { background: var(--chip-on); color: var(--chip-on-tx); font-weight: 500; }
-  .levels button:focus-visible { outline: 2px solid var(--series-1); outline-offset: 2px; }
+  .levels button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 
-  .origin { display: inline-block; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.05em;
+  .origin { display: inline-block; font-family: var(--serif); font-size: 10.5px; letter-spacing: 0.05em;
             text-transform: uppercase; padding: 1px 6px; border-radius: 2px; margin-left: 8px;
             vertical-align: 1px; border: 1px solid var(--rule); color: var(--ink-2); }
-  .origin.guesswork { border-color: #d98a5b; color: #b4541f; }
-  .origin.data { border-color: #6b9bd6; color: #1f5fae; }
-  .origin.research { border-color: #6fae7c; color: #2f7a41; }
-  .origin.scenario { border-color: #9b86c9; color: #5d45a0; }
 
   p.fn { font-size: 13.5px; color: var(--ink-2); line-height: 1.45; margin: 10px 0 0; }
-  p.fn a { color: var(--series-1); }
+  p.fn a { color: var(--link); }
   .presets { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
   .presets button {
     font-family: var(--sans); font-size: 13px; color: var(--ink); background: none;
     border: 1px solid var(--rule); border-radius: 2px; padding: 6px 12px; cursor: pointer;
   }
   .presets button:hover { border-color: var(--ink-3); }
-  .presets button.main { border-color: var(--series-1); }
+  .presets button.main { border-color: var(--ink-2); }
 
   /* ---- the outcomes chart: this setting against the main estimate, bars drawn
      from a zero line (negative to the left, positive to the right) ---------- */
   .bars { width: 100%; height: auto; display: block; margin: 4px 0 18px; }
   .bars text { font-family: var(--sans); font-size: 12px; fill: var(--ink-2); }
-  .bars .val { font-family: var(--mono); fill: var(--ink); paint-order: stroke; stroke: var(--paper); stroke-width: 4px; }
-  .bars .bar.main { fill: var(--pref); }
-  .bars .bar.cur { fill: var(--series-1); }
+  .bars .val { font-family: var(--serif); fill: var(--ink); paint-order: stroke; stroke: var(--paper); stroke-width: 4px; }
+  .bars .bar.main { fill: var(--main); }
+  .bars .bar.cur { fill: var(--cur); }
   .bars .zero { stroke: var(--ink-3); stroke-width: 1; }
 
   /* ---- table view ------------------------------------------------------- */
@@ -167,7 +128,7 @@
   @media (max-width: 640px) { .table-scroll::before { display: block; } }
   table { border-collapse: collapse; font-size: 12.5px; min-width: 320px; width: 100%; }
   th, td { text-align: right; padding: 6px 10px 6px 0; border-bottom: 1px solid var(--rule-2);
-           font-family: var(--mono); font-variant-numeric: tabular-nums; }
+           font-family: var(--serif); font-variant-numeric: tabular-nums; }
   th:first-child, td:first-child { text-align: left; font-family: var(--sans); }
   th { color: var(--ink-3); font-weight: 500; }
 
@@ -175,24 +136,25 @@
   details.fold.notes { margin-top: 28px; border-top: 1px solid var(--rule); padding-top: 10px; font-size: 12.5px; color: var(--ink-2); }
   details.fold > summary { cursor: pointer; font-size: 13.5px; font-weight: 500; padding: 6px 0; color: var(--ink); }
   details.fold[open] > summary { margin-bottom: 8px; }
-  details.fold a { color: var(--series-1); }
+  details.fold a { color: var(--link); }
   /* On a narrow screen the headline scrolls away while the reader moves the dials, so a thin
      bar at the top repeats it once the headline is out of view (the script sets .show). */
   .sticky-result { display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 40;
                    background: var(--paper); border-bottom: 1px solid var(--rule); padding: 6px 16px;
-                   font-family: var(--mono); font-size: 14px; font-weight: 500; color: var(--ink);
+                   font-family: var(--serif); font-size: 14px; font-weight: 500; color: var(--ink);
                    font-variant-numeric: tabular-nums; }
   @media (max-width: 860px) { .sticky-result.show { display: block; } }
   .note code { font-family: var(--mono); font-size: 11.5px; background: var(--chip); padding: 1px 4px; }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
   footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--ink-3); }
-  footer a { color: var(--series-1); }
+  footer a { color: var(--link); }
   .credit { margin: 14px 0 0; font-size: 11.5px; color: var(--ink-2); }
-  .credit a { color: var(--series-1); text-decoration: none; }
+  .credit a { color: var(--link); text-decoration: none; }
   .credit a:hover { text-decoration: underline; }
 </style>
+<link rel="stylesheet" href="../../../assets/paper.css">
 </head>
-<body>
+<body class="pg pg-explorer">
 
 <div class="sticky-result" id="sticky" aria-hidden="true">This setting: <span id="sticky-value"></span></div>
 <div class="wrap">
