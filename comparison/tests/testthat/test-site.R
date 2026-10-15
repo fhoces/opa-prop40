@@ -11,6 +11,11 @@ test_that("index.html, the explorer and assets/comparison-data.js are the genera
   expect_identical(s$js, read_page(file.path(root, "assets", "comparison-data.js")) |> paste0("\n"))
 })
 
+test_that("the explorer loads the data file with the hash of its content", {
+  h <- data_hash(read_page(file.path(root, "assets", "comparison-data.js")) |> paste0("\n"))
+  expect_true(grepl(sprintf('comparison-data.js?v=%s"', h), read_page(explorer), fixed = TRUE))
+})
+
 test_that("no unfilled tokens, no em-dashes on either page", {
   for (p in pages) {
     html <- read_page(p)
@@ -203,6 +208,7 @@ test_that("every relative link on both pages resolves to a file in the repo (sub
     refs <- regmatches(html, gregexpr('(href|src)="[^"#]+"', html))[[1]]
     refs <- unique(sub('^(href|src)="', "", sub('"$', "", refs)))
     refs <- refs[!grepl("^(https?:|mailto:)", refs)]
+    refs <- sub("\\?.*$", "", refs)   # the data file's cache-busting ?v=<hash>
     for (r in refs) {
       f <- file.path(dirname(p), r)
       if (grepl("/$", r)) f <- file.path(f, "index.html")

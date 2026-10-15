@@ -384,7 +384,7 @@
   </footer>
 </div>
 
-<script src="../../../assets/comparison-data.js"></script>
+<script src="../../../assets/comparison-data.js?v={{data_v}}"></script>
 <script src="model.js"></script>
 <script>
 (function () {
@@ -392,8 +392,8 @@
   // D is the data file (assets/comparison-data.js), M the estimating function (model.js).
   // D.sliders: the two input vectors, the horizon settings, the revision constants and, per
   // input, the argument it moves and its two printed values. M.panelValue(D.sliders, panel,
-  // positions) is slider_value() of comparison/R/model.R. D.sliders.minor lists the inputs
-  // the page folds into one switch. D.headline holds the two main estimates.
+  // positions) is slider_value() of comparison/R/model.R. D.headline holds the two main
+  // estimates.
   var D = window.__BRIDGE__, M = window.ComparisonModel;
   if (!D || !M) return;
   var S = D.sliders;
@@ -442,9 +442,13 @@
   PANELS.forEach(function (p) {
     SL[p] = Array.prototype.slice.call(document.querySelectorAll('input.sl-in[data-panel="' + p + '"]'));
   });
-  // The page's positions, keyed by slider id. The "minor_inputs" switch stands for the
-  // inputs in S.minor: off (0) keeps the panel's own values, on (1) takes the other
-  // analysis's values for all of them. expand() turns it into model.js positions.
+  // The page's positions, keyed by slider id. The "minor_inputs" switch stands for every
+  // input that has no slider of its own on the page (the data file lists them as
+  // S.minor too): off (0) keeps the panel's own values, on (1) takes the other analysis's
+  // values for all of them. expand() turns it into model.js positions.
+  var MINOR = S.inputs.map(function (x) { return x.id; }).filter(function (id) {
+    return !document.getElementById("bsz-" + id);
+  });
   function positions(panel) {
     var pos = {};
     SL[panel].forEach(function (inp) { pos[inp.dataset.id] = +inp.value; });
@@ -455,7 +459,7 @@
     for (var k in pos) x[k] = pos[k];
     if ("minor_inputs" in x) {
       var at = x.minor_inputs ? S.steps : 0;
-      S.minor.forEach(function (id) { x[id] = at; });
+      MINOR.forEach(function (id) { x[id] = at; });
       delete x.minor_inputs;
     }
     return x;
