@@ -160,7 +160,7 @@ def main():
             outputs="the text of grid.js, written to site/explorer/grid.js",
             method_ref="Plumbing.",
             method_status="plumbing",
-            r=loc(f"{SIDE}/R/site.R", "site_grid_payload(), write_site_grid_js()", [205, 247]),
+            r=loc(f"{SIDE}/R/site.R", "site_grid_payload(), write_site_grid_js()", [219, 261]),
             py=None,
             targets="_targets.R:73 site_grid_js",
         ),
@@ -180,8 +180,8 @@ def main():
                         "column is computed. test-npv-mc.R checks the reproduced mean against the "
                         "printed one within four Monte Carlo standard errors."),
             method_status="matches",
-            r=loc(f"{SIDE}/R/site.R", "compute_site_headlines()", [174, 202]),
-            py=loc(f"{SIDE}/py/run_export.py", "build_outputs()", [107, 140]),
+            r=loc(f"{SIDE}/R/site.R", "compute_site_headlines()", [188, 216]),
+            py=loc(f"{SIDE}/py/run_export.py", "build_outputs()", [115, 148]),
             targets="_targets.R:66 site_headlines",
         ),
         dict(
@@ -246,8 +246,8 @@ def main():
                         "Carlo uses the script's 72, not the recomputed 72.05 (MISMATCHES.md 4); "
                         "test-nber-final.R checks both numbers."),
             method_status="matches_with_caveat",
-            r=loc(f"{SIDE}/R/nber_final.R", "extract_nber_final(), compute_nber_ceiling()", [8, 42]),
-            py=loc(f"{SIDE}/py/nber_final.py", "extract_nber_final(), compute_nber_ceiling()", [5, 32]),
+            r=loc(f"{SIDE}/R/nber_final.R", "extract_nber_final(), compute_nber_ceiling()", [8, 52]),
+            py=loc(f"{SIDE}/py/nber_final.py", "extract_nber_final(), compute_nber_ceiling()", [5, 40]),
             targets="_targets.R:31 nber_final_csv; :32 nber_final; :33 nber_ceiling",
         ),
         dict(
