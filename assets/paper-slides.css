@@ -1,0 +1,53 @@
+/* paper-slides.css: the paper look for the three xaringan decks. It replaces xaringan's
+   default-fonts and sits beside assets/paper.css, which supplies the STIX Two Text files.
+   Selectors start with .remark-slide-content so they win over each deck's own css chunk.
+   Colours are written out (Palette A, light), since the decks have no dark theme. */
+
+body, .remark-slide-content, .remark-slide-content h1, .remark-slide-content h2, .remark-slide-content h3 {
+  font-family: "STIX Two Text", "STIXGeneral", "Times New Roman", Times, serif;
+}
+.remark-slide-content { color: #111111; font-variant-numeric: lining-nums; }
+.remark-slide-content h1, .remark-slide-content h2, .remark-slide-content h3 {
+  font-weight: 600; color: #111111; letter-spacing: 0; }
+.remark-code, .remark-inline-code {
+  font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace; }
+.remark-slide-content .remark-inline-code { color: #111111; }
+
+/* Links: their own blue, a hairline underline. */
+.remark-slide-content a, .remark-slide-content a > code { color: #1d4e89; text-decoration: underline;
+  text-decoration-thickness: 0.5px; text-underline-offset: 2px; }
+.remark-slide-content .site-nav { font-size: 13.5px; color: #666666; }
+.remark-slide-content .site-nav a { color: #1d4e89; text-decoration: none; }
+.remark-slide-content a.reflink { color: inherit; text-decoration: none; border-bottom: 1px dotted #666666; }
+.remark-slide-content .credit, .remark-slide-content .footnote { color: #666666; }
+
+/* Section slides: paper, not the dark "inverse" panel; a short rule under the title. */
+.remark-slide-content.inverse { background-color: #ffffff; color: #111111; text-shadow: none; }
+.remark-slide-content.inverse h1, .remark-slide-content.inverse h2, .remark-slide-content.inverse h3 {
+  color: #111111; }
+.remark-slide-content.inverse h1::after, .remark-slide-content.inverse h2::after {
+  content: ""; display: block; width: 6em; margin: 0.35em auto 0; border-top: 1.2px solid #111111; }
+
+/* Booktabs tables: ink rules at the top and bottom, one under the head, no stripes. */
+.remark-slide-content table { border-collapse: collapse; border-top: 1.2px solid #111111;
+  border-bottom: 1.2px solid #111111; font-variant-numeric: lining-nums tabular-nums; }
+.remark-slide-content thead th, .remark-slide-content table th { background: none; border-bottom: 0.6px solid #111111; }
+.remark-slide-content tbody tr:nth-child(even), .remark-slide-content thead { background: none; }
+.remark-slide-content table td { border-bottom: 0; }
+.remark-slide-content table td.num, .remark-slide-content .steps td.num {
+  font-family: "STIX Two Text", "STIXGeneral", "Times New Roman", Times, serif; }
+
+/* Boxes become rules, without tints or rounded corners. */
+.remark-slide-content .highlight-box, .remark-slide-content .blue-box {
+  background: none; border-left: 1px solid #666666; border-radius: 0; }
+.remark-slide-content .pseudo-eq .term { background: none; border: 0; border-radius: 0; }
+.remark-slide-content .pseudo-eq { border-top: 1.2px solid #111111; border-bottom: 1.2px solid #111111; }
+.remark-slide-content .guess { color: #111111; font-weight: 600; font-style: italic; }
+
+/* Origin tags, monochrome, coded by border: data solid, research dotted, guesswork dashed,
+   scenario italic with no border. */
+.remark-slide-content .og { color: #444444; border: 1px dashed #444444; border-radius: 0;
+  font-variant-caps: all-small-caps; letter-spacing: 0.04em; }
+.remark-slide-content .og.data { border-style: solid; border-color: #444444; color: #444444; }
+.remark-slide-content .og.research { border-style: dotted; border-color: #444444; color: #444444; }
+.remark-slide-content .og.scenario { border-color: transparent; color: #444444; font-style: italic; }

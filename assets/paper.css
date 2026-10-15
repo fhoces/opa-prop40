@@ -1,0 +1,209 @@
+/* paper.css: the shared look of the opa-prop40 pages (STIX Two Text and Palette A).
+
+   Every page links this file after its own <style> block, so a rule here wins over a page
+   rule of the same specificity. The colour variables live only here, so the pages stay
+   aligned. The reports and the decks link it too, for the fonts and the variables; the
+   page rules below are scoped to body.pg, which only the six HTML pages carry.
+
+   Fonts: STIX Two Text 2.13 (SIL Open Font License, fonts/OFL.txt), from
+   github.com/stipub/stixfonts, cut to a Latin woff2 subset that keeps the small caps
+   (smcp, c2sc), kerning and ligatures. The variable files carry weights 400 to 700. */
+
+@font-face {
+  font-family: "STIX Two Text";
+  src: url("fonts/stix-two-text-latin.woff2") format("woff2");
+  font-weight: 400 700; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "STIX Two Text";
+  src: url("fonts/stix-two-text-italic-latin.woff2") format("woff2");
+  font-weight: 400 700; font-style: italic; font-display: swap;
+}
+
+/* ---- Palette A: white paper, violet (BSZ) and green (JR) ------------------------------ */
+:root {
+  --paper: #ffffff; --panel: #ffffff; --chip: #f3f3f1;
+  --ink: #111111; --ink-2: #444444; --ink-3: #666666;
+  --rule: #cfcfcf; --rule-2: #e4e4e4;
+  --link: #1d4e89;
+  --bsz: #6a2f86; --jr: #1f6b3b;
+  --up: #555555; --down: #9a9a9a; --total: #222222; --model: #c8c8c8;
+  /* The credit squares keep their own colours whatever the palette does. */
+  --credit-h: #1f6fce; --credit-ai: #eb6834;
+  /* Single-analysis explorers: this setting, the main estimate, the other scenarios. */
+  --cur: var(--total); --main: var(--down); --ref: var(--model);
+  --chip-on: var(--ink); --chip-on-tx: var(--paper);
+  --serif: "STIX Two Text", "STIXGeneral", "Times New Roman", Times, serif;
+  --sans: var(--serif);
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #161616; --panel: #1d1d1d; --chip: #262626;
+    --ink: #ececea; --ink-2: #bdbdbb; --ink-3: #9a9a98;
+    --rule: #3a3a3a; --rule-2: #2a2a2a;
+    --link: #8fb6ea;
+    --bsz: #c9a2e0; --jr: #7cc690;
+    --up: #b0b0b0; --down: #6e6e6e; --total: #dcdcdc; --model: #4a4a4a;
+    --credit-h: #4e9bf0; --credit-ai: #f07b4a;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #161616; --panel: #1d1d1d; --chip: #262626;
+  --ink: #ececea; --ink-2: #bdbdbb; --ink-3: #9a9a98;
+  --rule: #3a3a3a; --rule-2: #2a2a2a;
+  --link: #8fb6ea;
+  --bsz: #c9a2e0; --jr: #7cc690;
+  --up: #b0b0b0; --down: #6e6e6e; --total: #dcdcdc; --model: #4a4a4a;
+  --credit-h: #4e9bf0; --credit-ai: #f07b4a;
+}
+
+/* ---- Type ------------------------------------------------------------------------------ */
+body.pg { font-family: var(--serif); font-size: 17px; line-height: 1.5;
+  font-variant-numeric: lining-nums; }
+body.pg h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(26px, 4.4vw, 32px);
+  line-height: 1.2; letter-spacing: 0; text-wrap: balance; }
+body.pg h3 { font-weight: 600; font-size: 17.5px; }
+body.pg code { font-family: var(--mono); color: var(--ink); border-radius: 0; }
+body.pg .formula { font-family: var(--mono); font-size: 12.5px; border-radius: 0; }
+
+/* Kickers, the eyebrow and short labels: true small caps of the text face. */
+body.pg .eyebrow, body.pg .kicker, body.pg .headline .name, body.pg .sl-head,
+body.pg .control-group .lbl, body.pg .preferred .kicker {
+  font-family: var(--serif); font-size: 14.5px; font-weight: 400; text-transform: none;
+  font-variant-caps: all-small-caps; letter-spacing: 0.06em; color: var(--ink-3); }
+
+/* Navigation in the text face. */
+body.pg .site-nav { font-family: var(--serif); font-size: 13.5px; letter-spacing: 0; color: var(--ink-3); }
+body.pg .site-nav a { color: var(--link); }
+
+/* Notes, captions and footnotes. */
+body.pg .footnotes .fn, body.pg p.fn, body.pg .headline .fn, body.pg figcaption,
+body.pg .eq-note, body.pg .small { font-size: 13.5px; line-height: 1.45; }
+body.pg footer { font-size: 14px; }
+
+/* Numbers in the text face, lining and tabular. */
+body.pg td.num, body.pg th.num, body.pg .sl-end, body.pg .sl-cur, body.pg .ph-now b,
+body.pg .headline .value, body.pg .pseudo-eq .term b, body.pg .panel-head h3,
+body.pg .sticky-result, body.pg .levels button, body.pg svg.bars text, body.pg svg.bars2 text,
+body.pg svg.waterfall text {
+  font-family: var(--serif); font-variant-numeric: lining-nums tabular-nums; }
+body.pg .headline .value { font-size: 34px; font-weight: 600; }
+
+/* ---- Links: their own colour, a hairline underline ------------------------------------ */
+:where(body.pg) a { color: var(--link); text-decoration-thickness: 0.5px; text-underline-offset: 2px; }
+body.pg .standfirst a, body.pg p.fn a, body.pg .note a, body.pg footer a, body.pg .credit a,
+body.pg .board-lead a:not(.info), body.pg .eq-note a, body.pg .footnotes .fn a, body.pg .headline .sub a,
+body.pg .headline .fn a, body.pg .cards-after a, body.pg .byline a, body.pg details.fold .fold-body a,
+body.pg .bridge-note a {
+  color: var(--link); text-decoration: underline; text-decoration-thickness: 0.5px; text-underline-offset: 2px; }
+body.pg sup a, body.pg .headline sup a { text-decoration: none; }
+body.pg .info, body.pg a.more { color: var(--link); border-bottom-color: var(--link); text-decoration: none; }
+body.pg .minor-fold > summary { color: var(--link); }
+
+/* ---- Booktabs tables: ink rules at the top and bottom, one under the head -------------- */
+body.pg table { border-top: 1.2px solid var(--ink); border-bottom: 1.2px solid var(--ink); }
+body.pg th, body.pg td { border-bottom: 0; }
+body.pg thead th { border-bottom: 0.6px solid var(--ink); }
+body.pg th { font-family: var(--serif); font-size: 13.5px; text-transform: none; letter-spacing: 0.01em;
+  font-weight: 600; color: var(--ink); }
+body.pg tbody th { font-weight: 400; }
+
+/* ---- No web chrome: square corners, no shadows, no lift, no animation ----------------- */
+body.pg .card, body.pg .subcard, body.pg .subopa-card, body.pg .compare figure, body.pg .tip,
+body.pg .sl-tip, body.pg .end-tip, body.pg .info-tip, body.pg .bridge-note, body.pg .note,
+body.pg .kind, body.pg .origin, body.pg .control-group button, body.pg .levels button,
+body.pg .presets button, body.pg .panel-head .reset, body.pg .eq-box, body.pg .panel,
+body.pg .sl-box, body.pg .subopa-card .headline, body.pg .preferred, body.pg .placeholder,
+body.pg .legend span::before {
+  border-radius: 0; box-shadow: none; }
+body.pg .card, body.pg .subcard, body.pg .subopa-card, body.pg .levels button,
+body.pg .presets button, body.pg .control-group button { transition: none; }
+body.pg .card:hover, body.pg .card:focus-visible, body.pg .subcard:hover, body.pg .subcard:focus-visible,
+body.pg .subopa-card:hover, body.pg .subopa-card:focus-visible { transform: none; border-color: var(--ink-3); }
+/* Tips keep their short hover delay (so a passing mouse does not flash them) but no fade. */
+body.pg .sl-tip, body.pg .end-tip, body.pg .info-tip { transition-duration: 0s; border-color: var(--ink-3);
+  font-family: var(--serif); font-size: 13.5px; }
+body.pg .levels .tip, body.pg .tip { border-color: var(--ink-3); font-family: var(--serif); font-size: 13.5px; }
+
+/* Cards: titles in ink, underlined on hover. */
+body.pg .card h3, body.pg .subcard h3, body.pg .subopa-card h3 { color: var(--ink); font-size: 19px; }
+body.pg .card:hover h3, body.pg .subcard:hover h3, body.pg .subopa-card:hover h3,
+body.pg .card:focus-visible h3, body.pg .subcard:focus-visible h3, body.pg .subopa-card:focus-visible h3 {
+  text-decoration: underline; text-decoration-thickness: 0.5px; text-underline-offset: 3px; }
+body.pg .card p, body.pg .subcard p, body.pg .subopa-card p, body.pg .headline .def { color: var(--ink-2); font-size: 15.5px; }
+body.pg .subopa-card .headline { font-family: var(--serif); font-size: 15px; }
+
+/* Boxes become rules. */
+body.pg .eq-box { border: 0; border-top: 1.2px solid var(--ink); border-bottom: 1.2px solid var(--ink);
+  padding: 12px 0; background: transparent; }
+body.pg .pseudo-eq .term b, body.pg .pseudo-eq .op { font-size: 19px; }
+body.pg .pseudo-eq .term small { font-size: 12.5px; }
+body.pg .bridge-note, body.pg .note { border-left: 1px solid var(--ink-3); background: transparent; }
+body.pg .preferred { border-left: 1px solid var(--ink-3); background: transparent; }
+body.pg .placeholder { border-color: var(--ink-3); }
+
+/* Origin tags, monochrome, coded by border: data solid, research dotted, guesswork dashed,
+   scenario italic with no border. */
+body.pg .origin { font-family: var(--serif); font-size: 12.5px; text-transform: none;
+  font-variant-caps: all-small-caps; letter-spacing: 0.05em; color: var(--ink-2);
+  border: 1px solid var(--ink-2); background: transparent; padding: 0 4px; }
+body.pg .origin.data { border-style: solid; }
+body.pg .origin.research { border-style: dotted; }
+body.pg .origin.guesswork { border-style: dashed; }
+body.pg .origin.scenario { border-color: transparent; font-style: italic; }
+body.pg .kind { font-family: var(--serif); font-size: 13.5px; font-variant-caps: all-small-caps;
+  letter-spacing: 0.04em; color: var(--ink-2); }
+
+/* Folds numbered as the sections of a paper, teasers in italic. */
+body.pg { counter-reset: sec; }
+body.pg details.fold > summary h2::before { counter-increment: sec; content: counter(sec) "\2002"; }
+body.pg details.fold > summary .teaser { font-style: italic; font-size: 14px; color: var(--ink-3); }
+body.pg details.fold > summary::before { border-color: var(--ink-3); width: 7px; height: 7px;
+  border-width: 0 1.5px 1.5px 0; }
+
+/* A LaTeX footnote rule: a third of the measure. */
+body.pg .footnotes { border-top: 0; }
+body.pg .footnotes::before { content: ""; display: block; width: 33%; border-top: 0.6px solid var(--ink);
+  margin-bottom: 10px; }
+
+/* The credit squares keep the credit colours. */
+body.pg .sq.h { background: var(--credit-h); }
+body.pg .sq.ai { background: var(--credit-ai); }
+body.pg .sq.eq { background: linear-gradient(135deg, var(--credit-h) 50%, var(--credit-ai) 50%); }
+
+/* ---- Prose pages (the overviews): a page measure, paper section heads ----------------- */
+body.pg-overview .wrap { max-width: 800px; }
+body.pg-overview h2 { font-weight: 600; font-size: 21px; line-height: 1.3; letter-spacing: 0; }
+body.pg-overview .byline { font-size: 17px; color: var(--ink); }
+body.pg-overview .pseudo-eq { gap: 6px 4px; }
+body.pg-overview .pseudo-eq .term { min-width: 4.4em; max-width: 7.2em; }
+body.pg-overview .pseudo-eq .term b, body.pg-overview .pseudo-eq .op { font-size: 18px; }
+body.pg-overview details.fold > summary h2 { flex: 1 1 0; min-width: 0; }
+
+/* ---- Explorers: keep the width; h2 stays a kicker, now in the text face --------------- */
+body.pg-explorer h2 { font-family: var(--serif); font-size: 14.5px; font-weight: 400; text-transform: none;
+  font-variant-caps: all-small-caps; letter-spacing: 0.08em; color: var(--ink-3); }
+body.pg-explorer .standfirst { font-size: 17px; color: var(--ink); }
+body.pg-explorer .panel { border: 0; border-top: 2px solid var(--c); padding: 10px 0 12px; background: transparent; }
+body.pg-explorer .panel-head h3 { font-size: 24px; }
+body.pg-explorer .sl-box { background: transparent; border: 0; border-top: 0.6px solid var(--ink-3);
+  border-bottom: 0.6px solid var(--ink-3); padding: 4px 0 2px; }
+body.pg-explorer .box-eq { font-size: 16.5px; }
+body.pg-explorer .sl-head { font-size: 13px; }
+body.pg-explorer .sl-end { font-size: 12.5px; }
+body.pg-explorer .sl-cur { font-size: 13px; }
+body.pg-explorer .panel-head .reset { font-family: var(--serif); font-size: 13.5px; }
+body.pg-explorer .sl-in:focus-visible, body.pg-explorer .panel-head .reset:focus-visible,
+body.pg-explorer .levels button:focus-visible { outline-color: var(--ink); }
+body.pg-explorer .dial .label .sym { font-family: var(--serif); font-style: italic; font-size: 15px; }
+body.pg-explorer .levels button { font-size: 14px; }
+body.pg-explorer .levels button.is-default { box-shadow: none; border-bottom: 2px solid var(--ink-2); padding-bottom: 5px; }
+body.pg-explorer .presets button { font-family: var(--serif); font-size: 14px; }
+body.pg-explorer .dial .label { font-weight: 600; font-size: 15.5px; }
+body.pg-explorer .dial .desc { font-size: 13.5px; }
+body.pg-explorer .note, body.pg-explorer details.fold.notes { font-size: 13.5px; }
+body.pg-explorer details.fold > summary { font-size: 15px; font-weight: 400; }
+body.pg-explorer table { font-size: 14px; }
+body.pg-explorer th, body.pg-explorer td { font-family: var(--serif); }
+@media (max-width: 420px) { body.pg-explorer .box-eq { font-size: 15px; } }
