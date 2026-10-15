@@ -238,6 +238,33 @@
   .ap-btn[aria-pressed="true"] { color: var(--ink); border-color: var(--ink); font-weight: 600; }
   @media (hover: hover) { .ap-btn:hover { text-decoration: underline; } }
   .ap-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
+  /* "But what are the actual quantities?": one row per dial, booktabs rules, no new colours. Below
+     600px each row becomes a card, each cell led by its column's name (data-label). */
+  .quantities { margin-top: 30px; }
+  .quantities h3 { margin: 0 0 4px; }
+  .q-sub { margin: 0 0 10px; font-size: 14.5px; color: var(--ink-2); max-width: 62em; }
+  .q-table { width: 100%; border-collapse: collapse; font-size: 13px; line-height: 1.4;
+    border-top: 1.5px solid var(--ink); border-bottom: 1.5px solid var(--ink); }
+  .q-table th { text-align: left; font-weight: 600; font-size: 12.5px; padding: 6px 8px; vertical-align: bottom;
+    border-bottom: 1px solid var(--ink); }
+  .q-table td { padding: 6px 8px; vertical-align: top; border-top: 1px solid var(--rule-2); }
+  .q-table tbody tr:first-child td { border-top: 0; }
+  .q-table td:first-child { white-space: nowrap; }
+  .q-table td:first-child i { font-family: var(--serif); font-size: 15px; }
+  .q-table .q-word { color: var(--ink-2); }
+  .q-table .q-cred { color: var(--ink-3); }
+  .q-foot { font-size: 12.5px; color: var(--ink-2); margin: 8px 0 0; }
+  .q-foot a { color: var(--link); }
+  @media (max-width: 600px) {
+    .q-table thead { display: none; }
+    .q-table, .q-table tbody, .q-table tr, .q-table td { display: block; width: auto; }
+    .q-table tr { padding: 6px 0; border-top: 1px solid var(--rule); }
+    .q-table tbody tr:first-child { border-top: 0; }
+    .q-table td { border-top: 0; padding: 3px 0; }
+    .q-table td:first-child { white-space: normal; font-weight: 600; }
+    .q-table td:not(:first-child)::before { content: attr(data-label); display: block;
+      font-size: 11.5px; color: var(--ink-3); }
+  }
   .eq-note { font-size: 12.5px; color: var(--ink-2); margin: 10px 0 0; line-height: 1.45; max-width: 62em; }
   .eq-note a { color: var(--link); }
   @media (max-width: 980px) {
@@ -565,6 +592,29 @@
   <span class="eq-step"><span class="op">+</span><span class="term"><small>The other three steps together (W, a, three minor inputs)</small><button type="button" class="ap-btn" data-act="term" data-dials="base_list avoidance noncitizens real_estate asset_sales" data-steps="7 8 9" aria-pressed="false">Apply</button></span></span>
   <span class="eq-step"><span class="op">&asymp;</span><span class="term"><small>JR estimate</small><button type="button" class="ap-btn" data-act="all" data-dials="confirmed_departures litigation_survival income_loss_share income_level horizon discount_rate base_list avoidance noncitizens real_estate asset_sales">Apply all</button></span></span>
 </div>
+  </section>
+
+  <section class="quantities" id="quantities" aria-labelledby="q-title">
+    <h3 id="q-title">But what are the actual quantities?</h3>
+    <p class="q-sub">All these are empirical quantities. An expert should be able to appraise each value
+    from more to less credible.</p>
+    <table class="q-table">
+      <thead><tr><th>Dial</th><th>The BSZ analysis's value and why</th><th>The JR analysis's value and why</th><th>Which is more credible (the author of this OPA)</th></tr></thead>
+      <tbody>
+      <tr data-id="base_list"><td data-label="Dial"><i>W</i> <span class="q-word">wealth</span></td><td data-label="The BSZ analysis's value and why"><b>Forbes 2026.</b> The Forbes list on 1 July 2026, 250 California billionaires worth $2,307B (BSZ PDF p.24). Kind: data.</td><td data-label="The JR analysis's value and why"><b>Forbes 2025.</b> The 2025 list, 212 billionaires, grown 7% to the 31 December 2026 valuation date: $2,027B (NBER README). Kind: data.</td><td data-label="Which is more credible (the author of this OPA)" class="q-cred">Not yet assessed</td></tr>
+      <tr data-id="confirmed_departures"><td data-label="Dial"><i>D</i> <span class="q-word">departed</span></td><td data-label="The BSZ analysis's value and why"><b>None.</b> Nobody, since announcing a move is not a legal change of residence (BSZ PDF p.23). Kind: guesswork on data.</td><td data-label="The JR analysis's value and why"><b>JR seven.</b> Its seven confirmed leavers, Page, Thiel, Hankey, Kalanick, Brin, Spielberg and Sacks (NPV_dist_v8.R:19). Kind: guesswork on data.</td><td data-label="Which is more credible (the author of this OPA)" class="q-cred">Not yet assessed</td></tr>
+      <tr data-id="avoidance"><td data-label="Dial"><i>a</i> <span class="q-word">avoidance</span></td><td data-label="The BSZ analysis's value and why"><b>10.0%.</b> A small allowance, argued from enforcement rather than estimated (GGSS p.4). Half of it is moving away, which also costs income tax. Kind: guesswork.</td><td data-label="The JR analysis's value and why"><b>0.0%.</b> None on top of the departures it counts (NBER chapter Secs. 4-5). Kind: guesswork.</td><td data-label="Which is more credible (the author of this OPA)" class="q-cred">Not yet assessed</td></tr>
+      <tr data-id="litigation_survival"><td data-label="Dial"><i>q</i> <span class="q-word">litigation</span></td><td data-label="The BSZ analysis's value and why"><b>100%.</b> The Act is taken as written and collected in full. Kind: guesswork.</td><td data-label="The JR analysis's value and why"><b>50%.</b> The revenue weighted by 50%, the accounting threshold for a tax more likely than not to stand (NBER README). Kind: guesswork.</td><td data-label="Which is more credible (the author of this OPA)" class="q-cred">Not yet assessed</td></tr>
+      <tr data-id="income_loss_share"><td data-label="Dial"><i>f</i> <span class="q-word">share lost</span></td><td data-label="The BSZ analysis's value and why"><b>5%.</b> Only the leavers' own income tax is lost, the people in D and the half of avoiders who move (BSZ Table 5). Kind: data.</td><td data-label="The JR analysis's value and why"><b>45%.</b> 45% of all billionaires' income tax, whoever leaves (the middle of a 30% to 60% guess), plus movers from a (NPV_dist_v8.R). Kind: guesswork.</td><td data-label="Which is more credible (the author of this OPA)" class="q-cred">Not yet assessed</td></tr>
+      <tr data-id="income_level"><td data-label="Dial"><i>C</i> <span class="q-word">yearly tax revenue</span></td><td data-label="The BSZ analysis's value and why"><b>$3.06B/yr.</b> From tax data, since top wealth holders earn about half of what top earners do (BSZ PDF p.11). Kind: research.</td><td data-label="The JR analysis's value and why"><b>$4.55B/yr.</b> The middle of a $3.3 billion to $5.8 billion range from two model bounds (NPV_dist_v8.R:21). Kind: guesswork.</td><td data-label="Which is more credible (the author of this OPA)" class="q-cred">Not yet assessed</td></tr>
+      <tr data-id="horizon"><td data-label="Dial"><i>H</i> <span class="q-word">years</span></td><td data-label="The BSZ analysis's value and why"><b>5 years.</b> About the payment period, treating the responses as temporary (BSZ PDF p.27). Kind: scenario.</td><td data-label="The JR analysis's value and why"><b>perpetuity.</b> For ever, so the loss never ends (chapter Sec. 5.4). Kind: scenario.</td><td data-label="Which is more credible (the author of this OPA)" class="q-cred">Not yet assessed</td></tr>
+      <tr data-id="discount_rate"><td data-label="Dial"><i>r</i> <span class="q-word">rate</span></td><td data-label="The BSZ analysis's value and why"><b>3%.</b> The rate this OPA applies to the BSZ analysis's 5-year loss, the middle of the JR range. BSZ give no rate. Kind: scenario.</td><td data-label="The JR analysis's value and why"><b>2.73%.</b> The one rate worth the same as the JR analysis's random draw between 1.5% and 4.5% (NPV_dist_v8.R:22). Kind: derived.</td><td data-label="Which is more credible (the author of this OPA)" class="q-cred">Not yet assessed</td></tr>
+      <tr data-id="noncitizens"><td data-label="Dial"><span class="q-word">Non-citizens</span></td><td data-label="The BSZ analysis's value and why"><b>$150B.</b> Taxed like any other California resident (GGSS 20 Jul 2026 p.2). Kind: data.</td><td data-label="The JR analysis's value and why"><b>$0B.</b> Left out with its 28 international billionaires (NBER chapter Sec. 3.5). Kind: data.</td><td data-label="Which is more credible (the author of this OPA)" class="q-cred">Not yet assessed</td></tr>
+      <tr data-id="real_estate"><td data-label="Dial"><span class="q-word">Real estate</span></td><td data-label="The BSZ analysis's value and why"><b>0.0%.</b> No deduction (BSZ PDF p.24). Kind: data.</td><td data-label="The JR analysis's value and why"><b>0.5%.</b> Nets out directly held real estate, about 0.5% of the base (NBER README). Kind: data.</td><td data-label="Which is more credible (the author of this OPA)" class="q-cred">Not yet assessed</td></tr>
+      <tr data-id="asset_sales"><td data-label="Dial"><span class="q-word">Asset sales</span></td><td data-label="The BSZ analysis's value and why"><b>33%.</b> One third, an assumption (BSZ p.24: "paid one-third by selling assets"). Kind: guesswork.</td><td data-label="The JR analysis's value and why"><b>0%.</b> Does not count this extra income tax. Kind: guesswork.</td><td data-label="Which is more credible (the author of this OPA)" class="q-cred">Not yet assessed</td></tr>
+      </tbody>
+    </table>
+    <p class="q-foot">Each value's full source is in the <a href="../repro.html#the-disputed-inputs">report's table of differences</a>.</p>
   </section>
 
   <details class="fold notes" id="notes-estimates">

@@ -178,6 +178,14 @@ DIAL_SYMBOLS <- c(base_list = "W", confirmed_departures = "D", avoidance = "a",
 DIAL_WORDS <- c(base_list = "wealth", confirmed_departures = "departed", avoidance = "avoidance",
                 litigation_survival = "litigation", income_loss_share = "share lost",
                 income_level = "yearly tax revenue", horizon = "years", discount_rate = "rate")
+# The quantities table (render_site()): the four answers the OPA author's credibility column can
+# take, the longest a value-and-why cell may run, and the short source a cell cites, cut from the
+# source columns of export/r/inputs.csv (the first page, section or script line they name).
+CREDIBILITY_LEVELS <- c("BSZ more credible", "JR more credible", "About equally credible", "Not yet assessed")
+QUANTITY_WORDS <- 25
+QUANTITY_SOURCE_PATTERN <- paste0(
+  "BSZ PDF pp?\\.[0-9]+(-[0-9]+)?|GGSS( [0-9]+ [A-Z][a-z]+ [0-9]{4})? pp?\\.[0-9]+|BSZ Table [0-9]+|",
+  "(NBER )?chapter (Secs?\\. [0-9.]+(-[0-9.]+)?|pp?\\.[0-9]+(-[0-9]+)?)|NPV_dist_v8\\.R(:[0-9]+)?|NBER README")
 # What each symbol stands for, at the start of its tip. The bridge's step names (short_labels)
 # name a step, not the dial: "No avoidance" is the JR end of the a dial, not the dial.
 DIAL_NAMES <- c(base_list = "wealth on the list", confirmed_departures = "wealth already gone",
@@ -430,6 +438,54 @@ render_site <- function(root = comparison_root(),
     k <- strsplit(k, " vs ", fixed = TRUE)[[1]]
     paste0(" Kind: ", if (side == "bsz") k[1] else k[length(k)], ".")
   }
+  # ---- "But what are the actual quantities?" (author request 2026-10-15): after the panels and
+  # the Apply block, one row per dial in the boxes' visual order (the revenue box, the loss box,
+  # then the three minor inputs one by one). Each analysis's cell is its value as the dial's end
+  # prints it, the end's tip (end_tips above, without its "BSZ:" or "JR:" lead), a short source
+  # cut from the dial's source column of export/r/inputs.csv, and the tip's "Kind:" label, so a
+  # cell cannot drift from the tip it repeats. If a cell runs past QUANTITY_WORDS words it drops
+  # the tip's parentheses, then keeps its first sentence only. The last column is the OPA
+  # author's own judgement, read from comparison/data/author-credibility.csv; no code or agent
+  # writes an assessment.
+  q_ids <- c(unlist(lapply(EXPLORER_BOXES, `[[`, "ids"), use.names = FALSE), EXPLORER_MINOR)
+  cred <- read_csv_plain(file.path(root, "comparison", "data", "author-credibility.csv"))
+  stopifnot(setequal(cred$step_id, q_ids), !anyDuplicated(cred$step_id),
+            all(cred$assessment %in% CREDIBILITY_LEVELS))
+  q_cell <- function(id, side) {
+    ii <- inp[inp$step_id == id, ]
+    if (id == "income_loss_share" && side == "rjkdc") ii <- ii[order(ii$input != "f0"), ]
+    src <- ii[[if (side == "bsz") "supporting_source" else "rauh_source"]]
+    hit <- unlist(regmatches(src, regexpr(QUANTITY_SOURCE_PATTERN, src)))
+    tip <- sub("^[^:]{1,14}: ", "", end_tips[[id]][[side]])
+    tip <- paste0(toupper(substr(tip, 1, 1)), substring(tip, 2))
+    first <- sub("^(.*?[.])( [A-Z].*)?$", "\\1", tip, perl = TRUE)
+    val <- dial_texts(inp, id, bi0)[[side]]
+    # the source goes in parentheses at the end of the tip's first sentence, unless the tip
+    # already cites a page
+    make <- function(t) paste0(val, ". ",
+      if (length(hit) && !grepl("p[.][0-9]", t)) sub("[.](?= [A-Z]|$)", paste0(" (", hit[1], ")."), t, perl = TRUE) else t,
+      end_kind(id, side))
+    bare <- function(t) gsub(" \\([^()]*\\)", "", t)
+    words <- function(x) length(strsplit(x, " ")[[1]])
+    for (t in c(tip, bare(tip), first, bare(first))) { out <- make(t); if (words(out) <= QUANTITY_WORDS) break }
+    list(text = out, html = paste0("<b>", esc(val), ".</b> ", esc(substring(out, nchar(val) + 3))))
+  }
+  q_dial <- function(id) if (id %in% names(DIAL_SYMBOLS))
+    sprintf('<i>%s</i> <span class="q-word">%s</span>', DIAL_SYMBOLS[[id]], esc(DIAL_WORDS[[id]])) else
+    sprintf('<span class="q-word">%s</span>', esc(unname(short_labels[id])))
+  q_heads <- c("Dial", "The BSZ analysis's value and why", "The JR analysis's value and why",
+               "Which is more credible (the author of this OPA)")
+  tok$quantity_rows <- paste(vapply(q_ids, function(id) {
+    cr <- cred[cred$step_id == id, ]
+    has <- function(x) length(x) == 1 && !is.na(x) && nzchar(as.character(x))
+    verdict <- paste0(esc(cr$assessment), if (has(cr$note)) paste0(". ", esc(cr$note)) else "",
+                      if (has(cr$date)) paste0(" (", esc(as.character(cr$date)), ")") else "")
+    sprintf(paste0('      <tr data-id="%s"><td data-label="%s">%s</td><td data-label="%s">%s</td>',
+                   '<td data-label="%s">%s</td><td data-label="%s" class="q-cred">%s</td></tr>'),
+            id, q_heads[1], q_dial(id), esc(q_heads[2]), q_cell(id, "bsz")$html,
+            esc(q_heads[3]), q_cell(id, "rjkdc")$html, esc(q_heads[4]), verdict)
+  }, ""), collapse = "\n")
+  tok$quantity_heads <- paste(sprintf("<th>%s</th>", esc(q_heads)), collapse = "")
   # Which analysis's value sits at the left end of dial `id` in `panel`: the smaller one (ties
   # and the minor switch, whose two ends are not numbers, keep the BSZ value at the left). The
   # share-lost dial compares its two rules' f at the panel's starting positions; a dial that

@@ -500,3 +500,62 @@ test_that("every relative link on both pages resolves to a file in the repo (sub
     }
   }
 })
+
+test_that("the quantities section: eleven dials in the boxes' order, credibility from the author's file", {
+  html <- read_page(explorer)
+  at <- function(x) regexpr(x, html, fixed = TRUE)[[1]]
+  # after the panels and the Apply block, before the notes fold
+  expect_true(grepl('<h3 id="q-title">But what are the actual quantities?</h3>', html, fixed = TRUE))
+  expect_gt(at('<section class="quantities"'), at('<div class="pseudo-eq apply-eq"'))
+  expect_lt(at('<section class="quantities"'), at('<details class="fold notes" id="notes-estimates">'))
+  expect_true(grepl("All these are empirical quantities. An expert should be able to appraise each value\n    from more to less credible.", html, fixed = TRUE))
+  # the four columns
+  head <- regmatches(html, regexpr("<thead><tr>.*?</tr></thead>", html, perl = TRUE))
+  th <- regmatches(head, gregexpr("(?<=<th>)[^<]*(?=</th>)", head, perl = TRUE))[[1]]
+  expect_identical(th, esc(c("Dial", "The BSZ analysis's value and why", "The JR analysis's value and why",
+                             "Which is more credible (the author of this OPA)")))
+  expect_length(th, 4)
+  # one row per dial, the boxes' visual order, then the three minor inputs one by one
+  rows <- regmatches(html, gregexpr('<tr data-id="[a-z_]+">.*?</tr>', html))[[1]]
+  ids <- sub('^<tr data-id="([a-z_]+)">.*$', "\\1", rows)
+  expect_length(rows, 11)
+  expect_identical(ids, c("base_list", "confirmed_departures", "avoidance", "litigation_survival",
+                          "income_loss_share", "income_level", "horizon", "discount_rate",
+                          "noncitizens", "real_estate", "asset_sales"))
+  expect_identical(ids, c(unlist(lapply(EXPLORER_BOXES, `[[`, "ids"), use.names = FALSE), EXPLORER_MINOR))
+  # the credibility column is the author's file, row by row; today every row is "Not yet assessed"
+  cred <- read_csv_plain(file.path(root, "comparison", "data", "author-credibility.csv"))
+  expect_identical(names(cred), c("step_id", "assessment", "note", "date"))
+  expect_true(all(cred$assessment %in% CREDIBILITY_LEVELS))
+  expect_true(all(cred$assessment == "Not yet assessed"))
+  cell <- function(r, k) regmatches(r, gregexpr("<td[^>]*>.*?</td>", r))[[1]][k]
+  txt <- function(x) gsub("&#39;", "'", gsub("&amp;", "&", gsub("<[^>]*>", "", x), fixed = TRUE), fixed = TRUE)
+  for (i in seq_along(rows))
+    expect_identical(txt(cell(rows[i], 4)), cred$assessment[cred$step_id == ids[i]], label = ids[i])
+  # every value-and-why cell: within 25 words, and it carries its Kind label
+  for (i in seq_along(rows)) for (k in 2:3) {
+    x <- txt(cell(rows[i], k))
+    expect_lte(length(strsplit(x, " ")[[1]]), 25, label = paste(ids[i], k, x))
+    expect_true(grepl("Kind: (data|research|guesswork|scenario|derived|guesswork on data)\\.$", x), label = paste(ids[i], k))
+  }
+  # a cell starts with the value its dial's end prints
+  inp <- read_csv_plain(file.path(root, "comparison", "export", "r", "inputs.csv"))
+  bi <- bridge_inputs(read_contracts(root))
+  for (i in seq_along(rows)) {
+    dt <- dial_texts(inp, ids[i], bi)
+    expect_true(startsWith(txt(cell(rows[i], 2)), paste0(dt$bsz, ".")), label = ids[i])
+    expect_true(startsWith(txt(cell(rows[i], 3)), paste0(dt$rjkdc, ".")), label = ids[i])
+  }
+  # the line under the table links to the report's differences table
+  expect_true(grepl("Each value's full source is in the <a href=\"../repro.html#the-disputed-inputs\">report's table of differences</a>.", html, fixed = TRUE))
+})
+
+test_that("an assessment in the author's file shows in the table, and an unknown one stops the build", {
+  f <- file.path(root, "comparison", "data", "author-credibility.csv")
+  old <- readLines(f); on.exit(writeLines(old, f), add = TRUE)
+  writeLines(sub("^horizon,Not yet assessed,,$", "horizon,About equally credible,test note,2026-10-15", old), f)
+  s <- render_site(root)
+  expect_true(grepl('<tr data-id="horizon">.*?<td data-label="Which is more credible \\(the author of this OPA\\)" class="q-cred">About equally credible. test note \\(2026-10-15\\)</td></tr>', s$explorer))
+  writeLines(sub("^horizon,Not yet assessed,,$", "horizon,Probably BSZ,,", old), f)
+  expect_error(render_site(root))
+})
