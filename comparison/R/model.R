@@ -111,6 +111,7 @@ switch_inputs <- function(sup, rauh, on) {
 #   most numeric inputs: five positions, linear in the parameter, (1 - p/4) own + (p/4)
 #                   other, so 0 and 4 are the two values exactly;
 #   the Forbes source: two positions, one list or the other (no blend of the two lists);
+#   the share lost: two positions, one rule or the other (no blend of the two rules);
 #   the departures: three stops, read from the ladder in bridge_inputs(): no departures
 #                   (the BSZ analysis), BSZ's aggressive scenario (Table 5 row 3: four escape
 #                   the tax, and the income tax of all seven named leavers is lost), the
@@ -120,7 +121,8 @@ switch_inputs <- function(sup, rauh, on) {
 #                   the BSZ analysis's 5 years (or in reverse from the JR perpetuity).
 SLIDER_STEPS <- 4L
 SLIDER_HORIZONS <- c(5, 10, 20, 50, Inf)
-slider_max <- function(id) switch(id, base_list = 1L, confirmed_departures = 2L, SLIDER_STEPS)
+slider_max <- function(id) switch(id, base_list = 1L, confirmed_departures = 2L,
+                                  income_loss_share = 1L, SLIDER_STEPS)
 
 slider_inputs <- function(from, to, positions, ladder = NULL) {
   x <- from

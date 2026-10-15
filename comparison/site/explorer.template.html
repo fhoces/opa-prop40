@@ -503,8 +503,6 @@
     if (p === e.max) return e[other + "_text"];
     if (id === "confirmed_departures")   // the middle stop: the BSZ analysis's own four leavers
       return "BSZ four, " + fmtValue("W_core", (1 - x.lam) * x.dep_b + x.lam * x.dep_j);
-    if (e.input.length > 1)   // the share-lost step: the leavers' ratio and the flat share
-      return (100 * x.own).toFixed(0) + "% own tax + " + fmtValue("f0", x.f0) + " flat";
     return fmtValue(e.input[0], x[e.input[0]]);
   }
   // A slider can have no effect at the other sliders' positions (the inputs of a box

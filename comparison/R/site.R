@@ -50,8 +50,8 @@ step_texts <- function(inp, id) {
   ii <- inp[inp$step_id == id, ]
   if (id == "income_loss_share") {
     k <- ii[ii$input == "own", ]; f <- ii[ii$input == "f0", ]
-    return(list(bsz = "own tax",
-                rjkdc = sprintf("%s flat", fmt_input("f0", f$rauh_value)),
+    return(list(bsz = "what leavers paid",
+                rjkdc = sprintf("%s of all", fmt_input("f0", f$rauh_value)),
                 bsz_source = paste(k$supporting_source, f$supporting_source, sep = "; "),
                 rjkdc_source = paste(f$rauh_source, k$rauh_source, sep = "; ")))
   }
@@ -252,12 +252,13 @@ render_site <- function(root = comparison_root(),
     avoidance = "The share of the tax lost to avoidance and evasion other than leaving. The BSZ analysis allows 10%. The JR analysis allows none. Kind: guesswork.",
     litigation_survival = "The chance that the Act survives a constitutional challenge, applied to the revenue. The BSZ analysis takes the Act as written and collected in full. The JR analysis weights the revenue by 50%, the accounting threshold for a tax that is more likely than not to stand; its simulation draws the revenue anywhere between zero and the ceiling, which has the same average. Kind: guesswork.",
     income_loss_share = sprintf(paste(
-      "What share of billionaires' yearly California income tax is lost to those who leave.",
-      "The BSZ analysis counts what the leavers themselves pay, from SEC filings and its own rate for the rest:",
-      "with no departures only its movers' 5%% of the income tax, and in its aggressive scenario (the D dial's middle stop) %s a year more.",
-      "The JR analysis assumes %s of the income tax is lost (the middle of its 30%% to 60%% range), whoever leaves.",
+      "How much of billionaires' yearly California income tax the state loses when some of them leave. Two rules, so two positions.",
+      "What leavers paid (the BSZ analysis): the state loses the income tax the people who leave were paying, from their SEC filings and a wealth-based rate for the rest, plus its 5%% of movers.",
+      "With nobody gone that is %s a year; at the D dial's middle stop, %s a year more.",
+      "%s of all (the JR analysis): the state loses %s of every billionaire's income tax, the middle of its 30%% to 60%% range, whoever leaves.",
       "Kind: data (BSZ) against guesswork (JR)."),
-      money(bi0$ladder$L[2], 2), pct(bi0$rauh$f0, 0)),
+      money(bi0$sup$alpha * bi0$sup$m * bi0$sup$C, 2), money(bi0$ladder$L[2], 2),
+      pct(bi0$rauh$f0, 0), pct(bi0$rauh$f0, 0)),
     income_level = "Billionaires' yearly California income tax, the amount at risk each year. The BSZ analysis: about $3.1 billion from tax data, since top wealth holders earn about half of what top earners do. The JR analysis: $4.55 billion, the midpoint of a $3.3 billion to $5.8 billion range from two model bounds. Kind: research (BSZ) against guesswork (JR).",
     horizon = sprintf("How many years the income tax loss is counted. The BSZ analysis: 5 years, about the payment period, with responses temporary. The JR analysis: for ever, discounted at %s to %s. The slider's five settings are %s. Kind: scenario.",
                       tok$r_min, tok$r_max, hz_words),
