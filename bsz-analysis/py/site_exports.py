@@ -22,35 +22,58 @@ def site_pv_factor(r=SITE_PV_RATE, H=SITE_PV_YEARS):
     return (1 - (1 + r) ** (-H)) / r
 
 
+# Each dial carries a one-sentence definition (desc, printed under its label) and one short
+# hover tip per level (tips, aligned with levels): the authors' level gives their value and
+# its one reason; every other level of a numeric dial is one this OPA adds.
+SITE_OTHER_LEVEL_TIP = "A level this OPA adds to show the range, not the authors'."
+
+
+def site_level_tips(n, default, why):
+    """n tips, the OPA's line everywhere but the authors' level (default, 1-based as in R)."""
+    tips = [SITE_OTHER_LEVEL_TIP] * n
+    tips[default - 1] = why
+    return tips
+
+
 def site_dials():
     return [
         dict(key="avoidance", label="Avoidance and evasion", sym="α", origin="guesswork",
-             desc="Share of listed wealth that escapes the tax. GGSS p.4: \"a relatively small "
-                  "avoidance rate of 10%\", argued from enforcement, not estimated.",
-             levels=[0, 0.05, 0.10, 0.15, 0.20, 0.30], default=3, fmt="pct"),
+             desc="The share of listed wealth that escapes the tax.",
+             levels=[0, 0.05, 0.10, 0.15, 0.20, 0.30], default=3, fmt="pct",
+             tips=site_level_tips(6, 3, "BSZ: 10%, a judgment that enforcement keeps avoidance "
+                                        "small, not an estimate (GGSS p.4).")),
         dict(key="mobility_share", label="Share of avoidance that is leaving", sym="m",
              origin="guesswork",
-             desc="Only this part costs income tax. BSZ PDF p.24: \"If we assume that half of "
-                  "the 10% avoidance takes the form of mobility\".",
-             levels=[0, 0.25, 0.50, 0.75, 1], default=3, fmt="pct"),
+             desc="The part of avoidance done by leaving California, the only part that costs "
+                  "income tax.",
+             levels=[0, 0.25, 0.50, 0.75, 1], default=3, fmt="pct",
+             tips=site_level_tips(5, 3, "BSZ: half (BSZ p.24: \"half of the 10% avoidance takes "
+                                        "the form of mobility\").")),
         dict(key="avoidance_small", label="Avoidance by the less visible billionaires",
              sym="αₛ", origin="guesswork",
-             desc="Applies only when the Pareto-missing billionaires are counted. BSZ PDF p.25: "
-                  "\"Assuming a higher evasion rate of 20%\".",
-             levels=[0.10, 0.20, 0.30, 0.50], default=2, fmt="pct"),
+             desc="Avoidance by the billionaires Forbes misses. It applies only when they are "
+                  "counted.",
+             levels=[0.10, 0.20, 0.30, 0.50], default=2, fmt="pct",
+             tips=site_level_tips(4, 2, "BSZ: 20%, higher than for the listed billionaires "
+                                        "(BSZ p.25).")),
         dict(key="sell_share", label="Share of the tax paid by selling assets", sym="s",
              origin="guesswork",
-             desc="Sales realise capital gains, which raise extra CA income tax. BSZ PDF p.24: "
-                  "\"paid one-third by selling assets\".",
-             levels=[0, 1 / 3, 2 / 3, 1], default=2, fmt="frac3"),
+             desc="The share of the tax paid by selling assets, whose gains raise extra income tax.",
+             levels=[0, 1 / 3, 2 / 3, 1], default=2, fmt="frac3",
+             tips=site_level_tips(4, 2, "BSZ: one third (BSZ p.24: \"paid one-third by selling "
+                                        "assets\").")),
         dict(key="pareto", label="Count billionaires Forbes misses", sym="P", origin="research",
-             desc="Pareto extrapolation of the $1B-4.5B range (Table 5 rows 2 and 4). BSZ PDF "
-                  "pp.24-25 and Appendix Figure A4.",
-             levels=[0, 1], default=1, fmt="bool"),
+             desc="Whether to add the billionaires Forbes misses between $1 and $4.5 billion, "
+                  "estimated from the shape of the list above $4.5 billion.",
+             levels=[0, 1], default=1, fmt="bool",
+             tips=["BSZ main row: not counted.",
+                   "BSZ Table 5 rows 2 and 4 count them (BSZ pp.24-25, Appendix Figure A4)."]),
         dict(key="leavers", label="Aggressive assumption on leavers", sym="L", origin="guesswork",
-             desc="Page, Thiel, Hankey, Kalanick escape the tax; Brin, Zuckerberg, Fang leave "
-                  "later (Table 5 rows 3 and 4). A legal judgment on residency, BSZ PDF p.26.",
-             levels=[0, 1], default=1, fmt="bool"),
+             desc="Whether some billionaires who moved escape the tax as non-residents.",
+             levels=[0, 1], default=1, fmt="bool",
+             tips=["BSZ main row: everyone resident on 1 January 2026 pays.",
+                   "BSZ Table 5 rows 3 and 4: Page, Thiel, Hankey and Kalanick escape; Brin, "
+                   "Zuckerberg and Fang leave later (BSZ p.26)."]),
     ]
 
 
@@ -190,7 +213,7 @@ def site_grid_js_text(grid, inp):
         "source": "Generated by write_site_grid_js() in R/site_exports.R from the targets pipeline "
                   f"(BSZ workbook, {inp['vintage']} vintage). Do not edit.",
         "vintage": inp["vintage"],
-        "dials": [{k: d[k] for k in ("key", "label", "sym", "origin", "desc", "levels", "fmt")} for d in dials],
+        "dials": [{k: d[k] for k in ("key", "label", "sym", "origin", "desc", "levels", "fmt", "tips")} for d in dials],
         "outcomes": [lab for _, lab, _ in SITE_OUTCOMES],
         "keys": keys,
         "units": [u for _, _, u in SITE_OUTCOMES],

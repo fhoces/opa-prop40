@@ -119,21 +119,17 @@
             border: 1px solid var(--rule); color: var(--ink-2); vertical-align: 1px; }
   .origin.guesswork { border-color: var(--pref); color: var(--pref); }
   .dial .desc { font-size: 12.5px; color: var(--ink-2); line-height: 1.4; margin-top: 2px; }
-  .dial .label { position: relative; }
-  .dial .info { border: 0; background: none; color: var(--ink-3); cursor: help; font-size: 13px;
-                margin-left: 6px; padding: 0 3px; line-height: 1; vertical-align: 1px; }
-  .dial .info:hover, .dial .info:focus-visible { color: var(--ink); }
-  .dial .tip { display: none; position: absolute; z-index: 30; left: 0; top: calc(100% + 6px);
-               width: min(26em, 86vw); background: var(--panel); color: var(--ink-2);
-               border: 1px solid var(--rule); border-radius: 4px; padding: 9px 11px;
-               box-shadow: 0 6px 18px rgba(16, 21, 25, .14); font-size: 12.5px; font-weight: 400;
-               line-height: 1.45; }
-  .dial .tip b { color: var(--ink); font-weight: 600; }
-  /* The mouse opens a tip by hovering; a touch screen has no hover, so there a tap on the label
-     opens it and a second tap closes it (the script sets .open). */
-  @media (hover: hover) { .dial .label:hover .tip, .dial .info:focus + .tip { display: block; } }
-  .dial .info:focus-visible + .tip, .dial .tip.open { display: block; }
-  .dial .label { cursor: default; }
+  /* Each level button has its own short tip. A mouse opens it by hovering and keyboard focus
+     opens it too; a touch screen has no hover, so there a tap on a button opens its tip (and
+     selects the level), a second tap closes it, and a tap elsewhere closes it (the script sets
+     .open). The tip spans the row of buttons, so it never runs off a narrow screen. */
+  .levels .tip { display: none; position: absolute; z-index: 30; left: 0; top: calc(100% + 6px);
+                 width: 100%; max-width: 26em; background: var(--panel); color: var(--ink-2);
+                 border: 1px solid var(--rule); border-radius: 4px; padding: 7px 10px;
+                 box-shadow: 0 6px 18px rgba(16, 21, 25, .14); font-family: var(--sans);
+                 font-size: 12.5px; font-weight: 400; line-height: 1.45; pointer-events: none; }
+  @media (hover: hover) { .levels button:hover + .tip { display: block; } }
+  .levels button:focus-visible + .tip, .levels .tip.open { display: block; }
   details.fold { margin-top: 14px; }
   .presets-h { font-size: 12px; color: var(--ink-3); margin: 14px 0 6px; }
   p.fn { font-size: 13.5px; color: var(--ink-2); line-height: 1.45; margin: 4px 0 0; }
@@ -147,9 +143,9 @@
   .dial .hint { font-size: 12px; color: var(--pref); margin-top: 4px; display: none; }
   .dial.is-off .hint { display: block; }
   .dial.is-off .levels { opacity: .45; }
-  .dial.is-off .label > :not(.tip) { opacity: .45; }
+  .dial.is-off .label, .dial.is-off .desc { opacity: .45; }
   .dial.is-off .levels button { cursor: not-allowed; }
-  .levels { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 8px; }
+  .levels { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 8px; position: relative; }
   .levels button {
     font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 13px;
     color: var(--ink-2); background: var(--chip); border: 1px solid transparent;
@@ -359,6 +355,11 @@
   var rack = document.getElementById("rack");
   var DI = {}; G.dials.forEach(function (d, i) { DI[d.key] = i; });
   var rowEl = [];
+  var lastPointer = "mouse";
+  function closeTips(keep) {
+    document.querySelectorAll(".levels .tip.open").forEach(function (t) { if (t !== keep) t.classList.remove("open"); });
+  }
+  function toggleTip(tip) { closeTips(tip); tip.classList.toggle("open"); }
   G.dials.forEach(function (dial, di) {
     var row = document.createElement("div");
     row.className = "dial";
@@ -371,39 +372,11 @@
     var org = document.createElement("span");
     org.className = "origin " + dial.origin; org.textContent = dial.origin;
     label.appendChild(org);
-    // Details live in a hover box on the label (a tap or click on the label, or keyboard focus
-    // on the info button, also opens it; a second tap closes it), so the rack shows only the
-    // label and the levels.
-    var info = document.createElement("button");
-    info.type = "button"; info.className = "info"; info.textContent = "\u24D8";
-    info.setAttribute("aria-label", "Details: " + dial.label);
-    var tip = document.createElement("div");
-    tip.className = "tip"; tip.setAttribute("role", "tooltip");
-    tip.id = "tip-" + dial.key; info.setAttribute("aria-describedby", tip.id);
-    var tipDesc = document.createElement("div"); tipDesc.textContent = dial.desc;
-    var tipDef = document.createElement("div"); tipDef.style.marginTop = "6px";
-    var bDef = document.createElement("b"); bDef.textContent = "The authors use: ";
-    tipDef.appendChild(bDef);
-    tipDef.appendChild(document.createTextNode(fmtLevel(dial, dial.levels[DEFAULT[di]]) +
-      " (" + dial.origin + ")"));
-    tip.appendChild(tipDesc); tip.appendChild(tipDef);
-    // The two yes/no switches have no OPA levels: "yes" is the authors' own Table 5 rows 2 to 4.
-    if (dial.fmt !== "bool") {
-      var tipOther = document.createElement("div");
-      tipOther.textContent = "Other levels: this OPA's.";
-      tip.appendChild(tipOther);
-    }
-    label.addEventListener("click", function (e) {
-      e.stopPropagation();
-      document.querySelectorAll(".dial .tip.open").forEach(function (t) { if (t !== tip) t.classList.remove("open"); });
-      tip.classList.toggle("open");
-    });
-    label.appendChild(info); label.appendChild(tip);
-    // The first sentence of the description sits under the label; the full text stays in the tip.
-    var cut = dial.desc.indexOf(". ");
+    // The one-sentence definition sits under the label. Each level's own tip (below) says
+    // whether it is the authors' value and why, so the label needs no tip of its own.
     var desc = document.createElement("div");
     desc.className = "desc";
-    desc.textContent = cut < 0 ? dial.desc : dial.desc.slice(0, cut + 1);
+    desc.textContent = dial.desc;
     var levels = document.createElement("div");
     levels.className = "levels";
     dial.levels.forEach(function (value, li) {
@@ -413,11 +386,20 @@
       b.textContent = fmtLevel(dial, value);
       if (li === DEFAULT[di]) b.className = "is-default";
       b.setAttribute("aria-label", dial.label + ", " + fmtLevel(dial, value));
-      b.addEventListener("click", function () {
+      var tip = document.createElement("div");
+      tip.className = "tip"; tip.setAttribute("role", "tooltip");
+      tip.id = "tip-" + dial.key + "-" + li; tip.textContent = dial.tips[li];
+      b.setAttribute("aria-describedby", tip.id);
+      // A touch tap toggles this button's tip and closes any other; a mouse click does not
+      // (hover already shows the tip). The tap still selects the level.
+      b.addEventListener("pointerdown", function (e) { lastPointer = e.pointerType; });
+      b.addEventListener("click", function (e) {
+        e.stopPropagation();
+        if (lastPointer === "touch" || lastPointer === "pen") toggleTip(tip);
         if (dial.key === "avoidance_small" && state[DI.pareto] === 0) return;
         state[di] = li; render();
       });
-      levels.appendChild(b);
+      levels.appendChild(b); levels.appendChild(tip);
     });
     row.appendChild(label); row.appendChild(desc); row.appendChild(levels);
     if (dial.key === "avoidance_small") {
@@ -428,9 +410,7 @@
     }
     rowEl[di] = row;
   });
-  document.addEventListener("click", function () {
-    document.querySelectorAll(".dial .tip.open").forEach(function (t) { t.classList.remove("open"); });
-  });
+  document.addEventListener("click", function () { closeTips(null); });
   ["avoidance", "mobility_share", "sell_share", "pareto", "avoidance_small", "leavers"]
     .forEach(function (k) { rack.appendChild(rowEl[DI[k]]); });
 
@@ -522,7 +502,9 @@
     document.querySelectorAll(".levels button").forEach(function (b) { b.setAttribute("aria-pressed", "false"); });
     var off = state[DI.pareto] === 0;
     rowEl[DI.avoidance_small].classList.toggle("is-off", off);
-    rowEl[DI.avoidance_small].querySelectorAll("button").forEach(function (b) { b.disabled = off; });
+    // aria-disabled, not disabled: a disabled button gets no tap, so its tip could not open.
+    // The click handler ignores the selection while the switch is off.
+    rowEl[DI.avoidance_small].querySelectorAll("button").forEach(function (b) { b.setAttribute("aria-disabled", off ? "true" : "false"); });
     G.dials.forEach(function (dial, di) {
       var b = document.getElementById("dial-" + dial.key + "-" + state[di]);
       if (b) b.setAttribute("aria-pressed", "true");
