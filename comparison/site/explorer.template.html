@@ -471,7 +471,8 @@
     var withCommas = function (s) { var p = s.split("."); p[0] = p[0].replace(/\B(?=(\d{3})+(?!\d))/g, ","); return p.join("."); };
     switch (input) {
       case "W_noncit": case "W_core": return "$" + withCommas(v.toFixed(1)) + "B";
-      case "re": case "d_conf": case "alpha": case "s": return (100 * v).toFixed(1) + "%";
+      case "re": case "d_conf": case "alpha": return (100 * v).toFixed(1) + "%";
+      case "s": return (100 * v).toFixed(0) + "%";
       case "q": case "f0": return (100 * v).toFixed(0) + "%";
       case "own": return v.toFixed(2);
       case "C": return "$" + v.toFixed(2) + "B/yr";

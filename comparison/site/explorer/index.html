@@ -418,7 +418,7 @@
         <li class="sl" data-id="asset_sales">
           <label for="bsz-asset_sales"><b>Asset sales</b> <span class="sl-title">Extra income tax from selling assets to pay</span></label>
           <span class="sl-tip" role="tooltip" id="bsz-asset_sales-tip">Extra income tax from assets sold to pay the tax: the BSZ analysis assumes a third of the tax is paid by selling assets, whose gains are taxed; the JR analysis does not count this. Kind: guesswork.</span>
-          <div class="sl-row"><span class="sl-end sl-lo">1/3</span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-asset_sales" min="0" max="4" step="1" value="0" data-panel="bsz" data-id="asset_sales" aria-describedby="bsz-asset_sales-tip"><output class="sl-cur" for="bsz-asset_sales">1/3</output></span><span class="sl-end sl-hi">0%</span></div>
+          <div class="sl-row"><span class="sl-end sl-lo">33%</span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-asset_sales" min="0" max="4" step="1" value="0" data-panel="bsz" data-id="asset_sales" aria-describedby="bsz-asset_sales-tip"><output class="sl-cur" for="bsz-asset_sales">33%</output></span><span class="sl-end sl-hi">0%</span></div>
           <span class="sl-note"></span>
         </li>
           </ul>
@@ -524,7 +524,7 @@
         <li class="sl" data-id="asset_sales">
           <label for="rjkdc-asset_sales"><b>Asset sales</b> <span class="sl-title">Extra income tax from selling assets to pay</span></label>
           <span class="sl-tip" role="tooltip" id="rjkdc-asset_sales-tip">Extra income tax from assets sold to pay the tax: the BSZ analysis assumes a third of the tax is paid by selling assets, whose gains are taxed; the JR analysis does not count this. Kind: guesswork.</span>
-          <div class="sl-row"><span class="sl-end sl-lo">1/3</span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-asset_sales" min="0" max="4" step="1" value="0" data-panel="rjkdc" data-id="asset_sales" aria-describedby="rjkdc-asset_sales-tip" dir="rtl"><output class="sl-cur" for="rjkdc-asset_sales">0%</output></span><span class="sl-end sl-hi">0%</span></div>
+          <div class="sl-row"><span class="sl-end sl-lo">33%</span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-asset_sales" min="0" max="4" step="1" value="0" data-panel="rjkdc" data-id="asset_sales" aria-describedby="rjkdc-asset_sales-tip" dir="rtl"><output class="sl-cur" for="rjkdc-asset_sales">0%</output></span><span class="sl-end sl-hi">0%</span></div>
           <span class="sl-note"></span>
         </li>
           </ul>
@@ -605,7 +605,7 @@
   </footer>
 </div>
 
-<script src="../../../assets/comparison-data.js?v=27b16392"></script>
+<script src="../../../assets/comparison-data.js?v=3fb2714d"></script>
 <script src="model.js"></script>
 <script>
 (function () {
@@ -648,7 +648,8 @@
     var withCommas = function (s) { var p = s.split("."); p[0] = p[0].replace(/\B(?=(\d{3})+(?!\d))/g, ","); return p.join("."); };
     switch (input) {
       case "W_noncit": case "W_core": return "$" + withCommas(v.toFixed(1)) + "B";
-      case "re": case "d_conf": case "alpha": case "s": return (100 * v).toFixed(1) + "%";
+      case "re": case "d_conf": case "alpha": return (100 * v).toFixed(1) + "%";
+      case "s": return (100 * v).toFixed(0) + "%";
       case "q": case "f0": return (100 * v).toFixed(0) + "%";
       case "own": return v.toFixed(2);
       case "C": return "$" + v.toFixed(2) + "B/yr";

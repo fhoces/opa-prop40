@@ -66,6 +66,8 @@ step_texts <- function(inp, id) {
   if (id == "base_list") ii <- ii[ii$input == "W_core", ]
   out <- list(bsz = fmt_input(ii$input, ii$supporting_value), rjkdc = fmt_input(ii$input, ii$rauh_value),
               bsz_source = ii$supporting_source, rjkdc_source = ii$rauh_source)
+  # the explorer's asset-sales dial prints whole percentages at every stop, the tables keep 1/3
+  if (id == "asset_sales") { out$bsz_short <- pct(ii$supporting_value, 0); out$rjkdc_short <- pct(ii$rauh_value, 0) }
   # the explorer's dial ends name the list, the tables keep the dollars
   if (id == "base_list") {
     out$bsz_short <- "Forbes 2026"; out$rjkdc_short <- "Forbes 2025"
