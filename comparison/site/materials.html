@@ -2545,7 +2545,7 @@ skipped
 4
 </td>
 <td style="text-align:right;">
-34
+37
 </td>
 <td style="text-align:right;">
 0
@@ -2562,7 +2562,7 @@ skipped
 12
 </td>
 <td style="text-align:right;">
-64
+71
 </td>
 <td style="text-align:right;">
 0
@@ -2579,7 +2579,7 @@ skipped
 3
 </td>
 <td style="text-align:right;">
-114
+116
 </td>
 <td style="text-align:right;">
 0
@@ -2596,7 +2596,7 @@ skipped
 7
 </td>
 <td style="text-align:right;">
-57
+62
 </td>
 <td style="text-align:right;">
 0
@@ -2610,10 +2610,10 @@ skipped
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/tests/testthat/test-site.R"><code>test-site.R</code></a>
 </td>
 <td style="text-align:right;">
-13
+14
 </td>
 <td style="text-align:right;">
-339
+367
 </td>
 <td style="text-align:right;">
 0
@@ -2644,10 +2644,10 @@ skipped
 <b>total</b>
 </td>
 <td style="text-align:right;">
-43
+44
 </td>
 <td style="text-align:right;">
-621
+666
 </td>
 <td style="text-align:right;">
 0
@@ -2659,7 +2659,7 @@ skipped
 </tbody>
 </table>
 </div>
-<p>Run while this page was rendered: <strong>621 expectations passed, 0 failed</strong>, in 43 test blocks. The files check:</p>
+<p>Run while this page was rendered: <strong>666 expectations passed, 0 failed</strong>, in 44 test blocks. The files check:</p>
 <ul>
 <li><code>test-endpoints.R</code>: each end of the bridge against the number its authors print (BSZ Table 5 row 1, the NBER mean NPV; NBER is the National Bureau of Economic Research, which circulates working papers), plus the earlier figures the code still checks: the headline of GGSS (the Galle, Gamage, Saez and Shanske expert report of July 2026, written in support of the measure), behind the BSZ analysis, and the March 2026 version of the JR analysis, where the bridge’s disputed-input steps end.</li>
 <li><code>test-shapley.R</code>: the Shapley steps sum exactly to the gap in every setting, and match a brute-force average over orders (a Shapley value: a step’s effect averaged over every order the inputs could be switched in, so the steps add up to the gap).</li>
@@ -2703,7 +2703,7 @@ reads the two export contracts and the document inputs, and nothing else
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/R/model.R"><code>R/model.R</code></a>
 </td>
 <td style="text-align:right;">
-294
+302
 </td>
 <td style="text-align:left;">
 score_common(), the one estimating function; exact Shapley over all orders; one sequential order; Rauh’s Monte Carlo expectations
@@ -2714,7 +2714,7 @@ score_common(), the one estimating function; exact Shapley over all orders; one 
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/R/build.R"><code>R/build.R</code></a>
 </td>
 <td style="text-align:right;">
-278
+282
 </td>
 <td style="text-align:left;">
 every number the page shows, written to export/r/*.csv
@@ -2725,7 +2725,7 @@ every number the page shows, written to export/r/*.csv
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/R/site.R"><code>R/site.R</code></a>
 </td>
 <td style="text-align:right;">
-613
+619
 </td>
 <td style="text-align:left;">
 renders the overview page (index.html), the explorer (site/explorer/index.html) and their data file from site/index.template.html and site/explorer.template.html
@@ -2736,7 +2736,7 @@ renders the overview page (index.html), the explorer (site/explorer/index.html) 
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/py/bridge.py"><code>py/bridge.py</code></a>
 </td>
 <td style="text-align:right;">
-454
+461
 </td>
 <td style="text-align:left;">
 the Python twin of contract.R, model.R and build.R; writes export/py/*.csv
@@ -2780,7 +2780,7 @@ score_common() and the slider rule ported to JavaScript; the explorer’s panels
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/site/repro.qmd"><code>site/repro.qmd</code></a>
 </td>
 <td style="text-align:right;">
-876
+860
 </td>
 <td style="text-align:left;">
 the reproduction report
@@ -2791,7 +2791,7 @@ the reproduction report
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/site/slides/slides.Rmd"><code>site/slides/slides.Rmd</code></a>
 </td>
 <td style="text-align:right;">
-710
+711
 </td>
 <td style="text-align:left;">
 the slide deck: what is in the report and where the main differences come from (xaringan; every number read from export/r/)
@@ -2838,7 +2838,7 @@ contents
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/export/r/inputs.csv"><code>inputs.csv</code></a>
 </td>
 <td style="text-align:right;">
-14
+15
 </td>
 <td style="text-align:right;">
 7
@@ -2852,7 +2852,7 @@ the disputed inputs: one row per bridge step, both analyses’ values and source
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/export/r/bridge.csv"><code>bridge.csv</code></a>
 </td>
 <td style="text-align:right;">
-140
+154
 </td>
 <td style="text-align:right;">
 9
@@ -2880,7 +2880,7 @@ the two ends of every bridge (BSZ, Jaros and Rauh NBER) for each output and hori
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/export/r/endpoints.csv"><code>endpoints.csv</code></a>
 </td>
 <td style="text-align:right;">
-7
+6
 </td>
 <td style="text-align:right;">
 7
@@ -2950,7 +2950,7 @@ intermediate values the page quotes (annuity factors, the BSZ net terms)
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/export/r/switchboard.csv"><code>switchboard.csv</code></a>
 </td>
 <td style="text-align:right;">
-8192
+16384
 </td>
 <td style="text-align:right;">
 4
@@ -2967,7 +2967,7 @@ the common function’s value for every mix of switches (bit i of mask = dispute
 600
 </td>
 <td style="text-align:right;">
-13
+14
 </td>
 <td style="text-align:left;">
 300 slider mixes per explorer panel (positions 0 to 4 per input, 0 = the panel’s own analysis) and the panel’s value, the sample the tests run model.js on
@@ -3050,8 +3050,8 @@ public-government-document (not committed per repo policy)
 <ul>
 <li><strong>The September 2026 ceiling has three values.</strong> The script draws revenue up to the literal 72; the README prints 72.06; the person-level file sums to 72.05 (the JR analysis’s mismatch 4). The comparison uses the script’s 72, so the common function returns the authors’ own expected revenue exactly and the bridge has no model-difference step.</li>
 <li><strong>The litigation weight has no multiplier in the code.</strong> The README applies q = 0.50 to the recognized base; the script instead draws revenue uniformly between 0 and the ceiling, whose mean is the same half (mismatch 5). The comparison reads that mean as the weight <code>q</code>.</li>
-<li><strong>The printed NPV is one run, not the expectation.</strong> The exact expectation of the NBER Monte Carlo is −$38.98B against a printed −$38.9B. The bridge’s JR end discounts at one 3% rate instead, −$32.25B; the JR rate gap, $6.73B, is what drawing the rate at random is worth (<a href="repro.html#the-jr-rate-gap">the report</a>). The JR pipeline reproduces the seeded run as −$38.886B, the JR main estimate.</li>
-<li><strong>Both analyses’ discount factors are right.</strong> One reading magnifies the loss by a factor 67 (1/1.5%), BSZ say 33 (1/3%). The first is the rate the JR text anchors its range on, the second the mean rate of its Monte Carlo (<code>DISPUTES.md</code>, row 2).</li>
+<li><strong>The printed NPV is one run, not the expectation.</strong> The exact expectation of the NBER Monte Carlo is −$38.98B against a printed −$38.9B. The bridge’s JR end is that expectation, with the authors’ random rate replaced by the one rate worth the same, 2.73% (<a href="repro.html#the-discount-rate">the report</a>). The JR pipeline reproduces the seeded run as −$38.886B, the JR main estimate.</li>
+<li><strong>Both analyses’ discount factors are right.</strong> One reading magnifies the loss by a factor 67 (1/1.5%), BSZ say 33 (1/3%). The first is the rate the JR text anchors its range on, the second the mean rate of its Monte Carlo (<code>DISPUTES.md</code>, row 2). Averaged over the draw the perpetuity factor is ln(3)/0.03 = 36.6, the value of one rate of 2.73%, the JR end of the comparison’s rate dial (row 10).</li>
 <li><strong>Two March disputes are closed in the BSZ analysis by August</strong>: Larry Ellison’s exclusion and the non-US-citizen residents (rows 7 and 8).</li>
 <li><strong>One Hoopes bar could not be traced.</strong> His confirmed-departures bar matches no number in the March 2026 version of the JR analysis (see the <a href="repro.html#the-hoopes-comparison">report’s Hoopes section</a>).</li>
 </ul>

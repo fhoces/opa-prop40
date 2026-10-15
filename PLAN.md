@@ -123,9 +123,10 @@ credited to us.
    and permanent-rate inputs (the September headline predicts no departures from an
    elasticity), and returns the September version's exact mean (-$38.98B) with no model
    difference. DISPUTES.md gains row 9 (litigation). Supersedes the "Rauh anchor" lines above.
-   (On the net fiscal effect the exact match is superseded by decision 11.)
+   (On the net fiscal effect the exact match was superseded by decision 11, then restored by decision 12.)
 10. 2026-10-15: the pseudo-equation and the report's bridge read one dial path (the explorer's dials top to bottom, each to its far end; `dial_path()`), not Shapley values; Shapley stays in the report as an order-free check (`feedback/DECISIONS.md`).
-11. 2026-10-15: one discount rate, 3%, at both ends (`common_discount_rate`); the JR end of the equation is the JR inputs at 3% (about -$32.3B), and the exported `jr_rate_gap` (about +$6.7B) takes it to the authors' -$38.98B mean, because they draw the rate between 1.5% and 4.5%. The comparison no longer claims to return the JR mean exactly (`feedback/DECISIONS.md`).
+11. 2026-10-15: one discount rate, 3%, at both ends (`common_discount_rate`); the JR end of the equation is the JR inputs at 3% (about -$32.3B), and the exported `jr_rate_gap` (about +$6.7B) takes it to the authors' -$38.98B mean, because they draw the rate between 1.5% and 4.5%. The comparison no longer claims to return the JR mean exactly (`feedback/DECISIONS.md`). Superseded by decision 12.
+12. 2026-10-15: the discount rate is a bridge step and an explorer dial, r: 3% at the BSZ end (`common_discount_rate`, a scenario), 2.73% at the JR end (1 / E[1/r] over the authors' 1.5% to 4.5% draw, computed from the JR contract, derived). The common function again returns the JR mean exactly (-$38.98B); the dial path has nine steps; `jr_rate_gap` is gone. DISPUTES.md row 10 (`feedback/DECISIONS.md`).
 
 **Same format as the previous OPA (user requirement 2026-09-23).** Every public surface (overview
 page, interactive explorer, Quarto reproduction report, teaching deck, reproduction-materials links,

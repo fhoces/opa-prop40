@@ -50,12 +50,12 @@ each page against the Guidelines' nine steps.
 The reconciliation layer: puts the BSZ analysis (Boll, Saez and Zucman, August 2026) and the
 JR analysis (Jaros and Rauh, NBER, September 2026) on one common output and one
 input-by-input bridge. The disputed inputs on the JR end are those of its latest version,
-September 2026. Both ends discount the lost income tax at one rate, 3% (author decision
-2026-10-15; the row `common_discount_rate` of `data/document-inputs.csv`). So the common
-function returns that version's expected revenue exactly, and on the net fiscal effect it
-returns the JR inputs at 3%. The JR analysis draws the rate between 1.5% and 4.5% instead; what
-that is worth is exported as `jr_rate_gap` (`export/r/ends.csv`, `meta.csv`), the difference
-between the JR end at 3% and the authors' exact Monte Carlo mean. It renders the site-root
+September 2026. The discount rate of the lost income tax is one of the bridge's inputs
+(author decision 2026-10-15): 3% at the BSZ end (the row `common_discount_rate` of
+`data/document-inputs.csv`; the BSZ analysis gives no rate) and 2.73% at the JR end, the one
+rate worth the same as the authors' draw between 1.5% and 4.5% (1 / E[1/r] = 0.03 / ln(3),
+computed from the JR contract). So the common function returns that version's exact Monte
+Carlo mean on both outputs. It renders the site-root
 page, `../index.html`, and the explorer, `site/explorer/index.html`.
 
 ## What it reads (and nothing else)
@@ -103,5 +103,4 @@ with every internal link resolving.
   values directly.
 - The Monte Carlo ranges (WT floor 35, C in [3.3, 5.8], r in [1.5%, 4.5%], NBER f in
   [0.30, 0.60]) are read from the JR contract (`rauh_mc_*`, `nber_mc_*` rows). The r range
-  enters only the JR analysis's own expectation and the JR rate gap; `score_common()` uses the
-  one common rate.
+  gives the JR end of the rate dial, 1 / E[1/r]; `score_common()` takes one rate per end.

@@ -233,15 +233,15 @@ The full crosswalk of disputed inputs, with every page reference checked against
   mean is the same half (mismatch 5). The comparison reads that mean as the weight `q`.
 - **The printed NPV is one run, not the expectation.** The exact expectation of the NBER
   Monte Carlo is `r usd(eb$rauh_own, 2)` against a printed
-  `r usd(ep$printed_value[ep$endpoint_id == "rauh_nber_npv"])`. The bridge's JR end discounts
-  at one `r pct(ex$meta$value[ex$meta$key == "r_common"])` rate instead, `r usd(eb$rauh_model, 2)`; the JR rate gap,
-  `r usd(eb$jr_rate_gap, 2)`, is what drawing the rate at random is worth
-  ([the report](repro.html#the-jr-rate-gap)). The JR pipeline reproduces
+  `r usd(ep$printed_value[ep$endpoint_id == "rauh_nber_npv"])`. The bridge's JR end is that
+  expectation, with the authors' random rate replaced by the one rate worth the same,
+  `r rate_txt(ex$meta$value[ex$meta$key == "r_jr"])` ([the report](repro.html#the-discount-rate)). The JR pipeline reproduces
   the seeded run as `r usd(ep$contract_value[ep$endpoint_id == "rauh_nber_npv"], 3)`, the JR
   main estimate.
 - **Both analyses' discount factors are right.** One reading magnifies the loss by a factor
   67 (1/1.5%), BSZ say 33 (1/3%). The first is the rate the JR text anchors its range on, the second the mean
-  rate of its Monte Carlo (`DISPUTES.md`, row 2).
+  rate of its Monte Carlo (`DISPUTES.md`, row 2). Averaged over the draw the perpetuity factor is
+  ln(3)/0.03 = `r formatC(ex$meta$value[ex$meta$key == "A_inf_jr_draw"], format = "f", digits = 1)`, the value of one rate of `r rate_txt(ex$meta$value[ex$meta$key == "r_jr"])`, the JR end of the comparison's rate dial (row 10).
 - **Two March disputes are closed in the BSZ analysis by August**: Larry Ellison's exclusion
   and the non-US-citizen residents (rows 7 and 8).
 - **One Hoopes bar could not be traced.** His confirmed-departures bar matches no number in
