@@ -123,6 +123,7 @@ credited to us.
    and permanent-rate inputs (the September headline predicts no departures from an
    elasticity), and returns the September version's exact mean (-$38.98B) with no model
    difference. DISPUTES.md gains row 9 (litigation). Supersedes the "Rauh anchor" lines above.
+10. 2026-10-15: the pseudo-equation and the report's bridge read one dial path (the explorer's dials top to bottom, each to its far end; `dial_path()`), not Shapley values; Shapley stays in the report as an order-free check (`feedback/DECISIONS.md`).
 
 **Same format as the previous OPA (user requirement 2026-09-23).** Every public surface (overview
 page, interactive explorer, Quarto reproduction report, teaching deck, reproduction-materials links,

@@ -39,6 +39,8 @@ root <- comparison_root()
 ex <- read_exports(file.path(root, "comparison", "export", "r"))   # R/site.R
 k  <- read_contracts(root)                                          # R/contract.R
 ep <- ex$endpoints; en <- ex$ends; br <- ex$bridge; inp <- ex$inputs
+# the dial path: the explorer's dials moved top to bottom, each to its far end (R/model.R)
+dp <- read_csv_plain(file.path(root, "comparison", "export", "r", "dial_path.csv"))
 own <- en[en$horizon_setting == "own", ]
 ea <- own[own$output == "a", ]; eb <- own[own$output == "b", ]
 epv <- function(id, col = "value") ep[[col]][ep$endpoint_id == id]
@@ -106,9 +108,9 @@ worth. The [BSZ analysis](../../bsz-analysis/site/) estimates about
 [JR analysis](../../rjkdc-analysis/site/) finds the state
 **`r usd(-epv("rauh_nber_npv", "printed_value"))`** poorer in today's dollars, because
 billionaires who leave stop paying California income tax for ever. Three inputs separate the
-two most: the chance the tax survives a court challenge, how long the lost income tax is
-counted, and the share of it that leaves. This report puts both on one output and walks from
-one to the other.
+two most: how long the lost income tax is counted, the chance the tax survives a court
+challenge, and the wealth of billionaires who have already left. This report puts both on one
+output and walks from one to the other.
 
 <details class="report-fold"><summary>Versions and citations</summary>
 
@@ -140,7 +142,7 @@ This report is part of the comparison's [Open Policy Analysis](https://doi.org/1
   net fiscal effect. Its two panels have one slider per disputed input that moves the
   estimate, from one analysis's value to the other's. The browser computes each panel's
   estimate with `explorer/model.js`, a copy of `score_common()` that a test checks against the
-  R values. The explorer shows the three largest steps; the full bridge is in this report.
+  R values. The explorer's equation shows the same eight steps as the bridge in this report.
 - **Open Analysis**: this document
 - **Open Materials**: [the repository folder](https://github.com/fhoces/opa-prop40/tree/main/comparison), every script, test and data file (guide: [the materials page](materials.html))
 :::
@@ -173,8 +175,8 @@ print.
 Every number in running text is computed when this page is rendered, from the files
 `comparison/run.R` writes. Open any "code" fold to see the R functions behind an exhibit and
 their Python twins (a Python twin: the same computation written a second time in Python and
-checked against the R result). Page numbers are PDF pages. "Shapley value" is defined where it
-is first used, in [The bridge](#the-bridge).
+checked against the R result). Page numbers are PDF pages. The Shapley average, an order-free
+check on the bridge, is defined at the end of [The bridge](#the-bridge).
 
 # The common output, and what each analysis reports {#the-common-output}
 
@@ -385,16 +387,15 @@ estimate, shown as `r usd(rj_main)`.
 **Step 3: the gap on (b).** `r usd(v_sup[["b"]], 3)` &minus; (`r usd(nber[["b"]], 3)`) =
 **`r usd(gap_b, 3)`**, shown as `r usd(gap_b)`.
 
-**Step 4: where the gap comes from.** The next section splits it into one step per disputed
-input. The steps add up to
-`r usd(sum(br$shapley[br$horizon_setting == "own" & br$output == "b"]), 3, TRUE)`, the gap
-read from the BSZ end, because the common function returns both ends exactly.
+**Step 4: where the gap comes from.** The next section splits it into one step per dial of
+the explorer. The steps add up to `r usd(sum(dp$change), 3, TRUE)`, the gap read from the BSZ
+end, because the common function returns both ends exactly.
 
 **On output (a)**, the secondary setting, the two ends are the wealth tax alone:
 `r usd(v_sup[["a"]], 3)` and the NBER expected revenue, `r usd(nber[["a"]], 1)` (the midpoint
 of zero and `r usd(pick(oi, "nber_ceiling_hardcoded"), 0)`; the authors print "approximately
-`r usd(dv("nber_headline_revenue"), 0)`", p.1). The gap is `r usd(gap, 3)`, split the same
-way into the steps.
+`r usd(dv("nber_headline_revenue"), 0)`", p.1). The gap is `r usd(gap, 3)`. The order-free
+check at the end of the next section splits it too.
 
 </details>
 
@@ -402,10 +403,10 @@ way into the steps.
 b_a <- br[br$horizon_setting == "own" & br$output == "a", ]
 b_b <- br[br$horizon_setting == "own" & br$output == "b", ]
 stopifnot(abs(sum(b_b$shapley) + gap_b) < 1e-9, abs(sum(b_a$shapley) + gap) < 1e-9,
-          max(abs(en$rauh_residual)) < 1e-9)
-# The introduction names the three largest steps on (b) in words; stop if they change.
-stopifnot(setequal(b_b$step_id[order(-abs(b_b$shapley))][1:3],
-                   c("litigation_survival", "horizon", "income_loss_share")))
+          abs(sum(dp$change) + gap_b) < 1e-9, max(abs(en$rauh_residual)) < 1e-9)
+# The introduction names the three largest steps of the dial path in words; stop if they change.
+top3p <- dp[order(-abs(dp$change)), ][1:3, ]
+stopifnot(identical(top3p$step_id, c("horizon", "litigation_survival", "confirmed_departures")))
 ```
 
 ```{r}
@@ -415,16 +416,95 @@ twin_fold("the two main estimates", c("bridge_inputs", "score_common", "rauh_nbe
 
 # The bridge, step by step {#the-bridge}
 
-Three inputs explain most of the `r usd(gap_b)` gap on the net fiscal effect: the chance the
-tax survives litigation (`r usd(-b_b$shapley[b_b$step_id == "litigation_survival"])`), the
-horizon (`r usd(-b_b$shapley[b_b$step_id == "horizon"])`) and the share of income tax lost
-(`r usd(-b_b$shapley[b_b$step_id == "income_loss_share"])`). The other
-`r nrow(b_b) - 3` together explain
-`r usd(-sum(b_b$shapley[!b_b$step_id %in% c("litigation_survival", "horizon", "income_loss_share")]))`.
+The bridge follows the explorer's dials. Start from the BSZ panel, where every dial is at the
+BSZ value, and move the dials top to bottom, each to its far end (the JR value). Each step is
+what one dial changes. The eight steps take the BSZ end, `r usd(dp$from[1])`, to the JR end,
+`r usd(dp$to[nrow(dp)])`, exactly. Three of them make most of the `r usd(gap_b)` gap: how long
+the lost income tax is counted (`r usd(dp$change[dp$step_id == "horizon"], 1, TRUE)`), the
+chance the tax survives litigation
+(`r usd(dp$change[dp$step_id == "litigation_survival"], 1, TRUE)`) and the billionaires already
+departed (`r usd(dp$change[dp$step_id == "confirmed_departures"], 1, TRUE)`). The other
+`r nrow(dp) - 3` together add
+`r usd(sum(dp$change[!dp$step_id %in% top3p$step_id]), 1, TRUE)`.
 
-Each step switches one input from the BSZ value to the JR value of its September 2026
-version (the share-lost step switches its two arguments together). Because the inputs interact (a departure matters more when the base is larger), the size of a step depends on
-the order in which the inputs are switched. The report shows two answers:
+The inputs interact, so a step's size depends on where the other dials stand when it moves.
+A departure matters more when the base is larger, for example. This path uses the order the
+explorer prints, so a reader can reproduce every step with the dials. The explorer's "Walk the
+path" button moves one dial per press. An order-free check, the Shapley average, closes this
+section.
+
+```{r}
+#| results: asis
+twin_fold("the bridge table and the figure", c("slider_inputs", "slider_value", "dial_path"))
+```
+
+```{r}
+#| results: asis
+# One row per dial in the explorer's order; the minor switch's row joins its three inputs.
+path_texts <- function(id) {
+  ids <- dial_ids(id); tx <- lapply(ids, function(i) step_texts(inp, i))
+  st <- steps[match(ids, steps$step_id), ]
+  list(row = paste(st$disputes_row, collapse = ", "), kind = paste(unique(st$kind), collapse = ", "),
+       bsz = paste(vapply(tx, `[[`, "", "bsz"), collapse = "; "),
+       rjkdc = paste(vapply(tx, `[[`, "", "rjkdc"), collapse = "; "))
+}
+pt <- lapply(dp$step_id, path_texts)
+# a signed amount stays on one line (no break after the minus sign)
+nobr <- function(x) ifelse(nzchar(x), sprintf('<span style="white-space:nowrap">%s</span>', x), x)
+path_rows <- data.frame(
+  Dial = ifelse(dp$step_id == "minor_inputs", esc(dp$title),
+                sprintf("<i>%s</i>, %s", dp$symbol, esc(dp$title))),
+  `DISPUTES row` = vapply(pt, `[[`, "", "row"), Kind = vapply(pt, `[[`, "", "kind"),
+  `BSZ value` = vapply(pt, `[[`, "", "bsz"), `JR value` = vapply(pt, `[[`, "", "rjkdc"),
+  Change = nobr(vapply(dp$change, money, "", digits = 2, signed = TRUE)),
+  `Running value` = nobr(vapply(dp$to, money, "", digits = 2)), check.names = FALSE)
+blank <- function(label, change, run) data.frame(Dial = label, `DISPUTES row` = "", Kind = "",
+  `BSZ value` = "", `JR value` = "", Change = change, `Running value` = run, check.names = FALSE)
+cat("\n**Output (b), net fiscal effect, each analysis's own horizon.** The horizon dial moves from the BSZ analysis's 5 years to a perpetuity.\n\n")
+scroll(show(rbind(blank("<b>BSZ end, (b)</b>", "", nobr(money(dp$from[1], 2))), path_rows,
+                  blank("Sum of the steps", nobr(money(sum(dp$change), 2, TRUE)), ""),
+                  blank("<b>JR end, (b)</b>", "", nobr(money(eb$rauh_own, 2))))))
+```
+
+Reading the table: the horizon step is the largest because it moves after the other dials,
+when the annual loss is already JR-sized, and a perpetuity multiplies that loss. One step
+raises the number. The JR analysis applies no avoidance allowance beyond migration, so dropping
+the BSZ analysis's `r pct(sup$alpha)` adds
+`r usd(dp$change[dp$step_id == "avoidance"], 1, TRUE)`.
+
+```{r}
+#| label: fig-waterfall
+#| fig-width: 6
+#| fig-height: 5
+#| fig-cap: "Output (b), the dial path: the explorer's dials moved top to bottom, each to its far end."
+library(ggplot2)
+wf_short <- ifelse(dp$step_id == "minor_inputs", "Minor inputs",
+                   paste0(dp$symbol, ": ", unname(DIAL_NAMES[dp$step_id])))
+wf <- rbind(
+  data.frame(i = 1, short = unname(short_labels["bsz"]), y0 = 0, y1 = dp$from[1], fill = "an analysis's estimate"),
+  data.frame(i = 1 + seq_len(nrow(dp)), short = wf_short, y0 = dp$from, y1 = dp$to,
+             fill = ifelse(dp$change >= 0, "step that raises it", "step that lowers it")),
+  data.frame(i = nrow(dp) + 2, short = unname(short_labels["nber"]), y0 = 0, y1 = eb$rauh_own, fill = "an analysis's estimate"))
+ggplot(wf) +
+  geom_rect(aes(xmin = i - 0.38, xmax = i + 0.38, ymin = pmin(y0, y1), ymax = pmax(y0, y1), fill = fill)) +
+  scale_fill_manual(values = c("an analysis's estimate" = "#222222",
+                               "step that raises it" = "#555555", "step that lowers it" = "#9a9a9a"), name = NULL) +
+  # horizontal bars, the BSZ estimate at the top, so the labels read on a phone
+  scale_x_reverse(breaks = wf$i, labels = wf$short) + coord_flip() +
+  labs(x = NULL, y = "$ billion") + theme_minimal(base_size = 12) +
+  guides(fill = guide_legend(nrow = 2)) +
+  theme(legend.position = "bottom", panel.grid.major.y = element_blank(), panel.grid.minor = element_blank())
+```
+
+<details class="report-fold" id="the-shapley-check"><summary>An order-free check: the Shapley average</summary>
+
+The path's steps depend on the order the dials move in. The same dial moved earlier or later
+changes the estimate by a different amount, because the inputs multiply each other. The
+Shapley average removes the order. It takes every order the inputs could be switched in and
+averages each input's step over them. Its steps also add up to the gap, so it checks the path
+without choosing an order. Here each step switches one input from the BSZ value to the JR
+value of its September 2026 version (the share-lost step switches its two arguments together).
+The tables show two answers:
 
 - **Shapley values**. Each step's switch is averaged over
   all `r format(factorial(nrow(steps)), big.mark = ",")` orders of the
@@ -436,7 +516,7 @@ the order in which the inputs are switched. The report shows two answers:
 
 ```{r}
 #| results: asis
-twin_fold("the bridge tables and the figure", c("switch_inputs", "shapley_bridge", "sequential_bridge"))
+twin_fold("the Shapley tables", c("switch_inputs", "shapley_bridge", "sequential_bridge"))
 ```
 
 ```{r}
@@ -503,37 +583,7 @@ cat(sprintf("Order matters most for %s: %s averaged over all orders, %s in the o
 
 </details>
 
-```{r}
-#| results: asis
-twin_fold("the waterfall", "build_series", py = character(0))
-```
-
-```{r}
-#| label: fig-waterfall
-#| fig-width: 6
-#| fig-height: 5
-#| fig-cap: "Output (b), Shapley steps, each analysis's own horizon."
-library(ggplot2)
-B <- build_series(ex)$own$b$shapley
-run <- 0; rows <- list()
-for (i in seq_along(B)) {
-  b <- B[[i]]
-  if (b$type == "total") { y0 <- 0; y1 <- b$value; run <- b$value } else { y0 <- run; y1 <- run + b$value; run <- y1 }
-  rows[[i]] <- data.frame(i = i, short = b$short, y0 = y0, y1 = y1,
-                          fill = if (b$type == "total") "an analysis's estimate" else if (b$type == "model") "model difference"
-                                 else if (b$value >= 0) "step that raises it" else "step that lowers it")
-}
-wf <- do.call(rbind, rows)
-ggplot(wf) +
-  geom_rect(aes(xmin = i - 0.38, xmax = i + 0.38, ymin = pmin(y0, y1), ymax = pmax(y0, y1), fill = fill)) +
-  scale_fill_manual(values = c("an analysis's estimate" = "#222222", "model difference" = "#c8c8c8",
-                               "step that raises it" = "#555555", "step that lowers it" = "#9a9a9a"), name = NULL) +
-  # horizontal bars, the BSZ estimate at the top, so the labels read on a phone
-  scale_x_reverse(breaks = wf$i, labels = wf$short) + coord_flip() +
-  labs(x = NULL, y = "$ billion") + theme_minimal(base_size = 12) +
-  guides(fill = guide_legend(nrow = 2)) +
-  theme(legend.position = "bottom", panel.grid.major.y = element_blank(), panel.grid.minor = element_blank())
-```
+</details>
 
 ## Which revenue of the JR analysis the steps reach {#which-revenue}
 
@@ -675,7 +725,7 @@ cat(sprintf("\n%d transcribed inputs: %s.\n", nrow(k$docs),
 ```{r}
 pdir <- file.path(root, "comparison", "export", "py")
 py_ok <- dir.exists(pdir)
-maxdiff <- if (py_ok) max(vapply(c("ends", "bridge", "endpoints"), function(f) {
+maxdiff <- if (py_ok) max(vapply(c("ends", "bridge", "endpoints", "dial_path"), function(f) {
   r <- read_csv_plain(file.path(root, "comparison", "export", "r", paste0(f, ".csv")))
   p <- read_csv_plain(file.path(pdir, paste0(f, ".csv")))
   key <- intersect(c("horizon_setting", "output", "step_id", "endpoint_id"), names(r))
@@ -692,12 +742,15 @@ maxdiff <- if (py_ok) max(vapply(c("ends", "bridge", "endpoints"), function(f) {
   printed `r usd(epv("rauh_nber_npv", "printed_value"))` from one seeded run. It uses the
   script's ceiling literal, 72, rather than the 72.05 the person-level file sums to (the JR
   analysis's mismatch 4), so that the two agree exactly.
+- **The bridge is the explorer's own.** `test-dial-path.R` checks that the eight steps of the
+  dial path add up to the gap, and that each equals the difference between two explorer values
+  in both panels, in R and in `model.js`.
 - **The code does what the method says.** Shapley values sum to the gap by construction;
   `test-shapley.R` checks that ours do in every horizon setting and for both outputs, and that
   they equal a brute-force average over orders. This is a check of the code, not a finding
   about the analyses.
 - **R and Python agree.** The Python twin writes the same tables;
-  the largest difference on the ends, the bridge and the endpoints is
+  the largest difference on the ends, the bridge, the dial path and the endpoints is
   `r if (py_ok) formatC(maxdiff, format = "e", digits = 1) else "not checked (run comparison/py/bridge.py)"`
   (`test-parity.R` requires 1e-9).
 - **Not reproduced.** The comparison does not re-run either analysis: it takes each

@@ -59,6 +59,9 @@ bb_sorted <- bb[order(-abs(bb$shapley)), ]
 top3 <- bb_sorted[1:3, ]; rest <- bb_sorted[-(1:3), ]
 gap_b <- eb$bsz_model - eb$rauh_own
 steps <- bridge_steps()
+# The dial path (R/model.R dial_path()): the explorer's dials moved top to bottom, each to its
+# far end. The pseudo-equation reads it, as the explorer and the overview do.
+dp <- read_csv_plain(file.path(root, "comparison", "export", "r", "dial_path.csv"))
 
 # Ties to the pipeline: a drift fails the render instead of shipping.
 stopifnot(
@@ -66,6 +69,7 @@ stopifnot(
   isTRUE(all.equal(vr[["a"]], ea$rauh_own)),  isTRUE(all.equal(vr[["b"]], eb$rauh_own)),
   abs(sum(bb$shapley) + gap_b) < 1e-9,
   abs(sum(bb$sequential) + gap_b) < 1e-9,
+  abs(sum(dp$change) + gap_b) < 1e-9, identical(dp$step_id, EXPLORER_DIAL_ORDER),
   # the deck names these three as the main differences, in this order
   identical(top3$step_id, c("litigation_survival", "horizon", "income_loss_share")),
   round(rj_main, 1) == rj_print,
@@ -171,6 +175,8 @@ table.dt th { background: none; }
 .pseudo-eq .term b { font-size: 120%; font-weight: 600; }
 .pseudo-eq .term small { font-size: 62%; color: #5b6873; line-height: 1.3; }
 .pseudo-eq .op { font-size: 130%; color: #5b6873; padding-top: 8px; }
+.pseudo-eq .run { font-size: 58%; color: #5b6873; white-space: nowrap; }
+.pseudo-eq .eq-step { display: inline-flex; align-items: flex-start; gap: 8px; }
 .claims { font-size: 85%; }
 .claims td, .claims th { vertical-align: top; text-align: left !important; }
 table.dt td.l, table.dt th.l { text-align: left; }
@@ -462,24 +468,27 @@ name: pseudo-eq
 # What separates the two numbers
 
 ```{r pseudo, results="asis"}
-term <- function(v, label) sprintf('<span class="op">%s</span><span class="term"><b>%s</b><small>%s</small></span>',
-                                   if (v < 0) "&minus;" else "+", money(abs(v), 1), label)
+# the eight terms of the dial path, in the explorer's order, each with its symbol and the
+# running value (the same equation as the explorer and the overview)
+path_label <- function(i) if (dp$step_id[i] == "minor_inputs") dp$title[i] else paste0(dp$title[i], " (", dp$symbol[i], ")")
+term <- function(i) sprintf('<span class="eq-step"><span class="op">%s</span><span class="term"><b>%s</b><small>%s</small><span class="run">to %s</span></span></span>',
+                            if (dp$change[i] < 0) "&minus;" else "+", money(abs(dp$change[i]), 1),
+                            esc(path_label(i)), money(dp$to[i], 1))
 cat('<div class="pseudo-eq">',
     sprintf('<span class="term"><b>%s</b><small>BSZ estimate</small></span>', money(eb$bsz_model, 1)),
-    paste(vapply(1:3, function(i) term(top3$shapley[i], esc(top3$title[i])), ""), collapse = ""),
-    term(sum(rest$shapley), sprintf("the %d other inputs together", nrow(rest))),
-    sprintf('<span class="op">&asymp;</span><span class="term"><b>%s</b><small>JR estimate</small></span>', money(eb$rauh_own, 1)),
+    paste(vapply(seq_len(nrow(dp)), term, ""), collapse = ""),
+    sprintf('<span class="eq-step"><span class="op">&asymp;</span><span class="term"><b>%s</b><small>JR estimate</small></span></span>', money(eb$rauh_own, 1)),
     '</div>', sep = "")
 ```
 
 .small[
-Start from the BSZ estimate and take away what each disagreement costs. Each term is one input's
-Shapley value on (b), read from the BSZ end to the JR end. The terms add up exactly; "about equal" is only rounding. The JR estimate here is the exact average,
-`r usd(eb$rauh_own, 2)`; the printed seeded run is `r usd(rj_print)`.
+Move the BSZ panel's dials top to bottom, each to its far end: each term is what that dial
+changes. The terms add up exactly; "about equal" is only rounding. The JR estimate here is the
+exact average, `r usd(eb$rauh_own, 2)`. The printed seeded run is `r usd(rj_print)`.
 ]
 
-The next three slides take one of the three largest terms each. Each says what both analyses
-assume, why, and what kind of claim it is:
+The next three slides take the three inputs with the largest Shapley values, which do not
+depend on an order. Each says what both analyses assume, why, and what kind of claim it is:
 
 .small[
 - **data**: settled by observable facts (lists, filings, tax statistics)

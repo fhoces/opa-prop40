@@ -212,7 +212,7 @@ hoopes_differences <- function(ex, k) {
             money(hz_pre, 1), money(dv("rauh_headline_revenue"), 0), money(ea$rauh_own, 2), money(dv("nber_headline_revenue"), 0)),
     sprintf("<b>Income tax.</b> His single bar, %s, ends at %s, close to the March 2026 version's %s. Ours is %s, the September 2026 version's expected present value of lost income tax against %s of revenue, and we split it into four labelled steps (the share lost, the income tax level, the horizon, asset-sale tax), which interact with the base steps.",
             hfmt(hs_("income_tax_loss"), NA), money(hz_end, 1), money(opp("npv_mc_ssrn_mean"), 1), money(ho("income_tax_loss"), 2, TRUE), money(ea$rauh_own, 2)),
-    "<b>Order and labels.</b> His is one sequential order, with no provenance labels; ours shows Shapley averages over all orders (a Shapley value: a step's effect averaged over every order the inputs could be switched in, so the steps add up to the gap) as well as one order, with each step labelled data, research, guesswork or scenario.",
+    "<b>Order and labels.</b> His is one sequential order, with no provenance labels. Ours follows the explorer's dials in the order the page prints them, with each step labelled data, research, guesswork or scenario. The Shapley average (a step's effect averaged over every order the inputs could be switched in) checks it without choosing an order, and the column here reads our steps in his order.",
     "<b>Steps he does not have.</b> The non-US-citizen residents, the BSZ analysis's avoidance allowance being dropped, the asset-sale income tax, and the litigation weight of the September 2026 version (which postdates his note)."
   )
 }
