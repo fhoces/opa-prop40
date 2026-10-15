@@ -59,10 +59,11 @@ steps <- bridge_steps()
 # at the JR end the one rate worth the same as the authors' draw between r_lo and r_hi.
 r3 <- rate_txt(mv("r_bsz")); r_jr <- rate_txt(mv("r_jr"))
 r_lo <- pct(mv("r_min_jr"), 1); r_hi <- pct(mv("r_max_jr"), 1)
-# The dial path (R/model.R dial_path()): the explorer's dials moved top to bottom, each to its
-# far end. The pseudo-equation reads it, as the explorer and the overview do.
+# The dial path (R/model.R dial_path()): the explorer's dials moved in the equation's order (D, q,
+# the loss box's f, C, H and r, then W, a and the minor switch), each to its far end. The
+# pseudo-equation reads it, as the explorer and the overview do.
 dp <- read_csv_plain(file.path(root, "comparison", "export", "r", "dial_path.csv"))
-# The three main differences are the path's three largest steps, in dial order; the other
+# The three main differences are the path's three largest steps, in path order; the other
 # steps are the smaller ones. The equation groups the steps by box instead (eq_terms() in
 # R/site.R): D and q alone, the loss box added up, the other three added up.
 et <- eq_terms(dp)
@@ -81,7 +82,7 @@ stopifnot(
   abs(eb$rauh_model - eb$rauh_own) < 1e-9,
   abs(sum(bb$shapley) + gap_b) < 1e-9,
   abs(sum(bb$sequential) + gap_b) < 1e-9,
-  abs(sum(dp$change) + gap_b) < 1e-9, identical(dp$step_id, EXPLORER_DIAL_ORDER),
+  abs(sum(dp$change) + gap_b) < 1e-9, identical(dp$step_id, DIAL_PATH_ORDER),
   # the deck names these three as the main differences, in this order
   identical(top3$step_id, c("confirmed_departures", "litigation_survival", "horizon")),
   round(epv("rauh_nber_npv", "contract_value"), 1) == rj_print, abs(rj_main - epv("rauh_nber_npv")) < 1e-9,
@@ -420,8 +421,9 @@ halves `r tm(toy_base)` if it goes first, but only `r tm(toy(d_to, q_from))` if 
 ]
 
 .blue-box[
-So the deck fixes one order, the **dial path**: the explorer's BSZ panel dials moved top to
-bottom, each to its far end. Its `r nrow(dp)` steps add up to the whole gap.
+So the deck fixes one order, the **dial path**: the explorer's BSZ panel dials moved in the
+order of the equation, each to its far end. That order is *D*, *q*, the four loss-box dials,
+then the rest. Its `r nrow(dp)` steps add up to the whole gap.
 ]
 
 ---
@@ -430,7 +432,7 @@ name: waterfall
 # The bridge on (b): the dial path, step by step
 
 ```{r waterfall, fig.height=3.6}
-# The BSZ end, the path's steps in dial order (export/r/dial_path.csv), the JR end.
+# The BSZ end, the path's steps in the equation's order (export/r/dial_path.csv), the JR end.
 lab_of <- function(id) if (id == "minor_inputs") "Minor inputs" else unname(short_labels[id])
 wf <- rbind(
   data.frame(short = short_labels[["bsz"]], y0 = 0, y1 = dp$from[1], v = dp$from[1], type = "total"),
@@ -459,7 +461,7 @@ ggplot(wf) +
 ```
 
 .small[
-Each bar moves one dial of the BSZ panel to its JR end, top to bottom. The equation on the next
+Each bar moves one dial of the BSZ panel to its JR end, in the equation's order. The equation on the next
 slide shows `r eq_d_q` on their own. It adds up the four loss-box steps, `r eq_loss`, into one
 term, and the other three into another. Only dropping the BSZ `r pct(sup$alpha, 0)` avoidance allowance raises the estimate,
 because the JR analysis applies none.
@@ -484,12 +486,12 @@ cat('<div class="pseudo-eq">',
 ```
 
 .small[
-Move the BSZ panel's dials top to bottom, each to its far end. `r et$note` The terms add up
+Move the BSZ panel's dials to their far ends, term by term from left to right. `r et$note` The terms add up
 exactly; "about equal" is only rounding. The JR estimate here is the exact average of the
 authors' Monte Carlo; their seeded run prints `r usd(rj_print)`.
 ]
 
-The next three slides take the three largest steps, `r three_syms`, in dial
+The next three slides take the three largest steps, `r three_syms`, in path
 order. Each says what both analyses assume, why, and what kind of claim it is:
 
 .small[
@@ -526,7 +528,7 @@ Who announced a move is observed. Whether that move ended legal residence before
 legal judgement.
 
 **Why it is large:** the 5% tax falls only on wealth still in the state, and the seven hold
-`r pct(dshare(rj), 1)` of it. *D* moves second on the path, while *q* is still 1, so that share
+`r pct(dshare(rj), 1)` of it. *D* moves `r c("first", "second", "third", "fourth")[dp$step[dp$step_id == "confirmed_departures"]]` on the path, while *q* is still 1, so that share
 of the revenue is lost in full.
 
 ]
@@ -589,8 +591,11 @@ cat(sprintf('<table class="dt"><tr><th>Income tax lost, in today&#39;s dollars, 
 cat(sprintf('<tr><td>BSZ yearly loss, %s</td><td>%s</td><td>%s</td><td>%s</td></tr>', usd(l_b$annual_loss, 2), usd(l_b$annual_loss * a5), usd(l_b$annual_loss * ainf), usd(l_b$annual_loss * (a5 - ainf), 1, TRUE)))
 cat(sprintf('<tr><td>JR yearly loss, %s</td><td>%s</td><td>%s</td><td>%s</td></tr>', usd(l_r$annual_loss, 2), usd(l_r$annual_loss * a5), usd(l_r$annual_loss * ainf), usd(l_r$annual_loss * (a5 - ainf), 1, TRUE)))
 cat("</table>")
-# on the path the horizon moves after the share lost and the yearly tax, so the loss is JR-sized
-stopifnot(abs(ps("horizon") - l_r$annual_loss * (a5 - ainf)) < 1e-9, abs(l_r$pv_5yr - l_r$annual_loss * a5) < 1e-9)
+# on the path the horizon moves after the share lost and the yearly tax but before a, so the
+# yearly loss is the JR one plus the part the BSZ avoidance allowance adds (alpha m C)
+av_loss <- sup$alpha * sup$m * rj$C
+stopifnot(abs(ps("horizon") - (l_r$annual_loss + av_loss) * (a5 - ainf)) < 1e-9, abs(l_r$pv_5yr - l_r$annual_loss * a5) < 1e-9,
+          dp$step[dp$step_id == "horizon"] < dp$step[dp$step_id == "avoidance"])
 ```
 
 .pull-left[
@@ -604,8 +609,9 @@ long a departure lasts.
 
 .highlight-box[
 **Dollars moved, on (b):** `r usd(ps("horizon"), 1, TRUE)`, step `r dp$step[dp$step_id == "horizon"]` of the dial path, the largest.
-The horizon moves after the share lost and the yearly tax, so the loss is already JR-sized and
-the step equals the JR row's last column. The rate dial moves next.
+The horizon moves after the share lost and the yearly tax, but before *a*. So the yearly loss is
+the JR one plus `r usd(av_loss, 2)` from the BSZ avoidance allowance, still in place. The step is
+larger than the JR row's last column. The rate dial moves next.
 ]
 
 ]
@@ -616,7 +622,7 @@ name: smaller
 # The smaller steps
 
 ```{r tab-rest, results="asis"}
-# the other path steps in dial order; the minor switch's row joins its three inputs
+# the other path steps in path order; the minor switch's row joins its three inputs
 cat('<table class="dt"><tr><th>Input</th><th>BSZ value</th><th>JR value</th><th class="l">Kind of claim</th><th>Step on the path, (b)</th></tr>')
 for (i in seq_len(nrow(rest))) {
   ids <- dial_ids(rest$step_id[i]); tx <- lapply(ids, function(x) step_texts(inp, x))

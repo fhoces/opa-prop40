@@ -39,7 +39,7 @@ root <- comparison_root()
 ex <- read_exports(file.path(root, "comparison", "export", "r"))   # R/site.R
 k  <- read_contracts(root)                                          # R/contract.R
 ep <- ex$endpoints; en <- ex$ends; br <- ex$bridge; inp <- ex$inputs
-# the dial path: the explorer's dials moved top to bottom, each to its far end (R/model.R)
+# the dial path: the explorer's dials moved in the equation's order, each to its far end (R/model.R)
 dp <- read_csv_plain(file.path(root, "comparison", "export", "r", "dial_path.csv"))
 own <- en[en$horizon_setting == "own", ]
 ea <- own[own$output == "a", ]; eb <- own[own$output == "b", ]
@@ -446,8 +446,9 @@ twin_fold("the two main estimates", c("bridge_inputs", "score_common", "rauh_nbe
 # The bridge, step by step {#the-bridge}
 
 The bridge follows the explorer's dials. Start from the BSZ panel, where every dial is at the
-BSZ value, and move the dials top to bottom, each to its far end (the JR value). Each step is
-what one dial changes. The nine steps take the BSZ end, `r usd(dp$from[1])`, to the JR end,
+BSZ value, and move each dial to its far end (the JR value), in the order of the explorer's
+equation. That order is D, then q, then the four loss-box dials (f, C, H and r), then W, a and
+the minor switch. Each step is what one dial changes. The nine steps take the BSZ end, `r usd(dp$from[1])`, to the JR end,
 `r usd(dp$to[nrow(dp)])`, exactly. Three of them make most of the `r usd(gap_b)` gap: how long
 the lost income tax is counted (`r usd(dp$change[dp$step_id == "horizon"], 1, TRUE)`), the
 chance the tax does not survive litigation
@@ -457,9 +458,10 @@ departed (`r usd(dp$change[dp$step_id == "confirmed_departures"], 1, TRUE)`). Th
 `r usd(sum(dp$change[!dp$step_id %in% top3p$step_id]), 1, TRUE)`.
 
 The inputs interact, so a step's size depends on where the other dials stand when it moves.
-A departure matters more when the base is larger, for example. This path uses the order the
-explorer prints, so a reader can reproduce every step with the dials. The explorer's "Walk the
-path" button moves one dial per press. An order-free check, the Shapley average, closes this
+A departure matters more when the base is larger, for example. This path uses the equation's
+order, left to right, so a reader can reproduce every step with the dials. The equation's
+Apply buttons, pressed left to right, give each of its terms. The explorer's "Walk the path"
+button moves one dial per press. An order-free check, the Shapley average, closes this
 section.
 
 ```{r}
@@ -469,7 +471,7 @@ twin_fold("the bridge table and the figure", c("slider_inputs", "slider_value", 
 
 ```{r}
 #| results: asis
-# One row per dial in the explorer's order; the minor switch's row joins its three inputs.
+# One row per dial in the path's order (the equation's); the minor switch's row joins its three inputs.
 path_texts <- function(id) {
   ids <- dial_ids(id); tx <- lapply(ids, function(i) step_texts(inp, i))
   st <- steps[match(ids, steps$step_id), ]
@@ -495,8 +497,9 @@ scroll(show(rbind(blank("<b>BSZ end, (b)</b>", "", nobr(money(dp$from[1], 2))), 
                   blank("<b>JR end, (b), the JR main estimate</b>", "", nobr(money(eb$rauh_own, 2))))))
 ```
 
-Reading the table: the horizon step is the largest because it moves after the other dials,
-when the annual loss is already JR-sized, and a perpetuity multiplies that loss. One step
+Reading the table: the horizon step is the largest because it moves after f and C, when the
+share lost and the yearly income tax are already at the JR values, and a perpetuity multiplies
+that annual loss. One step
 raises the number. The JR analysis applies no avoidance allowance beyond migration, so dropping
 the BSZ analysis's `r pct(sup$alpha)` adds
 `r usd(dp$change[dp$step_id == "avoidance"], 1, TRUE)`. The rate step,
@@ -509,7 +512,7 @@ of the rate adds to a loss that lasts for ever: at `r r_jr` a perpetuity is wort
 #| label: fig-waterfall
 #| fig-width: 6
 #| fig-height: 5
-#| fig-cap: "Output (b), the dial path: the explorer's dials moved top to bottom, each to its far end."
+#| fig-cap: "Output (b), the dial path: the explorer's dials moved in the equation's order, each to its far end."
 library(ggplot2)
 wf_short <- ifelse(dp$step_id == "minor_inputs", "Minor inputs",
                    paste0(dp$symbol, ": ", unname(DIAL_NAMES[dp$step_id])))

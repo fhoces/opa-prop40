@@ -647,9 +647,10 @@
     });
   });
   // ---- Walk the path: each press moves the next dial of the path (S.path, the order of
-  // dial_path() in model.R) to its far end and marks the term of the pseudo-equation that holds
-  // it. The BSZ panel walks the path from the top dial down; the JR panel walks it in
-  // reverse, from the minor switch up, back to the BSZ values. A press sets every dial of the
+  // dial_path() in model.R: the equation's order, D, q, f, C, H, r, W, a, the minor switch) to
+  // its far end and marks the term of the pseudo-equation that holds it. The BSZ panel walks
+  // the path from D on; the JR panel walks it in reverse, from the minor switch back to D, to
+  // the BSZ values. A press sets every dial of the
   // panel, so the panel always shows the path's own value. After the last step the button
   // starts over. Moving a dial by hand ends the walk.
   var PATH = S.path, NP = PATH.length, WALK = { bsz: 0, rjkdc: 0 }, EQ = document.querySelector(".pseudo-eq");

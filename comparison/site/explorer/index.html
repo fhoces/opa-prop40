@@ -316,15 +316,15 @@
 
   <section class="eq-box" id="what-separates" aria-labelledby="eq-title">
     <h2 id="eq-title">What separates the two numbers</h2>
-<div class="pseudo-eq" role="img" aria-label="The BSZ estimate, $106.8B, minus $28.2B for billionaires already departed (d), minus $41.4B for chance the tax does not survive litigation (q), minus $73.7B for lost income tax (h, f, c, r), minus $2.5B for the other three steps together (w, a, three minor inputs), gives about the JR estimate, −$39.0B.">
+<div class="pseudo-eq" role="img" aria-label="The BSZ estimate, $106.8B, minus $29.9B for billionaires already departed (d), minus $39.4B for chance the tax does not survive litigation (q), minus $81.3B for lost income tax (h, f, c, r), plus $4.9B for the other three steps together (w, a, three minor inputs), gives about the JR estimate, −$39.0B.">
   <span class="term" data-steps="0"><b>$106.8B</b><small>BSZ estimate</small></span>
-  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-steps="2"><b>$28.2B</b><small>Billionaires already departed (D)</small></span></span>
-  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-steps="4"><b>$41.4B</b><small>Chance the tax does not survive litigation (q)</small></span></span>
-  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-steps="5 6 7 8"><b>$73.7B</b><small>Lost income tax (H, f, C, r)</small></span></span>
-  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-steps="1 3 9"><b>$2.5B</b><small>The other three steps together (W, a, three minor inputs)</small></span></span>
+  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-steps="1"><b>$29.9B</b><small>Billionaires already departed (D)</small></span></span>
+  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-steps="2"><b>$39.4B</b><small>Chance the tax does not survive litigation (q)</small></span></span>
+  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-steps="3 4 5 6"><b>$81.3B</b><small>Lost income tax (H, f, C, r)</small></span></span>
+  <span class="eq-step"><span class="op">+</span><span class="term" data-steps="7 8 9"><b>$4.9B</b><small>The other three steps together (W, a, three minor inputs)</small></span></span>
   <span class="eq-step"><span class="op">&asymp;</span><span class="term" data-end="9"><b>−$39.0B</b><small>JR estimate</small></span></span>
 </div>
-    <p class="eq-note">Move the BSZ panel's dials top to bottom, each to its far end. The D and q terms are those two steps of that walk. Lost income tax is the four loss-box dials of the walk added up (f, C, H and r). The last term is the other three steps added up (W, a and three minor inputs). The Walk the path button in each panel does it for you. The <a href="../repro.html#the-bridge">report</a> gives all nine steps.</p>
+    <p class="eq-note">Move the BSZ panel's dials to their far ends, term by term from left to right. The D and q terms are those two steps of that walk. Lost income tax is the four loss-box dials of the walk added up (f, C, H and r). The last term is the other three steps added up (W, a and three minor inputs). The Walk the path button in each panel does it for you. The <a href="../repro.html#the-bridge">report</a> gives all nine steps.</p>
   </section>
 
   <section class="board" id="panels" aria-labelledby="board-title">
@@ -344,10 +344,10 @@
         </div>
         <div class="apply-eq" role="group" aria-label="The equation above in words: each button moves those dials of the BSZ panel to the JR values, or back">
           <span class="ap-term">BSZ <span class="ap-tie">estimate&nbsp;<button type="button" class="ap-btn" data-act="reset" data-dials="confirmed_departures litigation_survival income_loss_share income_level horizon discount_rate base_list avoidance noncitizens real_estate asset_sales">Reset</button></span></span>
-          <span class="ap-op">&minus;</span>&nbsp;<span class="ap-term">Billionaires already departed <span class="ap-tie">(D)&nbsp;<button type="button" class="ap-btn" data-act="term" data-dials="confirmed_departures" data-steps="2" aria-pressed="false">Apply</button></span></span>
-          <span class="ap-op">&minus;</span>&nbsp;<span class="ap-term">Chance the tax does not survive litigation <span class="ap-tie">(q)&nbsp;<button type="button" class="ap-btn" data-act="term" data-dials="litigation_survival" data-steps="4" aria-pressed="false">Apply</button></span></span>
-          <span class="ap-op">&minus;</span>&nbsp;<span class="ap-term">Lost income tax (H, f, C, <span class="ap-tie">r)&nbsp;<button type="button" class="ap-btn" data-act="term" data-dials="income_loss_share income_level horizon discount_rate" data-steps="5 6 7 8" aria-pressed="false">Apply</button></span></span>
-          <span class="ap-op">&minus;</span>&nbsp;<span class="ap-term">The other three steps together (W, a, three minor <span class="ap-tie">inputs)&nbsp;<button type="button" class="ap-btn" data-act="term" data-dials="base_list avoidance noncitizens real_estate asset_sales" data-steps="1 3 9" aria-pressed="false">Apply</button></span></span>
+          <span class="ap-op">&minus;</span>&nbsp;<span class="ap-term">Billionaires already departed <span class="ap-tie">(D)&nbsp;<button type="button" class="ap-btn" data-act="term" data-dials="confirmed_departures" data-steps="1" aria-pressed="false">Apply</button></span></span>
+          <span class="ap-op">&minus;</span>&nbsp;<span class="ap-term">Chance the tax does not survive litigation <span class="ap-tie">(q)&nbsp;<button type="button" class="ap-btn" data-act="term" data-dials="litigation_survival" data-steps="2" aria-pressed="false">Apply</button></span></span>
+          <span class="ap-op">&minus;</span>&nbsp;<span class="ap-term">Lost income tax (H, f, C, <span class="ap-tie">r)&nbsp;<button type="button" class="ap-btn" data-act="term" data-dials="income_loss_share income_level horizon discount_rate" data-steps="3 4 5 6" aria-pressed="false">Apply</button></span></span>
+          <span class="ap-op">+</span>&nbsp;<span class="ap-term">The other three steps together (W, a, three minor <span class="ap-tie">inputs)&nbsp;<button type="button" class="ap-btn" data-act="term" data-dials="base_list avoidance noncitizens real_estate asset_sales" data-steps="7 8 9" aria-pressed="false">Apply</button></span></span>
           <span class="ap-op">&asymp;</span>&nbsp;<span class="ap-term">JR <span class="ap-tie">estimate&nbsp;<button type="button" class="ap-btn" data-act="all" data-dials="confirmed_departures litigation_survival income_loss_share income_level horizon discount_rate base_list avoidance noncitizens real_estate asset_sales">Apply all</button></span></span>
         </div>
         <ul class="sl-list" aria-label="The BSZ panel's sliders">
@@ -633,7 +633,7 @@
   </footer>
 </div>
 
-<script src="../../../assets/comparison-data.js?v=fd3a4297"></script>
+<script src="../../../assets/comparison-data.js?v=d5c9eb0f"></script>
 <script src="model.js"></script>
 <script>
 (function () {
@@ -843,9 +843,10 @@
     });
   });
   // ---- Walk the path: each press moves the next dial of the path (S.path, the order of
-  // dial_path() in model.R) to its far end and marks the term of the pseudo-equation that holds
-  // it. The BSZ panel walks the path from the top dial down; the JR panel walks it in
-  // reverse, from the minor switch up, back to the BSZ values. A press sets every dial of the
+  // dial_path() in model.R: the equation's order, D, q, f, C, H, r, W, a, the minor switch) to
+  // its far end and marks the term of the pseudo-equation that holds it. The BSZ panel walks
+  // the path from D on; the JR panel walks it in reverse, from the minor switch back to D, to
+  // the BSZ values. A press sets every dial of the
   // panel, so the panel always shows the path's own value. After the last step the button
   // starts over. Moving a dial by hand ends the walk.
   var PATH = S.path, NP = PATH.length, WALK = { bsz: 0, rjkdc: 0 }, EQ = document.querySelector(".pseudo-eq");

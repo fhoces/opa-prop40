@@ -101,7 +101,7 @@ dial_texts <- function(inp, id, bi = NULL) {
 # "minor_inputs": off keeps the panel's own values, on takes the other analysis's values for
 # all three. The other inputs get a slider each. The data file lists the three under
 # sliders.minor and the page script expands the switch before calling model.js.
-# EXPLORER_MINOR and EXPLORER_DIAL_ORDER are in model.R (dial_path() reads them).
+# EXPLORER_MINOR and DIAL_PATH_ORDER are in model.R (dial_path() reads them).
 explorer_slider_ids <- function() setdiff(bridge_steps()$step_id, EXPLORER_MINOR)
 # The pseudo-equation's terms (author decision 2026-10-15, revised the same day): the grouping is by
 # box, not by size. D and q of the revenue box are shown one by one; the four dials of the loss box
@@ -143,6 +143,13 @@ eq_terms <- function(dp) {
 eq_term_dials <- function(dp, et = eq_terms(dp)) {
   lapply(strsplit(et$terms$steps, " ", fixed = TRUE), function(st)
     unlist(lapply(dp$step_id[as.integer(st)], dial_ids), use.names = FALSE))
+}
+# The equation's order, left to right (author decision 2026-10-15, "the equation's order: D, q,
+# lost income tax, the rest"): D and q, the loss box's dials in their box order, then the other
+# sliders in the page's order and the minor switch. DIAL_PATH_ORDER in model.R must equal it.
+eq_path_order <- function() {
+  c(EQ_SINGLE, EXPLORER_BOXES$loss$ids,
+    setdiff(explorer_slider_ids(), c(EQ_SINGLE, EXPLORER_BOXES$loss$ids)), "minor_inputs")
 }
 # The dials that act together, boxed on the page by the two terms of the net fiscal effect.
 # Inside a box the inputs multiply each other, so one dial's effect depends on where the
@@ -270,7 +277,7 @@ hoopes_differences <- function(ex, k) {
     sprintf("<b>Income tax.</b> His single bar, %s, ends at %s, close to the March 2026 version's %s. Ours is %s, the September 2026 version's present value of lost income tax against %s of revenue, and we split it into five labelled steps (the share lost, the income tax level, the horizon, the discount rate, asset-sale tax), which interact with the base steps.",
             hfmt(hs_("income_tax_loss"), NA), money(hz_end, 1), money(opp("npv_mc_ssrn_mean"), 1), money(ho("income_tax_loss"), 2, TRUE),
             money(ea$rauh_own, 2)),
-    "<b>Order and labels.</b> His is one sequential order, with no provenance labels. Ours follows the explorer's dials in the order the page prints them, with each step labelled data, research, guesswork or scenario. The Shapley average (a step's effect averaged over every order the inputs could be switched in) checks it without choosing an order, and the column here reads our steps in his order.",
+    "<b>Order and labels.</b> His is one sequential order, with no provenance labels. Ours moves the explorer's dials in the order of the equation at the top (D, q, the loss box's dials, then the rest), with each step labelled data, research, guesswork or scenario. The Shapley average (a step's effect averaged over every order the inputs could be switched in) checks it without choosing an order, and the column here reads our steps in his order.",
     "<b>Steps he does not have.</b> The non-US-citizen residents, the BSZ analysis's avoidance allowance being dropped, the asset-sale income tax, and the litigation weight of the September 2026 version (which postdates his note)."
   )
 }
@@ -535,12 +542,12 @@ render_site <- function(root = comparison_root(),
   # ---- the pseudo-equation: the BSZ estimate, the D and q steps of the dial path, the loss
   # box's four steps added up, the other three steps added up, the JR estimate (author decisions
   # 2026-10-15: everything from the explorer's own dials; grouped by box, eq_terms()). The dial
-  # path moves the BSZ panel's dials top to bottom, each to its far end (dial_path() in model.R,
-  # export/r/dial_path.csv). The terms take the BSZ end to the JR end exactly. eq_terms() is
-  # shared with the deck (slides.Rmd).
-  stopifnot(identical(EXPLORER_DIAL_ORDER, c(explorer_slider_ids(), "minor_inputs")))
+  # path moves the BSZ panel's dials in the equation's order, each to its far end (dial_path() in
+  # model.R, export/r/dial_path.csv), so the terms, pressed left to right, are the path's steps.
+  # The terms take the BSZ end to the JR end exactly. eq_terms() is shared with the deck (slides.Rmd).
+  stopifnot(identical(DIAL_PATH_ORDER, eq_path_order()))
   dp <- read_csv_plain(file.path(root, "comparison", "export", "r", "dial_path.csv"))
-  stopifnot(identical(dp$step_id, EXPLORER_DIAL_ORDER))
+  stopifnot(identical(dp$step_id, DIAL_PATH_ORDER))
   et <- eq_terms(dp)
   term <- function(j) {
     x <- et$terms[j, ]
@@ -593,7 +600,7 @@ render_site <- function(root = comparison_root(),
   # The note reads the same on both pages (author item 2026-10-15), except that the overview
   # has no Walk the path button, so it drops that sentence, and links "BSZ panel" to the explorer.
   eq_note <- function(href, panel, walk) paste0(
-    "Move the ", panel, "'s dials top to bottom, each to its far end. ", esc(et$note), " ",
+    "Move the ", panel, "'s dials to their far ends, term by term from left to right. ", esc(et$note), " ",
     walk,
     sprintf("The <a href=\"%s\">report</a> gives all %s steps.", href, et$n_words))
   tok$pseudo_eq_note_x <- eq_note("../repro.html#the-bridge", "BSZ panel",
@@ -674,7 +681,7 @@ render_site <- function(root = comparison_root(),
       bsz_text = dial_texts(inp, steps$step_id[i], bi)$bsz,
       rjkdc_text = dial_texts(inp, steps$step_id[i], bi)$rjkdc)),
     minor = EXPLORER_MINOR,
-    path = EXPLORER_DIAL_ORDER)
+    path = DIAL_PATH_ORDER)
   # The explorer shows the net fiscal effect, output (b), only, and the bridge at each
   # analysis's own horizon; output (a) and the common horizons stay in the exports, the
   # report and the tests, not in the data file the explorer reads.
