@@ -99,10 +99,12 @@ explorer_slider_ids <- function() setdiff(bridge_steps()$step_id, EXPLORER_MINOR
 # the departed dial, and the avoidance allowance enters both terms; the box notes say so).
 EXPLORER_BOXES <- list(
   revenue = list(ids = c("base_list", "confirmed_departures", "avoidance", "litigation_survival"),
+                 report = "step-revenue",   # the report's steps 1 to 3 of score_common()
                  eq = "Wealth tax collected = 5% &times; (W &minus; D) &times; (1 &minus; a) &times; q",
                  lead = "The wealth on the list, less what has already left, less avoidance, times the chance the tax survives in court.",
                  more = "The four dials multiply, so the effect of one depends on where the others stand. W and D are valued on the same Forbes list."),
   loss = list(ids = c("income_loss_share", "income_level", "horizon"),
+              report = "step-loss",      # the report's steps 5 and 6
               eq = "Income tax lost = f &times; C &times; A(H)",
               lead = "The share of billionaires' income tax that leaves, times that income tax per year, counted over H years.",
               more = "A(H) is what $1 a year for H years is worth today: about 5 for 5 years, about 37 for ever. The three dials multiply, and f also moves with D and a."))
@@ -346,8 +348,8 @@ render_site <- function(root = comparison_root(),
       '        <li class="sl-box" role="group" aria-labelledby="', panel, '-', key, '-head">\n',
       '          <div class="sl-box-head">\n',
       '            <p class="box-eq" id="', panel, '-', key, '-head">', bx$eq, '</p>\n',
-      '            <p class="box-lead">', bx$lead, ' <span class="info" tabindex="0" aria-describedby="', panel, '-', key, '-more">more',
-      '<span class="info-tip" role="tooltip" id="', panel, '-', key, '-more">', bx$more, '</span></span></p>\n',
+      '            <p class="box-lead">', bx$lead, ' <a class="info" href="../repro.html#', bx$report, '" aria-describedby="', panel, '-', key, '-more">more',
+      '<span class="info-tip" role="tooltip" id="', panel, '-', key, '-more">', bx$more, '</span></a></p>\n',
       '          </div>\n',
       '          <ul class="sl-list">\n',
       paste(vapply(bx$ids, function(id) step_row(panel, id), ""), collapse = "\n"), "\n",

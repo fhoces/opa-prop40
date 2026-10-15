@@ -248,7 +248,7 @@ In words, the function computes seven quantities in order. Each argument is writ
 title in quotation marks; `tau`, `m`, `g`, `t_cg` and the discount-rate range are shared by
 both ends.
 
-1. `R0 = tau * (W_core + W_noncit) * (1 - re)`: the revenue with no behavioural response.
+1. []{#step-revenue}`R0 = tau * (W_core + W_noncit) * (1 - re)`: the revenue with no behavioural response.
    `tau` is the tax rate; `W_core` (the base) and `W_noncit` (the non-US-citizen residents)
    are in billions of dollars ("Forbes source: which list and valuation date", "Non-US-citizen residents");
    `re` is the share of the revenue the real-estate deduction removes ("Real-estate
@@ -267,7 +267,7 @@ both ends.
 4. `X = WT * s * g * t_cg`: the extra income tax from assets sold to pay. `s` is the share of
    the tax paid by selling assets ("Extra income tax from selling assets to pay"), `g` the
    capital-gain share of a sale and `t_cg` the top California rate on realized gains.
-5. `f = alpha*m + own * L / C + f0`: the share of billionaire income tax lost ("Share of
+5. []{#step-loss}`f = alpha*m + own * L / C + f0`: the share of billionaire income tax lost ("Share of
    billionaire income tax lost"). The first term is the BSZ movers' share (`m` is the part of
    the avoidance allowance that is people leaving California). Under the BSZ rule (`own = 1`)
    the leavers' own income tax, `L` dollars a year as BSZ Table 5 counts it for the people at

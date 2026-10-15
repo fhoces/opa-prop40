@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-10-14">
+<meta name="dcterms.date" content="2026-10-15">
 
 <title>Prop 40, the comparison: the reproduction</title>
 <style>
@@ -2304,7 +2304,7 @@ min-width: 0 !important;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 14, 2026</p>
+      <p class="date">October 15, 2026</p>
     </div>
   </div>
   
@@ -2449,7 +2449,7 @@ min-width: 0 !important;
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">annual_loss =</span> f <span class="sc">*</span> x<span class="sc">$</span>C, <span class="at">annuity =</span> A, <span class="at">PV =</span> PV)</span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/model.R, lines 231-235</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/model.R, lines 235-239</span></span>
 <span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>rauh_nber_expectation <span class="ot">&lt;-</span> <span class="cf">function</span>(wt_min, wt_max, f_min, f_max, c_min, c_max, r_min, r_max, <span class="at">H =</span> <span class="cn">Inf</span>) {</span>
 <span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  e_wt <span class="ot">&lt;-</span> (wt_min <span class="sc">+</span> wt_max) <span class="sc">/</span> <span class="dv">2</span></span>
 <span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="at">a =</span> e_wt, <span class="at">b =</span> e_wt <span class="sc">-</span> (f_min <span class="sc">+</span> f_max) <span class="sc">/</span> <span class="dv">2</span> <span class="sc">*</span> (c_min <span class="sc">+</span> c_max) <span class="sc">/</span> <span class="dv">2</span> <span class="sc">*</span></span>
@@ -2555,11 +2555,11 @@ mean NPV −$38.9B; revenue ‘approximately $30B’ (p.1)
 <p>One estimating function, <code>score_common()</code>, takes every disputed input as an argument. Each argument takes either the BSZ analysis’s value or the JR analysis’s. At the all-BSZ setting the function must return the BSZ end: Table 5 row 1 on (a), and its net on (b). At the all-JR setting it must return the JR end, the exact mean of the September 2026 version’s Monte Carlo. The JR values are those of that version, the latest (its code and person-level file are in the authors’ public repository).</p>
 <p>In words, the function computes seven quantities in order. Each argument is written as <code>score_common()</code> names it and, where a step of the bridge switches it, followed by that step’s title in quotation marks; <code>tau</code>, <code>m</code>, <code>g</code>, <code>t_cg</code> and the discount-rate range are shared by both ends.</p>
 <ol type="1">
-<li><code>R0 = tau * (W_core + W_noncit) * (1 - re)</code>: the revenue with no behavioural response. <code>tau</code> is the tax rate; <code>W_core</code> (the base) and <code>W_noncit</code> (the non-US-citizen residents) are in billions of dollars (“Forbes source: which list and valuation date”, “Non-US-citizen residents”); <code>re</code> is the share of the revenue the real-estate deduction removes (“Real-estate deduction”).</li>
+<li><span id="step-revenue"></span><code>R0 = tau * (W_core + W_noncit) * (1 - re)</code>: the revenue with no behavioural response. <code>tau</code> is the tax rate; <code>W_core</code> (the base) and <code>W_noncit</code> (the non-US-citizen residents) are in billions of dollars (“Forbes source: which list and valuation date”, “Non-US-citizen residents”); <code>re</code> is the share of the revenue the real-estate deduction removes (“Real-estate deduction”).</li>
 <li><code>S = 1 - d_conf</code>: the share of the base still taxed. <code>d_conf = D / Wn</code> is the share of the base that had already left (“Billionaires already departed”): <code>D</code> is their wealth, valued on the Forbes list in use (<code>lam</code> picks it), and <code>Wn</code> the base net of real estate. The departures dial has three stops: none, the BSZ analysis’s aggressive scenario (Table 5 row 3) and the JR analysis’s seven. For the JR analysis, <code>R0 * S</code> is its ceiling, the most the tax can collect after the seven confirmed departures.</li>
 <li><code>WT = R0 * (1 - alpha) * S * q</code>: output (a), the gross one-time revenue, after the avoidance allowance <code>alpha</code>, a share of the base (“Avoidance and evasion allowance”), weighted by <code>q</code>, the chance that the Act survives a court challenge (“Chance the tax survives litigation”). The JR Monte Carlo draws the revenue anywhere between zero (struck down) and the ceiling; the mean of that draw is the ceiling times one half, its <code>q</code>.</li>
 <li><code>X = WT * s * g * t_cg</code>: the extra income tax from assets sold to pay. <code>s</code> is the share of the tax paid by selling assets (“Extra income tax from selling assets to pay”), <code>g</code> the capital-gain share of a sale and <code>t_cg</code> the top California rate on realized gains.</li>
-<li><code>f = alpha*m + own * L / C + f0</code>: the share of billionaire income tax lost (“Share of billionaire income tax lost”). The first term is the BSZ movers’ share (<code>m</code> is the part of the avoidance allowance that is people leaving California). Under the BSZ rule (<code>own = 1</code>) the leavers’ own income tax, <code>L</code> dollars a year as BSZ Table 5 counts it for the people at the departures stop, is lost. Under the JR rule (<code>own = 0</code>) a flat share <code>f0</code> is lost whoever leaves (the JR analysis’s independent draw of 30% to 60%). At the aggressive stop the BSZ end reproduces Table 5 row 3 in all three columns.</li>
+<li><span id="step-loss"></span><code>f = alpha*m + own * L / C + f0</code>: the share of billionaire income tax lost (“Share of billionaire income tax lost”). The first term is the BSZ movers’ share (<code>m</code> is the part of the avoidance allowance that is people leaving California). Under the BSZ rule (<code>own = 1</code>) the leavers’ own income tax, <code>L</code> dollars a year as BSZ Table 5 counts it for the people at the departures stop, is lost. Under the JR rule (<code>own = 0</code>) a flat share <code>f0</code> is lost whoever leaves (the JR analysis’s independent draw of 30% to 60%). At the aggressive stop the BSZ end reproduces Table 5 row 3 in all three columns.</li>
 <li><code>PV = f * C * E_r[annuity(r, H)]</code>: the present value of the lost income tax. <code>C</code> is billionaires’ annual California income tax, in billions of dollars a year (“Billionaires’ annual CA income tax”), lost for <code>H</code> years (“How long the income tax loss lasts”; for ever at the JR end); <code>annuity(r, H)</code> is what 1 a year for <code>H</code> years is worth today at the discount rate <code>r</code>, averaged over the rate range.</li>
 <li><code>NET = WT + X - PV</code>: output (b), the net fiscal effect.</li>
 </ol>
@@ -2857,7 +2857,7 @@ not printed
 <span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>    <span class="at">annual_loss =</span> f <span class="sc">*</span> x<span class="sc">$</span>C, <span class="at">annuity =</span> A, <span class="at">PV =</span> PV)</span>
 <span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/model.R, lines 231-235</span></span>
+<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/model.R, lines 235-239</span></span>
 <span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a>rauh_nber_expectation <span class="ot">&lt;-</span> <span class="cf">function</span>(wt_min, wt_max, f_min, f_max, c_min, c_max, r_min, r_max, <span class="at">H =</span> <span class="cn">Inf</span>) {</span>
 <span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a>  e_wt <span class="ot">&lt;-</span> (wt_min <span class="sc">+</span> wt_max) <span class="sc">/</span> <span class="dv">2</span></span>
 <span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="at">a =</span> e_wt, <span class="at">b =</span> e_wt <span class="sc">-</span> (f_min <span class="sc">+</span> f_max) <span class="sc">/</span> <span class="dv">2</span> <span class="sc">*</span> (c_min <span class="sc">+</span> c_max) <span class="sc">/</span> <span class="dv">2</span> <span class="sc">*</span></span>
@@ -2951,7 +2951,7 @@ not printed
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  x</span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/model.R, lines 199-213</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/model.R, lines 203-217</span></span>
 <span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>shapley_bridge <span class="ot">&lt;-</span> <span class="cf">function</span>(sup, rauh, players, <span class="at">output =</span> <span class="fu">c</span>(<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>), <span class="at">v =</span> <span class="cn">NULL</span>) {</span>
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  output <span class="ot">&lt;-</span> <span class="fu">match.arg</span>(output)</span>
 <span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">length</span>(players)</span>
@@ -2968,7 +2968,7 @@ not printed
 <span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>  stats<span class="sc">::</span><span class="fu">setNames</span>(phi, players)</span>
 <span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/model.R, lines 215-225</span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/model.R, lines 219-229</span></span>
 <span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>sequential_bridge <span class="ot">&lt;-</span> <span class="cf">function</span>(sup, rauh, order, <span class="at">output =</span> <span class="fu">c</span>(<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>)) {</span>
 <span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>  output <span class="ot">&lt;-</span> <span class="fu">match.arg</span>(output)</span>
 <span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>  prev <span class="ot">&lt;-</span> <span class="fu">score_common</span>(sup)[[output]]</span>
@@ -3218,10 +3218,10 @@ Share of billionaire income tax lost
 data vs guesswork
 </td>
 <td style="text-align:left;">
-leavers’ own tax
+what leavers paid
 </td>
 <td style="text-align:left;">
-45% flat
+45% of all
 </td>
 <td style="text-align:left;">
 −$33.47B
@@ -3537,10 +3537,10 @@ Share of billionaire income tax lost
 data vs guesswork
 </td>
 <td style="text-align:left;">
-leavers’ own tax
+what leavers paid
 </td>
 <td style="text-align:left;">
-45% flat
+45% of all
 </td>
 <td style="text-align:left;">
 +$0.00B
@@ -3665,7 +3665,7 @@ $36.00B
 <summary>
 R code for the waterfall
 </summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/site.R, lines 112-148</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/site.R, lines 122-158</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>build_series <span class="ot">&lt;-</span> <span class="cf">function</span>(ex) {</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  br <span class="ot">&lt;-</span> ex<span class="sc">$</span>bridge; en <span class="ot">&lt;-</span> ex<span class="sc">$</span>ends; steps <span class="ot">&lt;-</span> <span class="fu">bridge_steps</span>()</span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  settings <span class="ot">&lt;-</span> <span class="fu">unique</span>(en<span class="sc">$</span>horizon_setting)</span>
@@ -4325,10 +4325,10 @@ Share of billionaire income tax lost
 data vs guesswork
 </td>
 <td style="text-align:left;">
-<b>leavers’ own tax</b>. the leavers’ own income tax, in dollars, as BSZ Table 5 counts it (data: SEC filings for the top 3 and a wealth-proportional rate for the rest, BSZ PDF p.26, Table 4 p.38); no flat share: the loss follows the people who leave
+<b>what leavers paid</b>. the leavers’ own income tax, in dollars, as BSZ Table 5 counts it (data: SEC filings for the top 3 and a wealth-proportional rate for the rest, BSZ PDF p.26, Table 4 p.38); no flat share: the loss follows the people who leave
 </td>
 <td style="text-align:left;">
-<b>45% flat</b>. midpoint of f ~ U[0.30, 0.60], drawn independently of the revenue (NPV_dist_v8.R; chapter Sec. 5.4): guesswork; not used: the share lost does not follow who leaves
+<b>45% of all</b>. midpoint of f ~ U[0.30, 0.60], drawn independently of the revenue (NPV_dist_v8.R; chapter Sec. 5.4): guesswork; not used: the share lost does not follow who leaves
 </td>
 </tr>
 <tr>

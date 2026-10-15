@@ -226,7 +226,7 @@
   .box-eq { margin: 0; font-family: var(--serif); font-size: 16px; font-weight: 600; color: var(--ink); line-height: 1.35; }
   .box-lead { margin: 2px 0 0; font-size: 12.5px; line-height: 1.4; color: var(--ink-2); }
   .sl-box-head { position: relative; }
-  .info { color: var(--series-1); border-bottom: 1px dotted var(--series-1); cursor: help; white-space: nowrap; }
+  .info { color: var(--series-1); border-bottom: 1px dotted var(--series-1); text-decoration: none; white-space: nowrap; }
   .info-tip { position: absolute; left: 0; right: 0; top: calc(100% + 4px); z-index: 7; white-space: normal;
     background: var(--panel); color: var(--ink); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px;
     font-size: 12.5px; line-height: 1.45; box-shadow: 0 4px 14px rgba(0,0,0,.14); visibility: hidden; opacity: 0;
@@ -348,7 +348,7 @@
         <li class="sl-box" role="group" aria-labelledby="bsz-revenue-head">
           <div class="sl-box-head">
             <p class="box-eq" id="bsz-revenue-head">Wealth tax collected = 5% &times; (W &minus; D) &times; (1 &minus; a) &times; q</p>
-            <p class="box-lead">The wealth on the list, less what has already left, less avoidance, times the chance the tax survives in court. <span class="info" tabindex="0" aria-describedby="bsz-revenue-more">more<span class="info-tip" role="tooltip" id="bsz-revenue-more">The four dials multiply, so the effect of one depends on where the others stand. W and D are valued on the same Forbes list.</span></span></p>
+            <p class="box-lead">The wealth on the list, less what has already left, less avoidance, times the chance the tax survives in court. <a class="info" href="../repro.html#step-revenue" aria-describedby="bsz-revenue-more">more<span class="info-tip" role="tooltip" id="bsz-revenue-more">The four dials multiply, so the effect of one depends on where the others stand. W and D are valued on the same Forbes list.</span></a></p>
           </div>
           <ul class="sl-list">
         <li class="sl has-sym" data-id="base_list">
@@ -380,7 +380,7 @@
         <li class="sl-box" role="group" aria-labelledby="bsz-loss-head">
           <div class="sl-box-head">
             <p class="box-eq" id="bsz-loss-head">Income tax lost = f &times; C &times; A(H)</p>
-            <p class="box-lead">The share of billionaires' income tax that leaves, times that income tax per year, counted over H years. <span class="info" tabindex="0" aria-describedby="bsz-loss-more">more<span class="info-tip" role="tooltip" id="bsz-loss-more">A(H) is what $1 a year for H years is worth today: about 5 for 5 years, about 37 for ever. The three dials multiply, and f also moves with D and a.</span></span></p>
+            <p class="box-lead">The share of billionaires' income tax that leaves, times that income tax per year, counted over H years. <a class="info" href="../repro.html#step-loss" aria-describedby="bsz-loss-more">more<span class="info-tip" role="tooltip" id="bsz-loss-more">A(H) is what $1 a year for H years is worth today: about 5 for 5 years, about 37 for ever. The three dials multiply, and f also moves with D and a.</span></a></p>
           </div>
           <ul class="sl-list">
         <li class="sl has-sym" data-id="income_loss_share">
@@ -454,7 +454,7 @@
         <li class="sl-box" role="group" aria-labelledby="rjkdc-revenue-head">
           <div class="sl-box-head">
             <p class="box-eq" id="rjkdc-revenue-head">Wealth tax collected = 5% &times; (W &minus; D) &times; (1 &minus; a) &times; q</p>
-            <p class="box-lead">The wealth on the list, less what has already left, less avoidance, times the chance the tax survives in court. <span class="info" tabindex="0" aria-describedby="rjkdc-revenue-more">more<span class="info-tip" role="tooltip" id="rjkdc-revenue-more">The four dials multiply, so the effect of one depends on where the others stand. W and D are valued on the same Forbes list.</span></span></p>
+            <p class="box-lead">The wealth on the list, less what has already left, less avoidance, times the chance the tax survives in court. <a class="info" href="../repro.html#step-revenue" aria-describedby="rjkdc-revenue-more">more<span class="info-tip" role="tooltip" id="rjkdc-revenue-more">The four dials multiply, so the effect of one depends on where the others stand. W and D are valued on the same Forbes list.</span></a></p>
           </div>
           <ul class="sl-list">
         <li class="sl has-sym" data-id="base_list">
@@ -486,7 +486,7 @@
         <li class="sl-box" role="group" aria-labelledby="rjkdc-loss-head">
           <div class="sl-box-head">
             <p class="box-eq" id="rjkdc-loss-head">Income tax lost = f &times; C &times; A(H)</p>
-            <p class="box-lead">The share of billionaires' income tax that leaves, times that income tax per year, counted over H years. <span class="info" tabindex="0" aria-describedby="rjkdc-loss-more">more<span class="info-tip" role="tooltip" id="rjkdc-loss-more">A(H) is what $1 a year for H years is worth today: about 5 for 5 years, about 37 for ever. The three dials multiply, and f also moves with D and a.</span></span></p>
+            <p class="box-lead">The share of billionaires' income tax that leaves, times that income tax per year, counted over H years. <a class="info" href="../repro.html#step-loss" aria-describedby="rjkdc-loss-more">more<span class="info-tip" role="tooltip" id="rjkdc-loss-more">A(H) is what $1 a year for H years is worth today: about 5 for 5 years, about 37 for ever. The three dials multiply, and f also moves with D and a.</span></a></p>
           </div>
           <ul class="sl-list">
         <li class="sl has-sym" data-id="income_loss_share">
@@ -822,8 +822,8 @@
   });
   renderPanels();
 
-  // A touch screen has no hover. A tap on a dial's symbol, on a dial end that has a tip, or on
-  // "more" shows that tip; a second tap, or a tap anywhere else, hides it. Sliding a dial is not
+  // A touch screen has no hover. A tap on a dial's symbol or on a dial end that has a tip
+  // shows that tip; a second tap, or a tap anywhere else, hides it. Sliding a dial is not
   // a tap, so it leaves tips alone.
   var tapAt = null;
   document.addEventListener("pointerdown", function (e) {
@@ -835,7 +835,8 @@
     var moved = Math.abs(e.clientX - tapAt.x) + Math.abs(e.clientY - tapAt.y) > 10;
     tapAt = null;
     if (moved) return;
-    var host = e.target.closest ? e.target.closest(".info, .sl-end.has-tip, .sl > label") : null;
+    // "more" is a link to the report: a tap follows it, so it is not a tip host
+    var host = e.target.closest ? e.target.closest(".sl-end.has-tip, .sl > label") : null;
     var show = host && !host.classList.contains("tip-on");
     Array.prototype.slice.call(document.querySelectorAll(".tip-on")).forEach(function (h) { h.classList.remove("tip-on"); });
     if (show) host.classList.add("tip-on");
