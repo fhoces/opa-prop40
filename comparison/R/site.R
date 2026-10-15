@@ -149,6 +149,7 @@ render_site <- function(root = comparison_root(),
   tok$bsz_printed <- money(ep$printed_value[ep$endpoint_id == "bsz_tab5_row1"], 0)   # the digit the paper prints
   tok$bsz_row1_exact <- money(epv("bsz_tab5_row1"), 3)
   tok$nber_npv <- money(ep$printed_value[ep$endpoint_id == "rauh_nber_npv"], 1)
+  tok$nber_npv_abs <- money(-ep$printed_value[ep$endpoint_id == "rauh_nber_npv"], 1)
   tok$r_min <- pct(pick(k$rjkdc$inputs, "rauh_mc_r_min"), 1)
   tok$r_max <- pct(pick(k$rjkdc$inputs, "rauh_mc_r_max"), 1)
   tok$nber_growth <- pct(pick(k$rjkdc$inputs, "nber_growth_rate"))
