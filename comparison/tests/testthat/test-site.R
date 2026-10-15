@@ -257,13 +257,13 @@ test_that("the sliders' ends are the two analyses, and the departures dial stops
   }
 })
 
-test_that("every dial symbol in both boxes has one or two words under it (author items 2026-10-15)", {
+test_that("every dial symbol in both boxes has one or two words above it (author items 2026-10-15)", {
   ex_html <- read_page(explorer)
   expect_identical(sort(names(DIAL_WORDS)), sort(names(DIAL_SYMBOLS)))
   expect_identical(unname(DIAL_WORDS[EXPLORER_BOXES$revenue$ids]), c("wealth", "departed", "avoidance", "litigation"))
   for (id in names(DIAL_SYMBOLS))
-    expect_identical(lengths(regmatches(ex_html, gregexpr(sprintf('<span class="sym">%s</span><span class="sym-word">%s</span>',
-                                                                  DIAL_SYMBOLS[[id]], DIAL_WORDS[[id]]), ex_html, fixed = TRUE))), 2L, label = id)
+    expect_identical(lengths(regmatches(ex_html, gregexpr(sprintf('<span class="sym-word">%s</span><span class="sym">%s</span>',
+                                                                  DIAL_WORDS[[id]], DIAL_SYMBOLS[[id]]), ex_html, fixed = TRUE))), 2L, label = id)
 })
 
 test_that("the rate dial: r after H in the loss box, ends 3% and 2.73%, its tips and the box headings' formula tips", {
@@ -274,7 +274,7 @@ test_that("the rate dial: r after H in the loss box, ends 3% and 2.73%, its tips
   expect_identical(rate_txt(mv("r_bsz")), "3%"); expect_identical(rate_txt(mv("r_jr")), "2.73%")
   for (panel in c("bsz", "rjkdc")) {
     li <- regmatches(ex_html, gregexpr('<li class="sl has-sym" data-id="discount_rate">.*?</li>', ex_html))[[1]][match(panel, c("bsz", "rjkdc"))]
-    expect_true(grepl('<span class="sym">r</span><span class="sym-word">rate</span>', li, fixed = TRUE), label = panel)
+    expect_true(grepl('<span class="sym-word">rate</span><span class="sym">r</span>', li, fixed = TRUE), label = panel)
     expect_true(grepl("r, discount rate. The discount rate that turns a yearly loss into today's dollars.", li, fixed = TRUE), label = panel)
     expect_true(grepl('<span class="sl-end-v">3%</span>', li, fixed = TRUE), label = panel)
     expect_true(grepl('<span class="sl-end-v">2.73%</span>', li, fixed = TRUE), label = panel)

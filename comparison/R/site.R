@@ -462,8 +462,9 @@ render_site <- function(root = comparison_root(),
       '<output class="sl-cur" for="%1$s-%2$s">%12$s</output></span>%7$s</div>\n',
       '          <span class="sl-note"></span>\n',
       '        </li>'),
-      panel, id, if (sym) paste0('<span class="sym">', esc(name), '</span>',
-                                 if (!is.na(DIAL_WORDS[id])) paste0('<span class="sym-word">', DIAL_WORDS[[id]], '</span>') else "")
+      # the word first, the symbol under it (author instruction 2026-10-15)
+      panel, id, if (sym) paste0(if (!is.na(DIAL_WORDS[id])) paste0('<span class="sym-word">', DIAL_WORDS[[id]], '</span>') else "",
+                                 '<span class="sym">', esc(name), '</span>')
                  else esc(name),
       if (sym) paste0('<span class="sr">', esc(title), '</span>') else esc(title), gsub("\n", "<br>", esc(tip), fixed = TRUE),
       end_span(panel, id, lo, txt[[lo]], "lo"), end_span(panel, id, hi, txt[[hi]], "hi"), as.integer(max),
