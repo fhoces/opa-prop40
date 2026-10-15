@@ -18,10 +18,11 @@ execute:
 
 ::: {.site-nav}
 BSZ analysis of California Proposition 40:
-[Open Output (the explorer)](explorer/) &middot; Open Analysis: [Report](repro.html) and
+[Overview](index.html) &middot; Open Output: [Explorer](explorer/) &middot; Open Analysis: [Report](repro.html) and
 [Slides](slides/slides.html) &middot;
-[Open Materials](https://github.com/fhoces/opa-prop40/tree/main/bsz-analysis) (this page is its guide) &middot;
-[Overview](index.html)
+[Open Materials](https://github.com/fhoces/opa-prop40/tree/main/bsz-analysis) (this page is its guide)
+
+Also in this project: [Comparison overview](../../index.html) &middot; [JR analysis overview](../../rjkdc-analysis/site/)
 :::
 
 ```{r}
@@ -196,10 +197,11 @@ used by anything published here.
 
 ::: {.site-nav}
 BSZ analysis of California Proposition 40:
-[Open Output (the explorer)](explorer/) &middot; Open Analysis: [Report](repro.html) and
+[Overview](index.html) &middot; Open Output: [Explorer](explorer/) &middot; Open Analysis: [Report](repro.html) and
 [Slides](slides/slides.html) &middot;
-[Open Materials](https://github.com/fhoces/opa-prop40/tree/main/bsz-analysis) (this page is its guide) &middot;
-[Overview](index.html)
+[Open Materials](https://github.com/fhoces/opa-prop40/tree/main/bsz-analysis) (this page is its guide)
+
+Also in this project: [Comparison overview](../../index.html) &middot; [JR analysis overview](../../rjkdc-analysis/site/)
 :::
 
 ::: {.credit}

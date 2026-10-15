@@ -67,6 +67,8 @@
   .site-nav { font-family: var(--mono); font-size: 11.5px; color: var(--ink-3); margin: 0 0 16px; }
   .site-nav a { color: var(--accent); text-decoration: none; }
   .site-nav a:hover { text-decoration: underline; }
+  .site-nav .nav-row { display: block; }
+  .site-nav .nav-row + .nav-row { margin-top: 2px; }
   .byline cite { font-style: normal; }
 
   h2 {
@@ -219,13 +221,14 @@
 <div class="wrap">
 
 <p class="site-nav">
-  JR analysis of California Proposition 40:
+  <span class="nav-row">JR analysis of California Proposition 40:
   Overview (here) &middot;
   Open Output: <a href="explorer/">Explorer</a> &middot;
   Open Analysis: <a href="repro.html">Report</a> and <a href="slides/slides.html">Slides</a> &middot;
-  <a href="https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis">Open Materials</a> &middot;
+  <a href="https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis">Open Materials</a></span>
+  <span class="nav-row">Also in this project:
   <a href="../../index.html">Comparison overview</a> &middot;
-  <a href="../../bsz-analysis/site/">BSZ analysis overview</a>
+  <a href="../../bsz-analysis/site/">BSZ analysis overview</a></span>
 </p>
 
 <header>
@@ -238,11 +241,9 @@
     argues the state ends up poorer, because billionaires who leave take their income tax with
     them for ever. This site reproduces that estimate from Jaros and Rauh,
     <cite><a href="https://www.nber.org/system/files/chapters/c15504/c15504.pdf">The Net Present
-    Value of the California Billionaire Tax Act</a></cite> (NBER chapter c15504, Tax Policy and the Economy vol. 41, 22 September
-    2026; NBER is the National Bureau of Economic Research, which circulates working papers),
-    the revision of the first version by Rauh, Jaros, Kearney, Doran and Cosso (SSRN 6340778,
-    March 2026). This site calls the analysis JR, after the two authors of the version reproduced;
-    the first version is cited with its five authors where it appears. It is rebuilt from the authors' own public code and data
+    Value of the California Billionaire Tax Act</a></cite> (NBER chapter c15504, Tax Policy and
+    the Economy vol. 41, September 2026; NBER is the National Bureau of Economic Research, which
+    circulates working papers).<sup>1</sup> It is rebuilt from the authors' own public code and data
     (<a href="https://github.com/bjaros20/wealth_tax">github.com/bjaros20/wealth_tax</a>), and it
     marks which of its inputs are data and which are guesses.
     This site follows the <a href="https://doi.org/10.1093/scipol/scaa067">Open
@@ -250,9 +251,6 @@
     concludes, how it gets there, and what to run yourself stay in separate,
     checkable places.
   </p>
-  <p class="byline" style="margin-top:6px">OPA by <a href="https://fhoces.github.io">Fernando Hoces de la Guardia</a>.
-    This site recommends no vote and favours neither analysis: it reproduces both analyses'
-    arithmetic and shows where their assumptions differ.</p>
 </header>
 
 <div class="headline">
@@ -266,7 +264,10 @@
     Tax Policy and the Economy vol. 41, September 2026, PDF p.1): the average over their Monte Carlo draws, as printed from one
     seeded run (a run of the random draws started from a fixed seed number, so it gives the same
     draws every time). The <a href="explorer/">explorer</a> shows how far each input moves it, and the
-    <a href="../../index.html">comparison overview</a> sets it beside the BSZ analysis.</p>
+    <a href="../../index.html">comparison overview</a> sets it beside the BSZ analysis. The chapter
+    revises the first version of the analysis, by Rauh, Jaros, Kearney, Doran and Cosso (Hoover
+    Institution, SSRN 6340778, March 2026), which the pipeline also reproduces (footnote 2). This
+    site calls the analysis JR, after the two authors of the version reproduced.</p>
 </div>
 <script src="explorer/grid.js"></script>
 <script>

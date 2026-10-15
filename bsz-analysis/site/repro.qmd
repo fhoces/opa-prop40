@@ -22,10 +22,11 @@ execute:
 
 ::: {.site-nav}
 BSZ analysis of California Proposition 40:
-[Open Output (the explorer)](explorer/) &middot; Open Analysis: Report (here) and
+[Overview](index.html) &middot; Open Output: [Explorer](explorer/) &middot; Open Analysis: Report (here) and
 [Slides](slides/slides.html) &middot;
-[Open Materials](https://github.com/fhoces/opa-prop40/tree/main/bsz-analysis) &middot;
-[Overview](index.html)
+[Open Materials](https://github.com/fhoces/opa-prop40/tree/main/bsz-analysis)
+
+Also in this project: [Comparison overview](../../index.html) &middot; [JR analysis overview](../../rjkdc-analysis/site/)
 :::
 
 ```{r}
@@ -972,10 +973,11 @@ The workbook is not redistributed; `DATA-SOURCES.csv` gives its URL and SHA-256.
 
 ::: {.site-nav}
 BSZ analysis of California Proposition 40:
-[Open Output (the explorer)](explorer/) &middot; Open Analysis: Report (here) and
+[Overview](index.html) &middot; Open Output: [Explorer](explorer/) &middot; Open Analysis: Report (here) and
 [Slides](slides/slides.html) &middot;
-[Open Materials](https://github.com/fhoces/opa-prop40/tree/main/bsz-analysis) &middot;
-[Overview](index.html)
+[Open Materials](https://github.com/fhoces/opa-prop40/tree/main/bsz-analysis)
+
+Also in this project: [Comparison overview](../../index.html) &middot; [JR analysis overview](../../rjkdc-analysis/site/)
 :::
 
 ::: {.credit}

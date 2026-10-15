@@ -24,10 +24,11 @@ execute:
 
 ::: {.site-nav}
 JR analysis of California Proposition 40:
-[Open Output (the explorer)](explorer/) &middot; Open Analysis: Report (here) and
+[Overview](index.html) &middot; Open Output: [Explorer](explorer/) &middot; Open Analysis: Report (here) and
 [Slides](slides/slides.html) &middot;
-[Open Materials](https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis) &middot;
-[Overview](index.html)
+[Open Materials](https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis)
+
+Also in this project: [Comparison overview](../../index.html) &middot; [BSZ analysis overview](../../bsz-analysis/site/)
 :::
 
 ```{r}
@@ -776,10 +777,11 @@ scroll(kable(checks1, caption = "First version: internal identities"))
 
 ::: {.site-nav}
 JR analysis of California Proposition 40:
-[Open Output (the explorer)](explorer/) &middot; Open Analysis: Report (here) and
+[Overview](index.html) &middot; Open Output: [Explorer](explorer/) &middot; Open Analysis: Report (here) and
 [Slides](slides/slides.html) &middot;
-[Open Materials](https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis) &middot;
-[Overview](index.html)
+[Open Materials](https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis)
+
+Also in this project: [Comparison overview](../../index.html) &middot; [BSZ analysis overview](../../bsz-analysis/site/)
 :::
 
 ::: {.credit}

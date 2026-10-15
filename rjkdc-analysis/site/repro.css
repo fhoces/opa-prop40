@@ -23,6 +23,8 @@ code.sourceCode { font-size: 0.8rem; }
 }
 .site-nav a { color: #2a78d6; text-decoration: none; }
 .site-nav a:hover { text-decoration: underline; }
+.site-nav p { margin: 0; }
+.site-nav p + p { margin-top: 0.15rem; }
 
 /* The full OPA stack, floated beside the opening paragraph and its three-item
    legend of which artifact is which layer. */
