@@ -203,6 +203,16 @@
   details.fold > summary:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; border-radius: 4px; }
   details.fold > .fold-body { margin-top: 14px; }
   details.fold:not([open]) > .fold-body { display: none; }
+  /* ---- BEGIN fold URLs (CSS; copy with the "fold URLs" script block below) ----
+     Each fold heading carries a link to its own URL (index.html#<id>), as GitHub's headings do:
+     shown on hover or focus, always on touch screens. Markup: at the end of each summary's h2,
+     so the link follows the heading's last word,
+     <h2>Heading <a class="fold-link" href="#<id>" aria-label="Link to this section">#</a></h2> */
+  details.fold > summary .fold-link { font-family: var(--sans); font-size: 0.8em; font-weight: 400;
+    color: var(--link); text-decoration: none; opacity: 0; white-space: nowrap; }
+  details.fold > summary:hover .fold-link, details.fold > summary .fold-link:focus-visible { opacity: 1; }
+  @media (hover: none) { details.fold > summary .fold-link { opacity: 1; } }
+  /* ---- END fold URLs (CSS) ---- */
 
   /* The two main estimates, the same block as on the two analysis overviews and the code
      review page, one per analysis, next to each other. */
@@ -381,7 +391,7 @@
 </div>
 
 <details class="fold" id="common-output">
-  <summary><h2>A common output definition</h2> <span class="teaser">one definition both numbers can be put on, and the conventions behind it</span></summary>
+  <summary><h2>A common output definition <a class="fold-link" href="#common-output" aria-label="Link to this section">#</a></h2> <span class="teaser">one definition both numbers can be put on, and the conventions behind it</span></summary>
   <div class="fold-body">
 <p>The two headlines answer different questions: the BSZ analysis reports what the tax
 collects, the JR analysis a net present value that subtracts income tax lost for ever. Both are
@@ -409,7 +419,7 @@ the day-to-day movement of the Forbes base. Nothing is added to either analysis 
 </details>
 
 <details class="fold" id="two-analyses">
-  <summary><h2>The two analyses on the common output</h2> <span class="teaser">both main estimates on that definition, and what each paper prints</span></summary>
+  <summary><h2>The two analyses on the common output <a class="fold-link" href="#two-analyses" aria-label="Link to this section">#</a></h2> <span class="teaser">both main estimates on that definition, and what each paper prints</span></summary>
   <div class="fold-body">
 <div class="subopa-cards">
   <a class="subopa-card" href="bsz-analysis/site/">
@@ -447,7 +457,7 @@ random (the note under the equation).</p>
 </details>
 
 <details class="fold" id="document-versions">
-  <summary><h2>Which document versions are used</h2> <span class="teaser">the dated version of each document the numbers come from</span></summary>
+  <summary><h2>Which document versions are used <a class="fold-link" href="#document-versions" aria-label="Link to this section">#</a></h2> <span class="teaser">the dated version of each document the numbers come from</span></summary>
   <div class="fold-body">
 <p>This table gives the dated version of each document that the numbers on this site come
 from. The versions matter because the Hoopes comparison, described below, uses earlier
@@ -464,7 +474,7 @@ versions than this site. So the two do not line up step for step.</p>
 </details>
 
 <details class="fold" id="disputed-inputs">
-  <summary><h2>The disputed inputs</h2> <span class="teaser">every input the two estimates differ on, with both values</span></summary>
+  <summary><h2>The disputed inputs <a class="fold-link" href="#disputed-inputs" aria-label="Link to this section">#</a></h2> <span class="teaser">every input the two estimates differ on, with both values</span></summary>
   <div class="fold-body">
 <p>The table has one row per input on which the two estimates differ. It gives what each
 analysis assumes and what kind of claim it is (data, research, guesswork or scenario). Each row
@@ -490,7 +500,7 @@ judgement applied to observed facts.</p>
 </details>
 
 <details class="fold" id="other-loss-estimates">
-  <summary><h2>Other estimates of the yearly income tax loss, for scale</h2> <span class="teaser">the Legislative Analyst, the California Tax Foundation and both analyses' own figures on one scale</span></summary>
+  <summary><h2>Other estimates of the yearly income tax loss, for scale <a class="fold-link" href="#other-loss-estimates" aria-label="Link to this section">#</a></h2> <span class="teaser">the Legislative Analyst, the California Tax Foundation and both analyses' own figures on one scale</span></summary>
   <div class="fold-body">
 <p>The <b>LAO</b> (the Legislative Analyst's Office, the state's nonpartisan fiscal adviser)
 gives no point estimate: responses "probably would reduce state revenues by less than $1 billion
@@ -512,7 +522,7 @@ perpetuity, against the JR analysis's expected revenue, {{nber_a}}, for scale.</
 </details>
 
 <details class="fold" id="full-analyses">
-  <summary><h2>The two full analyses</h2> <span class="teaser">the two reproductions and the comparison's code</span></summary>
+  <summary><h2>The two full analyses <a class="fold-link" href="#full-analyses" aria-label="Link to this section">#</a></h2> <span class="teaser">the two reproductions and the comparison's code</span></summary>
   <div class="fold-body">
 <ul>
   <li><a href="bsz-analysis/site/">BSZ analysis</a>: Boll, Saez and Zucman (August 2026) reproduced from the authors' workbook, with an explorer over Table 5's guesswork inputs, a report, slides and materials.</li>
@@ -523,7 +533,7 @@ perpetuity, against the JR analysis's expected revenue, {{nber_a}}, for scale.</
 </details>
 
 <details class="fold" id="how-ai-was-used">
-  <summary><h2>How AI was used in this exercise, and what has been verified</h2> <span class="teaser">who did what, and what a person has checked</span></summary>
+  <summary><h2>How AI was used in this exercise, and what has been verified <a class="fold-link" href="#how-ai-was-used" aria-label="Link to this section">#</a></h2> <span class="teaser">who did what, and what a person has checked</span></summary>
   <div class="fold-body">
 <p>This work was a collaboration between the author and Claude Code (Opus and Sonnet models).
 The CRediT table of who led each role is not yet filled in, because the author's interview for
@@ -533,7 +543,7 @@ authors have not reviewed it.</p>
 </details>
 
 <details class="fold" id="difference">
-  <summary><h2 id="hoopes">This OPA and the Hoopes comparison</h2> <span class="teaser">the one published comparison, and what this OPA adds</span></summary>
+  <summary><h2 id="hoopes">This OPA and the Hoopes comparison <a class="fold-link" href="#difference" aria-label="Link to this section">#</a></h2> <span class="teaser">the one published comparison, and what this OPA adds</span></summary>
   <div class="fold-body">
 <p>Jeffrey Hoopes (SSRN 6428578, 2026) is the one published comparison of the two estimates. It
    compares earlier versions: the February 2026 GGSS expert report (Galle, Gamage, Saez and
@@ -610,6 +620,26 @@ authors have not reviewed it.</p>
     });
     reveal(alias(h));
   })();
+</script>
+<script>
+  // ---- BEGIN fold URLs (script; copy with the "fold URLs" CSS block in the style sheet) ----
+  // Opening a fold puts its id in the address bar, closing it takes it out (history.replaceState,
+  // so no new history entry). A hash that points inside the fold is kept. The heading's # link
+  // opens the fold and sets the URL, so a reader can copy it, as with GitHub's heading links.
+  document.querySelectorAll("details.fold[id]").forEach(function (d) {
+    d.addEventListener("toggle", function () {
+      var h = location.hash.slice(1), t = h ? document.getElementById(h) : null;
+      if (d.open) { if (!t || !d.contains(t)) history.replaceState(null, "", "#" + d.id); }
+      else if (t && d.contains(t)) history.replaceState(null, "", location.pathname + location.search);
+    });
+    var a = d.querySelector(":scope > summary .fold-link");
+    if (a) a.addEventListener("click", function (e) {
+      e.preventDefault();
+      d.open = true;
+      history.replaceState(null, "", "#" + d.id);
+    });
+  });
+  // ---- END fold URLs (script) ----
 </script>
 </body>
 </html>

@@ -67,6 +67,16 @@ test_that("both pages carry the pseudo-equation: the three largest dial-path ter
     expect_true(grepl(sprintf('<button type="button" class="reset walk" data-panel="%s">Walk the path</button>', panel), ex_html, fixed = TRUE), label = panel)
 })
 
+test_that("every fold on the overview has a # link to its own id, and the fold-URL script", {
+  html <- read_page(file.path(root, "index.html"))
+  ids <- regmatches(html, gregexpr('(?<=<details class="fold" id=")[a-z0-9-]+', html, perl = TRUE))[[1]]
+  expect_gt(length(ids), 0)
+  for (id in ids) expect_true(grepl(sprintf(
+    '<details class="fold" id="%s">\n  <summary><h2[^>]*>[^<]* <a class="fold-link" href="#%s" aria-label="Link to this section">#</a></h2>', id, id),
+    html), label = id)
+  expect_true(grepl('history.replaceState(null, "", "#" + d.id)', html, fixed = TRUE))
+})
+
 test_that("money() rounds a tie away from zero on either side of it, as the explorer's script does", {
   # the JR end at 3% is -32.25 exactly; R holds -32.249999999999993, model.js about -32.25
   for (v in c(-32.25 + 7e-15, -32.25, -32.25 - 7e-15)) expect_identical(money(v, 1), "\u2212$32.3B")
