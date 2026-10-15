@@ -205,7 +205,8 @@
   .sl.has-sym > .sl-row { grid-column: 2; margin-top: 0; }
   .sl.has-sym > .sl-note { grid-column: 2; }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-  /* The pseudo-equation: the BSZ estimate, one term per dial in the panels' order, the JR estimate. */
+  /* The pseudo-equation: the BSZ estimate, the three largest dial-path terms in the panels' order,
+     the other steps added up, the JR estimate. */
   .eq-box { margin: 26px 0 6px; padding: 14px 16px; border: 1px solid var(--rule); border-radius: 6px; background: var(--panel); }
   .pseudo-eq { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 6px 8px; position: relative; }
   .pseudo-eq .term { display: inline-flex; flex-direction: column; align-items: center; min-width: 5em; max-width: 8.5em; text-align: center; }
@@ -298,20 +299,16 @@
 
   <section class="eq-box" id="what-separates" aria-labelledby="eq-title">
     <h2 id="eq-title">What separates the two numbers</h2>
-<div class="pseudo-eq" role="img" aria-label="The BSZ estimate, $106.8B, minus $6.0B for forbes source: which list and valuation date (w), to $100.8B, minus $28.2B for billionaires already departed (d), to $72.6B, plus $9.0B for avoidance and evasion allowance (a), to $81.5B, minus $41.4B for chance the tax survives litigation (q), to $40.1B, minus $5.0B for share of billionaire income tax lost (f), to $35.1B, minus $3.1B for billionaires' annual ca income tax (c), to $32.0B, minus $58.9B for how long the income tax loss lasts (h), to −$26.8B, minus $5.4B for three minor inputs, to −$32.3B, gives about the JR estimate at one 3% rate, −$32.3B.">
-  <span class="term" data-step="0"><b>$106.8B</b><small>BSZ estimate</small></span>
-  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-step="1"><b>$6.0B</b><small>Forbes source: which list and valuation date (W)</small><span class="run">to $100.8B</span></span></span>
-  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-step="2"><b>$28.2B</b><small>Billionaires already departed (D)</small><span class="run">to $72.6B</span></span></span>
-  <span class="eq-step"><span class="op">+</span><span class="term" data-step="3"><b>$9.0B</b><small>Avoidance and evasion allowance (a)</small><span class="run">to $81.5B</span></span></span>
-  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-step="4"><b>$41.4B</b><small>Chance the tax survives litigation (q)</small><span class="run">to $40.1B</span></span></span>
-  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-step="5"><b>$5.0B</b><small>Share of billionaire income tax lost (f)</small><span class="run">to $35.1B</span></span></span>
-  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-step="6"><b>$3.1B</b><small>Billionaires' annual CA income tax (C)</small><span class="run">to $32.0B</span></span></span>
-  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-step="7"><b>$58.9B</b><small>How long the income tax loss lasts (H)</small><span class="run">to −$26.8B</span></span></span>
-  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-step="8"><b>$5.4B</b><small>Three minor inputs</small><span class="run">to −$32.3B</span></span></span>
-  <span class="eq-step"><span class="op">&asymp;</span><span class="term"><b>−$32.3B</b><small>JR estimate at one 3% rate</small></span></span>
+<div class="pseudo-eq" role="img" aria-label="The BSZ estimate, $106.8B, minus $28.2B for billionaires already departed (d), minus $41.4B for chance the tax survives litigation (q), minus $58.9B for how long the income tax loss lasts (h), minus $10.6B for the other five steps together, gives about the JR estimate at one 3% rate, −$32.3B.">
+  <span class="term" data-steps="0"><b>$106.8B</b><small>BSZ estimate</small></span>
+  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-steps="2"><b>$28.2B</b><small>Billionaires already departed (D)</small><span class="run">path at $72.6B</span></span></span>
+  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-steps="4"><b>$41.4B</b><small>Chance the tax survives litigation (q)</small><span class="run">path at $40.1B</span></span></span>
+  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-steps="7"><b>$58.9B</b><small>How long the income tax loss lasts (H)</small><span class="run">path at −$26.8B</span></span></span>
+  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-steps="1 3 5 6 8"><b>$10.6B</b><small>The other five steps together</small></span></span>
+  <span class="eq-step"><span class="op">&asymp;</span><span class="term" data-end="8"><b>−$32.3B</b><small>JR estimate at one 3% rate</small></span></span>
 </div>
 <p class="eq-note eq-gap">The JR analysis's own headline is −$38.9B: the authors draw the discount rate at random between 1.5% and 4.5% and average, which is worth about $6.7B more than one 3% rate.</p>
-    <p class="eq-note">Move the BSZ panel's dials top to bottom, each to its far end: each term is what that dial changes. The Walk the path button in each panel does it for you. The <a href="../repro.html#the-bridge">report</a> gives every step.</p>
+    <p class="eq-note">Move the BSZ panel's dials top to bottom, each to its far end. The three terms with a symbol are the steps for D, q and H of that walk, and the fourth is the other five steps added up (W, a, f, C and three minor inputs). Under each of the three is the value the path reaches after that step. The Walk the path button in each panel does it for you. The <a href="../repro.html#the-bridge">report</a> gives all eight steps.</p>
   </section>
 
   <section class="board" id="panels" aria-labelledby="board-title">
@@ -811,8 +808,8 @@
     });
   });
   // ---- Walk the path: each press moves the next dial of the path (S.path, the order of
-  // dial_path() in model.R) to its far end and marks the term of the pseudo-equation it
-  // reproduces. The BSZ panel walks the path from the top dial down; the JR panel walks it in
+  // dial_path() in model.R) to its far end and marks the term of the pseudo-equation that holds
+  // it. The BSZ panel walks the path from the top dial down; the JR panel walks it in
   // reverse, from the minor switch up, back to the BSZ values. A press sets every dial of the
   // panel, so the panel always shows the path's own value. After the last step the button
   // starts over. Moving a dial by hand ends the walk.
@@ -840,10 +837,15 @@
     clearMarks();
     if (!EQ) return;
     EQ.dataset.walk = panel;
-    // the term this press reproduced, and the running value that equals the panel's value
+    // the term holding the step this press reproduced (the combined term for a step inside it),
+    // and the running value that equals the panel's value: the BSZ estimate before any step, the
+    // JR estimate after the last, else the "path at" value of a main term (none inside the
+    // combined term)
     var t = panel === "bsz" ? k : NP - k + 1, r = panel === "bsz" ? k : NP - k;
-    var term = EQ.querySelector('.term[data-step="' + t + '"]');
-    var run = EQ.querySelector('.term[data-step="' + r + '"] ' + (r === 0 ? "b" : ".run"));
+    var term = EQ.querySelector('.term[data-steps~="' + t + '"]');
+    var run = r === 0 ? EQ.querySelector('.term[data-steps="0"] b') :
+      r === NP ? EQ.querySelector('.term[data-end="' + NP + '"] b') :
+      EQ.querySelector('.term[data-steps="' + r + '"] .run');
     if (term) term.classList.add("is-walk");
     if (run) run.classList.add("is-walk-run");
   }

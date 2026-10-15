@@ -205,7 +205,8 @@
   .sl.has-sym > .sl-row { grid-column: 2; margin-top: 0; }
   .sl.has-sym > .sl-note { grid-column: 2; }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-  /* The pseudo-equation: the BSZ estimate, one term per dial in the panels' order, the JR estimate. */
+  /* The pseudo-equation: the BSZ estimate, the three largest dial-path terms in the panels' order,
+     the other steps added up, the JR estimate. */
   .eq-box { margin: 26px 0 6px; padding: 14px 16px; border: 1px solid var(--rule); border-radius: 6px; background: var(--panel); }
   .pseudo-eq { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 6px 8px; position: relative; }
   .pseudo-eq .term { display: inline-flex; flex-direction: column; align-items: center; min-width: 5em; max-width: 8.5em; text-align: center; }
@@ -629,8 +630,8 @@
     });
   });
   // ---- Walk the path: each press moves the next dial of the path (S.path, the order of
-  // dial_path() in model.R) to its far end and marks the term of the pseudo-equation it
-  // reproduces. The BSZ panel walks the path from the top dial down; the JR panel walks it in
+  // dial_path() in model.R) to its far end and marks the term of the pseudo-equation that holds
+  // it. The BSZ panel walks the path from the top dial down; the JR panel walks it in
   // reverse, from the minor switch up, back to the BSZ values. A press sets every dial of the
   // panel, so the panel always shows the path's own value. After the last step the button
   // starts over. Moving a dial by hand ends the walk.
@@ -658,10 +659,15 @@
     clearMarks();
     if (!EQ) return;
     EQ.dataset.walk = panel;
-    // the term this press reproduced, and the running value that equals the panel's value
+    // the term holding the step this press reproduced (the combined term for a step inside it),
+    // and the running value that equals the panel's value: the BSZ estimate before any step, the
+    // JR estimate after the last, else the "path at" value of a main term (none inside the
+    // combined term)
     var t = panel === "bsz" ? k : NP - k + 1, r = panel === "bsz" ? k : NP - k;
-    var term = EQ.querySelector('.term[data-step="' + t + '"]');
-    var run = EQ.querySelector('.term[data-step="' + r + '"] ' + (r === 0 ? "b" : ".run"));
+    var term = EQ.querySelector('.term[data-steps~="' + t + '"]');
+    var run = r === 0 ? EQ.querySelector('.term[data-steps="0"] b') :
+      r === NP ? EQ.querySelector('.term[data-end="' + NP + '"] b') :
+      EQ.querySelector('.term[data-steps="' + r + '"] .run');
     if (term) term.classList.add("is-walk");
     if (run) run.classList.add("is-walk-run");
   }

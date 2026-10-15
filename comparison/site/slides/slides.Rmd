@@ -470,22 +470,22 @@ name: pseudo-eq
 # What separates the two numbers
 
 ```{r pseudo, results="asis"}
-# the eight terms of the dial path, in the explorer's order, each with its symbol and the
-# running value (the same equation as the explorer and the overview)
-path_label <- function(i) if (dp$step_id[i] == "minor_inputs") dp$title[i] else paste0(dp$title[i], " (", dp$symbol[i], ")")
-term <- function(i) sprintf('<span class="eq-step"><span class="op">%s</span><span class="term"><b>%s</b><small>%s</small><span class="run">to %s</span></span></span>',
-                            if (dp$change[i] < 0) "&minus;" else "+", money(abs(dp$change[i]), 1),
-                            esc(path_label(i)), money(dp$to[i], 1))
+# the three largest terms of the dial path in the explorer's order, then the other steps added
+# up (eq_terms() in R/site.R; the same equation as the explorer and the overview)
+et <- eq_terms(dp)
+term <- function(j) with(et$terms[j, ], sprintf('<span class="eq-step"><span class="op">%s</span><span class="term"><b>%s</b><small>%s</small>%s</span></span>',
+                            if (change < 0) "&minus;" else "+", money(abs(change), 1), esc(label),
+                            if (is.na(run)) "" else sprintf('<span class="run">path at %s</span>', money(run, 1))))
 cat('<div class="pseudo-eq">',
     sprintf('<span class="term"><b>%s</b><small>BSZ estimate</small></span>', money(eb$bsz_model, 1)),
-    paste(vapply(seq_len(nrow(dp)), term, ""), collapse = ""),
+    paste(vapply(seq_len(nrow(et$terms)), term, ""), collapse = ""),
     sprintf('<span class="eq-step"><span class="op">&asymp;</span><span class="term"><b>%s</b><small>JR estimate at one %s rate</small></span></span>', money(eb$rauh_model, 1), r3),
     '</div>', sep = "")
 ```
 
 .small[
-Move the BSZ panel's dials top to bottom, each to its far end: each term is what that dial
-changes. The terms add up exactly; "about equal" is only rounding. The JR estimate here is the
+Move the BSZ panel's dials top to bottom, each to its far end. `r et$note` The terms add up
+exactly; "about equal" is only rounding. The JR estimate here is the
 JR inputs at one `r r3` rate. The JR headline, `r usd(rj_print)`, is about `r usd(jr_gap)` lower
 because the authors draw the rate at random ([the two ends](#two-ends)).
 ]

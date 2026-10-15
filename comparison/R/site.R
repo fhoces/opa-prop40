@@ -97,6 +97,29 @@ dial_texts <- function(inp, id, bi = NULL) {
 # sliders.minor and the page script expands the switch before calling model.js.
 # EXPLORER_MINOR and EXPLORER_DIAL_ORDER are in model.R (dial_path() reads them).
 explorer_slider_ids <- function() setdiff(bridge_steps()$step_id, EXPLORER_MINOR)
+# The pseudo-equation's terms (author decision 2026-10-15): the three largest steps of the dial
+# path by absolute size, in dial order, then one term for the other steps added up. `steps` lists
+# the path steps a term holds (the page script marks the term whose list holds the walk's step);
+# `run` is the path's value after a main term's step (none for the combined term).
+eq_terms <- function(dp, n_main = 3L) {
+  words <- c("one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten")
+  main <- sort(order(-abs(dp$change))[seq_len(n_main)])
+  rest <- setdiff(seq_len(nrow(dp)), main)
+  lab <- function(i) if (dp$step_id[i] == "minor_inputs") dp$title[i] else paste0(dp$title[i], " (", dp$symbol[i], ")")
+  name <- function(i) if (dp$step_id[i] == "minor_inputs") tolower(dp$title[i]) else dp$symbol[i]
+  and_list <- function(x) if (length(x) < 2) x else paste0(paste(head(x, -1), collapse = ", "), " and ", tail(x, 1))
+  terms <- data.frame(
+    steps = c(as.character(dp$step[main]), paste(dp$step[rest], collapse = " ")),
+    change = c(dp$change[main], sum(dp$change[rest])),
+    label = c(vapply(main, lab, ""), sprintf("The other %s steps together", words[length(rest)])),
+    run = c(dp$to[main], NA_real_), stringsAsFactors = FALSE)
+  note <- sprintf(paste(
+    "The %s terms with a symbol are the steps for %s of that walk, and the %s is the other %s steps",
+    "added up (%s). Under each of the %s is the value the path reaches after that step."),
+    words[n_main], and_list(dp$symbol[main]), c("second", "third", "fourth", "fifth")[n_main],
+    words[length(rest)], and_list(vapply(rest, name, "")), words[n_main])
+  list(main = main, rest = rest, terms = terms, note = note, n_words = words[nrow(dp)])
+}
 # The dials that act together, boxed on the page by the two terms of the net fiscal effect.
 # Inside a box the inputs multiply each other, so one dial's effect depends on where the
 # others stand; between the boxes the terms are added (the BSZ share lost also scales with
@@ -462,40 +485,46 @@ render_site <- function(root = comparison_root(),
   ss <- read_csv_plain(file.path(root, "comparison", "export", "r", "slider_sample.csv"))
   tok$n_slider_sample <- format(nrow(ss), big.mark = ",")
   tok$n_slider_per_panel <- format(sum(ss$panel == "bsz"), big.mark = ",")
-  # ---- the pseudo-equation: the BSZ estimate, the eight terms of the dial path, the JR
-  # estimate (author decision 2026-10-15: everything from the explorer's own dials). Term k is
-  # what the k-th dial of the BSZ panel changes when the dials move top to bottom, each to its
-  # far end (dial_path() in model.R, export/r/dial_path.csv); under it, the panel's value once
-  # that dial has moved. The terms take the BSZ end to the JR end at the one common rate
-  # exactly; the JR gap note under the equation gives the authors' own headline.
+  # ---- the pseudo-equation: the BSZ estimate, the three largest terms of the dial path in dial
+  # order, one term for the other steps added up, the JR estimate (author decisions 2026-10-15:
+  # everything from the explorer's own dials; three main terms plus the rest combined). The dial
+  # path moves the BSZ panel's dials top to bottom, each to its far end (dial_path() in model.R,
+  # export/r/dial_path.csv). Under each main term is the path's value once that dial has moved,
+  # which is what the panel shows at that step of the walk. The terms take the BSZ end to the JR
+  # end at the one common rate exactly; the JR gap note under the equation gives the authors' own
+  # headline. eq_terms() is shared with the deck (slides.Rmd).
   stopifnot(identical(EXPLORER_DIAL_ORDER, c(explorer_slider_ids(), "minor_inputs")))
   dp <- read_csv_plain(file.path(root, "comparison", "export", "r", "dial_path.csv"))
   stopifnot(identical(dp$step_id, EXPLORER_DIAL_ORDER))
-  # A term's label is its dial's title and symbol, e.g. "Chance the tax survives litigation (q)".
-  path_label <- function(i) if (dp$step_id[i] == "minor_inputs") dp$title[i] else paste0(dp$title[i], " (", dp$symbol[i], ")")
-  term <- function(i) sprintf(
-    '<span class="eq-step"><span class="op">%s</span><span class="term" data-step="%d"><b>%s</b><small>%s</small><span class="run">to %s</span></span></span>',
-    if (dp$change[i] < 0) "&minus;" else "+", dp$step[i], money(abs(dp$change[i]), 1), esc(path_label(i)), money(dp$to[i], 1))
+  et <- eq_terms(dp)
+  tok$eq_main <- paste(dp$symbol[et$main], collapse = ", ")
+  term <- function(j) {
+    x <- et$terms[j, ]
+    sprintf(
+      '<span class="eq-step"><span class="op">%s</span><span class="term" data-steps="%s"><b>%s</b><small>%s</small>%s</span></span>',
+      if (x$change < 0) "&minus;" else "+", x$steps, money(abs(x$change), 1), esc(x$label),
+      if (is.na(x$run)) "" else sprintf('<span class="run">path at %s</span>', money(x$run, 1)))
+  }
   jr_label <- sprintf("JR estimate at one %s rate", tok$r_common)
-  say <- function(i) sprintf("%s %s for %s, to %s", if (dp$change[i] < 0) "minus" else "plus",
-                             money(abs(dp$change[i]), 1), tolower(path_label(i)), money(dp$to[i], 1))
+  say <- function(j) sprintf("%s %s for %s", if (et$terms$change[j] < 0) "minus" else "plus",
+                             money(abs(et$terms$change[j]), 1), tolower(et$terms$label[j]))
   pseudo_eq <- function(page) paste0(
     '<div class="pseudo-eq" role="img" aria-label="', esc(sprintf(
       "The BSZ estimate, %s, %s, gives about the JR estimate at one %s rate, %s.",
-      money(eb$bsz_model, 1), paste(vapply(seq_len(nrow(dp)), say, ""), collapse = ", "), tok$r_common,
+      money(eb$bsz_model, 1), paste(vapply(seq_len(nrow(et$terms)), say, ""), collapse = ", "), tok$r_common,
       money(eb$rauh_model, 1))), '">\n',
-    sprintf('  <span class="term" data-step="0"><b>%s</b><small>BSZ estimate</small></span>\n', money(eb$bsz_model, 1)),
-    paste(vapply(seq_len(nrow(dp)), function(i) paste0("  ", term(i)), ""), collapse = "\n"), "\n",
-    sprintf('  <span class="eq-step"><span class="op">&asymp;</span><span class="term"><b>%s</b><small>%s</small></span></span>\n', money(eb$rauh_model, 1), jr_label),
+    sprintf('  <span class="term" data-steps="0"><b>%s</b><small>BSZ estimate</small></span>\n', money(eb$bsz_model, 1)),
+    paste(vapply(seq_len(nrow(et$terms)), function(j) paste0("  ", term(j)), ""), collapse = "\n"), "\n",
+    sprintf('  <span class="eq-step"><span class="op">&asymp;</span><span class="term" data-end="%d"><b>%s</b><small>%s</small></span></span>\n', nrow(dp), money(eb$rauh_model, 1), jr_label),
     '</div>\n',
     sprintf('<p class="eq-note eq-gap">%s</p>', esc(tok$jr_gap_note)))
   tok$pseudo_eq_x <- pseudo_eq("x")
   tok$pseudo_eq <- pseudo_eq("root")
   # The note is the same on both pages, except for what does the walk for the reader.
   eq_note <- function(href, walk) paste0(
-    "Move the BSZ panel's dials top to bottom, each to its far end: each term is what that dial changes. ",
+    "Move the BSZ panel's dials top to bottom, each to its far end. ", esc(et$note), " ",
     walk,
-    sprintf("The <a href=\"%s\">report</a> gives every step.", href))
+    sprintf("The <a href=\"%s\">report</a> gives all %s steps.", href, et$n_words))
   tok$pseudo_eq_note_x <- eq_note("../repro.html#the-bridge",
                                   "The Walk the path button in each panel does it for you. ")
   tok$pseudo_eq_note_root <- eq_note("comparison/site/repro.html#the-bridge",

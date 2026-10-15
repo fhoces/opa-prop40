@@ -16,7 +16,7 @@ test_that("the explorer loads the data file with the hash of its content", {
   expect_true(grepl(sprintf('comparison-data.js?v=%s"', h), read_page(explorer), fixed = TRUE))
 })
 
-test_that("both pages carry the pseudo-equation: the eight dial-path terms in dial order, BSZ to JR", {
+test_that("both pages carry the pseudo-equation: the three largest dial-path terms in dial order, the rest combined, BSZ to JR", {
   en <- read_csv_plain(file.path(root, "comparison", "export", "r", "ends.csv"))
   eb <- en[en$horizon_setting == "own" & en$output == "b", ]
   dp <- read_csv_plain(file.path(root, "comparison", "export", "r", "dial_path.csv"))
@@ -33,15 +33,19 @@ test_that("both pages carry the pseudo-equation: the eight dial-path terms in di
     html <- read_page(p)
     expect_true(grepl('<div class="pseudo-eq" role="img"', html, fixed = TRUE), label = p)
     eq <- regmatches(html, regexpr('<div class="pseudo-eq".*?</div>', html))
-    # each label is the dial's title followed by its symbol, e.g. "(q)"; under it the running value
-    pins <- vapply(seq_len(nrow(dp)), function(i) sprintf(
-      '<span class="term" data-step="%d"><b>%s</b><small>%s</small><span class="run">to %s</span></span>',
-      i, money(abs(dp$change[i]), 1),
-      if (dp$step_id[i] == "minor_inputs") dp$title[i] else paste0(dp$title[i], " (", dp$symbol[i], ")"),
-      money(dp$to[i], 1)), "")
+    # the three largest steps of the path by absolute size, in dial order, each labelled with its
+    # dial's title and symbol, e.g. "(q)", and the path's value after it; then the other steps added up
+    main <- sort(order(-abs(dp$change))[1:3]); rest <- setdiff(seq_len(nrow(dp)), main)
+    expect_identical(dp$symbol[main], c("D", "q", "H"))
+    pins <- c(vapply(main, function(i) sprintf(
+      '<span class="term" data-steps="%d"><b>%s</b><small>%s (%s)</small><span class="run">path at %s</span></span>',
+      i, money(abs(dp$change[i]), 1), dp$title[i], dp$symbol[i], money(dp$to[i], 1)), ""),
+      sprintf('<span class="term" data-steps="%s"><b>%s</b><small>The other five steps together</small></span>',
+              paste(rest, collapse = " "), money(abs(sum(dp$change[rest])), 1)))
     at <- vapply(pins, function(x) regexpr(x, eq, fixed = TRUE)[[1]], 0)
     expect_true(all(at > 0), label = paste(p, "terms"))
     expect_true(all(diff(at) > 0), label = paste(p, "dial order"))
+    expect_identical(lengths(regmatches(eq, gregexpr('class="term"', eq, fixed = TRUE))), 6L, label = paste(p, "six terms"))
     # BSZ at the left, JR at the right
     expect_lt(regexpr("<small>BSZ estimate</small>", eq, fixed = TRUE)[[1]], at[1])
     expect_gt(max(gregexpr("JR estimate", eq, fixed = TRUE)[[1]]), at[length(at)])
@@ -56,7 +60,9 @@ test_that("both pages carry the pseudo-equation: the eight dial-path terms in di
     expect_false(grepl("shapley", html, ignore.case = TRUE), label = p)
   }
   ex_html <- read_page(explorer)
-  expect_true(grepl("Move the BSZ panel's dials top to bottom, each to its far end: each term is what that dial changes.", ex_html, fixed = TRUE))
+  expect_true(grepl(paste("Move the BSZ panel's dials top to bottom, each to its far end.",
+                          "The three terms with a symbol are the steps for D, q and H of that walk, and the fourth is the other five steps added up"),
+                    ex_html, fixed = TRUE))
   for (panel in c("bsz", "rjkdc"))
     expect_true(grepl(sprintf('<button type="button" class="reset walk" data-panel="%s">Walk the path</button>', panel), ex_html, fixed = TRUE), label = panel)
 })

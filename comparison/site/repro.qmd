@@ -145,7 +145,8 @@ This report is part of the comparison's [Open Policy Analysis](https://doi.org/1
   net fiscal effect. Its two panels have one slider per disputed input that moves the
   estimate, from one analysis's value to the other's. The browser computes each panel's
   estimate with `explorer/model.js`, a copy of `score_common()` that a test checks against the
-  R values. The explorer's equation shows the same eight steps as the bridge in this report.
+  R values. The explorer's equation shows the three largest of the bridge's eight steps in this report, and
+  the other five added up.
 - **Open Analysis**: this document
 - **Open Materials**: [the repository folder](https://github.com/fhoces/opa-prop40/tree/main/comparison), every script, test and data file (guide: [the materials page](materials.html))
 :::

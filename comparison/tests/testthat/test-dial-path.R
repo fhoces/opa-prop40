@@ -1,5 +1,6 @@
-# The dial path (author decision 2026-10-15): the pseudo-equation's eight terms are what the
-# BSZ panel's dials change when moved top to bottom, each to its far end.
+# The dial path (author decision 2026-10-15): the eight steps are what the BSZ panel's dials
+# change when moved top to bottom, each to its far end. The pseudo-equation shows the three
+# largest and the other five added up (eq_terms() in R/site.R).
 root <- comparison_root()
 rdir <- file.path(root, "comparison", "export", "r")
 pdir <- file.path(root, "comparison", "export", "py")
