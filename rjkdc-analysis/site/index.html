@@ -189,12 +189,16 @@
   details.fold > .fold-body { margin-top: 14px; }
   details.fold:not([open]) > .fold-body { display: none; }
   details.fold > .fold-body > h2 { margin-top: 24px; }
-  /* Each fold heading carries a link to its own URL (index.html#<id>), as GitHub's headings do:
-     shown on hover or focus, always on touch screens. */
-  details.fold > summary .fold-link { flex: none; font-family: var(--sans); font-size: 18px;
-    font-weight: 400; color: var(--link); text-decoration: none; opacity: 0; }
+  /* ---- BEGIN fold URLs (CSS; copy with the "fold URLs" script block below) ----
+     Each fold heading carries a link to its own URL (index.html#<id>), as GitHub's headings do:
+     shown on hover or focus, always on touch screens. Markup: at the end of each summary's h2,
+     so the link follows the heading's last word, as on the comparison overview,
+     <h2>Heading <a class="fold-link" href="#<id>" aria-label="Link to this section">#</a></h2> */
+  details.fold > summary .fold-link { font-family: var(--sans); font-size: 0.8em; font-weight: 400;
+    color: var(--link); text-decoration: none; opacity: 0; white-space: nowrap; }
   details.fold > summary:hover .fold-link, details.fold > summary .fold-link:focus-visible { opacity: 1; }
   @media (hover: none) { details.fold > summary .fold-link { opacity: 1; } }
+  /* ---- END fold URLs (CSS) ---- */
   footer .credit { margin: 10px 0 0; font-size: 85%; color: var(--ink-3); }
   /* The two-panel comparison in the last fold: the original analysis beside this OPA. */
   .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 18px 0 4px; }
@@ -329,113 +333,8 @@
 </div>
 <p class="cards-after">Guided summary: <a href="materials.html">the materials page</a>.</p>
 
-<details class="fold" id="what-the-model-says">
-  <summary><h2>What the model says</h2><a class="fold-link" href="#what-the-model-says" aria-label="Link to this section">#</a></summary>
-  <div class="fold-body">
-<p>The Act collects a wealth tax once; billionaires who leave stop paying California income
-   tax for ever. The authors value that lost stream as a perpetuity (the same amount every year
-   for ever, worth 1/r times the yearly amount today at discount rate r) and subtract it: NPV = revenue
-   &minus; (share of the income tax base that leaves) &times; (annual income tax) / (discount rate).
-   They report the average NPV over 100,000 random draws of those inputs: the main estimate,
-   <strong>&minus;$38.9 billion</strong> (Jaros and Rauh, NBER, September 2026).<sup>1</sup>
-   Amounts are billions of dollars.</p>
-
-<div class="table-scroll">
-<table class="scen">
-  <thead><tr><th></th><th class="pref">NBER, Sept 2026<br><span class="table-subhead">main estimate</span></th></tr></thead>
-  <tbody>
-    <tr><td><strong>Mean NPV to the state, as printed</strong></td><td class="pref"><strong>−38.9</strong></td></tr>
-    <tr><td>Share of outcomes below zero, as printed (85% in the text, p.1; 85.2% in the Figure 3 note, p.35)</td><td class="pref">85.2%</td></tr>
-    <tr><td>Wealth tax revenue, the paper's revenue headline (p.1, p.23)</td><td class="pref">about 30 (28.4 to 35.6)</td></tr>
-    <tr><td>Mean NPV, authors' seeded run, reproduced</td><td class="pref">−38.89</td></tr>
-    <tr><td>Mean NPV, exact expectation of the same draws</td><td class="pref">−38.98</td></tr>
-    <tr><td>Mean revenue in the Monte Carlo's draw</td><td class="pref">36.00</td></tr>
-    <tr><td>Mean present value of income tax lost</td><td class="pref">74.98</td></tr>
-  </tbody>
-</table>
-</div>
-
-<p style="margin-top:14px;">Printed values are from NBER PDF pp.1, 23 and 35. The numbers show three
-   things. First, the result is driven by the loss term: roughly 75 of present value lost against
-   36 collected. At the draws' 1.5% to 4.5% rates, a dollar a year for ever is
-   worth 22 to 67 dollars today.</p>
-<p style="margin-top:14px;">Second, the paper says the tax would collect about $30 billion (p.23). The
-   simulation behind the headline draws revenue anywhere from 0 to 72, the most left after the
-   seven confirmed departures. That draw averages 36 (0.5 &times; 72, p.33), above the 30 the
-   paper calls collectible.</p>
-<p style="margin-top:14px;">Third, of the seven inputs that move the answer, six are guesswork. The
-   <a href="explorer/">explorer</a> shows how far each one moves it. Whether the income tax loss
-   really lasts for ever is the main point the <a href="../../bsz-analysis/site/">BSZ analysis</a>
-   (Boll, Saez and Zucman) disputes.</p>
-<p style="margin-top:14px;"><strong>What this OPA does not estimate.</strong> It takes the measure as
-   written (<a href="../../docs/initiative/README.md">docs/initiative/</a>), with the wealth tax at
-   face value. The BSZ analysis alone adds the income tax from assets sold to pay the tax. The JR
-   analysis alone weights the revenue by the chance the Act survives in court. Nothing is added to
-   either here.</p>
-  </div>
-</details>
-
-<details class="fold" id="what-reproduces">
-  <summary><h2>What reproduces</h2><a class="fold-link" href="#what-reproduces" aria-label="Link to this section">#</a></summary>
-  <div class="fold-body">
-<div class="table-scroll">
-<table>
-  <thead><tr><th>Published result</th><th>Result</th></tr></thead>
-  <tbody>
-    <tr><td>Baseline revenue, Sec 4.1 (pp.18-19)</td>
-        <td>94.30 from the authors' workbook; the paper prints 94.20 (mismatch 6)</td></tr>
-    <tr><td>Revenue ceiling, Secs 4.1 and 4.3 (pp.19-21)</td>
-        <td>100.91 at the valuation date (printed 100.9); 72.05 after the seven confirmed
-            departures, printed 72.06 (mismatch 4)</td></tr>
-    <tr><td>Collectible revenue, Sec 4.4 (pp.22-23)</td>
-        <td>29.57 (printed 29.6), range 28.40 to 35.59</td></tr>
-    <tr><td>Pareto fit and Table 9, income tax (pp.26-30)</td>
-        <td>alpha 1.44; all 21 cells round to the printed digit, replaying the authors' random draws</td></tr>
-    <tr><td>Table 10, break-even share (p.34)</td>
-        <td>all 3 cells match the printed digit</td></tr>
-    <tr><td>Monte Carlo, Sec 5.4 (p.35)</td>
-        <td>mean, median, SD (standard deviation) and share negative within Monte Carlo error</td></tr>
-  </tbody>
-</table>
-</div>
-
-<p style="margin-top:14px;"><strong>"Match"</strong> means the reproduced value rounds to the printed
-digit for deterministic figures, and lies within four Monte Carlo standard errors for simulated ones.
-The test suite holds every comparison; the <a href="materials.html">materials page</a> gives its
-current count.<sup>2</sup></p>
-
-<p style="margin-top:14px;">Along the way we found <strong>nine mismatches</strong> between the
-authors' text, their READMEs and their code. Four concern the September chapter. The other five
-concern only the March first version.<sup>3</sup> We reproduce the code as shipped and record each
-one:</p>
-<ol start="3" style="margin:0 0 14px; padding-left:22px; color:var(--ink-2); font-size:15px;">
-  <li>The code and eq. 18 call the 1.5% to 4.5% draw (r &minus; g): r is the real discount rate and g the growth rate of the lost income tax. The sentence after eq. 19 divides by r alone (p.35), so one interval stands for two concepts.</li>
-  <li>The revenue ceiling is 72 in the script, 72.06 in the README and in the paper's eq. 4 (p.22), and 72.05 in the person-level data.</li>
-  <li>The paper sets the litigation weight q, the chance the Act survives in court, at 0.50. The code never multiplies by q. Its revenue draw from 0 to 72 has the same mean, 0.5 &times; 72, but a different spread.</li>
-  <li>The baseline revenue sums to 94.30 in the authors' workbook, and the grown person-level data give the same; the text prints 94.20 (p.19).</li>
-</ol>
-<p>Full text, with file and line references: <a href="materials.html#mismatches">materials page</a>.</p>
-
-<p class="fn" style="font-size:12.5px; color:var(--ink-3); margin-top:8px;"><sup>2</sup> The
-   pipeline also reproduces the authors' first version (Rauh, Jaros, Kearney, Doran and Cosso,
-   Hoover Institution, SSRN 6340778, March 2026). Its revenue chain, 94.30 / 67.51 / 55.10 / 45.59
-   from the authors' workbook, and all 18 and all 9 cells of its NPV and break-even tables match
-   the printed digits. Its Monte Carlo's median and share negative match; the mean and SD do not
-   quite (mismatch 9), and its printed mean equals the exact expectation, not the shipped seed's run.</p>
-<div class="fn" style="font-size:12.5px; color:var(--ink-3); margin-top:8px;"><sup>3</sup> The five
-   that concern only the first version:
-<ul style="list-style:none; margin:4px 0 0; padding-left:0;">
-  <li>1. Eq. 22 prints the revenue ceiling as 67.1; the code and the text use 67.51.</li>
-  <li>2. The text derives a growing perpetuity, C/(r &minus; g) (p.18); the Monte Carlo divides by the plain rate.</li>
-  <li>7. Two memo cells in the workbook read from the wrong sheet (no headline number affected).</li>
-  <li>8. Table 9's central revenue, 42.0, is a typed literal with no derivation.</li>
-  <li>9. The Monte Carlo's printed mean and SD do not come out of the shipped seeded script.</li>
-</ul></div>
-  </div>
-</details>
-
 <details class="fold" id="how-ai-was-used">
-  <summary><h2>How AI was used in this exercise, and what has been verified</h2><a class="fold-link" href="#how-ai-was-used" aria-label="Link to this section">#</a></summary>
+  <summary><h2>How AI was used in this exercise, and what has been verified <a class="fold-link" href="#how-ai-was-used" aria-label="Link to this section">#</a></h2></summary>
   <div class="fold-body">
 <p>The numbers on this page reproduce and are tested; what is still
 being completed is the author's own review of each part, recorded in the last column below, and
@@ -494,7 +393,7 @@ original authors have not reviewed it.</p>
 </details>
 
 <details class="fold" id="difference">
-  <summary><h2>Difference between this OPA and the original analysis</h2><a class="fold-link" href="#difference" aria-label="Link to this section">#</a></summary>
+  <summary><h2>Difference between this OPA and the original analysis <a class="fold-link" href="#difference" aria-label="Link to this section">#</a></h2></summary>
   <div class="fold-body">
 <p>Everything of substance on this site belongs to the original analysis: Jaros and Rauh,
    <cite><a href="https://www.nber.org/system/files/chapters/c15504/c15504.pdf">The Net Present
@@ -540,6 +439,111 @@ original authors have not reviewed it.</p>
    <span style="white-space:nowrap">&minus;$38.98 billion</span>, a number that does not depend on the seed. It labels each input as data
    or guesswork. Where this site and the chapter disagree, both numbers are shown, and the chapter
    is the reference.</p>
+  </div>
+</details>
+
+<details class="fold" id="what-the-model-says">
+  <summary><h2>What the model says <a class="fold-link" href="#what-the-model-says" aria-label="Link to this section">#</a></h2></summary>
+  <div class="fold-body">
+<p>The Act collects a wealth tax once; billionaires who leave stop paying California income
+   tax for ever. The authors value that lost stream as a perpetuity (the same amount every year
+   for ever, worth 1/r times the yearly amount today at discount rate r) and subtract it: NPV = revenue
+   &minus; (share of the income tax base that leaves) &times; (annual income tax) / (discount rate).
+   They report the average NPV over 100,000 random draws of those inputs: the main estimate,
+   <strong>&minus;$38.9 billion</strong> (Jaros and Rauh, NBER, September 2026).<sup>1</sup>
+   Amounts are billions of dollars.</p>
+
+<div class="table-scroll">
+<table class="scen">
+  <thead><tr><th></th><th class="pref">NBER, Sept 2026<br><span class="table-subhead">main estimate</span></th></tr></thead>
+  <tbody>
+    <tr><td><strong>Mean NPV to the state, as printed</strong></td><td class="pref"><strong>−38.9</strong></td></tr>
+    <tr><td>Share of outcomes below zero, as printed (85% in the text, p.1; 85.2% in the Figure 3 note, p.35)</td><td class="pref">85.2%</td></tr>
+    <tr><td>Wealth tax revenue, the paper's revenue headline (p.1, p.23)</td><td class="pref">about 30 (28.4 to 35.6)</td></tr>
+    <tr><td>Mean NPV, authors' seeded run, reproduced</td><td class="pref">−38.89</td></tr>
+    <tr><td>Mean NPV, exact expectation of the same draws</td><td class="pref">−38.98</td></tr>
+    <tr><td>Mean revenue in the Monte Carlo's draw</td><td class="pref">36.00</td></tr>
+    <tr><td>Mean present value of income tax lost</td><td class="pref">74.98</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p style="margin-top:14px;">Printed values are from NBER PDF pp.1, 23 and 35. The numbers show three
+   things. First, the result is driven by the loss term: roughly 75 of present value lost against
+   36 collected. At the draws' 1.5% to 4.5% rates, a dollar a year for ever is
+   worth 22 to 67 dollars today.</p>
+<p style="margin-top:14px;">Second, the paper says the tax would collect about $30 billion (p.23). The
+   simulation behind the headline draws revenue anywhere from 0 to 72, the most left after the
+   seven confirmed departures. That draw averages 36 (0.5 &times; 72, p.33), above the 30 the
+   paper calls collectible.</p>
+<p style="margin-top:14px;">Third, of the seven inputs that move the answer, six are guesswork. The
+   <a href="explorer/">explorer</a> shows how far each one moves it. Whether the income tax loss
+   really lasts for ever is the main point the <a href="../../bsz-analysis/site/">BSZ analysis</a>
+   (Boll, Saez and Zucman) disputes.</p>
+<p style="margin-top:14px;"><strong>What this OPA does not estimate.</strong> It takes the measure as
+   written (<a href="../../docs/initiative/README.md">docs/initiative/</a>), with the wealth tax at
+   face value. The BSZ analysis alone adds the income tax from assets sold to pay the tax. The JR
+   analysis alone weights the revenue by the chance the Act survives in court. Nothing is added to
+   either here.</p>
+  </div>
+</details>
+
+<details class="fold" id="what-reproduces">
+  <summary><h2>What reproduces <a class="fold-link" href="#what-reproduces" aria-label="Link to this section">#</a></h2></summary>
+  <div class="fold-body">
+<div class="table-scroll">
+<table>
+  <thead><tr><th>Published result</th><th>Result</th></tr></thead>
+  <tbody>
+    <tr><td>Baseline revenue, Sec 4.1 (pp.18-19)</td>
+        <td>94.30 from the authors' workbook; the paper prints 94.20 (mismatch 6)</td></tr>
+    <tr><td>Revenue ceiling, Secs 4.1 and 4.3 (pp.19-21)</td>
+        <td>100.91 at the valuation date (printed 100.9); 72.05 after the seven confirmed
+            departures, printed 72.06 (mismatch 4)</td></tr>
+    <tr><td>Collectible revenue, Sec 4.4 (pp.22-23)</td>
+        <td>29.57 (printed 29.6), range 28.40 to 35.59</td></tr>
+    <tr><td>Pareto fit and Table 9, income tax (pp.26-30)</td>
+        <td>alpha 1.44; all 21 cells round to the printed digit, replaying the authors' random draws</td></tr>
+    <tr><td>Table 10, break-even share (p.34)</td>
+        <td>all 3 cells match the printed digit</td></tr>
+    <tr><td>Monte Carlo, Sec 5.4 (p.35)</td>
+        <td>mean, median, SD (standard deviation) and share negative within Monte Carlo error</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p style="margin-top:14px;"><strong>"Match"</strong> means the reproduced value rounds to the printed
+digit for deterministic figures, and lies within four Monte Carlo standard errors for simulated ones.
+The test suite holds every comparison; the <a href="materials.html">materials page</a> gives its
+current count.<sup>2</sup></p>
+
+<p style="margin-top:14px;">Along the way we found <strong>nine mismatches</strong> between the
+authors' text, their READMEs and their code. Four concern the September chapter. The other five
+concern only the March first version.<sup>3</sup> We reproduce the code as shipped and record each
+one:</p>
+<ol start="3" style="margin:0 0 14px; padding-left:22px; color:var(--ink-2); font-size:15px;">
+  <li>The code and eq. 18 call the 1.5% to 4.5% draw (r &minus; g): r is the real discount rate and g the growth rate of the lost income tax. The sentence after eq. 19 divides by r alone (p.35), so one interval stands for two concepts.</li>
+  <li>The revenue ceiling is 72 in the script, 72.06 in the README and in the paper's eq. 4 (p.22), and 72.05 in the person-level data.</li>
+  <li>The paper sets the litigation weight q, the chance the Act survives in court, at 0.50. The code never multiplies by q. Its revenue draw from 0 to 72 has the same mean, 0.5 &times; 72, but a different spread.</li>
+  <li>The baseline revenue sums to 94.30 in the authors' workbook, and the grown person-level data give the same; the text prints 94.20 (p.19).</li>
+</ol>
+<p>Full text, with file and line references: <a href="materials.html#mismatches">materials page</a>.</p>
+
+<p class="fn" style="font-size:12.5px; color:var(--ink-3); margin-top:8px;"><sup>2</sup> The
+   pipeline also reproduces the authors' first version (Rauh, Jaros, Kearney, Doran and Cosso,
+   Hoover Institution, SSRN 6340778, March 2026). Its revenue chain, 94.30 / 67.51 / 55.10 / 45.59
+   from the authors' workbook, and all 18 and all 9 cells of its NPV and break-even tables match
+   the printed digits. Its Monte Carlo's median and share negative match; the mean and SD do not
+   quite (mismatch 9), and its printed mean equals the exact expectation, not the shipped seed's run.</p>
+<div class="fn" style="font-size:12.5px; color:var(--ink-3); margin-top:8px;"><sup>3</sup> The five
+   that concern only the first version:
+<ul style="list-style:none; margin:4px 0 0; padding-left:0;">
+  <li>1. Eq. 22 prints the revenue ceiling as 67.1; the code and the text use 67.51.</li>
+  <li>2. The text derives a growing perpetuity, C/(r &minus; g) (p.18); the Monte Carlo divides by the plain rate.</li>
+  <li>7. Two memo cells in the workbook read from the wrong sheet (no headline number affected).</li>
+  <li>8. Table 9's central revenue, 42.0, is a typed literal with no derivation.</li>
+  <li>9. The Monte Carlo's printed mean and SD do not come out of the shipped seeded script.</li>
+</ul></div>
   </div>
 </details>
 

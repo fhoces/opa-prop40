@@ -192,12 +192,16 @@
   details.fold > .fold-body { margin-top: 14px; }
   details.fold:not([open]) > .fold-body { display: none; }
   details.fold > .fold-body > h2 { margin-top: 24px; }
-  /* Each fold heading carries a link to its own URL (index.html#<id>), as GitHub's headings do:
-     shown on hover or focus, always on touch screens. */
-  details.fold > summary .fold-link { flex: none; font-family: var(--sans); font-size: 18px;
-    font-weight: 400; color: var(--link); text-decoration: none; opacity: 0; }
+  /* ---- BEGIN fold URLs (CSS; copy with the "fold URLs" script block below) ----
+     Each fold heading carries a link to its own URL (index.html#<id>), as GitHub's headings do:
+     shown on hover or focus, always on touch screens. Markup: at the end of each summary's h2,
+     so the link follows the heading's last word, as on the comparison overview,
+     <h2>Heading <a class="fold-link" href="#<id>" aria-label="Link to this section">#</a></h2> */
+  details.fold > summary .fold-link { font-family: var(--sans); font-size: 0.8em; font-weight: 400;
+    color: var(--link); text-decoration: none; opacity: 0; white-space: nowrap; }
   details.fold > summary:hover .fold-link, details.fold > summary .fold-link:focus-visible { opacity: 1; }
   @media (hover: none) { details.fold > summary .fold-link { opacity: 1; } }
+  /* ---- END fold URLs (CSS) ---- */
   details.method { margin: 10px 0 14px; }
   details.method > summary { cursor: pointer; font-size: 14px; color: var(--link); }
   details.method[open] > summary { margin-bottom: 8px; }
@@ -328,73 +332,8 @@
   </div>
 </div>
 
-<details class="fold" id="what-the-model-says">
-  <summary><h2>What the model says</h2><a class="fold-link" href="#what-the-model-says" aria-label="Link to this section">#</a></summary>
-  <div class="fold-body">
-<p>This OPA's main estimate is the base scenario of Table 5 in Boll, Saez and Zucman (2026),
-net of its income tax effects. The wealth tax is 5% of the $2,307 billion that Forbes lists for 250
-California billionaires on 1 July 2026, less 10% for avoidance and evasion: <strong>$103.8 billion</strong>,
-collected once (the paper prints $104 billion; the abstract says about $100 billion). Selling assets to pay it adds $3.68B of income tax. Leavers take $0.15B a year with
-them, worth $0.70B over 5 years at 3%. The total is <strong>$106.8 billion</strong>.<sup>1</sup>
-The other rows are the authors' own sensitivity checks.</p>
-
-<div class="table-scroll">
-<table class="scen">
-  <thead><tr><th>Scenario (Table 5 row)</th><th>Wealth tax, one time</th><th>Extra income tax from sales</th><th>Income tax lost, per year</th><th>Total (main estimate)<sup>2</sup></th></tr></thead>
-  <tbody>
-    <tr class="pref"><td><strong>Base (1)</strong></td><td>$103.8B</td><td>$3.7B</td><td>$0.15B</td><td><strong>$106.8B</strong></td></tr>
-    <tr><td>Missing billionaires (2)</td><td>$127.9B</td><td>$4.5B</td><td>$0.20B</td><td>$131.5B</td></tr>
-    <tr><td>Leavers (3)</td><td>$88.8B</td><td>$3.1B</td><td>$0.52B</td><td>$89.6B</td></tr>
-    <tr><td>Missing + leavers (4)</td><td>$114.8B</td><td>$4.1B</td><td>$0.56B</td><td>$116.3B</td></tr>
-  </tbody>
-</table>
-</div>
-<p class="fn" style="font-size:12.5px; color:var(--ink-3); margin-top:8px;"><sup>2</sup> Total = wealth tax +
-extra income tax &minus; income tax lost (present value, 5 years at 3%).</p>
-
-<p style="margin-top:14px;">The yearly income tax loss has no end date in Table 5. The authors
-argue it should last about as long as the five payment years; the <a href="../../rjkdc-analysis/site/">JR analysis</a> (Jaros and Rauh; first version Rauh, Jaros, Kearney, Doran and Cosso) counts it forever; BSZ call treating the responses as permanent "the main flaw in the scoring analysis of Rauh et al." (PDF p.22, fn.29). The revenue itself moves with only
-two guesses: the avoidance rate, and whether anyone left California before 1 January 2026.
-See <a href="repro.html#every-input-by-origin">every input, by origin</a>.</p>
-<p style="margin-top:14px;"><strong>What this OPA does not estimate.</strong> Both analyses take the
-measure as written (<a href="../../docs/initiative/README.md">docs/initiative/</a>). Neither models
-day-to-day moves in the Forbes base. Each adds one thing the other leaves out: the BSZ analysis the
-income tax from asset sales, the JR analysis the chance the Act survives in court.</p>
-  </div>
-</details>
-
-<details class="fold" id="what-reproduces">
-  <summary><h2>What reproduces</h2><a class="fold-link" href="#what-reproduces" aria-label="Link to this section">#</a></summary>
-  <div class="fold-body">
-<div class="table-scroll">
-<table>
-  <thead><tr><th>Published object</th><th>Result</th></tr></thead>
-  <tbody>
-    <tr><td>Table 5, estimating the one-time tax (PDF p.39)</td>
-        <td>All 28 cells match the workbook's cached values. 26 round to the digit the paper
-        prints; the other 2, the income tax loss in rows 2 and 3, are printed as $0.19B and
-        $0.51B where the workbook gives $0.20B and $0.52B</td></tr>
-    <tr><td>Tables 1 to 4 and A1, Figures 1 to 7, 9 and A2 to A4</td>
-        <td>Every formula cell the pipeline re-derives matches the workbook's cached value
-        within the tolerances the README lists (1e-4 for Table 5; 1e-3 to 1e-2 for the formula
-        sheets, where the workbook rounds to cents). Figures are checked for structure and anchor values</td></tr>
-    <tr><td>The authors' workbook</td>
-        <td>Four rows of the billionaire list appear twice, giving 244 billionaires instead of
-        240. The pipeline drops the repeat. No published number changes</td></tr>
-    <tr><td>Not reproduced</td>
-        <td>The paper's Figure 8 and Appendix Figure A1 (wealth relative to AGI); the raw data behind the workbook
-        (Forbes, tax statistics, SEC filings), which is taken as given</td></tr>
-  </tbody>
-</table>
-</div>
-
-<p style="margin-top:14px;">Every finding is in the <a href="repro.html#mismatches-found-and-how-each-was-resolved">report</a>.
-Test counts, scripts and the source manifest are on the <a href="materials.html">materials page</a>.</p>
-  </div>
-</details>
-
 <details class="fold" id="how-ai-was-used">
-  <summary><h2>How AI was used in this exercise, and what has been verified</h2><a class="fold-link" href="#how-ai-was-used" aria-label="Link to this section">#</a></summary>
+  <summary><h2>How AI was used in this exercise, and what has been verified <a class="fold-link" href="#how-ai-was-used" aria-label="Link to this section">#</a></h2></summary>
   <div class="fold-body">
 <p>The numbers on this page reproduce and are tested; what is still
 being completed is the author's own review of each part, recorded in the last column below, and
@@ -456,7 +395,7 @@ original authors have not reviewed it.</p>
 </details>
 
 <details class="fold" id="difference">
-  <summary><h2>Difference between this OPA and the original analysis</h2><a class="fold-link" href="#difference" aria-label="Link to this section">#</a></summary>
+  <summary><h2>Difference between this OPA and the original analysis <a class="fold-link" href="#difference" aria-label="Link to this section">#</a></h2></summary>
   <div class="fold-body">
 <p>The claims are the authors'. What this OPA changes is what a reader can check and change.</p>
 
@@ -496,6 +435,71 @@ original authors have not reviewed it.</p>
    choice, not the authors' (footnote 1). The explorer adds settings the authors did not publish.
    Where this site and the paper disagree, both numbers are shown, and the paper is the
    reference.</p>
+  </div>
+</details>
+
+<details class="fold" id="what-the-model-says">
+  <summary><h2>What the model says <a class="fold-link" href="#what-the-model-says" aria-label="Link to this section">#</a></h2></summary>
+  <div class="fold-body">
+<p>This OPA's main estimate is the base scenario of Table 5 in Boll, Saez and Zucman (2026),
+net of its income tax effects. The wealth tax is 5% of the $2,307 billion that Forbes lists for 250
+California billionaires on 1 July 2026, less 10% for avoidance and evasion: <strong>$103.8 billion</strong>,
+collected once (the paper prints $104 billion; the abstract says about $100 billion). Selling assets to pay it adds $3.68B of income tax. Leavers take $0.15B a year with
+them, worth $0.70B over 5 years at 3%. The total is <strong>$106.8 billion</strong>.<sup>1</sup>
+The other rows are the authors' own sensitivity checks.</p>
+
+<div class="table-scroll">
+<table class="scen">
+  <thead><tr><th>Scenario (Table 5 row)</th><th>Wealth tax, one time</th><th>Extra income tax from sales</th><th>Income tax lost, per year</th><th>Total (main estimate)<sup>2</sup></th></tr></thead>
+  <tbody>
+    <tr class="pref"><td><strong>Base (1)</strong></td><td>$103.8B</td><td>$3.7B</td><td>$0.15B</td><td><strong>$106.8B</strong></td></tr>
+    <tr><td>Missing billionaires (2)</td><td>$127.9B</td><td>$4.5B</td><td>$0.20B</td><td>$131.5B</td></tr>
+    <tr><td>Leavers (3)</td><td>$88.8B</td><td>$3.1B</td><td>$0.52B</td><td>$89.6B</td></tr>
+    <tr><td>Missing + leavers (4)</td><td>$114.8B</td><td>$4.1B</td><td>$0.56B</td><td>$116.3B</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="fn" style="font-size:12.5px; color:var(--ink-3); margin-top:8px;"><sup>2</sup> Total = wealth tax +
+extra income tax &minus; income tax lost (present value, 5 years at 3%).</p>
+
+<p style="margin-top:14px;">The yearly income tax loss has no end date in Table 5. The authors
+argue it should last about as long as the five payment years; the <a href="../../rjkdc-analysis/site/">JR analysis</a> (Jaros and Rauh; first version Rauh, Jaros, Kearney, Doran and Cosso) counts it forever; BSZ call treating the responses as permanent "the main flaw in the scoring analysis of Rauh et al." (PDF p.22, fn.29). The revenue itself moves with only
+two guesses: the avoidance rate, and whether anyone left California before 1 January 2026.
+See <a href="repro.html#every-input-by-origin">every input, by origin</a>.</p>
+<p style="margin-top:14px;"><strong>What this OPA does not estimate.</strong> Both analyses take the
+measure as written (<a href="../../docs/initiative/README.md">docs/initiative/</a>). Neither models
+day-to-day moves in the Forbes base. Each adds one thing the other leaves out: the BSZ analysis the
+income tax from asset sales, the JR analysis the chance the Act survives in court.</p>
+  </div>
+</details>
+
+<details class="fold" id="what-reproduces">
+  <summary><h2>What reproduces <a class="fold-link" href="#what-reproduces" aria-label="Link to this section">#</a></h2></summary>
+  <div class="fold-body">
+<div class="table-scroll">
+<table>
+  <thead><tr><th>Published object</th><th>Result</th></tr></thead>
+  <tbody>
+    <tr><td>Table 5, estimating the one-time tax (PDF p.39)</td>
+        <td>All 28 cells match the workbook's cached values. 26 round to the digit the paper
+        prints; the other 2, the income tax loss in rows 2 and 3, are printed as $0.19B and
+        $0.51B where the workbook gives $0.20B and $0.52B</td></tr>
+    <tr><td>Tables 1 to 4 and A1, Figures 1 to 7, 9 and A2 to A4</td>
+        <td>Every formula cell the pipeline re-derives matches the workbook's cached value
+        within the tolerances the README lists (1e-4 for Table 5; 1e-3 to 1e-2 for the formula
+        sheets, where the workbook rounds to cents). Figures are checked for structure and anchor values</td></tr>
+    <tr><td>The authors' workbook</td>
+        <td>Four rows of the billionaire list appear twice, giving 244 billionaires instead of
+        240. The pipeline drops the repeat. No published number changes</td></tr>
+    <tr><td>Not reproduced</td>
+        <td>The paper's Figure 8 and Appendix Figure A1 (wealth relative to AGI); the raw data behind the workbook
+        (Forbes, tax statistics, SEC filings), which is taken as given</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p style="margin-top:14px;">Every finding is in the <a href="repro.html#mismatches-found-and-how-each-was-resolved">report</a>.
+Test counts, scripts and the source manifest are on the <a href="materials.html">materials page</a>.</p>
   </div>
 </details>
 
