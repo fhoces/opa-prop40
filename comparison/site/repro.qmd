@@ -250,7 +250,7 @@ both ends.
 
 1. `R0 = tau * (W_core + W_noncit) * (1 - re)`: the revenue with no behavioural response.
    `tau` is the tax rate; `W_core` (the base) and `W_noncit` (the non-US-citizen residents)
-   are in billions of dollars ("Base list and valuation date", "Non-US-citizen residents");
+   are in billions of dollars ("Forbes source: which list and valuation date", "Non-US-citizen residents");
    `re` is the share of the revenue the real-estate deduction removes ("Real-estate
    deduction").
 2. `S = 1 - d_conf`: the share of the base still taxed. `d_conf` is the share of the base that

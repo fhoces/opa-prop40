@@ -87,7 +87,7 @@ def score_common(x: dict) -> dict:
 
 STEPS = [
     ("noncitizens", "8", "Non-US-citizen residents", "data"),
-    ("base_list", "7", "Base list and valuation date", "data"),
+    ("base_list", "7", "Forbes source: which list and valuation date", "data"),
     ("real_estate", "7", "Real-estate deduction", "data"),
     ("confirmed_departures", "3", "Billionaires already departed", "guesswork on data"),
     ("avoidance", "(not a row)", "Avoidance and evasion allowance", "guesswork"),

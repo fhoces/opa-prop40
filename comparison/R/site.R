@@ -37,7 +37,7 @@ fmt_input <- function(input, v) {
 }
 
 short_labels <- c(
-  bsz = "BSZ Aug 2026", noncitizens = "Non-citizens", base_list = "Base list, date",
+  bsz = "BSZ Aug 2026", noncitizens = "Non-citizens", base_list = "Forbes source",
   real_estate = "Real estate", confirmed_departures = "Departed", avoidance = "No avoidance",
   litigation_survival = "Litigation", income_loss_share = "Share lost",
   income_level = "Income tax level", horizon = "Horizon", asset_sales = "Asset sales",
@@ -54,8 +54,19 @@ step_texts <- function(inp, id) {
                 bsz_source = paste(k$supporting_source, f$supporting_source, sep = "; "),
                 rjkdc_source = paste(f$rauh_source, k$rauh_source, sep = "; ")))
   }
-  list(bsz = fmt_input(ii$input, ii$supporting_value), rjkdc = fmt_input(ii$input, ii$rauh_value),
-       bsz_source = ii$supporting_source, rjkdc_source = ii$rauh_source)
+  out <- list(bsz = fmt_input(ii$input, ii$supporting_value), rjkdc = fmt_input(ii$input, ii$rauh_value),
+              bsz_source = ii$supporting_source, rjkdc_source = ii$rauh_source)
+  # the explorer's dial ends name the list, the tables keep the dollars
+  if (id == "base_list") {
+    out$bsz_short <- "Forbes 2026"; out$rjkdc_short <- "Forbes 2025"
+    out$bsz <- paste0("Forbes 2026, ", out$bsz); out$rjkdc <- paste0("Forbes 2025 grown 7%, ", out$rjkdc)
+  }
+  out
+}
+# The two ends as an explorer dial prints them: the short form where there is one.
+dial_texts <- function(inp, id) {
+  tx <- step_texts(inp, id)
+  list(bsz = tx$bsz_short %||% tx$bsz, rjkdc = tx$rjkdc_short %||% tx$rjkdc)
 }
 
 # The explorer's sliders. Three inputs move a main estimate by less than $7B each when moved
@@ -208,7 +219,7 @@ render_site <- function(root = comparison_root(),
   hz_words <- paste0(paste(head(hz_fin, -1), collapse = ", "), " and ", tail(hz_fin, 1),
                      " years, and a perpetuity")
   slider_tips <- c(
-    base_list = "The wealth the tax applies to, before departures and behaviour. The BSZ analysis values the Forbes list on 1 July 2026 (250 people), less the non-US citizens. The JR analysis takes the 2025 Forbes list (212 people, with Ellison, Houston and Snyder removed and Sacks added) and grows it 7% to the 31 December 2026 valuation date. Kind: data.",
+    base_list = "Which Forbes list the base comes from, and so the wealth the tax applies to before departures and behaviour. Forbes 2026: the BSZ analysis values California's billionaires on 1 July 2026 (250 people, $2,157 billion without the non-US citizens). Forbes 2025: the JR analysis takes the 2025 list (212 people, with Ellison, Houston and Snyder removed and Sacks added) and grows it 7% to the 31 December 2026 valuation date ($2,027 billion). Between the ends the slider moves the dollar amount. Kind: data.",
     confirmed_departures = "The share of the base counted as already gone before the 1 January 2026 residency date. The BSZ analysis taxes every resident on that date, since an announced move is not a legal change of residence. The JR analysis drops seven confirmed departures (Page, Brin, Thiel, Hankey, Spielberg, Sacks, Kalanick), 29% of its base. Kind: guesswork resting on data.",
     avoidance = "The share of the tax lost to avoidance and evasion other than leaving. The BSZ analysis allows 10%. The JR analysis allows none. Kind: guesswork.",
     litigation_survival = "The chance that the Act survives a constitutional challenge, applied to the revenue. The BSZ analysis takes the Act as written and collected in full. The JR analysis weights the revenue by 50%, the accounting threshold for a tax that is more likely than not to stand; its simulation draws the revenue anywhere between zero and the ceiling, which has the same average. Kind: guesswork.",
@@ -235,7 +246,7 @@ render_site <- function(root = comparison_root(),
       if (rtl) rj_txt else bsz_txt)
   }
   step_row <- function(panel, id) {
-    i <- match(id, steps$step_id); tx <- step_texts(inp, id)
+    i <- match(id, steps$step_id); tx <- dial_texts(inp, id)
     slider_row(panel, id, unname(short_labels[id]), steps$title[i], slider_tips[[id]],
                tx$bsz, tx$rjkdc, SLIDER_STEPS)
   }
@@ -426,8 +437,8 @@ render_site <- function(root = comparison_root(),
     inputs = lapply(seq_len(nrow(steps)), function(i) list(
       id = steps$step_id[i], input = I(step_inputs[[steps$step_id[i]]]),
       short = unname(short_labels[steps$step_id[i]]),
-      bsz_text = step_texts(inp, steps$step_id[i])$bsz,
-      rjkdc_text = step_texts(inp, steps$step_id[i])$rjkdc)),
+      bsz_text = dial_texts(inp, steps$step_id[i])$bsz,
+      rjkdc_text = dial_texts(inp, steps$step_id[i])$rjkdc)),
     minor = EXPLORER_MINOR)
   # The explorer shows the net fiscal effect, output (b), only, and the bridge at each
   # analysis's own horizon; output (a) and the common horizons stay in the exports, the

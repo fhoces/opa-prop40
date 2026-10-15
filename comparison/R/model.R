@@ -60,7 +60,7 @@ bridge_steps <- function() {
     disputes_row = c("8", "7", "7", "3", "(not a row)", "9", "6", "5", "2", "(not a row)"),
     title = c(
       "Non-US-citizen residents",
-      "Base list and valuation date",
+      "Forbes source: which list and valuation date",
       "Real-estate deduction",
       "Billionaires already departed",
       "Avoidance and evasion allowance",
