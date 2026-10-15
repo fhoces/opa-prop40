@@ -146,21 +146,22 @@ This report is part of the comparison's [Open Policy Analysis](https://doi.org/1
   net fiscal effect. Its two panels have one slider per disputed input that moves the
   estimate, from one analysis's value to the other's. The browser computes each panel's
   estimate with `explorer/model.js`, a copy of `score_common()` that a test checks against the
-  R values. The explorer's equation shows the three largest of the bridge's nine steps in this report, and
-  the other six added up.
+  R values. The explorer's equation shows two of the bridge's nine steps in this report on their own
+  (D and q). It adds up the four steps of the loss box (f, C, H and r) into one term, and the
+  other three steps into another.
 - **Open Analysis**: this document
 - **Open Materials**: [the repository folder](https://github.com/fhoces/opa-prop40/tree/main/comparison), every script, test and data file (guide: [the materials page](materials.html))
 :::
 
 **The two main estimates** are each analysis's own: the BSZ analysis's net total over 5
 years, **`r usd(eb$bsz_model)`**, and the JR analysis's mean net present value in
-perpetuity, **`r usd(epv("rauh_nber_npv", "contract_value"))`** (NBER, September 2026). On
+perpetuity, **`r usd(eb$rauh_own)`** (NBER, September 2026). On
 the common output (b), the net fiscal effect, they are the bridge's two ends. The BSZ end is
-the same `r usd(eb$bsz_model)`. Jaros and Rauh print
-`r usd(epv("rauh_nber_npv", "printed_value"))` from one seeded run of their Monte Carlo (a run
-of the random draws started from a fixed seed number, so it gives the same draws every time);
-the exact expectation of that Monte Carlo, the average computed by formula, is
-`r usd(eb$rauh_own, 2)`, the JR end. The gap between the two ends,
+the same `r usd(eb$bsz_model)`. The JR number is the exact expectation of the authors' Monte
+Carlo, the average computed by formula: `r usd(eb$rauh_own, 2)`, the JR end. Jaros and Rauh
+print `r usd(epv("rauh_nber_npv", "printed_value"))` from one seeded run of that Monte Carlo (a
+run of the random draws started from a fixed seed number, so it gives the same draws every
+time). The gap between the two ends,
 `r usd(eb$bsz_model - eb$rauh_model)`, is what the bridge explains. The arithmetic is in
 [The two main estimates](#the-main-estimate).
 
@@ -362,7 +363,8 @@ nber <- rauh_nber_expectation(wt_min = 0, wt_max = pick(oi, "nber_ceiling_hardco
                               c_min = pick(oi, "rauh_mc_c_min"), c_max = pick(oi, "rauh_mc_c_max"),
                               r_min = pick(oi, "rauh_mc_r_min"), r_max = pick(oi, "rauh_mc_r_max"))
 v_rj <- score_common(bi$rauh)                 # the JR end, both outputs
-rj_main <- epv("rauh_nber_npv", "contract_value")   # the JR main estimate (seeded run)
+rj_main <- eb$rauh_own                              # the JR main estimate: the exact expectation (author decision 2026-10-15)
+rj_run <- epv("rauh_nber_npv", "contract_value")    # the authors' seeded run, as the JR pipeline reproduces it
 f_mid <- (pick(oi, "nber_mc_f_min") + pick(oi, "nber_mc_f_max")) / 2
 c_mid <- (pick(oi, "rauh_mc_c_min") + pick(oi, "rauh_mc_c_max")) / 2
 a_inf <- expected_annuity(Inf, pick(oi, "rauh_mc_r_min"), pick(oi, "rauh_mc_r_max"))   # E[1/r] over the draw
@@ -377,9 +379,9 @@ stopifnot(isTRUE(all.equal(v_sup[["b"]], eb$bsz_model)), isTRUE(all.equal(v_rj[[
 ```
 
 The BSZ main estimate is **`r usd(eb$bsz_model)`** and the JR main estimate
-**`r usd(epv("rauh_nber_npv", "contract_value"))`**. On the common output the two ends are
+**`r usd(rj_main)`**. On the common output the two ends are
 `r usd(eb$bsz_model)` and `r usd(eb$rauh_model)`, a gap of **`r usd(eb$bsz_model - eb$rauh_model)`**.
-The JR end is the exact mean of the Monte Carlo behind the JR main estimate.
+The JR main estimate is the JR end: the exact mean of the authors' Monte Carlo.
 
 <details class="report-fold"><summary>Steps 1 to 4, and output (a)</summary>
 
@@ -407,7 +409,8 @@ therefore `r usd(nber[["a"]], 1)` &minus; `r f_mid` &times; `r usd(c_mid, 3)` &t
 `r formatC(a_inf, format = "f", digits = 3)` (the average of 1/r, or 1/r at `r r_jr`) =
 **`r usd(nber[["b"]], 3)`**, the JR end on (b). The authors print `r usd(epv("rauh_nber_npv", "printed_value"))`
 from one seeded run of the same Monte Carlo, which the JR pipeline reproduces as
-`r usd(rj_main, 3)`. That run is the JR main estimate, shown as `r usd(rj_main)`.
+`r usd(rj_run, 3)`. The comparison's pages use the exact mean as the JR main estimate, shown
+as `r usd(rj_main)`.
 
 **Step 3: the gap on (b).** `r usd(v_sup[["b"]], 3)` &minus; (`r usd(v_rj[["b"]], 3)`) =
 **`r usd(gap_b, 3)`**, shown as `r usd(gap_b)`.
@@ -489,7 +492,7 @@ blank <- function(label, change, run) data.frame(Dial = label, `DISPUTES row` = 
 cat("\n**Output (b), net fiscal effect, each analysis's own horizon.** The horizon dial moves from the BSZ analysis's 5 years to a perpetuity.\n\n")
 scroll(show(rbind(blank("<b>BSZ end, (b)</b>", "", nobr(money(dp$from[1], 2))), path_rows,
                   blank("Sum of the steps", nobr(money(sum(dp$change), 2, TRUE)), ""),
-                  blank("<b>JR end, (b), the JR main estimate's exact mean</b>", "", nobr(money(eb$rauh_own, 2))))))
+                  blank("<b>JR end, (b), the JR main estimate</b>", "", nobr(money(eb$rauh_own, 2))))))
 ```
 
 Reading the table: the horizon step is the largest because it moves after the other dials,

@@ -195,7 +195,11 @@
   @media (hover: hover) { .info:hover .info-tip, .info:focus .info-tip { visibility: visible; opacity: 1; } }
   .info:focus-visible .info-tip, .info.tip-on .info-tip { visibility: visible; opacity: 1; }
   span.info { cursor: help; }
-  /* The first dial of a box opens its tips below it, so they do not cover the box's formula. */
+  /* A box heading hides its formula in a tip: ink colour, a dotted underline like the other tip hosts. */
+  .info.box-name { color: var(--ink); border-bottom-color: var(--ink-3); }
+  .info-tip .tip-eq { display: block; font-family: var(--serif); font-size: 15px; font-weight: 600; white-space: normal; }
+  .info-tip .tip-line { display: block; margin-top: 3px; }
+  /* The first dial of a box opens its tips below it, so they do not cover the box's heading. */
   .sl-box .sl-list > .sl:first-child > .sl-tip, .sl-box .sl-list > .sl:first-child .end-tip { bottom: auto; top: calc(100% - 4px); }
   .sl label .sym { font-family: var(--serif); font-style: italic; font-size: 18px; font-weight: 600; }
   /* A dial shown by its symbol: the symbol in a narrow left column, the slider beside it. */
@@ -205,10 +209,10 @@
   .sl.has-sym > .sl-row { grid-column: 2; margin-top: 0; }
   .sl.has-sym > .sl-note { grid-column: 2; }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-  /* The pseudo-equation: the BSZ estimate, the three largest dial-path terms in the panels' order,
-     the other steps added up, the JR estimate. */
+  /* The pseudo-equation: the BSZ estimate, the D and q steps of the dial path, the loss box's
+     four steps added up, the other three added up, the JR estimate (eq_terms() in R/site.R). */
   .eq-box { margin: 26px 0 6px; padding: 14px 16px; border: 1px solid var(--rule); border-radius: 6px; background: var(--panel); }
-  .pseudo-eq { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 6px 8px; position: relative; }
+  .pseudo-eq { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: center; gap: 6px 8px; position: relative; }
   .pseudo-eq .term { display: inline-flex; flex-direction: column; align-items: center; min-width: 5em; max-width: 8.5em; text-align: center; }
   .pseudo-eq .term b { font-family: var(--serif); font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .pseudo-eq .term small { font-size: 11.5px; color: var(--ink-2); line-height: 1.3; }
@@ -341,9 +345,7 @@
         <ul class="sl-list" aria-label="The JR panel's sliders">
 {{sliders_rjkdc}}
         </ul>
-        <p class="panel-note">Starts at {{jr_end_b2}}, the exact average of the authors' Monte
-        Carlo (their model run many times with random inputs). Their own seeded run prints
-        {{hl_rjkdc}}, the header number.</p>
+        <p class="panel-note">Starts at the JR analysis's main estimate, {{jr_end_b}}.</p>
       </div>
     </div>
 
@@ -358,7 +360,8 @@
     years at {{r_bsz}}. BSZ's own headline is the wealth tax alone; the net total is this OPA's choice,
     explained on the <a href="../../../bsz-analysis/site/">BSZ analysis overview</a>. The JR
     analysis's is a perpetuity net present value, averaged over the authors' Monte Carlo draws
-    (Jaros and Rauh, NBER chapter c15504, Tax Policy and the Economy vol. 41, September 2026).</p>
+    (Jaros and Rauh, NBER chapter c15504, Tax Policy and the Economy vol. 41, September 2026).
+    {{jr_fn_x}}</p>
     <p class="fn">The net fiscal effect puts both on one definition, and the panels start at its
     two ends. The BSZ end is <b>{{bsz_end_b}}</b> and the JR end <b>{{jr_end_b}}</b>, a gap of <b>{{gap_b}}</b>.
     The discount rate is a dial: {{r_bsz}} at the BSZ end, the rate the BSZ overview uses, and

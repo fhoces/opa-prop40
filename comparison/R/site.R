@@ -103,29 +103,39 @@ dial_texts <- function(inp, id, bi = NULL) {
 # sliders.minor and the page script expands the switch before calling model.js.
 # EXPLORER_MINOR and EXPLORER_DIAL_ORDER are in model.R (dial_path() reads them).
 explorer_slider_ids <- function() setdiff(bridge_steps()$step_id, EXPLORER_MINOR)
-# The pseudo-equation's terms (author decision 2026-10-15): the three largest steps of the dial
-# path by absolute size, in dial order, then one term for the other steps added up. `steps` lists
-# the path steps a term holds (the page script marks the term whose list holds the walk's step).
-# Each term shows its amount and its name only (author decision 2026-10-15: no running value under
-# it; the panel's "With these sliders" line shows that).
-eq_terms <- function(dp, n_main = 3L) {
+# The pseudo-equation's terms (author decision 2026-10-15, revised the same day): the grouping is by
+# box, not by size. D and q of the revenue box are shown one by one; the four dials of the loss box
+# (EXPLORER_BOXES$loss: f, C, H and r) are one term, "Lost income tax"; W, a and the minor switch
+# are the last term, added up. `steps` lists the path steps a term holds (the page script marks
+# the term whose list holds the walk's step). Each term shows its amount and its name only (no
+# running value under it; the panel's "With these sliders" line shows that).
+EQ_SINGLE <- c("confirmed_departures", "litigation_survival")
+eq_terms <- function(dp) {
   words <- c("one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten")
-  main <- sort(order(-abs(dp$change))[seq_len(n_main)])
-  rest <- setdiff(seq_len(nrow(dp)), main)
-  lab <- function(i) if (dp$step_id[i] == "minor_inputs") dp$title[i] else paste0(dp$title[i], " (", dp$symbol[i], ")")
+  main <- match(EQ_SINGLE, dp$step_id)
+  loss <- which(dp$step_id %in% EXPLORER_BOXES$loss$ids)
+  rest <- setdiff(seq_len(nrow(dp)), c(main, loss))
+  stopifnot(!anyNA(main), length(loss) == length(EXPLORER_BOXES$loss$ids))
   name <- function(i) if (dp$step_id[i] == "minor_inputs") tolower(dp$title[i]) else dp$symbol[i]
   and_list <- function(x) if (length(x) < 2) x else paste0(paste(head(x, -1), collapse = ", "), " and ", tail(x, 1))
+  # the loss term names H first, the step its label grew from, then the box's other dials in
+  # dial order (author wording: "Lost income tax (H, f, C, r)")
+  loss_syms <- dp$symbol[loss]; loss_syms <- c("H", setdiff(loss_syms, "H"))
+  rest_names <- vapply(rest, name, "")
   terms <- data.frame(
-    steps = c(as.character(dp$step[main]), paste(dp$step[rest], collapse = " ")),
-    change = c(dp$change[main], sum(dp$change[rest])),
-    label = c(vapply(main, lab, ""), sprintf("The other %s steps together", words[length(rest)])),
+    steps = c(as.character(dp$step[main]), paste(dp$step[loss], collapse = " "), paste(dp$step[rest], collapse = " ")),
+    change = c(dp$change[main], sum(dp$change[loss]), sum(dp$change[rest])),
+    label = c(paste0(dp$title[main], " (", dp$symbol[main], ")"),
+              sprintf("Lost income tax (%s)", paste(loss_syms, collapse = ", ")),
+              sprintf("The other %s steps together (%s)", words[length(rest)], paste(rest_names, collapse = ", "))),
     stringsAsFactors = FALSE)
   note <- sprintf(paste(
-    "The %s terms with a symbol are the steps for %s of that walk, and the %s is the other %s steps",
-    "added up (%s)."),
-    words[n_main], and_list(dp$symbol[main]), c("second", "third", "fourth", "fifth")[n_main],
-    words[length(rest)], and_list(vapply(rest, name, "")))
-  list(main = main, rest = rest, terms = terms, note = note, n_words = words[nrow(dp)])
+    "The %s terms are those %s steps of that walk.",
+    "Lost income tax is the %s loss-box dials of the walk added up (%s).",
+    "The last term is the other %s steps added up (%s)."),
+    and_list(dp$symbol[main]), words[length(main)], words[length(loss)], and_list(dp$symbol[loss]),
+    words[length(rest)], and_list(rest_names))
+  list(main = main, loss = loss, rest = rest, terms = terms, note = note, n_words = words[nrow(dp)])
 }
 # The dials that act together, boxed on the page by the two terms of the net fiscal effect.
 # Inside a box the inputs multiply each other, so one dial's effect depends on where the
@@ -134,21 +144,26 @@ eq_terms <- function(dp, n_main = 3L) {
 EXPLORER_BOXES <- list(
   revenue = list(ids = c("base_list", "confirmed_departures", "avoidance", "litigation_survival"),
                  report = "step-revenue",   # the report's steps 1 to 3 of score_common()
+                 name = "Wealth tax collected",
                  eq = "Wealth tax collected = 5% &times; (W &minus; D) &times; (1 &minus; a) &times; q",
-                 lead = "5% is the tax rate. W is the wealth on the list, D the part already gone, a the share lost to avoidance, q the chance the tax survives in court.",
+                 lead = "The tax takes 5% of the wealth. W is the wealth on the list, D the part already gone, a the share lost to avoidance, q the chance the tax survives in court.",
                  more = "The four dials multiply, so one dial's effect depends on the others. W and D are valued on the same Forbes list."),
   loss = list(ids = c("income_loss_share", "income_level", "horizon", "discount_rate"),
               report = "step-loss",      # the report's steps 5 and 6
+              name = "Income tax lost",
               eq = "Income tax lost = f &times; C &times; A(H, r)",
+              gloss = "A(H, r): what $1 a year for H years is worth today at rate r.",
               lead = "f is the share of billionaires' income tax lost, C that tax per year, H the years it is counted, and r the rate that discounts it.",
               more = "f, C and A(H, r) multiply, so one dial's effect depends on the others. f also moves with D and a."))
 # Each dial shows only its symbol; the name and the explanation are in its hover box.
 DIAL_SYMBOLS <- c(base_list = "W", confirmed_departures = "D", avoidance = "a",
                   litigation_survival = "q", income_loss_share = "f", income_level = "C",
                   horizon = "H", discount_rate = "r")
-# One or two words shown under a symbol (author instruction: f, C and H).
-DIAL_WORDS <- c(income_loss_share = "share lost", income_level = "yearly tax", horizon = "years",
-                discount_rate = "rate")
+# One or two words shown under a symbol (author instructions: f, C and H; then every symbol of the
+# revenue box too, 2026-10-15).
+DIAL_WORDS <- c(base_list = "wealth", confirmed_departures = "departed", avoidance = "avoidance",
+                litigation_survival = "litigation", income_loss_share = "share lost",
+                income_level = "yearly tax revenue", horizon = "years", discount_rate = "rate")
 # What each symbol stands for, at the start of its tip. The bridge's step names (short_labels)
 # name a step, not the dial: "No avoidance" is the JR end of the a dial, not the dial.
 DIAL_NAMES <- c(base_list = "wealth on the list", confirmed_departures = "wealth already gone",
@@ -276,8 +291,10 @@ render_site <- function(root = comparison_root(),
   tok$bsz_row1 <- money(epv("bsz_tab5_row1"), 1)
   tok$bsz_printed <- money(ep$printed_value[ep$endpoint_id == "bsz_tab5_row1"], 0)   # the digit the paper prints
   tok$bsz_row1_exact <- money(epv("bsz_tab5_row1"), 3)
-  tok$nber_npv <- money(ep$printed_value[ep$endpoint_id == "rauh_nber_npv"], 1)
-  tok$nber_npv_abs <- money(-ep$printed_value[ep$endpoint_id == "rauh_nber_npv"], 1)
+  # the comparison's pages print the JR estimate as the exact expectation of the authors' model
+  # (author decision 2026-10-15); footnote 1 gives the paper's seeded-run figure
+  tok$nber_npv <- money(eb$rauh_own, 1)
+  tok$nber_npv_abs <- money(-eb$rauh_own, 1)
   # The discount rate at each end (the rate dial, author decision 2026-10-15), from the exports:
   # 3% at the BSZ end, 1 / E[1/r] over the JR draw at the JR end.
   tok$r_bsz <- rate_txt(mv("r_bsz")); tok$r_jr <- rate_txt(mv("r_jr"))
@@ -286,20 +303,26 @@ render_site <- function(root = comparison_root(),
 
   # ---- the headline: the two analyses' main estimates, next to each other ----
   # The BSZ main estimate is the net total over 5 years, which is also the BSZ end of the
-  # bridge under the common output (b). The JR main estimate is the NBER mean NPV as the
-  # JR pipeline reproduces the authors' seeded Monte Carlo (its contract row
-  # npv_mc_nber_mean); the bridge's JR end is the exact expectation of the same Monte
-  # Carlo. The explorer reads the same values from assets/comparison-data.js.
-  rj_main <- ep$contract_value[ep$endpoint_id == "rauh_nber_npv"]
+  # bridge under the common output (b). The JR main estimate on the comparison's pages is the
+  # exact expectation of the authors' NBER Monte Carlo (author decision 2026-10-15), the JR end
+  # of the bridge and the number the sliders start at. The paper prints the mean of one seeded
+  # run (the contract row npv_mc_nber_mean, printed -$38.9B); footnote 1 says so, and the JR
+  # analysis's own pages keep the printed figure. The explorer reads the same values from
+  # assets/comparison-data.js.
+  rj_main <- eb$rauh_own
+  rj_printed <- ep$printed_value[ep$endpoint_id == "rauh_nber_npv"]
   tok$hl_bsz <- money(eb$bsz_model, 1)
   tok$hl_rjkdc <- money(rj_main, 1)
   tok$jr_end_b <- money(eb$rauh_model, 1)
   tok$bsz_end_b <- money(eb$bsz_model, 1)
-  tok$jr_end_b2 <- money(eb$rauh_model, 2)
-  # The JR estimate on the pages is the exact mean of the authors' Monte Carlo; the header
-  # prints their seeded run. One sentence says so wherever the two sit together.
-  tok$mc_note <- sprintf("The JR estimate is the exact mean of the authors' Monte Carlo. Their seeded run prints %s, the header number.",
-                         tok$hl_rjkdc)
+  # Footnote 1's provenance sentence for the JR number, on both pages (hrefs per page).
+  jr_fn <- function(report, jr_report) sprintf(paste(
+    "The paper prints %s, the average of one seeded run of 100,000 draws.",
+    "The exact average of the same formula is %s, used throughout this page",
+    "(<a href=\"%s\">report</a>, <a href=\"%s\">Step 6 of the JR analysis's report</a>)."),
+    money(rj_printed, 1), money(eb$rauh_own, 2), report, jr_report)
+  tok$jr_fn_root <- jr_fn("comparison/site/repro.html#the-main-estimate", "rjkdc-analysis/site/repro.html#step-npv")
+  tok$jr_fn_x <- jr_fn("../repro.html#the-main-estimate", "../../../rjkdc-analysis/site/repro.html#step-npv")
   # The gap on (b), stated in the explorer's footnote, not in the headline.
   gap_b <- eb$bsz_model - eb$rauh_model
   tok$gap_b <- money(gap_b, 1)
@@ -335,7 +358,7 @@ render_site <- function(root = comparison_root(),
     avoidance = "The share of the tax lost to avoidance and evasion other than leaving.",
     litigation_survival = "The chance that the tax survives a court challenge, applied to the revenue.",
     income_loss_share = "The share of billionaires' income tax California loses to people leaving. Under the BSZ rule it depends on the number of leavers.",
-    income_level = "Billionaires' yearly California income tax, the amount at risk each year.",
+    income_level = "Billionaires' yearly California income tax revenue, the amount at risk each year.",
     horizon = sprintf("How many years the lost income tax is counted. Middle stops: %s years.",
                       paste(hz_fin[-1], collapse = ", ") |> sub(pattern = ", ([^,]*)$", replacement = " and \\1")),
     discount_rate = "The discount rate that turns a yearly loss into today's dollars.",
@@ -453,21 +476,20 @@ render_site <- function(root = comparison_root(),
                paste0(DIAL_SYMBOLS[[id]], ", ", DIAL_NAMES[[id]], ". ", slider_tips[[id]]),
                tx$bsz, tx$rjkdc, slider_max(id), sym = TRUE)
   }
-  # A(H, r) in the loss formula gets its own tip, with the values at the two ends of the H and
-  # r dials (meta.csv: A_5 at the BSZ rate, A_inf at the JR rate).
-  ah_tip <- sprintf("What $1 a year for H years is worth today at the rate r: about %s for 5 years at %s, %s for ever at %s.",
-                    formatC(mv("A_5"), format = "f", digits = 1), tok$r_bsz,
-                    formatC(mv("A_inf"), format = "f", digits = 1), tok$r_jr)
-  info_span <- function(id, label, tip) sprintf(
-    '<span class="info" tabindex="0" aria-describedby="%1$s">%2$s<span class="info-tip" role="tooltip" id="%1$s">%3$s</span></span>',
-    id, label, tip)
+  # Each box heading shows the box's name only; its formula is in a tip that opens on hover
+  # (mouse) or tap (touch), the same mechanism as the dial tips (author item 2026-10-15). The
+  # loss box's tip adds a line glossing A(H, r), since a tip cannot hold another tip.
   box <- function(panel, key) {
     bx <- EXPLORER_BOXES[[key]]
-    eq <- sub("A(H, r)", info_span(paste0(panel, "-ah-tip"), "A(H, r)", ah_tip), bx$eq, fixed = TRUE)
+    tip_id <- paste0(panel, "-", key, "-eq")
+    tip <- paste0('<span class="tip-eq">', bx$eq, '</span>',
+                  if (!is.null(bx$gloss)) paste0('<span class="tip-line">', esc(bx$gloss), '</span>') else "")
     paste0(
       '        <li class="sl-box" role="group" aria-labelledby="', panel, '-', key, '-head">\n',
       '          <div class="sl-box-head">\n',
-      '            <p class="box-eq" id="', panel, '-', key, '-head">', eq, '</p>\n',
+      '            <p class="box-eq"><span class="info box-name" tabindex="0" aria-describedby="', tip_id, '">',
+      '<span id="', panel, '-', key, '-head">', bx$name, '</span>',
+      '<span class="info-tip" role="tooltip" id="', tip_id, '">', tip, '</span></span></p>\n',
       '            <p class="box-lead">', bx$lead, ' <a class="info" href="../repro.html#', bx$report, '" aria-describedby="', panel, '-', key, '-more">more',
       '<span class="info-tip" role="tooltip" id="', panel, '-', key, '-more">', bx$more, '</span></a></p>\n',
       '          </div>\n',
@@ -502,9 +524,9 @@ render_site <- function(root = comparison_root(),
   ss <- read_csv_plain(file.path(root, "comparison", "export", "r", "slider_sample.csv"))
   tok$n_slider_sample <- format(nrow(ss), big.mark = ",")
   tok$n_slider_per_panel <- format(sum(ss$panel == "bsz"), big.mark = ",")
-  # ---- the pseudo-equation: the BSZ estimate, the three largest terms of the dial path in dial
-  # order, one term for the other steps added up, the JR estimate (author decisions 2026-10-15:
-  # everything from the explorer's own dials; three main terms plus the rest combined). The dial
+  # ---- the pseudo-equation: the BSZ estimate, the D and q steps of the dial path, the loss
+  # box's four steps added up, the other three steps added up, the JR estimate (author decisions
+  # 2026-10-15: everything from the explorer's own dials; grouped by box, eq_terms()). The dial
   # path moves the BSZ panel's dials top to bottom, each to its far end (dial_path() in model.R,
   # export/r/dial_path.csv). The terms take the BSZ end to the JR end exactly. eq_terms() is
   # shared with the deck (slides.Rmd).
@@ -512,7 +534,6 @@ render_site <- function(root = comparison_root(),
   dp <- read_csv_plain(file.path(root, "comparison", "export", "r", "dial_path.csv"))
   stopifnot(identical(dp$step_id, EXPLORER_DIAL_ORDER))
   et <- eq_terms(dp)
-  tok$eq_main <- paste(dp$symbol[et$main], collapse = ", ")
   term <- function(j) {
     x <- et$terms[j, ]
     sprintf(
@@ -537,7 +558,7 @@ render_site <- function(root = comparison_root(),
   # has no Walk the path button, so it drops that sentence, and links "BSZ panel" to the explorer.
   eq_note <- function(href, panel, walk) paste0(
     "Move the ", panel, "'s dials top to bottom, each to its far end. ", esc(et$note), " ",
-    walk, esc(tok$mc_note), " ",
+    walk,
     sprintf("The <a href=\"%s\">report</a> gives all %s steps.", href, et$n_words))
   tok$pseudo_eq_note_x <- eq_note("../repro.html#the-bridge", "BSZ panel",
                                   "The Walk the path button in each panel does it for you. ")
@@ -597,7 +618,7 @@ render_site <- function(root = comparison_root(),
   # two ends under the common output (b), each analysis's own horizon and rate (bsz_end_b,
   # rjkdc_end_b).
   headline <- list(bsz = eb$bsz_model, rjkdc = rj_main,
-                   rjkdc_printed = ep$printed_value[ep$endpoint_id == "rauh_nber_npv"],
+                   rjkdc_printed = rj_printed,
                    bsz_end_b = eb$bsz_model, rjkdc_end_b = eb$rauh_model)
   # The sliders: the two input vectors (bridge_inputs(), full precision; the perpetuity is
   # written "Inf"), the horizon settings and the number of steps of slider_inputs(), and for

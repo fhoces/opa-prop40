@@ -16,7 +16,7 @@ test_that("the explorer loads the data file with the hash of its content", {
   expect_true(grepl(sprintf('comparison-data.js?v=%s"', h), read_page(explorer), fixed = TRUE))
 })
 
-test_that("both pages carry the pseudo-equation: the three largest dial-path terms in dial order, the rest combined, BSZ to JR", {
+test_that("both pages carry the pseudo-equation: D and q, the loss box added up, the rest added up, BSZ to JR", {
   en <- read_csv_plain(file.path(root, "comparison", "export", "r", "ends.csv"))
   eb <- en[en$horizon_setting == "own" & en$output == "b", ]
   dp <- read_csv_plain(file.path(root, "comparison", "export", "r", "dial_path.csv"))
@@ -26,20 +26,28 @@ test_that("both pages carry the pseudo-equation: the three largest dial-path ter
     html <- read_page(p)
     expect_true(grepl('<div class="pseudo-eq" role="img"', html, fixed = TRUE), label = p)
     eq <- regmatches(html, regexpr('<div class="pseudo-eq".*?</div>', html))
-    # the three largest steps of the path by absolute size, in dial order, each labelled with its
-    # dial's title and symbol, e.g. "(q)", and nothing under it (no running value, 2026-10-15); then
-    # the other steps added up
-    main <- sort(order(-abs(dp$change))[1:3]); rest <- setdiff(seq_len(nrow(dp)), main)
-    expect_identical(dp$symbol[main], c("D", "q", "H"))
+    # the rule (author decision 2026-10-15): D and q one by one, each labelled with its dial's
+    # title and symbol; the four loss-box dials added up as "Lost income tax"; W, a and the minor
+    # switch added up as the last term; nothing under a term (no running value)
+    main <- match(c("confirmed_departures", "litigation_survival"), dp$step_id)
+    loss <- match(c("income_loss_share", "income_level", "horizon", "discount_rate"), dp$step_id)
+    rest <- match(c("base_list", "avoidance", "minor_inputs"), dp$step_id)
+    expect_identical(sort(c(main, loss, rest)), seq_len(nrow(dp)))
+    expect_identical(dp$symbol[main], c("D", "q"))
     pins <- c(vapply(main, function(i) sprintf(
       '<span class="term" data-steps="%d"><b>%s</b><small>%s (%s)</small></span>',
       i, money(abs(dp$change[i]), 1), dp$title[i], dp$symbol[i]), ""),
-      sprintf('<span class="term" data-steps="%s"><b>%s</b><small>The other six steps together</small></span>',
+      sprintf('<span class="term" data-steps="%s"><b>%s</b><small>Lost income tax (H, f, C, r)</small></span>',
+              paste(loss, collapse = " "), money(abs(sum(dp$change[loss])), 1)),
+      sprintf('<span class="term" data-steps="%s"><b>%s</b><small>The other three steps together (W, a, three minor inputs)</small></span>',
               paste(rest, collapse = " "), money(abs(sum(dp$change[rest])), 1)))
     at <- vapply(pins, function(x) regexpr(x, eq, fixed = TRUE)[[1]], 0)
     expect_true(all(at > 0), label = paste(p, "terms"))
-    expect_true(all(diff(at) > 0), label = paste(p, "dial order"))
+    expect_true(all(diff(at) > 0), label = paste(p, "term order"))
     expect_identical(lengths(regmatches(eq, gregexpr('class="term"', eq, fixed = TRUE))), 6L, label = paste(p, "six terms"))
+    # the four printed terms take the printed BSZ estimate to the printed JR estimate
+    printed <- round(c(dp$change[main], sum(dp$change[loss]), sum(dp$change[rest])), 1)
+    expect_equal(round(eb$bsz_model, 1) + sum(printed), round(eb$rauh_own, 1), tolerance = 1e-9, label = paste(p, "sum"))
     # BSZ at the left, JR at the right
     expect_lt(regexpr("<small>BSZ estimate</small>", eq, fixed = TRUE)[[1]], at[1])
     expect_gt(max(gregexpr("JR estimate", eq, fixed = TRUE)[[1]]), at[length(at)])
@@ -53,7 +61,9 @@ test_that("both pages carry the pseudo-equation: the three largest dial-path ter
   }
   ex_html <- read_page(explorer)
   expect_true(grepl(paste("Move the BSZ panel's dials top to bottom, each to its far end.",
-                          "The three terms with a symbol are the steps for D, q and H of that walk, and the fourth is the other six steps added up (W, a, f, C, r and three minor inputs)."),
+                          "The D and q terms are those two steps of that walk.",
+                          "Lost income tax is the four loss-box dials of the walk added up (f, C, H and r).",
+                          "The last term is the other three steps added up (W, a and three minor inputs)."),
                     ex_html, fixed = TRUE))
   for (panel in c("bsz", "rjkdc"))
     expect_true(grepl(sprintf('<button type="button" class="reset walk" data-panel="%s">Walk the path</button>', panel), ex_html, fixed = TRUE), label = panel)
@@ -247,7 +257,16 @@ test_that("the sliders' ends are the two analyses, and the departures dial stops
   }
 })
 
-test_that("the rate dial: r after H in the loss box, ends 3% and 2.73%, its tips and the A(H, r) tip", {
+test_that("every dial symbol in both boxes has one or two words under it (author items 2026-10-15)", {
+  ex_html <- read_page(explorer)
+  expect_identical(sort(names(DIAL_WORDS)), sort(names(DIAL_SYMBOLS)))
+  expect_identical(unname(DIAL_WORDS[EXPLORER_BOXES$revenue$ids]), c("wealth", "departed", "avoidance", "litigation"))
+  for (id in names(DIAL_SYMBOLS))
+    expect_identical(lengths(regmatches(ex_html, gregexpr(sprintf('<span class="sym">%s</span><span class="sym-word">%s</span>',
+                                                                  DIAL_SYMBOLS[[id]], DIAL_WORDS[[id]]), ex_html, fixed = TRUE))), 2L, label = id)
+})
+
+test_that("the rate dial: r after H in the loss box, ends 3% and 2.73%, its tips and the box headings' formula tips", {
   ex_html <- read_page(explorer)
   me <- read_csv_plain(file.path(root, "comparison", "export", "r", "meta.csv"))
   mv <- function(key) me$value[me$key == key]
@@ -261,8 +280,18 @@ test_that("the rate dial: r after H in the loss box, ends 3% and 2.73%, its tips
     expect_true(grepl('<span class="sl-end-v">2.73%</span>', li, fixed = TRUE), label = panel)
     expect_true(grepl("Kind: scenario.</span>", li, fixed = TRUE), label = panel)
     expect_true(grepl("($1 a year for ever is worth $36.6). Kind: derived.</span>", li, fixed = TRUE), label = panel)
-    expect_true(grepl(sprintf("What $1 a year for H years is worth today at the rate r: about 4.6 for 5 years at 3%%, 36.6 for ever at 2.73%%."), ex_html, fixed = TRUE))
+    # each box heading shows its name only; the formula (and, for the loss box, the A(H, r)
+    # gloss) is in the heading's tip (author item 2026-10-15)
+    expect_true(grepl(sprintf(paste0('<p class="box-eq"><span class="info box-name" tabindex="0" aria-describedby="%1$s-loss-eq">',
+                                     '<span id="%1$s-loss-head">Income tax lost</span><span class="info-tip" role="tooltip" id="%1$s-loss-eq">',
+                                     '<span class="tip-eq">Income tax lost = f &times; C &times; A(H, r)</span>',
+                                     '<span class="tip-line">A(H, r): what $1 a year for H years is worth today at rate r.</span></span></span></p>'), panel),
+                      ex_html, fixed = TRUE), label = paste(panel, "loss heading"))
+    expect_true(grepl(sprintf(paste0('<span id="%1$s-revenue-head">Wealth tax collected</span><span class="info-tip" role="tooltip" id="%1$s-revenue-eq">',
+                                     '<span class="tip-eq">Wealth tax collected = 5%% &times; (W &minus; D) &times; (1 &minus; a) &times; q</span></span>'), panel),
+                      ex_html, fixed = TRUE), label = paste(panel, "revenue heading"))
   }
+  expect_false(grepl("ah-tip", ex_html, fixed = TRUE))
   # the H dial's tips name no rate
   h <- regmatches(ex_html, gregexpr('<li class="sl has-sym" data-id="horizon">.*?</li>', ex_html))[[1]]
   expect_length(h, 2L)
@@ -304,11 +333,17 @@ test_that("the headline is the two main estimates; the bridge's two ends under (
   en <- read_csv_plain(file.path(root, "comparison", "export", "r", "ends.csv"))
   eb <- en[en$horizon_setting == "own" & en$output == "b", ]
   ep <- read_csv_plain(file.path(root, "comparison", "export", "r", "endpoints.csv"))
-  rj <- ep$contract_value[ep$endpoint_id == "rauh_nber_npv"]
-  # the two values, pinned: BSZ net total over 5 years; JR NBER mean NPV (seeded run)
+  # the JR headline on the comparison's pages is the exact expectation of the authors' model
+  # (author decision 2026-10-15); the paper's seeded run stays in footnote 1
+  rj <- eb$rauh_own
+  rj_run <- ep$contract_value[ep$endpoint_id == "rauh_nber_npv"]
+  rj_printed <- ep$printed_value[ep$endpoint_id == "rauh_nber_npv"]
+  # the two values, pinned: BSZ net total over 5 years; JR NBER exact mean NPV
   expect_equal(round(eb$bsz_model, 4), 106.7960)   # 5 years at 3%, as on the BSZ overview
-  expect_equal(round(rj, 3), -38.886)
-  expect_equal(round(rj, 1), ep$printed_value[ep$endpoint_id == "rauh_nber_npv"])   # printed -38.9
+  expect_equal(round(rj, 2), -38.98)
+  expect_identical(money(rj, 1), "\u2212$39.0B")
+  expect_equal(round(rj_run, 3), -38.886)
+  expect_equal(round(rj_run, 1), rj_printed)   # printed -38.9
   # under (b) the two ends are the BSZ net constructed from Table 5 row 1 and the analytic
   # expectation of the NBER Monte Carlo, which the seeded run approximates
   expect_equal(eb$bsz_model, ep$value[ep$endpoint_id == "bsz_net_constructed"])
@@ -324,6 +359,10 @@ test_that("the headline is the two main estimates; the bridge's two ends under (
     html <- read_page(p)
     expect_true(grepl(sprintf('id="hl-bsz">%s<', money(eb$bsz_model, 1)), html, fixed = TRUE), label = p)
     expect_true(grepl(sprintf('id="hl-rjkdc">%s<', money(rj, 1)), html, fixed = TRUE), label = p)
+    # footnote 1 keeps the provenance of the paper's printed figure
+    expect_true(grepl(sprintf("The paper prints %s, the average of one seeded run of 100,000 draws. The exact average of the same formula is %s, used throughout this page",
+                              money(rj_printed, 1), money(rj, 2)), html, fixed = TRUE), label = paste(p, "footnote 1"))
+    expect_false(grepl("the header number", html, fixed = TRUE), label = p)
     expect_true(grepl("BSZ main estimate<sup>(<a [^>]*>)?1(</a>)?</sup>", html), label = p)
     expect_true(grepl("JR main estimate<sup>(<a [^>]*>)?1(</a>)?</sup>", html), label = p)
     expect_false(grepl("the gap on the common output", html, fixed = TRUE), label = p)
@@ -334,6 +373,12 @@ test_that("the headline is the two main estimates; the bridge's two ends under (
   D <- jsonlite::fromJSON(sub(";\\s*$", "", sub("^[^{]*", "", txt)), simplifyVector = FALSE)
   expect_equal(D$headline$bsz, eb$bsz_model)
   expect_equal(D$headline$rjkdc, rj)
+  expect_equal(D$headline$rjkdc_printed, rj_printed)
+  # the JR panel head and its "With these sliders" line read the same number at the start
+  ex_html <- read_page(explorer)
+  expect_true(grepl(sprintf('id="ph-rjkdc-main">%s<', money(rj, 1)), ex_html, fixed = TRUE))
+  expect_true(grepl(sprintf('id="now-rjkdc" aria-live="polite">%s<', money(eb$rauh_model, 1)), ex_html, fixed = TRUE))
+  expect_false(grepl("seeded run prints", ex_html, fixed = TRUE))
   B <- D$series$own$b$shapley
   expect_equal(B[[1]]$id, "bsz"); expect_equal(B[[1]]$value, eb$bsz_model)
   expect_equal(B[[length(B)]]$id, "nber"); expect_equal(B[[length(B)]]$value, eb$rauh_model)

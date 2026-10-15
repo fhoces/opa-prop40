@@ -38,7 +38,7 @@ own <- en[en$horizon_setting == "own", ]
 ea <- own[own$output == "a", ]; eb <- own[own$output == "b", ]
 epv <- function(id, col = "value") ep[[col]][ep$endpoint_id == id]
 mv  <- function(key) ex$meta$value[ex$meta$key == key]
-rj_main  <- epv("rauh_nber_npv", "contract_value")       # the JR main estimate (seeded run)
+rj_main  <- eb$rauh_own   # the JR main estimate: the exact expectation of the authors' model (author decision 2026-10-15)
 rj_print <- epv("rauh_nber_npv", "printed_value")
 bsz_print <- epv("bsz_tab5_row1", "printed_value")
 oi <- k$rjkdc$inputs
@@ -62,13 +62,17 @@ r_lo <- pct(mv("r_min_jr"), 1); r_hi <- pct(mv("r_max_jr"), 1)
 # The dial path (R/model.R dial_path()): the explorer's dials moved top to bottom, each to its
 # far end. The pseudo-equation reads it, as the explorer and the overview do.
 dp <- read_csv_plain(file.path(root, "comparison", "export", "r", "dial_path.csv"))
-# The three main differences are the path's three largest steps, in dial order, as in the
-# equation; the other steps are the smaller ones (eq_terms() in R/site.R).
+# The three main differences are the path's three largest steps, in dial order; the other
+# steps are the smaller ones. The equation groups the steps by box instead (eq_terms() in
+# R/site.R): D and q alone, the loss box added up, the other three added up.
 et <- eq_terms(dp)
-top3 <- dp[et$main, ]; rest <- dp[et$rest, ]
+big <- sort(order(-abs(dp$change))[1:3])
+top3 <- dp[big, ]; rest <- dp[-big, ]
 ps <- function(id) dp$change[dp$step_id == id]     # a dial's step on the path, output (b)
 three_syms <- sprintf("*%s*, *%s* and *%s*", top3$symbol[1], top3$symbol[2], top3$symbol[3])
 rest_n <- c("one", "two", "three", "four", "five", "six", "seven", "eight")[nrow(rest)]
+and_syms <- function(x) paste0(paste(sprintf("*%s*", head(x, -1)), collapse = ", "), " and ", sprintf("*%s*", tail(x, 1)))
+eq_d_q <- and_syms(dp$symbol[et$main]); eq_loss <- and_syms(dp$symbol[et$loss])
 
 # Ties to the pipeline: a drift fails the render instead of shipping.
 stopifnot(
@@ -80,7 +84,7 @@ stopifnot(
   abs(sum(dp$change) + gap_b) < 1e-9, identical(dp$step_id, EXPLORER_DIAL_ORDER),
   # the deck names these three as the main differences, in this order
   identical(top3$step_id, c("confirmed_departures", "litigation_survival", "horizon")),
-  round(rj_main, 1) == rj_print,
+  round(epv("rauh_nber_npv", "contract_value"), 1) == rj_print, abs(rj_main - epv("rauh_nber_npv")) < 1e-9,
   isTRUE(all.equal(mv("A_5"), annuity(sup$r, 5))))
 
 # R against the Python twin (comparison/export/py/), as in the report's "What reproduces".
@@ -235,7 +239,7 @@ from assets sold to pay it, minus the income tax lost to those who leave.<sup>1<
 
 Mean net present value. It is the wealth tax minus the income tax lost for ever, averaged over
 the authors' Monte Carlo (a simulation that draws the uncertain inputs at random many times
-and averages the results).
+and averages the results).<sup>2</sup>
 
 ]
 
@@ -245,7 +249,7 @@ value today (discounted). One analysis says the state
 gains about `r usd(eb$bsz_model, 0)`. The other says it loses about `r usd(-rj_main, 0)`.
 ]
 
-.footnote[<sup>1</sup> BSZ's own headline is the wealth tax alone. The net total is this OPA's choice, so both main estimates answer the same question. The BSZ overview discounts at `r r3`, and so does this deck's BSZ end ([the common output](#common-output)): both give `r usd(eb$bsz_model)`.]
+.footnote[<sup>1</sup> BSZ's own headline is the wealth tax alone. The net total is this OPA's choice, so both main estimates answer the same question. The BSZ overview discounts at `r r3`, and so does this deck's BSZ end ([the common output](#common-output)): both give `r usd(eb$bsz_model)`. <sup>2</sup> The paper prints `r usd(rj_print)`, the average of one seeded run of 100,000 draws. The exact average of the same formula is `r usd(rj_main, 2)`, used throughout this deck.]
 
 ---
 name: common-output
@@ -456,7 +460,8 @@ ggplot(wf) +
 
 .small[
 Each bar moves one dial of the BSZ panel to its JR end, top to bottom. The equation on the next
-slide shows three of these steps, `r three_syms`, and combines the other `r rest_n` there. Only dropping the BSZ `r pct(sup$alpha, 0)` avoidance allowance raises the estimate,
+slide shows `r eq_d_q` on their own. It adds up the four loss-box steps, `r eq_loss`, into one
+term, and the other three into another. Only dropping the BSZ `r pct(sup$alpha, 0)` avoidance allowance raises the estimate,
 because the JR analysis applies none.
 ]
 
@@ -466,8 +471,8 @@ name: pseudo-eq
 # What separates the two numbers
 
 ```{r pseudo, results="asis"}
-# the three largest terms of the dial path in the explorer's order, then the other steps added
-# up (eq_terms() in R/site.R; the same equation as the explorer and the overview)
+# D and q of the dial path, the loss box's four steps added up, then the other three added up
+# (eq_terms() in R/site.R; the same equation as the explorer and the overview)
 et <- eq_terms(dp)
 term <- function(j) with(et$terms[j, ], sprintf('<span class="eq-step"><span class="op">%s</span><span class="term"><b>%s</b><small>%s</small></span></span>',
                             if (change < 0) "&minus;" else "+", money(abs(change), 1), esc(label)))
@@ -484,7 +489,7 @@ exactly; "about equal" is only rounding. The JR estimate here is the exact avera
 authors' Monte Carlo; their seeded run prints `r usd(rj_print)`.
 ]
 
-The next three slides take these three steps, `r three_syms`, in dial
+The next three slides take the three largest steps, `r three_syms`, in dial
 order. Each says what both analyses assume, why, and what kind of claim it is:
 
 .small[

@@ -2610,10 +2610,10 @@ skipped
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/tests/testthat/test-site.R"><code>test-site.R</code></a>
 </td>
 <td style="text-align:right;">
-14
+15
 </td>
 <td style="text-align:right;">
-367
+541
 </td>
 <td style="text-align:right;">
 0
@@ -2644,10 +2644,10 @@ skipped
 <b>total</b>
 </td>
 <td style="text-align:right;">
-44
+45
 </td>
 <td style="text-align:right;">
-666
+840
 </td>
 <td style="text-align:right;">
 0
@@ -2659,7 +2659,7 @@ skipped
 </tbody>
 </table>
 </div>
-<p>Run while this page was rendered: <strong>666 expectations passed, 0 failed</strong>, in 44 test blocks. The files check:</p>
+<p>Run while this page was rendered: <strong>840 expectations passed, 0 failed</strong>, in 45 test blocks. The files check:</p>
 <ul>
 <li><code>test-endpoints.R</code>: each end of the bridge against the number its authors print (BSZ Table 5 row 1, the NBER mean NPV; NBER is the National Bureau of Economic Research, which circulates working papers), plus the earlier figures the code still checks: the headline of GGSS (the Galle, Gamage, Saez and Shanske expert report of July 2026, written in support of the measure), behind the BSZ analysis, and the March 2026 version of the JR analysis, where the bridge’s disputed-input steps end.</li>
 <li><code>test-shapley.R</code>: the Shapley steps sum exactly to the gap in every setting, and match a brute-force average over orders (a Shapley value: a step’s effect averaged over every order the inputs could be switched in, so the steps add up to the gap).</li>
@@ -2725,7 +2725,7 @@ every number the page shows, written to export/r/*.csv
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/R/site.R"><code>R/site.R</code></a>
 </td>
 <td style="text-align:right;">
-619
+666
 </td>
 <td style="text-align:left;">
 renders the overview page (index.html), the explorer (site/explorer/index.html) and their data file from site/index.template.html and site/explorer.template.html
@@ -2780,7 +2780,7 @@ score_common() and the slider rule ported to JavaScript; the explorer’s panels
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/site/repro.qmd"><code>site/repro.qmd</code></a>
 </td>
 <td style="text-align:right;">
-860
+863
 </td>
 <td style="text-align:left;">
 the reproduction report
@@ -2791,7 +2791,7 @@ the reproduction report
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/site/slides/slides.Rmd"><code>site/slides/slides.Rmd</code></a>
 </td>
 <td style="text-align:right;">
-711
+717
 </td>
 <td style="text-align:left;">
 the slide deck: what is in the report and where the main differences come from (xaringan; every number read from export/r/)
@@ -3050,7 +3050,7 @@ public-government-document (not committed per repo policy)
 <ul>
 <li><strong>The September 2026 ceiling has three values.</strong> The script draws revenue up to the literal 72; the README prints 72.06; the person-level file sums to 72.05 (the JR analysis’s mismatch 4). The comparison uses the script’s 72, so the common function returns the authors’ own expected revenue exactly and the bridge has no model-difference step.</li>
 <li><strong>The litigation weight has no multiplier in the code.</strong> The README applies q = 0.50 to the recognized base; the script instead draws revenue uniformly between 0 and the ceiling, whose mean is the same half (mismatch 5). The comparison reads that mean as the weight <code>q</code>.</li>
-<li><strong>The printed NPV is one run, not the expectation.</strong> The exact expectation of the NBER Monte Carlo is −$38.98B against a printed −$38.9B. The bridge’s JR end is that expectation, with the authors’ random rate replaced by the one rate worth the same, 2.73% (<a href="repro.html#the-discount-rate">the report</a>). The JR pipeline reproduces the seeded run as −$38.886B, the JR main estimate.</li>
+<li><strong>The printed NPV is one run, not the expectation.</strong> The exact expectation of the NBER Monte Carlo is −$38.98B against a printed −$38.9B. The bridge’s JR end is that expectation, with the authors’ random rate replaced by the one rate worth the same, 2.73% (<a href="repro.html#the-discount-rate">the report</a>). The JR pipeline reproduces the seeded run as −$38.886B. The comparison’s pages use the exact expectation as the JR main estimate.</li>
 <li><strong>Both analyses’ discount factors are right.</strong> One reading magnifies the loss by a factor 67 (1/1.5%), BSZ say 33 (1/3%). The first is the rate the JR text anchors its range on, the second the mean rate of its Monte Carlo (<code>DISPUTES.md</code>, row 2). Averaged over the draw the perpetuity factor is ln(3)/0.03 = 36.6, the value of one rate of 2.73%, the JR end of the comparison’s rate dial (row 10).</li>
 <li><strong>Two March disputes are closed in the BSZ analysis by August</strong>: Larry Ellison’s exclusion and the non-US-citizen residents (rows 7 and 8).</li>
 <li><strong>One Hoopes bar could not be traced.</strong> His confirmed-departures bar matches no number in the March 2026 version of the JR analysis (see the <a href="repro.html#the-hoopes-comparison">report’s Hoopes section</a>).</li>

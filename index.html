@@ -36,7 +36,7 @@
   .site-nav .nav-row { display: block; }
   .eq-box { margin: 22px 0 6px; padding: 14px 16px; border: 1px solid var(--rule); border-radius: 6px; background: var(--panel, #fff); }
   .eq-box h2 { margin-top: 0; }
-  .pseudo-eq { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 6px 8px; }
+  .pseudo-eq { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: center; gap: 6px 8px; }
   .pseudo-eq .term { display: inline-flex; flex-direction: column; align-items: center; min-width: 5em; max-width: 8.5em; text-align: center; }
   .pseudo-eq .term b { font-family: var(--serif); font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .pseudo-eq .term small { font-size: 11.5px; color: var(--ink-2); line-height: 1.3; }
@@ -299,7 +299,7 @@
     <a href="bsz-analysis/site/">BSZ analysis</a> (Boll, Saez and Zucman, NBER, August 2026)
     finds that it raises money for the state. The
     <a href="rjkdc-analysis/site/">JR analysis</a> (Jaros and Rauh, NBER, September 2026) finds
-    that it leaves the state $38.9B poorer, because billionaires who leave stop paying
+    that it leaves the state $39.0B poorer, because billionaires who leave stop paying
     California income tax for ever. This page puts both on one definition and shows which
     assumptions make the difference. It follows the
     <a href="https://doi.org/10.1093/scipol/scaa067">Open Policy Analysis</a> (OPA) framework.
@@ -315,7 +315,7 @@
     </div>
     <div class="hl">
       <span class="name">JR main estimate<sup><a href="#fn1" id="fnref1-jr">1</a></sup></span>
-      <span class="value" id="hl-rjkdc">−$38.9B</span>
+      <span class="value" id="hl-rjkdc">−$39.0B</span>
       <span class="def">Net present value: the wealth tax minus the income tax lost for ever, in today's dollars, averaged over the authors' model runs (Jaros and Rauh, September 2026)</span>
     </div>
   </div>
@@ -324,15 +324,15 @@
 
 <section class="eq-box" id="what-separates" aria-labelledby="eq-title">
   <h2 id="eq-title">What separates the two numbers</h2>
-<div class="pseudo-eq" role="img" aria-label="The BSZ estimate, $106.8B, minus $28.2B for billionaires already departed (d), minus $41.4B for chance the tax does not survive litigation (q), minus $58.9B for how long the income tax loss lasts (h), minus $17.3B for the other six steps together, gives about the JR estimate, −$39.0B.">
+<div class="pseudo-eq" role="img" aria-label="The BSZ estimate, $106.8B, minus $28.2B for billionaires already departed (d), minus $41.4B for chance the tax does not survive litigation (q), minus $73.7B for lost income tax (h, f, c, r), minus $2.5B for the other three steps together (w, a, three minor inputs), gives about the JR estimate, −$39.0B.">
   <span class="term" data-steps="0"><b>$106.8B</b><small>BSZ estimate</small></span>
   <span class="eq-step"><span class="op">&minus;</span><span class="term" data-steps="2"><b>$28.2B</b><small>Billionaires already departed (D)</small></span></span>
   <span class="eq-step"><span class="op">&minus;</span><span class="term" data-steps="4"><b>$41.4B</b><small>Chance the tax does not survive litigation (q)</small></span></span>
-  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-steps="7"><b>$58.9B</b><small>How long the income tax loss lasts (H)</small></span></span>
-  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-steps="1 3 5 6 8 9"><b>$17.3B</b><small>The other six steps together</small></span></span>
+  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-steps="5 6 7 8"><b>$73.7B</b><small>Lost income tax (H, f, C, r)</small></span></span>
+  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-steps="1 3 9"><b>$2.5B</b><small>The other three steps together (W, a, three minor inputs)</small></span></span>
   <span class="eq-step"><span class="op">&asymp;</span><span class="term" data-end="9"><b>−$39.0B</b><small>JR estimate</small></span></span>
 </div>
-  <p class="eq-note">Move the <a href="comparison/site/explorer/">BSZ panel</a>'s dials top to bottom, each to its far end. The three terms with a symbol are the steps for D, q and H of that walk, and the fourth is the other six steps added up (W, a, f, C, r and three minor inputs). The JR estimate is the exact mean of the authors' Monte Carlo. Their seeded run prints −$38.9B, the header number. The <a href="comparison/site/repro.html#the-bridge">report</a> gives all nine steps.</p>
+  <p class="eq-note">Move the <a href="comparison/site/explorer/">BSZ panel</a>'s dials top to bottom, each to its far end. The D and q terms are those two steps of that walk. Lost income tax is the four loss-box dials of the walk added up (f, C, H and r). The last term is the other three steps added up (W, a and three minor inputs). The <a href="comparison/site/repro.html#the-bridge">report</a> gives all nine steps.</p>
 </section>
 
 <div class="section-title">
@@ -410,7 +410,7 @@
     <span class="kicker">JR analysis: a net present value estimate</span>
     <h3>Jaros and Rauh, NBER c15504 (Sep 2026) &rarr;</h3>
     <p>Person-by-person base, observed departures, a litigation weight, lost income tax for ever.</p>
-    <span class="headline">Main estimate, mean NPV: −$38.9B</span>
+    <span class="headline">Main estimate, mean NPV: −$39.0B</span>
     <div class="card-icon-box" aria-hidden="true"><img src="assets/opa/opa-all.png" alt=""></div>
   </a>
 </div>
@@ -522,7 +522,7 @@ the JR discount rate is the one rate worth the same as the authors' random draw 
   <p class="fn" id="fn1"><sup>1</sup> Each analysis's own main estimate. The BSZ number is this
     OPA's net total over 5 years at 3%: the $103.8B wealth tax (Table 5 row 1), plus income
     tax from asset sales, minus income tax lost to leavers. BSZ's own headline is the wealth tax
-    alone. The JR number is the authors' mean net present value in perpetuity. The
+    alone. The JR number is the authors' mean net present value in perpetuity. The paper prints −$38.9B, the average of one seeded run of 100,000 draws. The exact average of the same formula is −$38.98B, used throughout this page (<a href="comparison/site/repro.html#the-main-estimate">report</a>, <a href="rjkdc-analysis/site/repro.html#step-npv">Step 6 of the JR analysis's report</a>). The
     <a href="comparison/site/repro.html#the-main-estimate">report</a> gives the details.</p>
 </section>
 

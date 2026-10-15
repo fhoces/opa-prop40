@@ -1,6 +1,6 @@
 # The dial path (author decision 2026-10-15): the nine steps are what the BSZ panel's dials
-# change when moved top to bottom, each to its far end. The pseudo-equation shows the three
-# largest and the other six added up (eq_terms() in R/site.R).
+# change when moved top to bottom, each to its far end. The pseudo-equation shows D and q, the
+# loss box's four steps added up, and the other three added up (eq_terms() in R/site.R).
 root <- comparison_root()
 rdir <- file.path(root, "comparison", "export", "r")
 pdir <- file.path(root, "comparison", "export", "py")
