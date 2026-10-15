@@ -172,7 +172,7 @@ own_a <- subset(rd("ends.csv"), horizon_setting == "own" & output == "a")
 `loss.csv`'s last column, `net_at_nber_revenue_perpetuity`, nets each loss in perpetuity
 against the JR analysis's expected revenue (`r usd(own_a$rauh_own)`, in `ends.csv` and
 `anchors.csv`); it is the last column of the comparison overview's
-[table of yearly income tax losses](../../index.html#neutral-material).
+[table of yearly income tax losses](../../index.html#other-loss-estimates).
 
 `comparison/export/py/` holds the same files from the Python twin (without `inputs.csv`).
 The explorer reads `assets/comparison-data.js`, written by `R/site.R`
@@ -243,7 +243,7 @@ The full crosswalk of disputed inputs, with every page reference checked against
 - **Two March disputes are closed in the BSZ analysis by August**: Larry Ellison's exclusion
   and the non-US-citizen residents (rows 7 and 8).
 - **One Hoopes bar could not be traced.** His confirmed-departures bar matches no number in
-  the March 2026 version of the JR analysis (see the [overview page](../../index.html#hoopes)).
+  the March 2026 version of the JR analysis (see the [report's Hoopes section](repro.html#the-hoopes-comparison)).
 
 ::: {.site-nav}
 Comparison of the two analyses of California Proposition 40:

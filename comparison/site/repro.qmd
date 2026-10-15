@@ -43,6 +43,8 @@ own <- en[en$horizon_setting == "own", ]
 ea <- own[own$output == "a", ]; eb <- own[own$output == "b", ]
 epv <- function(id, col = "value") ep[[col]][ep$endpoint_id == id]
 steps <- bridge_steps()
+# A(H): what 1 a year for H years is worth today, averaged over the JR rate range
+ann <- function(H) expected_annuity(H, pick(k$rjkdc$inputs, "rauh_mc_r_min"), pick(k$rjkdc$inputs, "rauh_mc_r_max"))
 # Money in running text: a dollar sign in markdown starts a formula, so escape it.
 usd <- function(x, d = 1, signed = FALSE) gsub("$", "\\$", money(x, d, signed), fixed = TRUE)
 # Two pandoc traps in raw HTML tables: a bare dollar sign can pair with the next one into
@@ -93,55 +95,52 @@ twin_fold <- function(exhibit, fns, py = fns) {
 }
 ```
 
-```{r}
-#| results: asis
-twin_html("the setup",
-  grep("^#\\|", knitr::knit_code$get("setup"), value = TRUE, invert = TRUE),
-  c("# The page is built with R, so the Python twin has no setup here: it runs on its own.",
-    "# From the repository root (Python 3.11 with scipy):",
-    "#",
-    "#   python3 comparison/py/bridge.py      # writes comparison/export/py/",
-    "#",
-    "# export/py/ holds the same tables this report reads from export/r/, and",
-    "# comparison/tests/testthat/test-parity.R checks every number against R's to 1e-9.",
-    "import pandas as pd",
-    "ends = pd.read_csv(\"comparison/export/py/ends.csv\")   # the two ends of every bridge"))
-```
-
 ## Introduction
 
 ::: {.report-intro}
 ![](assets/opa/opa-details.png){.opa-figure}
 
-Proposition 40, the Billionaire Tax Act, would tax people who lived in California on
-1 January 2026 and are worth \$1 billion or more: once, at 5% of their whole net worth as
-valued on 31 December 2026, paid in five equal yearly installments. Two analyses estimate it.
-This report cites each in its latest version. The [BSZ analysis](../../bsz-analysis/site/)
-(Boll, Saez and Zucman, NBER WP 35218, August 2026; NBER is the National Bureau of Economic
-Research, which circulates working papers) estimates about \$100 billion of wealth
-tax (`r usd(epv("bsz_tab5_row1", "printed_value"), 0)` in its Table 5 row 1, reproduced here
-as **`r usd(epv("bsz_tab5_row1"))`**), and **`r usd(eb$bsz_model)`** once the income tax the
-tax changes is added in. The [JR analysis](../../rjkdc-analysis/site/) (Jaros and Rauh,
-NBER chapter c15504, Tax Policy and the Economy vol. 41, September 2026, revising the March 2026 version by Rauh, Jaros, Kearney, Doran
-and Cosso) finds that the tax would collect about
-`r usd(pick(k$docs, "nber_headline_revenue"), 0)` by its own account but leave the state
-**`r usd(-epv("rauh_nber_npv", "printed_value"))`** poorer in today's dollars (a net present
-value of `r usd(epv("rauh_nber_npv", "printed_value"))`), because billionaires who leave stop
-paying California income tax for ever. Today's dollars (present value): what money received
-or lost in future years is worth now. The three inputs that separate the two most: the chance
-that the tax survives a court challenge (counted in full by BSZ, at one half by JR), whether the
-lost income tax is counted for five years (BSZ) or for ever (JR), and how much of billionaires'
-income tax leaves with those who go. The two numbers answer different questions, so neither can be read against the other
-directly. This report puts both on one common output and walks from one to the other, one
-disputed input at a time.
+Proposition 40 would tax Californians worth \$1 billion or more once, at 5% of their net
+worth. The [BSZ analysis](../../bsz-analysis/site/) estimates about
+`r usd(epv("bsz_tab5_row1", "printed_value"), 0)` of wealth tax. The
+[JR analysis](../../rjkdc-analysis/site/) finds the state
+**`r usd(-epv("rauh_nber_npv", "printed_value"))`** poorer in today's dollars, because
+billionaires who leave stop paying California income tax for ever. Three inputs separate the
+two most: the chance the tax survives a court challenge, how long the lost income tax is
+counted, and the share of it that leaves. This report puts both on one output and walks from
+one to the other.
+
+<details class="report-fold"><summary>Versions and citations</summary>
+
+Proposition 40, the Billionaire Tax Act, taxes people who lived in California on 1 January
+2026 and are worth \$1 billion or more. The tax is 5% of their whole net worth as valued on
+31 December 2026, paid in five equal yearly installments. This report cites each analysis in
+its latest version.
+
+The BSZ analysis is Boll, Saez and Zucman, NBER WP 35218 (August 2026). NBER is the National
+Bureau of Economic Research, which circulates working papers. Its Table 5 row 1 prints
+`r usd(epv("bsz_tab5_row1", "printed_value"), 0)` of wealth tax, reproduced here as
+**`r usd(epv("bsz_tab5_row1"))`**. With the income tax the tax changes added in, the net
+total is **`r usd(eb$bsz_model)`**.
+
+The JR analysis is Jaros and Rauh, NBER chapter c15504, Tax Policy and the Economy vol. 41
+(September 2026). It revises the March 2026 version by Rauh, Jaros, Kearney, Doran and Cosso.
+By its own account the tax would collect about
+`r usd(pick(k$docs, "nber_headline_revenue"), 0)`, for a net present value of
+`r usd(epv("rauh_nber_npv", "printed_value"))`.
+
+Today's dollars (present value) means what money received or lost in future years is worth
+now.
+
+</details>
 
 This report is part of the comparison's [Open Policy Analysis](https://doi.org/10.1093/scipol/scaa067) (OPA):
 
 - **Open Output**: [the explorer](explorer/index.html), with the two main estimates on the
-  net fiscal effect. Its two panels of sliders, one per disputed input that moves the
-  estimate, move each input in five steps from one analysis's value to the other's, and the
-  browser computes each panel's estimate with `explorer/model.js`, a copy of `score_common()`
-  that a test checks against the R values. The step-by-step bridge is in this report only
+  net fiscal effect. Its two panels have one slider per disputed input that moves the
+  estimate, from one analysis's value to the other's. The browser computes each panel's
+  estimate with `explorer/model.js`, a copy of `score_common()` that a test checks against the
+  R values. The explorer shows the three largest steps; the full bridge is in this report.
 - **Open Analysis**: this document
 - **Open Materials**: [the repository folder](https://github.com/fhoces/opa-prop40/tree/main/comparison), every script, test and data file (guide: [the materials page](materials.html))
 :::
@@ -234,7 +233,10 @@ columns combined here: the `r usd(ea$bsz_model)` revenue, plus
 its income tax loss. For the JR analysis, both outputs are the expectations of the
 authors' own Monte Carlo, computed exactly rather than by drawing.
 
-# The two ends, estimated on it {#the-two-ends}
+# One function, both ends {#the-two-ends}
+
+One function returns both analyses' numbers exactly: **`r usd(eb$bsz_model)`** at the BSZ
+inputs and **`r usd(eb$rauh_own)`** at the JR inputs, on the net fiscal effect.
 
 One estimating function, `score_common()`, takes every disputed input as an argument. Each
 argument takes either the BSZ analysis's value or the JR analysis's. At the all-BSZ setting
@@ -243,12 +245,21 @@ setting it must return the JR end, the exact mean of the September 2026 version'
 The JR values are those of that version, the latest (its code and person-level file are in the
 authors' public repository).
 
-In words, the function computes seven quantities in order. Each argument is written as
+In words, the function computes seven quantities in order.
+
+<details class="report-fold"><summary>The seven quantities, step by step</summary>
+
+Each argument is written as
 `score_common()` names it and, where a step of the bridge switches it, followed by that step's
 title in quotation marks; `tau`, `m`, `g`, `t_cg` and the discount-rate range are shared by
 both ends.
 
-1. []{#step-revenue}`R0 = tau * (W_core + W_noncit) * (1 - re)`: the revenue with no behavioural response.
+[]{#step-revenue}Steps 1 to 3 give the wealth tax collected, the explorer's
+5% × (W − D) × (1 − a) × q. In the code, 5% is `tau`, and W is
+`(W_core + W_noncit) * (1 - re)`: the list's wealth with two of the minor inputs. D and q keep
+their names, and a is `alpha`.
+
+1. `R0 = tau * (W_core + W_noncit) * (1 - re)`: the revenue with no behavioural response.
    `tau` is the tax rate; `W_core` (the base) and `W_noncit` (the non-US-citizen residents)
    are in billions of dollars ("Forbes source: which list and valuation date", "Non-US-citizen residents");
    `re` is the share of the revenue the real-estate deduction removes ("Real-estate
@@ -267,7 +278,11 @@ both ends.
 4. `X = WT * s * g * t_cg`: the extra income tax from assets sold to pay. `s` is the share of
    the tax paid by selling assets ("Extra income tax from selling assets to pay"), `g` the
    capital-gain share of a sale and `t_cg` the top California rate on realized gains.
-5. []{#step-loss}`f = alpha*m + own * L / C + f0`: the share of billionaire income tax lost ("Share of
+[]{#step-loss}Steps 5 and 6 give the income tax lost, the explorer's f × C × A(H). A(H) is
+`E_r[annuity(r, H)]`, about `r formatC(ann(5), format = "f", digits = 1)` for 5 years and
+`r formatC(ann(Inf), format = "f", digits = 0)` for ever.
+
+5. `f = alpha*m + own * L / C + f0`: the share of billionaire income tax lost ("Share of
    billionaire income tax lost"). The first term is the BSZ movers' share (`m` is the part of
    the avoidance allowance that is people leaving California). Under the BSZ rule (`own = 1`)
    the leavers' own income tax, `L` dollars a year as BSZ Table 5 counts it for the people at
@@ -281,7 +296,13 @@ both ends.
    discount rate `r`, averaged over the rate range.
 7. `NET = WT + X - PV`: output (b), the net fiscal effect.
 
-The table checks each end against the number its authors print.
+</details>
+
+Each end matches the number its authors print, up to rounding and, for the JR end, the
+sampling error of one Monte Carlo run.
+
+<details class="report-fold"><summary>The endpoint checks</summary>
+
 
 ```{r}
 #| results: asis
@@ -304,6 +325,8 @@ Every difference is a rounding of the printed number. The NBER mean NPV is the e
 of the Monte Carlo (`r usd(eb$rauh_own, 2)`), while the authors print one run of it
 (`r usd(epv("rauh_nber_npv", "printed_value"))`).
 
+</details>
+
 ## The two main estimates {#the-main-estimate}
 
 ```{r}
@@ -324,6 +347,12 @@ gap <- v_sup[["a"]] - nber[["a"]]
 stopifnot(isTRUE(all.equal(v_sup[["b"]], eb$bsz_model)), isTRUE(all.equal(nber[["b"]], eb$rauh_own)),
           isTRUE(all.equal(v_sup[["a"]], ea$bsz_model)), isTRUE(all.equal(nber[["a"]], ea$rauh_own)))
 ```
+
+The BSZ main estimate is **`r usd(eb$bsz_model)`** and the JR main estimate
+**`r usd(epv("rauh_nber_npv", "contract_value"))`**. On the common output the two ends are
+`r usd(eb$bsz_model)` and `r usd(eb$rauh_own)`, a gap of **`r usd(eb$bsz_model - eb$rauh_own)`**.
+
+<details class="report-fold"><summary>Steps 1 to 4, and output (a)</summary>
 
 **Step 1: the BSZ main estimate, the BSZ end on (b).** At the all-BSZ inputs, the wealth tax
 is the tax rate times the base, less the avoidance allowance. The base is the
@@ -367,6 +396,8 @@ of zero and `r usd(pick(oi, "nber_ceiling_hardcoded"), 0)`; the authors print "a
 `r usd(dv("nber_headline_revenue"), 0)`", p.1). The gap is `r usd(gap, 3)`, split the same
 way into the steps.
 
+</details>
+
 ```{r}
 b_a <- br[br$horizon_setting == "own" & br$output == "a", ]
 b_b <- br[br$horizon_setting == "own" & br$output == "b", ]
@@ -383,6 +414,13 @@ twin_fold("the two main estimates", c("bridge_inputs", "score_common", "rauh_nbe
 ```
 
 # The bridge, step by step {#the-bridge}
+
+Three inputs explain most of the `r usd(gap_b)` gap on the net fiscal effect: the chance the
+tax survives litigation (`r usd(-b_b$shapley[b_b$step_id == "litigation_survival"])`), the
+horizon (`r usd(-b_b$shapley[b_b$step_id == "horizon"])`) and the share of income tax lost
+(`r usd(-b_b$shapley[b_b$step_id == "income_loss_share"])`). The other
+`r nrow(b_b) - 3` together explain
+`r usd(-sum(b_b$shapley[!b_b$step_id %in% c("litigation_survival", "horizon", "income_loss_share")]))`.
 
 Each step switches one input from the BSZ value to the JR value of its September 2026
 version (the share-lost step switches its two arguments together). Because the inputs interact (a departure matters more when the base is larger), the size of a step depends on
@@ -426,7 +464,6 @@ bt <- function(o) {
   scroll(show(rbind(top, rows, extra, bot)))
 }
 cat("\n**Output (b), net fiscal effect, each analysis's own horizon.** The horizon step switches from the BSZ analysis's 5 years to a perpetuity.\n\n"); bt("b")
-cat("\n**Output (a), gross revenue, the secondary output.** It does not depend on the horizon.\n\n"); bt("a")
 ```
 
 Reading the (b) table: the three largest Shapley steps are
@@ -444,6 +481,13 @@ so dropping the BSZ analysis's `r pct(sup$alpha)` adds
 `r usd(b_b$shapley[b_b$step_id == "avoidance"], 1, TRUE)` on (b) and
 `r usd(b_a$shapley[b_a$step_id == "avoidance"], 1, TRUE)` on (a).
 
+<details class="report-fold"><summary>Output (a), gross revenue</summary>
+
+```{r}
+#| results: asis
+cat("\n**Output (a), gross revenue, the secondary output.** It does not depend on the horizon.\n\n"); bt("a")
+```
+
 Reading the (a) table: the three largest Shapley steps are
 ```{r}
 #| results: asis
@@ -457,6 +501,8 @@ cat(sprintf("Order matters most for %s: %s averaged over all orders, %s in the o
             tolower(om$title), usd(om$shapley, 1, TRUE), usd(om$sequential, 1, TRUE)))
 ```
 
+</details>
+
 ```{r}
 #| results: asis
 twin_fold("the waterfall", "build_series", py = character(0))
@@ -464,8 +510,8 @@ twin_fold("the waterfall", "build_series", py = character(0))
 
 ```{r}
 #| label: fig-waterfall
-#| fig-width: 9
-#| fig-height: 4.6
+#| fig-width: 6
+#| fig-height: 5
 #| fig-cap: "Output (b), Shapley steps, each analysis's own horizon."
 library(ggplot2)
 B <- build_series(ex)$own$b$shapley
@@ -482,10 +528,11 @@ ggplot(wf) +
   geom_rect(aes(xmin = i - 0.38, xmax = i + 0.38, ymin = pmin(y0, y1), ymax = pmax(y0, y1), fill = fill)) +
   scale_fill_manual(values = c("an analysis's estimate" = "#5b6873", "model difference" = "#a8b2bb",
                                "step that raises it" = "#1f6fce", "step that lowers it" = "#eb6834"), name = NULL) +
-  scale_x_continuous(breaks = wf$i, labels = wf$short) +
-  labs(x = NULL, y = "$ billion") + theme_minimal(base_size = 11) +
-  theme(axis.text.x = element_text(angle = 40, hjust = 1), legend.position = "bottom",
-        panel.grid.major.x = element_blank())
+  # horizontal bars, the BSZ estimate at the top, so the labels read on a phone
+  scale_x_reverse(breaks = wf$i, labels = wf$short) + coord_flip() +
+  labs(x = NULL, y = "$ billion") + theme_minimal(base_size = 12) +
+  guides(fill = guide_legend(nrow = 2)) +
+  theme(legend.position = "bottom", panel.grid.major.y = element_blank(), panel.grid.minor = element_blank())
 ```
 
 ## Which revenue of the JR analysis the steps reach {#which-revenue}
@@ -493,6 +540,9 @@ ggplot(wf) +
 The September 2026 version prints two revenue figures. On output (a) the steps reach the one
 consistent with its mean NPV, the expected revenue in the same Monte Carlo, because it is the
 revenue that NPV assumes. Using the other would add a further step of the size shown.
+
+<details class="report-fold"><summary>The two revenue figures</summary>
+
 
 ```{r}
 #| results: asis
@@ -503,12 +553,14 @@ twin_fold("the candidates", "build_all")
 #| results: asis
 an <- ex$anchors
 scroll(show(data.frame(
-  Candidate = paste0(esc(sub("behind the -?[0-9.]+ mean NPV", "behind that version's mean NPV", an$label)),
+  Candidate = paste0(esc(sub("Expected WT", "Expected wealth tax", sub("behind the -?[0-9.]+ mean NPV", "behind that version's mean NPV", an$label), fixed = TRUE)),
                      ifelse(an$default, " (used)", "")),
   Value = vapply(an$value, money, "", digits = 2), Where = esc(an$where),
   `Extra step vs the bridge end` = vapply(an$value - an$value[an$default], function(z) if (abs(z) < 1e-9) "none" else money(z, 2, TRUE), ""),
   check.names = FALSE)))
 ```
+
+</details>
 
 # The disputed inputs {#the-disputed-inputs}
 
@@ -517,7 +569,8 @@ each analysis assumes, where it comes from, and what kind of claim it is. Each r
 of the bridge above and one dial in the explorer. The Row column numbers the disagreements as
 the project's crosswalk does (`comparison/DISPUTES.md`, which quotes each analysis on each
 point); row 7 has two parts here, and two rows cover inputs the crosswalk does not list. In the source columns, GGSS is the
-Galle, Gamage, Saez and Shanske expert report of July 2026, written in support of the measure.
+expert report by Galle, Gamage, Saez and Shanske (updated July 2026), on which the BSZ analysis
+builds.
 
 ```{r}
 #| results: asis
@@ -541,11 +594,12 @@ Taxation" (SSRN 6428578; SSRN is a preprint site), is the one published comparis
 estimates. It compares their earlier versions: the February 2026 text of the GGSS expert
 report, on which the BSZ analysis builds, and the March 2026 version of the JR analysis. His Figure 2 (p.6) is a
 waterfall from the "Galle estimate" to "Rauh net fiscal effect". It
-prints no values, so his column below is read off the chart
-(`comparison/tools/digitize_hoopes_fig2.py`, tick fit within
-`r usd(as.numeric(k$hoopes$tick_fit_max_resid[1]), 1)`). Beside it is the bridge read in his
-order, ending at the JR analysis's September 2026 version, which postdates his note. The overview page
-lists every difference between the two in its Hoopes section.
+prints no values, so his column below is read off the chart with
+`comparison/tools/digitize_hoopes_fig2.py`. The script fits the chart's dollar scale to its
+axis ticks, and the fitted scale misses a tick by at most
+`r usd(as.numeric(k$hoopes$tick_fit_max_resid[1]), 1)`. Beside his column is the bridge read
+in his order, ending at the JR analysis's September 2026 version, which postdates his note.
+The list below gives every difference between the two.
 
 ```{r}
 #| results: asis
@@ -571,13 +625,31 @@ The "Galle estimate" bar is clipped by the chart's frame at
 (p.3), so the reading uncertainty printed with it is the digitizer's default for every bar,
 not a measurement.
 
+The note discloses two things. Hoopes states his priors: "To lay my cards on the table, I
+believe that the world is complicated, and that when possible, empirical analysis should be
+done in as detailed a way as possible" (p.2). He also thanks "David Gamage for encouraging me
+to read both of these analyses carefully and compare the two" (p.1). Gamage is a GGSS
+co-author.
+
+### Every difference
+
+```{r}
+#| results: asis
+# hoopes_differences() is in R/site.R; a dollar sign in markdown starts a formula, so escape it
+cat(paste0("- ", gsub("$", "\\$", hoopes_differences(ex, k), fixed = TRUE)), sep = "\n")
+cat("\n")
+```
+
 # Every input, by origin {#every-input-by-origin}
 
 The OPA framework sorts every input by where it comes from: **data** (settled by observable
 facts), **research** (a published estimate), **guesswork** (asserted without data or a study
 behind it) and **scenario** (a choice of which world is estimated). Each bridge step carries
 one of these kinds (the tables above). The values the comparison transcribes from the PDFs
-itself, because neither contract carries them, are in `comparison/data/document-inputs.csv`:
+itself, because neither contract carries them, are in `comparison/data/document-inputs.csv`.
+
+<details class="report-fold"><summary>The transcribed inputs</summary>
+
 
 ```{r}
 #| results: asis
@@ -595,6 +667,8 @@ cnt <- table(k$docs$label)
 cat(sprintf("\n%d transcribed inputs: %s.\n", nrow(k$docs),
             paste(sprintf("%s %d", names(cnt), as.integer(cnt)), collapse = ", ")))
 ```
+
+</details>
 
 # What reproduces {#what-reproduces}
 
@@ -638,6 +712,24 @@ Rscript comparison/tests/testthat.R      # the test suite
 cd comparison/site && quarto render repro.qmd
 ```
 
+The setup code below reads the exports and defines the helpers every exhibit uses.
+
+```{r}
+#| results: asis
+twin_html("the setup",
+  grep("^#\\|", knitr::knit_code$get("setup"), value = TRUE, invert = TRUE),
+  c("# The page is built with R, so the Python twin has no setup here: it runs on its own.",
+    "# From the repository root (Python 3.11 with scipy):",
+    "#",
+    "#   python3 comparison/py/bridge.py      # writes comparison/export/py/",
+    "#",
+    "# export/py/ holds the same tables this report reads from export/r/, and",
+    "# comparison/tests/testthat/test-parity.R checks every number against R's to 1e-9.",
+    "import pandas as pd",
+    "ends = pd.read_csv(\"comparison/export/py/ends.csv\")   # the two ends of every bridge"))
+```
+
+
 ::: {.site-nav}
 Comparison of the two analyses of California Proposition 40:
 [Overview](../../index.html) &middot; Open Output: [Explorer](explorer/index.html) &middot; Open Analysis: Report (here) and [Slides](slides/slides.html) &middot;
@@ -660,6 +752,16 @@ details.twin.show-py .lang-py { display: block; }
 details.twin.show-py .lang-r { display: none; }
 </style>
 <script>
+// A link to an anchor inside a fold (the explorer's "more" links, #step-revenue and
+// #step-loss) opens the fold first.
+function openTo(id) {
+  var el = id && document.getElementById(decodeURIComponent(id));
+  if (!el) return;
+  for (var d = el.closest("details"); d; d = d.parentElement.closest("details")) d.open = true;
+  el.scrollIntoView();
+}
+window.addEventListener("hashchange", function () { openTo(location.hash.slice(1)); });
+openTo(location.hash.slice(1));
 document.querySelectorAll("details.twin > summary a.lang").forEach(function (a) {
   a.addEventListener("click", function (e) {
     e.preventDefault(); e.stopPropagation();
