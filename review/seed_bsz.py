@@ -78,7 +78,7 @@ def main():
             outputs=f"the text 'main estimate ${main_est:.1f}B' and the nine-row outcome table",
             method_ref="Display only. The definition under the headline number (lines 219-225) is the method; footnote 1 says it is this OPA's choice, not the authors'.",
             method_status="plumbing",
-            r=loc("bsz-analysis/site/explorer/index.html", "render(): pick the row, print the main estimate", [485, 503], language="javascript"),
+            r=loc("bsz-analysis/site/explorer/index.html", "render(): pick the row, print the main estimate", [514, 554], language="javascript"),
             py=None,
             targets=None,
         ),
