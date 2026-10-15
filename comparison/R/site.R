@@ -104,6 +104,8 @@ EXPLORER_BOXES <- list(
 DIAL_SYMBOLS <- c(base_list = "W", confirmed_departures = "D", avoidance = "a",
                   litigation_survival = "q", income_loss_share = "f", income_level = "C",
                   horizon = "H")
+# One or two words shown under a symbol (author instruction: f, C and H).
+DIAL_WORDS <- c(income_loss_share = "share lost", income_level = "yearly tax", horizon = "years")
 
 # The bars of every view of the bridge, in display order: the BSZ analysis (August 2026,
 # Table 5 row 1), one step per disputed input (BSZ value to the JR value of its September
@@ -273,7 +275,9 @@ render_site <- function(root = comparison_root(),
       '<output class="sl-cur" for="%1$s-%2$s">%12$s</output></span><span class="sl-end sl-hi">%7$s</span></div>\n',
       '          <span class="sl-note"></span>\n',
       '        </li>'),
-      panel, id, if (sym) paste0('<span class="sym">', esc(name), '</span>') else esc(name),
+      panel, id, if (sym) paste0('<span class="sym">', esc(name), '</span>',
+                                 if (!is.na(DIAL_WORDS[id])) paste0('<span class="sym-word">', DIAL_WORDS[[id]], '</span>') else "")
+                 else esc(name),
       if (sym) paste0('<span class="sr">', esc(title), '</span>') else esc(title), esc(tip), bsz_txt, rj_txt, as.integer(max),
       if (rtl) " is-rtl" else "", ticks, if (rtl) ' dir="rtl"' else "",
       if (rtl) rj_txt else bsz_txt, if (sym) " has-sym" else "")
