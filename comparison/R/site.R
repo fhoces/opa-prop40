@@ -662,7 +662,10 @@ render_site <- function(root = comparison_root(),
       "The BSZ estimate, %s, %s, gives about the JR estimate, %s.",
       money(eb$bsz_model, 1), paste(vapply(seq_len(nrow(et$terms)), say, ""), collapse = ", "),
       money(eb$rauh_model, 1))), '"'),
-    sprintf("<b>%s</b><small>%s</small>", eq_amounts, esc(eq_labels)),
+    # the overview's labels drop the bracketed dial letters (author request 2026-10-15): the
+    # letters name the explorer's dials, which the overview does not show
+    sprintf("<b>%s</b><small>%s</small>", eq_amounts,
+            esc(if (page == "root") sub(" \\([^()]*\\)$", "", eq_labels) else eq_labels)),
     c(' data-steps="0"', sprintf(' data-steps="%s"', et$terms$steps), sprintf(' data-end="%d"', nrow(dp))))
   tok$pseudo_eq_x <- pseudo_eq("x")
   # The Apply block (author requests 2026-10-15): after the two panels, the top equation's grid
@@ -687,16 +690,19 @@ render_site <- function(root = comparison_root(),
     sprintf('<b class="ap-label">%s</b>%s', sub(" (", "<br>(", esc(eq_labels), fixed = TRUE), ap_btns),
     rep("", length(eq_labels)))
   tok$pseudo_eq <- pseudo_eq("root")
-  # The note reads the same on both pages (author item 2026-10-15), except that the overview
-  # has no Walk the path button, so it drops that sentence, and links "BSZ panel" to the explorer.
+  # The explorer's note names the dial letters and the Walk the path button.
   eq_note <- function(href, panel, walk) paste0(
     "Move the ", panel, "'s dials to their far ends, term by term from left to right. ", esc(et$note), " ",
     walk,
     sprintf("The <a href=\"%s\">report</a> gives all %s steps.", href, et$n_words))
   tok$pseudo_eq_note_x <- eq_note("../repro.html#the-bridge", "BSZ panel",
                                   "The Walk the path button in each panel does it for you. ")
-  tok$pseudo_eq_note_root <- eq_note("comparison/site/repro.html#the-bridge",
-                                     "<a href=\"comparison/site/explorer/\">BSZ panel</a>", "")
+  # the overview names no dial letters (author request 2026-10-15), so its note says the same in words
+  tok$pseudo_eq_note_root <- paste0(
+    "Move the <a href=\"comparison/site/explorer/\">explorer</a>'s BSZ panel to the JR values one group at a time, ",
+    "from left to right: the departed wealth, the chance the tax survives in court, the four inputs of the ",
+    "lost income tax, then the other three. Each term is what its group changes. ",
+    sprintf("The <a href=\"%s\">report</a> gives all %s steps.", "comparison/site/repro.html#the-bridge", et$n_words))
 
   # ---- anchors (output (a) candidates; default decided in PLAN.md) ----
   an <- ex$anchors

@@ -126,13 +126,17 @@ test_that("both pages carry the pseudo-equation: D and q, the loss box added up,
     rest <- match(c("base_list", "avoidance", "minor_inputs"), dp$step_id)
     expect_identical(sort(c(main, loss, rest)), seq_len(nrow(dp)))
     expect_identical(dp$symbol[main], c("D", "q"))
+    # the explorer labels each term with its dials' letters; the overview drops them (author
+    # request 2026-10-15)
+    lt <- function(x) if (identical(p, explorer)) paste0(" (", x, ")") else ""
     pins <- c(vapply(main, function(i) sprintf(
-      '<span class="term" data-steps="%d"><b>%s</b><small>%s (%s)</small></span>',
-      i, money(abs(dp$change[i]), 1), dp$title[i], dp$symbol[i]), ""),
-      sprintf('<span class="term" data-steps="%s"><b>%s</b><small>Lost income tax (H, f, C, r)</small></span>',
-              paste(loss, collapse = " "), money(abs(sum(dp$change[loss])), 1)),
-      sprintf('<span class="term" data-steps="%s"><b>%s</b><small>The other three steps together (W, a, three minor inputs)</small></span>',
-              paste(rest, collapse = " "), money(abs(sum(dp$change[rest])), 1)))
+      '<span class="term" data-steps="%d"><b>%s</b><small>%s%s</small></span>',
+      i, money(abs(dp$change[i]), 1), dp$title[i], lt(dp$symbol[i])), ""),
+      sprintf('<span class="term" data-steps="%s"><b>%s</b><small>Lost income tax%s</small></span>',
+              paste(loss, collapse = " "), money(abs(sum(dp$change[loss])), 1), lt("H, f, C, r")),
+      sprintf('<span class="term" data-steps="%s"><b>%s</b><small>The other three steps together%s</small></span>',
+              paste(rest, collapse = " "), money(abs(sum(dp$change[rest])), 1), lt("W, a, three minor inputs")))
+    if (!identical(p, explorer)) expect_false(grepl("\\([A-Za-z, ]+\\)</small>", eq), label = "no letters on the overview")
     at <- vapply(pins, function(x) regexpr(x, eq, fixed = TRUE)[[1]], 0)
     expect_true(all(at > 0), label = paste(p, "terms"))
     expect_true(all(diff(at) > 0), label = paste(p, "term order"))
@@ -162,6 +166,11 @@ test_that("both pages carry the pseudo-equation: D and q, the loss box added up,
                     ex_html, fixed = TRUE))
   for (panel in c("bsz", "rjkdc"))
     expect_true(grepl(sprintf('<button type="button" class="reset walk" data-panel="%s">Walk the path</button>', panel), ex_html, fixed = TRUE), label = panel)
+  # the overview's section has no dial letters in brackets, in the equation or its note
+  ov <- read_page(file.path(root, "index.html"))
+  sec <- regmatches(ov, regexpr('<section class="eq-box" id="what-separates".*?</section>', ov))
+  expect_false(grepl("\\((?:[A-Za-z], )*[A-Za-z](?: and [^)]*)?\\)", gsub("<[^>]*>", "", sec), perl = TRUE))
+  expect_true(grepl("the departed wealth, the chance the tax survives in court, the four inputs of the", sec, fixed = TRUE))
 })
 
 test_that("every fold on the overview has a # link to its own id, and the fold-URL script", {
