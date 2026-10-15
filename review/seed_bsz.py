@@ -197,8 +197,8 @@ def main():
                         "literals, checked only indirectly through the Tab5 test, not read from "
                         "the cells."),
             method_status="matches_with_caveat",
-            r=loc("bsz-analysis/R/vintage.R", ".TAB5_CONST, tab5_const()", [115, 147]),
-            py=loc("bsz-analysis/py/vintage.py", "TAB5_CONST, tab5_const()", [85, 112]),
+            r=loc("bsz-analysis/R/vintage.R", ".TAB5_CONST, tab5_const()", [138, 170]),
+            py=loc("bsz-analysis/py/vintage.py", "TAB5_CONST, tab5_const()", [99, 126]),
             targets=None,
         ),
         dict(
