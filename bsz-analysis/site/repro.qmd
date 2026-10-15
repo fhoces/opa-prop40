@@ -135,10 +135,10 @@ twin_html("the setup",
 
 California's Proposition 40, the Billionaire Tax Act, would levy, once, a 5% tax on the
 whole net worth of people who lived in California on 1 January 2026 and are worth \$1 billion
-or more, valued on 31 December 2026 and paid 1% a year over five years. Two
-documents carry BSZ's revenue estimate, and this report reproduces
-both:
+or more, valued on 31 December 2026 and paid 1% a year over five years. BSZ's paper and the
+GGSS expert report carry the same number. Reproducing one reproduces the other.
 
+::: {.callout-note collapse="true" title="The two documents"}
 1. **Boll, Saez and Zucman (BSZ)**, *California Billionaires: Wealth, Taxes, and Wealth
    Tax Revenue Estimates*, NBER (the National Bureau of Economic Research, which circulates
    working papers) Working Paper 35218, August 2026 revision, and its supplementary Excel
@@ -149,6 +149,7 @@ both:
    "Factoring in 10% of tax avoidance and evasion leads to a scoring of \$104 billion that
    we round to \$100 billion for simplicity." So the GGSS number is the BSZ row-1
    computation, rounded. Reproducing one reproduces the other.
+:::
 
 This report is part of an Open Policy Analysis of the BSZ analysis:
 
@@ -161,17 +162,24 @@ This report is part of an Open Policy Analysis of the BSZ analysis:
 `r usd(t5$wealth_tax_revenue[1])` of one-time wealth tax, plus `r usd(t5$extra_ca_inctax_sales[1], 2)` of extra state
 income tax from asset sales, minus `r usd(-t5$annual_ca_inctax_loss[1] * pvf, 2)` of income tax lost to
 leavers (`r usd(-t5$annual_ca_inctax_loss[1], 2)` a year, over 5 years at 3%): **`r usd(main1)`**. The
-arithmetic is in [The main estimate](#the-main-estimate).
+arithmetic is in [The main estimate](#the-main-estimate). [Section IV.A](#table-5) builds
+Table 5 step by step. Sections II and III reproduce the paper's other tables first. All
+`r nrow(t5pr)` cells of Table 5 match the workbook, and `r sum(t5pr$matches_printed)` match the
+digit the paper prints.
 
 **Not the authors' choice.** BSZ's own headline is the wealth tax alone: about \$100 billion in the
 abstract and in GGSS, `r usd(wt_printed, 0)` in Table 5 (p.39), reproduced here as
 `r usd(t5$wealth_tax_revenue[1])`. This OPA uses the total because it compares more directly with
 the [JR analysis](../../rjkdc-analysis/site/)’s net present value; the
-[comparison overview](../../index.html) puts both on one definition. The project's pre-specified output
-(`PLAN.md`, "Pre-specified output"), fixed before any result was seen, named the wealth tax. The
-switch to the total was made on 7 October 2026 for comparability, and the wealth tax is still
-reported throughout. Rows 2 to 4 of Table 5 are the authors' own sensitivity checks: this report
-reproduces them and the explorer shows them next to the base scenario.
+[comparison overview](../../index.html) puts both on one definition. Rows 2 to 4 of Table 5
+are the authors' own sensitivity checks. This report reproduces them, and the explorer shows them
+next to the base scenario.
+
+::: {.callout-note collapse="true" title="Why the total, and when this changed"}
+The project's pre-specified output (`PLAN.md`, "Pre-specified output"), fixed before any result
+was seen, named the wealth tax. The switch to the total was made on 7 October 2026 for
+comparability, and the wealth tax is still reported throughout.
+:::
 
 **What "reproduced" means here.** The pipeline re-derives every formula cell of the
 authors' workbook in R and checks each against the workbook's own cached value. It does
@@ -205,11 +213,14 @@ from the paper, the text says so.
 
 Two letters are reused locally, following the paper: in Section II, $g_t$ is the yearly growth
 of billionaire wealth (not the gain share $g$ above), and in the Laffer-curve section $e$ is a
-semi-elasticity, while the $e$ raised to a power there is the exponential.
+semi-elasticity.
 
 # II. The wealth of California billionaires
 
 ## A. Short-run growth: Table 1 Panel A and Figure 1
+
+Table 1 counts California's billionaires and their Forbes wealth from 2022 to 1 July 2026.
+Figure 1 plots that wealth from 2019.
 
 > Table 1 Panel A provides basic statistics on California billionaires in recent years.
 > (BSZ PDF p.5)
@@ -284,6 +295,9 @@ tr("fig_a1")
 
 ## B. The long run: Table 1 Panel B and Figure 2
 
+Table 1 Panel B and Figure 2 follow the wealth of California's top .001% of families from 1982
+to 2026. It grows much faster than average income.
+
 > Figure 2 depicts the longer time series. Panel A depicts the trajectory of top .001%
 > wealth. (BSZ PDF p.8)
 
@@ -310,6 +324,10 @@ tr("fig2")
 # III. Taxes paid by California billionaires
 
 ## A. California income tax: Table 2, Figure 3 and Table 3
+
+Table 2 estimates the California income tax that all billionaires pay each year,
+`r usd(inp$C, 2)` on average from 2019 to 2025. Figure 3 plots it. Table 3 computes the same tax
+for the top 4 from their SEC filings.
 
 > For all California billionaires, we estimate the California income tax they pay using
 > Franchise Tax Board (the California tax administration) tabulated statistics, a Pareto
@@ -398,6 +416,9 @@ tr("fig4")
 
 ## C. All taxes paid by the top 4: Table 4 and Figures 5 to 7
 
+Table 4 and Figures 5 to 7 add up every tax the four largest fortunes pay and compare it with
+their income and wealth.
+
 > Table 4 provides detailed numbers of wealth, income earned, and taxes paid by type of tax
 > for the top 4 over the full 2019-2025 period. (BSZ PDF p.15)
 
@@ -473,6 +494,8 @@ scenario as a change to it.
 
 ### Step 1: the tax base
 
+The tax base is the Forbes wealth of California's billionaires on 1 July 2026.
+
 > Using the July 1st wealth value of \$2.3 trillion, the wealth tax scores at \$104 billion
 > (=90%\*5%\*\$2307 billion). (BSZ PDF p.24)
 
@@ -483,16 +506,19 @@ something the pipeline recomputes. The Act itself values wealth on 31 December 2
 the real base will differ; GGSS note that the daily estimate ranged from \$87 billion to
 \$107 billion between January and mid-July 2026 (GGSS p.4, fn.8).
 
-### Step 2: avoidance and evasion
+### Step 2: avoidance and evasion {#step-2-avoidance-and-evasion}
 
 Some wealth will escape the tax, through under-valuation, hiding, or leaving the state in
 time. The authors assume a share $\alpha$ = 10% of all of these together:
-$$W^{\text{tax}} = (1 - \alpha)\,W_0 = 0.9 \times `r bn(inp$W0, 0)` = `r bn(t5$taxable_wealth[1])`.$$
+$$\begin{aligned}
+W^{\text{tax}} &= (1 - \alpha)\,W_0 \\
+  &= 0.9 \times `r bn(inp$W0, 0)` = `r bn(t5$taxable_wealth[1])`.
+\end{aligned}$$
 In words: the tax is charged on 90% of listed wealth. The 10% is not estimated. GGSS argue
 it is small because most of the wealth is listed stock that is easy to value, and each of
-some 250 taxpayers can be audited individually (GGSS p.4). It is **guesswork**, and the
-single most important one for the headline: it is the only guess the revenue number itself
-depends on (see [Every input, by origin](#every-input-by-origin)).
+some 250 taxpayers can be audited individually (GGSS p.4). It is **guesswork**, and it
+matters most for the headline. With the leavers assumption, it is one of only two guesses that
+move the revenue (see [Every input, by origin](#every-input-by-origin)).
 
 ### Step 3: wealth tax revenue
 
@@ -501,7 +527,10 @@ That is BSZ's headline: `r usd(t5$wealth_tax_revenue[1])`, collected once (in fi
 annual installments). Before avoidance, 5% of the base would be
 `r usd(0.05 * inp$W0)`; avoidance costs `r usd(0.05 * inp$W0 - t5$wealth_tax_revenue[1])`.
 
-### Step 4: extra state income tax from selling assets
+### Step 4: extra state income tax from selling assets {#step-4-extra-state-income-tax-from-selling-assets}
+
+Paying the tax by selling shares raises some extra California income tax, about
+`r pct(t5$extra_ca_inctax_sales[1] / t5$wealth_tax_revenue[1])` of the wealth tax.
 
 > Table 5 reports a column of this extra CA income tax generated assuming that wealth taxes
 > will be paid one-third by selling assets triggering taxable realized capital gains (with
@@ -513,13 +542,20 @@ state taxes. Only the **gain** is taxed: the sale price minus what the stock ori
 **basis**). The authors put the basis at 20% of the sale price, so the gain is $g$ = 80% of each
 dollar sold. Example: selling \$100 of stock bought for \$20 gives an \$80 taxable gain. With a
 share $s$ of the tax paid by selling and the top state rate $t_{cg}$ on gains:
-$$E = s \cdot g \cdot t_{cg} \cdot T = \tfrac13 \times 0.80 \times 0.133 \times `r bn(t5$wealth_tax_revenue[1])` = `r bn(t5$extra_ca_inctax_sales[1], 2)`.$$
+$$\begin{aligned}
+E &= s \cdot g \cdot t_{cg} \cdot T \\
+  &= \tfrac13 \times 0.80 \times 0.133 \times `r bn(t5$wealth_tax_revenue[1])` \\
+  &= `r bn(t5$extra_ca_inctax_sales[1], 2)`.
+\end{aligned}$$
 So the tax pays back about `r pct(t5$extra_ca_inctax_sales[1] / t5$wealth_tax_revenue[1])`
 of itself in income tax, spread over the five payment years. The one-third is guesswork;
 the 80% gain share is the paper's own estimate of how much of billionaire wealth is
 unrealised gains.
 
-### Step 5: income tax lost to billionaires who leave
+### Step 5: income tax lost to billionaires who leave {#step-5-income-tax-lost-to-billionaires-who-leave}
+
+Billionaires who leave stop paying California income tax:
+`r usd(-t5$annual_ca_inctax_loss[1], 2)` a year in the base scenario.
 
 > If we assume that half of the 10% avoidance takes the form of mobility: i.e. 5% of
 > billionaires were able to successfully relocate outside California in the narrow time
@@ -529,7 +565,11 @@ unrealised gains.
 A billionaire who leaves stops paying California income tax. The authors assume half of the
 avoidance ($m$ = 50%) is people leaving, so $\alpha m$ = 5% of the income tax billionaires
 pay is lost:
-$$L = -\alpha\,m\,C = -0.10 \times 0.5 \times `r bn(inp$C, 2)` = -`r bn(-t5$annual_ca_inctax_loss[1], 3)` \text{ per year}.$$
+$$\begin{aligned}
+L &= -\alpha\,m\,C \\
+  &= -0.10 \times 0.5 \times `r bn(inp$C, 2)` \\
+  &= -`r bn(-t5$annual_ca_inctax_loss[1], 3)` \text{ per year}.
+\end{aligned}$$
 
 In dollars: Step 2 took 10% of the wealth, `r usd(0.10 * inp$W0, 2)`, out of the wealth tax. Half of it
 is under-valued or hidden, and its owners still live in California and keep paying income tax.
@@ -545,24 +585,33 @@ every \$1,000 of wealth, and the authors assume the movers pay at that same rate
 
 This is a *yearly* loss, and Table 5 does not say for how many years. The paper argues that,
 for a genuinely one-time tax, departures should be temporary, "say only 5 years" (PDF p.27).
-The [JR report](../../rjkdc-analysis/site/) (Jaros and Rauh; first version Rauh, Jaros, Kearney, Doran and Cosso) counts the loss
+The [JR analysis](../../rjkdc-analysis/site/) (Jaros and Rauh; first version Rauh, Jaros, Kearney, Doran and Cosso) counts the loss
 forever. That difference in horizon is the largest single
-dispute between the two reports (`comparison/DISPUTES.md`, row 2).
+dispute between the two analyses (`comparison/DISPUTES.md`, row 2).
 
 ### The main estimate {#the-main-estimate}
 
 The main estimate adds the three pieces. It counts the yearly loss for BSZ's 5 years, discounted at
-3% a year, the middle of the 1.5% to 4.5% range the [JR report](../../rjkdc-analysis/site/) uses
+3% a year, the middle of the 1.5% to 4.5% range the [JR analysis](../../rjkdc-analysis/site/) uses
 (BSZ give no rate):
-$$M = T + E + L \times \frac{1 - 1.03^{-5}}{0.03} = `r bn(t5$wealth_tax_revenue[1], 2)` + `r bn(t5$extra_ca_inctax_sales[1], 2)` - `r bn(-t5$annual_ca_inctax_loss[1], 3)` \times `r bn(pvf, 2)` = `r bn(main1, 2)`.$$
+$$\begin{aligned}
+M &= T + E + L \times \frac{1 - 1.03^{-5}}{0.03} \\
+  &= `r bn(t5$wealth_tax_revenue[1], 2)` + `r bn(t5$extra_ca_inctax_sales[1], 2)` - `r bn(-t5$annual_ca_inctax_loss[1], 3)` \times `r bn(pvf, 2)` \\
+  &= `r bn(main1, 2)`.
+\end{aligned}$$
 It is not the authors' choice (see the [introduction](#introduction)): BSZ's headline is $T$ alone.
 The [explorer](explorer/) shows $M$ for every setting of the guesses.
 
 ### Missing billionaires scenario (Table 5, row 2) {#row-2-adding-the-billionaires-forbes-misses}
 
+Counting the billionaires Forbes misses raises the wealth tax to `r usd(t5$wealth_tax_revenue[2])`.
+
 > If we assume that the tail is Pareto with constant b=4.48 between \$1 billion and \$4.5
 > billion, then this means that there should be around 617 California billionaires (instead
 > of the 249 listed by Forbes). (BSZ PDF p.25)
+
+The paper's 249 is the 15 April 2026 Forbes list, which the workbook's Pareto sheet uses. The
+base here is the 1 July list of `r inp$n0`.
 
 Above \$4.5 billion, average wealth over any threshold is a steady multiple of the threshold,
 $b$ = `r bn(par$pareto_b, 2)`: the signature of a Pareto distribution. Below \$4.5 billion the
@@ -574,9 +623,15 @@ people but only `r pct(inp$pct_wealth_increase)` more wealth. The scenario appli
 percentages to the 1 July base, with a higher avoidance rate $\alpha_s$ = 20% for these less
 visible fortunes, and subtracts a deduction for those in the \$1 to \$1.1 billion band, where
 the Act phases the rate in:
-$$T_2 = \tau\left[(1-\alpha)W_0 + (1-\alpha_s)\,\Delta W\right] - 0.025\,f_{ph}\,\Delta W, \qquad \Delta W = `r bn(100 * inp$pct_wealth_increase)`\% \times W_0,$$
+$$\begin{aligned}
+T_2 &= \tau\left[(1-\alpha)W_0 + (1-\alpha_s)\,\Delta W\right] \\
+    &\quad {}- 0.025\,f_{ph}\,\Delta W, \\
+\Delta W &= `r bn(100 * inp$pct_wealth_increase)`\% \times W_0,
+\end{aligned}$$
 with $f_{ph}$ = `r pct(inp$fraction_in_phasein)` the share of the added wealth in the phase-in
-band. The result is `r usd(t5$wealth_tax_revenue[2])`.
+band. The 0.025 is the average rate forgone in that band: the Act's rate rises from 0 at
+\$1 billion to 5% at \$1.1 billion, so it is half of 5% on average. The result is
+`r usd(t5$wealth_tax_revenue[2])`.
 
 The figure compares the two distributions. Each bar is a share of the
 `r bn(par$total_count_proj, 0)` billionaires a Pareto tail puts above \$1 billion. On the left,
@@ -584,7 +639,8 @@ solid red is what Forbes lists and pale red is what it misses. On the right is t
 itself, the shape top wealth usually takes in wealth and tax data.
 
 ```{r}
-#| label: fig-forbes-vs-pareto
+#| label: forbes-vs-pareto
+#| fig-cap: "Forbes list against a Pareto tail (not in the paper)"
 #| fig-width: 11
 #| fig-height: 4.2
 #| code-summary: "R code for the Forbes vs Pareto figure"
@@ -628,6 +684,9 @@ tr("fig_a4")
 
 ### Leavers scenario (Table 5, row 3) {#row-3-an-aggressive-assumption-on-who-has-left}
 
+If four billionaires had left before 1 January 2026, the wealth tax would fall to
+`r usd(t5$wealth_tax_revenue[3])`.
+
 > The third row in Table 5 scores the wealth tax assuming that Page, Thiel, Hankey, Kalanick
 > successfully moved before January 1, 2026 which is an aggressive assumption. (BSZ PDF p.26)
 
@@ -650,7 +709,8 @@ names(lv) <- c("Person", "Assumed timing", "Wealth, $B", "Income tax lost, $B/yr
 show(lv)
 ```
 
-Taxable wealth falls to $0.9\,(W_0 - W_{pre})$ with $W_{pre}$ = `r usd(inp$W_pre)`, and revenue
+Taxable wealth falls to $0.9\,(W_0 - W_{pre})$, where $W_{pre}$ = `r usd(inp$W_pre)` is the
+wealth of the four who left before 1 January 2026, and revenue
 to `r usd(t5$wealth_tax_revenue[3])`. The yearly income tax loss grows to
 `r usd(-t5$annual_ca_inctax_loss[3], 2)`, still small, because the SEC data show the top three
 pay little income tax relative to their wealth. Whether any of these people has actually
@@ -713,6 +773,9 @@ cent of a billion; neither changes an argument.
 
 ### What the tax collects, and what it costs
 
+This table puts the four scenarios side by side: the wealth tax, the extra income tax, the
+income tax lost (present value, 5 years at 3%) and the total.
+
 ```{r}
 #| label: bottom-line
 #| code-summary: "R code for the scenario totals"
@@ -763,6 +826,8 @@ show(rng)
 
 ### Two documents, one number
 
+GGSS cite \$100 billion. The check below confirms that it is BSZ's row 1, rounded.
+
 ```{r}
 #| label: ggss
 #| code-summary: "R code for the GGSS comparison"
@@ -791,10 +856,13 @@ paper's Figure 8, on venture capital, is not built here).
 the base by about $e$ percent through people moving away. With a base of $Z_0$ = \$2,000
 billion at today's tax (the workbook's rounded input) and $\tau_0$ = 0.2% of wealth, the
 income tax billionaires already pay,
-$$Z(\tau) = Z_0\, e^{-e(\tau - \tau_0)}, \qquad T(\tau) = \tau\, Z(\tau).$$
+$$\begin{aligned}
+Z(\tau) &= Z_0 \exp\{-e(\tau - \tau_0)\}, \\
+T(\tau) &= \tau\, Z(\tau).
+\end{aligned}$$
 Revenue peaks where the next point of tax loses as much base as it gains in rate, at
-$\tau = 1/e$. With $e$ = 10 (Brülhart et al. 2022, the calibration [Rauh et al.](../../rjkdc-analysis/site/)
-also start from, 10.32; they prefer 12 to 13, `comparison/DISPUTES.md`, row 4) that is
+$\tau = 1/e$. With $e$ = 10 (Brülhart et al. 2022, the calibration the [JR analysis](../../rjkdc-analysis/site/)
+also starts from, 10.32; it prefers 12 to 13, `comparison/DISPUTES.md`, row 4) that is
 `r pct(laf$tax_rate[which.max(laf$actual_tax_revenue)], 0)`. The long-run curve also erodes
 wealth itself: $d$ = 15 years of paying the tax shrinks fortunes by $(1-\tau)^d$, and revenue
 then peaks at `r pct(laf$tax_rate[which.max(laf$long_run_tax_revenue)])`, close to the paper's
@@ -817,6 +885,9 @@ tr("fig8")
 
 ## Appendix Table A1: US billionaires
 
+Appendix Table A1 does for all US billionaires what Table 1 does for California: their number
+and wealth from 2022 to 2026, and their long-run growth since 1982.
+
 ::: {.table-scroll}
 ```{r}
 #| echo: false
@@ -831,6 +902,10 @@ tr("tab_a1_gt")
 :::
 
 ## Appendix Figures A2 and A3
+
+Appendix Figure A2 shows the California income tax billionaires pay as a share of all California
+personal income tax, 2019 to 2025. Appendix Figure A3 shows their total taxes as a share of
+their public stock wealth and of the economic income on it.
 
 ```{r}
 #| echo: false
@@ -897,7 +972,7 @@ guesswork, and they are exactly the explorer's `r n_guess_dials` guesswork dials
 (`r tolower(paste(guess_moving_rev, collapse = "; "))`); the others move only the smaller
 income tax columns, or matter only in the scenario rows. So BSZ's headline
 `r usd(t5$wealth_tax_revenue[1])` is Forbes' list, times 5%, times one minus a single guessed
-avoidance rate; the only other guess that moves it is who has already left. The disputes with the [JR report](../../rjkdc-analysis/site/) are mostly about inputs this
+avoidance rate; the only other guess that moves it is who has already left. The disputes with the [JR analysis](../../rjkdc-analysis/site/) are mostly about inputs this
 table labels guesswork or scenario: who has left (disputes row 3), how long losses last, and whether a
 one-time tax triggers permanent departures.
 
@@ -913,11 +988,11 @@ show(rbind(by_file, data.frame(file = "total", blocks = sum(by_file$blocks),
 ```
 
 The suite ran on `r tests$run_date[1]` against the `r tools::toTitleCase(tests$vintage[1])` workbook:
-`r sum(tests$passed)` expectations passed and `r sum(tests$failed)` failed. The
-`compute`, `tables` and `data_sheets` files compare R against the workbook's own cached
-cells, formula by formula, at a stated tolerance; `snapshots` pins every output so any
-change fails; `site` pins the explorer to the reproduction. Figures are checked for
-structure and a few anchor values, not pixel by pixel.
+`r sum(tests$passed)` expectations passed and `r sum(tests$failed)` failed. Three groups of
+tests compare R against the workbook's cached cells, formula by formula, at a stated tolerance
+(the `compute`, `tables` and `data_sheets` files). One pins every output, so any change fails
+(`snapshots`). One checks the explorer against the reproduction (`site`). Figures are checked
+for structure and a few anchor values, not pixel by pixel.
 
 ## Mismatches found, and how each was resolved
 
