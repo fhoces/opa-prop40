@@ -209,7 +209,7 @@ Full rows: `r link("comparison/DATA-SOURCES.csv")`. Neither PDF is redistributed
 The GGSS expert report (20 July 2026) and the GGSS response to Rauh (17 March 2026), which the
 bridge cites for the non-citizen residents and for the BSZ value "none applied" of the step
 "One-time tax estimated as a permanent 5 pp rate", are listed in the BSZ analysis's manifest,
-`r link("bsz-analysis/DATA-SOURCES.csv")`, which records no URL for them.
+`r link("bsz-analysis/DATA-SOURCES.csv")`, with their URLs on Saez's Berkeley page.
 
 ## What the checks found
 

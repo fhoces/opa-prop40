@@ -94,7 +94,7 @@ ever, so the state ends up poorer. Following the
 :::
 
 **What is reproduced.** Jaros and Rauh, *The Net Present Value of the California Billionaire Tax Act*,
-NBER chapter c15504 (22 September 2026; NBER is the National Bureau of Economic Research, which
+NBER chapter c15504 (Tax Policy and the Economy, vol. 41; 22 September 2026; NBER is the National Bureau of Economic Research, which
 circulates working papers), the litigation-weighted revision of the first version by Rauh, Jaros,
 Kearney, Doran and Cosso (SSRN 6340778, March 2026; SSRN is a preprint site). Its headline:
 revenue of about \$30B (\$`r h("nber","revenue_range_low","printed")`B to

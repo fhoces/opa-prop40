@@ -69,7 +69,7 @@ is checked against) is the Monte Carlo mean (−$24.7B). Table 9's central cell
 
 ## The second RJKDC estimate (NBER, Sept 2026)
 
-Jaros and Rauh, NBER chapter c15504, cover dated 22 Sept 2026: about $30B in revenue (range $28-36B),
+Jaros and Rauh, NBER chapter c15504 (Tax Policy and the Economy, vol. 41), cover dated 22 Sept 2026: about $30B in revenue (range $28-36B),
 mean NPV −$38.9B, 85% of draws negative (abstract, PDF p.1; restated p.3). The simulation reproduces
 exactly from `NBER_2026_litigation_weighted/NPV_data/NPV_dist_v8.R` (mean −38.9, median −35.3, 85.2%
 negative). Compared with SSRN, it keeps the same 212-person base, grows it 7% to the 31 Dec 2026

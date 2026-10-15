@@ -59,7 +59,7 @@ ts <- read.csv("data/test-summary.csv")
 ![](assets/opa/opa-materials.png){.opa-figure}
 
 This page is a guide to the **Open Materials** layer (the repository) of the RJKDC analysis (Jaros and Rauh,
-NBER chapter c15504, September 2026; first version by Rauh, Jaros, Kearney, Doran and Cosso, March 2026): everything needed to rebuild every number on this
+NBER chapter c15504, Tax Policy and the Economy vol. 41, September 2026; first version by Rauh, Jaros, Kearney, Doran and Cosso, March 2026): everything needed to rebuild every number on this
 site, in the repository [github.com/fhoces/opa-prop40](https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis),
 folder `rjkdc-analysis/`. The analysis is an R [`{targets}`](https://docs.ropensci.org/targets/)
 pipeline with a Python twin; the site's explorer grid, report and deck read that pipeline's store and

@@ -109,6 +109,10 @@ credited to us.
    RJKDC, in directory names (`bsz-analysis/`, `rjkdc-analysis/`), workflow names, CSV side keys
    (`bsz`, `rjkdc`, `neutral`), identifiers and prose. The words supporting and opposing appear
    only where a page explains which analysis is which.
+6. 2026-10-07: the BSZ main estimate changed to the net total over 5 years at 3% (this OPA's
+   construction, labelled so); BSZ's own $104B stays as the benchmark row.
+7. 2026-10-14: the RJKDC main estimate is the NBER mean NPV (Jaros and Rauh, September 2026,
+   -$38.9B); the SSRN estimate stays as a scenario and as the bridge's anchor.
 
 **Same format as the previous OPA (user requirement 2026-09-23).** Every public surface (overview
 page, interactive explorer, Quarto reproduction report, teaching deck, reproduction-materials links,

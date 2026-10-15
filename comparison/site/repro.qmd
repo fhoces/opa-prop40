@@ -121,7 +121,7 @@ Research, which circulates working papers) estimates about \$100 billion of weal
 tax (`r usd(epv("bsz_tab5_row1", "printed_value"), 0)` in its Table 5 row 1, reproduced here
 as **`r usd(epv("bsz_tab5_row1"))`**), and **`r usd(eb$bsz_model)`** once the income tax the
 tax changes is added in. The [RJKDC analysis](../../rjkdc-analysis/site/) (Jaros and Rauh,
-NBER c15504, September 2026, revising the March 2026 version by Rauh, Jaros, Kearney, Doran
+NBER chapter c15504, Tax Policy and the Economy vol. 41, September 2026, revising the March 2026 version by Rauh, Jaros, Kearney, Doran
 and Cosso) finds that the tax would collect about
 `r usd(pick(k$docs, "nber_headline_revenue"), 0)` by its own account but leave the state
 **`r usd(-epv("rauh_nber_npv", "printed_value"))`** poorer in today's dollars (a net present

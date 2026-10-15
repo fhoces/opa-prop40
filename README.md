@@ -22,7 +22,7 @@ wealth tax of about $100 billion. This OPA's main estimate, $106.8 billion, nets
 tax it changes (not the authors' headline, which is the wealth tax alone). [Overview page](https://fhoces.github.io/opa-prop40/bsz-analysis/site/). Materials
 can be found in [`bsz-analysis/`](bsz-analysis/).
 
-2 - **[The RJKDC analysis](rjkdc-analysis/README.md).** Jaros and Rauh, NBER chapter c15504 (September 2026), the
+2 - **[The RJKDC analysis](rjkdc-analysis/README.md).** Jaros and Rauh, NBER chapter c15504 (Tax Policy and the Economy, vol. 41; September 2026), the
 revision of the March 2026 version by Rauh, Jaros, Kearney, Doran and Cosso (SSRN 6340778; SSRN is a
 preprint site): a net present value to the state of about -$39 billion, because billionaires who
 leave take their income tax with them. [Overview page](https://fhoces.github.io/opa-prop40/rjkdc-analysis/site/).

@@ -3,7 +3,7 @@
 Mismatches 1, 2, 7, 8 and 9 concern only the authors' first version (Rauh, Jaros, Kearney, Doran and Cosso, Hoover Institution, SSRN 6340778, March 2026), which the pipeline also reproduces. Mismatches 3 to 6 concern the NBER chapter.
 
 One numbered item per code/paper or doc/code discrepancy found while reproducing Jaros and Rauh,
-*The Net Present Value of the California Billionaire Tax Act* (NBER chapter c15504, September 2026;
+*The Net Present Value of the California Billionaire Tax Act* (NBER chapter c15504, Tax Policy and the Economy vol. 41, September 2026;
 first version by Rauh, Jaros, Kearney, Doran and Cosso, March 2026). By design, we do not
 "fix" the authors: we reproduce their code as run, record the discrepancy, and where it matters
 expose the alternative reading as a parameter with both readings under test.
