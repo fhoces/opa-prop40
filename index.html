@@ -220,7 +220,7 @@
   details.fold > summary { list-style: none; cursor: pointer; display: flex; align-items: center;
     flex-wrap: wrap; gap: 12px; margin: 30px 0 0; }
   details.fold > summary::-webkit-details-marker { display: none; }
-  details.fold > summary h2 { margin: 0; }
+  details.fold > summary h2 { margin: 0; flex: 1 1 0; min-width: 0; }
   details.fold > summary .teaser { flex-basis: 100%; padding-left: 23px; margin-top: -6px;
     font-size: 13px; font-weight: 400; color: var(--ink-3); }
   details.fold > summary::before {
@@ -316,8 +316,8 @@
   <p class="byline">
     Proposition 40, the Billionaire Tax Act, would tax Californians worth $1 billion or more
     once, at 5% of their net worth, paid over five years. The
-    <a href="bsz-analysis/site/">BSZ analysis</a> (Boll, Saez and Zucman, NBER Working Paper
-    35218, August 2026) finds that it raises $106.8B net of the income tax it changes. The
+    <a href="bsz-analysis/site/">BSZ analysis</a> (Boll, Saez and Zucman, NBER, August 2026)
+    finds that it raises money for the state. The
     <a href="rjkdc-analysis/site/">JR analysis</a> (Jaros and Rauh, NBER, September 2026) finds
     that it leaves the state $38.9B poorer, because billionaires who leave stop paying
     California income tax for ever. This page puts both on one definition and shows which
@@ -367,8 +367,8 @@
         <span class="kicker">Open Output</span>
         <h3>Explore the main estimate and its assumptions &rarr;</h3>
         <p>Both main estimates on one definition, with a slider for each assumption they
-        disagree on. Move one towards the other analysis's value and watch the estimate move;
-        hover over or tap it for what it changes.</p>
+        disagree on. Move one towards the other analysis's value and watch the estimate move.
+        Tap or hover over a symbol for what it means.</p>
       </div>
       <div class="card-icon-box" aria-hidden="true">
         <img src="assets/opa/opa-assumptions-solo.png" alt="">
@@ -406,7 +406,7 @@
         <span class="kicker">Open Materials</span>
         <h3>Materials for computational reproduction &rarr;</h3>
         <p>The R code that computes every number on this page, its Python twin, the test suite,
-        every exported CSV and the page-referenced transcriptions. A guided summary is on the
+        every exported CSV and the values copied from the PDFs, with their page. A guided summary is on the
         materials page, linked in the text below.</p>
       </div>
       <div class="card-icon-box" aria-hidden="true">
@@ -479,68 +479,17 @@ authors' Monte Carlo, whose revenue is drawn between zero and $72B.</p>
   </div>
 </details>
 
-<details class="fold">
-  <summary><h2 id="hoopes">The existing comparison: Hoopes (2026)</h2> <span class="teaser">the one published comparison, read off its chart and set beside this bridge</span></summary>
+<details class="fold" id="document-versions">
+  <summary><h2>Which document versions are used</h2> <span class="teaser">the dated version of each document the numbers come from</span></summary>
   <div class="fold-body">
-<p>Jeffrey Hoopes, "Galle v Rauh: Comparing Two Revenue Estimates for California Billionaire
-Taxation" (SSRN 6428578), is the one published comparison. It compares earlier versions: the
-February 2026 GGSS expert report (Galle, Gamage, Saez and Shanske), on which the BSZ analysis
-builds, and the March 2026 version of the JR analysis (Rauh, Jaros, Kearney, Doran and Cosso).
-His Figure 2 prints no values, so his column is <b>read off the chart</b> (tick fit within
-$0.1B, about $0.6B per bar; <code>comparison/tools/digitize_hoopes_fig2.py</code>).
-Beside it is our bridge in his order, ending at the September 2026 version.</p>
-<p class="small">Disclosures from the note itself: Hoopes states his priors, "To lay my cards on
-the table, I believe that the world is complicated, and that when possible, empirical analysis
-should be done in as detailed a way as possible" (p.2), and thanks "David Gamage for encouraging
-me to read both of these analyses carefully and compare the two" (p.1); Gamage is a GGSS co-author.</p>
-
-<div class="table-scroll">
-<table>
-  <thead><tr><th>Hoopes Figure 2 bar</th><th class="num">Hoopes (read off the chart)</th><th class="num">Ours, one order</th><th>Our steps</th></tr></thead>
-  <tbody>
-    <tr><td>Galle estimate</td><td class="num">$100B</td><td class="num">$100B</td><td class="small">GGSS printed headline</td></tr>
-    <tr><td>(no bar)</td><td class="num">none</td><td class="num">+$3.8B</td><td class="small">GGSS's own rounding of their estimate</td></tr>
-    <tr><td>Residency correction</td><td class="num">−$12.6B &plusmn; 0.6</td><td class="num">−$12.6B</td><td class="small">Non-US-citizen residents + base list and valuation date</td></tr>
-    <tr><td>Confirmed departures</td><td class="num">−$17.0B &plusmn; 0.6</td><td class="num">−$26.0B</td><td class="small">Billionaires already departed</td></tr>
-    <tr><td>Additional movers</td><td class="num">−$12.5B &plusmn; 0.6</td><td class="num">none</td><td class="small">(none: Rauh's Monte Carlo headline does not use the ten 'expanded' departures)</td></tr>
-    <tr><td>Additional behavioral response</td><td class="num">−$9.2B &plusmn; 0.6</td><td class="num">−$29.0B</td><td class="small">Avoidance allowance + chance the tax survives litigation (his bar is the March 2026 version's elasticity response, which the September version does not use)</td></tr>
-    <tr><td>Real estate exclusion</td><td class="num">−$1.1B &plusmn; 0.8</td><td class="num">−$0.2B</td><td class="small">Real-estate deduction</td></tr>
-    <tr><td>(no bar)</td><td class="num">none</td><td class="num">−$0.0000B</td><td class="small">(none: the common function returns the September version's expectation exactly)</td></tr>
-    <tr><td>Income tax loss</td><td class="num">−$71.5B &plusmn; 0.6</td><td class="num">−$75.0B</td><td class="small">The JR analysis's own NPV minus its own expected revenue (all income-tax steps together)</td></tr>
-    <tr class="total"><td>End: Rauh net fiscal effect</td><td class="num">−$24.3B</td><td class="num">−$38.98B</td><td class="small">his: the March 2026 version&rsquo;s mean NPV; ours: the September 2026 version&rsquo;s</td></tr>
-  </tbody>
-</table>
-</div>
-<p class="small">The "Galle estimate" bar is clipped by the chart's frame at $100B; its value is taken
-from the note's text (p.3).</p>
-
-<h3>Every difference</h3>
-<ul>
-  <li><b>Vintage.</b> Hoopes's estimate uses the February GGSS text: 213 billionaires, $2,182B of wealth, $109B gross, $99B after 10% avoidance, rounded up to $100B (p.3 fn.1). The July GGSS text covers 250 billionaires and $2,307B: $103.8B after avoidance, rounded down to $100B. The same printed headline hides a rounding of +$1B in one vintage and of −$3.8B in the other.</li>
-  <li><b>Residency.</b> His bar is −$12.6B, close to Rauh's own −$12.84B for dropping Ellison, Houston and Snyder and adding Sacks (Rauh p.5). By July the BSZ analysis has itself dropped Ellison, so our step is a different quantity: the $150B of non-US-citizen residents Rauh omits plus the list and valuation-date difference, −$12.6B in one order.</li>
-  <li><b>Confirmed departures.</b> His bar is −$17.0B; Rauh's own step is −$26.69B before avoidance (94.2 to 67.51, p.11), and ours is −$26.0B at that point of the order. We could not trace his figure to a number in Rauh et al.</li>
-  <li><b>Additional movers.</b> His −$12.5B matches Rauh's expanded ten-departure estimate (67.51 to 55.1, a step of −$12.41B, pp.12-13). The March 2026 version's own −$24.7B mean NPV does not use that estimate, so our bridge has no such step.</li>
-  <li><b>Behaviour.</b> His −$9.2B is close to the March 2026 version's step from the expanded estimate to the literature calibration (55.1 to 45.59, −$9.51B, p.14), a mobility response from a European elasticity. The September 2026 version predicts no such departures; in their place it weights the revenue by the chance the tax survives litigation. Ours, −$29.0B in one order, nets two labelled steps: dropping the 10.0% avoidance allowance (up) and the litigation weight (down).</li>
-  <li><b>Real estate.</b> His bar is drawn near zero (−$1.1B &plusmn; 0.8 read off the chart), while his text says the exclusion reduces the base by about $8B (p.4). The two are consistent: $8B of base is about $0.4B of revenue at 5%. Ours is −$0.23B.</li>
-  <li><b>Level before income tax.</b> His revenue level before the income-tax bar is about $47.2B, near the March 2026 version's preferred 'about $40B' (p.14). Ours ends at $36.00B, the expected revenue in the Monte Carlo behind the September 2026 version's mean NPV (its text prefers 'approximately $30B', p.1).</li>
-  <li><b>Income tax.</b> His single bar, −$71.5B, ends at −$24.3B, close to the March 2026 version's −$24.7B. Ours is −$74.98B, the September 2026 version's expected present value of lost income tax against $36.00B of revenue, and we split it into four labelled steps (the share lost, the income tax level, the horizon, asset-sale tax), which interact with the base steps.</li>
-  <li><b>Order and labels.</b> His is one sequential order, with no provenance labels; ours shows Shapley averages over all orders (a Shapley value: a step's effect averaged over every order the inputs could be switched in, so the steps add up to the gap) as well as one order, with each step labelled data, research, guesswork or scenario.</li>
-  <li><b>Steps he does not have.</b> The non-US-citizen residents, the BSZ analysis's avoidance allowance being dropped, the asset-sale income tax, and the litigation weight of the September 2026 version (which postdates his note).</li>
-</ul>
-  </div>
-</details>
-
-<details class="fold" id="vintage-gap">
-  <summary><h2>The vintage gap</h2> <span class="teaser">the documents were written months apart; which version each number comes from</span></summary>
-  <div class="fold-body">
-<p>Which dated version of each document the numbers on this site come from. It matters for one
-reason: the Hoopes comparison above uses earlier versions than this site, so the two do not
-line up step for step.</p>
+<p>This table gives the dated version of each document that the numbers on this site come
+from. The versions matter because the Hoopes comparison, described below, uses earlier
+versions than this site. So the two do not line up step for step.</p>
 <div class="table-scroll">
 <table>
   <thead><tr><th>Document</th><th>Date</th><th>Base it uses</th></tr></thead>
   <tbody>
-    <tr><td>Rauh et al., SSRN 6340778</td><td>17 Mar 2026</td><td>212 billionaires, $2,027.4B, 2025 Forbes list</td></tr>
+    <tr><td>Rauh et al., SSRN 6340778</td><td>17 Mar 2026</td><td>212 billionaires, $1,894.8B, 2025 Forbes list (p.5)</td></tr>
     <tr><td>Galle, Gamage, Saez, Shanske, response to Rauh</td><td>17 Mar 2026</td><td>answers Rauh's 4 Mar version, not the 17 Mar copy used here</td></tr>
     <tr><td>Hoopes, SSRN 6428578</td><td>2026 (uses the February GGSS text)</td><td>213 billionaires, $2,182B (p.3 fn.1)</td></tr>
     <tr><td>GGSS expert report</td><td>updated 20 Jul 2026</td><td>250 billionaires, $2,307B at 1 Jul 2026, non-citizens included, Ellison excluded</td></tr>
@@ -554,28 +503,29 @@ line up step for step.</p>
 </details>
 
 <details class="fold" id="disputed-inputs">
-  <summary><h2>The disputed inputs</h2> <span class="teaser">every input the two estimates differ on, with both values and their sources</span></summary>
+  <summary><h2>The disputed inputs</h2> <span class="teaser">every input the two estimates differ on, with both values</span></summary>
   <div class="fold-body">
-<p>One row per input on which the two estimates differ: what each analysis assumes, where it
-comes from, and what kind of claim it is (data, research, guesswork or scenario). Each row is one
-step of the <a href="comparison/site/repro.html#the-bridge">bridge</a> and one dial of the
+<p>The table has one row per input on which the two estimates differ. It gives what each
+analysis assumes and what kind of claim it is (data, research, guesswork or scenario). Each row
+is one step of the <a href="comparison/site/repro.html#the-bridge">bridge</a> and one dial of the
 <a href="comparison/site/explorer/">explorer</a>. The Row column follows the project's crosswalk,
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/DISPUTES.md">DISPUTES.md</a>,
-which quotes both analyses on each point.</p>
+which quotes both analyses on each point. The sources for each value are in
+<a href="comparison/site/repro.html#the-disputed-inputs">the report's table</a>.</p>
 <div class="table-scroll">
 <table>
-  <thead><tr><th>Row</th><th>Dispute</th><th>Kind</th><th>BSZ value and source</th><th>JR value and source</th></tr></thead>
+  <thead><tr><th>Row</th><th>Dispute</th><th>Kind</th><th>BSZ value</th><th>JR value</th></tr></thead>
   <tbody>
-    <tr><td>8</td><td>Non-US-citizen residents</td><td><span class="kind">data</span></td><td class="small"><b>$150B</b>. GGSS 20 Jul 2026 p.2 fn.1 (24 people, about $150B); BSZ PDF p.54 ($132B at 1 Jan)</td><td class="small"><b>$0B</b>. omitted: 28 international billionaires, $146.3B, excluded from the domestic base (JR export nber_international_net_worth; NBER chapter Sec. 3.5)</td></tr>
-    <tr><td>7</td><td>Forbes source: which list and valuation date</td><td><span class="kind">data</span></td><td class="small"><b>Forbes 2026, $2,157B</b>. BSZ export baseline_net_worth ($2,307B, 1 Jul 2026; BSZ PDF p.24, GGSS p.4) minus the non-citizens</td><td class="small"><b>Forbes 2025 grown 7%, $2,027.4B</b>. JR export baseline_net_worth (212 billionaires, 2025 Forbes list) grown 7% to 31 Dec 2026 (JR export nber_growth_rate; NBER README, chapter p.19)</td></tr>
-    <tr><td>7</td><td>Real-estate deduction</td><td><span class="kind">data</span></td><td class="small"><b>0.0%</b>. no separate deduction (BSZ PDF p.24: 90% x 5% x $2,307B)</td><td class="small"><b>0.5%</b>. 1 - nber_domestic_grown / (5% x grown base) from the JR export: the person-level file nets out directly held real estate (NBER README; chapter p.19)</td></tr>
-    <tr><td>3</td><td>Billionaires already departed</td><td><span class="kind">guesswork on data</span></td><td class="small"><b>none</b>. benchmark taxes all 1 Jan 2026 residents (BSZ PDF p.23); the aggressive row 3 (Page, Thiel, Hankey, Kalanick, BSZ export pre2026_leavers_wealth) is the dial's middle stop</td><td class="small"><b>the JR seven: $614B on the BSZ list, $578B on the JR list</b>. the seven confirmed departures (Page, Brin, Thiel, Hankey, Spielberg, Kalanick, Sacks) valued on the BSZ list: BSZ exports pre2026_leavers_wealth and brin_wealth (Table 5, 1 Jul 2026), plus Spielberg and Sacks at the JR file's net worth (JR export nber_spielberg_sacks_net_worth), as the BSZ workbook does not list them by name; the same seven on the JR list: (nber_domestic_grown - 72) / 5%, the script's ceiling literal (NPV_dist_v8.R:19; the person-level file sums to 72.05, mismatch 4)</td></tr>
-    <tr><td>(not a row)</td><td>Avoidance and evasion allowance</td><td><span class="kind">guesswork</span></td><td class="small"><b>10.0%</b>. BSZ export avoidance_rate (GGSS p.4; BSZ PDF p.24)</td><td class="small"><b>0.0%</b>. none: no avoidance allowance (NBER chapter Secs. 4-5)</td></tr>
-    <tr><td>9</td><td>Chance the tax survives litigation</td><td><span class="kind">guesswork</span></td><td class="small"><b>100%</b>. the Act as written, collected in full: neither BSZ nor GGSS discounts for litigation</td><td class="small"><b>50%</b>. q = 0.50, the ASC 740-10 'more likely than not' threshold (NBER README assumptions table; the script draws WT ~ U[0, 72], whose mean is 0.5 x 72; mismatch 5)</td></tr>
-    <tr><td>6</td><td>Share of billionaire income tax lost</td><td><span class="kind">data vs guesswork</span></td><td class="small"><b>what leavers paid</b>. the leavers' own income tax, in dollars, as BSZ Table 5 counts it (data: SEC filings for the top 3 and a wealth-proportional rate for the rest, BSZ PDF p.26, Table 4 p.38); no flat share: the loss follows the people who leave</td><td class="small"><b>45% of all</b>. midpoint of f ~ U[0.30, 0.60], drawn independently of the revenue (NPV_dist_v8.R; chapter Sec. 5.4): guesswork; not used: the share lost does not follow who leaves</td></tr>
-    <tr><td>5</td><td>Billionaires' annual CA income tax</td><td><span class="kind">research vs guesswork</span></td><td class="small"><b>$3.06B/yr</b>. BSZ export ca_inctax_billionaires (Tab2!C14; BSZ PDF p.11): research, top wealth holders' income is 50% of top earners' (Balkir et al. 2025)</td><td class="small"><b>$4.55B/yr</b>. midpoint of C ~ U[3.3, 5.8] (NPV_dist_v8.R:21; chapter pp.29-31): guesswork, the K = 500 floor is the authors' judgement</td></tr>
-    <tr><td>2</td><td>How long the income tax loss lasts</td><td><span class="kind">scenario</span></td><td class="small"><b>5 years</b>. BSZ PDF p.27 ('If they last say only 5 years')</td><td class="small"><b>perpetuity</b>. perpetuity (chapter Sec. 5.4, eq. 18-19)</td></tr>
-    <tr><td>(not a row)</td><td>Extra income tax from selling assets to pay</td><td><span class="kind">guesswork</span></td><td class="small"><b>1/3</b>. BSZ export sell_share (BSZ PDF p.24)</td><td class="small"><b>0%</b>. not modelled</td></tr>
+    <tr><td>8</td><td>Non-US-citizen residents</td><td><span class="kind">data</span></td><td class="small"><b>$150B</b></td><td class="small"><b>$0B</b></td></tr>
+    <tr><td>7</td><td>Forbes source: which list and valuation date</td><td><span class="kind">data</span></td><td class="small"><b>Forbes 2026, $2,157B</b></td><td class="small"><b>Forbes 2025 grown 7%, $2,027.4B</b></td></tr>
+    <tr><td>7</td><td>Real-estate deduction</td><td><span class="kind">data</span></td><td class="small"><b>0.0%</b></td><td class="small"><b>0.5%</b></td></tr>
+    <tr><td>3</td><td>Billionaires already departed</td><td><span class="kind">guesswork on data</span></td><td class="small"><b>none</b></td><td class="small"><b>the JR seven: $614B on the BSZ list, $578B on the JR list</b></td></tr>
+    <tr><td>(not a row)</td><td>Avoidance and evasion allowance</td><td><span class="kind">guesswork</span></td><td class="small"><b>10.0%</b></td><td class="small"><b>0.0%</b></td></tr>
+    <tr><td>9</td><td>Chance the tax survives litigation</td><td><span class="kind">guesswork</span></td><td class="small"><b>100%</b></td><td class="small"><b>50%</b></td></tr>
+    <tr><td>6</td><td>Share of billionaire income tax lost</td><td><span class="kind">data vs guesswork</span></td><td class="small"><b>what leavers paid</b></td><td class="small"><b>45% of all</b></td></tr>
+    <tr><td>5</td><td>Billionaires' annual CA income tax</td><td><span class="kind">research vs guesswork</span></td><td class="small"><b>$3.06B/yr</b></td><td class="small"><b>$4.55B/yr</b></td></tr>
+    <tr><td>2</td><td>How long the income tax loss lasts</td><td><span class="kind">scenario</span></td><td class="small"><b>5 years</b></td><td class="small"><b>perpetuity</b></td></tr>
+    <tr><td>(not a row)</td><td>Extra income tax from selling assets to pay</td><td><span class="kind">guesswork</span></td><td class="small"><b>1/3</b></td><td class="small"><b>0%</b></td></tr>
   </tbody>
 </table>
 </div>
@@ -587,7 +537,7 @@ judgement applied to observed facts.</p>
   </div>
 </details>
 
-<details class="fold" id="neutral-material">
+<details class="fold" id="other-loss-estimates">
   <summary><h2>Other estimates of the yearly income tax loss, for scale</h2> <span class="teaser">the Legislative Analyst, the California Tax Foundation and both analyses' own figures on one scale</span></summary>
   <div class="fold-body">
 <p>The <b>LAO</b> (the Legislative Analyst's Office, the state's nonpartisan fiscal adviser)
@@ -602,10 +552,10 @@ its mean yearly income tax:</p>
   <tbody>
     <tr><td>BSZ Table 5 row 1 (benchmark) <span class="small">(BSZ PDF p.39)</span></td><td>BSZ</td><td class="num">$0.15B</td><td class="num">$0.7B</td><td class="num">$5.6B</td><td class="num">$30.4B</td></tr>
     <tr><td>BSZ Table 5 row 3 (aggressive leavers) <span class="small">(BSZ PDF p.39)</span></td><td>BSZ</td><td class="num">$0.52B</td><td class="num">$2.4B</td><td class="num">$18.9B</td><td class="num">$17.1B</td></tr>
-    <tr><td>LAO ballot analysis (upper bound, 'less than $1 billion') <span class="small">(LAO p.2)</span></td><td>neutral</td><td class="num">$1.00B</td><td class="num">$4.6B</td><td class="num">$36.6B</td><td class="num">−$0.6B</td></tr>
+    <tr><td>LAO ballot analysis (upper bound, 'less than $1 billion') <span class="small">(LAO p.2)</span></td><td>LAO</td><td class="num">$1.00B</td><td class="num">$4.6B</td><td class="num">$36.6B</td><td class="num">−$0.6B</td></tr>
     <tr><td>JR, Jaros and Rauh NBER: E[f] x E[C] <span class="small">(NBER p.35)</span></td><td>JR</td><td class="num">$2.05B</td><td class="num">$9.4B</td><td class="num">$75.0B</td><td class="num">−$39.0B</td></tr>
-    <tr><td>Walczak / CalTax, low (incl. spillovers) <span class="small">(Walczak p.1)</span></td><td>Walczak / CalTax (alternative dial; same direction as JR)</td><td class="num">$3.53B</td><td class="num">$16.2B</td><td class="num">$129.3B</td><td class="num">−$93.3B</td></tr>
-    <tr><td>Walczak / CalTax, high (incl. spillovers) <span class="small">(Walczak p.1)</span></td><td>Walczak / CalTax (alternative dial; same direction as JR)</td><td class="num">$4.49B</td><td class="num">$20.6B</td><td class="num">$164.4B</td><td class="num">−$128.4B</td></tr>
+    <tr><td>Walczak / CalTax, low (incl. spillovers) <span class="small">(Walczak p.1)</span></td><td>Walczak (California Tax Foundation)</td><td class="num">$3.53B</td><td class="num">$16.2B</td><td class="num">$129.3B</td><td class="num">−$93.3B</td></tr>
+    <tr><td>Walczak / CalTax, high (incl. spillovers) <span class="small">(Walczak p.1)</span></td><td>Walczak (California Tax Foundation)</td><td class="num">$4.49B</td><td class="num">$20.6B</td><td class="num">$164.4B</td><td class="num">−$128.4B</td></tr>
   </tbody>
 </table>
 </div>
@@ -628,77 +578,28 @@ perpetuity, against the JR analysis's expected revenue, $36.0B, for scale.</p>
 <details class="fold" id="how-ai-was-used">
   <summary><h2>How AI was used in this exercise, and what has been verified</h2> <span class="teaser">who did what, and what a person has checked</span></summary>
   <div class="fold-body">
-<p>The numbers on this page reproduce and are tested; what is still
-being completed is the author's own review of each part, recorded in the last column below, and
-the credit interview.</p>
-<p>This work was a collaboration between the author and Claude Code (Opus and Sonnet
-models) across many sessions, not an AI working alone. The table records who led the work on
-each public object of the reconciliation, using the <a href="https://credit.niso.org/">CRediT</a>
-contributor roles. The answers will come from a questionnaire the author fills in, not from
-commit history.
-The table groups the 14 roles into three: <em>ideas and direction</em> (conceptualization,
-methodology, supervision, project administration), <em>doing the work</em> (data curation,
-formal analysis, investigation, software, validation, visualization) and <em>writing</em>
-(original draft, review and editing). Funding and resources do not apply. Each square in a cell
-is one role, coloured by who led it (key below the table). The last column is not part of
-CRediT. It records how closely the author has checked the object.</p>
-
-<div class="table-scroll">
-<table class="ai-use">
-  <thead><tr><th>Object</th><th>Ideas and<br>direction</th><th>Doing<br>the work</th><th>Writing</th><th>Human<br>verification</th></tr></thead>
-  <tbody>
-    <tr><td>Reconciliation page<br><span class="table-subhead">this page</span></td><td></td><td></td><td></td><td></td></tr>
-    <tr><td>Bridge analysis code<br><span class="table-subhead">Open Materials</span></td><td></td><td></td><td></td><td></td></tr>
-    <tr><td>Disputes table<br><span class="table-subhead">Open Materials</span></td><td></td><td></td><td></td><td></td></tr>
-    <tr><td>Hoopes comparison<br><span class="table-subhead">this page</span></td><td></td><td></td><td></td><td></td></tr>
-  </tbody>
-</table>
-</div>
-<p class="small" style="margin:8px 0 0;">Not yet filled in as of October 2026. The record in
-<a href="comparison/site/credit/CREDIT.md">comparison/site/credit/CREDIT.md</a> (2026-10-01) carries the answers the author gave
-once, for the BSZ explorer, and asked to be applied to every object; the per-object interview for
-the comparison has not been run, so the table is left blank until it is.</p>
-<div class="ai-key">
-  <div><span><i class="sq h"></i> led by the author</span>
-  <span><i class="sq ai"></i> led by Claude</span>
-  <span><i class="sq eq"></i> shared equally</span></div>
-  <div>One square per CRediT role in the group; roles that do not apply to an object are left out.</div>
-  <div>Human verification:
-  <span><span class="meter"><i class="pip"></i><i class="pip"></i></span>not reviewed</span>
-  <span><span class="meter"><i class="pip on"></i><i class="pip"></i></span>lightly reviewed</span>
-  <span><span class="meter"><i class="pip on"></i><i class="pip on"></i></span>reviewed</span></div>
-</div>
-
-<p style="margin-top:14px;">Human verification uses three levels: <em>not reviewed</em>,
-<em>lightly reviewed</em> (checked, but the author cannot yet explain it clearly) and
-<em>reviewed</em> (the author can explain it to others). The automated test suites are
-mechanical checks, not an outside review. No other person has verified this work, and the
-original authors have not reviewed it.</p>
+<p>This work was a collaboration between the author and Claude Code (Opus and Sonnet models).
+The CRediT table of who led each role is not yet filled in, because the author's interview for
+the comparison has not been run. No other person has verified this work, and the original
+authors have not reviewed it.</p>
   </div>
 </details>
 
 <details class="fold" id="difference">
-  <summary><h2>Difference between this OPA and the original analysis</h2> <span class="teaser">what the one published comparison gives, and what this OPA adds</span></summary>
+  <summary><h2 id="hoopes">This OPA and the Hoopes comparison</h2> <span class="teaser">the one published comparison, and what this OPA adds</span></summary>
   <div class="fold-body">
-<p>The original analysis here is the one published comparison of the two estimates: Jeffrey
-   Hoopes, <cite>Galle v Rauh: Comparing Two Revenue Estimates for California Billionaire
-   Taxation</cite> (SSRN 6428578, 2026). It compares earlier documents than this site: the February
-   2026 GGSS expert report, on which the BSZ analysis builds, and the March 2026 version of the JR
-   analysis. The two
-   estimates belong to their authors, and the reading of them in the note is Hoopes's. This site
-   adds no data and no new model to either analysis.</p>
-
-<p>The note publishes an <strong>output</strong> and part of the <strong>details</strong>. Its
-   output is two charts. Figure 1 sets the two revenue estimates beside the JR net effect, and
-   Figure 2 walks from one estimate to the other in seven bars. Its details are seven pages that
-   describe each method in words. Figure 2 prints no values for its bars, and the text gives
-   numbers for only some of the steps. There is no code and no data, so the
-   <strong>materials</strong> layer is absent, and the bars cannot be recomputed or reordered.</p>
+<p>Jeffrey Hoopes (SSRN 6428578, 2026) is the one published comparison of the two estimates. It
+   compares earlier versions: the February 2026 GGSS expert report (Galle, Gamage, Saez and
+   Shanske), on which the BSZ analysis builds, and the March 2026 JR analysis. Its Figure 2
+   prints no values and comes with no code or data, so its steps cannot be recomputed. This OPA
+   uses the latest versions, publishes the code, and bridges the two estimates step by step. The
+   <a href="comparison/site/repro.html#the-hoopes-comparison">report</a> sets his bars beside this
+   bridge, difference by difference.</p>
 
 <div class="compare">
   <figure>
-    <span class="kicker">The original analysis</span>
-    <svg viewBox="0 0 300 290" role="img" aria-label="The original comparison: a solid output layer, a details layer apart from it whose front half is solid and whose back half is a dashed outline, and an empty dashed outline where a materials layer would be" xmlns="http://www.w3.org/2000/svg"><polygon points="92,170 184,216 184,242 92,288 0,242 0,216" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.55"/><polyline points="0,216 92,262 184,216" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.55"/><polygon points="116,138 208,92 254,115 162,161 162,187 116,164" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.55"/><polyline points="116,138 162,161" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.55"/><polygon points="162,161 208,184 208,210 162,187" fill="#1581ab"/><polygon points="208,184 300,138 300,164 208,210" fill="#1582b8"/><polygon points="162,161 254,115 300,138 208,184" fill="#1484c5"/><text transform="matrix(0.894 -0.447 0 1 254.0 179.7)" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-weight="600" font-size="11" letter-spacing="1.5" fill="#fff">DETAILS</text><polygon points="0,52 92,98 92,124 0,78" fill="#da9516"/><polygon points="92,98 184,52 184,78 92,124" fill="#eca516"/><polygon points="92,6 184,52 92,98 0,52" fill="#fcb415"/><text transform="matrix(0.894 -0.447 0 1 138.0 93.7)" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-weight="600" font-size="11" letter-spacing="1.5" fill="#fff">OUTPUT</text></svg>
+    <span class="kicker">The Hoopes comparison</span>
+    <svg viewBox="0 0 300 290" role="img" aria-label="The Hoopes comparison: a solid output layer, a details layer apart from it whose front half is solid and whose back half is a dashed outline, and an empty dashed outline where a materials layer would be" xmlns="http://www.w3.org/2000/svg"><polygon points="92,170 184,216 184,242 92,288 0,242 0,216" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.55"/><polyline points="0,216 92,262 184,216" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.55"/><polygon points="116,138 208,92 254,115 162,161 162,187 116,164" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.55"/><polyline points="116,138 162,161" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.55"/><polygon points="162,161 208,184 208,210 162,187" fill="#1581ab"/><polygon points="208,184 300,138 300,164 208,210" fill="#1582b8"/><polygon points="162,161 254,115 300,138 208,184" fill="#1484c5"/><text transform="matrix(0.894 -0.447 0 1 254.0 179.7)" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-weight="600" font-size="11" letter-spacing="1.5" fill="#fff">DETAILS</text><polygon points="0,52 92,98 92,124 0,78" fill="#da9516"/><polygon points="92,98 184,52 184,78 92,124" fill="#eca516"/><polygon points="92,6 184,52 92,98 0,52" fill="#fcb415"/><text transform="matrix(0.894 -0.447 0 1 138.0 93.7)" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-weight="600" font-size="11" letter-spacing="1.5" fill="#fff">OUTPUT</text></svg>
     <figcaption><strong>An output, part of the details, no materials.</strong> The charts give
       the result, and the text explains the methods in words. The step sizes are not printed (the
       dashed half), and with no code a reader cannot get from the text to the bars.</figcaption>
@@ -714,27 +615,15 @@ original authors have not reviewed it.</p>
   </figure>
 </div>
 
-<p style="margin-top:14px;">So the difference is in what can be checked and redone. This OPA
-   puts both analyses on one common output definition, uses each one's latest version, and
-   bridges the two main estimates step by step. Each step is a Shapley value: its effect averaged
-   over every order the inputs could be switched in, so the steps add up to the gap. The explorer
-   has a slider for each input the two disagree on. The <a href="#hoopes">Hoopes section</a> sets
-   his bars beside this bridge, and the <a href="#vintage-gap">vintage gap</a> says which version
-   each number comes from.</p>
   </div>
 </details>
 
 <section class="footnotes" aria-label="Footnotes">
-  <p class="fn" id="fn1"><sup>1</sup> Each analysis's own main estimate. The BSZ analysis's is a
-    net total over 5 years at 3%: the wealth tax ($103.8B; the paper prints $104B,
-    Table 5 row 1), plus the income tax from assets sold to pay it, minus the income tax lost to
-    those who leave. BSZ's own headline is the wealth tax alone; the net total is this OPA's
-    choice (<a href="bsz-analysis/site/">BSZ analysis overview</a>). The JR analysis's is a net
-    present value in perpetuity, averaged over the authors' 100,000 Monte Carlo draws (Jaros and
-    Rauh, NBER chapter c15504, Tax Policy and the Economy vol. 41, September 2026). On the common
-    output the BSZ end is the same $106.8B, discounted over the 1.5% to 4.5% range;
-    the JR end is −$39.0B, the exact mean of those draws, of which the authors' seeded run
-    gives −$38.9B.</p>
+  <p class="fn" id="fn1"><sup>1</sup> Each analysis's own main estimate. The BSZ number is this
+    OPA's net total over 5 years at 3%: the $103.8B wealth tax (Table 5 row 1), plus income
+    tax from asset sales, minus income tax lost to leavers. BSZ's own headline is the wealth tax
+    alone. The JR number is the authors' mean net present value in perpetuity. The
+    <a href="comparison/site/repro.html#the-main-estimate">report</a> gives the details.</p>
 </section>
 
 <footer>
@@ -755,6 +644,9 @@ original authors have not reviewed it.</p>
     var h = location.hash.slice(1);
     if (h === "the-bridge") { location.replace("comparison/site/repro.html#the-bridge"); return; }
     if (h.indexOf("=") >= 0) { location.replace("comparison/site/explorer/index.html"); return; }
+    // folds renamed on 2026-10-15: an old link still opens the right one
+    var OLD = { "vintage-gap": "document-versions", "neutral-material": "other-loss-estimates" };
+    function alias(id) { return OLD[id] || id; }
     function reveal(id) {
       if (!id) return;
       var el = document.getElementById(id);
@@ -763,13 +655,13 @@ original authors have not reviewed it.</p>
       if (d) d.open = true;
       el.scrollIntoView();
     }
-    window.addEventListener("hashchange", function () { reveal(location.hash.slice(1)); });
+    window.addEventListener("hashchange", function () { reveal(alias(location.hash.slice(1))); });
     // Clicking a same-page link opens its fold even when the hash does not change.
     document.addEventListener("click", function (e) {
       var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
       if (a) reveal(a.getAttribute("href").slice(1));
     });
-    reveal(location.hash.slice(1));
+    reveal(alias(h));
   })();
 </script>
 </body>

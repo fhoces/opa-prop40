@@ -170,6 +170,53 @@ data_hash <- function(txt) {
   substr(unname(tools::md5sum(tf)), 1, 8)
 }
 
+# The differences between Hoopes's Figure 2 and this bridge, one HTML item each (the
+# report's Hoopes section lists them). Every number is read from the exports and contracts.
+hoopes_differences <- function(ex, k) {
+  d <- k$docs; inp <- ex$inputs; ep <- ex$endpoints; hz <- ex$hoopes; hraw <- k$hoopes
+  ea <- ex$ends[ex$ends$horizon_setting == "own" & ex$ends$output == "a", ]
+  epv <- function(id) ep$value[ep$endpoint_id == id]
+  dv <- function(id) as.numeric(d$value[d$input_id == id])
+  opp <- function(id) pick(k$rjkdc$outputs, id, "printed_value")
+  hs_ <- function(id) hz$hoopes[hz$step_id == id]; ho <- function(id) hz$ours[hz$step_id == id]
+  hfmt <- function(x, u) if (is.na(x)) "none" else paste0(money(x, 1, TRUE), if (!is.na(u)) paste0(" &plusmn; ", formatC(u, format = "f", digits = 1)) else "")
+  hz_end <- as.numeric(hraw$end[hraw$step_id == "income_tax_loss"])
+  hz_pre <- as.numeric(hraw$end[hraw$step_id == "real_estate_exclusion"])
+  n_sup <- pick(k$bsz$inputs, "n_billionaires")
+  tok <- list(ggss_headline = money(epv("ggss_headline"), 0))
+  c(
+    sprintf("<b>Vintage.</b> Hoopes's estimate uses the February GGSS text: %s billionaires, %s of wealth, %s gross, %s after 10%% avoidance, rounded up to %s (p.3 fn.1). The July GGSS text covers %s billionaires and %s: %s after avoidance, rounded down to %s. The same printed headline hides a rounding of %s in one vintage and of %s in the other.",
+            dv("hoopes_n_billionaires"), money(dv("hoopes_wealth"), 0),
+            money(dv("hoopes_gross"), 0), money(dv("hoopes_net"), 0), tok$ggss_headline,
+            n_sup, money(inp$supporting_value[inp$input == "W_core"] + inp$supporting_value[inp$input == "W_noncit"], 0),
+            money(epv("ggss_scoring"), 1), tok$ggss_headline,
+            money(epv("ggss_headline") - dv("hoopes_net"), 0, TRUE), money(-ho("ggss_rounding"), 1, TRUE)),
+    sprintf("<b>Residency.</b> His bar is %s, close to Rauh's own %s for dropping Ellison, Houston and Snyder and adding Sacks (Rauh p.5). By July the BSZ analysis has itself dropped Ellison, so our step is a different quantity: the %s of non-US-citizen residents Rauh omits plus the list and valuation-date difference, %s in one order.",
+            hfmt(hs_("residency_correction"), NA), money(-dv("rauh_residency_correction"), 2), money(inp$supporting_value[inp$input == "W_noncit"], 0), money(ho("residency_correction"), 1, TRUE)),
+    sprintf("<b>Confirmed departures.</b> His bar is %s; Rauh's own step is %s before avoidance (%s to %s, p.11), and ours is %s at that point of the order. We could not trace his figure to a number in Rauh et al.",
+            hfmt(hs_("confirmed_departures"), NA), money(opp("revenue_confirmed6") - opp("revenue_baseline"), 2, TRUE),
+            opp("revenue_baseline"), opp("revenue_confirmed6"), money(ho("confirmed_departures"), 1, TRUE)),
+    sprintf("<b>Additional movers.</b> His %s matches Rauh's expanded ten-departure estimate (%s to %s, a step of %s, pp.12-13). The March 2026 version's own %s mean NPV does not use that estimate, so our bridge has no such step.",
+            hfmt(hs_("additional_movers"), NA), opp("revenue_confirmed6"), opp("revenue_expanded10"),
+            money(opp("revenue_expanded10") - opp("revenue_confirmed6"), 2, TRUE), money(opp("npv_mc_ssrn_mean"), 1)),
+    sprintf("<b>Behaviour.</b> His %s is close to the March 2026 version's step from the expanded estimate to the literature calibration (%s to %s, %s, p.14), a mobility response from a European elasticity. The September 2026 version predicts no such departures; in their place it weights the revenue by the chance the tax survives litigation. Ours, %s in one order, nets two labelled steps: dropping the %s avoidance allowance (up) and the litigation weight (down).",
+            hfmt(hs_("additional_behavioral_response"), NA), opp("revenue_expanded10"), opp("revenue_literature_calibrated"),
+            money(opp("revenue_literature_calibrated") - opp("revenue_expanded10"), 2, TRUE),
+            money(ho("additional_behavioral_response"), 1, TRUE),
+            fmt_input("alpha", inp$supporting_value[inp$input == "alpha"])),
+    sprintf("<b>Real estate.</b> His bar is drawn near zero (%s read off the chart), while his text says the exclusion reduces the base by about %s (p.4). The two are consistent: %s of base is about %s of revenue at 5%%. Ours is %s.",
+            hfmt(hs_("real_estate_exclusion"), hz$hoopes_uncertainty[hz$step_id == "real_estate_exclusion"]),
+            money(dv("hoopes_real_estate_base"), 0), money(dv("hoopes_real_estate_base"), 0),
+            money(0.05 * dv("hoopes_real_estate_base"), 1), money(ho("real_estate_exclusion"), 2, TRUE)),
+    sprintf("<b>Level before income tax.</b> His revenue level before the income-tax bar is about %s, near the March 2026 version's preferred 'about %s' (p.14). Ours ends at %s, the expected revenue in the Monte Carlo behind the September 2026 version's mean NPV (its text prefers 'approximately %s', p.1).",
+            money(hz_pre, 1), money(dv("rauh_headline_revenue"), 0), money(ea$rauh_own, 2), money(dv("nber_headline_revenue"), 0)),
+    sprintf("<b>Income tax.</b> His single bar, %s, ends at %s, close to the March 2026 version's %s. Ours is %s, the September 2026 version's expected present value of lost income tax against %s of revenue, and we split it into four labelled steps (the share lost, the income tax level, the horizon, asset-sale tax), which interact with the base steps.",
+            hfmt(hs_("income_tax_loss"), NA), money(hz_end, 1), money(opp("npv_mc_ssrn_mean"), 1), money(ho("income_tax_loss"), 2, TRUE), money(ea$rauh_own, 2)),
+    "<b>Order and labels.</b> His is one sequential order, with no provenance labels; ours shows Shapley averages over all orders (a Shapley value: a step's effect averaged over every order the inputs could be switched in, so the steps add up to the gap) as well as one order, with each step labelled data, research, guesswork or scenario.",
+    "<b>Steps he does not have.</b> The non-US-citizen residents, the BSZ analysis's avoidance allowance being dropped, the asset-sale income tax, and the litigation weight of the September 2026 version (which postdates his note)."
+  )
+}
+
 render_site <- function(root = comparison_root(),
                         template = file.path(root, "comparison", "site", "index.template.html"),
                         explorer = file.path(root, "comparison", "site", "explorer.template.html")) {
@@ -444,70 +491,20 @@ render_site <- function(root = comparison_root(),
     vapply(an$value - an$value[an$default], function(z) if (abs(z) < 1e-9) "none" else money(z, 2, TRUE), "")),
     collapse = "\n")
 
-  # ---- Hoopes ----
-  hz <- ex$hoopes; hraw <- k$hoopes
-  hoopes_names <- c(galle_estimate = "Galle estimate", ggss_rounding = "(no bar)",
-                    residency_correction = "Residency correction", confirmed_departures = "Confirmed departures",
-                    additional_movers = "Additional movers", additional_behavioral_response = "Additional behavioral response",
-                    real_estate_exclusion = "Real estate exclusion", rauh_rounding = "(no bar)",
-                    income_tax_loss = "Income tax loss")
-  hfmt <- function(x, u) if (is.na(x)) "none" else paste0(money(x, 1, TRUE), if (!is.na(u)) paste0(" &plusmn; ", formatC(u, format = "f", digits = 1)) else "")
-  hz_end <- as.numeric(hraw$end[hraw$step_id == "income_tax_loss"])
-  hz_pre <- as.numeric(hraw$end[hraw$step_id == "real_estate_exclusion"])
-  tok$hoopes_rows <- paste(c(sprintf(
-    '    <tr><td>%s</td><td class="num">%s</td><td class="num">%s</td><td class="small">%s</td></tr>',
-    hoopes_names[hz$step_id],
-    mapply(function(x, u, id) if (id == "galle_estimate") money(x, 0) else hfmt(x, u), hz$hoopes, hz$hoopes_uncertainty, hz$step_id),
-    mapply(function(x, id) if (is.na(x)) "none" else if (id == "galle_estimate") money(x, 0) else money(x, if (abs(x) < 0.05) 4 else 1, TRUE), hz$ours, hz$step_id),
-    esc(hz$our_steps)),
-    sprintf('    <tr class="total"><td>End: Rauh net fiscal effect</td><td class="num">%s</td><td class="num">%s</td><td class="small">his: the March 2026 version&rsquo;s mean NPV; ours: the September 2026 version&rsquo;s</td></tr>',
-            money(hz_end, 1), money(eb$rauh_own, 2))), collapse = "\n")
   dv <- function(id) as.numeric(d$value[d$input_id == id])
-  hs_ <- function(id) hz$hoopes[hz$step_id == id]; ho <- function(id) hz$ours[hz$step_id == id]
-  tok$hoopes_differences <- paste(sprintf("  <li>%s</li>", c(
-    sprintf("<b>Vintage.</b> Hoopes's estimate uses the February GGSS text: %s billionaires, %s of wealth, %s gross, %s after 10%% avoidance, rounded up to %s (p.3 fn.1). The July GGSS text covers %s billionaires and %s: %s after avoidance, rounded down to %s. The same printed headline hides a rounding of %s in one vintage and of %s in the other.",
-            dv("hoopes_n_billionaires"), money(dv("hoopes_wealth"), 0),
-            money(dv("hoopes_gross"), 0), money(dv("hoopes_net"), 0), tok$ggss_headline,
-            n_sup, money(inp$supporting_value[inp$input == "W_core"] + inp$supporting_value[inp$input == "W_noncit"], 0),
-            money(epv("ggss_scoring"), 1), tok$ggss_headline,
-            money(epv("ggss_headline") - dv("hoopes_net"), 0, TRUE), money(-ho("ggss_rounding"), 1, TRUE)),
-    sprintf("<b>Residency.</b> His bar is %s, close to Rauh's own %s for dropping Ellison, Houston and Snyder and adding Sacks (Rauh p.5). By July the BSZ analysis has itself dropped Ellison, so our step is a different quantity: the %s of non-US-citizen residents Rauh omits plus the list and valuation-date difference, %s in one order.",
-            hfmt(hs_("residency_correction"), NA), money(-dv("rauh_residency_correction"), 2), money(inp$supporting_value[inp$input == "W_noncit"], 0), money(ho("residency_correction"), 1, TRUE)),
-    sprintf("<b>Confirmed departures.</b> His bar is %s; Rauh's own step is %s before avoidance (%s to %s, p.11), and ours is %s at that point of the order. We could not trace his figure to a number in Rauh et al.",
-            hfmt(hs_("confirmed_departures"), NA), money(opp("revenue_confirmed6") - opp("revenue_baseline"), 2, TRUE),
-            opp("revenue_baseline"), opp("revenue_confirmed6"), money(ho("confirmed_departures"), 1, TRUE)),
-    sprintf("<b>Additional movers.</b> His %s matches Rauh's expanded ten-departure estimate (%s to %s, a step of %s, pp.12-13). The March 2026 version's own %s mean NPV does not use that estimate, so our bridge has no such step.",
-            hfmt(hs_("additional_movers"), NA), opp("revenue_confirmed6"), opp("revenue_expanded10"),
-            money(opp("revenue_expanded10") - opp("revenue_confirmed6"), 2, TRUE), money(opp("npv_mc_ssrn_mean"), 1)),
-    sprintf("<b>Behaviour.</b> His %s is close to the March 2026 version's step from the expanded estimate to the literature calibration (%s to %s, %s, p.14), a mobility response from a European elasticity. The September 2026 version predicts no such departures; in their place it weights the revenue by the chance the tax survives litigation. Ours, %s in one order, nets two labelled steps: dropping the %s avoidance allowance (up) and the litigation weight (down).",
-            hfmt(hs_("additional_behavioral_response"), NA), opp("revenue_expanded10"), opp("revenue_literature_calibrated"),
-            money(opp("revenue_literature_calibrated") - opp("revenue_expanded10"), 2, TRUE),
-            money(ho("additional_behavioral_response"), 1, TRUE),
-            fmt_input("alpha", inp$supporting_value[inp$input == "alpha"])),
-    sprintf("<b>Real estate.</b> His bar is drawn near zero (%s read off the chart), while his text says the exclusion reduces the base by about %s (p.4). The two are consistent: %s of base is about %s of revenue at 5%%. Ours is %s.",
-            hfmt(hs_("real_estate_exclusion"), hz$hoopes_uncertainty[hz$step_id == "real_estate_exclusion"]),
-            money(dv("hoopes_real_estate_base"), 0), money(dv("hoopes_real_estate_base"), 0),
-            money(0.05 * dv("hoopes_real_estate_base"), 1), money(ho("real_estate_exclusion"), 2, TRUE)),
-    sprintf("<b>Level before income tax.</b> His revenue level before the income-tax bar is about %s, near the March 2026 version's preferred 'about %s' (p.14). Ours ends at %s, the expected revenue in the Monte Carlo behind the September 2026 version's mean NPV (its text prefers 'approximately %s', p.1).",
-            money(hz_pre, 1), money(dv("rauh_headline_revenue"), 0), money(ea$rauh_own, 2), money(dv("nber_headline_revenue"), 0)),
-    sprintf("<b>Income tax.</b> His single bar, %s, ends at %s, close to the March 2026 version's %s. Ours is %s, the September 2026 version's expected present value of lost income tax against %s of revenue, and we split it into four labelled steps (the share lost, the income tax level, the horizon, asset-sale tax), which interact with the base steps.",
-            hfmt(hs_("income_tax_loss"), NA), money(hz_end, 1), money(opp("npv_mc_ssrn_mean"), 1), money(ho("income_tax_loss"), 2, TRUE), money(ea$rauh_own, 2)),
-    "<b>Order and labels.</b> His is one sequential order, with no provenance labels; ours shows Shapley averages over all orders (a Shapley value: a step's effect averaged over every order the inputs could be switched in, so the steps add up to the gap) as well as one order, with each step labelled data, research, guesswork or scenario.",
-    "<b>Steps he does not have.</b> The non-US-citizen residents, the BSZ analysis's avoidance allowance being dropped, the asset-sale income tax, and the litigation weight of the September 2026 version (which postdates his note)."
-  )), collapse = "\n")
-  tok$hoopes_fit <- money(as.numeric(hraw$tick_fit_max_resid[1]), 1)
   # Row 3 departure share: the script's ceiling literal over the grown domestic face value
   oval <- function(id) pick(k$rjkdc$outputs, id)
   tok$dconf_sept <- pct(inp$rauh_value[inp$input == "d_conf"], 1)
   tok$ceiling_literal <- formatC(pick(k$rjkdc$inputs, "nber_ceiling_hardcoded"), format = "f", digits = 0)
   tok$ceiling_file <- formatC(oval("nber_ceiling"), format = "f", digits = 2)
   tok$domestic_grown <- formatC(oval("nber_domestic_grown"), format = "f", digits = 3)
-  tok$hoopes_unc <- money(as.numeric(hraw$uncertainty[hraw$step_id == "confirmed_departures"]), 1)
 
   # ---- vintage ----
   tok$vintage_rows <- paste(c(
-    sprintf('    <tr><td>Rauh et al., SSRN 6340778</td><td>17 Mar 2026</td><td>%s billionaires, %s, 2025 Forbes list</td></tr>',
-            n_rauh, money(inp$rauh_value[inp$input == "W_core"], 1)),
+    # the March document's own base, the 2025 list before the September version grows it 7%
+    # (SSRN 6340778 p.5: "Sum $1,894.8 billion Count 212")
+    sprintf('    <tr><td>Rauh et al., SSRN 6340778</td><td>17 Mar 2026</td><td>%s billionaires, %s, 2025 Forbes list (p.5)</td></tr>',
+            n_rauh, money(pick(k$rjkdc$inputs, "baseline_net_worth"), 1)),
     '    <tr><td>Galle, Gamage, Saez, Shanske, response to Rauh</td><td>17 Mar 2026</td><td>answers Rauh\'s 4 Mar version, not the 17 Mar copy used here</td></tr>',
     sprintf('    <tr><td>Hoopes, SSRN 6428578</td><td>2026 (uses the February GGSS text)</td><td>%s billionaires, %s (p.3 fn.1)</td></tr>',
             dv("hoopes_n_billionaires"), money(dv("hoopes_wealth"), 0)),
@@ -517,17 +514,16 @@ render_site <- function(root = comparison_root(),
     sprintf('    <tr><td>Jaros and Rauh, NBER c15504</td><td>Sep 2026</td><td>Rauh\'s base grown %s to 31 Dec 2026, seven departures, litigation weight</td></tr>', pct(pick(k$rjkdc$inputs, "nber_growth_rate"))),
     '    <tr><td>LAO ballot analysis</td><td>for the 3 Nov 2026 ballot</td><td>no point estimate</td></tr>'), collapse = "\n")
 
-  # ---- disputes table ----
+  # ---- disputes table: the two values only; the report's table gives their sources ----
   tx <- lapply(steps$step_id, function(id) step_texts(inp, id))
   tok$disputes_rows <- paste(sprintf(
-    '    <tr><td>%s</td><td>%s</td><td><span class="kind">%s</span></td><td class="small"><b>%s</b>. %s</td><td class="small"><b>%s</b>. %s</td></tr>',
+    '    <tr><td>%s</td><td>%s</td><td><span class="kind">%s</span></td><td class="small"><b>%s</b></td><td class="small"><b>%s</b></td></tr>',
     esc(steps$disputes_row), esc(steps$title), steps$kind,
-    vapply(tx, `[[`, "", "bsz"), esc(vapply(tx, `[[`, "", "bsz_source")),
-    vapply(tx, `[[`, "", "rjkdc"), esc(vapply(tx, `[[`, "", "rjkdc_source"))), collapse = "\n")
+    vapply(tx, `[[`, "", "bsz"), vapply(tx, `[[`, "", "rjkdc")), collapse = "\n")
 
   # ---- loss table ----
   ls <- ex$loss
-  who <- c(bsz = "BSZ", rjkdc = "JR", neutral = "neutral", "walczak (credited dial)" = "Walczak / CalTax (alternative dial; same direction as JR)")
+  who <- c(bsz = "BSZ", rjkdc = "JR", neutral = "LAO", "walczak (credited dial)" = "Walczak (California Tax Foundation)")
   tok$loss_rows <- paste(sprintf(
     '    <tr><td>%s <span class="small">(%s)</span></td><td>%s</td><td class="num">%s</td><td class="num">%s</td><td class="num">%s</td><td class="num">%s</td></tr>',
     esc(ls$label), esc(ls$where), unname(who[ls$side]), vapply(ls$annual_loss, money, "", digits = 2),
