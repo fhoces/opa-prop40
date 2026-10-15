@@ -284,6 +284,16 @@
     .cards { grid-template-columns: 1fr; }
     .card-subgrid { grid-template-columns: 1fr; }
   }
+  /* The two-panel comparison in the last fold: the original analysis beside this OPA. */
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 18px 0 4px; }
+  .compare figure {
+    margin: 0; padding: 16px 18px 14px; border: 1px solid var(--rule); border-radius: 10px;
+    background: var(--panel); color: var(--ink-3);
+  }
+  .compare svg { width: 100%; max-width: 300px; height: auto; display: block; margin: 6px auto 0; }
+  .compare figcaption { font-size: 14px; color: var(--ink-2); margin-top: 10px; line-height: 1.5; }
+  .compare figcaption strong { color: var(--ink); font-weight: 600; }
+  @media (max-width: 560px) { .compare { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -618,6 +628,53 @@ the comparison has not been run, so the table is left blank until it is.</p>
 <em>reviewed</em> (the author can explain it to others). The automated test suites are
 mechanical checks, not an outside review. No other person has verified this work, and the
 original authors have not reviewed it.</p>
+  </div>
+</details>
+
+<details class="fold" id="difference">
+  <summary><h2>Difference between this OPA and the original analysis</h2> <span class="teaser">what the one published comparison gives, and what this OPA adds</span></summary>
+  <div class="fold-body">
+<p>The original analysis here is the one published comparison of the two estimates: Jeffrey
+   Hoopes, <cite>Galle v Rauh: Comparing Two Revenue Estimates for California Billionaire
+   Taxation</cite> (SSRN 6428578, 2026). It compares earlier documents than this site: the February
+   2026 GGSS expert report, on which the BSZ analysis builds, and the March 2026 version of the JR
+   analysis. The two
+   estimates belong to their authors, and the reading of them in the note is Hoopes's. This site
+   adds no data and no new model to either analysis.</p>
+
+<p>The note publishes an <strong>output</strong> and part of the <strong>details</strong>. Its
+   output is two charts. Figure 1 sets the two revenue estimates beside the JR net effect, and
+   Figure 2 walks from one estimate to the other in seven bars. Its details are seven pages that
+   describe each method in words. Figure 2 prints no values for its bars, and the text gives
+   numbers for only some of the steps. There is no code and no data, so the
+   <strong>materials</strong> layer is absent, and the bars cannot be recomputed or reordered.</p>
+
+<div class="compare">
+  <figure>
+    <span class="kicker">The original analysis</span>
+    <svg viewBox="0 0 300 290" role="img" aria-label="The original comparison: a solid output layer, a details layer apart from it whose front half is solid and whose back half is a dashed outline, and an empty dashed outline where a materials layer would be" xmlns="http://www.w3.org/2000/svg"><polygon points="92,170 184,216 184,242 92,288 0,242 0,216" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.55"/><polyline points="0,216 92,262 184,216" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.55"/><polygon points="116,138 208,92 254,115 162,161 162,187 116,164" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.55"/><polyline points="116,138 162,161" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.55"/><polygon points="162,161 208,184 208,210 162,187" fill="#1581ab"/><polygon points="208,184 300,138 300,164 208,210" fill="#1582b8"/><polygon points="162,161 254,115 300,138 208,184" fill="#1484c5"/><text transform="matrix(0.894 -0.447 0 1 254.0 179.7)" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-weight="600" font-size="11" letter-spacing="1.5" fill="#fff">DETAILS</text><polygon points="0,52 92,98 92,124 0,78" fill="#da9516"/><polygon points="92,98 184,52 184,78 92,124" fill="#eca516"/><polygon points="92,6 184,52 92,98 0,52" fill="#fcb415"/><text transform="matrix(0.894 -0.447 0 1 138.0 93.7)" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-weight="600" font-size="11" letter-spacing="1.5" fill="#fff">OUTPUT</text></svg>
+    <figcaption><strong>An output, part of the details, no materials.</strong> The charts give
+      the result, and the text explains the methods in words. The step sizes are not printed (the
+      dashed half), and with no code a reader cannot get from the text to the bars.</figcaption>
+  </figure>
+  <figure>
+    <span class="kicker">This OPA</span>
+    <svg viewBox="0 0 300 290" role="img" aria-label="This OPA: output, details and materials stacked tightly in one vertical plane" xmlns="http://www.w3.org/2000/svg"><polygon points="58,157 150,203 150,229 58,183" fill="#002547"/><polygon points="150,203 242,157 242,183 150,229" fill="#003262"/><polygon points="150,111 242,157 150,203 58,157" fill="#0b4a7c"/><text transform="matrix(0.894 -0.447 0 1 196.0 198.7)" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-weight="600" font-size="10" letter-spacing="1.5" fill="#fff">MATERIALS</text><polygon points="58,126 150,172 150,198 58,152" fill="#1581ab"/><polygon points="150,172 242,126 242,152 150,198" fill="#1582b8"/><polygon points="150,80 242,126 150,172 58,126" fill="#1484c5"/><text transform="matrix(0.894 -0.447 0 1 196.0 167.7)" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-weight="600" font-size="11" letter-spacing="1.5" fill="#fff">DETAILS</text><polygon points="58,86 150,132 150,158 58,112" fill="#da9516"/><polygon points="150,132 242,86 242,112 150,158" fill="#eca516"/><polygon points="150,40 242,86 150,132 58,86" fill="#fcb415"/><text transform="matrix(0.894 -0.447 0 1 196.0 127.7)" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-weight="600" font-size="11" letter-spacing="1.5" fill="#fff">OUTPUT</text></svg>
+    <figcaption><strong>Three layers, tightly connected.</strong> Both estimates and every bridge
+      step, here and in the <a href="comparison/site/explorer/">explorer</a>, are computed by the R code in the
+      <a href="https://github.com/fhoces/opa-prop40/tree/main/comparison">repository</a>, with a
+      Python twin. The <a href="comparison/site/repro.html">report</a> derives each step, and the
+      test suite checks that the steps add up to the gap.</figcaption>
+  </figure>
+</div>
+
+<p style="margin-top:14px;">So the difference is in what can be checked and redone. This OPA
+   puts both analyses on one common output definition, uses each one's latest version, and
+   bridges the two main estimates step by step. Each step is a Shapley value: its effect averaged
+   over every order the inputs could be switched in, so the steps add up to the gap. The explorer
+   has a slider for each input the two disagree on. The <a href="#hoopes">Hoopes section</a> sets
+   his bars beside this bridge, and the <a href="#vintage-gap">vintage gap</a> says which version
+   each number comes from.</p>
   </div>
 </details>
 
