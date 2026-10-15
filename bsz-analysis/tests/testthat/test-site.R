@@ -63,7 +63,8 @@ test_that("the named explorer rows are the Table 5 rows, cell for cell", {
 })
 
 test_that("site/explorer/grid.js is exactly the exporter's output", {
-  skip_if_not(identical(bsz_vintage(), "august"), "grid.js is committed for the August vintage")
+  skip_if_not(identical(bsz_snapshot_set(), "august"),
+              "grid.js is committed for the default workbook (August, data appendix of 2026-10-08)")
   path <- file.path(SITE, "explorer", "grid.js")
   skip_if_not(file.exists(path), "site/explorer/grid.js not present")
   s <- site_inp()

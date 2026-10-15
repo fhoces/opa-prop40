@@ -7,6 +7,10 @@ test_that("export/py reproduces every number the R side exports", {
   skip_if_not(dir.exists(py_parity_dir()), "export/py not built yet (python py/run_export.py)")
   skip_if_not(identical(py_parity_vintage(), bsz_vintage()),
               paste("export/py was built from another vintage than", bsz_vintage()))
+  # The committed export/py comes from the default workbook (the 2026-10-08
+  # appendix); grid.js records "august" for both August appendices.
+  skip_if(identical(bsz_snapshot_set(), "september"),
+          "export/py is committed for the default workbook, not the 2026-09-04 appendix")
   tab <- py_parity_table()
   expect_gt(nrow(tab), 40)
   expect_setequal(unique(tab$group), c("contract", "site", "exhibits"))

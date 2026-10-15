@@ -12,7 +12,18 @@ test_that("list_sheets returns the sheets in the BSZ workbook", {
   # August added 4 sheets (Fig9's predecessor moved there, plus
   # 2023-b-1__adjusted_gross_income, data_venturemonitor_annual,
   # data_venturemonitor_quarterly - see RC9c / section 4 of VERIFY-AUGUST.md).
-  expect_length(sheets, if (identical(bsz_vintage(), "may")) 36 else 40)
+  # The data appendix updated 2026-10-08 (the default workbook) added ten
+  # more, removing none.
+  new_oct <- c("Fig5bis", "Tab3-slides", "Tab3-slides2", "Tab3aslides",
+               "Tab3bslides", "Tab5slides-a", "Tab5slides-b", "shortrunseriesB",
+               "Fig1 (2)", "data_rtb_20260921_2023")
+  n_expected <- switch(bsz_snapshot_set(), may = 36, september = 40, 50)
+  expect_length(sheets, n_expected)
+  if (identical(bsz_snapshot_set(), "august")) {
+    expect_true(all(new_oct %in% sheets))
+  } else {
+    expect_false(any(new_oct %in% sheets))
+  }
   expect_true("Index" %in% sheets)
   expect_true("Tab1" %in% sheets)
   expect_true("data_sec_top4" %in% sheets)

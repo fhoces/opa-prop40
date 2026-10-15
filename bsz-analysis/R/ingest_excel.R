@@ -23,10 +23,23 @@ materials_dir <- function() {
   file.path(project_root(), "original-materials")
 }
 
+# Which workbook BSZ_VINTAGE selects:
+#   "august" (default): original-materials/BSZ_MainTablesFigures.xlsx, the
+#       August 2026 paper revision with its data appendix updated 2026-10-08
+#       (Index sheet "Last update 2026-10-08"; SHA-256 ea0c1410...).
+#   "september": original-materials/september-2026/BSZ_MainTablesFigures.xlsx,
+#       the same paper revision with the data appendix of 2026-09-04
+#       (SHA-256 c236cc94...), the default until 2026-10-14.
+#   "may": original-materials/may-2026/BSZ_MainTablesFigures.xlsx, the May
+#       2026 paper revision.
+# "august" keeps its name because it is the paper's revision month; the
+# appendix date is what tells the two August workbooks apart.
 xlsx_path_default <- function() {
   vintage <- Sys.getenv("BSZ_VINTAGE", unset = "august")
   if (identical(vintage, "may")) {
     file.path(materials_dir(), "may-2026", "BSZ_MainTablesFigures.xlsx")
+  } else if (identical(vintage, "september")) {
+    file.path(materials_dir(), "september-2026", "BSZ_MainTablesFigures.xlsx")
   } else {
     file.path(materials_dir(), "BSZ_MainTablesFigures.xlsx")
   }

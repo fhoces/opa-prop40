@@ -86,18 +86,29 @@ test_that("compute_data_sec_agg excludes Ellison from every year", {
       agg_with_ell$forbes_worth[agg_with_ell$year == 2019],
       agg_no_ell$forbes_worth[agg_no_ell$year == 2019] + 60   # Ellison ~ $68B in 2019
     )
-  } else {
-    # August's data_sec_all no longer has ANY "larry-ellison" row, in any
-    # year (verified: 0 of 1345 rows match, openpyxl direct scan) - the
-    # workbook itself now excludes him at the data layer rather than relying
-    # on a downstream filter, matching the paper's narrative that Ellison
-    # should not count as a CA billionaire. compute_data_sec_agg's
-    # exclude_ids argument is therefore a no-op under this vintage: the
-    # with/without-Ellison aggregates are IDENTICAL, not merely close.
+  } else if (identical(bsz_snapshot_set(), "september")) {
+    # The 2026-09-04 appendix's data_sec_all has no "larry-ellison" row, in
+    # any year (verified: 0 of 1345 rows match, openpyxl direct scan) - the
+    # workbook excluded him at the data layer rather than relying on a
+    # downstream filter, matching the paper's narrative that Ellison should
+    # not count as a CA billionaire. compute_data_sec_agg's exclude_ids
+    # argument is therefore a no-op under this vintage: the with/without-
+    # Ellison aggregates are IDENTICAL, not merely close.
     expect_identical(
       agg_with_ell$forbes_worth,
       agg_no_ell$forbes_worth
     )
+  } else {
+    # The appendix updated 2026-10-08 (the default workbook) has the seven
+    # "larry-ellison" rows again (1348 rows, one per year 2019-2025), so the
+    # default filter matters once more: the two aggregates differ by exactly
+    # his Forbes wealth in each year, and nothing else is dropped.
+    ell <- d_all[!is.na(d_all$forbes_id) & d_all$forbes_id == "larry-ellison", ]
+    expect_equal(nrow(ell), 7L)
+    ell_worth <- tapply(ell$forbes_worth, ell$year, sum)
+    yrs <- as.character(agg_no_ell$year)
+    expect_equal(agg_with_ell$forbes_worth - agg_no_ell$forbes_worth,
+                 as.numeric(ell_worth[yrs]) / 1000, tolerance = 1e-9)
   }
 })
 

@@ -1,8 +1,8 @@
 """Python twin of R/vintage.R: the literals that differ between the May and
 August BSZ_MainTablesFigures.xlsx workbooks.
 
-One environment variable, BSZ_VINTAGE ("august" by default, or "may"),
-switches the workbook path (ingest_excel.xlsx_path_default) and every
+One environment variable, BSZ_VINTAGE ("august" by default, "september" or
+"may"), switches the workbook path (ingest_excel.xlsx_path_default) and every
 vintage-dependent column letter, row offset and constant below, exactly as
 in R. The comments in R/vintage.R explain where each literal comes from; this
 file only restates the values.
@@ -11,6 +11,10 @@ import os
 
 
 def bsz_vintage():
+    # "september" (the 2026-09-04 data appendix of the August paper revision)
+    # shares the August layout, so it maps to "august" here; only the workbook
+    # path differs (ingest_excel.xlsx_path_default). The default "august"
+    # workbook is the data appendix updated 2026-10-08.
     v = os.environ.get("BSZ_VINTAGE", "august")
     return "may" if v == "may" else "august"
 
@@ -50,9 +54,19 @@ def srs_col(name, vintage=None):
     return col
 
 
+def bsz_snapshot_set():
+    """The tests/snapshots/<set>/ name: "may", "september" or "august"."""
+    v = os.environ.get("BSZ_VINTAGE", "august")
+    return v if v in ("may", "september") else "august"
+
+
 def srs_summary_row(row_may, vintage=None):
+    """shortrunseries summary block: +2 in the 2026-09-04 appendix, +261 in
+    the 2026-10-08 one (a daily 2026 series was inserted at rows 15-272)."""
     vintage = vintage or bsz_vintage()
-    return row_may if vintage == "may" else row_may + 2
+    if vintage == "may":
+        return row_may
+    return row_may + 2 if bsz_snapshot_set() == "september" else row_may + 261
 
 
 srs_growth_row = srs_summary_row

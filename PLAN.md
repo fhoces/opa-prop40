@@ -178,7 +178,10 @@ opa-prop40/
    `../CAWT-BSZ/original-materials/` into `bsz-analysis/original-materials/may-2026/`.
    Record the SHA-256 of every source file; they go in the READMEs.
    - May workbook: `cffe04bd...b7b1a`
-   - August workbook: `c236cc94...cb6ce`
+   - August workbook: `c236cc94...cb6ce` (data appendix of 2026-09-04; kept in
+     `original-materials/september-2026/` since 2026-10-14)
+   - August workbook, data appendix updated 2026-10-08 (the default since 2026-10-14):
+     `ea0c1410...3f022`
 
 2. **`git init` and write the root `.gitignore`.** It must cover:
    - `**/original-materials/`, `*.sqlite`, `**/_targets/`

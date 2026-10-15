@@ -19,11 +19,11 @@ taxable_wealth,3,1776.0,0,1,1776.051,TRUE
 avoidance_rate,3,23.0,1,100,23.0146944083225,TRUE
 wealth_tax_revenue,3,89.0,0,1,88.80255,TRUE
 extra_ca_inctax_sales,3,3.1,1,1,3.14953044,TRUE
-annual_ca_inctax_loss,3,-0.51,2,1,-0.5154305912072779,FALSE
+annual_ca_inctax_loss,3,-0.51,2,1,-0.5154030917924886,FALSE
 n_billionaires,4,620.0,0,1,619.559380317206,TRUE
 wealth,4,2957.0,0,1,2957.352794667372,TRUE
 taxable_wealth,4,2296.0,0,1,2296.3332357338977,TRUE
 avoidance_rate,4,22.4,1,100,22.351731593383416,TRUE
 wealth_tax_revenue,4,115.0,0,1,114.8166617866949,TRUE
 extra_ca_inctax_sales,4,4.1,1,1,4.072164271368112,TRUE
-annual_ca_inctax_loss,4,-0.56,2,1,-0.5585811435758424,TRUE
+annual_ca_inctax_loss,4,-0.56,2,1,-0.5585536441610532,TRUE

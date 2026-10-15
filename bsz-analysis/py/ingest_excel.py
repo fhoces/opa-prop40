@@ -45,8 +45,17 @@ def materials_dir():
 
 
 def xlsx_path_default():
+    """The workbook BSZ_VINTAGE selects (see R/ingest_excel.R).
+
+    "august" (default): the August 2026 paper revision with its data appendix
+    updated 2026-10-08. "september": the same revision with the 2026-09-04
+    appendix, kept in original-materials/september-2026/. "may": the May 2026
+    revision in original-materials/may-2026/.
+    """
     if bsz_vintage() == "may":
         return materials_dir() / "may-2026" / "BSZ_MainTablesFigures.xlsx"
+    if os.environ.get("BSZ_VINTAGE", "august") == "september":
+        return materials_dir() / "september-2026" / "BSZ_MainTablesFigures.xlsx"
     return materials_dir() / "BSZ_MainTablesFigures.xlsx"
 
 

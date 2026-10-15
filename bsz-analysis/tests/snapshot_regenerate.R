@@ -1,7 +1,10 @@
-# Regenerate the golden-master snapshots in tests/snapshots/<vintage>/.
+# Regenerate the golden-master snapshots in tests/snapshots/<set>/
+# (bsz_snapshot_set(): "august" for the default workbook, "september" or
+# "may").
 #
 # Run from project root: Rscript tests/snapshot_regenerate.R
-# (or BSZ_VINTAGE=may Rscript tests/snapshot_regenerate.R for the other vintage)
+# (or BSZ_VINTAGE=september / BSZ_VINTAGE=may Rscript tests/snapshot_regenerate.R
+# for the other workbooks)
 #
 # Snapshots capture the current numeric output of every Phase-2 R re-derivation
 # AND every Phase-3 exhibit (table tibbles + figure data layers), for the
@@ -19,7 +22,7 @@
 stopifnot(dir.exists("R"), file.exists("_targets.R"))
 invisible(lapply(list.files("R", pattern = "\\.R$", full.names = TRUE), source))
 
-SNAP_DIR <- file.path("tests/snapshots", bsz_vintage())
+SNAP_DIR <- file.path("tests/snapshots", bsz_snapshot_set())
 dir.create(SNAP_DIR, showWarnings = FALSE, recursive = TRUE)
 
 save_snap <- function(obj, name) {

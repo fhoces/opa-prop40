@@ -55,7 +55,7 @@ new Figure 8 and Appendix Figure A1, not built) plus a Quarto report.
 | Layer | Source of truth | Status |
 |---|---|---|
 | Paper PDF | `original-materials/BSZ26CAbillionaires.pdf` | **Required input. NOT redistributed in this repo** |
-| Authors' supplementary workbook | `original-materials/BSZ_MainTablesFigures.xlsx` (August, default) or `original-materials/may-2026/BSZ_MainTablesFigures.xlsx` (`BSZ_VINTAGE=may`) | **Required input. NOT redistributed in this repo** |
+| Authors' supplementary workbook | `original-materials/BSZ_MainTablesFigures.xlsx` (August, data appendix of 2026-10-08, default), `original-materials/september-2026/BSZ_MainTablesFigures.xlsx` (August, data appendix of 2026-09-04, `BSZ_VINTAGE=september`) or `original-materials/may-2026/BSZ_MainTablesFigures.xlsx` (`BSZ_VINTAGE=may`) | **Required input. NOT redistributed in this repo** |
 | Excel extractors | 14 `tar_target`s reading the workbook, one per sheet | Complete |
 | R re-derivations | 8 `compute_*` functions, ~1,640 Excel formula cells | Complete; all verified within tolerance |
 | Tables | 6 `gt` builders + HTML/LaTeX renders | Complete |
@@ -83,22 +83,31 @@ convention for raw data the paper's authors may share later.
 ### NOT in the repo (must be obtained separately)
 
 Nothing under `original-materials/` is tracked; the whole directory is
-gitignored. The pipeline reads two vintages of the authors' workbook, chosen
-by the `BSZ_VINTAGE` environment variable (default `august`; set
-`BSZ_VINTAGE=may` to use the May vintage instead) via `xlsx_path_default()`
-in `R/ingest_excel.R`:
+gitignored. The pipeline reads three copies of the authors' workbook, chosen
+by the `BSZ_VINTAGE` environment variable via `xlsx_path_default()` in
+`R/ingest_excel.R` (and its twin in `py/ingest_excel.py`). The default,
+`august`, is the August 2026 paper revision with its data appendix updated
+2026-10-08. `BSZ_VINTAGE=september` reads the same paper revision with the
+data appendix of 2026-09-04, the default until 2026-10-14. `BSZ_VINTAGE=may`
+reads the May 2026 revision. The paper PDF did not change between the two
+August appendices. `targets` does not track the environment variable, so after
+switching run `Rscript -e 'targets::tar_invalidate(xlsx_path)'` before
+`tar_make()`.
 
-- **`original-materials/BSZ_MainTablesFigures.xlsx`** (August, default):
-  every Excel extractor reads from this file unless `BSZ_VINTAGE=may` is set.
-  Without it the default pipeline cannot run. Download from:
+- **`original-materials/BSZ_MainTablesFigures.xlsx`** (August, data appendix
+  of 2026-10-08, default): every Excel extractor reads from this file unless
+  `BSZ_VINTAGE` is set to `september` or `may`. Without it the default
+  pipeline cannot run. Download from:
 
   ```
   https://eml.berkeley.edu/~saez/BSZ_MainTablesFigures.xlsx
   ```
 
-  As of 2026-09-23 that URL serves the August vintage:
+  As of 2026-10-14 that URL serves the August revision with the data
+  appendix updated 2026-10-08 (Index sheet "Last update 2026-10-08",
+  3,259,265 bytes):
   ```
-  SHA-256  c236cc9413374402973d61bfdfc02b7e573b05ad9c2f0658ee6b66ad898cb6ce
+  SHA-256  ea0c14107e1042182519d2f51a1dc157ee049cb33477a38d96f95cfe6f23f022
   ```
 
   Quick fetch + verify:
@@ -106,7 +115,18 @@ in `R/ingest_excel.R`:
   curl -L -o original-materials/BSZ_MainTablesFigures.xlsx \
        https://eml.berkeley.edu/~saez/BSZ_MainTablesFigures.xlsx
   shasum -a 256 original-materials/BSZ_MainTablesFigures.xlsx
-  # Expected: c236cc9413374402973d61bfdfc02b7e573b05ad9c2f0658ee6b66ad898cb6ce
+  # Expected: ea0c14107e1042182519d2f51a1dc157ee049cb33477a38d96f95cfe6f23f022
+  ```
+- **`original-materials/september-2026/BSZ_MainTablesFigures.xlsx`**: the
+  same August revision with the data appendix of 2026-09-04 (obtained
+  2026-09-22 from the same URL), used when `BSZ_VINTAGE=september`. Its
+  layout and every vintage literal in `R/vintage.R` are the August ones,
+  except the row of the shortrunseries summary block that the tests read.
+  What changed between the two appendices is recorded in
+  `VERIFY-AUGUST.md` (section "Data appendix update of 2026-10-08").
+
+  ```
+  SHA-256  c236cc9413374402973d61bfdfc02b7e573b05ad9c2f0658ee6b66ad898cb6ce
   ```
 - **`original-materials/may-2026/BSZ_MainTablesFigures.xlsx`**: the May 2026
   vintage of the same workbook, used when `BSZ_VINTAGE=may`. This is the
@@ -170,8 +190,10 @@ edit _raw-sources.md and run tools/sync-readme.sh to refresh.
 ```
 bsz-analysis/
 ├── original-materials/                   # GITIGNORED, see above
-│   ├── BSZ_MainTablesFigures.xlsx        # August (default vintage)
+│   ├── BSZ_MainTablesFigures.xlsx        # August, data appendix of 2026-10-08 (default)
 │   ├── BSZ26CAbillionaires.pdf           # August paper PDF
+│   ├── september-2026/
+│   │   └── BSZ_MainTablesFigures.xlsx    # August, data appendix of 2026-09-04 (BSZ_VINTAGE=september)
 │   ├── may-2026/
 │   │   ├── BSZ_MainTablesFigures.xlsx    # May vintage (BSZ_VINTAGE=may)
 │   │   └── BSZ26CAbillionaires.pdf       # May paper PDF
@@ -202,7 +224,7 @@ bsz-analysis/
 ├── report.qmd                            # Quarto narrative report
 ├── tests/
 │   ├── testthat.R                        # entry point
-│   ├── snapshots/{august,may}/*.rds      # 34 golden-master outputs per vintage (committed)
+│   ├── snapshots/{august,september,may}/*.rds  # 34 golden-master outputs per workbook (committed)
 │   ├── snapshot_regenerate.R             # re-baseline script (run on intentional change)
 │   └── testthat/                         # the test files (counts: see Verification approach)
 ├── tools/site-test-results.R             # runs the suite, writes site/data/test-results.csv
@@ -370,8 +392,10 @@ from both languages. See `py/README.md` and `sql/README.md`.
 ## How to reproduce
 
 ```sh
-# 1. Place the workbook here (August, default vintage):
+# 1. Place the workbook here (August, data appendix of 2026-10-08, default):
 #    original-materials/BSZ_MainTablesFigures.xlsx
+#    or, for the 2026-09-04 appendix, here, and run with BSZ_VINTAGE=september:
+#    original-materials/september-2026/BSZ_MainTablesFigures.xlsx
 #    or, for the May vintage, here, and run with BSZ_VINTAGE=may:
 #    original-materials/may-2026/BSZ_MainTablesFigures.xlsx
 
@@ -416,10 +440,10 @@ written by `Rscript tools/site-test-results.R`, which also rewrites this block):
 
 <!-- test-counts:start -->
 ```
-compute:      215
+compute:      216
 data_sheets:   45
 figures:       76
-ingest_excel:  20
+ingest_excel:  21
 py-parity:     56
 site:          48       # the explorer runs compute_tab5.R's estimating function; grid.js is the exporter's output
 snapshots:     34       # pin exact output of every exhibit + compute_* fn
@@ -429,11 +453,12 @@ sql-workbook:  41
 tables:       121
 verify:         7
               ---
-total:        719       # August vintage, 2026-10-07, 114 test blocks across 12 files, 0 failed, 0 skipped
+total:        721       # August vintage, 2026-10-14, 114 test blocks across 12 files, 0 failed, 0 skipped
 ```
 <!-- test-counts:end -->
 
-The snapshot tests load `tests/snapshots/<vintage>/*.rds` (`august/` or `may/`; committed golden masters of
+The snapshot tests load `tests/snapshots/<set>/*.rds` (`august/` for the default workbook, `september/` for
+the 2026-09-04 appendix, or `may/`; the set is `bsz_snapshot_set()` in `R/vintage.R`; committed golden masters of
 every Phase-2 R output and every Phase-3 exhibit) and assert byte-level
 equality against the current pipeline. They catch any refactor that changes
 a numeric value, even within Excel-rounding tolerance. Re-baseline only when

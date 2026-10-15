@@ -7,6 +7,49 @@ default (August) vintage of `BSZ_MainTablesFigures.xlsx`
 (SHA-256 `c236cc94...cb6ce`), compared against the May vintage
 (SHA-256 `cffe04bd...b7b1a`) already verified clean (see PLAN.md step 5).
 
+## Data appendix update of 2026-10-08
+
+Added 2026-10-14. Saez's site now serves an updated workbook at the same URL: Index sheet
+"Last update 2026-10-08", SHA-256 `ea0c1410...3f022`, 3,259,265 bytes. The paper PDF did not
+change. This workbook is now the pipeline's default input (`BSZ_VINTAGE` unset or `august`).
+The 2026-09-04 appendix this report was written against (`c236cc94...cb6ce`) is kept in
+`original-materials/september-2026/` and is read with `BSZ_VINTAGE=september`. Its golden
+masters are `tests/snapshots/september/`, and the suite passes on it (668 expectations, 0
+failed, 2 skipped: the committed `export/py` and `grid.js` come from the default workbook).
+Switching workbooks needs `targets::tar_invalidate(xlsx_path)` before `tar_make()`, because
+targets does not track the environment variable.
+
+What changed between the two appendices (October minus September, R pipeline outputs):
+
+- Ten new sheets, none removed: Fig5bis, Tab3-slides, Tab3-slides2, Tab3aslides, Tab3bslides,
+  Tab5slides-a, Tab5slides-b, shortrunseriesB, "Fig1 (2)" and data_rtb_20260921_2023. The
+  pipeline reads none of them.
+- shortrunseries has a daily 2026 series (2026-01-01 to 2026-10-07, columns A:E) inserted at
+  rows 15-272. The summary and growth blocks moved down 259 rows (May row + 261 instead of
+  May row + 2). Only the tests read that block (`srs_summary_row()` in `R/vintage.R`). The
+  year panel the pipeline reads (rows 6:13) did not move. The sheet's 2018 estimate (C6)
+  changed from 660.95 to 719.81; the pipeline does not read it.
+- data_sec_all has the seven larry-ellison rows again (1,348 rows, against 1,345 with none).
+  `compute_data_sec_agg()` filters them out as before, so the aggregates differ from the
+  September ones only through the data changes below.
+- The 2025 SEC data moved slightly. In data_sec_agg 2025, non-equity compensation went from
+  0.0383 to 0.0367 $B and economic income from 58.09 to 58.44 $B; CA income tax from
+  1.21225 to 1.21210 $B.
+- What a reader can see: the Fig 5 economic-income bar ("Net of taxes") went from 115.1 to
+  115.8. Table 3's 2025 row: Zuckerberg 126.0 to 125.8, Huang 89.4 (89.39 to 89.44), all top 4
+  358.7 to 358.5 ($M). Smaller moves: Table 4 total 18.443 to 18.442, Table 2 top-4 CA income
+  tax 2025 0.3587 to 0.3585, the top4taxes per-income ratios (and Figures 6, 7 and A3) by up
+  to 0.8% (1.4% in Figure A3 panel 2).
+- Table 5: only the yearly CA income tax loss of rows 3 and 4 moved (-0.515431 to -0.515403
+  and -0.558581 to -0.558554 $B), still printed as -0.51 and -0.56. Row 6 (250, 2307, 2076.3,
+  0.1, 103.815) is identical.
+- The main estimate and every one of the 1,920 explorer grid cells are unchanged at one
+  decimal (largest move 0.00013 $B).
+
+The full per-snapshot comparison (max absolute and relative difference per field) was made
+with the 2026-09-04 snapshots, kept in `tests/snapshots/september/`, against the regenerated
+`tests/snapshots/august/`.
+
 ## 0. Resolution (step 4)
 
 All 184 August failures classified below are fixed. Full-suite result, `Rscript`-sourcing

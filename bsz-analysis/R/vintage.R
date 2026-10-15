@@ -1,5 +1,7 @@
 # Vintage resolution + the small set of literals that differ between the May
-# and August BSZ_MainTablesFigures.xlsx workbooks.
+# and August BSZ_MainTablesFigures.xlsx workbooks. "August" here means the
+# August 2026 paper revision; both of its data appendices (2026-09-04 and the
+# default 2026-10-08 update) share the August layout.
 #
 # `xlsx_path_default()` (R/ingest_excel.R) already resolves which workbook to
 # read from BSZ_VINTAGE. Everything below keys off the SAME env var so a
@@ -12,9 +14,22 @@
 # resolve those here, in one place, rather than scattering `if` statements
 # through the compute_*/build_* files.
 
+# BSZ_VINTAGE = "september" selects the 2026-09-04 data appendix of the same
+# August paper revision (original-materials/september-2026/). Its layout is
+# the August one, so every literal below treats it exactly like "august";
+# only the workbook path (xlsx_path_default()) and the golden-master snapshot
+# set (bsz_snapshot_set()) differ. The default "august" workbook is the data
+# appendix updated 2026-10-08.
 bsz_vintage <- function() {
   v <- Sys.getenv("BSZ_VINTAGE", unset = "august")
   if (identical(v, "may")) "may" else "august"
+}
+
+# The tests/snapshots/<set>/ directory for the active workbook: "may",
+# "september" (2026-09-04 appendix) or "august" (2026-10-08 appendix).
+bsz_snapshot_set <- function() {
+  v <- Sys.getenv("BSZ_VINTAGE", unset = "august")
+  if (v %in% c("may", "september")) v else "august"
 }
 
 # ---------------------------------------------------------------------------
@@ -66,9 +81,17 @@ srs_col <- function(name, vintage = bsz_vintage()) {
 # August (a new numeric-2026 row plus a blank spacer were inserted between
 # the year panel and this block). Row LETTERS within the block shifted too
 # (see .SRS_COL); this only matters for the row literal itself.
+#
+# The data appendix updated 2026-10-08 (the default workbook) also inserted
+# a daily 2026 series (2026-01-01 to 2026-10-07, columns A:E) at rows
+# 15-272, pushing the block down by another 259 rows: May row + 261 (for
+# example "2026 (feb 1)" moved from row 16 to row 275). The 2026-09-04
+# appendix (BSZ_VINTAGE=september) keeps the +2 offset. Only the tests read
+# this block; the pipeline reads the year panel (rows 6:13), which did not
+# move.
 srs_summary_row <- function(row_may, vintage = bsz_vintage()) {
   if (identical(vintage, "may")) return(row_may)
-  row_may + 2L
+  if (identical(bsz_snapshot_set(), "september")) row_may + 2L else row_may + 261L
 }
 
 # shortrunseries' growth-summary block (base-year rows) shifted the same +2.

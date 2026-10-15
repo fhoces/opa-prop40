@@ -1,10 +1,12 @@
 name: bsz-analysis CI
 
 # Rebuilds the bsz-analysis pipeline against the August 2026 BSZ
-# workbook (fetched and SHA-256 checked) and runs the full test suite, which
-# must pass: every R derivation is compared cell by cell with the workbook's
-# cached values. The May vintage is verified locally (BSZ_VINTAGE=may); its
-# workbook is not fetched here. See bsz-analysis/VERIFY-AUGUST.md.
+# workbook, data appendix updated 2026-10-08 (fetched and SHA-256 checked),
+# and runs the full test suite, which must pass: every R derivation is
+# compared cell by cell with the workbook's cached values. The May vintage
+# (BSZ_VINTAGE=may) and the 2026-09-04 appendix (BSZ_VINTAGE=september) are
+# verified locally; their workbooks are not fetched here. See
+# bsz-analysis/VERIFY-AUGUST.md.
 
 on:
   push:
@@ -37,12 +39,12 @@ jobs:
         with:
           working-directory: bsz-analysis
 
-      - name: Fetch the August workbook and verify its SHA-256
+      - name: Fetch the workbook (data appendix of 2026-10-08) and verify its SHA-256
         run: |
           mkdir -p original-materials
           curl -sL -o original-materials/BSZ_MainTablesFigures.xlsx \
             https://eml.berkeley.edu/~saez/BSZ_MainTablesFigures.xlsx
-          echo "c236cc9413374402973d61bfdfc02b7e573b05ad9c2f0658ee6b66ad898cb6ce  original-materials/BSZ_MainTablesFigures.xlsx" \
+          echo "ea0c14107e1042182519d2f51a1dc157ee049cb33477a38d96f95cfe6f23f022  original-materials/BSZ_MainTablesFigures.xlsx" \
             | sha256sum -c -
 
       # The Quarto report targets need Quarto + LaTeX, which this runner lacks; CI

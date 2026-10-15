@@ -1,17 +1,19 @@
-# Golden-master snapshot tests. The .rds files under tests/snapshots/<vintage>/
+# Golden-master snapshot tests. The .rds files under tests/snapshots/<set>/
 # pin the exact numeric output of every Phase-2 R re-derivation and every
 # Phase-3 exhibit at the commit when they were captured. Snapshots are
-# vintage-specific (tests/snapshots/may/, tests/snapshots/august/) because the
-# underlying August workbook data legitimately differs from May's - a
-# byte-for-byte snapshot comparison across vintages would always fail by
-# design, not because of a regression.
+# workbook-specific (tests/snapshots/may/; tests/snapshots/september/ for the
+# 2026-09-04 data appendix; tests/snapshots/august/ for the default workbook,
+# the data appendix updated 2026-10-08; see bsz_snapshot_set()) because the
+# underlying workbook data legitimately differs - a byte-for-byte snapshot
+# comparison across workbooks would always fail by design, not because of a
+# regression.
 #
 # A refactor that changes ANY numeric value will fail these tests. Re-baseline
 # only when the change is intentional: run `Rscript tests/snapshot_regenerate.R`
-# (regenerates the CURRENT vintage's snapshots, from BSZ_VINTAGE) and commit
+# (regenerates the CURRENT workbook's snapshots, from BSZ_VINTAGE) and commit
 # the updated .rds files with an explanatory message.
 
-SNAP_DIR <- testthat::test_path("..", "snapshots", bsz_vintage())
+SNAP_DIR <- testthat::test_path("..", "snapshots", bsz_snapshot_set())
 load_snap <- function(name) {
   path <- file.path(SNAP_DIR, paste0(name, ".rds"))
   if (!file.exists(path)) {

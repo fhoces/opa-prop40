@@ -19,11 +19,11 @@
 "avoidance_rate",3,23,1,100,23.0146944083225,TRUE
 "wealth_tax_revenue",3,89,0,1,88.80255,TRUE
 "extra_ca_inctax_sales",3,3.1,1,1,3.14953044,TRUE
-"annual_ca_inctax_loss",3,-0.51,2,1,-0.515430591207278,FALSE
+"annual_ca_inctax_loss",3,-0.51,2,1,-0.515403091792489,FALSE
 "n_billionaires",4,620,0,1,619.559380317206,TRUE
 "wealth",4,2957,0,1,2957.35279466737,TRUE
 "taxable_wealth",4,2296,0,1,2296.3332357339,TRUE
 "avoidance_rate",4,22.4,1,100,22.3517315933834,TRUE
 "wealth_tax_revenue",4,115,0,1,114.816661786695,TRUE
 "extra_ca_inctax_sales",4,4.1,1,1,4.07216427136811,TRUE
-"annual_ca_inctax_loss",4,-0.56,2,1,-0.558581143575842,TRUE
+"annual_ca_inctax_loss",4,-0.56,2,1,-0.558553644161053,TRUE

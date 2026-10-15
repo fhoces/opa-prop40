@@ -93,7 +93,7 @@ compare_parity_frames <- function(r, py, output, group) {
 # The full parity table, one row per output. `snap_dir` holds the R
 # reference snapshots for the vintage the Python export was built from.
 py_parity_table <- function(py_dir = py_parity_dir(),
-                            snap_dir = file.path(project_root(), "tests", "snapshots", bsz_vintage())) {
+                            snap_dir = file.path(project_root(), "tests", "snapshots", bsz_snapshot_set())) {
   root <- project_root()
   rows <- list()
   add <- function(x) rows[[length(rows) + 1L]] <<- x
