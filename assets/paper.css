@@ -196,11 +196,12 @@ body.pg-explorer .sl-cur { font-size: 13px; }
 body.pg-explorer .panel-head .reset { font-family: var(--serif); font-size: 13.5px; }
 body.pg-explorer .sl-in:focus-visible, body.pg-explorer .panel-head .reset:focus-visible,
 body.pg-explorer .levels button:focus-visible { outline-color: var(--ink); }
-/* A dial's name, small, with its symbol under it, large (as on the comparison explorer). */
-body.pg-explorer .dial .label .sym-word { display: block; font-size: 10.5px; font-weight: 400; color: var(--ink-3);
-  line-height: 1.15; margin-bottom: 1px; }
-body.pg-explorer .dial .label .sym { font-family: var(--serif); font-style: italic; font-size: 18px; font-weight: 600;
-  color: var(--ink); margin-left: 0; margin-right: 8px; line-height: 1.2; }
+/* A dial's name, large, with its symbol under it, small (author request 2026-10-15; as on the
+   comparison explorer). */
+body.pg-explorer .dial .label .sym-word { display: block; font-size: 14.5px; font-weight: 600; color: var(--ink);
+  line-height: 1.2; margin-bottom: 2px; }
+body.pg-explorer .dial .label .sym { font-family: var(--serif); font-style: italic; font-size: 13px; font-weight: 400;
+  color: var(--ink-3); margin-left: 0; margin-right: 8px; line-height: 1.2; }
 body.pg-explorer .levels button { font-size: 14px; }
 body.pg-explorer .levels button.is-default { box-shadow: none; border-bottom: 2px solid var(--ink-2); padding-bottom: 5px; }
 body.pg-explorer .presets button { font-family: var(--serif); font-size: 14px; }
