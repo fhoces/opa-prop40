@@ -315,12 +315,14 @@ render_site <- function(root = comparison_root(),
 
   # ---- the two slider panels: one slider per disputed input that moves the estimate, in
   # the bridge's order, then the minor-inputs switch and the September 2026 revision switch.
-  # In both panels a slider prints the BSZ value at its left end and the JR value at its
-  # right end, in the wording of the disputed-inputs table (fmt_input). The value of a slider
-  # is its position as slider_inputs() (model.R) defines it, 0 = the panel's own analysis: the
-  # BSZ panel's sliders run left to right, the JR panel's right to left (dir="rtl"). Each
-  # slider carries an explanation (slider_tips), shown while the pointer is over it. The page
-  # script reads the rest from D.sliders.
+  # Every dial runs from its smaller value at the left end to its larger value at the right
+  # end, in both panels, whichever analysis each value belongs to (author instruction
+  # 2026-10-15; dial_lo_side() below). Each end prints its value in the wording of the
+  # disputed-inputs table (fmt_input) and a tag naming whose value it is. The value of a slider
+  # is its position as slider_inputs() (model.R) defines it, 0 = the panel's own analysis, so
+  # a slider runs right to left (dir="rtl") wherever the panel's own value is the larger one.
+  # Each slider carries an explanation (slider_tips), shown while the pointer is over it. The
+  # page script reads the rest from D.sliders.
   hz_fin <- SLIDER_HORIZONS[is.finite(SLIDER_HORIZONS)]
   hz_words <- paste0(paste(head(hz_fin, -1), collapse = ", "), " and ", tail(hz_fin, 1),
                      " years, and a perpetuity")
@@ -391,17 +393,41 @@ render_site <- function(root = comparison_root(),
     k <- strsplit(k, " vs ", fixed = TRUE)[[1]]
     paste0(" Kind: ", if (side == "bsz") k[1] else k[length(k)], ".")
   }
-  end_span <- function(panel, id, side, txt) {
+  # Which analysis's value sits at the left end of dial `id` in `panel`: the smaller one (ties
+  # and the minor switch, whose two ends are not numbers, keep the BSZ value at the left). The
+  # share-lost dial compares its two rules' f at the panel's starting positions; a dial that
+  # moves several arguments compares its first (the Forbes list by its core wealth, the
+  # departures by the wealth gone, dep_b).
+  dial_lo_side <- function(panel, id) {
+    if (id == "minor_inputs") return("bsz")
+    if (id == "income_loss_share") {
+      from <- if (panel == "bsz") bi0$sup else bi0$rauh
+      to <- if (panel == "bsz") bi0$rauh else bi0$sup
+      f <- vapply(c(0L, slider_max(id)), function(p)
+        score_common(slider_inputs(from, to, stats::setNames(list(p), id), bi0$ladder))[["f"]], 0)
+      v <- if (panel == "bsz") f else rev(f)
+    } else {
+      nm <- step_inputs[[id]][1]
+      v <- c(bi0$sup[[nm]], bi0$rauh[[nm]])
+    }
+    if (v[1] <= v[2]) "bsz" else "rjkdc"
+  }
+  end_tag <- c(bsz = "BSZ", rjkdc = "JR")
+  end_span <- function(panel, id, side, txt, at) {
     tp <- end_tips[[id]][side]
     if (!is.null(tp) && !is.na(tp)) tp <- paste0(tp, end_kind(id, side))
+    val <- sprintf('<span class="sl-end-v">%s</span><span class="sl-end-tag">%s</span>', txt, end_tag[[side]])
     if (is.null(tp) || is.na(tp))
-      return(sprintf('<span class="sl-end sl-%s"><span class="sl-end-v">%s</span></span>', if (side == "bsz") "lo" else "hi", txt))
-    sprintf(paste0('<span class="sl-end sl-%1$s has-tip" tabindex="0" aria-describedby="%2$s-%3$s-%4$s-tip">',
-                   '<span class="sl-end-v">%5$s</span><span class="end-tip" role="tooltip" id="%2$s-%3$s-%4$s-tip">%6$s</span></span>'),
-            if (side == "bsz") "lo" else "hi", panel, id, side, txt, esc(tp))
+      return(sprintf('<span class="sl-end sl-%s" data-side="%s">%s</span>', at, side, val))
+    sprintf(paste0('<span class="sl-end sl-%1$s has-tip" data-side="%4$s" tabindex="0" aria-describedby="%2$s-%3$s-%4$s-tip">',
+                   '%5$s<span class="end-tip" role="tooltip" id="%2$s-%3$s-%4$s-tip">%6$s</span></span>'),
+            at, panel, id, side, val, esc(tp))
   }
   slider_row <- function(panel, id, name, title, tip, bsz_txt, rj_txt, max, sym = FALSE) {
-    rtl <- panel == "rjkdc"
+    lo <- dial_lo_side(panel, id); hi <- setdiff(c("bsz", "rjkdc"), lo)
+    txt <- c(bsz = bsz_txt, rjkdc = rj_txt)
+    # the panel's own value (position 0) is the larger one: the slider runs right to left
+    rtl <- lo != panel
     ticks <- paste(sprintf('<i style="--t:%s"></i>', format((0:max) / max)), collapse = "")
     sprintf(paste0(
       '        <li class="sl%13$s" data-id="%2$s">\n',
@@ -417,9 +443,9 @@ render_site <- function(root = comparison_root(),
                                  if (!is.na(DIAL_WORDS[id])) paste0('<span class="sym-word">', DIAL_WORDS[[id]], '</span>') else "")
                  else esc(name),
       if (sym) paste0('<span class="sr">', esc(title), '</span>') else esc(title), gsub("\n", "<br>", esc(tip), fixed = TRUE),
-      end_span(panel, id, "bsz", bsz_txt), end_span(panel, id, "rjkdc", rj_txt), as.integer(max),
+      end_span(panel, id, lo, txt[[lo]], "lo"), end_span(panel, id, hi, txt[[hi]], "hi"), as.integer(max),
       if (rtl) " is-rtl" else "", ticks, if (rtl) ' dir="rtl"' else "",
-      if (rtl) rj_txt else bsz_txt, if (sym) " has-sym" else "")
+      txt[[panel]], if (sym) " has-sym" else "")
   }
   step_row <- function(panel, id) {
     i <- match(id, steps$step_id); tx <- dial_texts(inp, id, bi0)

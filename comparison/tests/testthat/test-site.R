@@ -153,9 +153,49 @@ test_that("the slider panels: the dials in their two boxes in the bridge's order
       expect_true(grepl(sprintf('data-id="%s" aria-describedby="%s-%s-tip"', id, panel, id), ex_html, fixed = TRUE), label = paste(panel, id, "describedby"))
     }
   }
-  # the JR panel's sliders run right to left, so position 0 sits at the JR end
-  expect_equal(length(gregexpr('data-panel="rjkdc" data-id="[a-z_]+" aria-describedby="[a-z_-]+" dir="rtl"', ex_html)[[1]]), length(shown) + 1 + length(EXPLORER_MINOR))
-  expect_false(grepl('data-panel="bsz" data-id="[a-z_]+" aria-describedby="[a-z_-]+" dir="rtl"', ex_html))
+  # Every dial has its smaller value at the left end and its larger at the right, in both
+  # panels, whichever analysis each belongs to (author instruction 2026-10-15). Each end is
+  # tagged with its analysis; a slider runs right to left exactly where the panel's own value
+  # (position 0) is at the right end. The values compared are the data file's (the first
+  # argument a dial moves), the printed percentages for the share lost; the minor switch's
+  # ends are not numbers and keep the BSZ values at the left.
+  expect_false(grepl("sl-head", ex_html, fixed = TRUE))
+  expect_false(grepl("<span>BSZ value</span>", ex_html, fixed = TRUE))
+  rows <- regmatches(ex_html, gregexpr('(?s)<li class="sl(?: has-sym)?" data-id="[a-z_]+">.*?</li>', ex_html, perl = TRUE))[[1]]
+  expect_length(rows, 2L * (length(shown) + 1L + length(EXPLORER_MINOR)))
+  num <- function(z) if (identical(z, "Inf")) Inf else z
+  inp_of <- stats::setNames(lapply(D$sliders$inputs, function(x) unlist(x$input)), vapply(D$sliders$inputs, `[[`, "", "id"))
+  rtl_ids <- list(bsz = character(), rjkdc = character())
+  for (li in rows) {
+    id <- sub('(?s)^<li class="sl(?: has-sym)?" data-id="([a-z_]+)">.*', "\\1", li, perl = TRUE)
+    panel <- sub('(?s).*data-panel="([a-z]+)".*', "\\1", li, perl = TRUE)
+    ends <- regmatches(li, gregexpr('class="sl-end sl-(lo|hi)[^"]*" data-side="(bsz|rjkdc)"[^>]*><span class="sl-end-v">[^<]*</span><span class="sl-end-tag">(BSZ|JR)</span>', li))[[1]]
+    expect_length(ends, 2L)
+    at <- sub('class="sl-end sl-(lo|hi).*', "\\1", ends)
+    side <- sub('.*data-side="(bsz|rjkdc)".*', "\\1", ends)
+    tag <- sub('.*<span class="sl-end-tag">(BSZ|JR)</span>$', "\\1", ends)
+    lab <- paste(panel, id)
+    expect_identical(at, c("lo", "hi"), label = lab)
+    expect_setequal(side, c("bsz", "rjkdc"))
+    expect_identical(tag, c(bsz = "BSZ", rjkdc = "JR")[side] |> unname(), label = lab)
+    if (id == "minor_inputs") {
+      expect_identical(side, c("bsz", "rjkdc"), label = lab)
+    } else if (id == "income_loss_share") {
+      v <- as.numeric(sub("%", "", sub('.*<span class="sl-end-v">([^<]*)</span>.*', "\\1", ends), fixed = TRUE))
+      expect_lte(v[1], v[2], label = lab)
+    } else {
+      nm <- inp_of[[id]][1]
+      v <- vapply(side, function(sd) num(D$sliders$values[[sd]][[nm]]), 0)
+      expect_lte(v[[1]], v[[2]], label = lab)
+    }
+    rtl <- grepl(sprintf('data-panel="%s" data-id="%s" aria-describedby="%s-%s-tip" dir="rtl"', panel, id, panel, id), li, fixed = TRUE)
+    expect_identical(rtl, side[2] == panel, label = paste(lab, "direction"))
+    if (rtl) rtl_ids[[panel]] <- c(rtl_ids[[panel]], id)
+  }
+  # the flips this rule makes: the BSZ panel's W, a, q, r and two minor dials run right to left,
+  # the JR panel's D, f, C, H, the minor switch and the real-estate dial
+  expect_identical(rtl_ids$bsz, c("base_list", "avoidance", "litigation_survival", "discount_rate", "noncitizens", "asset_sales"))
+  expect_identical(rtl_ids$rjkdc, c("confirmed_departures", "income_loss_share", "income_level", "horizon", "minor_inputs", "real_estate"))
   # the data file: every input in the bridge's order (the switch stands for three of them),
   # the argument each moves, both vectors, and the three the switch covers
   bi <- bridge_inputs(read_contracts(root))

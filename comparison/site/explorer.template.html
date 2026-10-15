@@ -107,10 +107,6 @@
   .ph-now { font-size: 14px; color: var(--ink); margin-top: 4px; }
   .ph-now b { font-family: var(--serif); font-size: 22px; font-weight: 600; margin-left: 4px;
     font-variant-numeric: tabular-nums; }
-  .sl-head { display: flex; justify-content: space-between; font-size: 10.5px; letter-spacing: .07em;
-    text-transform: uppercase; color: var(--ink-3); font-weight: 500; padding: 2px 0 0; }
-  .sl-head span:first-child { color: var(--bsz); }
-  .sl-head span:last-child { color: var(--jr); }
   .sl-list { list-style: none; margin: 0; padding: 0; }
   .sl { position: relative; padding: 7px 0 2px; border-bottom: 1px solid var(--rule-2); }
   .sl:last-child { border-bottom: 0; }
@@ -121,6 +117,10 @@
   .sl-end { font-family: var(--serif); font-size: 11px; color: var(--ink-3); line-height: 1.25;
     padding-top: 4px; overflow-wrap: anywhere; }
   .sl-lo { text-align: right; }
+  /* Under each end's value, whose value it is: the smaller value is at the left end, whichever
+     analysis it belongs to. */
+  .sl-end-tag { display: block; font-family: var(--sans); font-size: 9.5px; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--ink-3); font-weight: 500; margin-top: 1px; }
   .sl-track { position: relative; display: block; height: 38px; }
   .sl-track::before { content: ""; position: absolute; left: 9px; right: 9px; top: 10px; height: 2px;
     background: var(--rule); border-radius: 1px; }
@@ -303,9 +303,10 @@
 
   <section class="board" id="panels" aria-labelledby="board-title">
     <h2 id="board-title">Two panels, one estimating function</h2>
-    <p class="board-lead">Each slider moves one disputed input from the BSZ value (left end) to
-    the JR value (right end). The BSZ panel starts at the BSZ values, the JR panel at the JR
-    values. Tap or hover over a symbol or an end for what it means.</p>
+    <p class="board-lead">Each slider moves one disputed input between the two analyses' values.
+    Every dial has its smaller value at the left end and its larger value at the right end, and
+    each end names whose value it is. The BSZ panel starts at the BSZ values, the JR panel at the
+    JR values, so a dial can start at either end. Tap or hover over a symbol or an end for what it means.</p>
 
     <div class="panels">
       <div class="panel bsz" id="panel-bsz" role="group" aria-labelledby="pbsz-h">
@@ -315,7 +316,6 @@
           <p class="ph-src">The BSZ analysis's main estimate<sup>1</sup> (Boll, Saez and Zucman, August 2026)</p>
           <p class="ph-now">With these sliders <b id="now-bsz" aria-live="polite">{{bsz_end_b}}</b></p>
         </div>
-        <div class="sl-head" aria-hidden="true"><span>BSZ value</span><span>JR value</span></div>
         <ul class="sl-list" aria-label="The BSZ panel's sliders">
 {{sliders_bsz}}
         </ul>
@@ -338,7 +338,6 @@
           <p class="ph-src">The JR analysis's main estimate<sup>1</sup> (Jaros and Rauh, NBER, September 2026)</p>
           <p class="ph-now">With these sliders <b id="now-rjkdc" aria-live="polite">{{jr_end_b}}</b></p>
         </div>
-        <div class="sl-head" aria-hidden="true"><span>BSZ value</span><span>JR value</span></div>
         <ul class="sl-list" aria-label="The JR panel's sliders">
 {{sliders_rjkdc}}
         </ul>
@@ -404,8 +403,8 @@
       judgement applied to observed facts), <b>scenario</b> (a choice of which world is
       estimated) and <b>derived</b> (computed from the analysis's own inputs). "A vs B" reads the BSZ value's kind against the JR value's.</p>
       <p><strong>The function.</strong> The <a href="../repro.html#the-two-ends">report</a> states
-      the estimating function line by line. The left sliders move only the left bar and the right
-      sliders only the right bar.</p>
+      the estimating function line by line. The BSZ panel's sliders move only the BSZ bar and the JR
+      panel's sliders only the JR bar.</p>
     </div>
   </details>
 
@@ -539,11 +538,11 @@
       out.textContent = txt;
       if (id === "income_loss_share") {
         var fe = fEnds(panel), row = inp.closest(".sl-row");
-        row.querySelector(".sl-lo .sl-end-v").textContent = pct(fe.bsz);
-        row.querySelector(".sl-hi .sl-end-v").textContent = pct(fe.rjkdc);
+        row.querySelector('.sl-end[data-side="bsz"] .sl-end-v').textContent = pct(fe.bsz);
+        row.querySelector('.sl-end[data-side="rjkdc"] .sl-end-v').textContent = pct(fe.rjkdc);
       }
-      // under the thumb: the JR panel's sliders run right to left
-      var frac = panel === "bsz" ? p / max : 1 - p / max;
+      // under the thumb: a slider whose panel's own value is the larger runs right to left
+      var frac = inp.getAttribute("dir") === "rtl" ? 1 - p / max : p / max;
       out.style.left = "calc(9px + " + frac + " * (100% - 18px))";
       out.style.transform = frac === 0 ? "translateX(-9px)" : frac === 1 ? "translateX(calc(-100% + 9px))" : "translateX(-50%)";
       inp.setAttribute("aria-valuetext", txt + ", position " + p + " of " + max +
