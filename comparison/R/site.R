@@ -506,6 +506,19 @@ render_site <- function(root = comparison_root(),
             esc(q_heads[4]), verdict)
   }, ""), collapse = "\n")
   tok$quantity_heads <- paste(sprintf("<th>%s</th>", esc(q_heads)), collapse = "")
+  # The same table on the explorer and in the overview's "The differences" fold (author request
+  # 2026-10-15); only the link to the report differs by page.
+  q_table <- function(report) paste0(
+    '    <p class="q-sub">All these are empirical quantities. An expert should be able to appraise each value\n',
+    '    from more to less credible.</p>\n',
+    '    <table class="q-table">\n',
+    '      <thead><tr>', tok$quantity_heads, '</tr></thead>\n',
+    '      <tbody>\n', tok$quantity_rows, '\n      </tbody>\n',
+    '    </table>\n',
+    '    <p class="q-foot">Each value\'s full source is in the <a href="', report,
+    '#the-disputed-inputs">report\'s table of differences</a>.</p>')
+  tok$quantity_table_x <- q_table("../repro.html")
+  tok$quantity_table_root <- q_table("comparison/site/repro.html")
   # Which analysis's value sits at the left end of dial `id` in `panel`: the smaller one (ties
   # and the minor switch, whose two ends are not numbers, keep the BSZ value at the left). The
   # share-lost dial compares its two rules' f at the panel's starting positions; a dial that

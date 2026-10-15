@@ -558,6 +558,15 @@ test_that("the quantities section: one row per group of dials, credibility from 
   expect_true(grepl("Each value's full source is in the <a href=\"../repro.html#the-disputed-inputs\">report's table of differences</a>.", html, fixed = TRUE))
 })
 
+test_that("the overview's \"The differences\" fold repeats the explorer's quantities table (author request 2026-10-15)", {
+  ex <- read_page(explorer); ov <- read_page(file.path(root, "index.html"))
+  tb <- function(h) regmatches(h, regexpr('<table class="q-table">.*?</table>', h))
+  expect_identical(tb(ov), tb(ex))
+  fold <- regmatches(ov, regexpr('<details class="fold" id="differences">.*?</details>', ov))
+  expect_true(grepl('<table class="q-table">', fold, fixed = TRUE))
+  expect_true(grepl('href="comparison/site/repro.html#the-disputed-inputs"', fold, fixed = TRUE))
+})
+
 test_that("an assessment in the author's file shows in the table, and an unknown one stops the build", {
   f <- file.path(root, "comparison", "data", "author-credibility.csv")
   old <- readLines(f); on.exit(writeLines(old, f), add = TRUE)

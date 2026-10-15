@@ -471,26 +471,12 @@ versions than this site. So the two do not line up step for step.</p>
 <details class="fold" id="differences">
   <summary><h2>The differences <a class="fold-link" href="#differences" aria-label="Link to this section">#</a></h2> <span class="teaser">every input the two estimates differ on, with both values</span></summary>
   <div class="fold-body">
-<p>The table has one row per input on which the two estimates differ. It gives what each
-analysis assumes and what kind of claim it is (data, research, guesswork, scenario or derived). Each row
-is one step of the <a href="comparison/site/repro.html#the-bridge">bridge</a> and one dial of the
-<a href="comparison/site/explorer/">explorer</a>. The first column gives the input's row in the project's crosswalk,
+<p>One row per group of inputs the two estimates differ on, as in the
+<a href="comparison/site/explorer/#quantities">explorer</a>. The project's crosswalk,
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/DISPUTES.md">DISPUTES.md</a>,
-which quotes both analyses on each point. The sources for each value are in
-<a href="comparison/site/repro.html#the-disputed-inputs">the report's table</a>.</p>
-<div class="table-scroll">
-<table>
-  <thead><tr><th>Row in DISPUTES.md</th><th>Difference</th><th>Kind</th><th>BSZ value</th><th>JR value</th></tr></thead>
-  <tbody>
-{{differences_rows}}
-  </tbody>
-</table>
-</div>
-<p class="small">Row 3: {{dconf_sept}} = 1 &minus; {{ceiling_literal}} / {{domestic_grown}}, the authors' ceiling after seven
-departures over the grown base. Their person-level file gives {{ceiling_file}} (mismatch 4); the
-script's {{ceiling_literal}} is used so the comparison returns their mean exactly.</p>
-<p class="small">"A vs B" reads the BSZ value's kind against the JR value's; "guesswork on data" is a
-judgement applied to observed facts. "Derived" is a value computed from the analysis's own inputs:
+quotes both analyses on each point.</p>
+{{quantity_table_root}}
+<p class="small">"Guesswork on data" is a judgement applied to observed facts. "Derived" is a value computed from the analysis's own inputs:
 the JR discount rate is the one rate worth the same as the authors' random draw of it.</p>
   </div>
 </details>
