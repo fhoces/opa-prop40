@@ -198,23 +198,25 @@ slider_sample <- function(bi, n = 300, seed = 20261014) {
   out
 }
 
-# The dial path (author decision 2026-10-15): the pseudo-equation and the report's bridge
+# The dial path (author decisions 2026-10-15): the pseudo-equation and the report's bridge
 # read one path through the explorer's own dials, not Shapley averages. Start from the BSZ
-# panel with every dial at 0 (the BSZ values) and move the dials in the order the explorer
-# prints them, each to its far end (the JR value); a term is what one move changes. The
-# order is the revenue box's dials, the loss box's dials, then the minor switch, which moves
-# its three inputs (noncitizens, real_estate, asset_sales) together. site.R checks that this
-# is the page's order. The JR panel walks the same states in reverse.
+# panel with every dial at 0 (the BSZ values) and move the dials in the equation's order, each
+# to its far end (the JR value); a term is what one move changes. The equation's order (author:
+# "the equation's order: D, q, lost income tax, the rest") is D and q, then the loss box's dials
+# in their box order (f, C, H, r), then W, a and the minor switch, which moves its three inputs
+# (noncitizens, real_estate, asset_sales) together. Pressing the equation's terms left to right
+# therefore gives the printed terms exactly. The page keeps its own dial order in the boxes;
+# site.R checks that this order is the equation's. The JR panel walks the same states in reverse.
 EXPLORER_MINOR <- c("noncitizens", "real_estate", "asset_sales")
-EXPLORER_DIAL_ORDER <- c("base_list", "confirmed_departures", "avoidance", "litigation_survival",
-                         "income_loss_share", "income_level", "horizon", "discount_rate",
-                         "minor_inputs")
+DIAL_PATH_ORDER <- c("confirmed_departures", "litigation_survival",
+                     "income_loss_share", "income_level", "horizon", "discount_rate",
+                     "base_list", "avoidance", "minor_inputs")
 DIAL_PATH_SYMBOLS <- c(base_list = "W", confirmed_departures = "D", avoidance = "a",
                        litigation_survival = "q", income_loss_share = "f", income_level = "C",
                        horizon = "H", discount_rate = "r", minor_inputs = "minor")
 DIAL_PATH_TITLES <- c(minor_inputs = "Three minor inputs")
 dial_ids <- function(id) if (id == "minor_inputs") EXPLORER_MINOR else id
-dial_path <- function(bi, order = EXPLORER_DIAL_ORDER) {
+dial_path <- function(bi, order = DIAL_PATH_ORDER) {
   st <- bridge_steps()
   pos <- list()
   prev <- slider_value(bi, "bsz", pos)

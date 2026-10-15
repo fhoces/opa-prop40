@@ -193,18 +193,19 @@ def slider_sample(sup, rauh, ladder, n=300, seed=20261014):
 
 
 # The dial path (twin of dial_path() in R/model.R): the BSZ panel with every dial at 0, the
-# dials moved in the explorer's order, each to its far end; the minor switch moves its three
-# inputs together. A term is what one move changes.
+# dials moved in the equation's order (D, q, then the loss box's f, C, H, r, then W, a and the
+# minor switch), each to its far end; the minor switch moves its three inputs together. A term
+# is what one move changes.
 EXPLORER_MINOR = ["noncitizens", "real_estate", "asset_sales"]
-EXPLORER_DIAL_ORDER = ["base_list", "confirmed_departures", "avoidance", "litigation_survival",
-                       "income_loss_share", "income_level", "horizon", "discount_rate",
-                       "minor_inputs"]
+DIAL_PATH_ORDER = ["confirmed_departures", "litigation_survival",
+                   "income_loss_share", "income_level", "horizon", "discount_rate",
+                   "base_list", "avoidance", "minor_inputs"]
 DIAL_PATH_SYMBOLS = {"base_list": "W", "confirmed_departures": "D", "avoidance": "a",
                      "litigation_survival": "q", "income_loss_share": "f", "income_level": "C",
                      "horizon": "H", "discount_rate": "r", "minor_inputs": "minor"}
 
 
-def dial_path(sup, rauh, ladder, order=EXPLORER_DIAL_ORDER):
+def dial_path(sup, rauh, ladder, order=DIAL_PATH_ORDER):
     titles = {s[0]: s[2] for s in STEPS}
     titles["minor_inputs"] = "Three minor inputs"
     pos = {}

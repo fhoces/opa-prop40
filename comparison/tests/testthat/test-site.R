@@ -53,10 +53,52 @@ test_that("the BSZ panel's Apply block repeats the equation's labels in words, e
   # every dial of the BSZ panel except the switch, once each
   ids <- regmatches(html, gregexpr('(?<=data-panel="bsz" data-id=")[a-z_]+', html, perl = TRUE))[[1]]
   expect_setequal(dials[[1]], setdiff(ids, "minor_inputs"))
+  # each sign in the block is its term's sign: the remainder (W, a and the minor switch) raises
+  # the estimate, so its sign is a plus
+  ops <- regmatches(ap, gregexpr('(?<=<span class="ap-op">)[^<]*(?=</span>)', ap, perl = TRUE))[[1]]
+  ch <- c(dp$change[main], sum(dp$change[loss]), sum(dp$change[rest]))
+  expect_identical(ops, c(ifelse(ch < 0, "&minus;", "+"), "&asymp;"))
+  expect_gt(ch[4], 0)
   # each Apply button names the top term it marks, and starts unpressed
   steps <- sub('.*data-steps="([^"]*)".*', "\\1", btn[2:5])
   for (st in steps) expect_true(grepl(sprintf('<span class="term" data-steps="%s">', st), eq, fixed = TRUE), label = st)
   expect_true(all(grepl('aria-pressed="false"', btn[2:5], fixed = TRUE)))
+})
+
+test_that("pressing the Apply buttons left to right gives each printed term exactly", {
+  node <- Sys.which("node")
+  skip_if(!nzchar(node), "node is not on PATH: model.js not checked")
+  dp <- read_csv_plain(file.path(root, "comparison", "export", "r", "dial_path.csv"))
+  html <- read_page(explorer)
+  ap <- regmatches(html, regexpr('<div class="apply-eq".*?</div>', html))
+  eq <- regmatches(html, regexpr('<div class="pseudo-eq".*?</div>', html))
+  btn <- regmatches(ap, gregexpr('<button[^>]*data-act="term"[^>]*>', ap))[[1]]
+  dials <- lapply(strsplit(sub('.*data-dials="([^"]*)".*', "\\1", btn), " ", fixed = TRUE), identity)
+  # the four middle amounts and their signs as the top equation prints them
+  b <- regmatches(eq, gregexpr("(?<=<b>)[^<]*(?=</b>)", eq, perl = TRUE))[[1]]
+  ops <- regmatches(eq, gregexpr('(?<=<span class="op">)[^<]*(?=</span>)', eq, perl = TRUE))[[1]]
+  expect_length(b, 6); expect_length(ops, 5)
+  js <- tempfile(fileext = ".js")
+  writeLines(c(
+    "globalThis.window = globalThis;",
+    sprintf("require(%s);", jsonlite::toJSON(file.path(root, "assets", "comparison-data.js"), auto_unbox = TRUE)),
+    sprintf("require(%s);", jsonlite::toJSON(file.path(root, "comparison", "site", "explorer", "model.js"), auto_unbox = TRUE)),
+    sprintf("const S = window.__BRIDGE__.sliders, M = window.ComparisonModel, B = %s;", jsonlite::toJSON(dials)),
+    "const p = {}, v = [M.panelValue(S, 'bsz', p).value];",
+    "B.forEach(ids => { ids.forEach(i => { p[i] = S.inputs.find(x => x.id === i).max; }); v.push(M.panelValue(S, 'bsz', p).value); });",
+    "console.log(JSON.stringify(v));"), js)
+  v <- jsonlite::fromJSON(paste(system2(node, js, stdout = TRUE), collapse = ""))
+  # the running values after each press are the path's values at the end of each term
+  last <- vapply(strsplit(sub('.*data-steps="([^"]*)".*', "\\1", btn), " "), function(x) max(as.integer(x)), 0L)
+  expect_identical(last, c(1L, 2L, 6L, 9L))
+  expect_lt(max(abs(v - c(dp$from[1], dp$to[last]))), 1e-9)
+  # each press changes the panel by the printed term: same amount, same sign
+  d <- diff(v)
+  expect_identical(vapply(abs(d), money, "", 1), b[2:5])
+  expect_identical(ifelse(d < 0, "&minus;", "+"), ops[1:4])
+  expect_identical(money(v[1], 1), b[1]); expect_identical(money(v[5], 1), b[6])
+  expect_identical(b[2:5], c("$29.9B", "$39.4B", "$81.3B", "$4.9B"))
+  expect_identical(ops[4], "+")
 })
 
 test_that("both pages carry the pseudo-equation: D and q, the loss box added up, the rest added up, BSZ to JR", {
@@ -88,9 +130,12 @@ test_that("both pages carry the pseudo-equation: D and q, the loss box added up,
     expect_true(all(at > 0), label = paste(p, "terms"))
     expect_true(all(diff(at) > 0), label = paste(p, "term order"))
     expect_identical(lengths(regmatches(eq, gregexpr('class="term"', eq, fixed = TRUE))), 6L, label = paste(p, "six terms"))
-    # the four printed terms take the printed BSZ estimate to the printed JR estimate
+    # the four printed terms take the printed BSZ estimate to within rounding of the printed JR
+    # estimate (the page prints "about", &asymp;): in the equation's order the rounded terms sum
+    # to -38.9 against the printed -39.0
     printed <- round(c(dp$change[main], sum(dp$change[loss]), sum(dp$change[rest])), 1)
-    expect_equal(round(eb$bsz_model, 1) + sum(printed), round(eb$rauh_own, 1), tolerance = 1e-9, label = paste(p, "sum"))
+    expect_lte(abs(round(eb$bsz_model, 1) + sum(printed) - round(eb$rauh_own, 1)), 0.1 + 1e-9, label = paste(p, "sum"))
+    expect_true(grepl('<span class="op">&asymp;</span><span class="term" data-end=', eq, fixed = TRUE), label = paste(p, "about"))
     # BSZ at the left, JR at the right
     expect_lt(regexpr("<small>BSZ estimate</small>", eq, fixed = TRUE)[[1]], at[1])
     expect_gt(max(gregexpr("JR estimate", eq, fixed = TRUE)[[1]]), at[length(at)])
@@ -103,7 +148,7 @@ test_that("both pages carry the pseudo-equation: D and q, the loss box added up,
     expect_false(grepl("shapley", html, ignore.case = TRUE), label = p)
   }
   ex_html <- read_page(explorer)
-  expect_true(grepl(paste("Move the BSZ panel's dials top to bottom, each to its far end.",
+  expect_true(grepl(paste("Move the BSZ panel's dials to their far ends, term by term from left to right.",
                           "The D and q terms are those two steps of that walk.",
                           "Lost income tax is the four loss-box dials of the walk added up (f, C, H and r).",
                           "The last term is the other three steps added up (W, a and three minor inputs)."),
@@ -255,7 +300,7 @@ test_that("the slider panels: the dials in their two boxes in the bridge's order
   expect_identical(vapply(D$sliders$inputs, `[[`, "", "id"), ids)
   expect_identical(unlist(D$sliders$minor), EXPLORER_MINOR)
   # the walk button's path is the dial path's order
-  expect_identical(unlist(D$sliders$path), EXPLORER_DIAL_ORDER)
+  expect_identical(unlist(D$sliders$path), DIAL_PATH_ORDER)
   expect_identical(lapply(D$sliders$inputs, function(x) unlist(x$input)), unname(step_inputs[ids]))
   num <- function(z) if (identical(z, "Inf")) Inf else z
   for (nm in names(bi$sup)) {
