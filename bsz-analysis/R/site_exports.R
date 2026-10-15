@@ -10,12 +10,16 @@
 # ---- the explorer's dials: exactly the inputs the report labels guesswork,
 # plus the two scenario rows Table 5 itself varies -------------------------
 
-# Each dial carries a one-sentence definition (desc, printed under its label) and one short
-# hover tip per level (tips, aligned with levels): the authors' level gives their value and
-# its one reason; every other level of a numeric dial is one this OPA adds.
-site_other_level_tip <- "A level this OPA adds to show the range, not the authors'."
-site_level_tips <- function(n, default, why) {
-  tips <- rep(site_other_level_tip, n)
+# Each dial carries a one-sentence definition (desc, printed under its label), the id of the
+# report section that explains it (report, an anchor in site/repro.html that the page links as
+# "more") and one short hover tip per level (tips, aligned with levels): the authors' level
+# gives their value and its one reason; every other level of a numeric dial is one this OPA
+# adds, and its tip names the authors' value (authors, as the page prints it).
+site_other_level_tip <- function(authors) {
+  paste0("Added by this OPA to show the range. BSZ use ", authors, ".")
+}
+site_level_tips <- function(n, default, authors, why) {
+  tips <- rep(site_other_level_tip(authors), n)
   tips[default] <- why
   tips
 }
@@ -24,37 +28,43 @@ site_dials <- function() {
   list(
     list(key = "avoidance", label = "Avoidance and evasion", sym = "α",
          origin = "guesswork",
-         desc = "The share of listed wealth that escapes the tax.",
+         desc = "The share of the wealth on the Forbes list that escapes the tax.",
+         report = "step-2-avoidance-and-evasion",
          levels = c(0, 0.05, 0.10, 0.15, 0.20, 0.30), default = 3L, fmt = "pct",
-         tips = site_level_tips(6L, 3L,
-           "BSZ: 10%, a judgment that enforcement keeps avoidance small, not an estimate (GGSS p.4).")),
+         tips = site_level_tips(6L, 3L, "10%",
+           "BSZ: 10%, from an expert report's judgment that enforcement keeps avoidance small. Not an estimate (BSZ PDF p.23).")),
     list(key = "mobility_share", label = "Share of avoidance that is leaving", sym = "m",
          origin = "guesswork",
          desc = "The part of avoidance done by leaving California, the only part that costs income tax.",
+         report = "step-5-income-tax-lost-to-billionaires-who-leave",
          levels = c(0, 0.25, 0.50, 0.75, 1), default = 3L, fmt = "pct",
-         tips = site_level_tips(5L, 3L,
+         tips = site_level_tips(5L, 3L, "50%",
            "BSZ: half (BSZ p.24: \"half of the 10% avoidance takes the form of mobility\").")),
     list(key = "avoidance_small", label = "Avoidance by the less visible billionaires", sym = "αₛ",
          origin = "guesswork",
          desc = "Avoidance by the billionaires Forbes misses. It applies only when they are counted.",
+         report = "row-2-adding-the-billionaires-forbes-misses",
          levels = c(0.10, 0.20, 0.30, 0.50), default = 2L, fmt = "pct",
-         tips = site_level_tips(4L, 2L,
+         tips = site_level_tips(4L, 2L, "20%",
            "BSZ: 20%, higher than for the listed billionaires (BSZ p.25).")),
     list(key = "sell_share", label = "Share of the tax paid by selling assets", sym = "s",
          origin = "guesswork",
-         desc = "The share of the tax paid by selling assets, whose gains raise extra income tax.",
+         desc = "Selling shares to pay the tax realises gains, which raise extra California income tax.",
+         report = "step-4-extra-state-income-tax-from-selling-assets",
          levels = c(0, 1/3, 2/3, 1), default = 2L, fmt = "frac3",
-         tips = site_level_tips(4L, 2L,
+         tips = site_level_tips(4L, 2L, "1/3",
            "BSZ: one third (BSZ p.24: \"paid one-third by selling assets\").")),
     list(key = "pareto", label = "Count billionaires Forbes misses", sym = "P",
          origin = "research",
          desc = "Whether to add the billionaires Forbes misses between $1 and $4.5 billion, estimated from the shape of the list above $4.5 billion.",
+         report = "row-2-adding-the-billionaires-forbes-misses",
          levels = c(0, 1), default = 1L, fmt = "bool",
          tips = c("BSZ main row: not counted.",
                   "BSZ Table 5 rows 2 and 4 count them (BSZ pp.24-25, Appendix Figure A4).")),
     list(key = "leavers", label = "Aggressive assumption on leavers", sym = "L",
          origin = "guesswork",
          desc = "Whether some billionaires who moved escape the tax as non-residents.",
+         report = "row-3-an-aggressive-assumption-on-who-has-left",
          levels = c(0, 1), default = 1L, fmt = "bool",
          tips = c("BSZ main row: everyone resident on 1 January 2026 pays.",
                   "BSZ Table 5 rows 3 and 4: Page, Thiel, Hankey and Kalanick escape; Brin, Zuckerberg and Fang leave later (BSZ p.26)."))
@@ -193,7 +203,7 @@ site_grid_js_text <- function(grid, inp) {
     source  = paste0("Generated by write_site_grid_js() in R/site_exports.R from the ",
                      "targets pipeline (BSZ workbook, ", inp$vintage, " vintage). Do not edit."),
     vintage = inp$vintage,
-    dials   = lapply(dials, function(d) d[c("key", "label", "sym", "origin", "desc", "levels", "fmt", "tips")]),
+    dials   = lapply(dials, function(d) d[c("key", "label", "sym", "origin", "desc", "report", "levels", "fmt", "tips")]),
     outcomes = outs$label,
     keys     = outs$key,
     units    = outs$unit,

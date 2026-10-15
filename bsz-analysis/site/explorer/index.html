@@ -196,6 +196,22 @@
   footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--ink-3); }
   footer a { color: var(--series-1); }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+  /* "more": a plain link to the report section that explains a dial or a definition. */
+  a.more { color: var(--series-1); text-decoration: none; border-bottom: 1px dotted var(--series-1);
+           white-space: nowrap; }
+  a.more:hover { border-bottom-style: solid; }
+  p.tcap { font-size: 12px; color: var(--ink-3); margin: 10px 0 0; line-height: 1.45; }
+  /* The bar labels are drawn in a 640-unit viewBox; on a phone that box is about 360 px
+     wide, so the labels need larger units to stay readable. */
+  @media (max-width: 640px) { .bars text { font-size: 20px; } }
+  /* On narrow screens the headline scrolls away above the inputs. This thin bar repeats its
+     value at the top of the screen once the headline is out of view (the script sets .show). */
+  .sticky-result { display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 40;
+    background: var(--panel); border-bottom: 1px solid var(--rule); padding: 6px 16px;
+    font-family: var(--sans); font-size: 13px; color: var(--ink-2); }
+  .sticky-result b { font-family: var(--serif); font-size: 16px; font-weight: 600; color: var(--ink);
+    font-variant-numeric: tabular-nums; }
+  @media (max-width: 860px) { .sticky-result.show { display: block; } }
   .credit { margin: 14px 0 0; font-size: 11.5px; color: var(--ink-2); }
   .credit a { color: var(--series-1); text-decoration: none; }
   .credit a:hover { text-decoration: underline; }
@@ -203,6 +219,7 @@
 </head>
 <body>
 
+<div class="sticky-result" id="sticky" aria-hidden="true">This setting: <b id="sticky-value"></b></div>
 <div class="wrap">
   <p class="site-nav">
     <span class="nav-row">BSZ analysis of California Proposition 40:
@@ -219,11 +236,9 @@
     <div class="hero-left">
       <h1>How much would the one-time billionaire tax raise, net?</h1>
       <p class="standfirst">
-        Boll, Saez and Zucman (BSZ, 2026) estimate about $100 billion of wealth tax ($104 billion in their
-        Table 5). Add the income tax the tax changes and the total is this site's <strong>main estimate</strong>.
-        Most of its inputs are guesswork.
-        Move them and the estimate updates: every setting is precomputed by the pipeline that reproduces
-        the authors' workbook.
+        Boll, Saez and Zucman (BSZ, 2026) put the one-time tax at about $100 billion of wealth tax.
+        This Open Policy Analysis (OPA) adds its income tax effects to get the <strong>main estimate</strong>.
+        Most inputs are guesswork. Move them and the estimate updates.
       </p>
     </div>
     <div class="headline">
@@ -232,7 +247,7 @@
       <span class="value" id="cell-value"></span>
       <span class="def">Defined as the wealth tax, plus the extra income tax from assets sold to pay it,
         minus the income tax lost to billionaires who leave, counted over 5 years in today's dollars
-        (present value at 3% a year).</span>
+        (present value at 3% a year). <a class="more" href="../repro.html#the-main-estimate">more</a></span>
     </div>
   </header>
 
@@ -241,11 +256,9 @@
       <h2>The inputs</h2>
       <div class="rack" id="rack"></div>
       <p class="legend-default"><i></i>the value the authors use</p>
-      <p class="small">Levels other than the authors' are this OPA's, chosen to bracket the authors' value;
-      the two yes/no switches instead turn on the authors' own Table 5 scenarios (rows 2 to 4). The explorer
-      holds every combination. Origins follow the OPA taxonomy: <b>data</b> (settled by observable facts),
-      <b>research</b> (a published estimate), <b>guesswork</b> (asserted without data or a study behind it),
-      <b>scenario</b> (a choice of which world is estimated).</p>
+      <p class="small">Each input is tagged by origin: <b>data</b>, <b>research</b> (a published estimate)
+      or <b>guesswork</b> (set by assumption, argued for but not measured).
+      <a class="more" href="../repro.html#every-input-by-origin">Every input, by origin</a> lists them all.</p>
 
     </section>
 
@@ -254,21 +267,19 @@
       <svg class="bars" id="bars" viewBox="0 0 640 200" role="img" aria-labelledby="bars-title">
         <title id="bars-title">Main estimate, this setting against the base scenario</title>
       </svg>
-      <p class="fn"><sup>1</sup> The main estimate is not the authors' choice: BSZ's headline is
-      the wealth tax alone, about $100 billion in the abstract and $104 billion in Table 5 (reproduced
-      here as <span id="pref-wt"></span>). This OPA uses the total because it compares more directly
-      with the <a href="../../../rjkdc-analysis/site/">JR analysis</a>'s net present value; the
-      <a href="../../../index.html">comparison overview</a> puts both on one definition.</p>
-      <p class="presets-h">Jump to a scenario</p>
+      <p class="fn"><sup>1</sup> BSZ's headline is the wealth tax alone: $104 billion in their Table 5,
+      <span id="pref-wt"></span> here. This OPA adds the income tax effects to compare with the
+      <a href="../../../rjkdc-analysis/site/">JR analysis</a>.
+      <a class="more" href="../repro.html#the-main-estimate">Why</a></p>
+      <p class="presets-h">Jump to a setting</p>
       <div class="presets" id="presets"></div>
       <dl class="scen-key" id="scen-key"></dl>
       <details class="fold">
         <summary>Every outcome, for this setting and the four Table 5 scenarios</summary>
+      <p class="tcap">Wealth from the 1 July 2026 Forbes list. Leaver losses are a present value
+      (5 years at 3%). Orange marks the base scenario.</p>
       <div class="table-scroll">
         <table id="cmp">
-          <caption style="caption-side:top; text-align:left; font-size:12px; color:var(--ink-3); padding-bottom:8px;">
-            Nominal dollars, 1 July 2026 Forbes wealth. The orange column is the main estimate.
-          </caption>
           <thead><tr id="cmp-head"><th>Outcome</th><th>This setting</th></tr></thead>
           <tbody></tbody>
         </table>
@@ -286,7 +297,7 @@
       rate). The JR analysis counts it forever: see the <a href="../../../index.html">comparison overview</a>.</p>
       <p><strong>Two departures from the workbook.</strong> (1) Its income tax loss is a literal 5%
       (<code>Tab5!H6</code>); the explorer reads it as avoidance times the share leaving, identical at
-      the authors' values. (2) Table 5 deducts the $1B to $1.1B phase-in in row 2 but not row 4
+      the authors' values. (2) Table 5 deducts the phase-in (the Act's lower rate between $1B and $1.1B) in row 2 but not row 4
       (<code>Tab5!F9</code>). The explorer copies this, so with both switches on the estimate is
       <span id="gap"></span> higher than a consistent treatment.</p>
       <p><strong>Data.</strong> <a href="../data/grid.csv">grid.csv</a> (every setting),
@@ -376,7 +387,11 @@
     // whether it is the authors' value and why, so the label needs no tip of its own.
     var desc = document.createElement("div");
     desc.className = "desc";
-    desc.textContent = dial.desc;
+    desc.textContent = dial.desc + " ";
+    // "more" goes to the report section that explains this input (dial.report, from grid.js).
+    var more = document.createElement("a");
+    more.className = "more"; more.href = "../repro.html#" + dial.report; more.textContent = "more";
+    desc.appendChild(more);
     var levels = document.createElement("div");
     levels.className = "levels";
     dial.levels.forEach(function (value, li) {
@@ -424,15 +439,24 @@
     "Base": "Table 5 row 1: the Forbes list, every input at the authors' value.",
     "Missing billionaires": "adds about " + Math.round(nAdd) + " smaller fortunes ($1B to $4.5B) that Forbes " +
       "misses, estimated with a Pareto extrapolation and taxed with 20% avoidance (Table 5 row 2).",
-    "Leavers": "assumes Page, Thiel, Hankey and Kalanick left before 1 January 2026 and escape the tax, " +
-      "and that Brin, Zuckerberg and Fang leave later, taking their income tax (Table 5 row 3).",
+    "Leavers": "four billionaires left before 1 January 2026 and escape the tax. Three more leave " +
+      "later, taking their income tax (Table 5 row 3).",
     "Missing + leavers": "both changes together (Table 5 row 4)."
+  };
+  // Each line links to the report's derivation of that Table 5 row.
+  var KEY_REPORT = {
+    "Missing billionaires": "row-2-adding-the-billionaires-forbes-misses",
+    "Leavers": "row-3-an-aggressive-assumption-on-who-has-left",
+    "Missing + leavers": "row-4-rows-2-and-3-together"
   };
   var keyEl = document.getElementById("scen-key");
   names.forEach(function (n) {
     if (n === PREF) return;
     var dt = document.createElement("dt"); dt.textContent = n + ": ";
-    var dd = document.createElement("dd"); dd.textContent = KEY[n];
+    var dd = document.createElement("dd"); dd.textContent = KEY[n] + " ";
+    var a = document.createElement("a");
+    a.className = "more"; a.href = "../repro.html#" + KEY_REPORT[n]; a.textContent = "more";
+    dd.appendChild(a);
     keyEl.appendChild(dt); keyEl.appendChild(dd);
   });
   var presets = document.getElementById("presets");
@@ -490,13 +514,15 @@
                 [PREF, G.snap[namedIdx[PREF]][K.main_estimate], "pref"]];
     var max = 0;
     G.snap.forEach(function (s) { if (s[K.main_estimate] > max) max = s[K.main_estimate]; });
-    var x0 = 190, w = 380, h = 26, gap = 8;
+    // On a phone the labels are drawn larger (CSS), so the bars are shorter to leave room.
+    var narrow = window.matchMedia("(max-width: 640px)").matches;
+    var x0 = 190, w = narrow ? 320 : 380, h = 26, gap = 8;
     svg.setAttribute("viewBox", "0 0 640 " + (20 + rows.length * (h + gap)));
     rows.forEach(function (r, k) {
       var y = 10 + k * (h + gap);
-      svg.appendChild(el("text", { x: 0, y: y + 17 }, r[0]));
+      svg.appendChild(el("text", { x: 0, y: y + (narrow ? 20 : 17) }, r[0]));
       svg.appendChild(el("rect", { x: x0, y: y, width: Math.max(1, w * r[1] / max), height: h, "class": "bar " + r[2] }));
-      svg.appendChild(el("text", { x: x0 + w * r[1] / max + 6, y: y + 17, "class": "val" }, "$" + r[1].toFixed(1) + "B"));
+      svg.appendChild(el("text", { x: x0 + w * r[1] / max + 6, y: y + (narrow ? 20 : 17), "class": "val" }, "$" + r[1].toFixed(1) + "B"));
     });
   }
 
@@ -517,10 +543,12 @@
     for (var k in namedIdx) if (namedIdx[k] === i) name = k;
     var ext = i === iMax ? "The highest total across all settings"
             : i === iMin ? "The lowest total across all settings" : null;
-    document.getElementById("cell-name").textContent = "Main estimate\u00B9, " +
-      (name ? (name === PREF ? "base scenario" : name + " scenario (Table 5)")
-            : ext ? ext.toLowerCase() : "a setting the authors did not publish");
+    document.getElementById("cell-name").textContent =
+      name === PREF ? "Main estimate\u00B9, base scenario"
+      : name ? name + " scenario (Table 5)"
+      : ext ? ext : "This setting (not published by the authors)";
     document.getElementById("cell-value").textContent = fmtOut("$B", snap[K.main_estimate]);
+    document.getElementById("sticky-value").textContent = fmtOut("$B", snap[K.main_estimate]);
 
     tbody.textContent = "";
     G.outcomes.forEach(function (label, oi) {
@@ -545,6 +573,20 @@
   }
 
   render();
+  // Redraw the bars when the screen crosses the phone width (their length depends on it).
+  var mqBars = window.matchMedia("(max-width: 640px)");
+  if (mqBars.addEventListener) mqBars.addEventListener("change", render);
+
+  // The sticky result bar (narrow screens only, by CSS): shown once the headline block has
+  // scrolled up out of view, hidden again when it comes back.
+  var sticky = document.getElementById("sticky");
+  var head = document.querySelector("header .headline");
+  if ("IntersectionObserver" in window && head) {
+    new IntersectionObserver(function (entries) {
+      var e = entries[0];
+      sticky.classList.toggle("show", !e.isIntersecting && e.boundingClientRect.top < 0);
+    }).observe(head);
+  }
 })();
 </script>
 
