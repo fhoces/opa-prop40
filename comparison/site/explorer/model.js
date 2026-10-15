@@ -1,6 +1,6 @@
 /* The common estimating function, in the browser.
  *
- * A port of comparison/R/model.R for the explorer's two slider panels: expected_annuity(),
+ * A port of comparison/R/model.R for the explorer's two slider panels: annuity(),
  * score_common(), slider_inputs() and slider_value(). The R code is the definition; the
  * Python twin (comparison/py/bridge.py) mirrors it, and comparison/tests/testthat/test-site.R
  * runs this file with node over comparison/export/r/slider_sample.csv and checks every value
@@ -14,41 +14,12 @@
 (function (root) {
   "use strict";
 
-  // Gauss-Legendre nodes and weights on [-1, 1] (Newton's method on the Legendre
-  // polynomial). The annuity's integrand is smooth on the rate range, so 40 nodes give the
-  // integral to machine precision, the accuracy R's integrate() reaches with rel.tol 1e-12.
-  function gaussLegendre(n) {
-    var x = [], w = [];
-    for (var i = 1; i <= n; i++) {
-      var z = Math.cos(Math.PI * (i - 0.25) / (n + 0.5)), pp = 0;
-      for (var it = 0; it < 100; it++) {
-        var p1 = 1, p2 = 0;
-        for (var j = 1; j <= n; j++) {
-          var p3 = p2; p2 = p1;
-          p1 = ((2 * j - 1) * z * p2 - (j - 1) * p3) / j;
-        }
-        pp = n * (z * p1 - p2) / (z * z - 1);
-        var dz = p1 / pp;
-        z -= dz;
-        if (Math.abs(dz) < 1e-16) break;
-      }
-      x.push(z); w.push(2 / ((1 - z * z) * pp * pp));
-    }
-    return { x: x, w: w };
-  }
-  var GL = gaussLegendre(40);
-
-  // expected_annuity(H, r_min, r_max): the value of 1 a year for H years, averaged over a
-  // discount rate uniform between r_min and r_max. H = Infinity is a perpetuity (closed form).
-  function expectedAnnuity(H, rMin, rMax) {
-    if (H === Infinity) return Math.log(rMax / rMin) / (rMax - rMin);
+  // annuity(r, H): the value of 1 a year for H years at the one common rate r (the data
+  // file's input vectors carry it as r). H = Infinity is a perpetuity, 1 / r.
+  function annuity(r, H) {
+    if (H === Infinity) return 1 / r;
     if (H === 0) return 0;
-    var mid = (rMax + rMin) / 2, half = (rMax - rMin) / 2, s = 0;
-    for (var i = 0; i < GL.x.length; i++) {
-      var r = mid + half * GL.x[i];
-      s += GL.w[i] * (1 - Math.pow(1 + r, -H)) / r;
-    }
-    return s * half / (rMax - rMin);
+    return (1 - Math.pow(1 + r, -H)) / r;
   }
 
   // score_common(x): the same formulas as model.R, line for line.
@@ -61,7 +32,7 @@
     var WT = R0 * (1 - x.alpha) * S * x.q;
     var X = WT * x.s * x.g * x.t_cg;
     var f = x.alpha * x.m + x.own * x.L / x.C + x.f0;
-    var A = expectedAnnuity(x.H, x.r_min, x.r_max);
+    var A = annuity(x.r, x.H);
     var PV = f * x.C * A;
     return { a: WT, b: WT + X - PV, R0: R0, S: S, d_conf: d_conf, D: D, X: X, f: f, annual_loss: f * x.C,
              annuity: A, PV: PV };
@@ -104,7 +75,7 @@
   }
 
   root.ComparisonModel = {
-    expectedAnnuity: expectedAnnuity,
+    annuity: annuity,
     scoreCommon: scoreCommon,
     sliderInputs: sliderInputs,
     panelValue: panelValue,

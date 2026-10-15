@@ -315,7 +315,7 @@
 
 <section class="eq-box" id="what-separates" aria-labelledby="eq-title">
   <h2 id="eq-title">What separates the two numbers</h2>
-<div class="pseudo-eq" role="img" aria-label="The BSZ estimate, $106.8B, minus $6.0B for forbes source: which list and valuation date (w), to $100.8B, minus $28.2B for billionaires already departed (d), to $72.6B, plus $9.0B for avoidance and evasion allowance (a), to $81.5B, minus $41.4B for chance the tax survives litigation (q), to $40.1B, minus $5.0B for share of billionaire income tax lost (f), to $35.1B, minus $3.1B for billionaires' annual ca income tax (c), to $32.0B, minus $65.6B for how long the income tax loss lasts (h), to −$33.6B, minus $5.4B for three minor inputs, to −$39.0B, gives about the JR estimate, −$39.0B.">
+<div class="pseudo-eq" role="img" aria-label="The BSZ estimate, $106.8B, minus $6.0B for forbes source: which list and valuation date (w), to $100.8B, minus $28.2B for billionaires already departed (d), to $72.6B, plus $9.0B for avoidance and evasion allowance (a), to $81.5B, minus $41.4B for chance the tax survives litigation (q), to $40.1B, minus $5.0B for share of billionaire income tax lost (f), to $35.1B, minus $3.1B for billionaires' annual ca income tax (c), to $32.0B, minus $58.9B for how long the income tax loss lasts (h), to −$26.8B, minus $5.4B for three minor inputs, to −$32.3B, gives about the JR estimate at one 3% rate, −$32.3B.">
   <span class="term" data-step="0"><b>$106.8B</b><small>BSZ estimate</small></span>
   <span class="eq-step"><span class="op">&minus;</span><span class="term" data-step="1"><b>$6.0B</b><small>Forbes source: which list and valuation date (W)</small><span class="run">to $100.8B</span></span></span>
   <span class="eq-step"><span class="op">&minus;</span><span class="term" data-step="2"><b>$28.2B</b><small>Billionaires already departed (D)</small><span class="run">to $72.6B</span></span></span>
@@ -323,11 +323,12 @@
   <span class="eq-step"><span class="op">&minus;</span><span class="term" data-step="4"><b>$41.4B</b><small>Chance the tax survives litigation (q)</small><span class="run">to $40.1B</span></span></span>
   <span class="eq-step"><span class="op">&minus;</span><span class="term" data-step="5"><b>$5.0B</b><small>Share of billionaire income tax lost (f)</small><span class="run">to $35.1B</span></span></span>
   <span class="eq-step"><span class="op">&minus;</span><span class="term" data-step="6"><b>$3.1B</b><small>Billionaires' annual CA income tax (C)</small><span class="run">to $32.0B</span></span></span>
-  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-step="7"><b>$65.6B</b><small>How long the income tax loss lasts (H)</small><span class="run">to −$33.6B</span></span></span>
-  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-step="8"><b>$5.4B</b><small>Three minor inputs</small><span class="run">to −$39.0B</span></span></span>
-  <span class="eq-step"><span class="op">&asymp;</span><span class="term"><b>−$39.0B</b><small>JR estimate</small></span></span>
+  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-step="7"><b>$58.9B</b><small>How long the income tax loss lasts (H)</small><span class="run">to −$26.8B</span></span></span>
+  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-step="8"><b>$5.4B</b><small>Three minor inputs</small><span class="run">to −$32.3B</span></span></span>
+  <span class="eq-step"><span class="op">&asymp;</span><span class="term"><b>−$32.3B</b><small>JR estimate at one 3% rate</small></span></span>
 </div>
-  <p class="eq-note">Move the BSZ panel's dials top to bottom, each to its far end: each term is what that dial changes. The <a href="comparison/site/explorer/">explorer</a> does it for you. The JR estimate is the exact mean of the authors' Monte Carlo. Their seeded run prints −$38.9B, the header number. The <a href="comparison/site/repro.html#the-bridge">report</a> gives every step.</p>
+<p class="eq-note eq-gap">The JR analysis's own headline is −$38.9B: the authors draw the discount rate at random between 1.5% and 4.5% and average, which is worth about $6.7B more than one 3% rate.</p>
+  <p class="eq-note">Move the BSZ panel's dials top to bottom, each to its far end: each term is what that dial changes. The <a href="comparison/site/explorer/">explorer</a> does it for you. The <a href="comparison/site/repro.html#the-bridge">report</a> gives every step.</p>
 </section>
 
 <div class="section-title">
@@ -404,8 +405,10 @@ put on two outputs. The explorer shows (b); (a) is in the report.</p>
 
 <p>The horizon H is itself disputed: about the 5 payment years for the BSZ analysis, for ever
 for the JR analysis. So it is a dial in the <a href="comparison/site/explorer/">explorer</a>
-and a step of the bridge. Present values use the JR analysis's discount-rate range,
-1.5% to 4.5%; the BSZ analysis takes no position on the rate.</p>
+and a step of the bridge. Present values use one discount rate, 3% a year, the rate
+the BSZ overview uses. The BSZ analysis takes no position on the rate. The JR analysis draws it
+at random; that is a method of the JR analysis, not a disputed input, and the note under the
+equation above gives what it is worth.</p>
 <p><strong>Conventions.</strong> Nominal billions of dollars. The wealth tax is counted at face
 value when assessed and not discounted over the five installments, as both analyses do. The
 BSZ analysis values the base on 1 July 2026; the JR analysis grows its 2025 Forbes base by 7% to
@@ -443,14 +446,16 @@ the day-to-day movement of the Forbes base. Nothing is added to either analysis 
   <thead><tr><th>Analysis</th><th class="num">(b) net fiscal effect</th><th class="num">(a) gross revenue</th><th>What the authors print</th></tr></thead>
   <tbody>
     <tr><td>BSZ analysis: Boll, Saez and Zucman, NBER WP 35218, Table 5 row 1 (Aug 2026)</td><td class="num">$106.8B</td><td class="num">$103.8B</td><td>$104B revenue (PDF p.39); no net figure</td></tr>
-    <tr><td>JR analysis: Jaros and Rauh, NBER c15504 (Sep 2026)</td><td class="num">−$38.98B</td><td class="num">$36.0B</td><td>mean NPV −$38.9B; revenue 'approximately $30B' (p.1)</td></tr>
+    <tr><td>JR analysis: Jaros and Rauh, NBER c15504 (Sep 2026), at one 3% rate</td><td class="num">−$32.25B</td><td class="num">$36.0B</td><td>mean NPV −$38.9B, with a random rate: $6.73B below the one-rate value (the JR rate gap); revenue 'approximately $30B' (p.1)</td></tr>
   </tbody>
 </table>
 </div>
 <p class="small">The BSZ paper prints no (b). It is Table 5 row 1's own columns combined here:
 $103.8B of revenue, plus $3.68B from asset sales, minus $0.70B, five years of its
-$0.15B yearly income tax loss. For the JR analysis both outputs are exact means of the
-authors' Monte Carlo, whose revenue is drawn between zero and $72B.</p>
+$0.15B yearly income tax loss. For the JR analysis, (a) is the exact mean revenue of the
+authors' Monte Carlo, drawn between zero and $72B. Its (b) is the JR inputs at one
+3% rate. The authors' mean NPV is $6.7B lower, because they draw the rate at
+random (the note under the equation).</p>
   </div>
 </details>
 
@@ -506,7 +511,7 @@ which quotes both analyses on each point. The sources for each value are in
 </div>
 <p class="small">Row 3: % = 1 &minus; 72 / 100.906, the authors' ceiling after seven
 departures over the grown base. Their person-level file gives 72.05 (mismatch 4); the
-script's 72 is used so the comparison returns their mean exactly.</p>
+script's 72 is used so the comparison returns their expected revenue exactly.</p>
 <p class="small">"A vs B" reads the BSZ value's kind against the JR value's; "guesswork on data" is a
 judgement applied to observed facts.</p>
   </div>
@@ -525,16 +530,16 @@ its mean yearly income tax:</p>
 <table>
   <thead><tr><th>Annual income tax loss</th><th>Analysis</th><th class="num">Per year</th><th class="num">PV, 5 years</th><th class="num">PV, perpetuity</th><th class="num">Net of the JR analysis's expected revenue, $36.0B (this OPA's arithmetic)</th></tr></thead>
   <tbody>
-    <tr><td>BSZ Table 5 row 1 (benchmark) <span class="small">(BSZ PDF p.39)</span></td><td>BSZ</td><td class="num">$0.15B</td><td class="num">$0.7B</td><td class="num">$5.6B</td><td class="num">$30.4B</td></tr>
-    <tr><td>BSZ Table 5 row 3 (aggressive leavers) <span class="small">(BSZ PDF p.39)</span></td><td>BSZ</td><td class="num">$0.52B</td><td class="num">$2.4B</td><td class="num">$18.9B</td><td class="num">$17.1B</td></tr>
-    <tr><td>LAO ballot analysis (upper bound, 'less than $1 billion') <span class="small">(LAO p.2)</span></td><td>LAO</td><td class="num">$1.00B</td><td class="num">$4.6B</td><td class="num">$36.6B</td><td class="num">−$0.6B</td></tr>
-    <tr><td>JR, Jaros and Rauh NBER: E[f] x E[C] <span class="small">(NBER p.35)</span></td><td>JR</td><td class="num">$2.05B</td><td class="num">$9.4B</td><td class="num">$75.0B</td><td class="num">−$39.0B</td></tr>
-    <tr><td>Walczak / CalTax, low (incl. spillovers) <span class="small">(Walczak p.1)</span></td><td>Walczak (California Tax Foundation)</td><td class="num">$3.53B</td><td class="num">$16.2B</td><td class="num">$129.3B</td><td class="num">−$93.3B</td></tr>
-    <tr><td>Walczak / CalTax, high (incl. spillovers) <span class="small">(Walczak p.1)</span></td><td>Walczak (California Tax Foundation)</td><td class="num">$4.49B</td><td class="num">$20.6B</td><td class="num">$164.4B</td><td class="num">−$128.4B</td></tr>
+    <tr><td>BSZ Table 5 row 1 (benchmark) <span class="small">(BSZ PDF p.39)</span></td><td>BSZ</td><td class="num">$0.15B</td><td class="num">$0.7B</td><td class="num">$5.1B</td><td class="num">$30.9B</td></tr>
+    <tr><td>BSZ Table 5 row 3 (aggressive leavers) <span class="small">(BSZ PDF p.39)</span></td><td>BSZ</td><td class="num">$0.52B</td><td class="num">$2.4B</td><td class="num">$17.2B</td><td class="num">$18.8B</td></tr>
+    <tr><td>LAO ballot analysis (upper bound, 'less than $1 billion') <span class="small">(LAO p.2)</span></td><td>LAO</td><td class="num">$1.00B</td><td class="num">$4.6B</td><td class="num">$33.3B</td><td class="num">$2.7B</td></tr>
+    <tr><td>JR, Jaros and Rauh NBER: E[f] x E[C] <span class="small">(NBER p.35)</span></td><td>JR</td><td class="num">$2.05B</td><td class="num">$9.4B</td><td class="num">$68.3B</td><td class="num">−$32.3B</td></tr>
+    <tr><td>Walczak / CalTax, low (incl. spillovers) <span class="small">(Walczak p.1)</span></td><td>Walczak (California Tax Foundation)</td><td class="num">$3.53B</td><td class="num">$16.2B</td><td class="num">$117.7B</td><td class="num">−$81.7B</td></tr>
+    <tr><td>Walczak / CalTax, high (incl. spillovers) <span class="small">(Walczak p.1)</span></td><td>Walczak (California Tax Foundation)</td><td class="num">$4.49B</td><td class="num">$20.6B</td><td class="num">$149.7B</td><td class="num">−$113.7B</td></tr>
   </tbody>
 </table>
 </div>
-<p class="small">Present values use the bridge's rate range. The last column sets each loss, in
+<p class="small">Present values are at 3% a year, the bridge's one rate. The last column sets each loss, in
 perpetuity, against the JR analysis's expected revenue, $36.0B, for scale.</p>
   </div>
 </details>

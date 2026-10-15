@@ -393,8 +393,10 @@ put on two outputs. The explorer shows (b); (a) is in the report.</p>
 
 <p>The horizon H is itself disputed: about the 5 payment years for the BSZ analysis, for ever
 for the JR analysis. So it is a dial in the <a href="comparison/site/explorer/">explorer</a>
-and a step of the bridge. Present values use the JR analysis's discount-rate range,
-{{r_min}} to {{r_max}}; the BSZ analysis takes no position on the rate.</p>
+and a step of the bridge. Present values use one discount rate, {{r_common}} a year, the rate
+the BSZ overview uses. The BSZ analysis takes no position on the rate. The JR analysis draws it
+at random; that is a method of the JR analysis, not a disputed input, and the note under the
+equation above gives what it is worth.</p>
 <p><strong>Conventions.</strong> Nominal billions of dollars. The wealth tax is counted at face
 value when assessed and not discounted over the five installments, as both analyses do. The
 BSZ analysis values the base on 1 July 2026; the JR analysis grows its 2025 Forbes base by 7% to
@@ -437,8 +439,10 @@ the day-to-day movement of the Forbes base. Nothing is added to either analysis 
 </div>
 <p class="small">The BSZ paper prints no (b). It is Table 5 row 1's own columns combined here:
 {{bsz_row1}} of revenue, plus {{x_sup}} from asset sales, minus {{pv_sup}}, five years of its
-{{loss_sup}} yearly income tax loss. For the JR analysis both outputs are exact means of the
-authors' Monte Carlo, whose revenue is drawn between zero and {{nber_wt_max}}.</p>
+{{loss_sup}} yearly income tax loss. For the JR analysis, (a) is the exact mean revenue of the
+authors' Monte Carlo, drawn between zero and {{nber_wt_max}}. Its (b) is the JR inputs at one
+{{r_common}} rate. The authors' mean NPV is {{jr_gap}} lower, because they draw the rate at
+random (the note under the equation).</p>
   </div>
 </details>
 
@@ -479,7 +483,7 @@ which quotes both analyses on each point. The sources for each value are in
 </div>
 <p class="small">Row 3: {{dconf_sept}} = 1 &minus; {{ceiling_literal}} / {{domestic_grown}}, the authors' ceiling after seven
 departures over the grown base. Their person-level file gives {{ceiling_file}} (mismatch 4); the
-script's {{ceiling_literal}} is used so the comparison returns their mean exactly.</p>
+script's {{ceiling_literal}} is used so the comparison returns their expected revenue exactly.</p>
 <p class="small">"A vs B" reads the BSZ value's kind against the JR value's; "guesswork on data" is a
 judgement applied to observed facts.</p>
   </div>
@@ -502,7 +506,7 @@ its mean yearly income tax:</p>
   </tbody>
 </table>
 </div>
-<p class="small">Present values use the bridge's rate range. The last column sets each loss, in
+<p class="small">Present values are at {{r_common}} a year, the bridge's one rate. The last column sets each loss, in
 perpetuity, against the JR analysis's expected revenue, {{nber_a}}, for scale.</p>
   </div>
 </details>

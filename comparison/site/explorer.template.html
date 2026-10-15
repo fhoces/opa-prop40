@@ -253,7 +253,7 @@
 <div class="sticky-result" id="sticky-result" aria-hidden="true">
   <span><span class="sr-bsz">BSZ panel</span> <b id="sticky-bsz">{{bsz_end_b}}</b></span>
   <span>&middot;</span>
-  <span><span class="sr-rjkdc">JR panel</span> <b id="sticky-rjkdc">{{nber_end_b}}</b></span>
+  <span><span class="sr-rjkdc">JR panel</span> <b id="sticky-rjkdc">{{jr_end_b}}</b></span>
 </div>
 <div class="wrap">
   <p class="site-nav">
@@ -325,7 +325,7 @@
 
       <figure class="mid" id="mid">
         <svg class="bars2" id="bars" viewBox="0 0 240 380" role="img" aria-labelledby="bars-title">
-          <title id="bars-title">The BSZ panel's estimate is {{bsz_end_b}} and the JR panel's is {{nber_end_b}}.</title>
+          <title id="bars-title">The BSZ panel's estimate is {{bsz_end_b}} and the JR panel's is {{jr_end_b}}.</title>
         </svg>
         <figcaption>Net fiscal effect, $ billions: wealth tax collected minus income tax lost, plus
         asset-sale tax (one of the three minor inputs). Move every slider in a panel to its far end
@@ -337,15 +337,15 @@
           <h3 id="prj-h"><span class="ph-name">JR:</span> <span id="ph-rjkdc-main">{{hl_rjkdc}}</span></h3>
           <div class="ph-btns"><button type="button" class="reset walk" data-panel="rjkdc">Walk the path</button><button type="button" class="reset" data-panel="rjkdc">Reset</button></div>
           <p class="ph-src">The JR analysis's main estimate<sup>1</sup> (Jaros and Rauh, NBER, September 2026)</p>
-          <p class="ph-now">With these sliders <b id="now-rjkdc" aria-live="polite">{{nber_end_b}}</b></p>
+          <p class="ph-src ph-gap">{{jr_gap_note}}</p>
+          <p class="ph-now">With these sliders <b id="now-rjkdc" aria-live="polite">{{jr_end_b}}</b></p>
         </div>
         <div class="sl-head" aria-hidden="true"><span>BSZ value</span><span>JR value</span></div>
         <ul class="sl-list" aria-label="The JR panel's sliders">
 {{sliders_rjkdc}}
         </ul>
-        <p class="panel-note">Starts at {{nber_end_b2}}, the exact average of the authors' Monte
-        Carlo (their model run many times with random inputs). Their own seeded run prints
-        {{hl_rjkdc}}, the header number.</p>
+        <p class="panel-note">Starts at {{jr_end_b}}, the JR inputs with the lost income tax
+        discounted at one {{r_common}} rate, the JR end of the equation above.</p>
       </div>
     </div>
 
@@ -362,15 +362,14 @@
     analysis's is a perpetuity net present value, averaged over the authors' Monte Carlo draws
     (Jaros and Rauh, NBER chapter c15504, Tax Policy and the Economy vol. 41, September 2026).</p>
     <p class="fn">The net fiscal effect puts both on one definition, and the panels start at its
-    two ends. The BSZ end is <b>{{bsz_end_b}}</b> and the JR end <b>{{nber_end_b}}</b>, a gap of <b>{{gap_b}}</b>.
-    The BSZ end discounts the same 5 years over the JR analysis's {{r_min}} to {{r_max}} rate
-    range instead of at 3%. The JR end is the exact average of the Monte Carlo whose own run
-    gives {{hl_rjkdc}}.</p>
+    two ends. The BSZ end is <b>{{bsz_end_b}}</b> and the JR end <b>{{jr_end_b}}</b>, a gap of <b>{{gap_b}}</b>.
+    Both ends discount the lost income tax at one rate, {{r_common}} a year, the rate the BSZ
+    overview uses. {{jr_gap_note}}</p>
     <p class="fn">Conventions. All amounts are nominal billions of dollars. The wealth tax is
     counted at face value when assessed and undiscounted, as both analyses do (the BSZ analysis
     values the base on 1 July 2026; the JR analysis grows its 2025 Forbes base by {{nber_growth}}
-    to 31 December 2026). Present values are at the assessment date. The {{r_min}} to {{r_max}}
-    range is what the JR code draws; the code labels it r − g and the text r (the JR
+    to 31 December 2026). Present values are at the assessment date, at {{r_common}} a year.
+    The JR code labels its rate r − g and the text r (the JR
     analysis's <a href="../../../rjkdc-analysis/site/materials.html#mismatches">mismatch 3</a>).</p>
     </div>
   </details>
@@ -441,12 +440,16 @@
     if (text != null) e.textContent = text;
     return e;
   }
+  // Halves round away from zero, with a 1e-9 tolerance, as money() in comparison/R/site.R does,
+  // so a value that is a tie in exact arithmetic (the JR end, -32.25) prints the same here and
+  // on the static page whichever side of the tie its floating-point value falls.
+  function fixed(a, d) { var m = Math.pow(10, d); return (Math.floor(a * m + 0.5 + 1e-9) / m).toFixed(d); }
   function money(v) {
     var a = Math.abs(v);
-    var s = a === 0 ? "0.0" : a < 0.005 ? a.toFixed(4) : a < 0.05 ? a.toFixed(2) : a.toFixed(1);
+    var s = a === 0 ? "0.0" : a < 0.005 ? fixed(a, 4) : a < 0.05 ? fixed(a, 2) : fixed(a, 1);
     return (v < 0 ? "−" : "") + "$" + s + "B";
   }
-  function money1(v) { return (v < 0 ? "−" : "") + "$" + Math.abs(v).toFixed(1) + "B"; }
+  function money1(v) { return (v < 0 ? "−" : "") + "$" + fixed(Math.abs(v), 1) + "B"; }
   function $(id) { return document.getElementById(id); }
 
   // ---- the headline, from the data file, not typed ----

@@ -20,7 +20,15 @@ test_that("both pages carry the pseudo-equation: the eight dial-path terms in di
   en <- read_csv_plain(file.path(root, "comparison", "export", "r", "ends.csv"))
   eb <- en[en$horizon_setting == "own" & en$output == "b", ]
   dp <- read_csv_plain(file.path(root, "comparison", "export", "r", "dial_path.csv"))
-  expect_equal(eb$bsz_model + sum(dp$change), eb$rauh_own, tolerance = 1e-9)
+  expect_equal(eb$bsz_model + sum(dp$change), eb$rauh_model, tolerance = 1e-9)
+  ep <- read_csv_plain(file.path(root, "comparison", "export", "r", "endpoints.csv"))
+  me <- read_csv_plain(file.path(root, "comparison", "export", "r", "meta.csv"))
+  r3 <- pct(me$value[me$key == "r_common"])
+  # the JR rate gap note: the authors' headline, the draw range and the gap, from the exports
+  gap_note <- sprintf(
+    "The JR analysis's own headline is %s: the authors draw the discount rate at random between %s and %s and average, which is worth about %s more than one %s rate.",
+    money(ep$contract_value[ep$endpoint_id == "rauh_nber_npv"], 1), pct(me$value[me$key == "r_min_jr"], 1),
+    pct(me$value[me$key == "r_max_jr"], 1), money(eb$jr_rate_gap, 1), r3)
   for (p in pages) {
     html <- read_page(p)
     expect_true(grepl('<div class="pseudo-eq" role="img"', html, fixed = TRUE), label = p)
@@ -37,6 +45,13 @@ test_that("both pages carry the pseudo-equation: the eight dial-path terms in di
     # BSZ at the left, JR at the right
     expect_lt(regexpr("<small>BSZ estimate</small>", eq, fixed = TRUE)[[1]], at[1])
     expect_gt(max(gregexpr("JR estimate", eq, fixed = TRUE)[[1]]), at[length(at)])
+    # the printed end is the JR end at one 3% rate, and the gap note sits under the equation
+    expect_true(grepl(sprintf('<b>%s</b><small>JR estimate at one %s rate</small>', money(eb$rauh_model, 1), r3), eq, fixed = TRUE), label = p)
+    expect_true(grepl(sprintf('</div>\n<p class="eq-note eq-gap">%s</p>', gap_note), html, fixed = TRUE), label = p)
+    # the draw range appears only inside the gap note, and no claim of an exact JR match is left
+    rest <- gsub(gap_note, "", html, fixed = TRUE)
+    for (x in c("1.5%", "4.5%")) expect_false(grepl(x, rest, fixed = TRUE), label = paste(p, x))
+    expect_false(grepl("exact (mean|average) of the authors' Monte Carlo", html), label = p)
     # no Shapley numbers or wording on either page
     expect_false(grepl("shapley", html, ignore.case = TRUE), label = p)
   }
@@ -44,6 +59,12 @@ test_that("both pages carry the pseudo-equation: the eight dial-path terms in di
   expect_true(grepl("Move the BSZ panel's dials top to bottom, each to its far end: each term is what that dial changes.", ex_html, fixed = TRUE))
   for (panel in c("bsz", "rjkdc"))
     expect_true(grepl(sprintf('<button type="button" class="reset walk" data-panel="%s">Walk the path</button>', panel), ex_html, fixed = TRUE), label = panel)
+})
+
+test_that("money() rounds a tie away from zero on either side of it, as the explorer's script does", {
+  # the JR end at 3% is -32.25 exactly; R holds -32.249999999999993, model.js about -32.25
+  for (v in c(-32.25 + 7e-15, -32.25, -32.25 - 7e-15)) expect_identical(money(v, 1), "\u2212$32.3B")
+  expect_identical(money(0.04999, 1), "$0.0B")
 })
 
 test_that("no unfilled tokens, no em-dashes on either page", {
@@ -63,11 +84,12 @@ test_that("key numbers appear on the pages as computed", {
   ea <- en[en$horizon_setting == "own" & en$output == "a", ]
   v <- function(id) ep$value[ep$endpoint_id == id]
   expect_true(grepl(money(v("bsz_tab5_row1"), 1), html, fixed = TRUE))
-  expect_true(grepl(money(eb$rauh_own, 2), html, fixed = TRUE))       # the (b) table
+  expect_true(grepl(money(eb$rauh_model, 2), html, fixed = TRUE))     # the (b) table: the JR end at 3%
+  expect_true(grepl(money(eb$jr_rate_gap, 2), html, fixed = TRUE))    # beside the authors' headline, with the gap
   expect_true(grepl(money(ea$rauh_own, 1), html, fixed = TRUE))
   # the explorer's footnote: both ends and the gap on the net fiscal effect, output (b)
   expect_true(grepl(sprintf("The BSZ end is <b>%s</b> and the JR end <b>%s</b>, a gap of <b>%s</b>.",
-                            money(eb$bsz_model, 1), money(eb$rauh_own, 1), money(eb$bsz_model - eb$rauh_own, 1)),
+                            money(eb$bsz_model, 1), money(eb$rauh_model, 1), money(eb$bsz_model - eb$rauh_model, 1)),
                     ex_html, fixed = TRUE))
   # the explorer shows the net fiscal effect only: no output setting, no gross revenue
   # number (the two ends on output (a), its gap, Table 5 row 1), no output (a) in its data file
@@ -94,7 +116,7 @@ test_that("the switchboard: all off is the BSZ end, all on is the JR end", {
       g <- g[order(g$mask), ]
       expect_equal(nrow(g), 2^n, label = paste(st, o, "rows"))
       expect_equal(g$value[g$mask == 0], e$bsz_model, tolerance = 1e-9, label = paste(st, o, "all off"))
-      expect_equal(g$value[nrow(g)], e$rauh_own, tolerance = 1e-9,
+      expect_equal(g$value[nrow(g)], e$rauh_model, tolerance = 1e-9,
                    label = paste(st, o, "all on"))
     }
   }
@@ -152,8 +174,8 @@ test_that("the sliders' ends are the two analyses, and the departures dial stops
   all_at <- function(p) stats::setNames(as.list(rep(p, length(ids))), ids)
   far <- stats::setNames(as.list(vapply(ids, slider_max, 0L)), ids)
   expect_equal(slider_value(bi, "bsz", all_at(0)), eb$bsz_model, tolerance = 1e-12)
-  expect_equal(slider_value(bi, "rjkdc", all_at(0)), eb$rauh_own, tolerance = 1e-12)
-  expect_equal(slider_value(bi, "bsz", far), eb$rauh_own, tolerance = 1e-12)
+  expect_equal(slider_value(bi, "rjkdc", all_at(0)), eb$rauh_model, tolerance = 1e-12)
+  expect_equal(slider_value(bi, "bsz", far), eb$rauh_model, tolerance = 1e-12)
   expect_equal(slider_value(bi, "rjkdc", far), eb$bsz_model, tolerance = 1e-12)
   # the far positions are the other analysis's values exactly; the horizon steps through the settings
   xf <- slider_inputs(bi$sup, bi$rauh, far, bi$ladder)
@@ -203,8 +225,8 @@ test_that("model.js returns the R values on every slider mix of the sample, to 1
   en <- read_csv_plain(file.path(root, "comparison", "export", "r", "ends.csv"))
   eb <- en[en$horizon_setting == "own" & en$output == "b", ]
   expect_lt(abs(v[ss$panel == "bsz" & ss$draw == 1] - eb$bsz_model), 1e-9)
-  expect_lt(abs(v[ss$panel == "rjkdc" & ss$draw == 1] - eb$rauh_own), 1e-9)
-  expect_lt(abs(v[ss$panel == "bsz" & ss$draw == 2] - eb$rauh_own), 1e-9)
+  expect_lt(abs(v[ss$panel == "rjkdc" & ss$draw == 1] - eb$rauh_model), 1e-9)
+  expect_lt(abs(v[ss$panel == "bsz" & ss$draw == 2] - eb$rauh_model), 1e-9)
   expect_lt(abs(v[ss$panel == "rjkdc" & ss$draw == 2] - eb$bsz_model), 1e-9)
 })
 
@@ -214,17 +236,20 @@ test_that("the headline is the two main estimates; the bridge's two ends under (
   ep <- read_csv_plain(file.path(root, "comparison", "export", "r", "endpoints.csv"))
   rj <- ep$contract_value[ep$endpoint_id == "rauh_nber_npv"]
   # the two values, pinned: BSZ net total over 5 years; JR NBER mean NPV (seeded run)
-  expect_equal(round(eb$bsz_model, 4), 106.7956)
+  expect_equal(round(eb$bsz_model, 4), 106.7960)   # 5 years at 3%, as on the BSZ overview
   expect_equal(round(rj, 3), -38.886)
   expect_equal(round(rj, 1), ep$printed_value[ep$endpoint_id == "rauh_nber_npv"])   # printed -38.9
-  # under (b) the two ends are the BSZ net constructed from Table 5 row 1 and the NBER expectation
+  # under (b) the two ends are the BSZ net constructed from Table 5 row 1 and the JR inputs at
+  # one 3% rate; the NBER expectation is that JR end less the JR rate gap
   expect_equal(eb$bsz_model, ep$value[ep$endpoint_id == "bsz_net_constructed"])
   expect_equal(eb$rauh_own, ep$value[ep$endpoint_id == "rauh_nber_npv"])
+  expect_equal(eb$rauh_model, ep$value[ep$endpoint_id == "rauh_common_end"])
   expect_equal(round(eb$rauh_own, 2), -38.98)
+  expect_equal(round(eb$rauh_model, 2), -32.25)
   # the Shapley steps between them add up
   br <- read_csv_plain(file.path(root, "comparison", "export", "r", "bridge.csv"))
   b <- br[br$horizon_setting == "own" & br$output == "b", ]
-  expect_equal(sum(b$shapley), eb$rauh_own - eb$bsz_model,
+  expect_equal(sum(b$shapley), eb$rauh_model - eb$bsz_model,
                tolerance = 1e-9)
   for (p in pages) {
     html <- read_page(p)
@@ -242,7 +267,9 @@ test_that("the headline is the two main estimates; the bridge's two ends under (
   expect_equal(D$headline$rjkdc, rj)
   B <- D$series$own$b$shapley
   expect_equal(B[[1]]$id, "bsz"); expect_equal(B[[1]]$value, eb$bsz_model)
-  expect_equal(B[[length(B)]]$id, "nber"); expect_equal(B[[length(B)]]$value, eb$rauh_own)
+  expect_equal(B[[length(B)]]$id, "nber"); expect_equal(B[[length(B)]]$value, eb$rauh_model)
+  expect_equal(D$headline$rjkdc_end_b, eb$rauh_model)
+  expect_equal(D$headline$jr_rate_gap, eb$jr_rate_gap)
   # neither the GGSS headline nor the March 2026 version is an end on the pages
   ids <- vapply(B, `[[`, "", "id")
   expect_false(any(c("ggss", "ggss_rounding", "rauh") %in% ids))
