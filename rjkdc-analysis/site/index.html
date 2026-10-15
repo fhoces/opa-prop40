@@ -189,6 +189,12 @@
   details.fold > .fold-body { margin-top: 14px; }
   details.fold:not([open]) > .fold-body { display: none; }
   details.fold > .fold-body > h2 { margin-top: 24px; }
+  /* Each fold heading carries a link to its own URL (index.html#<id>), as GitHub's headings do:
+     shown on hover or focus, always on touch screens. */
+  details.fold > summary .fold-link { flex: none; font-family: var(--sans); font-size: 18px;
+    font-weight: 400; color: var(--link); text-decoration: none; opacity: 0; }
+  details.fold > summary:hover .fold-link, details.fold > summary .fold-link:focus-visible { opacity: 1; }
+  @media (hover: none) { details.fold > summary .fold-link { opacity: 1; } }
   footer .credit { margin: 10px 0 0; font-size: 85%; color: var(--ink-3); }
   /* The two-panel comparison in the last fold: the original analysis beside this OPA. */
   .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 18px 0 4px; }
@@ -324,7 +330,7 @@
 <p class="cards-after">Guided summary: <a href="materials.html">the materials page</a>.</p>
 
 <details class="fold" id="what-the-model-says">
-  <summary><h2>What the model says</h2></summary>
+  <summary><h2>What the model says</h2><a class="fold-link" href="#what-the-model-says" aria-label="Link to this section">#</a></summary>
   <div class="fold-body">
 <p>The Act collects a wealth tax once; billionaires who leave stop paying California income
    tax for ever. The authors value that lost stream as a perpetuity (the same amount every year
@@ -370,7 +376,7 @@
 </details>
 
 <details class="fold" id="what-reproduces">
-  <summary><h2>What reproduces</h2></summary>
+  <summary><h2>What reproduces</h2><a class="fold-link" href="#what-reproduces" aria-label="Link to this section">#</a></summary>
   <div class="fold-body">
 <div class="table-scroll">
 <table>
@@ -429,7 +435,7 @@ one:</p>
 </details>
 
 <details class="fold" id="how-ai-was-used">
-  <summary><h2>How AI was used in this exercise, and what has been verified</h2></summary>
+  <summary><h2>How AI was used in this exercise, and what has been verified</h2><a class="fold-link" href="#how-ai-was-used" aria-label="Link to this section">#</a></summary>
   <div class="fold-body">
 <p>The numbers on this page reproduce and are tested; what is still
 being completed is the author's own review of each part, recorded in the last column below, and
@@ -488,7 +494,7 @@ original authors have not reviewed it.</p>
 </details>
 
 <details class="fold" id="difference">
-  <summary><h2>Difference between this OPA and the original analysis</h2></summary>
+  <summary><h2>Difference between this OPA and the original analysis</h2><a class="fold-link" href="#difference" aria-label="Link to this section">#</a></summary>
   <div class="fold-body">
 <p>Everything of substance on this site belongs to the original analysis: Jaros and Rauh,
    <cite><a href="https://www.nber.org/system/files/chapters/c15504/c15504.pdf">The Net Present
@@ -560,6 +566,21 @@ original authors have not reviewed it.</p>
     }
     window.addEventListener("hashchange", reveal);
     reveal();
+    // Opening a fold puts its id in the address bar, closing it takes it out (no new history
+    // entry). A hash that points inside the fold is kept. The heading's # link copies the URL.
+    document.querySelectorAll("details.fold[id]").forEach(function (d) {
+      d.addEventListener("toggle", function () {
+        var h = location.hash.slice(1), t = h ? document.getElementById(h) : null;
+        if (d.open) { if (!t || !d.contains(t)) history.replaceState(null, "", "#" + d.id); }
+        else if (t && d.contains(t)) history.replaceState(null, "", location.pathname + location.search);
+      });
+      var a = d.querySelector(":scope > summary .fold-link");
+      if (a) a.addEventListener("click", function (e) {
+        e.preventDefault();
+        d.open = true;
+        history.replaceState(null, "", "#" + d.id);
+      });
+    });
   })();
 </script>
 </body>

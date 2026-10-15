@@ -192,6 +192,12 @@
   details.fold > .fold-body { margin-top: 14px; }
   details.fold:not([open]) > .fold-body { display: none; }
   details.fold > .fold-body > h2 { margin-top: 24px; }
+  /* Each fold heading carries a link to its own URL (index.html#<id>), as GitHub's headings do:
+     shown on hover or focus, always on touch screens. */
+  details.fold > summary .fold-link { flex: none; font-family: var(--sans); font-size: 18px;
+    font-weight: 400; color: var(--link); text-decoration: none; opacity: 0; }
+  details.fold > summary:hover .fold-link, details.fold > summary .fold-link:focus-visible { opacity: 1; }
+  @media (hover: none) { details.fold > summary .fold-link { opacity: 1; } }
   details.method { margin: 10px 0 14px; }
   details.method > summary { cursor: pointer; font-size: 14px; color: var(--link); }
   details.method[open] > summary { margin-bottom: 8px; }
@@ -323,7 +329,7 @@
 </div>
 
 <details class="fold" id="what-the-model-says">
-  <summary><h2>What the model says</h2></summary>
+  <summary><h2>What the model says</h2><a class="fold-link" href="#what-the-model-says" aria-label="Link to this section">#</a></summary>
   <div class="fold-body">
 <p>This OPA's main estimate is the base scenario of Table 5 in Boll, Saez and Zucman (2026),
 net of its income tax effects. The wealth tax is 5% of the $2,307 billion that Forbes lists for 250
@@ -358,7 +364,7 @@ income tax from asset sales, the JR analysis the chance the Act survives in cour
 </details>
 
 <details class="fold" id="what-reproduces">
-  <summary><h2>What reproduces</h2></summary>
+  <summary><h2>What reproduces</h2><a class="fold-link" href="#what-reproduces" aria-label="Link to this section">#</a></summary>
   <div class="fold-body">
 <div class="table-scroll">
 <table>
@@ -388,7 +394,7 @@ Test counts, scripts and the source manifest are on the <a href="materials.html"
 </details>
 
 <details class="fold" id="how-ai-was-used">
-  <summary><h2>How AI was used in this exercise, and what has been verified</h2></summary>
+  <summary><h2>How AI was used in this exercise, and what has been verified</h2><a class="fold-link" href="#how-ai-was-used" aria-label="Link to this section">#</a></summary>
   <div class="fold-body">
 <p>The numbers on this page reproduce and are tested; what is still
 being completed is the author's own review of each part, recorded in the last column below, and
@@ -450,7 +456,7 @@ original authors have not reviewed it.</p>
 </details>
 
 <details class="fold" id="difference">
-  <summary><h2>Difference between this OPA and the original analysis</h2></summary>
+  <summary><h2>Difference between this OPA and the original analysis</h2><a class="fold-link" href="#difference" aria-label="Link to this section">#</a></summary>
   <div class="fold-body">
 <p>The claims are the authors'. What this OPA changes is what a reader can check and change.</p>
 
@@ -518,6 +524,21 @@ original authors have not reviewed it.</p>
     }
     window.addEventListener("hashchange", reveal);
     reveal();
+    // Opening a fold puts its id in the address bar, closing it takes it out (no new history
+    // entry). A hash that points inside the fold is kept. The heading's # link copies the URL.
+    document.querySelectorAll("details.fold[id]").forEach(function (d) {
+      d.addEventListener("toggle", function () {
+        var h = location.hash.slice(1), t = h ? document.getElementById(h) : null;
+        if (d.open) { if (!t || !d.contains(t)) history.replaceState(null, "", "#" + d.id); }
+        else if (t && d.contains(t)) history.replaceState(null, "", location.pathname + location.search);
+      });
+      var a = d.querySelector(":scope > summary .fold-link");
+      if (a) a.addEventListener("click", function (e) {
+        e.preventDefault();
+        d.open = true;
+        history.replaceState(null, "", "#" + d.id);
+      });
+    });
   })();
 </script>
 </body>
