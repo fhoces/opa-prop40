@@ -80,12 +80,15 @@ scroll <- function(x) cat("\n\n```{=html}\n<div class=\"table-scroll\">\n",
 ::: {.report-intro}
 ![](assets/opa/opa-details.png){.opa-figure}
 
-This report rebuilds, step by step, JR's fiscal estimate of California's
-Proposition 40 (the Billionaire Tax Act): a one-time 5% tax on the net worth of billionaires
-resident in California on 1 January 2026. The authors argue that the tax would collect far less
-than the [BSZ report](../../bsz-analysis/site/) estimates, and that billionaires who leave take their income tax with them for
-ever, so the state ends up poorer. Following the
-[Open Policy Analysis](https://doi.org/10.1093/scipol/scaa067) framework:
+Jaros and Rauh estimate that Proposition 40 leaves California poorer: a mean net present value
+of `r num(h("nber","mc_mean_npv","printed"))` \$B (PDF p.1). The tax is collected once, but
+billionaires who leave stop paying income tax for ever. At the authors' discount rates that lost
+stream is worth about `r num(h("nber","pv_lost"), 0)` \$B today, against
+`r num(h("nber","mc_expected_revenue"), 0)` \$B collected. This report rebuilds that number step
+by step. The chapter sets its revenue of about \$30B against the \$104B benchmark of the
+[BSZ analysis](../../bsz-analysis/site/) (PDF p.3).
+
+Following the [Open Policy Analysis](https://doi.org/10.1093/scipol/scaa067) framework:
 
 - **Open Output**: [the explorer](explorer/), the mean net present value and share of
   negative outcomes for every combination of seven inputs
@@ -94,6 +97,7 @@ ever, so the state ends up poorer. Following the
   source (guide, with all nine mismatches found along the way: [the materials page](materials.html))
 :::
 
+::: {.callout-note collapse="true" title="Sources and how they are read"}
 **What is reproduced.** Jaros and Rauh, *The Net Present Value of the California Billionaire Tax Act*,
 NBER chapter c15504 (Tax Policy and the Economy, vol. 41; 22 September 2026; NBER is the National Bureau of Economic Research, which
 circulates working papers), the litigation-weighted revision of the first version by Rauh, Jaros,
@@ -118,6 +122,7 @@ and also re-run unmodified, and the person-level file `final.csv` is summed dire
 number in this document is read from the project's `{targets}` pipeline at render time; the only
 numbers typed in are the paper's printed values we compare against, each with its PDF page
 (page numbers are PDF pages throughout).
+:::
 
 **The shape of the argument**, in one line: net present value = wealth tax collected once, minus
 the present value of the income tax that departing billionaires would have paid in every future
@@ -148,7 +153,7 @@ the average has an exact value too, and we build it one input at a time. Every n
 read from the pipeline (`R/npv_mc.R`, `R/nber_final.R`); the draw ranges are the defaults of
 `compute_npv_mc_nber()`, which copies the authors' script `NPV_dist_v8.R`.
 
-### Step 1: the wealth tax collected, $WT$
+### Step 1: the wealth tax collected, $WT$ {#step-wt}
 
 The script draws $WT \sim U[`r nb$wt_min`, `r nb$wt_max`]$ (\$B). The top, `r nb$wt_max`, is
 the revenue if the Act survives in court, after removing the seven confirmed departures. Summing
@@ -159,54 +164,51 @@ $$E[WT] = \frac{`r nb$wt_min` + `r nb$wt_max`}{2} = `r num((nb$wt_min + nb$wt_ma
 This is the paper's central revenue, $q \times 72$ with a survival chance $q$ = 0.50
 (PDF p.33). The 0 lower bound is **guesswork**.
 
-### Step 2: the share of the income tax base that leaves, $f$
+### Step 2: the share of the income tax base that leaves, $f$ {#step-f}
 
 The script draws $f \sim U[`r nb$f_min`, `r nb$f_max`]$, on its own, unrelated to the revenue
 draw. Its mean is $E[f]$ = `r num((nb$f_min + nb$f_max) / 2, 2)`: on average, 45 cents of every
 dollar of billionaire income tax leaves the state. The range is **guesswork**, "centered
 conservatively around the observed wealth-base departure fraction" (PDF p.31).
 
-### Step 3: the income tax the billionaires pay each year, $C$
+### Step 3: the income tax the billionaires pay each year, $C$ {#step-c}
 
 The script draws $C \sim U[`r nb$c_min`, `r nb$c_max`]$ (\$B a year), the two ends of the income
 tax Monte Carlo in [Section 5.1](#section-5.1-the-income-tax-the-billionaires-pay). Its mean is
 $E[C]$ = `r num((nb$c_min + nb$c_max) / 2, 2)`.
 
-### Step 4: the discount rate, $r$
+### Step 4: the discount rate, $r$ {#step-r}
 
 The script draws $r \sim U[`r nb$rg_min`, `r nb$rg_max`]$, a rate between
 `r pct(100 * nb$rg_min)` and `r pct(100 * nb$rg_max)` a year. A stream of
 \$1 a year for ever is worth $1/r$ today, so what enters is the mean of $1/r$, not $1/E[r]$:
 $$E\!\left[\tfrac1r\right] = \frac{\ln(`r nb$rg_max` / `r nb$rg_min`)}{`r nb$rg_max` - `r nb$rg_min`} = `r num(npv_e_inv_rate(nb$rg_min, nb$rg_max), 2)`.$$
 In words: at these rates, \$1 lost every year for ever is worth about
-\$`r num(npv_e_inv_rate(nb$rg_min, nb$rg_max), 0)` today. The range is **guesswork**: its
-`r pct(100 * nb$rg_min)` anchor is a published market yield, which is why the export contract (the
-two CSV files, `inputs.csv` and `outputs.csv`, that each analysis's pipeline writes for the
-comparison to read) and the comparison's
-[disputes row 2](https://github.com/fhoces/opa-prop40/blob/main/comparison/DISPUTES.md) call the
-range research, but the width of the band, to `r pct(100 * nb$rg_max)`, is the authors' judgement,
-and the width is what moves the result.
+\$`r num(npv_e_inv_rate(nb$rg_min, nb$rg_max), 0)` today. The range is **guesswork**. Its
+`r pct(100 * nb$rg_min)` anchor is a published market yield, but the width of the band, to
+`r pct(100 * nb$rg_max)`, is the authors' judgement, and the width is what moves the
+result.^[The pipeline's input file (`export/r/inputs.csv`) and the comparison's
+[disputes row 2](https://github.com/fhoces/opa-prop40/blob/main/comparison/DISPUTES.md) label the
+range research, because of its published anchor. This report labels it guesswork, because the
+width of the band moves the result.]
 
 ### Step 5: the present value of the income tax lost
 
 The three loss inputs are independent, so the mean of their product is the product of their means:
 $$E\!\left[\frac{f\,C}{r}\right] = `r num((nb$f_min + nb$f_max) / 2, 2)` \times `r num((nb$c_min + nb$c_max) / 2, 2)` \times `r num(npv_e_inv_rate(nb$rg_min, nb$rg_max), 2)` = `r num(h("nber","pv_lost"), 2)`.$$
 
-### Step 6: the net present value
+### Step 6: the net present value {#step-npv}
 
 The revenue of Step 1 minus the loss of Step 5:
 $$E[NPV] = E[WT] - E\!\left[\frac{f\,C}{r}\right]$$
 $$= `r num(h("nber","mc_expected_revenue"), 2)` - `r num(h("nber","pv_lost"), 2)` = `r num(tr("npv_mc_nber_analytic_mean"), 2)`.$$
 
-The authors do not print this exact expectation (the average of the Monte Carlo computed by
-formula rather than by drawing). They print the average of one seeded run of 100,000 draws (a
-seeded run: one run of the random draws started from a fixed seed number, 2026, so it gives the
-same draws every time; its mean differs from the exact expectation by sampling error), which our
-R port replays draw for draw:
-**`r num(mcn$summary$mean, 3)` \$B**, printed as `r num(h("nber","mc_mean_npv","printed"))`.
-The two differ by `r num(abs(mcn$summary$mean - tr("npv_mc_nber_analytic_mean")), 2)` \$B, less
-than one Monte Carlo standard error (`r num(mcn$summary$sd, 1)` / $\sqrt{100{,}000}$ =
-`r num(mcn$summary$sd / sqrt(mcn$summary$n), 2)`). The overview and the explorer show the printed
+The authors do not print this exact expectation. They print the average of one seeded run of
+100,000 draws. A seeded run starts the random draws from a fixed number (2026), so it gives the
+same draws every time. Our R port replays it draw for draw:
+**`r num(mcn$summary$mean, 3)` \$B**, printed as `r num(h("nber","mc_mean_npv","printed"))`. The
+gap, `r num(abs(mcn$summary$mean - tr("npv_mc_nber_analytic_mean")), 2)`, is less than one Monte
+Carlo standard error (`r num(mcn$summary$sd / sqrt(mcn$summary$n), 2)`). The overview and the explorer show the printed
 `r num(h("nber","mc_mean_npv","printed"))`; the explorer's grid holds the exact value for every other
 setting. The [explorer](explorer/) moves each of the four draws, and two readings the code does
 not implement (a litigation multiplier and growth of the lost income).
@@ -247,17 +249,23 @@ fold("Python code for the main estimate", "python", c(
 
 ## Section 4: the wealth tax revenue
 
+This section builds the revenue. The base is \$`r num(rc$baseline_precise, 2)`B before anyone
+leaves and grows to \$`r num(nc$domestic_total_grown, 2)`B by the valuation date. Removing the
+seven confirmed departures leaves \$`r num(nc$ceiling_recomputed, 2)`B. Leaving out three
+pre-filing departures and Zuckerberg, and halving for the chance the Act is struck down, gives
+the paper's about \$30B (p.23).
+
 ### 4.1 The baseline, before anyone leaves (eqs. 1 and 2)
 
-$$R_{\text{base}} = \sum_{i=1}^{N} \tau \times \text{TaxBase}_i, \qquad \text{TaxBase}_i = \text{NetWorth}_i - \text{TRRE}_i$$
-
-In words: take each of the $N$ = `r inp("n_billionaires")` California billionaires on the 2025
+Take each of the $N$ = `r inp("n_billionaires")` California billionaires on the 2025
 Forbes list (with the authors' corrections), subtract their directly held residential real estate
 (TRRE, total residential real estate; the Act exempts it), multiply what is left by the
 `r pct(100*inp("tax_rate"),0)` rate, and add up. Their aggregate net worth is
 \$`r num(inp("baseline_net_worth"))`B. The authors' workbook sums this row by row to
 **\$`r num(rc$baseline_precise, 2)`B**; the paper prints \$`r num(out("revenue_baseline","printed_value"), 2)`B
 (PDF p.19, eq. 2). The difference is [mismatch 6](materials.html#mismatches).
+
+$$R_{\text{base}} = \sum_{i=1}^{N} \tau \times \text{TaxBase}_i, \qquad \text{TaxBase}_i = \text{NetWorth}_i - \text{TRRE}_i$$
 
 The tax is assessed on net worth at 31 December 2026, so the authors grow every net worth by
 `r pct(100 * inp("nber_growth_rate"), 0)` to that valuation date and rebuild the base person by
@@ -271,9 +279,11 @@ worth) stay outside the base (PDF p.17).
 
 ### 4.2 The collectibility principle (eq. 3)
 
+The authors count revenue only when it is "more likely than not" to be collected.
+
 $$E[R] = q \times R_{\text{recognized}}$$
 
-The authors count revenue only when it is "more likely than not" to be collected. They borrow this
+They borrow this
 test from the accounting rule for uncertain tax positions in company accounts (ASC 740-10,
 PDF p.20). It works at two levels. For each taxpayer: confirmed departures, pre-filing departures
 and billionaires imputed from a Pareto curve are left out of the recognized base,
@@ -331,6 +341,9 @@ paper's central \$`r num(h("nber","mc_expected_revenue"), 0)`B (Step 1 and
 
 ### 4.5 Validation against the literature (Table 8)
 
+Brülhart et al. (2022) estimate that Swiss taxable wealth falls by about 43% per point of wealth
+tax, about 24% of it through people moving.
+
 $$\eta_{\text{mig}} = 0.24 \times 43 = 10.32, \qquad \text{base lost} = 1 - (1 - 0.05)^{10.32}$$
 
 ```{r}
@@ -340,27 +353,31 @@ lit_loss <- 1 - (1 - inp("tax_rate"))^inp("brulhart_semi_elasticity")
 lit_loss
 ```
 
-Brülhart et al. (2022) estimate that Swiss taxable wealth falls by about 43% per point of wealth
-tax, about 24% of it through people moving. The authors keep only the moving part,
+The authors keep only the moving part,
 `r inp("brulhart_semi_elasticity")`, and apply it to the 5-point rate in log form: the base
 shrinks by **`r pct(100 * lit_loss)`** (PDF p.24). Table 8 (PDF p.25) sets this beside the observed
 28.6% from the seven confirmed departures. This check does not enter the main estimate. Two
 things to notice. First, the Swiss estimate is for a recurring annual tax. The paper argues that
 taxpayers price the Act as the start of a recurring regime, so the recurring-tax estimate is the
-right benchmark (PDF p.25). Second, the [BSZ report](../../bsz-analysis/site/) (Boll, Saez and
+right benchmark (PDF p.25). Second, the [BSZ analysis](../../bsz-analysis/site/) (Boll, Saez and
 Zucman) disputes exactly this transfer ([disputes row 1](https://github.com/fhoces/opa-prop40/blob/main/comparison/DISPUTES.md)).
 
 ## Section 5.1: the income tax the billionaires pay
 
-### The Pareto upper bound (eqs. 9 and 10)
+This section estimates $C$, the income tax the billionaires pay each year. It is at most
+\$`r num(t8$mean_fy25[t8$K == 212], 1)`B if they are the 212 highest earners and about
+\$`r num(t8$mean_fy25[t8$K == 500], 1)`B if they are spread among the top 500 filers. The Monte
+Carlo draws between the two.
 
-$$N(y) = A\,y^{-\alpha}, \qquad S(k, n) = \left(\frac{k}{n}\right)^{(\alpha - 1)/\alpha}$$
+### The Pareto upper bound (eqs. 9 and 10)
 
 The state publishes how many tax returns report income above \$1M, \$2M, \$3M, \$4M, \$5M and
 \$10M (Franchise Tax Board, FTB below: Personal Income Tax Annual Report 2024, Table B-4A). If top incomes follow a Pareto distribution, the log
 of those counts falls on a straight line against the log of the thresholds, with slope $-\alpha$.
 The fitted line gives $\hat\alpha$ = **`r num(pf$alpha, 3)`** (printed `r out("pareto_alpha","printed_value")`,
 $R^2$ = `r num(pf$r_squared, 4)`, PDF p.26).
+
+$$N(y) = A\,y^{-\alpha}, \qquad S(k, n) = \left(\frac{k}{n}\right)^{(\alpha - 1)/\alpha}$$
 
 ```{r}
 #| label: f-pareto
@@ -417,15 +434,17 @@ scroll(kable(tab8, align = "rrrrrrr", caption = "Table 9, $B per year (PDF p.30)
 `r m8` of the `r 3 * nrow(t8)` cells round to the printed value; the tests hold this at the printed rounding
 (`tests/testthat/test-income-tax-mc.R`).
 
-## Section 5.2: from an annual loss to a present value (eqs. 11 to 14)
+## Section 5.2: from an annual loss to a present value (eqs. 11 to 14) {#perpetuity}
+
+This is the step that makes the result. The wealth tax is collected **once**. The income tax of
+anyone who leaves is lost **every year, for ever**, and a perpetuity paying $C$ a year is worth
+$C/r$ today.
 
 $$PV = \frac{C}{r}, \qquad NPV = WT - f \cdot \frac{C}{r}$$
 
 $$\text{or, with growth:}\qquad PV = \frac{C}{r - g}, \qquad NPV = WT - f \cdot \frac{C}{r - g}$$
 
-This is the step that makes the result. The wealth tax is collected **once**. The income tax of
-anyone who leaves is lost **every year, for ever**, and a perpetuity paying $C$ a year is worth
-$C/r$ today. At $r$ = 1.5% a perpetuity is worth 1/0.015, about 67 years of payments; at 4.5%,
+At $r$ = 1.5% a perpetuity is worth 1/0.015, about 67 years of payments; at 4.5%,
 about 22. The paper's text then argues the lost stream grows with the billionaires' wealth, making
 it a growing perpetuity, $C/(r-g)$ (PDF p.31). It calibrates $r - g$ at about 1.5% from the
 S&P 500's dividend yield, and presents scenarios at 1.5%, 3.0% and 4.5% (PDF p.32).
@@ -440,15 +459,17 @@ Three things are worth knowing before reading the rest:
 - **The loss is not scaled by $q$.** People who left do not come back if the Act is struck down,
   so the income tax loss stays even when the wealth tax collects nothing (PDF p.33).
 - **The horizon.** Treating the loss as permanent is itself one of the disputed choices: the
-  [BSZ report](../../bsz-analysis/site/) estimates the loss as lasting about the five payment years
+  [BSZ analysis](../../bsz-analysis/site/) estimates the loss as lasting about the five payment years
   ([disputes row 2](https://github.com/fhoces/opa-prop40/blob/main/comparison/DISPUTES.md)).
 
 ## Section 5.3: the break-even departure share (Table 10, eq. 15)
 
+Set NPV to zero and solve for the departure share. The tax pays for itself only if less than
+$x^*$ of the income tax base leaves.
+
 $$x^* = \frac{WT \cdot (r - g)}{C}$$
 
-Set NPV to zero and solve for the departure share: the tax pays for itself only if less than
-$x^*$ of the income tax base leaves. The paper evaluates it at its central revenue,
+The paper evaluates it at its central revenue,
 \$`r num(0.5 * nb$wt_max, 0)`B ($q \times 72$), and the midpoint income tax, \$4.55B (PDF p.33).
 
 ```{r}
@@ -472,11 +493,13 @@ NPV formula must give exactly zero (see [internal identities](#internal-identiti
 
 ## Section 5.4: the Monte Carlo behind the headline (eqs. 16 to 19) {#monte-carlo}
 
+Draw the four inputs independently and uniformly, 100,000 times, and average the NPV
+(PDF p.35).
+
 $$WT \sim U[\$0\text{B}, \$72\text{B}], \quad C \sim U[\$3.3\text{B}, \$5.8\text{B}], \quad
 (r - g) \sim U[0.015, 0.045], \quad f \sim U[0.30, 0.60]$$
 
-Draw the four inputs independently and uniformly, 100,000 times, and average the NPV
-(PDF p.35). Two details matter:
+Two details matter:
 
 1. **Revenue is drawn from zero.** The mean of $U[0, 72]$, \$`r num(h("nber","mc_expected_revenue"), 0)`B,
    is $0.5 \times 72$, the paper's central estimate (PDF p.33). This is the only place $q$
@@ -528,6 +551,16 @@ ggplot(data.frame(npv = mcn$draws$npv), aes(npv, fill = npv < 0)) +
 This section is not in the paper: it re-sorts every input by *how much evidence stands behind
 it*, the question a reader who wants to argue with the result has to answer first.
 
+**The headline:** `r sum(vapply(site_dials(rc), function(d) d$origin == "guesswork", logical(1)))`
+of the `r length(site_dials(rc))` inputs that move the result in the explorer are guesswork. The
+one labelled data, the revenue ceiling, rests on a legal judgement about who counts as having left
+(disputes row 3). The data and research inputs (the Forbes base, the FTB brackets, the Pareto fit)
+fix the *scale*. Whether the NPV is negative is decided by the guesswork: how wide the revenue draw
+is, where the income tax range stops, which rate is used, and whether the lost income tax is
+permanent.^[The pipeline's input file also lists `r sum(inputs$version == "ssrn")` rows sourced to
+the authors' first version (March 2026): its revenue floor, its central scenario and the Swiss
+semi-elasticity as its workbook applies it. The [appendix](#appendix-first-version) shows them.]
+
 - **data**: read off a public dataset or the authors' own person-level file, and recomputable from it.
 - **research**: an estimate taken from a published paper.
 - **guesswork**: set by assumption. Some are bounded by evidence, but no dataset or estimate pins
@@ -541,13 +574,13 @@ it*, the question a reader who wants to argue with the result has to answer firs
 #| code-summary: "R code for the input table"
 dials <- site_dials(rc)
 dial_rows <- do.call(rbind, lapply(dials, function(d) data.frame(
-  input = d$key, what = d$label, `value(s)` = paste(d$labels, collapse = "; "),
-  origin = d$origin, where = "explorer dial (R/site.R)", check.names = FALSE)))
+  input = d$key, origin = d$origin, what = d$label, `value(s)` = paste(d$labels, collapse = "; "),
+  where = "explorer dial (R/site.R)", check.names = FALSE)))
 # The rows only the first version uses (version "ssrn") go to the appendix.
 first_only <- inputs$version == "ssrn"
-inp_row <- function(x) data.frame(input = x$input_id, what = x$description,
+inp_row <- function(x) data.frame(input = x$input_id, origin = x$label, what = x$description,
   `value(s)` = ifelse(is.na(x$value), "1.5% to 4.5%", vapply(x$value, function(v) format(signif(v, 6)), "")),
-  origin = x$label, where = x$source, check.names = FALSE)
+  where = x$source, check.names = FALSE)
 odf <- rbind(inp_row(inputs[!first_only, ]), dial_rows)
 scroll(kable(odf, caption = "Inputs by origin (export/r/inputs.csv, then the explorer's dials)"))
 ```
@@ -558,19 +591,9 @@ scroll(kable(odf, caption = "Inputs by origin (export/r/inputs.csv, then the exp
 #| code-summary: "R code for the input counts"
 cnt <- as.data.frame(table(factor(odf$origin, levels = c("data", "research", "guesswork", "scenario", "derived"))))
 names(cnt) <- c("origin", "rows")
-n_guess_dials <- sum(vapply(dials, function(d) d$origin == "guesswork", logical(1)))
-scroll(kable(cnt))
+scroll(kable(cnt, caption = paste0("Rows of the table above (", nrow(odf), "), by origin. ",
+                                   "The last ", length(dials), " rows are the explorer's dials.")))
 ```
-
-**The headline:** `r n_guess_dials` of the `r length(dials)` inputs that move the result in the
-explorer are guesswork. The one labelled data, the revenue ceiling, rests on a legal judgement
-about who counts as having left (disputes row 3). The data and research inputs (the Forbes base,
-the FTB brackets, the Pareto fit) fix the *scale*; whether the NPV is negative is decided by the
-guesswork: how wide the revenue draw is, where the income tax range stops, which rate is used, and
-whether the lost income tax is permanent.^[The pipeline's input file also lists
-`r sum(first_only)` rows sourced to the authors' first version (March 2026): its revenue floor,
-its central scenario and the Swiss semi-elasticity as its workbook applies it. The
-[appendix](#appendix-first-version) shows them.]
 
 ## What reproduces
 
@@ -578,24 +601,37 @@ its central scenario and the Swiss semi-elasticity as its workbook applies it. T
 #| label: mismatch-summary
 #| results: asis
 #| code-summary: "R code for the output checks"
-# The chapter's PDF page for each figure it prints (typed, like the printed values).
+# The chapter's PDF page for each figure it prints (typed, like the printed values), and a
+# plain label for each output id (outputs.csv has no description column).
 page_nber <- c(revenue_baseline = "19", nber_domestic_grown = "19", nber_ceiling = "21",
                nber_international = "17", pareto_alpha = "26", income_tax_mc_k212 = "30",
                income_tax_mc_k300 = "30", income_tax_mc_k500 = "30", npv_mc_nber_mean = "35",
                npv_mc_nber_median = "35", npv_mc_nber_pct_negative = "35")
+what_nber <- c(revenue_baseline = "Baseline revenue, before anyone leaves ($B)",
+               nber_domestic_grown = "Baseline grown 7% to the valuation date ($B)",
+               nber_ceiling = "Revenue left after the seven confirmed departures ($B)",
+               nber_international = "Net worth of the non-US-citizen residents left out ($B)",
+               pareto_alpha = "Pareto tail parameter, alpha",
+               income_tax_mc_k212 = "Yearly income tax C, billionaires among the top 212 filers ($B)",
+               income_tax_mc_k300 = "Yearly income tax C, billionaires among the top 300 filers ($B)",
+               income_tax_mc_k500 = "Yearly income tax C, billionaires among the top 500 filers ($B)",
+               npv_mc_nber_mean = "Mean NPV, seeded run ($B)",
+               npv_mc_nber_median = "Median NPV, seeded run ($B)",
+               npv_mc_nber_pct_negative = "Share of draws below zero (%)")
 ob <- outputs[outputs$output_id %in% names(page_nber), ]
-o <- ob %>% transmute(output = output_id, reproduced = signif(value, 6),
-  printed = printed_value, `abs diff` = signif(abs_diff, 2), page = page_nber[output_id])
-scroll(kable(o, row.names = FALSE))
 top_id <- ob$output_id[which.max(ob$abs_diff)]
 stopifnot(top_id == "revenue_baseline")   # the prose below names it as mismatch 6
+o <- ob %>% transmute(output = what_nber[output_id], reproduced = signif(value, 6),
+  printed = printed_value, `abs diff` = signif(abs_diff, 2), page = page_nber[output_id])
+# One cat() call: the prose, then the table, so the code shows in one fold.
+cat("Every figure reproduces from the authors' own code to within the tolerances in ",
+    "`tests/testthat/` (printed rounding for deterministic figures, four Monte Carlo standard ",
+    "errors for simulated ones). The largest gap, ", num(max(ob$abs_diff), 2), ", is the baseline ",
+    "revenue ([mismatch 6](materials.html#mismatches)). Table 9's 21 cells and Table 10's 3 cells, ",
+    "shown above, match as well.^[The first version's own outputs are in the ",
+    "[appendix](#appendix-first-version).]\n",
+    paste(capture.output(scroll(kable(o, row.names = FALSE))), collapse = "\n"), sep = "")
 ```
-
-Every figure reproduces from the authors' own code to within the tolerances in
-`tests/testthat/` (printed rounding for deterministic figures, four Monte Carlo standard errors
-for simulated ones). The largest gap is `r top_id` (`r num(max(ob$abs_diff), 2)`), the baseline
-of mismatch 6. Table 9's 21 cells and Table 10's 3 cells, shown above, match as well.^[The
-first version's own outputs are in the [appendix](#appendix-first-version).]
 
 ```{r}
 #| label: mismatch-list
@@ -603,16 +639,19 @@ first version's own outputs are in the [appendix](#appendix-first-version).]
 #| code-summary: "R code for the mismatch list"
 mm_lines <- sub("^## ", "", grep("^## [0-9]+\\.", readLines("../MISMATCHES.md"), value = TRUE))
 mm_first <- grepl("^[0-9]+\\. First version: ", mm_lines)
-cat(length(mm_lines), " discrepancies were found between the authors' text, their READMEs and their code. ",
-    sum(!mm_first), " of them concern the chapter. We record them rather than fix them:",
-    "^[The other ", sum(mm_first), " concern only the authors' first version: ",
-    paste(sub("First version: ", "", mm_lines[mm_first]), collapse = "; "), ".]\n\n", sep = "")
-cat(paste0(mm_lines[!mm_first], collapse = "\n"), "\n\nFull text: [the materials page](materials.html#mismatches).\n")
+word <- function(n) c("One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten")[n]
+cat(paste0(
+  word(length(mm_lines)), " discrepancies were found between the authors' text, their READMEs and their code. ",
+  word(sum(!mm_first)), " of them concern the chapter. We record them rather than fix them.",
+  "^[The other ", tolower(word(sum(mm_first))), " concern only the authors' first version: ",
+  paste(sub("First version: ", "", mm_lines[mm_first]), collapse = "; "), ".]\n\n",
+  paste0(mm_lines[!mm_first], collapse = "\n"),
+  "\n\nFull text: [the materials page](materials.html#mismatches).\n"))
 ```
 
 ### Internal identities {#internal-identities}
 
-Checks against things that are not inputs to anything:
+These checks compare the pipeline with itself, not with the paper. Each value should be zero or small.
 
 ```{r}
 #| label: identities
@@ -623,7 +662,7 @@ se_n <- mcn$summary$sd / sqrt(mcn$summary$n)
 checks <- data.frame(
   identity = c(
     "Table 10's x* plugged into NPV = WT - x* C/r gives 0 (max |NPV|, $B)",
-    "Grid's main-estimate cell equals the pipeline's analytic mean (abs diff, $B)",
+    "The explorer's value at the main setting equals the pipeline's analytic mean (abs diff, $B)",
     "Seeded MC mean vs exact expectation, in MC standard errors",
     "Share negative: quadrature vs seeded MC (points)",
     "Ceiling: domestic total minus the 7 departures, recomputed, minus the script's 72 ($B)"),
