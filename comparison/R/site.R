@@ -101,19 +101,25 @@ EXPLORER_BOXES <- list(
   revenue = list(ids = c("base_list", "confirmed_departures", "avoidance", "litigation_survival"),
                  report = "step-revenue",   # the report's steps 1 to 3 of score_common()
                  eq = "Wealth tax collected = 5% &times; (W &minus; D) &times; (1 &minus; a) &times; q",
-                 lead = "The wealth on the list, less what has already left, less avoidance, times the chance the tax survives in court.",
-                 more = "The four dials multiply, so the effect of one depends on where the others stand. W and D are valued on the same Forbes list."),
+                 lead = "5% is the tax rate. W is the wealth on the list, D the part already gone, a the share lost to avoidance, q the chance the tax survives in court.",
+                 more = "The four dials multiply, so one dial's effect depends on the others. W and D are valued on the same Forbes list."),
   loss = list(ids = c("income_loss_share", "income_level", "horizon"),
               report = "step-loss",      # the report's steps 5 and 6
               eq = "Income tax lost = f &times; C &times; A(H)",
-              lead = "The share of billionaires' income tax that leaves, times that income tax per year, counted over H years.",
-              more = "A(H) is what $1 a year for H years is worth today: about 5 for 5 years, about 37 for ever. The three dials multiply, and f also moves with D and a."))
+              lead = "f is the share of billionaires' income tax lost, C that tax per year, and H the years it is counted.",
+              more = "The three dials multiply, and f also moves with D and a."))
 # Each dial shows only its symbol; the name and the explanation are in its hover box.
 DIAL_SYMBOLS <- c(base_list = "W", confirmed_departures = "D", avoidance = "a",
                   litigation_survival = "q", income_loss_share = "f", income_level = "C",
                   horizon = "H")
 # One or two words shown under a symbol (author instruction: f, C and H).
 DIAL_WORDS <- c(income_loss_share = "share lost", income_level = "yearly tax", horizon = "years")
+# What each symbol stands for, at the start of its tip. The bridge's step names (short_labels)
+# name a step, not the dial: "No avoidance" is the JR end of the a dial, not the dial.
+DIAL_NAMES <- c(base_list = "wealth on the list", confirmed_departures = "wealth already gone",
+                avoidance = "avoidance share", litigation_survival = "chance it survives court",
+                income_loss_share = "share lost", income_level = "yearly income tax",
+                horizon = "years counted")
 
 # The bars of every view of the bridge, in display order: the BSZ analysis (August 2026,
 # Table 5 row 1), one step per disputed input (BSZ value to the JR value of its September
@@ -251,7 +257,7 @@ render_site <- function(root = comparison_root(),
   # one-sentence definition, and each end says what that analysis assumes and its one reason.
   slider_tips <- c(
     base_list = "The billionaires' wealth the tax applies to, from one of two Forbes lists.",
-    confirmed_departures = "Wealth gone by the 1 January 2026 residency date, out of reach. Middle stop: the four leavers of the BSZ aggressive case.",
+    confirmed_departures = "Wealth that left before the 1 January 2026 residency date. Middle stop: the BSZ aggressive case's four leavers.",
     avoidance = "The share of the tax lost to avoidance and evasion other than leaving.",
     litigation_survival = "The chance that the tax survives a court challenge, applied to the revenue.",
     income_loss_share = "The share of billionaires' income tax California loses to people leaving. Under the BSZ rule it depends on the number of leavers.",
@@ -265,10 +271,11 @@ render_site <- function(root = comparison_root(),
   # What each dial end means, shown while the pointer is over that end (or on a tap).
   end_tips <- list(
     base_list = c(
-      bsz = sprintf("BSZ: the Forbes list on 1 July 2026, 250 California billionaires worth %s (non-US citizens are a separate dial).", money(bi0$sup$W_core, 0)),
+      bsz = sprintf("BSZ: the Forbes list on 1 July 2026, %s California billionaires worth %s. The %s of non-US citizens is a separate dial.",
+                    n_sup, money(bi0$sup$W_core + bi0$sup$W_noncit, 0), money(bi0$sup$W_noncit, 0)),
       rjkdc = sprintf("JR: the 2025 list, 212 billionaires, grown 7%% to the 31 December 2026 valuation date: %s.", money(bi0$rauh$W_core, 0))),
     confirmed_departures = c(
-      bsz = "BSZ main estimate: nobody, since announcing a move is not a legal change of residence.",
+      bsz = "BSZ: nobody, since announcing a move is not a legal change of residence.",
       rjkdc = "JR: its seven confirmed leavers, Page, Thiel, Hankey, Kalanick, Brin, Spielberg and Sacks."),
     avoidance = c(
       bsz = "BSZ: a small allowance, argued from enforcement rather than estimated. Half of it is moving away, which also costs income tax (f).",
@@ -277,7 +284,7 @@ render_site <- function(root = comparison_root(),
       bsz = "BSZ: the Act is taken as written and collected in full.",
       rjkdc = "JR: the revenue weighted by 50%, the accounting threshold for a tax more likely than not to stand."),
     income_loss_share = c(
-      bsz = "The BSZ rule: the state loses only the income tax of those who leave, the people in D and the half of avoiders (a) who move away.",
+      bsz = "The BSZ rule: only the leavers' own income tax is lost, the people in D and the half of avoiders who move.",
       rjkdc = sprintf("The JR rule: %s of all billionaires' income tax, whoever leaves (the middle of a 30%% to 60%% guess), plus movers from a.",
                       pct(bi0$rauh$f0))),
     income_level = c(
@@ -339,15 +346,24 @@ render_site <- function(root = comparison_root(),
   step_row <- function(panel, id) {
     i <- match(id, steps$step_id); tx <- dial_texts(inp, id, bi0)
     slider_row(panel, id, unname(DIAL_SYMBOLS[id]), unname(short_labels[id]),
-               paste0(DIAL_SYMBOLS[[id]], ", ", sub("^forbes", "Forbes", tolower(unname(short_labels[id]))), ". ", slider_tips[[id]]),
+               paste0(DIAL_SYMBOLS[[id]], ", ", DIAL_NAMES[[id]], ". ", slider_tips[[id]]),
                tx$bsz, tx$rjkdc, slider_max(id), sym = TRUE)
   }
+  # A(H) in the loss formula gets its own tip, with the two values the dial's ends give.
+  ah_tip <- sprintf("What $1 a year for H years is worth today, discounted at %s to %s: about %s for 5 years, %s for ever.",
+                    tok$r_min, tok$r_max,
+                    formatC(expected_annuity(5, bi0$rauh$r_min, bi0$rauh$r_max), format = "f", digits = 1),
+                    formatC(expected_annuity(Inf, bi0$rauh$r_min, bi0$rauh$r_max), format = "f", digits = 0))
+  info_span <- function(id, label, tip) sprintf(
+    '<span class="info" tabindex="0" aria-describedby="%1$s">%2$s<span class="info-tip" role="tooltip" id="%1$s">%3$s</span></span>',
+    id, label, tip)
   box <- function(panel, key) {
     bx <- EXPLORER_BOXES[[key]]
+    eq <- sub("A(H)", info_span(paste0(panel, "-ah-tip"), "A(H)", ah_tip), bx$eq, fixed = TRUE)
     paste0(
       '        <li class="sl-box" role="group" aria-labelledby="', panel, '-', key, '-head">\n',
       '          <div class="sl-box-head">\n',
-      '            <p class="box-eq" id="', panel, '-', key, '-head">', bx$eq, '</p>\n',
+      '            <p class="box-eq" id="', panel, '-', key, '-head">', eq, '</p>\n',
       '            <p class="box-lead">', bx$lead, ' <a class="info" href="../repro.html#', bx$report, '" aria-describedby="', panel, '-', key, '-more">more',
       '<span class="info-tip" role="tooltip" id="', panel, '-', key, '-more">', bx$more, '</span></a></p>\n',
       '          </div>\n',
@@ -390,8 +406,12 @@ render_site <- function(root = comparison_root(),
   top <- bb[1:3, ]; rest <- sum(bb$shapley[-(1:3)])
   term <- function(v, label) sprintf('<span class="op">%s</span><span class="term"><b>%s</b><small>%s</small></span>',
                                      if (v < 0) "&minus;" else "+", money(abs(v), 1), esc(label))
+  # A step's label ends with its dial's symbol, so "$45.0B / Chance ... (q)" reads as a dial.
+  sym_label <- function(id, title) if (is.na(DIAL_SYMBOLS[id])) title else paste0(title, " (", DIAL_SYMBOLS[[id]], ")")
+  mc_note <- sprintf("The exact mean of the authors' Monte Carlo. Their seeded run prints %s, the header number.", tok$hl_rjkdc)
+  jr_label <- c(x = info_span("jr-est-tip", "JR estimate", mc_note), root = "JR estimate")
   say <- function(v, what) sprintf("%s %s for %s", if (v < 0) "minus" else "plus", money(abs(v), 1), what)
-  tok$pseudo_eq <- paste0(
+  pseudo_eq <- function(page) paste0(
     '<div class="pseudo-eq" role="img" aria-label="', esc(sprintf(
       "The BSZ estimate, %s, %s, %s, %s, and %s, gives about the JR estimate, %s.",
       money(eb$bsz_model, 1),
@@ -399,17 +419,21 @@ render_site <- function(root = comparison_root(),
       say(top$shapley[3], tolower(top$title[3])),
       say(rest, sprintf("the %d other inputs", nrow(bb) - 3)), money(eb$rauh_own, 1))), '">\n',
     sprintf('  <span class="term"><b>%s</b><small>BSZ estimate</small></span>\n', money(eb$bsz_model, 1)),
-    paste(vapply(1:3, function(i) paste0("  ", term(top$shapley[i], top$title[i])), ""), collapse = "\n"), "\n",
+    paste(vapply(1:3, function(i) paste0("  ", term(top$shapley[i], sym_label(top$step_id[i], top$title[i]))), ""), collapse = "\n"), "\n",
     "  ", term(rest, sprintf("the %d other inputs together", nrow(bb) - 3)), "\n",
-    sprintf('  <span class="op">&asymp;</span><span class="term"><b>%s</b><small>JR estimate</small></span>\n', money(eb$rauh_own, 1)),
+    sprintf('  <span class="op">&asymp;</span><span class="term"><b>%s</b><small>%s</small></span>\n', money(eb$rauh_own, 1), jr_label[[page]]),
     '</div>')
-  tok$pseudo_eq_note <- sprintf(paste0(
-    "Start from the BSZ estimate and take away what each disagreement costs: each term is that input's effect on the net fiscal effect when switched from the BSZ value to the JR value, averaged over every order the inputs could be switched in (its Shapley value). The terms add up exactly. ",
-    "The JR estimate here is the exact mean of the authors' Monte Carlo, %s; their seeded run prints %s. The <a href=\"%s\">report</a> gives every step."),
-    money(eb$rauh_own, 1), tok$hl_rjkdc, "%s")
-  tok$pseudo_eq_note_x <- sub("%s", "../repro.html#the-bridge", tok$pseudo_eq_note, fixed = TRUE)
-  tok$pseudo_eq_note_root <- sub("%s", "comparison/site/repro.html#the-bridge", tok$pseudo_eq_note, fixed = TRUE)
-  tok$pseudo_eq_note <- NULL
+  tok$pseudo_eq_x <- pseudo_eq("x")
+  tok$pseudo_eq <- pseudo_eq("root")
+  # The note is the same on both pages; the explorer moves the Monte Carlo sentence into a
+  # bubble on "JR estimate", the overview keeps it in the note.
+  eq_note <- function(href, extra) paste0(
+    "Each term is what one disagreement costs when its input moves from the BSZ value to the JR value, ",
+    "averaged over every order of moving them (its Shapley value). The terms add up exactly. ", extra,
+    sprintf("The <a href=\"%s\">report</a> gives every step.", href))
+  tok$pseudo_eq_note_x <- eq_note("../repro.html#the-bridge", "")
+  tok$pseudo_eq_note_root <- eq_note("comparison/site/repro.html#the-bridge",
+                                     sprintf("The JR estimate is the exact mean of the authors' Monte Carlo. Their seeded run prints %s, the header number. ", tok$hl_rjkdc))
 
   # ---- anchors (output (a) candidates; default decided in PLAN.md) ----
   an <- ex$anchors

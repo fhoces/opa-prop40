@@ -228,11 +228,15 @@
   .sl-box-head { position: relative; }
   .info { color: var(--series-1); border-bottom: 1px dotted var(--series-1); text-decoration: none; white-space: nowrap; }
   .info-tip { position: absolute; left: 0; right: 0; top: calc(100% + 4px); z-index: 7; white-space: normal;
+    font-family: var(--sans); font-weight: 400; font-style: normal; text-align: left; letter-spacing: normal;
     background: var(--panel); color: var(--ink); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px;
     font-size: 12.5px; line-height: 1.45; box-shadow: 0 4px 14px rgba(0,0,0,.14); visibility: hidden; opacity: 0;
     transition: opacity 120ms ease 150ms; pointer-events: none; }
   @media (hover: hover) { .info:hover .info-tip, .info:focus .info-tip { visibility: visible; opacity: 1; } }
   .info:focus-visible .info-tip, .info.tip-on .info-tip { visibility: visible; opacity: 1; }
+  span.info { cursor: help; }
+  /* The first dial of a box opens its tips below it, so they do not cover the box's formula. */
+  .sl-box .sl-list > .sl:first-child > .sl-tip, .sl-box .sl-list > .sl:first-child .end-tip { bottom: auto; top: calc(100% - 4px); }
   .sl label .sym { font-family: var(--serif); font-style: italic; font-size: 18px; font-weight: 600; }
   /* A dial shown by its symbol: the symbol in a narrow left column, the slider beside it. */
   .sl.has-sym { display: grid; grid-template-columns: 58px minmax(0, 1fr); column-gap: 4px; align-items: start; }
@@ -243,7 +247,7 @@
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   /* The pseudo-equation: BSZ estimate = JR estimate + the three largest steps + the rest. */
   .eq-box { margin: 26px 0 6px; padding: 14px 16px; border: 1px solid var(--rule); border-radius: 6px; background: var(--panel); }
-  .pseudo-eq { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 6px 8px; }
+  .pseudo-eq { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 6px 8px; position: relative; }
   .pseudo-eq .term { display: inline-flex; flex-direction: column; align-items: center; min-width: 5em; max-width: 8.5em; text-align: center; }
   .pseudo-eq .term b { font-family: var(--serif); font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .pseudo-eq .term small { font-size: 11.5px; color: var(--ink-2); line-height: 1.3; }
@@ -255,6 +259,19 @@
     .mid { position: static; order: 0; }
     svg.bars2 { max-width: 260px; }
   }
+  /* On a narrow screen the panels stack, so a thin bar at the top keeps both panels'
+     estimates in view once the header has scrolled away. */
+  .sticky-result { display: none; }
+  @media (max-width: 860px) {
+    .sticky-result { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px 14px;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 9; padding: 5px 12px;
+      background: var(--panel); border-bottom: 1px solid var(--rule); font-size: 13px; color: var(--ink-2);
+      transform: translateY(-100%); visibility: hidden; transition: transform 150ms ease, visibility 0s linear 150ms; }
+    .sticky-result.is-on { transform: none; visibility: visible; transition: transform 150ms ease; }
+    .sticky-result b { font-family: var(--serif); font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+    .sticky-result .sr-bsz { color: var(--series-1); }
+    .sticky-result .sr-rjkdc { color: var(--pref); }
+  }
   @media (max-width: 420px) {
     .panel { padding: 10px 10px 12px; }
     .sl-row { grid-template-columns: 66px minmax(0, 1fr) 66px; gap: 4px; }
@@ -264,6 +281,11 @@
 </head>
 <body>
 
+<div class="sticky-result" id="sticky-result" aria-hidden="true">
+  <span><span class="sr-bsz">BSZ panel</span> <b id="sticky-bsz">$106.8B</b></span>
+  <span>&middot;</span>
+  <span><span class="sr-rjkdc">JR panel</span> <b id="sticky-rjkdc">−$39.0B</b></span>
+</div>
 <div class="wrap">
   <p class="site-nav">
     <span class="nav-row">Comparison of the two analyses of California Proposition 40:
@@ -280,13 +302,11 @@
       <h1>Why do the two analyses of Proposition 40 disagree?</h1>
       <p class="standfirst">
         The <a href="../../../bsz-analysis/site/">BSZ analysis</a> (Boll, Saez and Zucman, August
-        2026) finds that the one-time billionaire tax raises money for California, net of the
-        income tax it changes. The <a href="../../../rjkdc-analysis/site/">JR analysis</a>
-        (Jaros and Rauh, September 2026, a working paper of the National Bureau of Economic
-        Research, NBER) finds that it loses money, because it counts the income tax lost to
-        billionaires who leave for ever. This page puts both on one definition, the net fiscal
-        effect. Each slider moves one disputed assumption from one analysis's value towards the
-        other's. The bars show what one estimating function returns for each panel.
+        2026) finds that the billionaire tax raises money for California. The
+        <a href="../../../rjkdc-analysis/site/">JR analysis</a> (Jaros and Rauh, NBER, September
+        2026) finds that it loses money. This page puts both on one measure, the net fiscal
+        effect: the wealth tax collected, plus extra income tax from asset sales, minus the income
+        tax lost to people who leave.
       </p>
     </div>
     <div class="headline">
@@ -295,7 +315,7 @@
         <div class="hl">
           <span class="name">BSZ main estimate<sup>1</sup></span>
           <span class="value" id="hl-bsz">$106.8B</span>
-          <span class="def">Net total over 5 years: the wealth tax plus the income tax it changes, in today's dollars</span>
+          <span class="def">Over 5 years: the wealth tax, net of the income tax it adds and loses.</span>
         </div>
         <div class="hl">
           <span class="name">JR main estimate<sup>1</sup></span>
@@ -311,29 +331,20 @@
     <h2 id="eq-title">What separates the two numbers</h2>
 <div class="pseudo-eq" role="img" aria-label="The BSZ estimate, $106.8B, minus $45.0B for chance the tax survives litigation, minus $33.6B for how long the income tax loss lasts, minus $33.5B for share of billionaire income tax lost, and minus $33.8B for the 7 other inputs, gives about the JR estimate, −$39.0B.">
   <span class="term"><b>$106.8B</b><small>BSZ estimate</small></span>
-  <span class="op">&minus;</span><span class="term"><b>$45.0B</b><small>Chance the tax survives litigation</small></span>
-  <span class="op">&minus;</span><span class="term"><b>$33.6B</b><small>How long the income tax loss lasts</small></span>
-  <span class="op">&minus;</span><span class="term"><b>$33.5B</b><small>Share of billionaire income tax lost</small></span>
+  <span class="op">&minus;</span><span class="term"><b>$45.0B</b><small>Chance the tax survives litigation (q)</small></span>
+  <span class="op">&minus;</span><span class="term"><b>$33.6B</b><small>How long the income tax loss lasts (H)</small></span>
+  <span class="op">&minus;</span><span class="term"><b>$33.5B</b><small>Share of billionaire income tax lost (f)</small></span>
   <span class="op">&minus;</span><span class="term"><b>$33.8B</b><small>the 7 other inputs together</small></span>
-  <span class="op">&asymp;</span><span class="term"><b>−$39.0B</b><small>JR estimate</small></span>
+  <span class="op">&asymp;</span><span class="term"><b>−$39.0B</b><small><span class="info" tabindex="0" aria-describedby="jr-est-tip">JR estimate<span class="info-tip" role="tooltip" id="jr-est-tip">The exact mean of the authors' Monte Carlo. Their seeded run prints −$38.9B, the header number.</span></span></small></span>
 </div>
-    <p class="eq-note">Start from the BSZ estimate and take away what each disagreement costs: each term is that input's effect on the net fiscal effect when switched from the BSZ value to the JR value, averaged over every order the inputs could be switched in (its Shapley value). The terms add up exactly. The JR estimate here is the exact mean of the authors' Monte Carlo, −$39.0B; their seeded run prints −$38.9B. The <a href="../repro.html#the-bridge">report</a> gives every step.</p>
+    <p class="eq-note">Each term is what one disagreement costs when its input moves from the BSZ value to the JR value, averaged over every order of moving them (its Shapley value). The terms add up exactly. The <a href="../repro.html#the-bridge">report</a> gives every step.</p>
   </section>
 
   <section class="board" id="panels" aria-labelledby="board-title">
     <h2 id="board-title">Two panels, one estimating function</h2>
-    <p class="board-lead">Each panel holds the assumptions the two analyses disagree on, with
-    the JR values taken from its latest version (September 2026). The BSZ panel starts every
-    slider at the BSZ value, the JR panel at the JR value. A slider has five positions: the two
-    analyses' values and three steps between them. The BSZ value is printed at the left end and
-    the JR value at the right end. Each box opens with its formula. Hover over or tap a dial's symbol
-    for what it is, and either end for what that analysis assumes. Three inputs that barely move the estimate (non-US-citizen
-    residents, the real-estate deduction, extra income tax from asset sales) share one switch.</p>
-    <p class="board-lead">The bars show what the common estimating function returns for each
-    panel. The left sliders move only the left bar and the right sliders only the right bar.
-    Move every slider in one panel to its far end and the two bars meet. The
-    <a href="../repro.html#the-two-ends">report</a> states the function line by line; your
-    browser runs a copy of it, which a test checks against the pipeline.</p>
+    <p class="board-lead">Each slider moves one disputed input from the BSZ value (left end) to
+    the JR value (right end). The BSZ panel starts at the BSZ values, the JR panel at the JR
+    values. Tap or hover over a symbol or an end for what it means.</p>
 
     <div class="panels">
       <div class="panel bsz" id="panel-bsz" role="group" aria-labelledby="pbsz-h">
@@ -348,30 +359,30 @@
         <li class="sl-box" role="group" aria-labelledby="bsz-revenue-head">
           <div class="sl-box-head">
             <p class="box-eq" id="bsz-revenue-head">Wealth tax collected = 5% &times; (W &minus; D) &times; (1 &minus; a) &times; q</p>
-            <p class="box-lead">The wealth on the list, less what has already left, less avoidance, times the chance the tax survives in court. <a class="info" href="../repro.html#step-revenue" aria-describedby="bsz-revenue-more">more<span class="info-tip" role="tooltip" id="bsz-revenue-more">The four dials multiply, so the effect of one depends on where the others stand. W and D are valued on the same Forbes list.</span></a></p>
+            <p class="box-lead">5% is the tax rate. W is the wealth on the list, D the part already gone, a the share lost to avoidance, q the chance the tax survives in court. <a class="info" href="../repro.html#step-revenue" aria-describedby="bsz-revenue-more">more<span class="info-tip" role="tooltip" id="bsz-revenue-more">The four dials multiply, so one dial's effect depends on the others. W and D are valued on the same Forbes list.</span></a></p>
           </div>
           <ul class="sl-list">
         <li class="sl has-sym" data-id="base_list">
           <label for="bsz-base_list"><b><span class="sym">W</span></b> <span class="sl-title"><span class="sr">Forbes source</span></span></label>
-          <span class="sl-tip" role="tooltip" id="bsz-base_list-tip">W, Forbes source. The billionaires' wealth the tax applies to, from one of two Forbes lists.</span>
-          <div class="sl-row"><span class="sl-end sl-lo has-tip" tabindex="0" aria-describedby="bsz-base_list-bsz-tip"><span class="sl-end-v">Forbes 2026</span><span class="end-tip" role="tooltip" id="bsz-base_list-bsz-tip">BSZ: the Forbes list on 1 July 2026, 250 California billionaires worth $2,157B (non-US citizens are a separate dial). Kind: data.</span></span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0"></i><i style="--t:1"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-base_list" min="0" max="1" step="1" value="0" data-panel="bsz" data-id="base_list" aria-describedby="bsz-base_list-tip"><output class="sl-cur" for="bsz-base_list">Forbes 2026</output></span><span class="sl-end sl-hi has-tip" tabindex="0" aria-describedby="bsz-base_list-rjkdc-tip"><span class="sl-end-v">Forbes 2025</span><span class="end-tip" role="tooltip" id="bsz-base_list-rjkdc-tip">JR: the 2025 list, 212 billionaires, grown 7% to the 31 December 2026 valuation date: $2,027B. Kind: data.</span></span></div>
+          <span class="sl-tip" role="tooltip" id="bsz-base_list-tip">W, wealth on the list. The billionaires' wealth the tax applies to, from one of two Forbes lists.</span>
+          <div class="sl-row"><span class="sl-end sl-lo has-tip" tabindex="0" aria-describedby="bsz-base_list-bsz-tip"><span class="sl-end-v">Forbes 2026</span><span class="end-tip" role="tooltip" id="bsz-base_list-bsz-tip">BSZ: the Forbes list on 1 July 2026, 250 California billionaires worth $2,307B. The $150B of non-US citizens is a separate dial. Kind: data.</span></span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0"></i><i style="--t:1"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-base_list" min="0" max="1" step="1" value="0" data-panel="bsz" data-id="base_list" aria-describedby="bsz-base_list-tip"><output class="sl-cur" for="bsz-base_list">Forbes 2026</output></span><span class="sl-end sl-hi has-tip" tabindex="0" aria-describedby="bsz-base_list-rjkdc-tip"><span class="sl-end-v">Forbes 2025</span><span class="end-tip" role="tooltip" id="bsz-base_list-rjkdc-tip">JR: the 2025 list, 212 billionaires, grown 7% to the 31 December 2026 valuation date: $2,027B. Kind: data.</span></span></div>
           <span class="sl-note"></span>
         </li>
         <li class="sl has-sym" data-id="confirmed_departures">
           <label for="bsz-confirmed_departures"><b><span class="sym">D</span></b> <span class="sl-title"><span class="sr">Departed wealth</span></span></label>
-          <span class="sl-tip" role="tooltip" id="bsz-confirmed_departures-tip">D, departed wealth. Wealth gone by the 1 January 2026 residency date, out of reach. Middle stop: the four leavers of the BSZ aggressive case.</span>
-          <div class="sl-row"><span class="sl-end sl-lo has-tip" tabindex="0" aria-describedby="bsz-confirmed_departures-bsz-tip"><span class="sl-end-v">None</span><span class="end-tip" role="tooltip" id="bsz-confirmed_departures-bsz-tip">BSZ main estimate: nobody, since announcing a move is not a legal change of residence. Kind: guesswork on data.</span></span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.0"></i><i style="--t:0.5"></i><i style="--t:1.0"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-confirmed_departures" min="0" max="2" step="1" value="0" data-panel="bsz" data-id="confirmed_departures" aria-describedby="bsz-confirmed_departures-tip"><output class="sl-cur" for="bsz-confirmed_departures">None</output></span><span class="sl-end sl-hi has-tip" tabindex="0" aria-describedby="bsz-confirmed_departures-rjkdc-tip"><span class="sl-end-v">JR seven</span><span class="end-tip" role="tooltip" id="bsz-confirmed_departures-rjkdc-tip">JR: its seven confirmed leavers, Page, Thiel, Hankey, Kalanick, Brin, Spielberg and Sacks. Kind: guesswork on data.</span></span></div>
+          <span class="sl-tip" role="tooltip" id="bsz-confirmed_departures-tip">D, wealth already gone. Wealth that left before the 1 January 2026 residency date. Middle stop: the BSZ aggressive case's four leavers.</span>
+          <div class="sl-row"><span class="sl-end sl-lo has-tip" tabindex="0" aria-describedby="bsz-confirmed_departures-bsz-tip"><span class="sl-end-v">None</span><span class="end-tip" role="tooltip" id="bsz-confirmed_departures-bsz-tip">BSZ: nobody, since announcing a move is not a legal change of residence. Kind: guesswork on data.</span></span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.0"></i><i style="--t:0.5"></i><i style="--t:1.0"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-confirmed_departures" min="0" max="2" step="1" value="0" data-panel="bsz" data-id="confirmed_departures" aria-describedby="bsz-confirmed_departures-tip"><output class="sl-cur" for="bsz-confirmed_departures">None</output></span><span class="sl-end sl-hi has-tip" tabindex="0" aria-describedby="bsz-confirmed_departures-rjkdc-tip"><span class="sl-end-v">JR seven</span><span class="end-tip" role="tooltip" id="bsz-confirmed_departures-rjkdc-tip">JR: its seven confirmed leavers, Page, Thiel, Hankey, Kalanick, Brin, Spielberg and Sacks. Kind: guesswork on data.</span></span></div>
           <span class="sl-note"></span>
         </li>
         <li class="sl has-sym" data-id="avoidance">
           <label for="bsz-avoidance"><b><span class="sym">a</span></b> <span class="sl-title"><span class="sr">No avoidance</span></span></label>
-          <span class="sl-tip" role="tooltip" id="bsz-avoidance-tip">a, no avoidance. The share of the tax lost to avoidance and evasion other than leaving.</span>
+          <span class="sl-tip" role="tooltip" id="bsz-avoidance-tip">a, avoidance share. The share of the tax lost to avoidance and evasion other than leaving.</span>
           <div class="sl-row"><span class="sl-end sl-lo has-tip" tabindex="0" aria-describedby="bsz-avoidance-bsz-tip"><span class="sl-end-v">10.0%</span><span class="end-tip" role="tooltip" id="bsz-avoidance-bsz-tip">BSZ: a small allowance, argued from enforcement rather than estimated. Half of it is moving away, which also costs income tax (f). Kind: guesswork.</span></span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-avoidance" min="0" max="4" step="1" value="0" data-panel="bsz" data-id="avoidance" aria-describedby="bsz-avoidance-tip"><output class="sl-cur" for="bsz-avoidance">10.0%</output></span><span class="sl-end sl-hi has-tip" tabindex="0" aria-describedby="bsz-avoidance-rjkdc-tip"><span class="sl-end-v">0.0%</span><span class="end-tip" role="tooltip" id="bsz-avoidance-rjkdc-tip">JR: none on top of the departures it counts. Kind: guesswork.</span></span></div>
           <span class="sl-note"></span>
         </li>
         <li class="sl has-sym" data-id="litigation_survival">
           <label for="bsz-litigation_survival"><b><span class="sym">q</span></b> <span class="sl-title"><span class="sr">Litigation</span></span></label>
-          <span class="sl-tip" role="tooltip" id="bsz-litigation_survival-tip">q, litigation. The chance that the tax survives a court challenge, applied to the revenue.</span>
+          <span class="sl-tip" role="tooltip" id="bsz-litigation_survival-tip">q, chance it survives court. The chance that the tax survives a court challenge, applied to the revenue.</span>
           <div class="sl-row"><span class="sl-end sl-lo has-tip" tabindex="0" aria-describedby="bsz-litigation_survival-bsz-tip"><span class="sl-end-v">100%</span><span class="end-tip" role="tooltip" id="bsz-litigation_survival-bsz-tip">BSZ: the Act is taken as written and collected in full. Kind: guesswork.</span></span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-litigation_survival" min="0" max="4" step="1" value="0" data-panel="bsz" data-id="litigation_survival" aria-describedby="bsz-litigation_survival-tip"><output class="sl-cur" for="bsz-litigation_survival">100%</output></span><span class="sl-end sl-hi has-tip" tabindex="0" aria-describedby="bsz-litigation_survival-rjkdc-tip"><span class="sl-end-v">50%</span><span class="end-tip" role="tooltip" id="bsz-litigation_survival-rjkdc-tip">JR: the revenue weighted by 50%, the accounting threshold for a tax more likely than not to stand. Kind: guesswork.</span></span></div>
           <span class="sl-note"></span>
         </li>
@@ -379,25 +390,25 @@
         </li>
         <li class="sl-box" role="group" aria-labelledby="bsz-loss-head">
           <div class="sl-box-head">
-            <p class="box-eq" id="bsz-loss-head">Income tax lost = f &times; C &times; A(H)</p>
-            <p class="box-lead">The share of billionaires' income tax that leaves, times that income tax per year, counted over H years. <a class="info" href="../repro.html#step-loss" aria-describedby="bsz-loss-more">more<span class="info-tip" role="tooltip" id="bsz-loss-more">A(H) is what $1 a year for H years is worth today: about 5 for 5 years, about 37 for ever. The three dials multiply, and f also moves with D and a.</span></a></p>
+            <p class="box-eq" id="bsz-loss-head">Income tax lost = f &times; C &times; <span class="info" tabindex="0" aria-describedby="bsz-ah-tip">A(H)<span class="info-tip" role="tooltip" id="bsz-ah-tip">What $1 a year for H years is worth today, discounted at 1.5% to 4.5%: about 4.6 for 5 years, 37 for ever.</span></span></p>
+            <p class="box-lead">f is the share of billionaires' income tax lost, C that tax per year, and H the years it is counted. <a class="info" href="../repro.html#step-loss" aria-describedby="bsz-loss-more">more<span class="info-tip" role="tooltip" id="bsz-loss-more">The three dials multiply, and f also moves with D and a.</span></a></p>
           </div>
           <ul class="sl-list">
         <li class="sl has-sym" data-id="income_loss_share">
           <label for="bsz-income_loss_share"><b><span class="sym">f</span><span class="sym-word">share lost</span></b> <span class="sl-title"><span class="sr">Share lost</span></span></label>
           <span class="sl-tip" role="tooltip" id="bsz-income_loss_share-tip">f, share lost. The share of billionaires' income tax California loses to people leaving. Under the BSZ rule it depends on the number of leavers.</span>
-          <div class="sl-row"><span class="sl-end sl-lo has-tip" tabindex="0" aria-describedby="bsz-income_loss_share-bsz-tip"><span class="sl-end-v">5%</span><span class="end-tip" role="tooltip" id="bsz-income_loss_share-bsz-tip">The BSZ rule: the state loses only the income tax of those who leave, the people in D and the half of avoiders (a) who move away. Kind: data.</span></span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-income_loss_share" min="0" max="4" step="1" value="0" data-panel="bsz" data-id="income_loss_share" aria-describedby="bsz-income_loss_share-tip"><output class="sl-cur" for="bsz-income_loss_share">5%</output></span><span class="sl-end sl-hi has-tip" tabindex="0" aria-describedby="bsz-income_loss_share-rjkdc-tip"><span class="sl-end-v">45%</span><span class="end-tip" role="tooltip" id="bsz-income_loss_share-rjkdc-tip">The JR rule: 45% of all billionaires' income tax, whoever leaves (the middle of a 30% to 60% guess), plus movers from a. Kind: guesswork.</span></span></div>
+          <div class="sl-row"><span class="sl-end sl-lo has-tip" tabindex="0" aria-describedby="bsz-income_loss_share-bsz-tip"><span class="sl-end-v">5%</span><span class="end-tip" role="tooltip" id="bsz-income_loss_share-bsz-tip">The BSZ rule: only the leavers' own income tax is lost, the people in D and the half of avoiders who move. Kind: data.</span></span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-income_loss_share" min="0" max="4" step="1" value="0" data-panel="bsz" data-id="income_loss_share" aria-describedby="bsz-income_loss_share-tip"><output class="sl-cur" for="bsz-income_loss_share">5%</output></span><span class="sl-end sl-hi has-tip" tabindex="0" aria-describedby="bsz-income_loss_share-rjkdc-tip"><span class="sl-end-v">45%</span><span class="end-tip" role="tooltip" id="bsz-income_loss_share-rjkdc-tip">The JR rule: 45% of all billionaires' income tax, whoever leaves (the middle of a 30% to 60% guess), plus movers from a. Kind: guesswork.</span></span></div>
           <span class="sl-note"></span>
         </li>
         <li class="sl has-sym" data-id="income_level">
           <label for="bsz-income_level"><b><span class="sym">C</span><span class="sym-word">yearly tax</span></b> <span class="sl-title"><span class="sr">Income tax level</span></span></label>
-          <span class="sl-tip" role="tooltip" id="bsz-income_level-tip">C, income tax level. Billionaires' yearly California income tax, the amount at risk each year.</span>
+          <span class="sl-tip" role="tooltip" id="bsz-income_level-tip">C, yearly income tax. Billionaires' yearly California income tax, the amount at risk each year.</span>
           <div class="sl-row"><span class="sl-end sl-lo has-tip" tabindex="0" aria-describedby="bsz-income_level-bsz-tip"><span class="sl-end-v">$3.06B/yr</span><span class="end-tip" role="tooltip" id="bsz-income_level-bsz-tip">BSZ: from tax data, since top wealth holders earn about half of what top earners do. Kind: research.</span></span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-income_level" min="0" max="4" step="1" value="0" data-panel="bsz" data-id="income_level" aria-describedby="bsz-income_level-tip"><output class="sl-cur" for="bsz-income_level">$3.06B/yr</output></span><span class="sl-end sl-hi has-tip" tabindex="0" aria-describedby="bsz-income_level-rjkdc-tip"><span class="sl-end-v">$4.55B/yr</span><span class="end-tip" role="tooltip" id="bsz-income_level-rjkdc-tip">JR: the middle of a $3.3 billion to $5.8 billion range from two model bounds. Kind: guesswork.</span></span></div>
           <span class="sl-note"></span>
         </li>
         <li class="sl has-sym" data-id="horizon">
           <label for="bsz-horizon"><b><span class="sym">H</span><span class="sym-word">years</span></b> <span class="sl-title"><span class="sr">Horizon</span></span></label>
-          <span class="sl-tip" role="tooltip" id="bsz-horizon-tip">H, horizon. How many years the lost income tax is counted, discounted at 1.5% to 4.5% a year. Middle stops: 10, 20 and 50 years.</span>
+          <span class="sl-tip" role="tooltip" id="bsz-horizon-tip">H, years counted. How many years the lost income tax is counted, discounted at 1.5% to 4.5% a year. Middle stops: 10, 20 and 50 years.</span>
           <div class="sl-row"><span class="sl-end sl-lo has-tip" tabindex="0" aria-describedby="bsz-horizon-bsz-tip"><span class="sl-end-v">5 years</span><span class="end-tip" role="tooltip" id="bsz-horizon-bsz-tip">BSZ: about the payment period, treating the responses as temporary. Kind: scenario.</span></span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-horizon" min="0" max="4" step="1" value="0" data-panel="bsz" data-id="horizon" aria-describedby="bsz-horizon-tip"><output class="sl-cur" for="bsz-horizon">5 years</output></span><span class="sl-end sl-hi has-tip" tabindex="0" aria-describedby="bsz-horizon-rjkdc-tip"><span class="sl-end-v">perpetuity</span><span class="end-tip" role="tooltip" id="bsz-horizon-rjkdc-tip">JR: for ever, so the loss never ends. Kind: scenario.</span></span></div>
           <span class="sl-note"></span>
         </li>
@@ -439,7 +450,9 @@
         <svg class="bars2" id="bars" viewBox="0 0 240 380" role="img" aria-labelledby="bars-title">
           <title id="bars-title">The BSZ panel's estimate is $106.8B and the JR panel's is −$39.0B.</title>
         </svg>
-        <figcaption>Net fiscal effect, $ billions. Left bar: the BSZ panel. Right bar: the JR panel.</figcaption>
+        <figcaption>Net fiscal effect, $ billions: wealth tax collected minus income tax lost, plus
+        asset-sale tax (one of the three minor inputs). Move every slider in a panel to its far end
+        and the two bars meet.</figcaption>
       </figure>
 
       <div class="panel rjkdc" id="panel-rjkdc" role="group" aria-labelledby="prj-h">
@@ -454,30 +467,30 @@
         <li class="sl-box" role="group" aria-labelledby="rjkdc-revenue-head">
           <div class="sl-box-head">
             <p class="box-eq" id="rjkdc-revenue-head">Wealth tax collected = 5% &times; (W &minus; D) &times; (1 &minus; a) &times; q</p>
-            <p class="box-lead">The wealth on the list, less what has already left, less avoidance, times the chance the tax survives in court. <a class="info" href="../repro.html#step-revenue" aria-describedby="rjkdc-revenue-more">more<span class="info-tip" role="tooltip" id="rjkdc-revenue-more">The four dials multiply, so the effect of one depends on where the others stand. W and D are valued on the same Forbes list.</span></a></p>
+            <p class="box-lead">5% is the tax rate. W is the wealth on the list, D the part already gone, a the share lost to avoidance, q the chance the tax survives in court. <a class="info" href="../repro.html#step-revenue" aria-describedby="rjkdc-revenue-more">more<span class="info-tip" role="tooltip" id="rjkdc-revenue-more">The four dials multiply, so one dial's effect depends on the others. W and D are valued on the same Forbes list.</span></a></p>
           </div>
           <ul class="sl-list">
         <li class="sl has-sym" data-id="base_list">
           <label for="rjkdc-base_list"><b><span class="sym">W</span></b> <span class="sl-title"><span class="sr">Forbes source</span></span></label>
-          <span class="sl-tip" role="tooltip" id="rjkdc-base_list-tip">W, Forbes source. The billionaires' wealth the tax applies to, from one of two Forbes lists.</span>
-          <div class="sl-row"><span class="sl-end sl-lo has-tip" tabindex="0" aria-describedby="rjkdc-base_list-bsz-tip"><span class="sl-end-v">Forbes 2026</span><span class="end-tip" role="tooltip" id="rjkdc-base_list-bsz-tip">BSZ: the Forbes list on 1 July 2026, 250 California billionaires worth $2,157B (non-US citizens are a separate dial). Kind: data.</span></span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0"></i><i style="--t:1"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-base_list" min="0" max="1" step="1" value="0" data-panel="rjkdc" data-id="base_list" aria-describedby="rjkdc-base_list-tip" dir="rtl"><output class="sl-cur" for="rjkdc-base_list">Forbes 2025</output></span><span class="sl-end sl-hi has-tip" tabindex="0" aria-describedby="rjkdc-base_list-rjkdc-tip"><span class="sl-end-v">Forbes 2025</span><span class="end-tip" role="tooltip" id="rjkdc-base_list-rjkdc-tip">JR: the 2025 list, 212 billionaires, grown 7% to the 31 December 2026 valuation date: $2,027B. Kind: data.</span></span></div>
+          <span class="sl-tip" role="tooltip" id="rjkdc-base_list-tip">W, wealth on the list. The billionaires' wealth the tax applies to, from one of two Forbes lists.</span>
+          <div class="sl-row"><span class="sl-end sl-lo has-tip" tabindex="0" aria-describedby="rjkdc-base_list-bsz-tip"><span class="sl-end-v">Forbes 2026</span><span class="end-tip" role="tooltip" id="rjkdc-base_list-bsz-tip">BSZ: the Forbes list on 1 July 2026, 250 California billionaires worth $2,307B. The $150B of non-US citizens is a separate dial. Kind: data.</span></span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0"></i><i style="--t:1"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-base_list" min="0" max="1" step="1" value="0" data-panel="rjkdc" data-id="base_list" aria-describedby="rjkdc-base_list-tip" dir="rtl"><output class="sl-cur" for="rjkdc-base_list">Forbes 2025</output></span><span class="sl-end sl-hi has-tip" tabindex="0" aria-describedby="rjkdc-base_list-rjkdc-tip"><span class="sl-end-v">Forbes 2025</span><span class="end-tip" role="tooltip" id="rjkdc-base_list-rjkdc-tip">JR: the 2025 list, 212 billionaires, grown 7% to the 31 December 2026 valuation date: $2,027B. Kind: data.</span></span></div>
           <span class="sl-note"></span>
         </li>
         <li class="sl has-sym" data-id="confirmed_departures">
           <label for="rjkdc-confirmed_departures"><b><span class="sym">D</span></b> <span class="sl-title"><span class="sr">Departed wealth</span></span></label>
-          <span class="sl-tip" role="tooltip" id="rjkdc-confirmed_departures-tip">D, departed wealth. Wealth gone by the 1 January 2026 residency date, out of reach. Middle stop: the four leavers of the BSZ aggressive case.</span>
-          <div class="sl-row"><span class="sl-end sl-lo has-tip" tabindex="0" aria-describedby="rjkdc-confirmed_departures-bsz-tip"><span class="sl-end-v">None</span><span class="end-tip" role="tooltip" id="rjkdc-confirmed_departures-bsz-tip">BSZ main estimate: nobody, since announcing a move is not a legal change of residence. Kind: guesswork on data.</span></span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.0"></i><i style="--t:0.5"></i><i style="--t:1.0"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-confirmed_departures" min="0" max="2" step="1" value="0" data-panel="rjkdc" data-id="confirmed_departures" aria-describedby="rjkdc-confirmed_departures-tip" dir="rtl"><output class="sl-cur" for="rjkdc-confirmed_departures">JR seven</output></span><span class="sl-end sl-hi has-tip" tabindex="0" aria-describedby="rjkdc-confirmed_departures-rjkdc-tip"><span class="sl-end-v">JR seven</span><span class="end-tip" role="tooltip" id="rjkdc-confirmed_departures-rjkdc-tip">JR: its seven confirmed leavers, Page, Thiel, Hankey, Kalanick, Brin, Spielberg and Sacks. Kind: guesswork on data.</span></span></div>
+          <span class="sl-tip" role="tooltip" id="rjkdc-confirmed_departures-tip">D, wealth already gone. Wealth that left before the 1 January 2026 residency date. Middle stop: the BSZ aggressive case's four leavers.</span>
+          <div class="sl-row"><span class="sl-end sl-lo has-tip" tabindex="0" aria-describedby="rjkdc-confirmed_departures-bsz-tip"><span class="sl-end-v">None</span><span class="end-tip" role="tooltip" id="rjkdc-confirmed_departures-bsz-tip">BSZ: nobody, since announcing a move is not a legal change of residence. Kind: guesswork on data.</span></span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.0"></i><i style="--t:0.5"></i><i style="--t:1.0"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-confirmed_departures" min="0" max="2" step="1" value="0" data-panel="rjkdc" data-id="confirmed_departures" aria-describedby="rjkdc-confirmed_departures-tip" dir="rtl"><output class="sl-cur" for="rjkdc-confirmed_departures">JR seven</output></span><span class="sl-end sl-hi has-tip" tabindex="0" aria-describedby="rjkdc-confirmed_departures-rjkdc-tip"><span class="sl-end-v">JR seven</span><span class="end-tip" role="tooltip" id="rjkdc-confirmed_departures-rjkdc-tip">JR: its seven confirmed leavers, Page, Thiel, Hankey, Kalanick, Brin, Spielberg and Sacks. Kind: guesswork on data.</span></span></div>
           <span class="sl-note"></span>
         </li>
         <li class="sl has-sym" data-id="avoidance">
           <label for="rjkdc-avoidance"><b><span class="sym">a</span></b> <span class="sl-title"><span class="sr">No avoidance</span></span></label>
-          <span class="sl-tip" role="tooltip" id="rjkdc-avoidance-tip">a, no avoidance. The share of the tax lost to avoidance and evasion other than leaving.</span>
+          <span class="sl-tip" role="tooltip" id="rjkdc-avoidance-tip">a, avoidance share. The share of the tax lost to avoidance and evasion other than leaving.</span>
           <div class="sl-row"><span class="sl-end sl-lo has-tip" tabindex="0" aria-describedby="rjkdc-avoidance-bsz-tip"><span class="sl-end-v">10.0%</span><span class="end-tip" role="tooltip" id="rjkdc-avoidance-bsz-tip">BSZ: a small allowance, argued from enforcement rather than estimated. Half of it is moving away, which also costs income tax (f). Kind: guesswork.</span></span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-avoidance" min="0" max="4" step="1" value="0" data-panel="rjkdc" data-id="avoidance" aria-describedby="rjkdc-avoidance-tip" dir="rtl"><output class="sl-cur" for="rjkdc-avoidance">0.0%</output></span><span class="sl-end sl-hi has-tip" tabindex="0" aria-describedby="rjkdc-avoidance-rjkdc-tip"><span class="sl-end-v">0.0%</span><span class="end-tip" role="tooltip" id="rjkdc-avoidance-rjkdc-tip">JR: none on top of the departures it counts. Kind: guesswork.</span></span></div>
           <span class="sl-note"></span>
         </li>
         <li class="sl has-sym" data-id="litigation_survival">
           <label for="rjkdc-litigation_survival"><b><span class="sym">q</span></b> <span class="sl-title"><span class="sr">Litigation</span></span></label>
-          <span class="sl-tip" role="tooltip" id="rjkdc-litigation_survival-tip">q, litigation. The chance that the tax survives a court challenge, applied to the revenue.</span>
+          <span class="sl-tip" role="tooltip" id="rjkdc-litigation_survival-tip">q, chance it survives court. The chance that the tax survives a court challenge, applied to the revenue.</span>
           <div class="sl-row"><span class="sl-end sl-lo has-tip" tabindex="0" aria-describedby="rjkdc-litigation_survival-bsz-tip"><span class="sl-end-v">100%</span><span class="end-tip" role="tooltip" id="rjkdc-litigation_survival-bsz-tip">BSZ: the Act is taken as written and collected in full. Kind: guesswork.</span></span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-litigation_survival" min="0" max="4" step="1" value="0" data-panel="rjkdc" data-id="litigation_survival" aria-describedby="rjkdc-litigation_survival-tip" dir="rtl"><output class="sl-cur" for="rjkdc-litigation_survival">50%</output></span><span class="sl-end sl-hi has-tip" tabindex="0" aria-describedby="rjkdc-litigation_survival-rjkdc-tip"><span class="sl-end-v">50%</span><span class="end-tip" role="tooltip" id="rjkdc-litigation_survival-rjkdc-tip">JR: the revenue weighted by 50%, the accounting threshold for a tax more likely than not to stand. Kind: guesswork.</span></span></div>
           <span class="sl-note"></span>
         </li>
@@ -485,25 +498,25 @@
         </li>
         <li class="sl-box" role="group" aria-labelledby="rjkdc-loss-head">
           <div class="sl-box-head">
-            <p class="box-eq" id="rjkdc-loss-head">Income tax lost = f &times; C &times; A(H)</p>
-            <p class="box-lead">The share of billionaires' income tax that leaves, times that income tax per year, counted over H years. <a class="info" href="../repro.html#step-loss" aria-describedby="rjkdc-loss-more">more<span class="info-tip" role="tooltip" id="rjkdc-loss-more">A(H) is what $1 a year for H years is worth today: about 5 for 5 years, about 37 for ever. The three dials multiply, and f also moves with D and a.</span></a></p>
+            <p class="box-eq" id="rjkdc-loss-head">Income tax lost = f &times; C &times; <span class="info" tabindex="0" aria-describedby="rjkdc-ah-tip">A(H)<span class="info-tip" role="tooltip" id="rjkdc-ah-tip">What $1 a year for H years is worth today, discounted at 1.5% to 4.5%: about 4.6 for 5 years, 37 for ever.</span></span></p>
+            <p class="box-lead">f is the share of billionaires' income tax lost, C that tax per year, and H the years it is counted. <a class="info" href="../repro.html#step-loss" aria-describedby="rjkdc-loss-more">more<span class="info-tip" role="tooltip" id="rjkdc-loss-more">The three dials multiply, and f also moves with D and a.</span></a></p>
           </div>
           <ul class="sl-list">
         <li class="sl has-sym" data-id="income_loss_share">
           <label for="rjkdc-income_loss_share"><b><span class="sym">f</span><span class="sym-word">share lost</span></b> <span class="sl-title"><span class="sr">Share lost</span></span></label>
           <span class="sl-tip" role="tooltip" id="rjkdc-income_loss_share-tip">f, share lost. The share of billionaires' income tax California loses to people leaving. Under the BSZ rule it depends on the number of leavers.</span>
-          <div class="sl-row"><span class="sl-end sl-lo has-tip" tabindex="0" aria-describedby="rjkdc-income_loss_share-bsz-tip"><span class="sl-end-v">5%</span><span class="end-tip" role="tooltip" id="rjkdc-income_loss_share-bsz-tip">The BSZ rule: the state loses only the income tax of those who leave, the people in D and the half of avoiders (a) who move away. Kind: data.</span></span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-income_loss_share" min="0" max="4" step="1" value="0" data-panel="rjkdc" data-id="income_loss_share" aria-describedby="rjkdc-income_loss_share-tip" dir="rtl"><output class="sl-cur" for="rjkdc-income_loss_share">45%</output></span><span class="sl-end sl-hi has-tip" tabindex="0" aria-describedby="rjkdc-income_loss_share-rjkdc-tip"><span class="sl-end-v">45%</span><span class="end-tip" role="tooltip" id="rjkdc-income_loss_share-rjkdc-tip">The JR rule: 45% of all billionaires' income tax, whoever leaves (the middle of a 30% to 60% guess), plus movers from a. Kind: guesswork.</span></span></div>
+          <div class="sl-row"><span class="sl-end sl-lo has-tip" tabindex="0" aria-describedby="rjkdc-income_loss_share-bsz-tip"><span class="sl-end-v">5%</span><span class="end-tip" role="tooltip" id="rjkdc-income_loss_share-bsz-tip">The BSZ rule: only the leavers' own income tax is lost, the people in D and the half of avoiders who move. Kind: data.</span></span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-income_loss_share" min="0" max="4" step="1" value="0" data-panel="rjkdc" data-id="income_loss_share" aria-describedby="rjkdc-income_loss_share-tip" dir="rtl"><output class="sl-cur" for="rjkdc-income_loss_share">45%</output></span><span class="sl-end sl-hi has-tip" tabindex="0" aria-describedby="rjkdc-income_loss_share-rjkdc-tip"><span class="sl-end-v">45%</span><span class="end-tip" role="tooltip" id="rjkdc-income_loss_share-rjkdc-tip">The JR rule: 45% of all billionaires' income tax, whoever leaves (the middle of a 30% to 60% guess), plus movers from a. Kind: guesswork.</span></span></div>
           <span class="sl-note"></span>
         </li>
         <li class="sl has-sym" data-id="income_level">
           <label for="rjkdc-income_level"><b><span class="sym">C</span><span class="sym-word">yearly tax</span></b> <span class="sl-title"><span class="sr">Income tax level</span></span></label>
-          <span class="sl-tip" role="tooltip" id="rjkdc-income_level-tip">C, income tax level. Billionaires' yearly California income tax, the amount at risk each year.</span>
+          <span class="sl-tip" role="tooltip" id="rjkdc-income_level-tip">C, yearly income tax. Billionaires' yearly California income tax, the amount at risk each year.</span>
           <div class="sl-row"><span class="sl-end sl-lo has-tip" tabindex="0" aria-describedby="rjkdc-income_level-bsz-tip"><span class="sl-end-v">$3.06B/yr</span><span class="end-tip" role="tooltip" id="rjkdc-income_level-bsz-tip">BSZ: from tax data, since top wealth holders earn about half of what top earners do. Kind: research.</span></span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-income_level" min="0" max="4" step="1" value="0" data-panel="rjkdc" data-id="income_level" aria-describedby="rjkdc-income_level-tip" dir="rtl"><output class="sl-cur" for="rjkdc-income_level">$4.55B/yr</output></span><span class="sl-end sl-hi has-tip" tabindex="0" aria-describedby="rjkdc-income_level-rjkdc-tip"><span class="sl-end-v">$4.55B/yr</span><span class="end-tip" role="tooltip" id="rjkdc-income_level-rjkdc-tip">JR: the middle of a $3.3 billion to $5.8 billion range from two model bounds. Kind: guesswork.</span></span></div>
           <span class="sl-note"></span>
         </li>
         <li class="sl has-sym" data-id="horizon">
           <label for="rjkdc-horizon"><b><span class="sym">H</span><span class="sym-word">years</span></b> <span class="sl-title"><span class="sr">Horizon</span></span></label>
-          <span class="sl-tip" role="tooltip" id="rjkdc-horizon-tip">H, horizon. How many years the lost income tax is counted, discounted at 1.5% to 4.5% a year. Middle stops: 10, 20 and 50 years.</span>
+          <span class="sl-tip" role="tooltip" id="rjkdc-horizon-tip">H, years counted. How many years the lost income tax is counted, discounted at 1.5% to 4.5% a year. Middle stops: 10, 20 and 50 years.</span>
           <div class="sl-row"><span class="sl-end sl-lo has-tip" tabindex="0" aria-describedby="rjkdc-horizon-bsz-tip"><span class="sl-end-v">5 years</span><span class="end-tip" role="tooltip" id="rjkdc-horizon-bsz-tip">BSZ: about the payment period, treating the responses as temporary. Kind: scenario.</span></span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0.00"></i><i style="--t:0.25"></i><i style="--t:0.50"></i><i style="--t:0.75"></i><i style="--t:1.00"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-horizon" min="0" max="4" step="1" value="0" data-panel="rjkdc" data-id="horizon" aria-describedby="rjkdc-horizon-tip" dir="rtl"><output class="sl-cur" for="rjkdc-horizon">perpetuity</output></span><span class="sl-end sl-hi has-tip" tabindex="0" aria-describedby="rjkdc-horizon-rjkdc-tip"><span class="sl-end-v">perpetuity</span><span class="end-tip" role="tooltip" id="rjkdc-horizon-rjkdc-tip">JR: for ever, so the loss never ends. Kind: scenario.</span></span></div>
           <span class="sl-note"></span>
         </li>
@@ -539,9 +552,8 @@
         </details></li>
         </ul>
         <p class="panel-note">Starts at −$38.98B, the exact average of the authors' Monte
-        Carlo simulation (a model run many times with its uncertain inputs drawn at random). The
-        authors' own run of it gives −$38.9B, the main estimate in the header; the two differ
-        by sampling error.</p>
+        Carlo (their model run many times with random inputs). Their own seeded run prints
+        −$38.9B, the header number.</p>
       </div>
     </div>
 
@@ -598,8 +610,12 @@
       output.</p>
       <p><strong>Kinds.</strong> Each slider's explanation ends with the kind of its two values:
       <b>data</b> (settled by observable facts), <b>research</b> (a published estimate),
-      <b>guesswork</b> (asserted without data or a study behind it) and <b>scenario</b> (a choice
-      of which world is estimated).</p>
+      <b>guesswork</b> (asserted without data or a study behind it), <b>guesswork on data</b> (a
+      judgement applied to observed facts) and <b>scenario</b> (a choice of which world is
+      estimated). "A vs B" reads the BSZ value's kind against the JR value's.</p>
+      <p><strong>The function.</strong> The <a href="../repro.html#the-two-ends">report</a> states
+      the estimating function line by line. The left sliders move only the left bar and the right
+      sliders only the right bar.</p>
     </div>
   </details>
 
@@ -748,7 +764,8 @@
       var li = inp.closest(".sl");
       li.classList.toggle("is-inert", dead);
       li.querySelector(".sl-note").textContent = dead ? deadNote(id, r.x) :
-        (p > 0 && p < max ? "A position between the two analyses' values: this OPA's construction, not a published number." : "");
+        (p > 0 && p < max ? (id === "confirmed_departures" ? "The BSZ analysis's aggressive case (Table 5 row 3), four leavers." :
+                             "A position between the two analyses' values: this OPA's construction, not a published number.") : "");
     });
   }
 
@@ -793,6 +810,8 @@
       var ly = b[1] >= 0 ? y1 - 8 : y1 + 18;
       svg.appendChild(el("text", { x: x, y: ly, "text-anchor": "middle", "class": "val" }, money1(b[1])));
     });
+    $("sticky-bsz").textContent = money1(vb);
+    $("sticky-rjkdc").textContent = money1(vr);
     $("bars-title").textContent = "The BSZ panel's estimate is " + money1(vb) +
       " and the JR panel's is " + money1(vr) + " (net fiscal effect).";
     svg.setAttribute("data-bsz", vb.toFixed(9));
@@ -822,10 +841,21 @@
   });
   renderPanels();
 
-  // A touch screen has no hover. A tap on a dial's symbol or on a dial end that has a tip
-  // shows that tip; a second tap, or a tap anywhere else, hides it. Sliding a dial is not
-  // a tap, so it leaves tips alone.
-  var tapAt = null;
+  // The narrow-screen result bar: shown once the header's two estimates have scrolled out of
+  // view (CSS hides it on wide screens).
+  var bar = $("sticky-result"), head = document.querySelector("header .headline");
+  if (bar && head && "IntersectionObserver" in window) {
+    new IntersectionObserver(function (en) {
+      var e = en[0];
+      bar.classList.toggle("is-on", !e.isIntersecting && e.boundingClientRect.bottom < 0);
+    }).observe(head);
+  }
+
+  // A touch screen has no hover. A tap on a dial's symbol, on a dial end that has a tip, or
+  // on a glossed term shows that tip; a second tap, or a tap anywhere else, hides it. A box's
+  // "more" is a link to the report: the first tap shows its bubble, a second tap follows the
+  // link. Sliding a dial is not a tap, so it leaves tips alone.
+  var tapAt = null, holdLink = null;
   document.addEventListener("pointerdown", function (e) {
     tapAt = e.pointerType === "touch" ? { x: e.clientX, y: e.clientY } : null;
   }, true);
@@ -835,11 +865,19 @@
     var moved = Math.abs(e.clientX - tapAt.x) + Math.abs(e.clientY - tapAt.y) > 10;
     tapAt = null;
     if (moved) return;
-    // "more" is a link to the report: a tap follows it, so it is not a tip host
-    var host = e.target.closest ? e.target.closest(".sl-end.has-tip, .sl > label") : null;
+    var host = e.target.closest ? e.target.closest(".sl-end.has-tip, .sl > label, .info") : null;
     var show = host && !host.classList.contains("tip-on");
     Array.prototype.slice.call(document.querySelectorAll(".tip-on")).forEach(function (h) { h.classList.remove("tip-on"); });
-    if (show) host.classList.add("tip-on");
+    holdLink = null;
+    if (show) {
+      host.classList.add("tip-on");
+      if (host.tagName === "A") holdLink = host;   // this tap opened the bubble: do not follow
+    }
+  }, true);
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest ? e.target.closest("a.info") : null;
+    if (a && a === holdLink) e.preventDefault();
+    holdLink = null;
   }, true);
 })();
 </script>

@@ -26,7 +26,9 @@ test_that("both pages carry the pseudo-equation, and its terms add up to the BSZ
   for (p in pages) {
     html <- read_page(p)
     expect_true(grepl('<div class="pseudo-eq" role="img"', html, fixed = TRUE), label = p)
-    for (i in 1:3) expect_true(grepl(sprintf("<b>%s</b><small>%s</small>", money(abs(b$shapley[i]), 1), b$title[i]),
+    # each label is the step's title followed by its dial's symbol, e.g. "(q)"
+    for (i in 1:3) expect_true(grepl(sprintf("<b>%s</b><small>%s (%s)</small>", money(abs(b$shapley[i]), 1), b$title[i],
+                                             DIAL_SYMBOLS[[b$step_id[i]]]),
                                      html, fixed = TRUE), label = paste(p, b$step_id[i]))
   }
 })
