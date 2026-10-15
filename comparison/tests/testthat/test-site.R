@@ -102,7 +102,9 @@ test_that("the slider panels: the dials in their two boxes in the bridge's order
     # the two boxes hold the shown dials, in order
     expect_equal(length(gregexpr(sprintf('<li class="sl-box" role="group" aria-labelledby="%s-', panel), ex_html)[[1]]), 2L, label = panel)
     for (id in all_ids) {
-      expect_true(grepl(sprintf('<span class="sl-tip" role="tooltip" id="%s-%s-tip">(?:[^<]|<br>){80,}</span>', panel, id), ex_html, perl = TRUE), label = paste(panel, id, "tip"))
+      expect_true(grepl(sprintf('<span class="sl-tip" role="tooltip" id="%s-%s-tip">(?:[^<]|<br>){30,}</span>', panel, id), ex_html, perl = TRUE), label = paste(panel, id, "tip"))
+      for (side in c("bsz", "rjkdc"))
+        expect_true(grepl(sprintf('<span class="end-tip" role="tooltip" id="%s-%s-%s-tip">[^<]{15,}</span>', panel, id, side), ex_html), label = paste(panel, id, side, "end tip"))
       expect_true(grepl(sprintf('data-id="%s" aria-describedby="%s-%s-tip"', id, panel, id), ex_html, fixed = TRUE), label = paste(panel, id, "describedby"))
     }
   }

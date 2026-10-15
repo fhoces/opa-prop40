@@ -101,11 +101,11 @@ EXPLORER_BOXES <- list(
   revenue = list(ids = c("base_list", "confirmed_departures", "avoidance", "litigation_survival"),
                  eq = "Wealth tax collected = 5% &times; (W &minus; D) &times; (1 &minus; a) &times; q",
                  lead = "The wealth on the list, less what has already left, less avoidance, times the chance the tax survives in court.",
-                 more = "The four dials multiply each other, so the effect of one depends on where the others stand. W and D are valued on the same Forbes list. Hover over or tap a dial for what each analysis assumes."),
+                 more = "The four dials multiply, so the effect of one depends on where the others stand. W and D are valued on the same Forbes list."),
   loss = list(ids = c("income_loss_share", "income_level", "horizon"),
               eq = "Income tax lost = f &times; C &times; A(H)",
               lead = "The share of billionaires' income tax that leaves, times that income tax per year, counted over H years.",
-              more = "A(H) is what $1 a year for H years is worth today, at the 1.5% to 4.5% discount rates both analyses use: about 5 for 5 years, about 37 for ever. The three dials multiply each other. In the BSZ analysis f also follows D in the box above. Hover over or tap a dial for what each analysis assumes."))
+              more = "A(H) is what $1 a year for H years is worth today: about 5 for 5 years, about 37 for ever. The three dials multiply, and f also moves with D and a."))
 # Each dial shows only its symbol; the name and the explanation are in its hover box.
 DIAL_SYMBOLS <- c(base_list = "W", confirmed_departures = "D", avoidance = "a",
                   litigation_survival = "q", income_loss_share = "f", income_level = "C",
@@ -245,30 +245,57 @@ render_site <- function(root = comparison_root(),
   hz_words <- paste0(paste(head(hz_fin, -1), collapse = ", "), " and ", tail(hz_fin, 1),
                      " years, and a perpetuity")
   bi0 <- bridge_inputs(k)
+  # Every tip is two or three lines (author instruction 2026-10-15): the dial's symbol gives a
+  # one-sentence definition, and each end says what that analysis assumes and its one reason.
   slider_tips <- c(
-    base_list = "Which Forbes list the base comes from, and so the wealth the tax applies to before departures and behaviour. Forbes 2026: the BSZ analysis values California's billionaires on 1 July 2026 (250 people, $2,157 billion without the non-US citizens). Forbes 2025: the JR analysis takes the 2025 list (212 people, with Ellison, Houston and Snyder removed and Sacks added) and grows it 7% to the 31 December 2026 valuation date ($2,027 billion). Two positions: one list or the other. Kind: data.",
-    confirmed_departures = sprintf(paste(
-      "Billionaires counted as already gone before the 1 January 2026 residency date, whose wealth the tax cannot reach.",
-      "Three stops. None: the BSZ analysis's main estimate taxes every resident on that date, since an announced move is not a legal change of residence.",
-      "BSZ four: Page, Thiel, Hankey and Kalanick, the BSZ analysis's own aggressive scenario (Table 5 row 3), %s on the BSZ list.",
-      "JR seven: those four plus Brin, Spielberg and Sacks, the JR analysis's confirmed departures, %s on the BSZ list and %s on the JR list.",
-      "Each stop is valued on the list chosen by the Forbes source dial.",
-      "Kind: guesswork resting on data."),
-      money(bi0$ladder$dep_b[2], 0), money(bi0$ladder$dep_b[3], 0), money(bi0$ladder$dep_j[3], 0)),
-    avoidance = "The share of the tax lost to avoidance and evasion other than leaving. The BSZ analysis allows 10%. The JR analysis allows none. Kind: guesswork.",
-    litigation_survival = "The chance that the Act survives a constitutional challenge, applied to the revenue. The BSZ analysis takes the Act as written and collected in full. The JR analysis weights the revenue by 50%, the accounting threshold for a tax that is more likely than not to stand; its simulation draws the revenue anywhere between zero and the ceiling, which has the same average. Kind: guesswork.",
+    base_list = "The billionaires' wealth the tax applies to, from one of two Forbes lists.",
+    confirmed_departures = "Wealth gone by the 1 January 2026 residency date, out of reach. Middle stop: the four leavers of the BSZ aggressive case.",
+    avoidance = "The share of the tax lost to avoidance and evasion other than leaving.",
+    litigation_survival = "The chance that the tax survives a court challenge, applied to the revenue.",
     income_loss_share = "The share of billionaires' California income tax lost because people leave the state.",
-    income_level = "Billionaires' yearly California income tax, the amount at risk each year. The BSZ analysis: about $3.1 billion from tax data, since top wealth holders earn about half of what top earners do. The JR analysis: $4.55 billion, the midpoint of a $3.3 billion to $5.8 billion range from two model bounds. Kind: research (BSZ) against guesswork (JR).",
-    horizon = sprintf("How many years the income tax loss is counted. The BSZ analysis: 5 years, about the payment period, with responses temporary. The JR analysis: for ever, discounted at %s to %s. The slider's five settings are %s. Kind: scenario.",
-                      tok$r_min, tok$r_max, hz_words),
-    minor_inputs = "Three inputs that each move the estimate by less than $7 billion when moved alone: the non-US-citizen residents ($150 billion of wealth; the BSZ analysis taxes them, the JR analysis leaves its 28 international billionaires out), the real-estate deduction (none in the BSZ analysis; the JR analysis nets out directly held homes, about 0.5% of the base) and the extra income tax from assets sold to pay the tax (the BSZ analysis counts it, the JR analysis does not). Off keeps this panel's own values; on takes the other analysis's values for all three.")
-  # What each dial end means, shown while the pointer is over that end (or on a tap). A dial
-  # without one keeps only the explanation on its symbol.
+    income_level = "Billionaires' yearly California income tax, the amount at risk each year.",
+    horizon = sprintf("How many years the lost income tax is counted, discounted at %s to %s a year. Middle stops: %s years.",
+                      tok$r_min, tok$r_max, paste(hz_fin[-1], collapse = ", ") |> sub(pattern = ", ([^,]*)$", replacement = " and \\1")),
+    minor_inputs = "One switch for three inputs that each move the estimate by less than $7 billion. Open the fold below to set them one by one.",
+    noncitizens = "Wealth of California billionaires who are not US citizens.",
+    real_estate = "The share of the base deducted for directly held homes.",
+    asset_sales = "The share of the tax paid by selling assets, whose gains raise extra income tax.")
+  # What each dial end means, shown while the pointer is over that end (or on a tap).
   end_tips <- list(
+    base_list = c(
+      bsz = sprintf("BSZ: the Forbes list on 1 July 2026, 250 California billionaires worth %s (non-US citizens are a separate dial).", money(bi0$sup$W_core, 0)),
+      rjkdc = sprintf("JR: the 2025 list, 212 billionaires, grown 7%% to the 31 December 2026 valuation date: %s.", money(bi0$rauh$W_core, 0))),
+    confirmed_departures = c(
+      bsz = "BSZ main estimate: nobody, since announcing a move is not a legal change of residence.",
+      rjkdc = "JR: its seven confirmed leavers, Page, Thiel, Hankey, Kalanick, Brin, Spielberg and Sacks."),
+    avoidance = c(
+      bsz = "BSZ: a small allowance, argued from enforcement rather than estimated. Half of it is moving away, which also costs income tax (f).",
+      rjkdc = "JR: none on top of the departures it counts."),
+    litigation_survival = c(
+      bsz = "BSZ: the Act is taken as written and collected in full.",
+      rjkdc = "JR: the revenue weighted by 50%, the accounting threshold for a tax more likely than not to stand."),
     income_loss_share = c(
       bsz = "The BSZ rule: the state loses only the income tax of those who leave, the people in D and the half of avoiders (a) who move away.",
       rjkdc = sprintf("The JR rule: the state loses %s of all billionaires' income tax, whoever leaves (the middle of a 30%% to 60%% guess), plus any movers from a.",
-                      pct(bi0$rauh$f0))))
+                      pct(bi0$rauh$f0))),
+    income_level = c(
+      bsz = "BSZ: from tax data, since top wealth holders earn about half of what top earners do.",
+      rjkdc = "JR: the middle of a $3.3 billion to $5.8 billion range from two model bounds."),
+    horizon = c(
+      bsz = "BSZ: about the payment period, treating the responses as temporary.",
+      rjkdc = "JR: for ever, so the loss never ends."),
+    minor_inputs = c(
+      bsz = "BSZ: non-citizens taxed, no real-estate deduction, the extra tax from asset sales counted.",
+      rjkdc = "JR: non-citizens left out, homes deducted, no extra tax from asset sales."),
+    noncitizens = c(
+      bsz = "BSZ: taxed like any other California resident.",
+      rjkdc = "JR: left out with its 28 international billionaires."),
+    real_estate = c(
+      bsz = "BSZ: no deduction.",
+      rjkdc = "JR: nets out directly held real estate, about 0.5% of the base."),
+    asset_sales = c(
+      bsz = "BSZ: one third, an assumption (BSZ p.24: \"paid one-third by selling assets\").",
+      rjkdc = "JR: does not count this extra income tax."))
   end_span <- function(panel, id, side, txt) {
     tp <- end_tips[[id]][side]
     if (is.null(tp) || is.na(tp))
@@ -321,10 +348,7 @@ render_site <- function(root = comparison_root(),
   stopifnot(identical(unname(unlist(lapply(EXPLORER_BOXES, `[[`, "ids"))), explorer_slider_ids()))
   # The three minor inputs: one switch that moves all three, and a fold that opens into the
   # three dials themselves (the switch sets them; each can then be moved on its own).
-  minor_tips <- c(
-    noncitizens = "The non-US-citizen residents: $150 billion of wealth that the BSZ analysis taxes and the JR analysis leaves out with its 28 international billionaires. Kind: data.",
-    real_estate = "The real-estate deduction: none in the BSZ analysis; the JR analysis nets out directly held homes, about 0.5% of the base. Kind: data.",
-    asset_sales = "Extra income tax from assets sold to pay the tax: the BSZ analysis assumes a third of the tax is paid by selling assets, whose gains are taxed; the JR analysis does not count this. Kind: guesswork.")
+  minor_tips <- slider_tips[EXPLORER_MINOR]
   minor_block <- function(panel) paste0(
     slider_row(panel, "minor_inputs", "Three minor inputs", "Non-citizens, real-estate deduction, asset-sale tax",
                slider_tips[["minor_inputs"]], "BSZ values", "JR values", 1), "\n",

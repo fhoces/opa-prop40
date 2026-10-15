@@ -225,8 +225,9 @@
   .sl-box-head { margin: 6px 0 2px; }
   .box-eq { margin: 0; font-family: var(--serif); font-size: 16px; font-weight: 600; color: var(--ink); line-height: 1.35; }
   .box-lead { margin: 2px 0 0; font-size: 12.5px; line-height: 1.4; color: var(--ink-2); }
-  .info { position: relative; color: var(--series-1); border-bottom: 1px dotted var(--series-1); cursor: help; white-space: nowrap; }
-  .info-tip { position: absolute; left: -40px; top: calc(100% + 6px); width: 300px; z-index: 7; white-space: normal;
+  .sl-box-head { position: relative; }
+  .info { color: var(--series-1); border-bottom: 1px dotted var(--series-1); cursor: help; white-space: nowrap; }
+  .info-tip { position: absolute; left: 0; right: 0; top: calc(100% + 4px); z-index: 7; white-space: normal;
     background: var(--panel); color: var(--ink); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px;
     font-size: 12.5px; line-height: 1.45; box-shadow: 0 4px 14px rgba(0,0,0,.14); visibility: hidden; opacity: 0;
     transition: opacity 120ms ease 150ms; pointer-events: none; }
@@ -318,8 +319,8 @@
     the JR values taken from its latest version (September 2026). The BSZ panel starts every
     slider at the BSZ value, the JR panel at the JR value. A slider has five positions: the two
     analyses' values and three steps between them. The BSZ value is printed at the left end and
-    the JR value at the right end. Each box opens with its formula; hover over a dial's symbol,
-    or tap it, for what it is and why the two analyses differ. Three inputs that barely move the estimate (non-US-citizen
+    the JR value at the right end. Each box opens with its formula. Hover over or tap a dial's symbol
+    for what it is, and either end for what that analysis assumes. Three inputs that barely move the estimate (non-US-citizen
     residents, the real-estate deduction, extra income tax from asset sales) share one switch.</p>
     <p class="board-lead">The bars show what the common estimating function returns for each
     panel. The left sliders move only the left bar and the right sliders only the right bar.
