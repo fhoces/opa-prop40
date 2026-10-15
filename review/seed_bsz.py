@@ -78,7 +78,7 @@ def main():
             outputs=f"the text 'main estimate ${main_est:.1f}B' and the nine-row outcome table",
             method_ref="Display only. The definition under the headline number (lines 219-225) is the method; footnote 1 says it is this OPA's choice, not the authors'.",
             method_status="plumbing",
-            r=loc("bsz-analysis/site/explorer/index.html", "render(): pick the row, print the main estimate", [503, 545], language="javascript"),
+            r=loc("bsz-analysis/site/explorer/index.html", "render(): pick the row, print the main estimate", [495, 539], language="javascript"),
             py=None,
             targets=None,
         ),
@@ -121,8 +121,8 @@ def main():
             outputs="the text of grid.js, written as raw UTF-8 bytes",
             method_ref="Plumbing.",
             method_status="plumbing",
-            r=loc("bsz-analysis/R/site_exports.R", "site_grid_js_text(), write_site_grid_js()", [182, 218]),
-            py=loc("bsz-analysis/py/site_exports.py", "site_grid_js_text()", [204, 236]),
+            r=loc("bsz-analysis/R/site_exports.R", "site_grid_js_text(), write_site_grid_js()", [192, 228]),
+            py=loc("bsz-analysis/py/site_exports.py", "site_grid_js_text()", [215, 247]),
             targets="_targets.R:154 site_grid_js",
         ),
         dict(
@@ -144,7 +144,7 @@ def main():
                         "PDF p.27 gives the 5-year horizon; the 3% rate is the middle of the "
                         "JR report's 1.5-4.5% range. BSZ give no rate."),
             method_status="opa_definition",
-            r=loc("bsz-analysis/R/site_exports.R", "site_pv_factor(), build_site_grid()", [74, 116]),
+            r=loc("bsz-analysis/R/site_exports.R", "site_pv_factor(), build_site_grid()", [84, 126]),
             py=loc("bsz-analysis/py/site_exports.py", "site_pv_factor(), build_site_grid()", [17, 122]),
             targets="_targets.R:144 site_grid",
         ),
