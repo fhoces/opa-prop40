@@ -137,6 +137,9 @@ def main():
            for x in read_csv("comparison/export/r/inputs.csv")}
     sv = {k: v[0] for k, v in inp.items()}
     rv = {k: v[1] for k, v in inp.items()}
+    # the departed share at each end, as score_common() derives it from D and the net base
+    sv["d_conf"] = 0.0
+    rv["d_conf"] = rv["dep_j"] / ((rv["W_core"] + rv["W_noncit"]) * (1 - rv["re"]))
     si = read_csv("bsz-analysis/export/r/inputs.csv")
     oi = read_csv("rjkdc-analysis/export/r/inputs.csv")
     oo = read_csv("rjkdc-analysis/export/r/outputs.csv")
@@ -298,7 +301,9 @@ def main():
             n=5, name="Splitting the gap into steps",
             what=(f"There are {n_steps} steps. Each switches one disputed input from the BSZ value to "
                   "the JR value of its September 2026 version. The share-lost step switches two "
-                  "together: the leavers' ratio kappa and the flat share f0. Because inputs interact, "
+                  "together: the rule own (1 = the leavers' own income tax, 0 = none) and the flat share "
+                  "f0; the departures step switches three: the departed wealth on each Forbes list "
+                  "(dep_b, dep_j) and the leavers' own tax L. Because inputs interact, "
                   "a step's size depends on when it is switched. shapley_bridge() averages each switch "
                   "over every order, exactly. It estimates the model at all "
                   f"2^{n_steps} = {2 ** n_steps:,} subsets of switched inputs (coalition_values()) "
@@ -324,12 +329,13 @@ def main():
         dict(
             n=6, name="The estimating function and the JR end",
             what=("score_common() is the one function that estimates both analyses. R0 = tau x base x "
-                  "(1 - real-estate share) is the revenue with no behaviour. S = 1 - d_conf is the "
-                  "share of the base still taxed after the confirmed departures. The wealth tax is "
+                  "(1 - real-estate share) is the revenue with no behaviour. D, the departed wealth, is "
+                  "dep_b or dep_j as lam picks the Forbes list, and S = 1 - D / (base net of real "
+                  "estate) is the share of the base still taxed. The wealth tax is "
                   "WT = R0 x (1 - alpha) x S x q, where alpha is the avoidance allowance and q the "
                   "chance the Act survives litigation. The share of income tax lost is f = alpha m + "
-                  "(1 - alpha m)(kappa d_conf + f0): the BSZ movers' share, then the leavers' own tax "
-                  "on the departed base (kappa) and a flat share (f0). Output (b) is WT + X - PV, with "
+                  "own x L / C + f0: the BSZ movers' share, then the leavers' own income tax L (dollars a "
+                  "year, under the BSZ rule own = 1) and a flat share f0 (the JR rule). Output (b) is WT + X - PV, with "
                   "X the extra income tax from asset sales and PV = f x C x the expected annuity. "
                   f"At the all-BSZ inputs S = 1 and q = 1, so WT = {tau:g} x {W0:,.0f} x {1 - alpha_s:g} = "
                   f"{wt_bsz:.3f}, BSZ Table 5 row 1. Output (b) adds X = {meta['X_bsz']:.3f} and "
@@ -348,7 +354,7 @@ def main():
             inputs_from=[dict(layer="comparison-7", what=(
                 f"sup: tau {sv.get('tau', tau):g}, W_core {sv['W_core']:g}, W_noncit {sv['W_noncit']:g}, "
                 f"re {sv['re']:g}, d_conf {sv['d_conf']:g}, alpha {sv['alpha']:g}, q {sv['q']:g}, "
-                f"kappa {sv['kappa']:.3f}, f0 {sv['f0']:g}, ...; rauh: W_core {rv['W_core']:.1f}, "
+                f"own {sv['own']:g}, f0 {sv['f0']:g}, ...; rauh: W_core {rv['W_core']:.1f}, "
                 f"d_conf {rv['d_conf']:.3f}, q {rv['q']:g}, f0 {rv['f0']:g}, C {rv['C']:g}, ..."))],
             other_inputs=(f"the Monte Carlo bounds wt_min = 0 (a literal in build.R), wt_max = {ceiling:g} "
                           "(contract row nber_ceiling_hardcoded), and the f, C and r ranges (contract rows "
@@ -377,18 +383,19 @@ def main():
                   f"{pct(alpha_s, 0)} avoidance allowance and a {h(sv['H'])} horizon. The JR values are "
                   f"those of its September 2026 version. The base is the 2025 Forbes list's "
                   f"{W0_r:,.1f} grown {pct(grow, 0)} to {rv['W_core']:,.1f}. The real-estate share is "
-                  f"what the person-level file nets out ({rv['re']:.4f}). d_conf = 1 - {ceiling:g} / "
-                  f"{R0_r:.3f} = {rv['d_conf']:.3f} brings the revenue down to the script's ceiling "
-                  f"after seven departures. q is {q_r:g}, f0 and C are the midpoints of the Monte "
+                  f"what the person-level file nets out ({rv['re']:.4f}). The seven departures are "
+                  f"{rv['dep_j']:.2f} on the JR list (the base less the script's {ceiling:g} ceiling over "
+                  f"5%, so d_conf = {rv['d_conf']:.3f}) and {rv['dep_b']:.2f} on the BSZ list; the "
+                  f"departures dial's middle stop is the BSZ aggressive scenario. q is {q_r:g}, f0 and C are the midpoints of the Monte "
                   f"Carlo's ranges ({rv['f0']:g} and {rv['C']:g}) and the horizon is a {h(rv['H'])}."),
             inputs="k: the two contracts and the document inputs",
             inputs_from=[dict(layer="comparison-8", what="k$bsz, k$rjkdc (inputs and outputs tables) and k$docs, looked up row by row with pick()")],
             other_inputs="none",
             outputs=(f"sup: W_core {sv['W_core']:g}, W_noncit {sv['W_noncit']:g}, re {sv['re']:g}, "
-                     f"d_conf {sv['d_conf']:g}, alpha {sv['alpha']:g}, q {sv['q']:g}, kappa {sv['kappa']:.3f}, "
+                     f"dep_b {sv['dep_b']:g}, alpha {sv['alpha']:g}, q {sv['q']:g}, own {sv['own']:g}, "
                      f"f0 {sv['f0']:g}, C {sv['C']:.3f}, H {sv['H']:g}, s {sv['s']:.3f}; "
                      f"rauh: W_core {rv['W_core']:.1f}, W_noncit {rv['W_noncit']:g}, re {rv['re']:.4f}, "
-                     f"d_conf {rv['d_conf']:.3f}, alpha {rv['alpha']:g}, q {rv['q']:g}, kappa {rv['kappa']:g}, "
+                     f"dep_b {rv['dep_b']:.2f}, dep_j {rv['dep_j']:.2f}, alpha {rv['alpha']:g}, q {rv['q']:g}, own {rv['own']:g}, "
                      f"f0 {rv['f0']:g}, C {rv['C']:g}, H {rv['H']:g}, s {rv['s']:g}"),
             method_ref="Each value's source and page is in comparison/export/r/inputs.csv (bridge_input_table()).",
             method_status="matches",
@@ -595,7 +602,7 @@ os.chdir(next(p for p in [Path.cwd(), *Path.cwd().parents] if (p / "comparison")
 sys.path.insert(0, "comparison/py")
 import bridge as b                       # the Python twin: every function on the chain
 k = b.read_contracts(os.getcwd())        # layer 8: the two contracts and the document inputs
-sup, rauh = b.bridge_inputs(k)           # layer 7: the two input vectors
+sup, rauh, ladder = b.bridge_inputs(k)           # layer 7: the two input vectors
 print("ready: BSZ base", sup["W_core"] + sup["W_noncit"], "; JR base", rauh["W_core"])""",
     )
 

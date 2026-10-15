@@ -28,6 +28,14 @@ compute_nber_ceiling <- function(final_df) {
   removed_departed_total <- sum(removed$face_tax_5pct) / 1e9
   ceiling_recomputed <- domestic_total_grown - removed_departed_total
   international_net_worth <- sum(intl$net_worth_usd) / 1e9
+  # Two subsets of the seven, for the comparison's departures dial: the four the BSZ
+  # analysis's aggressive row also removes, at this file's grown taxable value, and the two
+  # the BSZ workbook does not list by name, at their net worth.
+  four <- c("Larry Page", "Peter Thiel", "Don Hankey", "Travis Kalanick")
+  two  <- c("Steven Spielberg", "David Sacks")
+  stopifnot(all(c(four, two) %in% removed$name))
+  departed_four_grown <- sum(removed$wealth_in_tax_base_usd_7pct[removed$name %in% four]) / 1e9
+  spielberg_sacks_net_worth <- sum(removed$net_worth_usd[removed$name %in% two]) / 1e9
 
   list(
     n_domestic = nrow(dom),
@@ -37,6 +45,8 @@ compute_nber_ceiling <- function(final_df) {
     removed_departed_total = removed_departed_total,     # ~28.854
     ceiling_recomputed = ceiling_recomputed,              # ~72.051 (README says 72.06)
     international_net_worth = international_net_worth,   # ~146.3 ("$146.3B")
+    departed_four_grown = departed_four_grown,            # ~314.8 (Page, Thiel, Hankey, Kalanick)
+    spielberg_sacks_net_worth = spielberg_sacks_net_worth, # ~9.0
     removed_names = removed$name
   )
 }

@@ -19,6 +19,12 @@ def compute_nber_ceiling(final_rows):
     removed_departed_total = s(removed, "face_tax_5pct") / 1e9
     ceiling_recomputed = domestic_total_grown - removed_departed_total
     international_net_worth = s(intl, "net_worth_usd") / 1e9
+    four = ("Larry Page", "Peter Thiel", "Don Hankey", "Travis Kalanick")
+    two = ("Steven Spielberg", "David Sacks")
+    names = {r["name"] for r in removed}
+    assert all(n in names for n in four + two)
+    departed_four_grown = s([r for r in removed if r["name"] in four], "wealth_in_tax_base_usd_7pct") / 1e9
+    spielberg_sacks_net_worth = s([r for r in removed if r["name"] in two], "net_worth_usd") / 1e9
 
     return {
         "n_domestic": len(dom),
@@ -28,5 +34,7 @@ def compute_nber_ceiling(final_rows):
         "removed_departed_total": removed_departed_total,
         "ceiling_recomputed": ceiling_recomputed,
         "international_net_worth": international_net_worth,
+        "departed_four_grown": departed_four_grown,
+        "spielberg_sacks_net_worth": spielberg_sacks_net_worth,
         "removed_names": [r["name"] for r in removed],
     }

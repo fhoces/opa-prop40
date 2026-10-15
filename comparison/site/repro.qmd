@@ -253,9 +253,12 @@ both ends.
    are in billions of dollars ("Forbes source: which list and valuation date", "Non-US-citizen residents");
    `re` is the share of the revenue the real-estate deduction removes ("Real-estate
    deduction").
-2. `S = 1 - d_conf`: the share of the base still taxed. `d_conf` is the share of the base that
-   had already left ("Billionaires already departed"). For the JR analysis, `R0 * S` is its
-   ceiling, the most the tax can collect after the seven confirmed departures.
+2. `S = 1 - d_conf`: the share of the base still taxed. `d_conf = D / Wn` is the share of the
+   base that had already left ("Billionaires already departed"): `D` is their wealth, valued on
+   the Forbes list in use (`lam` picks it), and `Wn` the base net of real estate. The departures
+   dial has three stops: none, the BSZ analysis's aggressive scenario (Table 5 row 3) and the JR
+   analysis's seven. For the JR analysis, `R0 * S` is its ceiling, the most the tax can collect
+   after the seven confirmed departures.
 3. `WT = R0 * (1 - alpha) * S * q`: output (a), the gross one-time revenue, after the avoidance
    allowance `alpha`, a share of the base ("Avoidance and evasion allowance"), weighted by `q`,
    the chance that the Act survives a court challenge ("Chance the tax survives litigation").
@@ -264,12 +267,13 @@ both ends.
 4. `X = WT * s * g * t_cg`: the extra income tax from assets sold to pay. `s` is the share of
    the tax paid by selling assets ("Extra income tax from selling assets to pay"), `g` the
    capital-gain share of a sale and `t_cg` the top California rate on realized gains.
-5. `f = alpha*m + (1 - alpha*m) * (kappa * d_conf + f0)`: the share of billionaire income tax
-   lost ("Share of billionaire income tax lost"). The first term is the BSZ movers' share (`m`
-   is the part of the avoidance allowance that is people leaving California). The second is the
-   loss from those who left: `kappa * d_conf` follows the departed base, with `kappa` the
-   leavers' income tax per dollar of wealth relative to the average (the BSZ analysis), and
-   `f0` is a flat share lost whoever leaves (the JR analysis's independent draw of 30% to 60%).
+5. `f = alpha*m + own * L / C + f0`: the share of billionaire income tax lost ("Share of
+   billionaire income tax lost"). The first term is the BSZ movers' share (`m` is the part of
+   the avoidance allowance that is people leaving California). Under the BSZ rule (`own = 1`)
+   the leavers' own income tax, `L` dollars a year as BSZ Table 5 counts it for the people at
+   the departures stop, is lost. Under the JR rule (`own = 0`) a flat share `f0` is lost
+   whoever leaves (the JR analysis's independent draw of 30% to 60%). At the aggressive stop
+   the BSZ end reproduces Table 5 row 3 in all three columns.
 6. `PV = f * C * E_r[annuity(r, H)]`: the present value of the lost income tax. `C` is
    billionaires' annual California income tax, in billions of dollars a year ("Billionaires'
    annual CA income tax"), lost for `H` years ("How long the income tax loss lasts"; for ever

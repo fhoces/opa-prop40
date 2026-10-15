@@ -46,7 +46,7 @@ test_that("the JR inputs rebuild the September version's base, ceiling and weigh
   expect_equal(x[["R0"]] * x[["S"]], pick(oi, "nber_ceiling_hardcoded"), tolerance = 1e-12)  # 72
   expect_equal(x[["a"]], 36, tolerance = 1e-12)                                       # 0.5 x 72
   expect_equal(x[["f"]], 0.45, tolerance = 1e-12)                                     # E[U(0.30, 0.60)]
-  expect_equal(r$q, 0.5); expect_equal(r$kappa, 0); expect_equal(bi$sup$q, 1); expect_equal(bi$sup$f0, 0)
+  expect_equal(r$q, 0.5); expect_equal(r$own, 0); expect_equal(bi$sup$own, 1); expect_equal(bi$sup$q, 1); expect_equal(bi$sup$f0, 0)
 })
 
 test_that("the expected annuity has the right limits", {

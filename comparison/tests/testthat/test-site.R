@@ -94,18 +94,20 @@ test_that("the slider panels: the dials in their two boxes in the bridge's order
   D <- jsonlite::fromJSON(sub(";\\s*$", "", sub("^[^{]*", "", txt)), simplifyVector = FALSE)
   for (panel in c("bsz", "rjkdc")) {
     sl <- regmatches(ex_html, gregexpr(sprintf('<input type="range" class="sl-in" id="%s-[a-z_]+" min="0" max="[0-9]" step="1" value="0" data-panel="%s" data-id="[a-z_]+"', panel, panel), ex_html))[[1]]
-    expect_identical(sub('.*data-id="([a-z_]+)"$', "\\1", sl), c(shown, "minor_inputs"), label = panel)
-    expect_identical(sub('.*max="([0-9])".*', "\\1", sl), c(rep(as.character(SLIDER_STEPS), length(shown)), "1"), label = panel)
+    all_ids <- c(shown, "minor_inputs", EXPLORER_MINOR)
+    expect_identical(sub('.*data-id="([a-z_]+)"$', "\\1", sl), all_ids, label = panel)
+    expect_identical(sub('.*max="([0-9])".*', "\\1", sl),
+                     as.character(c(vapply(shown, slider_max, 0L), 1L, vapply(EXPLORER_MINOR, slider_max, 0L))), label = panel)
     # every slider carries its explanation, and the input points at it
     # the two boxes hold the shown dials, in order
     expect_equal(length(gregexpr(sprintf('<li class="sl-box" role="group" aria-labelledby="%s-', panel), ex_html)[[1]]), 2L, label = panel)
-    for (id in c(shown, "minor_inputs")) {
+    for (id in all_ids) {
       expect_true(grepl(sprintf('<span class="sl-tip" role="tooltip" id="%s-%s-tip">[^<]{80,}</span>', panel, id), ex_html), label = paste(panel, id, "tip"))
       expect_true(grepl(sprintf('data-id="%s" aria-describedby="%s-%s-tip"', id, panel, id), ex_html, fixed = TRUE), label = paste(panel, id, "describedby"))
     }
   }
   # the JR panel's sliders run right to left, so position 0 sits at the JR end
-  expect_equal(length(gregexpr('data-panel="rjkdc" data-id="[a-z_]+" aria-describedby="[a-z_-]+" dir="rtl"', ex_html)[[1]]), length(shown) + 1)
+  expect_equal(length(gregexpr('data-panel="rjkdc" data-id="[a-z_]+" aria-describedby="[a-z_-]+" dir="rtl"', ex_html)[[1]]), length(shown) + 1 + length(EXPLORER_MINOR))
   expect_false(grepl('data-panel="bsz" data-id="[a-z_]+" aria-describedby="[a-z_-]+" dir="rtl"', ex_html))
   # the data file: every input in the bridge's order (the switch stands for three of them),
   # the argument each moves, both vectors, and the three the switch covers
@@ -123,23 +125,30 @@ test_that("the slider panels: the dials in their two boxes in the bridge's order
   expect_null(D$sliders$revision)
 })
 
-test_that("the sliders' ends are the two analyses and position 2 lies between its neighbours", {
+test_that("the sliders' ends are the two analyses, and the departures dial stops at the BSZ four", {
   k <- read_contracts(root); bi <- bridge_inputs(k)
   en <- read_csv_plain(file.path(root, "comparison", "export", "r", "ends.csv"))
   eb <- en[en$horizon_setting == "own" & en$output == "b", ]
   ids <- bridge_steps()$step_id
   all_at <- function(p) stats::setNames(as.list(rep(p, length(ids))), ids)
+  far <- stats::setNames(as.list(vapply(ids, slider_max, 0L)), ids)
   expect_equal(slider_value(bi, "bsz", all_at(0)), eb$bsz_model, tolerance = 1e-12)
   expect_equal(slider_value(bi, "rjkdc", all_at(0)), eb$rauh_own, tolerance = 1e-12)
-  expect_equal(slider_value(bi, "bsz", all_at(SLIDER_STEPS)), eb$rauh_own, tolerance = 1e-12)
-  expect_equal(slider_value(bi, "rjkdc", all_at(SLIDER_STEPS)), eb$bsz_model, tolerance = 1e-12)
-  # position 0 and 4 are the two values exactly; the horizon steps through the five settings
-  x4 <- slider_inputs(bi$sup, bi$rauh, all_at(SLIDER_STEPS))
-  for (nm in names(bi$rauh)) expect_identical(x4[[nm]], bi$rauh[[nm]], label = nm)
-  expect_equal(vapply(0:4, function(p) slider_inputs(bi$rauh, bi$sup, list(horizon = p))$H, 0),
+  expect_equal(slider_value(bi, "bsz", far), eb$rauh_own, tolerance = 1e-12)
+  expect_equal(slider_value(bi, "rjkdc", far), eb$bsz_model, tolerance = 1e-12)
+  # the far positions are the other analysis's values exactly; the horizon steps through the settings
+  xf <- slider_inputs(bi$sup, bi$rauh, far, bi$ladder)
+  for (nm in names(bi$rauh)) expect_identical(xf[[nm]], bi$rauh[[nm]], label = nm)
+  expect_equal(vapply(0:4, function(p) slider_inputs(bi$rauh, bi$sup, list(horizon = p), bi$ladder)$H, 0),
                rev(SLIDER_HORIZONS))
-  # one input at 1, 2, 3 with the rest at 0: the middle value lies strictly between
-  for (panel in c("bsz", "rjkdc")) for (id in c("base_list", "income_level", "confirmed_departures")) {
+  expect_identical(slider_max("base_list"), 1L); expect_identical(slider_max("confirmed_departures"), 2L)
+  # the middle stop of the departures dial in the BSZ panel is the BSZ analysis's own Table 5 row 3
+  x1 <- slider_inputs(bi$sup, bi$rauh, list(confirmed_departures = 1), bi$ladder)
+  expect_equal(score_common(x1)[["a"]], pick(k$bsz$outputs, "tab5_row3_wealth_tax_revenue"), tolerance = 1e-9)
+  expect_equal(score_common(x1)[["X"]], pick(k$bsz$outputs, "tab5_row3_extra_ca_inctax_sales"), tolerance = 1e-9)
+  expect_equal(-score_common(x1)[["annual_loss"]], pick(k$bsz$outputs, "tab5_row3_annual_ca_inctax_loss"), tolerance = 1e-9)
+  # one numeric input at 1, 2, 3 with the rest at 0: the middle value lies strictly between
+  for (panel in c("bsz", "rjkdc")) for (id in c("income_level", "litigation_survival")) {
     v <- vapply(1:3, function(p) slider_value(bi, panel, stats::setNames(list(p), id)), 0)
     expect_true((v[2] - v[1]) * (v[3] - v[2]) > 0, label = paste(panel, id))
   }

@@ -209,7 +209,25 @@
   .sl-box { list-style: none; border: 1px solid var(--rule); border-radius: 6px; padding: 4px 10px 2px;
     margin: 8px 0 10px; background: var(--paper); }
   .sl-box .sl-list { margin: 0; }
-  .sl-box-head { margin: 4px 0 0; font-size: 12px; line-height: 1.4; color: var(--ink-2); }
+  .sl-minor { list-style: none; padding: 0 0 4px; }
+  .minor-fold > summary { cursor: pointer; font-size: 12.5px; color: var(--series-1); padding: 4px 0; }
+  .minor-fold .sl-list { border-left: 2px solid var(--rule); padding-left: 10px; margin: 2px 0 4px; }
+  .sl-box-head { margin: 6px 0 2px; }
+  .box-eq { margin: 0; font-family: var(--serif); font-size: 16px; font-weight: 600; color: var(--ink); line-height: 1.35; }
+  .box-lead { margin: 2px 0 0; font-size: 12.5px; line-height: 1.4; color: var(--ink-2); }
+  .info { position: relative; color: var(--series-1); border-bottom: 1px dotted var(--series-1); cursor: help; white-space: nowrap; }
+  .info-tip { position: absolute; left: -40px; top: calc(100% + 6px); width: 300px; z-index: 7; white-space: normal;
+    background: var(--panel); color: var(--ink); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px;
+    font-size: 12.5px; line-height: 1.45; box-shadow: 0 4px 14px rgba(0,0,0,.14); visibility: hidden; opacity: 0;
+    transition: opacity 120ms ease 150ms; pointer-events: none; }
+  .info:hover .info-tip, .info:focus .info-tip { visibility: visible; opacity: 1; }
+  .sl label .sym { font-family: var(--serif); font-style: italic; font-size: 18px; font-weight: 600; }
+  /* A dial shown by its symbol: the symbol in a narrow left column, the slider beside it. */
+  .sl.has-sym { display: grid; grid-template-columns: 22px minmax(0, 1fr); column-gap: 4px; align-items: start; }
+  .sl.has-sym > label { grid-column: 1; grid-row: 1 / span 2; padding-top: 4px; }
+  .sl.has-sym > .sl-row { grid-column: 2; margin-top: 0; }
+  .sl.has-sym > .sl-note { grid-column: 2; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   /* The pseudo-equation: BSZ estimate = JR estimate + the three largest steps + the rest. */
   .eq-box { margin: 26px 0 6px; padding: 14px 16px; border: 1px solid var(--rule); border-radius: 6px; background: var(--panel); }
   .pseudo-eq { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 6px 8px; }
@@ -288,9 +306,8 @@
     the JR values taken from its latest version (September 2026). The BSZ panel starts every
     slider at the BSZ value, the JR panel at the JR value. A slider has five positions: the two
     analyses' values and three steps between them. The BSZ value is printed at the left end and
-    the JR value at the right end. Hover over a slider, or tap it, for what it changes and why
-    the two analyses differ. Dials in the same box multiply each other, so the effect of one
-    depends on where the others stand. Three inputs that barely move the estimate (non-US-citizen
+    the JR value at the right end. Each box opens with its formula; hover over a dial's symbol,
+    or tap it, for what it is and why the two analyses differ. Three inputs that barely move the estimate (non-US-citizen
     residents, the real-estate deduction, extra income tax from asset sales) share one switch.</p>
     <p class="board-lead">The bars show what the common estimating function returns for each
     panel. The left sliders move only the left bar and the right sliders only the right bar.
@@ -451,7 +468,7 @@
       case "W_noncit": case "W_core": return "$" + withCommas(v.toFixed(1)) + "B";
       case "re": case "d_conf": case "alpha": case "s": return (100 * v).toFixed(1) + "%";
       case "q": case "f0": return (100 * v).toFixed(0) + "%";
-      case "kappa": return v.toFixed(2);
+      case "own": return v.toFixed(2);
       case "C": return "$" + v.toFixed(2) + "B/yr";
       case "H": return v === Infinity ? "perpetuity" : v + " years";
       default: return String(v);
@@ -464,28 +481,16 @@
   PANELS.forEach(function (p) {
     SL[p] = Array.prototype.slice.call(document.querySelectorAll('input.sl-in[data-panel="' + p + '"]'));
   });
-  // The page's positions, keyed by slider id. The "minor_inputs" switch stands for every
-  // input that has no slider of its own on the page (the data file lists them as
-  // S.minor too): off (0) keeps the panel's own values, on (1) takes the other analysis's
-  // values for all of them. expand() turns it into model.js positions.
-  var MINOR = S.inputs.map(function (x) { return x.id; }).filter(function (id) {
-    return !document.getElementById("bsz-" + id);
-  });
+  // The page's positions, keyed by slider id. The "minor_inputs" switch is not an input of
+  // its own: moving it sets the three minor dials (in their fold) to the panel's own value
+  // (0) or to the other analysis's (their last position); each can then be moved on its own.
+  var MINOR = S.minor;
   function positions(panel) {
     var pos = {};
-    SL[panel].forEach(function (inp) { pos[inp.dataset.id] = +inp.value; });
+    SL[panel].forEach(function (inp) { if (inp.dataset.id !== "minor_inputs") pos[inp.dataset.id] = +inp.value; });
     return pos;
   }
-  function expand(pos) {
-    var x = {};
-    for (var k in pos) x[k] = pos[k];
-    if ("minor_inputs" in x) {
-      var at = x.minor_inputs ? S.steps : 0;
-      MINOR.forEach(function (id) { x[id] = at; });
-      delete x.minor_inputs;
-    }
-    return x;
-  }
+  function expand(pos) { return pos; }
   function value(panel, pos) { return M.panelValue(S, panel, expand(pos)); }
   // The printed value of slider `id` at position p of `panel`. Position 0 is the panel's own
   // analysis, the far end the other's.
@@ -494,9 +499,11 @@
     if (id === "minor_inputs") return (p === 0) === (panel === "bsz") ? "BSZ values" : "JR values";
     var e = INPUT[id];
     if (p === 0) return e[panel + "_text"];
-    if (p === S.steps) return e[other + "_text"];
+    if (p === e.max) return e[other + "_text"];
+    if (id === "confirmed_departures")   // the middle stop: the BSZ analysis's own four leavers
+      return "BSZ four, " + fmtValue("W_core", (1 - x.lam) * x.dep_b + x.lam * x.dep_j);
     if (e.input.length > 1)   // the share-lost step: the leavers' ratio and the flat share
-      return fmtValue("kappa", x.kappa) + " \u00d7 dep. + " + fmtValue("f0", x.f0);
+      return (100 * x.own).toFixed(0) + "% own tax + " + fmtValue("f0", x.f0) + " flat";
     return fmtValue(e.input[0], x[e.input[0]]);
   }
   // A slider can have no effect at the other sliders' positions (the inputs of a box
@@ -519,7 +526,7 @@
       inp.setAttribute("aria-valuetext", txt + ", position " + p + " of " + max +
         " from the " + (panel === "bsz" ? "BSZ" : "JR") + " value");
       // a slider with no effect at the other sliders' current positions says so
-      var dead = true;
+      var dead = id !== "minor_inputs";   // the switch acts through the three dials
       for (var q = 0; q <= max && dead; q++) {
         if (q === p) continue;
         var alt = {}; for (var k in pos) alt[k] = pos[k];
@@ -580,8 +587,20 @@
     svg.setAttribute("data-rjkdc", vr.toFixed(9));
   }
   function renderPanels() { PANELS.forEach(updatePanel); drawBars(); }
+  function minorSwitch(panel) { return SL[panel].filter(function (i) { return i.dataset.id === "minor_inputs"; })[0]; }
+  function minorDials(panel) { return SL[panel].filter(function (i) { return MINOR.indexOf(i.dataset.id) >= 0; }); }
   PANELS.forEach(function (p) {
-    SL[p].forEach(function (inp) { inp.addEventListener("input", renderPanels); });
+    SL[p].forEach(function (inp) {
+      inp.addEventListener("input", function () {
+        if (inp.dataset.id === "minor_inputs") {
+          minorDials(p).forEach(function (d) { d.value = inp.value === "1" ? d.max : "0"; });
+        } else if (MINOR.indexOf(inp.dataset.id) >= 0) {
+          var ds = minorDials(p), all = ds.every(function (d) { return +d.value === +d.max; });
+          minorSwitch(p).value = all ? "1" : "0";
+        }
+        renderPanels();
+      });
+    });
   });
   Array.prototype.slice.call(document.querySelectorAll("button.reset")).forEach(function (btn) {
     btn.addEventListener("click", function () {

@@ -2357,7 +2357,7 @@ skipped
 8
 </td>
 <td style="text-align:right;">
-32
+33
 </td>
 <td style="text-align:right;">
 0
@@ -2408,7 +2408,7 @@ skipped
 11
 </td>
 <td style="text-align:right;">
-236
+260
 </td>
 <td style="text-align:right;">
 0
@@ -2442,7 +2442,7 @@ skipped
 33
 </td>
 <td style="text-align:right;">
-438
+463
 </td>
 <td style="text-align:right;">
 0
@@ -2454,7 +2454,7 @@ skipped
 </tbody>
 </table>
 </div>
-<p>Run while this page was rendered: <strong>438 expectations passed, 0 failed</strong>, in 33 test blocks. The files check:</p>
+<p>Run while this page was rendered: <strong>463 expectations passed, 0 failed</strong>, in 33 test blocks. The files check:</p>
 <ul>
 <li><code>test-endpoints.R</code>: each end of the bridge against the number its authors print (BSZ Table 5 row 1, the NBER mean NPV; NBER is the National Bureau of Economic Research, which circulates working papers), plus the earlier figures the code still checks: the headline of GGSS (the Galle, Gamage, Saez and Shanske expert report of July 2026, written in support of the measure), behind the BSZ analysis, and the March 2026 version of the JR analysis, where the bridge’s disputed-input steps end.</li>
 <li><code>test-shapley.R</code>: the Shapley steps sum exactly to the gap in every setting, and match a brute-force average over orders (a Shapley value: a step’s effect averaged over every order the inputs could be switched in, so the steps add up to the gap).</li>
@@ -2498,7 +2498,7 @@ reads the two export contracts and the document inputs, and nothing else
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/R/model.R"><code>R/model.R</code></a>
 </td>
 <td style="text-align:right;">
-212
+235
 </td>
 <td style="text-align:left;">
 score_common(), the one estimating function; exact Shapley over all orders; one sequential order; Rauh’s Monte Carlo expectations
@@ -2509,7 +2509,7 @@ score_common(), the one estimating function; exact Shapley over all orders; one 
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/R/build.R"><code>R/build.R</code></a>
 </td>
 <td style="text-align:right;">
-248
+270
 </td>
 <td style="text-align:left;">
 every number the page shows, written to export/r/*.csv
@@ -2520,7 +2520,7 @@ every number the page shows, written to export/r/*.csv
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/R/site.R"><code>R/site.R</code></a>
 </td>
 <td style="text-align:right;">
-467
+518
 </td>
 <td style="text-align:left;">
 renders the overview page (index.html), the explorer (site/explorer/index.html) and their data file from site/index.template.html and site/explorer.template.html
@@ -2531,7 +2531,7 @@ renders the overview page (index.html), the explorer (site/explorer/index.html) 
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/py/bridge.py"><code>py/bridge.py</code></a>
 </td>
 <td style="text-align:right;">
-375
+405
 </td>
 <td style="text-align:left;">
 the Python twin of contract.R, model.R and build.R; writes export/py/*.csv
@@ -2564,7 +2564,7 @@ reads Hoopes (2026) Figure 2 off the chart into data/hoopes-fig2.csv
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/site/explorer/model.js"><code>site/explorer/model.js</code></a>
 </td>
 <td style="text-align:right;">
-105
+113
 </td>
 <td style="text-align:left;">
 score_common() and the slider rule ported to JavaScript; the explorer’s panels run it in the browser (written by hand, checked against slider_sample.csv)
@@ -2575,7 +2575,7 @@ score_common() and the slider rule ported to JavaScript; the explorer’s panels
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/site/repro.qmd"><code>site/repro.qmd</code></a>
 </td>
 <td style="text-align:right;">
-669
+673
 </td>
 <td style="text-align:left;">
 the reproduction report
@@ -2586,7 +2586,7 @@ the reproduction report
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/site/slides/slides.Rmd"><code>site/slides/slides.Rmd</code></a>
 </td>
 <td style="text-align:right;">
-699
+700
 </td>
 <td style="text-align:left;">
 the slide deck: what is in the report and where the main differences come from (xaringan; every number read from export/r/)
@@ -2633,7 +2633,7 @@ contents
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/export/r/inputs.csv"><code>inputs.csv</code></a>
 </td>
 <td style="text-align:right;">
-11
+14
 </td>
 <td style="text-align:right;">
 7

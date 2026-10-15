@@ -7,16 +7,22 @@
 # expectation of the JR analysis's own Monte Carlo (its inputs are independent uniforms,
 # so the expectation has a closed form and needs no random draws).
 #
-#   R0  = tau * (W_core + W_noncit) * (1 - re)             no-behaviour revenue
-#   S   = 1 - d_conf                                       share of the base still taxed after
-#                                                          the confirmed departures
+#   Wn  = (W_core + W_noncit) * (1 - re)                   the base, net of real estate
+#   D   = (1 - lam) * dep_b + lam * dep_j                  wealth already departed, valued on the
+#         Forbes list in use (lam = 0 the BSZ analysis's 2026 list, 1 the JR analysis's 2025
+#         list grown 7%); dep_b and dep_j value the same people on each list
+#   d_conf = D / Wn                                        share of the base already departed
+#   R0  = tau * Wn                                         no-behaviour revenue
+#   S   = 1 - d_conf                                       share of the base still taxed
 #   WT  = R0 * (1 - alpha) * S * q                         output (a), gross one-time revenue:
 #         q is the chance the Act survives litigation. The JR Monte Carlo draws the revenue
 #         uniformly between 0 (struck down) and the ceiling R0 S, whose mean is the ceiling
 #         times q = 0.5, the weight the authors' README states
 #   X   = WT * s * g * t_cg                                extra income tax from asset sales
-#   f   = alpha*m + (1 - alpha*m) * (kappa * d_conf + f0)  share of billionaire income tax lost:
-#         the BSZ movers' share, then the leavers' own tax on the departed base (kappa) and
+#   f   = alpha*m + own * L / C + f0                       share of billionaire income tax lost:
+#         the BSZ movers' share; with own = 1 (the BSZ analysis) the leavers' own income tax,
+#         L dollars a year, as BSZ Table 5 counts it for the people who leave; with own = 0
+#         (the JR analysis) none of that, and
 #         a flat share (f0, the JR analysis's independent draw)
 #   PV  = f * C * E_r[ annuity(r, H) ]                     present value of the lost income tax
 #   NET = WT + X - PV                                      output (b), net fiscal effect
@@ -34,15 +40,18 @@ expected_annuity <- function(H, r_min, r_max) {
 }
 
 score_common <- function(x) {
-  R0  <- x$tau * (x$W_core + x$W_noncit) * (1 - x$re)
-  S   <- 1 - x$d_conf
+  Wn  <- (x$W_core + x$W_noncit) * (1 - x$re)
+  D   <- (1 - x$lam) * x$dep_b + x$lam * x$dep_j
+  d_conf <- D / Wn
+  R0  <- x$tau * Wn
+  S   <- 1 - d_conf
   WT  <- R0 * (1 - x$alpha) * S * x$q
   X   <- WT * x$s * x$g * x$t_cg
-  f   <- x$alpha * x$m + (1 - x$alpha * x$m) * (x$kappa * x$d_conf + x$f0)
+  f   <- x$alpha * x$m + x$own * x$L / x$C + x$f0
   A   <- expected_annuity(x$H, x$r_min, x$r_max)
   PV  <- f * x$C * A
-  c(a = WT, b = WT + X - PV, R0 = R0, S = S, X = X, f = f, annual_loss = f * x$C,
-    annuity = A, PV = PV)
+  c(a = WT, b = WT + X - PV, R0 = R0, S = S, d_conf = d_conf, D = D, X = X, f = f,
+    annual_loss = f * x$C, annuity = A, PV = PV)
 }
 
 # The bridge steps (Shapley players). One per row of comparison/DISPUTES.md that the
@@ -75,9 +84,9 @@ bridge_steps <- function() {
 }
 
 step_inputs <- list(
-  noncitizens = "W_noncit", base_list = "W_core", real_estate = "re",
-  confirmed_departures = "d_conf", avoidance = "alpha", litigation_survival = "q",
-  income_loss_share = c("kappa", "f0"), income_level = "C", horizon = "H", asset_sales = "s")
+  noncitizens = "W_noncit", base_list = c("W_core", "lam"), real_estate = "re",
+  confirmed_departures = c("dep_b", "dep_j", "L"), avoidance = "alpha", litigation_survival = "q",
+  income_loss_share = c("own", "f0"), income_level = "C", horizon = "H", asset_sales = "s")
 
 # The order Hoopes (2026) Figure 2 reads in: base and residency, departures,
 # behaviour, real estate, then everything about income tax last.
@@ -95,24 +104,38 @@ switch_inputs <- function(sup, rauh, on) {
 # ---- the explorer's sliders ---------------------------------------------------------
 # The explorer has two panels. The BSZ panel starts every disputed input at the BSZ value and
 # moves it towards the JR value; the JR panel starts at the JR value and moves towards
-# the BSZ value. Each input has five positions, 0 to 4: 0 is the panel's own analysis's value,
-# 4 the other analysis's. This is the one definition of what positions 1 to 3 mean; the
-# Python twin (slider_inputs in py/bridge.py) and the page (site/explorer/model.js) mirror it,
-# and test-parity / test-site check both against the values written here.
-#   numeric inputs: linear in the parameter, (1 - p/4) * own + (p/4) * other, so 0 and 4 are
-#                   the two values exactly; a step with two inputs moves both;
+# the BSZ value. Position 0 is the panel's own analysis's value, the last position the other
+# analysis's. This is the one definition of what the positions mean; the Python twin
+# (slider_inputs in py/bridge.py) and the page (site/explorer/model.js) mirror it, and
+# test-parity / test-site check both against the values written here.
+#   most numeric inputs: five positions, linear in the parameter, (1 - p/4) own + (p/4)
+#                   other, so 0 and 4 are the two values exactly;
+#   the Forbes source: two positions, one list or the other (no blend of the two lists);
+#   the departures: three stops, read from the ladder in bridge_inputs(): no departures
+#                   (the BSZ analysis), BSZ's aggressive scenario (Table 5 row 3: four escape
+#                   the tax, and the income tax of all seven named leavers is lost), the
+#                   seven the JR analysis removes; each valued on both lists, with the
+#                   leavers' own income tax L;
 #   the horizon:    the five settings 5, 10, 20, 50 years and perpetuity, in that order from
 #                   the BSZ analysis's 5 years (or in reverse from the JR perpetuity).
-SLIDER_STEPS <- 4
+SLIDER_STEPS <- 4L
 SLIDER_HORIZONS <- c(5, 10, 20, 50, Inf)
+slider_max <- function(id) switch(id, base_list = 1L, confirmed_departures = 2L, SLIDER_STEPS)
 
-slider_inputs <- function(from, to, positions) {
+slider_inputs <- function(from, to, positions, ladder = NULL) {
   x <- from
   for (st in names(step_inputs)) {
     p <- positions[[st]]
     if (is.null(p)) p <- 0
-    stopifnot(p %in% 0:SLIDER_STEPS)
-    t <- p / SLIDER_STEPS
+    mx <- slider_max(st)
+    stopifnot(p %in% 0:mx)
+    t <- p / mx
+    if (st == "confirmed_departures") {
+      stopifnot(!is.null(ladder))
+      k <- if (from$dep_b <= to$dep_b) p + 1 else mx + 1 - p
+      x$dep_b <- ladder$dep_b[k]; x$dep_j <- ladder$dep_j[k]; x$L <- ladder$L[k]
+      next
+    }
     for (nm in step_inputs[[st]]) {
       if (nm == "H") {
         lad <- if (from$H <= to$H) SLIDER_HORIZONS else rev(SLIDER_HORIZONS)
@@ -131,7 +154,7 @@ slider_value <- function(bi, panel = c("bsz", "rjkdc"), positions) {
   panel <- match.arg(panel)
   from <- if (panel == "bsz") bi$sup else bi$rauh
   to   <- if (panel == "bsz") bi$rauh else bi$sup
-  score_common(slider_inputs(from, to, positions))[["b"]]
+  score_common(slider_inputs(from, to, positions, bi$ladder))[["b"]]
 }
 
 # A fixed sample of slider mixes for the parity tests (R, Python and model.js): per panel,
@@ -146,8 +169,8 @@ slider_sample <- function(bi, n = 300, seed = 20261014) {
   for (panel in c("bsz", "rjkdc")) {
     for (i in seq_len(n)) {
       pos <- if (i == 1) rep(0, length(ids))
-             else if (i == 2) rep(SLIDER_STEPS, length(ids))
-             else vapply(ids, function(id) draw(SLIDER_STEPS + 1), 0)
+             else if (i == 2) vapply(ids, slider_max, 0L)
+             else vapply(ids, function(id) draw(slider_max(id) + 1), 0)
       names(pos) <- ids
       rows[[length(rows) + 1]] <- data.frame(
         panel = panel, draw = i, as.list(pos),

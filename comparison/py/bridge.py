@@ -74,15 +74,18 @@ def expected_annuity(H: float, r_min: float, r_max: float) -> float:
 
 
 def score_common(x: dict) -> dict:
-    R0 = x["tau"] * (x["W_core"] + x["W_noncit"]) * (1 - x["re"])
-    S = 1 - x["d_conf"]
+    Wn = (x["W_core"] + x["W_noncit"]) * (1 - x["re"])
+    D = (1 - x["lam"]) * x["dep_b"] + x["lam"] * x["dep_j"]
+    d_conf = D / Wn
+    R0 = x["tau"] * Wn
+    S = 1 - d_conf
     WT = R0 * (1 - x["alpha"]) * S * x["q"]
     X = WT * x["s"] * x["g"] * x["t_cg"]
-    f = x["alpha"] * x["m"] + (1 - x["alpha"] * x["m"]) * (x["kappa"] * x["d_conf"] + x["f0"])
+    f = x["alpha"] * x["m"] + x["own"] * x["L"] / x["C"] + x["f0"]
     A = expected_annuity(x["H"], x["r_min"], x["r_max"])
     PV = f * x["C"] * A
-    return {"a": WT, "b": WT + X - PV, "R0": R0, "S": S, "X": X, "f": f,
-            "annual_loss": f * x["C"], "annuity": A, "PV": PV}
+    return {"a": WT, "b": WT + X - PV, "R0": R0, "S": S, "d_conf": d_conf, "D": D, "X": X,
+            "f": f, "annual_loss": f * x["C"], "annuity": A, "PV": PV}
 
 
 STEPS = [
@@ -98,9 +101,9 @@ STEPS = [
     ("asset_sales", "(not a row)", "Extra income tax from selling assets to pay", "guesswork"),
 ]
 IDS = [s[0] for s in STEPS]
-STEP_INPUTS = {"noncitizens": ["W_noncit"], "base_list": ["W_core"], "real_estate": ["re"],
-               "confirmed_departures": ["d_conf"], "avoidance": ["alpha"],
-               "litigation_survival": ["q"], "income_loss_share": ["kappa", "f0"],
+STEP_INPUTS = {"noncitizens": ["W_noncit"], "base_list": ["W_core", "lam"], "real_estate": ["re"],
+               "confirmed_departures": ["dep_b", "dep_j", "L"], "avoidance": ["alpha"],
+               "litigation_survival": ["q"], "income_loss_share": ["own", "f0"],
                "income_level": ["C"], "horizon": ["H"],
                "asset_sales": ["s"]}
 SEQUENTIAL = ["noncitizens", "base_list", "confirmed_departures", "avoidance",
@@ -117,19 +120,33 @@ def switch_inputs(sup: dict, rauh: dict, on) -> dict:
 
 
 # ---- the explorer's sliders (twin of slider_inputs() etc. in R/model.R) ---------------
-# Positions 0 to 4 per input, 0 = the panel's own analysis's value, 4 = the other's: linear in
-# the parameter for numeric inputs, the five settings 5/10/20/50 years/perpetuity for the
-# horizon; a step with two inputs moves both.
+# Position 0 = the panel's own analysis's value, the last position = the other's. Most numeric
+# inputs: five positions (0 to 4), linear in the parameter. The Forbes source: two positions,
+# one list or the other. The departures: three stops read from the ladder in bridge_inputs()
+# (none, the four of the BSZ aggressive row, the seven of the JR analysis, each valued on both
+# lists). The horizon: the five settings 5/10/20/50 years/perpetuity.
 SLIDER_STEPS = 4
 SLIDER_HORIZONS = [5, 10, 20, 50, math.inf]
 
 
-def slider_inputs(frm: dict, to: dict, positions: dict) -> dict:
+def slider_max(id: str) -> int:
+    return {"base_list": 1, "confirmed_departures": 2}.get(id, SLIDER_STEPS)
+
+
+def slider_inputs(frm: dict, to: dict, positions: dict, ladder: dict | None = None) -> dict:
     x = dict(frm)
     for st in IDS:
         p = positions.get(st, 0)
-        assert p in range(SLIDER_STEPS + 1)
-        t = p / SLIDER_STEPS
+        mx = slider_max(st)
+        assert p in range(mx + 1)
+        t = p / mx
+        if st == "confirmed_departures":
+            assert ladder is not None
+            k = p if frm["dep_b"] <= to["dep_b"] else mx - p  # R's 1-based p + 1 / mx + 1 - p
+            x["dep_b"] = ladder["dep_b"][k]
+            x["dep_j"] = ladder["dep_j"][k]
+            x["L"] = ladder["L"][k]
+            continue
         for nm in STEP_INPUTS[st]:
             if nm == "H":
                 lad = SLIDER_HORIZONS if frm["H"] <= to["H"] else SLIDER_HORIZONS[::-1]
@@ -140,12 +157,12 @@ def slider_inputs(frm: dict, to: dict, positions: dict) -> dict:
     return x
 
 
-def slider_value(sup, rauh, panel, positions):
+def slider_value(sup, rauh, panel, positions, ladder):
     frm, to = (sup, rauh) if panel == "bsz" else (rauh, sup)
-    return score_common(slider_inputs(frm, to, positions))["b"]
+    return score_common(slider_inputs(frm, to, positions, ladder))["b"]
 
 
-def slider_sample(sup, rauh, n=300, seed=20261014):
+def slider_sample(sup, rauh, ladder, n=300, seed=20261014):
     """Per panel: all at 0, all at the far end, then n - 2 Park-Miller draws (same as R)."""
     state = [seed]
 
@@ -159,12 +176,12 @@ def slider_sample(sup, rauh, n=300, seed=20261014):
             if i == 1:
                 pos = [0] * len(IDS)
             elif i == 2:
-                pos = [SLIDER_STEPS] * len(IDS)
+                pos = [slider_max(id) for id in IDS]
             else:
-                pos = [draw(SLIDER_STEPS + 1) for _ in IDS]
+                pos = [draw(slider_max(id) + 1) for id in IDS]
             p = dict(zip(IDS, pos))
             rows.append({"panel": panel, "draw": i, **p,
-                         "value": slider_value(sup, rauh, panel, p)})
+                         "value": slider_value(sup, rauh, panel, p, ladder)})
     return rows
 
 
@@ -221,29 +238,42 @@ def bridge_inputs(k):
     W0 = pick(si, "baseline_net_worth")
     noncit = pick(d, "ggss_noncitizen_wealth")
     C_sup = pick(si, "ca_inctax_billionaires")
-    kappa_s = (pick(si, "leavers_annual_inctax") / pick(si, "leavers_wealth")) / (C_sup / W0)
     tau = pick(oi, "tax_rate")
     assert abs(tau - pick(si, "tax_rate")) < 1e-12
     base_r = pick(oi, "baseline_net_worth") * (1 + pick(oi, "nber_growth_rate"))
     R0_r = pick(oo, "nber_domestic_grown")
     ceiling = pick(oi, "nber_ceiling_hardcoded")
+    # Departed wealth, the same people valued on each list (see R/build.R): on the BSZ list the
+    # four pre-2026 leavers, Brin, and Spielberg and Sacks at the JR file's net worth; on the
+    # JR list the four from the person-level file, and all seven as the base less the 72 ceiling.
+    four_b = pick(si, "pre2026_leavers_wealth")
+    seven_b = four_b + pick(si, "brin_wealth") + pick(oi, "nber_spielberg_sacks_net_worth")
+    four_j = pick(oi, "nber_departed_four_grown")
+    seven_j = (R0_r - ceiling) / tau
+    # The leavers' own income tax at each stop, as BSZ Table 5 counts it (see R/build.R).
+    L_bsz = pick(si, "leavers_annual_inctax")
+    L_seven = (pick(si, "pre2026_leavers_annual_inctax") + pick(si, "brin_annual_inctax") +
+               pick(si, "resid_inctax_rate") * pick(oi, "nber_spielberg_sacks_net_worth"))
     shared = {"tau": tau, "m": pick(si, "mobility_share"), "g": pick(si, "gains_share"),
               "t_cg": pick(si, "ca_cg_rate"),
               "r_min": pick(oi, "rauh_mc_r_min"), "r_max": pick(oi, "rauh_mc_r_max")}
-    sup = dict(shared, W_noncit=noncit, W_core=W0 - noncit, re=0.0, d_conf=0.0,
+    sup = dict(shared, W_noncit=noncit, W_core=W0 - noncit, lam=0.0, re=0.0,
+               dep_b=0.0, dep_j=0.0, L=0.0,
                alpha=pick(si, "avoidance_rate"), q=1.0,
-               kappa=kappa_s, f0=0.0, C=C_sup,
+               own=1.0, f0=0.0, C=C_sup,
                H=pick(d, "bsz_loss_horizon"), s=pick(si, "sell_share"))
-    rauh = dict(shared, W_noncit=0.0, W_core=base_r, re=1 - R0_r / (tau * base_r),
-                d_conf=1 - ceiling / R0_r, alpha=0.0, q=pick(oi, "q_litigation_survival"),
-                kappa=0.0, f0=(pick(oi, "nber_mc_f_min") + pick(oi, "nber_mc_f_max")) / 2,
+    rauh = dict(shared, W_noncit=0.0, W_core=base_r, lam=1.0, re=1 - R0_r / (tau * base_r),
+                dep_b=seven_b, dep_j=seven_j, L=L_seven, alpha=0.0, q=pick(oi, "q_litigation_survival"),
+                own=0.0, f0=(pick(oi, "nber_mc_f_min") + pick(oi, "nber_mc_f_max")) / 2,
                 C=(pick(oi, "rauh_mc_c_min") + pick(oi, "rauh_mc_c_max")) / 2,
                 H=pick(d, "rauh_loss_horizon"), s=0.0)
-    return sup, rauh
+    ladder = {"dep_b": [0.0, four_b, seven_b], "dep_j": [0.0, four_j, seven_j],
+              "L": [0.0, L_bsz, L_seven]}
+    return sup, rauh, ladder
 
 
 def build_all(k):
-    sup, rauh = bridge_inputs(k)
+    sup, rauh, ladder = bridge_inputs(k)
     so, oo, d = k["bsz"]["outputs"], k["rjkdc"]["outputs"], k["docs"]
     oi = k["rjkdc"]["inputs"]
     ggss_printed = pick(so, "ggss_headline", "printed_value")
@@ -336,14 +366,14 @@ def build_all(k):
 
     s_r = score_common(rauh)
     meta = [{"key": "A_5", "value": A5}, {"key": "A_inf", "value": Ainf},
-            {"key": "kappa_bsz", "value": sup["kappa"]},
+            {"key": "L_bsz_aggressive", "value": ladder["L"][1]},
             {"key": "R0_rauh", "value": s_r["R0"]}, {"key": "S_rauh", "value": s_r["S"]},
             {"key": "X_bsz", "value": score_common(sup)["X"]},
             {"key": "PV_bsz_own", "value": score_common(sup)["PV"]},
             {"key": "f_rauh", "value": s_r["f"]}, {"key": "C_rauh", "value": rauh["C"]}]
     return {"bridge": bridge, "ends": ends, "endpoints": endpoints, "anchors": anchors,
             "loss": loss, "hoopes": hoopes, "meta": meta, "switchboard": board,
-            "slider_sample": slider_sample(sup, rauh)}
+            "slider_sample": slider_sample(sup, rauh, ladder)}
 
 
 def fmt(v):

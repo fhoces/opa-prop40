@@ -285,15 +285,16 @@ name: term-wealth
 
 ```{r tab-wealth, results="asis"}
 w_s <- sup$W_core + sup$W_noncit; w_r <- rj$W_core + rj$W_noncit
-run_s <- cumprod(c(w_s, sup$tau, 1 - sup$re, 1 - sup$d_conf, 1 - sup$alpha, sup$q))
-run_r <- cumprod(c(w_r, rj$tau, 1 - rj$re, 1 - rj$d_conf, 1 - rj$alpha, rj$q))
+dshare <- function(x) score_common(x)[["d_conf"]]
+run_s <- cumprod(c(w_s, sup$tau, 1 - sup$re, 1 - dshare(sup), 1 - sup$alpha, sup$q))
+run_r <- cumprod(c(w_r, rj$tau, 1 - rj$re, 1 - dshare(rj), 1 - rj$alpha, rj$q))
 stopifnot(abs(run_s[6] - vs[["a"]]) < 1e-9, abs(run_r[6] - vr[["a"]]) < 1e-9)
 fac <- function(x) pct(x, if (abs(100 * x - round(100 * x)) < 1e-9) 0 else 1)
 rows <- list(
   c("Wealth on the list", usd(w_s, 0), usd(w_s, 0), usd(w_r, 0), usd(w_r, 0)),
   c("&times; tax rate", fac(sup$tau), usd(run_s[2]), fac(rj$tau), usd(run_r[2])),
   c("&times; (1 &minus; real-estate deduction)", fac(1 - sup$re), usd(run_s[3]), fac(1 - rj$re), usd(run_r[3])),
-  c("&times; (1 &minus; share already departed)", fac(1 - sup$d_conf), usd(run_s[4]), fac(1 - rj$d_conf), usd(run_r[4])),
+  c("&times; (1 &minus; share already departed)", fac(1 - dshare(sup)), usd(run_s[4]), fac(1 - dshare(rj)), usd(run_r[4])),
   c("&times; (1 &minus; avoidance allowance)", fac(1 - sup$alpha), usd(run_s[5]), fac(1 - rj$alpha), usd(run_r[5])),
   c("&times; chance it survives litigation, <i>q</i>", fac(sup$q), usd(run_s[6]), fac(rj$q), usd(run_r[6])))
 cat('<table class="dt"><tr><th>Step</th><th>BSZ factor</th><th>BSZ running total</th><th>JR factor</th><th>JR running total</th></tr>')
@@ -571,8 +572,8 @@ name: diff-share
 
 ```{r claims-sh, results="asis"}
 claim_table(
-  sprintf("<b>The loss follows the people who leave.</b> Leavers pay %s times the average income tax per dollar of wealth: the largest fortunes pay little income tax (SEC filings for the top three, BSZ PDF p.26, Table 4). With no departures at the BSZ end, only the movers count: %s of the %s allowance, so %s.",
-          fmt_input("kappa", sup$kappa), pct(sup$m), pct(sup$alpha), pct(vs[["f"]])),
+  sprintf("<b>The loss follows the people who leave.</b> What is lost is the leavers' own income tax, from SEC filings for the largest fortunes and a wealth-proportional rate for the rest (BSZ PDF p.26, Table 4): %s a year in its aggressive scenario. With no departures at the BSZ end, only the movers count: %s of the %s allowance, so %s.",
+          usd(bi$ladder$L[2], 2), pct(sup$m), pct(sup$alpha), pct(vs[["f"]])),
   sprintf("<b>A flat %s.</b> The middle of a random draw between %s and %s, independent of how much revenue is collected (NPV_dist_v8.R; chapter Sec. 5.4). It does not depend on who leaves.",
           pct(rj$f0), pct(f_lo), pct(f_hi)))
 ```
@@ -616,7 +617,7 @@ cat("</table>")
 
 .small[
 - **Billionaires already departed** is close to the three above. The JR analysis removes seven
-  confirmed departures, `r pct(rj$d_conf, 1)` of its base; the BSZ analysis taxes everyone resident
+  confirmed departures, `r pct(dshare(rj), 1)` of its base; the BSZ analysis taxes everyone resident
   on 1 January 2026. "Guesswork on data" means a legal judgement about residency applied to who
   announced a move.
 - **Yearly income tax**: BSZ take the 2019 to 2025 average from tax statistics and published

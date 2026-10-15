@@ -53,14 +53,17 @@
 
   // score_common(x): the same formulas as model.R, line for line.
   function scoreCommon(x) {
-    var R0 = x.tau * (x.W_core + x.W_noncit) * (1 - x.re);
-    var S = 1 - x.d_conf;
+    var Wn = (x.W_core + x.W_noncit) * (1 - x.re);
+    var D = (1 - x.lam) * x.dep_b + x.lam * x.dep_j;
+    var d_conf = D / Wn;
+    var R0 = x.tau * Wn;
+    var S = 1 - d_conf;
     var WT = R0 * (1 - x.alpha) * S * x.q;
     var X = WT * x.s * x.g * x.t_cg;
-    var f = x.alpha * x.m + (1 - x.alpha * x.m) * (x.kappa * x.d_conf + x.f0);
+    var f = x.alpha * x.m + x.own * x.L / x.C + x.f0;
     var A = expectedAnnuity(x.H, x.r_min, x.r_max);
     var PV = f * x.C * A;
-    return { a: WT, b: WT + X - PV, R0: R0, S: S, X: X, f: f, annual_loss: f * x.C,
+    return { a: WT, b: WT + X - PV, R0: R0, S: S, d_conf: d_conf, D: D, X: X, f: f, annual_loss: f * x.C,
              annuity: A, PV: PV };
   }
 
@@ -78,7 +81,12 @@
     var lad = S.horizons.map(num);
     if (!(from.H <= to.H)) lad = lad.slice().reverse();
     S.inputs.forEach(function (inp) {
-      var p = positions[inp.id] || 0, t = p / S.steps;
+      var p = positions[inp.id] || 0, mx = inp.max, t = p / mx;
+      if (inp.id === "confirmed_departures") {   // three stops, from the ladder
+        var k = from.dep_b <= to.dep_b ? p : mx - p;
+        x.dep_b = S.ladder.dep_b[k]; x.dep_j = S.ladder.dep_j[k]; x.L = S.ladder.L[k];
+        return;
+      }
       inp.input.forEach(function (nm) {
         if (nm === "H") x.H = lad[p];
         else x[nm] = (1 - t) * from[nm] + t * to[nm];

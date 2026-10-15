@@ -28,7 +28,8 @@ fmt_input <- function(input, v) {
     W_noncit = , W_core = money(v, if (v %% 1 == 0) 0 else 1),
     re = , d_conf = , alpha = pct(v, 1),
     q = pct(v, 0),
-    kappa = formatC(v, format = "f", digits = 2),
+    own = if (v == 1) "the leavers' own tax" else "a flat share",
+    L = paste0(money(v, 2), "/yr"),
     f0 = pct(v, 0),
     C = paste0(money(v, 2), "/yr"),
     H = if (is.infinite(v)) "perpetuity" else paste0(v, " years"),
@@ -48,12 +49,21 @@ short_labels <- c(
 step_texts <- function(inp, id) {
   ii <- inp[inp$step_id == id, ]
   if (id == "income_loss_share") {
-    k <- ii[ii$input == "kappa", ]; f <- ii[ii$input == "f0", ]
-    return(list(bsz = sprintf("%s \u00d7 departed", fmt_input("kappa", k$supporting_value)),
+    k <- ii[ii$input == "own", ]; f <- ii[ii$input == "f0", ]
+    return(list(bsz = "own tax",
                 rjkdc = sprintf("%s flat", fmt_input("f0", f$rauh_value)),
                 bsz_source = paste(k$supporting_source, f$supporting_source, sep = "; "),
                 rjkdc_source = paste(f$rauh_source, k$rauh_source, sep = "; ")))
   }
+  if (id == "confirmed_departures") {
+    b <- ii[ii$input == "dep_b", ]; j <- ii[ii$input == "dep_j", ]
+    return(list(bsz = "none",
+                rjkdc = sprintf("the JR seven: %s on the BSZ list, %s on the JR list",
+                                money(b$rauh_value, 0), money(j$rauh_value, 0)),
+                bsz_source = b$supporting_source, rjkdc_source = paste(b$rauh_source, j$rauh_source, sep = "; "),
+                bsz_short = "None", rjkdc_short = "JR seven"))
+  }
+  if (id == "base_list") ii <- ii[ii$input == "W_core", ]
   out <- list(bsz = fmt_input(ii$input, ii$supporting_value), rjkdc = fmt_input(ii$input, ii$rauh_value),
               bsz_source = ii$supporting_source, rjkdc_source = ii$rauh_source)
   # the explorer's dial ends name the list, the tables keep the dollars
@@ -83,9 +93,17 @@ explorer_slider_ids <- function() setdiff(bridge_steps()$step_id, EXPLORER_MINOR
 # the departed dial, and the avoidance allowance enters both terms; the box notes say so).
 EXPLORER_BOXES <- list(
   revenue = list(ids = c("base_list", "confirmed_departures", "avoidance", "litigation_survival"),
-                 head = "Wealth tax collected. These four multiply each other: each one scales what the others leave."),
+                 eq = "Wealth tax collected = 5% &times; (W &minus; D) &times; (1 &minus; a) &times; q",
+                 lead = "The wealth on the list, less what has already left, less avoidance, times the chance the tax survives in court.",
+                 more = "The four dials multiply each other, so the effect of one depends on where the others stand. W and D are valued on the same Forbes list. Hover over a dial for what each analysis assumes."),
   loss = list(ids = c("income_loss_share", "income_level", "horizon"),
-              head = "Income tax lost to departures. These three multiply each other: share lost &times; yearly income tax &times; years counted. The BSZ share lost also follows the departed-wealth dial above."))
+              eq = "Income tax lost = f &times; C &times; A(H)",
+              lead = "The share of billionaires' income tax that leaves, times that income tax per year, counted over H years.",
+              more = "A(H) is what $1 a year for H years is worth today, at the 1.5% to 4.5% discount rates both analyses use: about 5 for 5 years, about 37 for ever. The three dials multiply each other. In the BSZ analysis f also follows D in the box above. Hover over a dial for what each analysis assumes."))
+# Each dial shows only its symbol; the name and the explanation are in its hover box.
+DIAL_SYMBOLS <- c(base_list = "W", confirmed_departures = "D", avoidance = "a",
+                  litigation_survival = "q", income_loss_share = "f", income_level = "C",
+                  horizon = "H")
 
 # The bars of every view of the bridge, in display order: the BSZ analysis (August 2026,
 # Table 5 row 1), one step per disputed input (BSZ value to the JR value of its September
@@ -218,21 +236,35 @@ render_site <- function(root = comparison_root(),
   hz_fin <- SLIDER_HORIZONS[is.finite(SLIDER_HORIZONS)]
   hz_words <- paste0(paste(head(hz_fin, -1), collapse = ", "), " and ", tail(hz_fin, 1),
                      " years, and a perpetuity")
+  bi0 <- bridge_inputs(k)
   slider_tips <- c(
-    base_list = "Which Forbes list the base comes from, and so the wealth the tax applies to before departures and behaviour. Forbes 2026: the BSZ analysis values California's billionaires on 1 July 2026 (250 people, $2,157 billion without the non-US citizens). Forbes 2025: the JR analysis takes the 2025 list (212 people, with Ellison, Houston and Snyder removed and Sacks added) and grows it 7% to the 31 December 2026 valuation date ($2,027 billion). Between the ends the slider moves the dollar amount. Kind: data.",
-    confirmed_departures = "The share of the base counted as already gone before the 1 January 2026 residency date. The BSZ analysis taxes every resident on that date, since an announced move is not a legal change of residence. The JR analysis drops seven confirmed departures (Page, Brin, Thiel, Hankey, Spielberg, Sacks, Kalanick), 29% of its base. Kind: guesswork resting on data.",
+    base_list = "Which Forbes list the base comes from, and so the wealth the tax applies to before departures and behaviour. Forbes 2026: the BSZ analysis values California's billionaires on 1 July 2026 (250 people, $2,157 billion without the non-US citizens). Forbes 2025: the JR analysis takes the 2025 list (212 people, with Ellison, Houston and Snyder removed and Sacks added) and grows it 7% to the 31 December 2026 valuation date ($2,027 billion). Two positions: one list or the other. Kind: data.",
+    confirmed_departures = sprintf(paste(
+      "Billionaires counted as already gone before the 1 January 2026 residency date, whose wealth the tax cannot reach.",
+      "Three stops. None: the BSZ analysis's main estimate taxes every resident on that date, since an announced move is not a legal change of residence.",
+      "BSZ four: Page, Thiel, Hankey and Kalanick, the BSZ analysis's own aggressive scenario (Table 5 row 3), %s on the BSZ list.",
+      "JR seven: those four plus Brin, Spielberg and Sacks, the JR analysis's confirmed departures, %s on the BSZ list and %s on the JR list.",
+      "Each stop is valued on the list chosen by the Forbes source dial.",
+      "Kind: guesswork resting on data."),
+      money(bi0$ladder$dep_b[2], 0), money(bi0$ladder$dep_b[3], 0), money(bi0$ladder$dep_j[3], 0)),
     avoidance = "The share of the tax lost to avoidance and evasion other than leaving. The BSZ analysis allows 10%. The JR analysis allows none. Kind: guesswork.",
     litigation_survival = "The chance that the Act survives a constitutional challenge, applied to the revenue. The BSZ analysis takes the Act as written and collected in full. The JR analysis weights the revenue by 50%, the accounting threshold for a tax that is more likely than not to stand; its simulation draws the revenue anywhere between zero and the ceiling, which has the same average. Kind: guesswork.",
-    income_loss_share = "The share of billionaires' California income tax that leaves with them. The BSZ analysis uses the leavers' own tax from SEC filings: per dollar of wealth the largest leavers pay about a third of the billionaire average, so the share lost is 0.33 times the share of the base that departed. The JR analysis draws the share between 30% and 60% regardless of who leaves, 45% on average. Kind: data (BSZ) against guesswork (JR).",
+    income_loss_share = sprintf(paste(
+      "What share of billionaires' yearly California income tax is lost to those who leave.",
+      "The BSZ analysis counts what the leavers themselves pay, from SEC filings and its own rate for the rest:",
+      "with no departures only its movers' 5%% of the income tax, and in its aggressive scenario (the D dial's middle stop) %s a year more.",
+      "The JR analysis assumes %s of the income tax is lost (the middle of its 30%% to 60%% range), whoever leaves.",
+      "Kind: data (BSZ) against guesswork (JR)."),
+      money(bi0$ladder$L[2], 2), pct(bi0$rauh$f0, 0)),
     income_level = "Billionaires' yearly California income tax, the amount at risk each year. The BSZ analysis: about $3.1 billion from tax data, since top wealth holders earn about half of what top earners do. The JR analysis: $4.55 billion, the midpoint of a $3.3 billion to $5.8 billion range from two model bounds. Kind: research (BSZ) against guesswork (JR).",
     horizon = sprintf("How many years the income tax loss is counted. The BSZ analysis: 5 years, about the payment period, with responses temporary. The JR analysis: for ever, discounted at %s to %s. The slider's five settings are %s. Kind: scenario.",
                       tok$r_min, tok$r_max, hz_words),
     minor_inputs = "Three inputs that each move the estimate by less than $7 billion when moved alone: the non-US-citizen residents ($150 billion of wealth; the BSZ analysis taxes them, the JR analysis leaves its 28 international billionaires out), the real-estate deduction (none in the BSZ analysis; the JR analysis nets out directly held homes, about 0.5% of the base) and the extra income tax from assets sold to pay the tax (the BSZ analysis counts it, the JR analysis does not). Off keeps this panel's own values; on takes the other analysis's values for all three.")
-  slider_row <- function(panel, id, name, title, tip, bsz_txt, rj_txt, max) {
+  slider_row <- function(panel, id, name, title, tip, bsz_txt, rj_txt, max, sym = FALSE) {
     rtl <- panel == "rjkdc"
     ticks <- paste(sprintf('<i style="--t:%s"></i>', format((0:max) / max)), collapse = "")
     sprintf(paste0(
-      '        <li class="sl" data-id="%2$s">\n',
+      '        <li class="sl%13$s" data-id="%2$s">\n',
       '          <label for="%1$s-%2$s"><b>%3$s</b> <span class="sl-title">%4$s</span></label>\n',
       '          <span class="sl-tip" role="tooltip" id="%1$s-%2$s-tip">%5$s</span>\n',
       '          <div class="sl-row"><span class="sl-end sl-lo">%6$s</span><span class="sl-track',
@@ -241,30 +273,53 @@ render_site <- function(root = comparison_root(),
       '<output class="sl-cur" for="%1$s-%2$s">%12$s</output></span><span class="sl-end sl-hi">%7$s</span></div>\n',
       '          <span class="sl-note"></span>\n',
       '        </li>'),
-      panel, id, esc(name), esc(title), esc(tip), bsz_txt, rj_txt, as.integer(max),
+      panel, id, if (sym) paste0('<span class="sym">', esc(name), '</span>') else esc(name),
+      if (sym) paste0('<span class="sr">', esc(title), '</span>') else esc(title), esc(tip), bsz_txt, rj_txt, as.integer(max),
       if (rtl) " is-rtl" else "", ticks, if (rtl) ' dir="rtl"' else "",
-      if (rtl) rj_txt else bsz_txt)
+      if (rtl) rj_txt else bsz_txt, if (sym) " has-sym" else "")
   }
   step_row <- function(panel, id) {
     i <- match(id, steps$step_id); tx <- dial_texts(inp, id)
-    slider_row(panel, id, unname(short_labels[id]), steps$title[i], slider_tips[[id]],
-               tx$bsz, tx$rjkdc, SLIDER_STEPS)
+    slider_row(panel, id, unname(DIAL_SYMBOLS[id]), unname(short_labels[id]),
+               paste0(DIAL_SYMBOLS[[id]], ", ", tolower(unname(short_labels[id])), ". ", slider_tips[[id]]),
+               tx$bsz, tx$rjkdc, slider_max(id), sym = TRUE)
   }
   box <- function(panel, key) {
     bx <- EXPLORER_BOXES[[key]]
     paste0(
       '        <li class="sl-box" role="group" aria-labelledby="', panel, '-', key, '-head">\n',
-      '          <p class="sl-box-head" id="', panel, '-', key, '-head">', bx$head, '</p>\n',
+      '          <div class="sl-box-head">\n',
+      '            <p class="box-eq" id="', panel, '-', key, '-head">', bx$eq, '</p>\n',
+      '            <p class="box-lead">', bx$lead, ' <span class="info" tabindex="0" aria-describedby="', panel, '-', key, '-more">more',
+      '<span class="info-tip" role="tooltip" id="', panel, '-', key, '-more">', bx$more, '</span></span></p>\n',
+      '          </div>\n',
       '          <ul class="sl-list">\n',
       paste(vapply(bx$ids, function(id) step_row(panel, id), ""), collapse = "\n"), "\n",
       '          </ul>\n',
       '        </li>')
   }
   stopifnot(identical(unname(unlist(lapply(EXPLORER_BOXES, `[[`, "ids"))), explorer_slider_ids()))
+  # The three minor inputs: one switch that moves all three, and a fold that opens into the
+  # three dials themselves (the switch sets them; each can then be moved on its own).
+  minor_tips <- c(
+    noncitizens = "The non-US-citizen residents: $150 billion of wealth that the BSZ analysis taxes and the JR analysis leaves out with its 28 international billionaires. Kind: data.",
+    real_estate = "The real-estate deduction: none in the BSZ analysis; the JR analysis nets out directly held homes, about 0.5% of the base. Kind: data.",
+    asset_sales = "Extra income tax from assets sold to pay the tax: the BSZ analysis assumes a third of the tax is paid by selling assets, whose gains are taxed; the JR analysis does not count this. Kind: guesswork.")
+  minor_block <- function(panel) paste0(
+    slider_row(panel, "minor_inputs", "Three minor inputs", "Non-citizens, real-estate deduction, asset-sale tax",
+               slider_tips[["minor_inputs"]], "BSZ values", "JR values", 1), "\n",
+    '        <li class="sl-minor"><details class="minor-fold"><summary>Show the three inputs one by one</summary>\n',
+    '          <ul class="sl-list">\n',
+    paste(vapply(EXPLORER_MINOR, function(id) {
+      i <- match(id, steps$step_id); tx <- dial_texts(inp, id)
+      slider_row(panel, id, unname(short_labels[id]), steps$title[i], minor_tips[[id]],
+                 tx$bsz, tx$rjkdc, slider_max(id))
+    }, ""), collapse = "\n"), "\n",
+    '          </ul>\n',
+    '        </details></li>')
   slider_rows <- function(panel) paste(c(
     vapply(names(EXPLORER_BOXES), function(key) box(panel, key), ""),
-    slider_row(panel, "minor_inputs", "Three minor inputs", "Non-citizens, real-estate deduction, asset-sale tax",
-               slider_tips[["minor_inputs"]], "BSZ values", "JR values", 1)),
+    minor_block(panel)),
     collapse = "\n")
   tok$sliders_bsz <- slider_rows("bsz")
   tok$sliders_rjkdc <- slider_rows("rjkdc")
@@ -429,8 +484,9 @@ render_site <- function(root = comparison_root(),
   sliders <- list(
     steps = SLIDER_STEPS, horizons = sl_vec(SLIDER_HORIZONS),
     values = list(bsz = sl_vec(bi$sup), rjkdc = sl_vec(bi$rauh)),
+    ladder = bi$ladder,
     inputs = lapply(seq_len(nrow(steps)), function(i) list(
-      id = steps$step_id[i], input = I(step_inputs[[steps$step_id[i]]]),
+      id = steps$step_id[i], input = I(step_inputs[[steps$step_id[i]]]), max = slider_max(steps$step_id[i]),
       short = unname(short_labels[steps$step_id[i]]),
       bsz_text = dial_texts(inp, steps$step_id[i])$bsz,
       rjkdc_text = dial_texts(inp, steps$step_id[i])$rjkdc)),
