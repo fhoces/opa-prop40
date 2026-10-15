@@ -230,7 +230,9 @@
      face, square corners, ink and link only). The buttons act on the BSZ panel's dials. */
   .apply-box { margin-top: 22px; }
   .ap-lead { margin: 0 0 10px; font-size: 13px; color: var(--ink-2); text-align: center; }
-  .pseudo-eq .term .ap-btn { margin-top: 5px; align-self: center; }
+  .pseudo-eq .term .ap-btn { margin-top: 6px; align-self: center; }
+  .apply-eq .term { max-width: 10.5em; }
+  .apply-eq .term b.ap-label { font-family: var(--serif); font-size: 20px; font-weight: 600; line-height: 1.2; white-space: normal; }
   .ap-btn { font-family: var(--serif); font-size: 12px; line-height: 1.25; padding: 0 5px; margin: 0 2px 0 1px;
     color: var(--link); background: transparent; border: 1px solid var(--link); border-radius: 0;
     cursor: pointer; white-space: nowrap; touch-action: manipulation;
@@ -393,7 +395,8 @@
 
   </section>
 
-  <section class="eq-box apply-box" id="apply" aria-label="Apply the equation's terms to the BSZ panel">
+  <section class="eq-box apply-box" id="apply" aria-labelledby="apply-title">
+    <h2 id="apply-title">What separates the two numbers</h2>
     <p class="ap-lead">Apply to the BSZ panel: each button moves its term's dials to the JR values, or back.</p>
 {{apply_eq}}
   </section>

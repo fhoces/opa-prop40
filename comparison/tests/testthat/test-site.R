@@ -30,12 +30,12 @@ test_that("the Apply block, after the two panels, is the top equation's grid wit
   # its one-line lead names the panel the buttons act on, once
   expect_identical(lengths(regmatches(html, gregexpr("Apply to the BSZ panel", html, fixed = TRUE))), 1L)
   expect_gt(at("Apply to the BSZ panel"), at("<p class=\"panel-note\">Starts at the JR analysis's main estimate"))
-  # the top equation's markup: six terms, the same signs, each label in a <small> where the top
-  # equation has its caption, then the term's button directly under it; no amounts
+  # the top equation's markup: six terms, the same signs, each label in the amounts' bold face
+  # (its bracketed symbols on their own line), then the term's button directly under it; no amounts
   top <- regmatches(eq, gregexpr("(?<=<small>)[^<]*(?=</small>)", eq, perl = TRUE))[[1]]
-  terms <- regmatches(ap, gregexpr('<span class="term"><small>[^<]*</small><button[^>]*>[^<]*</button></span>', ap))[[1]]
+  terms <- regmatches(ap, gregexpr('<span class="term"><b class="ap-label">.*?</b><button[^>]*>[^<]*</button></span>', ap, perl = TRUE))[[1]]
   expect_length(terms, 6)
-  words <- sub('^<span class="term"><small>([^<]*)</small>.*$', "\\1", terms)
+  words <- sub("<br>(", " (", sub('^<span class="term"><b class="ap-label">(.*?)</b>.*$', "\\1", terms, perl = TRUE), fixed = TRUE)
   expect_length(top, 6)
   expect_identical(words, top)
   expect_false(grepl("$", ap, fixed = TRUE))

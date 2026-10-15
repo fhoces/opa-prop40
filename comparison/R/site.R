@@ -649,7 +649,10 @@ render_site <- function(root = comparison_root(),
   tok$apply_eq <- eq_html(
     "pseudo-eq apply-eq",
     ' role="group" aria-label="The equation above in words: each button moves those dials of the BSZ panel to the JR values, or back"',
-    sprintf("<small>%s</small>%s", esc(eq_labels), ap_btns), rep("", length(eq_labels)))
+    # each label in the amounts' face (bold, the same size), its bracketed symbols on a line of
+    # their own (author request 2026-10-15: the words now take the place of the numbers)
+    sprintf('<b class="ap-label">%s</b>%s', sub(" (", "<br>(", esc(eq_labels), fixed = TRUE), ap_btns),
+    rep("", length(eq_labels)))
   tok$pseudo_eq <- pseudo_eq("root")
   # The note reads the same on both pages (author item 2026-10-15), except that the overview
   # has no Walk the path button, so it drops that sentence, and links "BSZ panel" to the explorer.
