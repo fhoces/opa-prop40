@@ -22,7 +22,7 @@ execute:
 
 ::: {.site-nav}
 Comparison of the two analyses of California Proposition 40:
-[Overview](../../index.html) &middot; Open Output: [Explorer](explorer/index.html) &middot; Open Analysis: Report (here) &middot;
+[Overview](../../index.html) &middot; Open Output: [Explorer](explorer/index.html) &middot; Open Analysis: Report (here) and [Slides](slides/slides.html) &middot;
 [Open Materials](https://github.com/fhoces/opa-prop40/tree/main/comparison)
 
 Also in this project: [BSZ analysis overview](../../bsz-analysis/site/) &middot; [JR analysis overview](../../rjkdc-analysis/site/)
@@ -636,7 +636,7 @@ cd comparison/site && quarto render repro.qmd
 
 ::: {.site-nav}
 Comparison of the two analyses of California Proposition 40:
-[Overview](../../index.html) &middot; Open Output: [Explorer](explorer/index.html) &middot; Open Analysis: Report (here) &middot;
+[Overview](../../index.html) &middot; Open Output: [Explorer](explorer/index.html) &middot; Open Analysis: Report (here) and [Slides](slides/slides.html) &middot;
 [Open Materials](https://github.com/fhoces/opa-prop40/tree/main/comparison)
 
 Also in this project: [BSZ analysis overview](../../bsz-analysis/site/) &middot; [JR analysis overview](../../rjkdc-analysis/site/)

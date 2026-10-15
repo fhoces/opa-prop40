@@ -18,7 +18,7 @@ execute:
 
 ::: {.site-nav}
 Comparison of the two analyses of California Proposition 40:
-[Overview](../../index.html) &middot; Open Output: [Explorer](explorer/index.html) &middot; Open Analysis: [Report](repro.html) &middot;
+[Overview](../../index.html) &middot; Open Output: [Explorer](explorer/index.html) &middot; Open Analysis: [Report](repro.html) and [Slides](slides/slides.html) &middot;
 [Open Materials](https://github.com/fhoces/opa-prop40/tree/main/comparison) (this page is its guide)
 
 Also in this project: [BSZ analysis overview](../../bsz-analysis/site/) &middot; [JR analysis overview](../../rjkdc-analysis/site/)
@@ -135,6 +135,7 @@ role <- c(
   "tools/digitize_hoopes_fig2.py" = "reads Hoopes (2026) Figure 2 off the chart into data/hoopes-fig2.csv",
   "site/explorer/model.js" = "score_common() and the slider rule ported to JavaScript; the explorer's panels run it in the browser (written by hand, checked against slider_sample.csv)",
   "site/repro.qmd" = "the reproduction report",
+  "site/slides/slides.Rmd" = "the slide deck: what is in the report and where the main differences come from (xaringan; every number read from export/r/)",
   "site/materials.qmd" = "this page")
 fs <- names(role)
 scroll(show(data.frame(
@@ -246,7 +247,7 @@ The full crosswalk of disputed inputs, with every page reference checked against
 
 ::: {.site-nav}
 Comparison of the two analyses of California Proposition 40:
-[Overview](../../index.html) &middot; Open Output: [Explorer](explorer/index.html) &middot; Open Analysis: [Report](repro.html) &middot;
+[Overview](../../index.html) &middot; Open Output: [Explorer](explorer/index.html) &middot; Open Analysis: [Report](repro.html) and [Slides](slides/slides.html) &middot;
 [Open Materials](https://github.com/fhoces/opa-prop40/tree/main/comparison) (this page is its guide)
 
 Also in this project: [BSZ analysis overview](../../bsz-analysis/site/) &middot; [JR analysis overview](../../rjkdc-analysis/site/)

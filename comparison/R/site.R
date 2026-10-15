@@ -38,7 +38,7 @@ fmt_input <- function(input, v) {
 
 short_labels <- c(
   bsz = "BSZ Aug 2026", noncitizens = "Non-citizens", base_list = "Forbes source",
-  real_estate = "Real estate", confirmed_departures = "Departed", avoidance = "No avoidance",
+  real_estate = "Real estate", confirmed_departures = "Departed wealth", avoidance = "No avoidance",
   litigation_survival = "Litigation", income_loss_share = "Share lost",
   income_level = "Income tax level", horizon = "Horizon", asset_sales = "Asset sales",
   nber = "JR Sep 2026")
@@ -85,7 +85,7 @@ EXPLORER_BOXES <- list(
   revenue = list(ids = c("base_list", "confirmed_departures", "avoidance", "litigation_survival"),
                  head = "Wealth tax collected. These four multiply each other: each one scales what the others leave."),
   loss = list(ids = c("income_loss_share", "income_level", "horizon"),
-              head = "Income tax lost to departures. These three multiply each other: share lost &times; yearly income tax &times; years counted. The BSZ share lost also follows the departed dial above."))
+              head = "Income tax lost to departures. These three multiply each other: share lost &times; yearly income tax &times; years counted. The BSZ share lost also follows the departed-wealth dial above."))
 
 # The bars of every view of the bridge, in display order: the BSZ analysis (August 2026,
 # Table 5 row 1), one step per disputed input (BSZ value to the JR value of its September

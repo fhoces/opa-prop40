@@ -2308,7 +2308,7 @@ min-width: 0 !important;
 
 
 <div class="site-nav">
-<p>Comparison of the two analyses of California Proposition 40: <a href="../../index.html">Overview</a> · Open Output: <a href="explorer/index.html">Explorer</a> · Open Analysis: <a href="repro.html">Report</a> · <a href="https://github.com/fhoces/opa-prop40/tree/main/comparison">Open Materials</a> (this page is its guide)</p>
+<p>Comparison of the two analyses of California Proposition 40: <a href="../../index.html">Overview</a> · Open Output: <a href="explorer/index.html">Explorer</a> · Open Analysis: <a href="repro.html">Report</a> and <a href="slides/slides.html">Slides</a> · <a href="https://github.com/fhoces/opa-prop40/tree/main/comparison">Open Materials</a> (this page is its guide)</p>
 <p>Also in this project: <a href="../../bsz-analysis/site/">BSZ analysis overview</a> · <a href="../../rjkdc-analysis/site/">JR analysis overview</a></p>
 </div>
 <div class="report-intro">
@@ -2408,7 +2408,7 @@ skipped
 11
 </td>
 <td style="text-align:right;">
-234
+236
 </td>
 <td style="text-align:right;">
 0
@@ -2442,7 +2442,7 @@ skipped
 33
 </td>
 <td style="text-align:right;">
-436
+438
 </td>
 <td style="text-align:right;">
 0
@@ -2454,7 +2454,7 @@ skipped
 </tbody>
 </table>
 </div>
-<p>Run while this page was rendered: <strong>436 expectations passed, 0 failed</strong>, in 33 test blocks. The files check:</p>
+<p>Run while this page was rendered: <strong>438 expectations passed, 0 failed</strong>, in 33 test blocks. The files check:</p>
 <ul>
 <li><code>test-endpoints.R</code>: each end of the bridge against the number its authors print (BSZ Table 5 row 1, the NBER mean NPV; NBER is the National Bureau of Economic Research, which circulates working papers), plus the earlier figures the code still checks: the headline of GGSS (the Galle, Gamage, Saez and Shanske expert report of July 2026, written in support of the measure), behind the BSZ analysis, and the March 2026 version of the JR analysis, where the bridge’s disputed-input steps end.</li>
 <li><code>test-shapley.R</code>: the Shapley steps sum exactly to the gap in every setting, and match a brute-force average over orders (a Shapley value: a step’s effect averaged over every order the inputs could be switched in, so the steps add up to the gap).</li>
@@ -2520,7 +2520,7 @@ every number the page shows, written to export/r/*.csv
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/R/site.R"><code>R/site.R</code></a>
 </td>
 <td style="text-align:right;">
-455
+467
 </td>
 <td style="text-align:left;">
 renders the overview page (index.html), the explorer (site/explorer/index.html) and their data file from site/index.template.html and site/explorer.template.html
@@ -2583,10 +2583,21 @@ the reproduction report
 </tr>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/site/slides/slides.Rmd"><code>site/slides/slides.Rmd</code></a>
+</td>
+<td style="text-align:right;">
+699
+</td>
+<td style="text-align:left;">
+the slide deck: what is in the report and where the main differences come from (xaringan; every number read from export/r/)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/site/materials.qmd"><code>site/materials.qmd</code></a>
 </td>
 <td style="text-align:right;">
-257
+258
 </td>
 <td style="text-align:left;">
 this page
@@ -2840,7 +2851,7 @@ public-government-document (not committed per repo policy)
 <li><strong>One Hoopes bar could not be traced.</strong> His confirmed-departures bar matches no number in the March 2026 version of the JR analysis (see the <a href="../../index.html#hoopes">overview page</a>).</li>
 </ul>
 <div class="site-nav">
-<p>Comparison of the two analyses of California Proposition 40: <a href="../../index.html">Overview</a> · Open Output: <a href="explorer/index.html">Explorer</a> · Open Analysis: <a href="repro.html">Report</a> · <a href="https://github.com/fhoces/opa-prop40/tree/main/comparison">Open Materials</a> (this page is its guide)</p>
+<p>Comparison of the two analyses of California Proposition 40: <a href="../../index.html">Overview</a> · Open Output: <a href="explorer/index.html">Explorer</a> · Open Analysis: <a href="repro.html">Report</a> and <a href="slides/slides.html">Slides</a> · <a href="https://github.com/fhoces/opa-prop40/tree/main/comparison">Open Materials</a> (this page is its guide)</p>
 <p>Also in this project: <a href="../../bsz-analysis/site/">BSZ analysis overview</a> · <a href="../../rjkdc-analysis/site/">JR analysis overview</a></p>
 </div>
 <div class="credit">
