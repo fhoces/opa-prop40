@@ -215,10 +215,8 @@
   .pseudo-eq .op { font-family: var(--serif); font-size: 20px; color: var(--ink-3); padding-top: 1px; }
   /* an operator stays on the line of the term it belongs to */
   .pseudo-eq .eq-step { display: inline-flex; align-items: flex-start; gap: 8px; }
-  .pseudo-eq .run { font-family: var(--serif); font-size: 11.5px; color: var(--ink-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
   /* Walk the path: the term the last press reproduced, and the value the panel now shows. */
   .pseudo-eq .term.is-walk { outline: 2px solid var(--walk, var(--ink-3)); outline-offset: 3px; }
-  .pseudo-eq .is-walk-run { color: var(--ink); font-weight: 600; }
   .pseudo-eq[data-walk="bsz"] { --walk: var(--bsz); }
   .pseudo-eq[data-walk="rjkdc"] { --walk: var(--jr); }
   .eq-note { font-size: 12.5px; color: var(--ink-2); margin: 10px 0 0; line-height: 1.45; max-width: 62em; }
@@ -301,14 +299,14 @@
     <h2 id="eq-title">What separates the two numbers</h2>
 <div class="pseudo-eq" role="img" aria-label="The BSZ estimate, $106.8B, minus $28.2B for billionaires already departed (d), minus $41.4B for chance the tax survives litigation (q), minus $58.9B for how long the income tax loss lasts (h), minus $10.6B for the other five steps together, gives about the JR estimate at one 3% rate, −$32.3B.">
   <span class="term" data-steps="0"><b>$106.8B</b><small>BSZ estimate</small></span>
-  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-steps="2"><b>$28.2B</b><small>Billionaires already departed (D)</small><span class="run">path at $72.6B</span></span></span>
-  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-steps="4"><b>$41.4B</b><small>Chance the tax survives litigation (q)</small><span class="run">path at $40.1B</span></span></span>
-  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-steps="7"><b>$58.9B</b><small>How long the income tax loss lasts (H)</small><span class="run">path at −$26.8B</span></span></span>
+  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-steps="2"><b>$28.2B</b><small>Billionaires already departed (D)</small></span></span>
+  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-steps="4"><b>$41.4B</b><small>Chance the tax survives litigation (q)</small></span></span>
+  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-steps="7"><b>$58.9B</b><small>How long the income tax loss lasts (H)</small></span></span>
   <span class="eq-step"><span class="op">&minus;</span><span class="term" data-steps="1 3 5 6 8"><b>$10.6B</b><small>The other five steps together</small></span></span>
   <span class="eq-step"><span class="op">&asymp;</span><span class="term" data-end="8"><b>−$32.3B</b><small>JR estimate at one 3% rate</small></span></span>
 </div>
 <p class="eq-note eq-gap">The JR analysis's own headline is −$38.9B: the authors draw the discount rate at random between 1.5% and 4.5% and average, which is worth about $6.7B more than one 3% rate.</p>
-    <p class="eq-note">Move the BSZ panel's dials top to bottom, each to its far end. The three terms with a symbol are the steps for D, q and H of that walk, and the fourth is the other five steps added up (W, a, f, C and three minor inputs). Under each of the three is the value the path reaches after that step. The Walk the path button in each panel does it for you. The <a href="../repro.html#the-bridge">report</a> gives all eight steps.</p>
+    <p class="eq-note">Move the BSZ panel's dials top to bottom, each to its far end. The three terms with a symbol are the steps for D, q and H of that walk, and the fourth is the other five steps added up (W, a, f, C and three minor inputs). The Walk the path button in each panel does it for you. The <a href="../repro.html#the-bridge">report</a> gives all eight steps.</p>
   </section>
 
   <section class="board" id="panels" aria-labelledby="board-title">
@@ -817,8 +815,8 @@
   function walkButton(panel) { return document.querySelector('button.walk[data-panel="' + panel + '"]'); }
   function clearMarks(panel) {
     if (!EQ || (panel && EQ.dataset.walk !== panel)) return;
-    Array.prototype.slice.call(EQ.querySelectorAll(".is-walk, .is-walk-run")).forEach(function (n) {
-      n.classList.remove("is-walk", "is-walk-run");
+    Array.prototype.slice.call(EQ.querySelectorAll(".is-walk")).forEach(function (n) {
+      n.classList.remove("is-walk");
     });
     delete EQ.dataset.walk;
   }
@@ -837,17 +835,11 @@
     clearMarks();
     if (!EQ) return;
     EQ.dataset.walk = panel;
-    // the term holding the step this press reproduced (the combined term for a step inside it),
-    // and the running value that equals the panel's value: the BSZ estimate before any step, the
-    // JR estimate after the last, else the "path at" value of a main term (none inside the
-    // combined term)
-    var t = panel === "bsz" ? k : NP - k + 1, r = panel === "bsz" ? k : NP - k;
+    // the term holding the step this press reproduced (the combined term for a step inside it);
+    // the panel's "With these sliders" line shows the path's running value
+    var t = panel === "bsz" ? k : NP - k + 1;
     var term = EQ.querySelector('.term[data-steps~="' + t + '"]');
-    var run = r === 0 ? EQ.querySelector('.term[data-steps="0"] b') :
-      r === NP ? EQ.querySelector('.term[data-end="' + NP + '"] b') :
-      EQ.querySelector('.term[data-steps="' + r + '"] .run');
     if (term) term.classList.add("is-walk");
-    if (run) run.classList.add("is-walk-run");
   }
   PANELS.forEach(function (p) {
     walkButton(p).addEventListener("click", function () {

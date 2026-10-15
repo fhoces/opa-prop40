@@ -99,8 +99,9 @@ dial_texts <- function(inp, id, bi = NULL) {
 explorer_slider_ids <- function() setdiff(bridge_steps()$step_id, EXPLORER_MINOR)
 # The pseudo-equation's terms (author decision 2026-10-15): the three largest steps of the dial
 # path by absolute size, in dial order, then one term for the other steps added up. `steps` lists
-# the path steps a term holds (the page script marks the term whose list holds the walk's step);
-# `run` is the path's value after a main term's step (none for the combined term).
+# the path steps a term holds (the page script marks the term whose list holds the walk's step).
+# Each term shows its amount and its name only (author decision 2026-10-15: no running value under
+# it; the panel's "With these sliders" line shows that).
 eq_terms <- function(dp, n_main = 3L) {
   words <- c("one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten")
   main <- sort(order(-abs(dp$change))[seq_len(n_main)])
@@ -112,12 +113,12 @@ eq_terms <- function(dp, n_main = 3L) {
     steps = c(as.character(dp$step[main]), paste(dp$step[rest], collapse = " ")),
     change = c(dp$change[main], sum(dp$change[rest])),
     label = c(vapply(main, lab, ""), sprintf("The other %s steps together", words[length(rest)])),
-    run = c(dp$to[main], NA_real_), stringsAsFactors = FALSE)
+    stringsAsFactors = FALSE)
   note <- sprintf(paste(
     "The %s terms with a symbol are the steps for %s of that walk, and the %s is the other %s steps",
-    "added up (%s). Under each of the %s is the value the path reaches after that step."),
+    "added up (%s)."),
     words[n_main], and_list(dp$symbol[main]), c("second", "third", "fourth", "fifth")[n_main],
-    words[length(rest)], and_list(vapply(rest, name, "")), words[n_main])
+    words[length(rest)], and_list(vapply(rest, name, "")))
   list(main = main, rest = rest, terms = terms, note = note, n_words = words[nrow(dp)])
 }
 # The dials that act together, boxed on the page by the two terms of the net fiscal effect.
@@ -277,9 +278,6 @@ render_site <- function(root = comparison_root(),
   tok$r_common <- pct(mv("r_common"))
   r_min <- pct(mv("r_min_jr"), 1); r_max <- pct(mv("r_max_jr"), 1)
   tok$nber_growth <- pct(pick(k$rjkdc$inputs, "nber_growth_rate"))
-  tok$x_sup <- money(mv("X_bsz"), 2)
-  tok$pv_sup <- money(mv("PV_bsz_own"), 2)
-  tok$loss_sup <- money(ex$loss$annual_loss[ex$loss$source_id == "bsz_row1"], 2)
 
   # ---- the headline: the two analyses' main estimates, next to each other ----
   # The BSZ main estimate is the net total over 5 years, which is also the BSZ end of the
@@ -308,22 +306,6 @@ render_site <- function(root = comparison_root(),
   tok$gap_a_signed <- money(-gap, 1)
   tok$bsz_end_a <- money(ea$bsz_model, 1)
   tok$nber_end_a <- money(ea$rauh_own, 1)
-  tok$nber_wt_max <- money(pick(k$rjkdc$inputs, "nber_ceiling_hardcoded"), 0)
-
-  # ---- the two analyses on the common output, (b) first ----
-  hr <- function(name, b, a, printed) sprintf(
-    '    <tr><td>%s</td><td class="num">%s</td><td class="num">%s</td><td>%s</td></tr>',
-    name, b, a, printed)
-  tok$headline_rows <- paste(c(
-    hr("BSZ analysis: Boll, Saez and Zucman, NBER WP 35218, Table 5 row 1 (Aug 2026)",
-       money(eb$bsz_model, 1), money(ea$bsz_model, 1),
-       sprintf("%s revenue (PDF p.39); no net figure", money(ep$printed_value[ep$endpoint_id == "bsz_tab5_row1"], 0))),
-    hr(sprintf("JR analysis: Jaros and Rauh, NBER c15504 (Sep 2026), at one %s rate", tok$r_common),
-       money(eb$rauh_model, 2), money(ea$rauh_own, 1),
-       sprintf("mean NPV %s, with a random rate: %s below the one-rate value (the JR rate gap); revenue 'approximately %s' (p.1)",
-               money(ep$printed_value[ep$endpoint_id == "rauh_nber_npv"], 1), money(eb$jr_rate_gap, 2),
-               money(as.numeric(d$value[d$input_id == "nber_headline_revenue"]), 0)))
-  ), collapse = "\n")
 
   # ---- the bridge series for the data file (the report draws the chart) ----
   series <- build_series(ex)
@@ -489,8 +471,7 @@ render_site <- function(root = comparison_root(),
   # order, one term for the other steps added up, the JR estimate (author decisions 2026-10-15:
   # everything from the explorer's own dials; three main terms plus the rest combined). The dial
   # path moves the BSZ panel's dials top to bottom, each to its far end (dial_path() in model.R,
-  # export/r/dial_path.csv). Under each main term is the path's value once that dial has moved,
-  # which is what the panel shows at that step of the walk. The terms take the BSZ end to the JR
+  # export/r/dial_path.csv). The terms take the BSZ end to the JR
   # end at the one common rate exactly; the JR gap note under the equation gives the authors' own
   # headline. eq_terms() is shared with the deck (slides.Rmd).
   stopifnot(identical(EXPLORER_DIAL_ORDER, c(explorer_slider_ids(), "minor_inputs")))
@@ -501,9 +482,8 @@ render_site <- function(root = comparison_root(),
   term <- function(j) {
     x <- et$terms[j, ]
     sprintf(
-      '<span class="eq-step"><span class="op">%s</span><span class="term" data-steps="%s"><b>%s</b><small>%s</small>%s</span></span>',
-      if (x$change < 0) "&minus;" else "+", x$steps, money(abs(x$change), 1), esc(x$label),
-      if (is.na(x$run)) "" else sprintf('<span class="run">path at %s</span>', money(x$run, 1)))
+      '<span class="eq-step"><span class="op">%s</span><span class="term" data-steps="%s"><b>%s</b><small>%s</small></span></span>',
+      if (x$change < 0) "&minus;" else "+", x$steps, money(abs(x$change), 1), esc(x$label))
   }
   jr_label <- sprintf("JR estimate at one %s rate", tok$r_common)
   say <- function(j) sprintf("%s %s for %s", if (et$terms$change[j] < 0) "minus" else "plus",
@@ -520,15 +500,16 @@ render_site <- function(root = comparison_root(),
     sprintf('<p class="eq-note eq-gap">%s</p>', esc(tok$jr_gap_note)))
   tok$pseudo_eq_x <- pseudo_eq("x")
   tok$pseudo_eq <- pseudo_eq("root")
-  # The note is the same on both pages, except for what does the walk for the reader.
-  eq_note <- function(href, walk) paste0(
-    "Move the BSZ panel's dials top to bottom, each to its far end. ", esc(et$note), " ",
+  # The note reads the same on both pages (author item 2026-10-15), except that the overview
+  # has no Walk the path button, so it drops that sentence, and links "BSZ panel" to the explorer.
+  eq_note <- function(href, panel, walk) paste0(
+    "Move the ", panel, "'s dials top to bottom, each to its far end. ", esc(et$note), " ",
     walk,
     sprintf("The <a href=\"%s\">report</a> gives all %s steps.", href, et$n_words))
-  tok$pseudo_eq_note_x <- eq_note("../repro.html#the-bridge",
+  tok$pseudo_eq_note_x <- eq_note("../repro.html#the-bridge", "BSZ panel",
                                   "The Walk the path button in each panel does it for you. ")
   tok$pseudo_eq_note_root <- eq_note("comparison/site/repro.html#the-bridge",
-                                     "The <a href=\"comparison/site/explorer/\">explorer</a> does it for you. ")
+                                     "<a href=\"comparison/site/explorer/\">BSZ panel</a>", "")
 
   # ---- anchors (output (a) candidates; default decided in PLAN.md) ----
   an <- ex$anchors
@@ -562,25 +543,13 @@ render_site <- function(root = comparison_root(),
     sprintf('    <tr><td>Jaros and Rauh, NBER c15504</td><td>Sep 2026</td><td>Rauh\'s base grown %s to 31 Dec 2026, seven departures, litigation weight</td></tr>', pct(pick(k$rjkdc$inputs, "nber_growth_rate"))),
     '    <tr><td>LAO ballot analysis</td><td>for the 3 Nov 2026 ballot</td><td>no point estimate</td></tr>'), collapse = "\n")
 
-  # ---- disputes table: the two values only; the report's table gives their sources ----
+  # ---- differences table: the two values only; the report's table gives their sources ----
   tx <- lapply(steps$step_id, function(id) step_texts(inp, id))
-  tok$disputes_rows <- paste(sprintf(
+  tok$differences_rows <- paste(sprintf(
     '    <tr><td>%s</td><td>%s</td><td><span class="kind">%s</span></td><td class="small"><b>%s</b></td><td class="small"><b>%s</b></td></tr>',
     esc(steps$disputes_row), esc(steps$title), steps$kind,
     vapply(tx, `[[`, "", "bsz"), vapply(tx, `[[`, "", "rjkdc")), collapse = "\n")
 
-  # ---- loss table ----
-  ls <- ex$loss
-  who <- c(bsz = "BSZ", rjkdc = "JR", neutral = "LAO", "walczak (credited dial)" = "Walczak (California Tax Foundation)")
-  tok$loss_rows <- paste(sprintf(
-    '    <tr><td>%s <span class="small">(%s)</span></td><td>%s</td><td class="num">%s</td><td class="num">%s</td><td class="num">%s</td><td class="num">%s</td></tr>',
-    esc(ls$label), esc(ls$where), unname(who[ls$side]), vapply(ls$annual_loss, money, "", digits = 2),
-    vapply(ls$pv_5yr, money, "", digits = 1), vapply(ls$pv_perpetuity, money, "", digits = 1),
-    vapply(ls$net_at_nber_revenue_perpetuity, money, "", digits = 1)), collapse = "\n")
-  tok$nber_a <- money(ea$rauh_own, 1)
-
-  tok$walczak_range <- sprintf("$%s-%sB", formatC(dv("walczak_loss_low"), format = "f", digits = 2),
-                               formatC(dv("walczak_loss_high"), format = "f", digits = 2))
   # ---- parity note ----
   tok$parity_note <- "R and Python agree to 1e-9 on every exported number; see comparison/tests"
 

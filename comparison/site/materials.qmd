@@ -171,8 +171,7 @@ own_a <- subset(rd("ends.csv"), horizon_setting == "own" & output == "a")
 
 `loss.csv`'s last column, `net_at_nber_revenue_perpetuity`, nets each loss in perpetuity
 against the JR analysis's expected revenue (`r usd(own_a$rauh_own)`, in `ends.csv` and
-`anchors.csv`); it is the last column of the comparison overview's
-[table of yearly income tax losses](../../index.html#other-loss-estimates).
+`anchors.csv`).
 
 `comparison/export/py/` holds the same files from the Python twin (without `inputs.csv`).
 The explorer reads `assets/comparison-data.js`, written by `R/site.R`

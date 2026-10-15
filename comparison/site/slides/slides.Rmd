@@ -473,9 +473,8 @@ name: pseudo-eq
 # the three largest terms of the dial path in the explorer's order, then the other steps added
 # up (eq_terms() in R/site.R; the same equation as the explorer and the overview)
 et <- eq_terms(dp)
-term <- function(j) with(et$terms[j, ], sprintf('<span class="eq-step"><span class="op">%s</span><span class="term"><b>%s</b><small>%s</small>%s</span></span>',
-                            if (change < 0) "&minus;" else "+", money(abs(change), 1), esc(label),
-                            if (is.na(run)) "" else sprintf('<span class="run">path at %s</span>', money(run, 1))))
+term <- function(j) with(et$terms[j, ], sprintf('<span class="eq-step"><span class="op">%s</span><span class="term"><b>%s</b><small>%s</small></span></span>',
+                            if (change < 0) "&minus;" else "+", money(abs(change), 1), esc(label)))
 cat('<div class="pseudo-eq">',
     sprintf('<span class="term"><b>%s</b><small>BSZ estimate</small></span>', money(eb$bsz_model, 1)),
     paste(vapply(seq_len(nrow(et$terms)), term, ""), collapse = ""),

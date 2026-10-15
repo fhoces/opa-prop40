@@ -34,12 +34,13 @@ test_that("both pages carry the pseudo-equation: the three largest dial-path ter
     expect_true(grepl('<div class="pseudo-eq" role="img"', html, fixed = TRUE), label = p)
     eq <- regmatches(html, regexpr('<div class="pseudo-eq".*?</div>', html))
     # the three largest steps of the path by absolute size, in dial order, each labelled with its
-    # dial's title and symbol, e.g. "(q)", and the path's value after it; then the other steps added up
+    # dial's title and symbol, e.g. "(q)", and nothing under it (no running value, 2026-10-15); then
+    # the other steps added up
     main <- sort(order(-abs(dp$change))[1:3]); rest <- setdiff(seq_len(nrow(dp)), main)
     expect_identical(dp$symbol[main], c("D", "q", "H"))
     pins <- c(vapply(main, function(i) sprintf(
-      '<span class="term" data-steps="%d"><b>%s</b><small>%s (%s)</small><span class="run">path at %s</span></span>',
-      i, money(abs(dp$change[i]), 1), dp$title[i], dp$symbol[i], money(dp$to[i], 1)), ""),
+      '<span class="term" data-steps="%d"><b>%s</b><small>%s (%s)</small></span>',
+      i, money(abs(dp$change[i]), 1), dp$title[i], dp$symbol[i]), ""),
       sprintf('<span class="term" data-steps="%s"><b>%s</b><small>The other five steps together</small></span>',
               paste(rest, collapse = " "), money(abs(sum(dp$change[rest])), 1)))
     at <- vapply(pins, function(x) regexpr(x, eq, fixed = TRUE)[[1]], 0)
@@ -100,9 +101,10 @@ test_that("key numbers appear on the pages as computed", {
   ea <- en[en$horizon_setting == "own" & en$output == "a", ]
   v <- function(id) ep$value[ep$endpoint_id == id]
   expect_true(grepl(money(v("bsz_tab5_row1"), 1), html, fixed = TRUE))
-  expect_true(grepl(money(eb$rauh_model, 2), html, fixed = TRUE))     # the (b) table: the JR end at 3%
-  expect_true(grepl(money(eb$jr_rate_gap, 2), html, fixed = TRUE))    # beside the authors' headline, with the gap
-  expect_true(grepl(money(ea$rauh_own, 1), html, fixed = TRUE))
+  # the overview's table of the two analyses on the common output went on 2026-10-15 (it is in
+  # the report): the JR end at 3% is the equation's right end, the rate gap is in its note
+  expect_true(grepl(money(eb$rauh_model, 1), html, fixed = TRUE))
+  expect_true(grepl(money(eb$jr_rate_gap, 1), html, fixed = TRUE))
   # the explorer's footnote: both ends and the gap on the net fiscal effect, output (b)
   expect_true(grepl(sprintf("The BSZ end is <b>%s</b> and the JR end <b>%s</b>, a gap of <b>%s</b>.",
                             money(eb$bsz_model, 1), money(eb$rauh_model, 1), money(eb$bsz_model - eb$rauh_model, 1)),
