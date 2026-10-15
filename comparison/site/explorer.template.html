@@ -97,7 +97,8 @@
   .panel-head h3 { margin: 0; font-family: var(--serif); font-size: 26px; line-height: 1.15; font-weight: 600;
     font-variant-numeric: tabular-nums; }
   .panel-head h3 .ph-name { color: var(--c); }
-  .panel-head .reset { grid-column: 2; grid-row: 1; align-self: center; font-family: var(--serif); font-size: 12.5px;
+  .ph-btns { grid-column: 2; grid-row: 1; align-self: center; display: flex; gap: 6px; }
+  .panel-head .reset { font-family: var(--serif); font-size: 12.5px; white-space: nowrap;
     color: var(--ink-2); background: var(--panel); border: 1px solid var(--rule); border-radius: 2px;
     padding: 5px 10px; cursor: pointer; }
   .panel-head .reset:hover { border-color: var(--ink-3); }
@@ -204,13 +205,21 @@
   .sl.has-sym > .sl-row { grid-column: 2; margin-top: 0; }
   .sl.has-sym > .sl-note { grid-column: 2; }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-  /* The pseudo-equation: BSZ estimate = JR estimate + the three largest steps + the rest. */
+  /* The pseudo-equation: the BSZ estimate, one term per dial in the panels' order, the JR estimate. */
   .eq-box { margin: 26px 0 6px; padding: 14px 16px; border: 1px solid var(--rule); border-radius: 6px; background: var(--panel); }
   .pseudo-eq { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 6px 8px; position: relative; }
   .pseudo-eq .term { display: inline-flex; flex-direction: column; align-items: center; min-width: 5em; max-width: 8.5em; text-align: center; }
   .pseudo-eq .term b { font-family: var(--serif); font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .pseudo-eq .term small { font-size: 11.5px; color: var(--ink-2); line-height: 1.3; }
   .pseudo-eq .op { font-family: var(--serif); font-size: 20px; color: var(--ink-3); padding-top: 1px; }
+  /* an operator stays on the line of the term it belongs to */
+  .pseudo-eq .eq-step { display: inline-flex; align-items: flex-start; gap: 8px; }
+  .pseudo-eq .run { font-family: var(--serif); font-size: 11.5px; color: var(--ink-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  /* Walk the path: the term the last press reproduced, and the value the panel now shows. */
+  .pseudo-eq .term.is-walk { outline: 2px solid var(--walk, var(--ink-3)); outline-offset: 3px; }
+  .pseudo-eq .is-walk-run { color: var(--ink); font-weight: 600; }
+  .pseudo-eq[data-walk="bsz"] { --walk: var(--bsz); }
+  .pseudo-eq[data-walk="rjkdc"] { --walk: var(--jr); }
   .eq-note { font-size: 12.5px; color: var(--ink-2); margin: 10px 0 0; line-height: 1.45; max-width: 62em; }
   .eq-note a { color: var(--link); }
   @media (max-width: 980px) {
@@ -303,7 +312,7 @@
       <div class="panel bsz" id="panel-bsz" role="group" aria-labelledby="pbsz-h">
         <div class="panel-head">
           <h3 id="pbsz-h"><span class="ph-name">BSZ:</span> <span id="ph-bsz-main">{{hl_bsz}}</span></h3>
-          <button type="button" class="reset" data-panel="bsz">Reset</button>
+          <div class="ph-btns"><button type="button" class="reset walk" data-panel="bsz">Walk the path</button><button type="button" class="reset" data-panel="bsz">Reset</button></div>
           <p class="ph-src">The BSZ analysis's main estimate<sup>1</sup> (Boll, Saez and Zucman, August 2026)</p>
           <p class="ph-now">With these sliders <b id="now-bsz" aria-live="polite">{{bsz_end_b}}</b></p>
         </div>
@@ -326,7 +335,7 @@
       <div class="panel rjkdc" id="panel-rjkdc" role="group" aria-labelledby="prj-h">
         <div class="panel-head">
           <h3 id="prj-h"><span class="ph-name">JR:</span> <span id="ph-rjkdc-main">{{hl_rjkdc}}</span></h3>
-          <button type="button" class="reset" data-panel="rjkdc">Reset</button>
+          <div class="ph-btns"><button type="button" class="reset walk" data-panel="rjkdc">Walk the path</button><button type="button" class="reset" data-panel="rjkdc">Reset</button></div>
           <p class="ph-src">The JR analysis's main estimate<sup>1</sup> (Jaros and Rauh, NBER, September 2026)</p>
           <p class="ph-now">With these sliders <b id="now-rjkdc" aria-live="polite">{{nber_end_b}}</b></p>
         </div>
@@ -387,7 +396,7 @@
       <a href="../../export/r/inputs.csv">inputs.csv</a> (every disputed input and its sources),
       <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/DISPUTES.md">DISPUTES.md</a>
       (the crosswalk of the disagreements, one row each, with what each analysis says and where),
-      <a href="../../export/r/bridge.csv">bridge.csv</a> (the bridge, step by step),
+      <a href="../../export/r/dial_path.csv">dial_path.csv</a> (the terms of the equation at the top, dial by dial),
       <a href="../../../assets/comparison-data.js">comparison-data.js</a> (what this page reads).
       A test fails if <code>comparison-data.js</code> or this page differs from the generator's
       output.</p>
@@ -616,9 +625,53 @@
       });
     });
   });
-  Array.prototype.slice.call(document.querySelectorAll("button.reset")).forEach(function (btn) {
+  // ---- Walk the path: each press moves the next dial of the path (S.path, the order of
+  // dial_path() in model.R) to its far end and marks the term of the pseudo-equation it
+  // reproduces. The BSZ panel walks the path from the top dial down; the JR panel walks it in
+  // reverse, from the minor switch up, back to the BSZ values. A press sets every dial of the
+  // panel, so the panel always shows the path's own value. After the last step the button
+  // starts over. Moving a dial by hand ends the walk.
+  var PATH = S.path, NP = PATH.length, WALK = { bsz: 0, rjkdc: 0 }, EQ = document.querySelector(".pseudo-eq");
+  function walkButton(panel) { return document.querySelector('button.walk[data-panel="' + panel + '"]'); }
+  function clearMarks(panel) {
+    if (!EQ || (panel && EQ.dataset.walk !== panel)) return;
+    Array.prototype.slice.call(EQ.querySelectorAll(".is-walk, .is-walk-run")).forEach(function (n) {
+      n.classList.remove("is-walk", "is-walk-run");
+    });
+    delete EQ.dataset.walk;
+  }
+  function endWalk(panel) {
+    WALK[panel] = 0;
+    walkButton(panel).textContent = "Walk the path";
+    clearMarks(panel);
+  }
+  function setWalk(panel, k) {
+    var moved = panel === "bsz" ? PATH.slice(0, k) : PATH.slice(NP - k);
+    if (moved.indexOf("minor_inputs") >= 0) moved = moved.concat(MINOR);
+    SL[panel].forEach(function (inp) { inp.value = moved.indexOf(inp.dataset.id) >= 0 ? inp.max : "0"; });
+    renderPanels();
+    WALK[panel] = k;
+    walkButton(panel).textContent = k === NP ? "Start over" : "Walk the path";
+    clearMarks();
+    if (!EQ) return;
+    EQ.dataset.walk = panel;
+    // the term this press reproduced, and the running value that equals the panel's value
+    var t = panel === "bsz" ? k : NP - k + 1, r = panel === "bsz" ? k : NP - k;
+    var term = EQ.querySelector('.term[data-step="' + t + '"]');
+    var run = EQ.querySelector('.term[data-step="' + r + '"] ' + (r === 0 ? "b" : ".run"));
+    if (term) term.classList.add("is-walk");
+    if (run) run.classList.add("is-walk-run");
+  }
+  PANELS.forEach(function (p) {
+    walkButton(p).addEventListener("click", function () {
+      if (WALK[p] === NP) { setWalk(p, 0); endWalk(p); } else setWalk(p, WALK[p] + 1);
+    });
+    SL[p].forEach(function (inp) { inp.addEventListener("input", function () { endWalk(p); }); });
+  });
+  Array.prototype.slice.call(document.querySelectorAll("button.reset:not(.walk)")).forEach(function (btn) {
     btn.addEventListener("click", function () {
       SL[btn.dataset.panel].forEach(function (inp) { inp.value = "0"; });
+      endWalk(btn.dataset.panel);
       renderPanels();
     });
   });

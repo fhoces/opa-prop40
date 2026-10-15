@@ -91,7 +91,7 @@ dial_texts <- function(inp, id, bi = NULL) {
 # "minor_inputs": off keeps the panel's own values, on takes the other analysis's values for
 # all three. The other inputs get a slider each. The data file lists the three under
 # sliders.minor and the page script expands the switch before calling model.js.
-EXPLORER_MINOR <- c("noncitizens", "real_estate", "asset_sales")
+# EXPLORER_MINOR and EXPLORER_DIAL_ORDER are in model.R (dial_path() reads them).
 explorer_slider_ids <- function() setdiff(bridge_steps()$step_id, EXPLORER_MINOR)
 # The dials that act together, boxed on the page by the two terms of the net fiscal effect.
 # Inside a box the inputs multiply each other, so one dial's effect depends on where the
@@ -445,42 +445,44 @@ render_site <- function(root = comparison_root(),
   ss <- read_csv_plain(file.path(root, "comparison", "export", "r", "slider_sample.csv"))
   tok$n_slider_sample <- format(nrow(ss), big.mark = ",")
   tok$n_slider_per_panel <- format(sum(ss$panel == "bsz"), big.mark = ",")
-  # ---- the pseudo-equation: BSZ estimate - the three largest steps - the rest = JR estimate.
-  # Each term is a Shapley step on (b), read from the BSZ end to the JR end, so the terms take
-  # the BSZ end to the JR end exactly.
-  bb <- br[br$horizon_setting == "own" & br$output == "b", ]
-  bb <- bb[order(-abs(bb$shapley)), ]
-  top <- bb[1:3, ]; rest <- sum(bb$shapley[-(1:3)])
-  term <- function(v, label) sprintf('<span class="op">%s</span><span class="term"><b>%s</b><small>%s</small></span>',
-                                     if (v < 0) "&minus;" else "+", money(abs(v), 1), esc(label))
-  # A step's label ends with its dial's symbol, so "$45.0B / Chance ... (q)" reads as a dial.
-  sym_label <- function(id, title) if (is.na(DIAL_SYMBOLS[id])) title else paste0(title, " (", DIAL_SYMBOLS[[id]], ")")
+  # ---- the pseudo-equation: the BSZ estimate, the eight terms of the dial path, the JR
+  # estimate (author decision 2026-10-15: everything from the explorer's own dials). Term k is
+  # what the k-th dial of the BSZ panel changes when the dials move top to bottom, each to its
+  # far end (dial_path() in model.R, export/r/dial_path.csv); under it, the panel's value once
+  # that dial has moved. The terms take the BSZ end to the JR end exactly.
+  stopifnot(identical(EXPLORER_DIAL_ORDER, c(explorer_slider_ids(), "minor_inputs")))
+  dp <- read_csv_plain(file.path(root, "comparison", "export", "r", "dial_path.csv"))
+  stopifnot(identical(dp$step_id, EXPLORER_DIAL_ORDER))
+  # A term's label is its dial's title and symbol, e.g. "Chance the tax survives litigation (q)".
+  path_label <- function(i) if (dp$step_id[i] == "minor_inputs") dp$title[i] else paste0(dp$title[i], " (", dp$symbol[i], ")")
+  term <- function(i) sprintf(
+    '<span class="eq-step"><span class="op">%s</span><span class="term" data-step="%d"><b>%s</b><small>%s</small><span class="run">to %s</span></span></span>',
+    if (dp$change[i] < 0) "&minus;" else "+", dp$step[i], money(abs(dp$change[i]), 1), esc(path_label(i)), money(dp$to[i], 1))
   mc_note <- sprintf("The exact mean of the authors' Monte Carlo. Their seeded run prints %s, the header number.", tok$hl_rjkdc)
   jr_label <- c(x = info_span("jr-est-tip", "JR estimate", mc_note), root = "JR estimate")
-  say <- function(v, what) sprintf("%s %s for %s", if (v < 0) "minus" else "plus", money(abs(v), 1), what)
+  say <- function(i) sprintf("%s %s for %s, to %s", if (dp$change[i] < 0) "minus" else "plus",
+                             money(abs(dp$change[i]), 1), tolower(path_label(i)), money(dp$to[i], 1))
   pseudo_eq <- function(page) paste0(
     '<div class="pseudo-eq" role="img" aria-label="', esc(sprintf(
-      "The BSZ estimate, %s, %s, %s, %s, and %s, gives about the JR estimate, %s.",
-      money(eb$bsz_model, 1),
-      say(top$shapley[1], tolower(top$title[1])), say(top$shapley[2], tolower(top$title[2])),
-      say(top$shapley[3], tolower(top$title[3])),
-      say(rest, sprintf("the %d other inputs", nrow(bb) - 3)), money(eb$rauh_own, 1))), '">\n',
-    sprintf('  <span class="term"><b>%s</b><small>BSZ estimate</small></span>\n', money(eb$bsz_model, 1)),
-    paste(vapply(1:3, function(i) paste0("  ", term(top$shapley[i], sym_label(top$step_id[i], top$title[i]))), ""), collapse = "\n"), "\n",
-    "  ", term(rest, sprintf("the %d other inputs together", nrow(bb) - 3)), "\n",
-    sprintf('  <span class="op">&asymp;</span><span class="term"><b>%s</b><small>%s</small></span>\n', money(eb$rauh_own, 1), jr_label[[page]]),
+      "The BSZ estimate, %s, %s, gives about the JR estimate, %s.",
+      money(eb$bsz_model, 1), paste(vapply(seq_len(nrow(dp)), say, ""), collapse = ", "), money(eb$rauh_own, 1))), '">\n',
+    sprintf('  <span class="term" data-step="0"><b>%s</b><small>BSZ estimate</small></span>\n', money(eb$bsz_model, 1)),
+    paste(vapply(seq_len(nrow(dp)), function(i) paste0("  ", term(i)), ""), collapse = "\n"), "\n",
+    sprintf('  <span class="eq-step"><span class="op">&asymp;</span><span class="term"><b>%s</b><small>%s</small></span></span>\n', money(eb$rauh_own, 1), jr_label[[page]]),
     '</div>')
   tok$pseudo_eq_x <- pseudo_eq("x")
   tok$pseudo_eq <- pseudo_eq("root")
   # The note is the same on both pages; the explorer moves the Monte Carlo sentence into a
   # bubble on "JR estimate", the overview keeps it in the note.
-  eq_note <- function(href, extra) paste0(
-    "Each term is what one disagreement costs when its input moves from the BSZ value to the JR value, ",
-    "averaged over every order of moving them (its Shapley value). The terms add up exactly. ", extra,
+  eq_note <- function(href, extra, walk) paste0(
+    "Move the BSZ panel's dials top to bottom, each to its far end: each term is what that dial changes. ",
+    walk, extra,
     sprintf("The <a href=\"%s\">report</a> gives every step.", href))
-  tok$pseudo_eq_note_x <- eq_note("../repro.html#the-bridge", "")
+  tok$pseudo_eq_note_x <- eq_note("../repro.html#the-bridge", "",
+                                  "The Walk the path button in each panel does it for you. ")
   tok$pseudo_eq_note_root <- eq_note("comparison/site/repro.html#the-bridge",
-                                     sprintf("The JR estimate is the exact mean of the authors' Monte Carlo. Their seeded run prints %s, the header number. ", tok$hl_rjkdc))
+                                     sprintf("The JR estimate is the exact mean of the authors' Monte Carlo. Their seeded run prints %s, the header number. ", tok$hl_rjkdc),
+                                     "The <a href=\"comparison/site/explorer/\">explorer</a> does it for you. ")
 
   # ---- anchors (output (a) candidates; default decided in PLAN.md) ----
   an <- ex$anchors
@@ -565,7 +567,8 @@ render_site <- function(root = comparison_root(),
       short = unname(short_labels[steps$step_id[i]]),
       bsz_text = dial_texts(inp, steps$step_id[i], bi)$bsz,
       rjkdc_text = dial_texts(inp, steps$step_id[i], bi)$rjkdc)),
-    minor = EXPLORER_MINOR)
+    minor = EXPLORER_MINOR,
+    path = EXPLORER_DIAL_ORDER)
   # The explorer shows the net fiscal effect, output (b), only, and the bridge at each
   # analysis's own horizon; output (a) and the common horizons stay in the exports, the
   # report and the tests, not in the data file the explorer reads.

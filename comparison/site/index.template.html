@@ -41,6 +41,9 @@
   .pseudo-eq .term b { font-family: var(--serif); font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .pseudo-eq .term small { font-size: 11.5px; color: var(--ink-2); line-height: 1.3; }
   .pseudo-eq .op { font-family: var(--serif); font-size: 20px; color: var(--ink-3); padding-top: 1px; }
+  /* an operator stays on the line of the term it belongs to */
+  .pseudo-eq .eq-step { display: inline-flex; align-items: flex-start; gap: 8px; }
+  .pseudo-eq .run { font-family: var(--serif); font-size: 11.5px; color: var(--ink-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
   .eq-note { font-size: 12.5px; color: var(--ink-2); margin: 10px 0 0; line-height: 1.45; max-width: 62em; }
   .eq-note a { color: var(--link); }
   .site-nav .nav-row + .nav-row { margin-top: 2px; }

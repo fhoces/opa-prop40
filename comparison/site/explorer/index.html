@@ -97,7 +97,8 @@
   .panel-head h3 { margin: 0; font-family: var(--serif); font-size: 26px; line-height: 1.15; font-weight: 600;
     font-variant-numeric: tabular-nums; }
   .panel-head h3 .ph-name { color: var(--c); }
-  .panel-head .reset { grid-column: 2; grid-row: 1; align-self: center; font-family: var(--serif); font-size: 12.5px;
+  .ph-btns { grid-column: 2; grid-row: 1; align-self: center; display: flex; gap: 6px; }
+  .panel-head .reset { font-family: var(--serif); font-size: 12.5px; white-space: nowrap;
     color: var(--ink-2); background: var(--panel); border: 1px solid var(--rule); border-radius: 2px;
     padding: 5px 10px; cursor: pointer; }
   .panel-head .reset:hover { border-color: var(--ink-3); }
@@ -204,13 +205,21 @@
   .sl.has-sym > .sl-row { grid-column: 2; margin-top: 0; }
   .sl.has-sym > .sl-note { grid-column: 2; }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-  /* The pseudo-equation: BSZ estimate = JR estimate + the three largest steps + the rest. */
+  /* The pseudo-equation: the BSZ estimate, one term per dial in the panels' order, the JR estimate. */
   .eq-box { margin: 26px 0 6px; padding: 14px 16px; border: 1px solid var(--rule); border-radius: 6px; background: var(--panel); }
   .pseudo-eq { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 6px 8px; position: relative; }
   .pseudo-eq .term { display: inline-flex; flex-direction: column; align-items: center; min-width: 5em; max-width: 8.5em; text-align: center; }
   .pseudo-eq .term b { font-family: var(--serif); font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .pseudo-eq .term small { font-size: 11.5px; color: var(--ink-2); line-height: 1.3; }
   .pseudo-eq .op { font-family: var(--serif); font-size: 20px; color: var(--ink-3); padding-top: 1px; }
+  /* an operator stays on the line of the term it belongs to */
+  .pseudo-eq .eq-step { display: inline-flex; align-items: flex-start; gap: 8px; }
+  .pseudo-eq .run { font-family: var(--serif); font-size: 11.5px; color: var(--ink-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  /* Walk the path: the term the last press reproduced, and the value the panel now shows. */
+  .pseudo-eq .term.is-walk { outline: 2px solid var(--walk, var(--ink-3)); outline-offset: 3px; }
+  .pseudo-eq .is-walk-run { color: var(--ink); font-weight: 600; }
+  .pseudo-eq[data-walk="bsz"] { --walk: var(--bsz); }
+  .pseudo-eq[data-walk="rjkdc"] { --walk: var(--jr); }
   .eq-note { font-size: 12.5px; color: var(--ink-2); margin: 10px 0 0; line-height: 1.45; max-width: 62em; }
   .eq-note a { color: var(--link); }
   @media (max-width: 980px) {
@@ -289,15 +298,19 @@
 
   <section class="eq-box" id="what-separates" aria-labelledby="eq-title">
     <h2 id="eq-title">What separates the two numbers</h2>
-<div class="pseudo-eq" role="img" aria-label="The BSZ estimate, $106.8B, minus $45.0B for chance the tax survives litigation, minus $33.6B for how long the income tax loss lasts, minus $33.5B for share of billionaire income tax lost, and minus $33.8B for the 7 other inputs, gives about the JR estimate, −$39.0B.">
-  <span class="term"><b>$106.8B</b><small>BSZ estimate</small></span>
-  <span class="op">&minus;</span><span class="term"><b>$45.0B</b><small>Chance the tax survives litigation (q)</small></span>
-  <span class="op">&minus;</span><span class="term"><b>$33.6B</b><small>How long the income tax loss lasts (H)</small></span>
-  <span class="op">&minus;</span><span class="term"><b>$33.5B</b><small>Share of billionaire income tax lost (f)</small></span>
-  <span class="op">&minus;</span><span class="term"><b>$33.8B</b><small>the 7 other inputs together</small></span>
-  <span class="op">&asymp;</span><span class="term"><b>−$39.0B</b><small><span class="info" tabindex="0" aria-describedby="jr-est-tip">JR estimate<span class="info-tip" role="tooltip" id="jr-est-tip">The exact mean of the authors' Monte Carlo. Their seeded run prints −$38.9B, the header number.</span></span></small></span>
+<div class="pseudo-eq" role="img" aria-label="The BSZ estimate, $106.8B, minus $6.0B for forbes source: which list and valuation date (w), to $100.8B, minus $28.2B for billionaires already departed (d), to $72.6B, plus $9.0B for avoidance and evasion allowance (a), to $81.5B, minus $41.4B for chance the tax survives litigation (q), to $40.1B, minus $5.0B for share of billionaire income tax lost (f), to $35.1B, minus $3.1B for billionaires' annual ca income tax (c), to $32.0B, minus $65.6B for how long the income tax loss lasts (h), to −$33.6B, minus $5.4B for three minor inputs, to −$39.0B, gives about the JR estimate, −$39.0B.">
+  <span class="term" data-step="0"><b>$106.8B</b><small>BSZ estimate</small></span>
+  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-step="1"><b>$6.0B</b><small>Forbes source: which list and valuation date (W)</small><span class="run">to $100.8B</span></span></span>
+  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-step="2"><b>$28.2B</b><small>Billionaires already departed (D)</small><span class="run">to $72.6B</span></span></span>
+  <span class="eq-step"><span class="op">+</span><span class="term" data-step="3"><b>$9.0B</b><small>Avoidance and evasion allowance (a)</small><span class="run">to $81.5B</span></span></span>
+  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-step="4"><b>$41.4B</b><small>Chance the tax survives litigation (q)</small><span class="run">to $40.1B</span></span></span>
+  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-step="5"><b>$5.0B</b><small>Share of billionaire income tax lost (f)</small><span class="run">to $35.1B</span></span></span>
+  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-step="6"><b>$3.1B</b><small>Billionaires' annual CA income tax (C)</small><span class="run">to $32.0B</span></span></span>
+  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-step="7"><b>$65.6B</b><small>How long the income tax loss lasts (H)</small><span class="run">to −$33.6B</span></span></span>
+  <span class="eq-step"><span class="op">&minus;</span><span class="term" data-step="8"><b>$5.4B</b><small>Three minor inputs</small><span class="run">to −$39.0B</span></span></span>
+  <span class="eq-step"><span class="op">&asymp;</span><span class="term"><b>−$39.0B</b><small><span class="info" tabindex="0" aria-describedby="jr-est-tip">JR estimate<span class="info-tip" role="tooltip" id="jr-est-tip">The exact mean of the authors' Monte Carlo. Their seeded run prints −$38.9B, the header number.</span></span></small></span></span>
 </div>
-    <p class="eq-note">Each term is what one disagreement costs when its input moves from the BSZ value to the JR value, averaged over every order of moving them (its Shapley value). The terms add up exactly. The <a href="../repro.html#the-bridge">report</a> gives every step.</p>
+    <p class="eq-note">Move the BSZ panel's dials top to bottom, each to its far end: each term is what that dial changes. The Walk the path button in each panel does it for you. The <a href="../repro.html#the-bridge">report</a> gives every step.</p>
   </section>
 
   <section class="board" id="panels" aria-labelledby="board-title">
@@ -310,7 +323,7 @@
       <div class="panel bsz" id="panel-bsz" role="group" aria-labelledby="pbsz-h">
         <div class="panel-head">
           <h3 id="pbsz-h"><span class="ph-name">BSZ:</span> <span id="ph-bsz-main">$106.8B</span></h3>
-          <button type="button" class="reset" data-panel="bsz">Reset</button>
+          <div class="ph-btns"><button type="button" class="reset walk" data-panel="bsz">Walk the path</button><button type="button" class="reset" data-panel="bsz">Reset</button></div>
           <p class="ph-src">The BSZ analysis's main estimate<sup>1</sup> (Boll, Saez and Zucman, August 2026)</p>
           <p class="ph-now">With these sliders <b id="now-bsz" aria-live="polite">$106.8B</b></p>
         </div>
@@ -418,7 +431,7 @@
       <div class="panel rjkdc" id="panel-rjkdc" role="group" aria-labelledby="prj-h">
         <div class="panel-head">
           <h3 id="prj-h"><span class="ph-name">JR:</span> <span id="ph-rjkdc-main">−$38.9B</span></h3>
-          <button type="button" class="reset" data-panel="rjkdc">Reset</button>
+          <div class="ph-btns"><button type="button" class="reset walk" data-panel="rjkdc">Walk the path</button><button type="button" class="reset" data-panel="rjkdc">Reset</button></div>
           <p class="ph-src">The JR analysis's main estimate<sup>1</sup> (Jaros and Rauh, NBER, September 2026)</p>
           <p class="ph-now">With these sliders <b id="now-rjkdc" aria-live="polite">−$39.0B</b></p>
         </div>
@@ -564,7 +577,7 @@
       <a href="../../export/r/inputs.csv">inputs.csv</a> (every disputed input and its sources),
       <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/DISPUTES.md">DISPUTES.md</a>
       (the crosswalk of the disagreements, one row each, with what each analysis says and where),
-      <a href="../../export/r/bridge.csv">bridge.csv</a> (the bridge, step by step),
+      <a href="../../export/r/dial_path.csv">dial_path.csv</a> (the terms of the equation at the top, dial by dial),
       <a href="../../../assets/comparison-data.js">comparison-data.js</a> (what this page reads).
       A test fails if <code>comparison-data.js</code> or this page differs from the generator's
       output.</p>
@@ -589,7 +602,7 @@
   </footer>
 </div>
 
-<script src="../../../assets/comparison-data.js?v=63131e24"></script>
+<script src="../../../assets/comparison-data.js?v=b65d0a7a"></script>
 <script src="model.js"></script>
 <script>
 (function () {
@@ -793,9 +806,53 @@
       });
     });
   });
-  Array.prototype.slice.call(document.querySelectorAll("button.reset")).forEach(function (btn) {
+  // ---- Walk the path: each press moves the next dial of the path (S.path, the order of
+  // dial_path() in model.R) to its far end and marks the term of the pseudo-equation it
+  // reproduces. The BSZ panel walks the path from the top dial down; the JR panel walks it in
+  // reverse, from the minor switch up, back to the BSZ values. A press sets every dial of the
+  // panel, so the panel always shows the path's own value. After the last step the button
+  // starts over. Moving a dial by hand ends the walk.
+  var PATH = S.path, NP = PATH.length, WALK = { bsz: 0, rjkdc: 0 }, EQ = document.querySelector(".pseudo-eq");
+  function walkButton(panel) { return document.querySelector('button.walk[data-panel="' + panel + '"]'); }
+  function clearMarks(panel) {
+    if (!EQ || (panel && EQ.dataset.walk !== panel)) return;
+    Array.prototype.slice.call(EQ.querySelectorAll(".is-walk, .is-walk-run")).forEach(function (n) {
+      n.classList.remove("is-walk", "is-walk-run");
+    });
+    delete EQ.dataset.walk;
+  }
+  function endWalk(panel) {
+    WALK[panel] = 0;
+    walkButton(panel).textContent = "Walk the path";
+    clearMarks(panel);
+  }
+  function setWalk(panel, k) {
+    var moved = panel === "bsz" ? PATH.slice(0, k) : PATH.slice(NP - k);
+    if (moved.indexOf("minor_inputs") >= 0) moved = moved.concat(MINOR);
+    SL[panel].forEach(function (inp) { inp.value = moved.indexOf(inp.dataset.id) >= 0 ? inp.max : "0"; });
+    renderPanels();
+    WALK[panel] = k;
+    walkButton(panel).textContent = k === NP ? "Start over" : "Walk the path";
+    clearMarks();
+    if (!EQ) return;
+    EQ.dataset.walk = panel;
+    // the term this press reproduced, and the running value that equals the panel's value
+    var t = panel === "bsz" ? k : NP - k + 1, r = panel === "bsz" ? k : NP - k;
+    var term = EQ.querySelector('.term[data-step="' + t + '"]');
+    var run = EQ.querySelector('.term[data-step="' + r + '"] ' + (r === 0 ? "b" : ".run"));
+    if (term) term.classList.add("is-walk");
+    if (run) run.classList.add("is-walk-run");
+  }
+  PANELS.forEach(function (p) {
+    walkButton(p).addEventListener("click", function () {
+      if (WALK[p] === NP) { setWalk(p, 0); endWalk(p); } else setWalk(p, WALK[p] + 1);
+    });
+    SL[p].forEach(function (inp) { inp.addEventListener("input", function () { endWalk(p); }); });
+  });
+  Array.prototype.slice.call(document.querySelectorAll("button.reset:not(.walk)")).forEach(function (btn) {
     btn.addEventListener("click", function () {
       SL[btn.dataset.panel].forEach(function (inp) { inp.value = "0"; });
+      endWalk(btn.dataset.panel);
       renderPanels();
     });
   });
