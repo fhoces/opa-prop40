@@ -587,6 +587,10 @@ test_that("the overview's \"The differences\" fold holds the quantities table; t
   expect_true(grepl('<table class="q-table">', fold, fixed = TRUE))
   expect_true(grepl('href="comparison/site/repro.html#the-disputed-inputs"', fold, fixed = TRUE))
   expect_false(grepl('<table class="q-table">', ex, fixed = TRUE))
+  # the same survey button sits under the table on the overview (author request 2026-10-15)
+  btn <- function(h) regmatches(h, regexpr('<p class="q-cta">.*?</p>', h))
+  expect_true(grepl('<p class="q-cta">', fold, fixed = TRUE))
+  expect_identical(btn(ov), btn(ex))
 })
 
 test_that("an assessment in the author's file shows in the table, and an unknown one stops the build", {

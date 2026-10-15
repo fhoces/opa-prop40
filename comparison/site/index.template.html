@@ -476,6 +476,7 @@ versions than this site. So the two do not line up step for step.</p>
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/DISPUTES.md">DISPUTES.md</a>,
 quotes both analyses on each point.</p>
 {{quantity_table_root}}
+{{quantity_survey_root}}
 <p class="small">"Guesswork on data" is a judgement applied to observed facts. "Derived" is a value computed from the analysis's own inputs:
 the JR discount rate is the one rate worth the same as the authors' random draw of it.</p>
   </div>
@@ -553,6 +554,16 @@ the JR discount rate is the one rate worth the same as the authors' random draw 
     });
   });
   // ---- END fold URLs (script) ----
+</script>
+<script>
+// The survey button: each click opens one of the two survey versions at random (they swap Value A and B).
+(function () {
+  var sv = document.querySelector("a.q-survey[data-links]");
+  if (sv) sv.addEventListener("click", function () {
+    var links = sv.getAttribute("data-links").split(" ");
+    sv.href = links[Math.floor(Math.random() * links.length)];
+  });
+})();
 </script>
 </body>
 </html>

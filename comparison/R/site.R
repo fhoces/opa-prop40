@@ -526,16 +526,19 @@ render_site <- function(root = comparison_root(),
   sv <- read_csv_plain(file.path(root, "comparison", "data", "survey-links.csv"))
   sv <- sv[!is.na(sv$url) & nzchar(sv$url), , drop = FALSE]
   stopifnot(all(grepl("^https://", sv$url)))
-  tok$quantity_survey_x <- paste0(
-    '    <p class="q-sub">All these are empirical quantities. Their values should not depend on whether one\n',
-    '    supports or opposes a wealth tax. An expert should be able to appraise each value from more to less\n',
-    '    credible.</p>\n',
+  survey_button <- paste0(
     '    <p class="q-cta">',
     if (nrow(sv)) sprintf('<a class="q-survey" href="%s" data-links="%s" target="_blank" rel="noopener">Take the survey: what do you think these values are?</a>',
                           esc(sv$url[1]), esc(paste(sv$url, collapse = " ")))
     else '<span class="q-survey is-off" aria-disabled="true">Take the survey: what do you think these values are? (opening soon)</span>',
     '</p>\n',
     '    <p class="q-share">Share this survey with people you think have expertise in this area, to learn what they think these values are.</p>')
+  tok$quantity_survey_x <- paste0(
+    '    <p class="q-sub">All these are empirical quantities. Their values should not depend on whether one\n',
+    '    supports or opposes a wealth tax. An expert should be able to appraise each value from more to less\n',
+    '    credible.</p>\n', survey_button)
+  # the overview's differences fold: the same button under its table (author request 2026-10-15)
+  tok$quantity_survey_root <- survey_button
   # Which analysis's value sits at the left end of dial `id` in `panel`: the smaller one (ties
   # and the minor switch, whose two ends are not numbers, keep the BSZ value at the left). The
   # share-lost dial compares its two rules' f at the panel's starting positions; a dial that
