@@ -362,13 +362,13 @@ render_site <- function(root = comparison_root(),
 
   # ---- loss table ----
   ls <- ex$loss[ex$loss$source_id != "rauh_ssrn", ]
-  who <- c(bsz = "BSZ", rjkdc = "JR", neutral = "neutral", "rjkdc (credited dial)" = "Walczak / CalTax (alternative dial; same direction as JR)")
+  who <- c(bsz = "BSZ", rjkdc = "JR", neutral = "neutral", "walczak (credited dial)" = "Walczak / CalTax (alternative dial; same direction as JR)")
   ls$label[ls$source_id == "rauh_nber"] <- "JR, Jaros and Rauh NBER: E[f] x E[C]"
   tok$loss_rows <- paste(sprintf(
     '    <tr><td>%s <span class="small">(%s)</span></td><td>%s</td><td class="num">%s</td><td class="num">%s</td><td class="num">%s</td><td class="num">%s</td></tr>',
     esc(ls$label), esc(ls$where), unname(who[ls$side]), vapply(ls$annual_loss, money, "", digits = 2),
     vapply(ls$pv_5yr, money, "", digits = 1), vapply(ls$pv_perpetuity, money, "", digits = 1),
-    vapply(ea$nber_own - ls$pv_perpetuity, money, "", digits = 1)), collapse = "\n")
+    vapply(ls$net_at_nber_revenue_perpetuity, money, "", digits = 1)), collapse = "\n")
   tok$nber_a <- money(ea$nber_own, 1)
 
   tok$walczak_range <- sprintf("$%s-%sB", formatC(dv("walczak_loss_low"), format = "f", digits = 2),

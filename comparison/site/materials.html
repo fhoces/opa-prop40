@@ -2371,7 +2371,7 @@ skipped
 3
 </td>
 <td style="text-align:right;">
-110
+112
 </td>
 <td style="text-align:right;">
 0
@@ -2439,7 +2439,7 @@ skipped
 32
 </td>
 <td style="text-align:right;">
-391
+393
 </td>
 <td style="text-align:right;">
 0
@@ -2451,7 +2451,7 @@ skipped
 </tbody>
 </table>
 </div>
-<p>Run while this page was rendered: <strong>391 expectations passed, 0 failed</strong>, in 32 test blocks. The files check:</p>
+<p>Run while this page was rendered: <strong>393 expectations passed, 0 failed</strong>, in 32 test blocks. The files check:</p>
 <ul>
 <li><code>test-endpoints.R</code>: each end of the bridge against the number its authors print (BSZ Table 5 row 1, the NBER mean NPV; NBER is the National Bureau of Economic Research, which circulates working papers), plus the earlier figures the code still checks: the headline of GGSS (the Galle, Gamage, Saez and Shanske expert report of July 2026, written in support of the measure), behind the BSZ analysis, and the March 2026 version of the JR analysis, where the bridge’s disputed-input steps end.</li>
 <li><code>test-shapley.R</code>: the Shapley steps sum exactly to the gap in every setting, and match a brute-force average over orders (a Shapley value: a step’s effect averaged over every order the inputs could be switched in, so the steps add up to the gap).</li>
@@ -2506,7 +2506,7 @@ score_common(), the one estimating function; exact Shapley over all orders; one 
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/R/build.R"><code>R/build.R</code></a>
 </td>
 <td style="text-align:right;">
-257
+259
 </td>
 <td style="text-align:left;">
 every number the page shows, written to export/r/*.csv
@@ -2528,7 +2528,7 @@ renders the overview page (index.html), the explorer (site/explorer/index.html) 
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/py/bridge.py"><code>py/bridge.py</code></a>
 </td>
 <td style="text-align:right;">
-408
+409
 </td>
 <td style="text-align:left;">
 the Python twin of contract.R, model.R and build.R; writes export/py/*.csv
@@ -2583,7 +2583,7 @@ the reproduction report
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/site/materials.qmd"><code>site/materials.qmd</code></a>
 </td>
 <td style="text-align:right;">
-258
+257
 </td>
 <td style="text-align:left;">
 this page
@@ -2692,7 +2692,7 @@ the four revenue numbers of the JR analysis’s March 2026 version, as candidate
 7
 </td>
 <td style="text-align:right;">
-8
+9
 </td>
 <td style="text-align:left;">
 every annual income tax loss on one scale, with present values
@@ -2757,7 +2757,7 @@ the common function’s value for every mix of switches (bit i of mask = dispute
 </tbody>
 </table>
 </div>
-<p><code>loss.csv</code>’s last column, <code>net_at_rauh_revenue_perpetuity</code>, nets each loss against the expected revenue of the JR analysis’s March 2026 version ($51.3B, in <code>ends.csv</code> and <code>anchors.csv</code>). The last column of the comparison overview’s <a href="../../index.html#neutral-material">table of yearly income tax losses</a> nets against the September 2026 expected revenue instead ($36.0B), which <code>R/site.R</code> computes from <code>ends.csv</code>.</p>
+<p><code>loss.csv</code>’s two last columns net each loss against the JR analysis’s expected revenue: <code>net_at_rauh_revenue_perpetuity</code> against the March 2026 version’s ($51.3B, in <code>ends.csv</code> and <code>anchors.csv</code>, the bridge’s anchor) and <code>net_at_nber_revenue_perpetuity</code> against the September 2026 version’s ($36.0B), which is the last column of the comparison overview’s <a href="../../index.html#neutral-material">table of yearly income tax losses</a>.</p>
 <p><code>comparison/export/py/</code> holds the same files from the Python twin (without <code>inputs.csv</code>). The explorer’s interactive bridge reads <code>assets/comparison-data.js</code>, written by <code>R/site.R</code> from these files. Its two slider panels read the two input vectors from the same data file and compute each panel’s estimate in the browser with <code>site/explorer/model.js</code>, which follows <code>slider_inputs()</code> in <code>R/model.R</code>: positions 1 to 3 are evenly spaced between the two values, and the horizon steps through 5, 10, 20 and 50 years and a perpetuity. The inputs the comparison transcribes itself are in <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/data/document-inputs.csv"><code>comparison/data/document-inputs.csv</code></a> (18 rows, each with an origin label, a source and a page) and <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/data/hoopes-fig2.csv"><code>comparison/data/hoopes-fig2.csv</code></a> (Hoopes’s Figure 2, read off the chart). None is edited by hand except these two transcriptions.</p>
 </section>
 <section id="sources" class="level2">

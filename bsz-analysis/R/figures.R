@@ -165,7 +165,8 @@ build_fig_a2 <- function(shortrunseries_r) {
 }
 
 build_fig_a1 <- function(xlsx_path) {
-  # Appendix Figure A1: California Billionaires Wealth by Industry.
+  # Figure 1, Panel B: California Billionaires Wealth by Industry (the target keeps its
+  # historical name fig_a1; the paper's Appendix Figure A1, wealth relative to AGI, is not built).
   # Stacked horizontal bar, 13 industries × 3 components: Public stock held
   # by Top 4 (col I), other public stock (col G), private stock (col H).
   # Block 2 of rtb_2026_industry: rows 22-34, cols A and G-I.
@@ -201,7 +202,7 @@ build_fig_a1 <- function(xlsx_path) {
       "Private stock"        = "#999999"
     )) +
     ggplot2::labs(
-      title    = "Appendix Figure A1: CA Billionaire Wealth by Industry",
+      title    = "Figure 1, Panel B: CA Billionaire Wealth by Industry",
       subtitle = "% of total CA billionaire wealth, end of 2025 (Forbes 2026/01/01)",
       x = NULL, y = NULL, fill = NULL
     ) +

@@ -199,7 +199,7 @@ build_all <- function(k = read_contracts()) {
               "LAO ballot analysis (upper bound, 'less than $1 billion')",
               "Rauh SSRN: E[f] x E[C]", "Rauh NBER: E[f] x E[C]",
               "Walczak / CalTax, low (incl. spillovers)", "Walczak / CalTax, high (incl. spillovers)"),
-    side = c("bsz", "bsz", "neutral", "rjkdc", "rjkdc", "rjkdc (credited dial)", "rjkdc (credited dial)"),
+    side = c("bsz", "bsz", "neutral", "rjkdc", "rjkdc", "walczak (credited dial)", "walczak (credited dial)"),
     annual_loss = c(-pick(so, "tab5_row1_annual_ca_inctax_loss"), -pick(so, "tab5_row3_annual_ca_inctax_loss"),
                     pick(d, "lao_loss_upper"),
                     (1 - ea$rauh_own / rauh_args$baseline) * (rauh_args$c_min + rauh_args$c_max) / 2,
@@ -209,8 +209,10 @@ build_all <- function(k = read_contracts()) {
     stringsAsFactors = FALSE)
   loss$pv_5yr <- loss$annual_loss * A5
   loss$pv_perpetuity <- loss$annual_loss * Ainf
-  # Walczak as a credited dial: Rauh's expected revenue net of Walczak's loss.
+  # Each loss netted against the JR expected revenue on (a): the March 2026 version's (the
+  # bridge's anchor) and the September 2026 version's (what the overview's table shows).
   loss$net_at_rauh_revenue_perpetuity <- ea$rauh_own - loss$pv_perpetuity
+  loss$net_at_nber_revenue_perpetuity <- ea$nber_own - loss$pv_perpetuity
 
   # ---- Hoopes (2026) Figure 2 beside a Hoopes-shaped chain of ours ----------------
   hz <- k$hoopes

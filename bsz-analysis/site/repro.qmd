@@ -265,9 +265,8 @@ tr("fig1")
 ```
 
 The paper's Figure 1 has a Panel B, wealth by industry. The pipeline builds that chart under
-a target it names after Appendix Figure A1, and the chart's title below still says so (a naming
-slip in the code: the paper's Appendix Figure A1, wealth relative to AGI, is not built; see
-"What is not reproduced" under [What reproduces](#what-reproduces)):
+the target `fig_a1` (its historical name; the paper's Appendix Figure A1, wealth relative to
+AGI, is not built, see "What is not reproduced" under [What reproduces](#what-reproduces)):
 
 ```{r}
 #| echo: false

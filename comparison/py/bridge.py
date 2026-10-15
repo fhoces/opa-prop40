@@ -347,7 +347,8 @@ def build_all(k):
                     ("walczak_high", pick(d, "walczak_loss_high"))]:
         loss.append({"source_id": sid, "annual_loss": al, "pv_5yr": al * A5,
                      "pv_perpetuity": al * Ainf,
-                     "net_at_rauh_revenue_perpetuity": ea["rauh_own"] - al * Ainf})
+                     "net_at_rauh_revenue_perpetuity": ea["rauh_own"] - al * Ainf,
+                     "net_at_nber_revenue_perpetuity": ea["nber_own"] - al * Ainf})
 
     hz = {r["step_id"]: r for r in k["hoopes"]}
     sqa = {r["step_id"]: r["sequential"] for r in bridge

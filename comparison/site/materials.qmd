@@ -167,12 +167,11 @@ scroll(show(data.frame(
 own_a <- subset(rd("ends.csv"), horizon_setting == "own" & output == "a")
 ```
 
-`loss.csv`'s last column, `net_at_rauh_revenue_perpetuity`, nets each loss against the
-expected revenue of the JR analysis's March 2026 version (`r usd(own_a$rauh_own)`, in
-`ends.csv` and `anchors.csv`). The last column of the comparison overview's
-[table of yearly income tax losses](../../index.html#neutral-material) nets against the
-September 2026 expected revenue instead (`r usd(own_a$nber_own)`), which `R/site.R` computes
-from `ends.csv`.
+`loss.csv`'s two last columns net each loss against the JR analysis's expected revenue:
+`net_at_rauh_revenue_perpetuity` against the March 2026 version's (`r usd(own_a$rauh_own)`, in
+`ends.csv` and `anchors.csv`, the bridge's anchor) and `net_at_nber_revenue_perpetuity` against
+the September 2026 version's (`r usd(own_a$nber_own)`), which is the last column of the
+comparison overview's [table of yearly income tax losses](../../index.html#neutral-material).
 
 `comparison/export/py/` holds the same files from the Python twin (without `inputs.csv`).
 The explorer's interactive bridge reads `assets/comparison-data.js`, written by `R/site.R`
