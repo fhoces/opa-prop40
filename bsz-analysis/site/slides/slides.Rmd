@@ -6,7 +6,7 @@ output:
     self_contained: true
     includes:
       in_header: mathjax-config.html
-    css: [default, default-fonts]
+    css: [default, ../../../assets/paper.css, ../../../assets/paper-slides.css]
     nature:
       highlightStyle: github
       highlightLines: true
@@ -114,14 +114,12 @@ own computation legible.
 .small table { font-size: 70%; }
 .tiny table { font-size: 62%; width: 100%; }
 .highlight-box {
-  background: #fff3e0;
-  border-left: 4px solid #e65100;
+  border-left: 1px solid #666666;
   padding: 0.5em 1em;
   margin: 0.5em 0;
 }
 .blue-box {
-  background: #e3f2fd;
-  border-left: 4px solid #1565c0;
+  border-left: 1px solid #666666;
   padding: 0.5em 1em;
   margin: 0.5em 0;
 }
@@ -130,13 +128,13 @@ a.reflink {
   text-decoration: none;
   border-bottom: 1px dotted #9aa6b2;
 }
-a.reflink:hover { color: #1a237e; border-bottom-color: #1a237e; }
+a.reflink:hover { color: #1d4e89; border-bottom-color: #1d4e89; }
 .site-nav {
   font-size: 11px;
   color: #5b6873;
   margin: 0 0 14px;
 }
-.site-nav a { color: #1a237e; text-decoration: none; }
+.site-nav a { color: #1d4e89; text-decoration: none; }
 .site-nav a:hover { text-decoration: underline; }
 .remark-slide-content.opa-slide { position: relative; z-index: 0; overflow: hidden; }
 /* Author credit, pinned near the slide's lower-left corner, above the fixed
@@ -144,11 +142,11 @@ a.reflink:hover { color: #1a237e; border-bottom-color: #1a237e; }
 .opa-slide .credit {
   position: absolute; left: 2em; bottom: 48px; font-size: 65%; color: #5b6873;
 }
-.opa-slide .credit a { color: #1a237e; }
+.opa-slide .credit a { color: #1d4e89; }
 .opa-intro { font-size: 92%; max-width: 30em; margin: 0 auto 1.1em; }
 .opa-legend { font-size: 85%; line-height: 1.75; max-width: 34em; margin: 0 auto;
               text-align: left; }
-.opa-intro a, .opa-legend a { color: #1a237e; }
+.opa-intro a, .opa-legend a { color: #1d4e89; }
 .opa-slide .highlight-box { max-width: 34em; margin: 1em auto 0; text-align: left; }
 .opa-mark {
   position: absolute; top: 26px; right: 34px; height: 190px; width: auto;
@@ -157,7 +155,7 @@ a.reflink:hover { color: #1a237e; border-bottom-color: #1a237e; }
 .steps table { width: 100%; font-size: 80%; border-collapse: collapse; }
 .steps td, .steps th { padding: 5px 8px; border-bottom: 1px solid #e2e7ec; text-align: left; }
 .steps td.num { text-align: right; font-family: monospace; }
-.guess { color: #e65100; font-weight: 600; }
+.guess { font-weight: 600; font-style: italic; }
 ```
 
 .site-nav[
@@ -171,7 +169,7 @@ BSZ analysis of California Proposition 40:
 # Deck Map
 
 <table style="width:100%; font-size:85%; border-collapse:collapse;">
-<tr style="background:#e8eaf6;"><th style="text-align:left; padding:6px;">Part</th><th style="text-align:left; padding:6px;">What it covers</th></tr>
+<tr><th style="text-align:left; padding:6px;">Part</th><th style="text-align:left; padding:6px;">What it covers</th></tr>
 <tr><td style="padding:6px;"><b><a href="#part-policy">1. What is being estimated</a></b></td><td style="padding:6px;">The tax, and the two documents that make BSZ's case</td></tr>
 <tr><td style="padding:6px;"><b><a href="#part-steps">2. Five steps to $`r round(t5$wealth_tax_revenue[1])` billion</a></b></td><td style="padding:6px;">The base scenario, built one line at a time</td></tr>
 <tr><td style="padding:6px;"><b><a href="#part-rows">3. Alternative scenarios</a></b></td><td style="padding:6px;">Three more scenarios, the bottom line, and how far each guess moves it</td></tr>
@@ -265,7 +263,7 @@ ggplot(d, aes(x = step, xmin = as.numeric(step) - 0.35, xmax = as.numeric(step) 
   geom_rect() +
   geom_text(aes(y = pmax(start, end), label = paste0("$", bn(abs(value)), "B")), vjust = -0.5) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
-  scale_fill_manual(values = c("#9aa6b2", "#e65100", "#1f6fce"), guide = "none") +
+  scale_fill_manual(values = c("#c8c8c8", "#9a9a9a", "#6a2f86"), guide = "none") +
   labs(x = NULL, y = "$ billion")
 ```
 
@@ -378,11 +376,11 @@ st <- rbind(data.frame(b = bands$b, y = bands$forbes_sh, part = "listed by Forbe
             data.frame(b = bands$b, y = bands$miss_sh,   part = "missing"))
 st$part <- factor(st$part, levels = c("missing", "listed by Forbes"))
 ggplot(st, aes(b, y, fill = part, alpha = part)) +
-  geom_col(width = 0.8, fill = "#d62728") +
+  geom_col(width = 0.8, fill = "#6a2f86") +
   geom_text(data = subset(bands, miss_sh > 0.005), inherit.aes = FALSE,
-            aes(b, pareto_sh, label = paste0("+", pct(miss_sh))), vjust = -0.3, size = 3.4, colour = "#d62728") +
+            aes(b, pareto_sh, label = paste0("+", pct(miss_sh))), vjust = -0.3, size = 3.4, colour = "#6a2f86") +
   scale_alpha_manual(values = c("missing" = 0.25, "listed by Forbes" = 1), name = NULL,
-                     guide = guide_legend(override.aes = list(fill = "#d62728"), reverse = TRUE)) +
+                     guide = guide_legend(override.aes = list(fill = "#6a2f86"), reverse = TRUE)) +
   scale_y_continuous(limits = c(0, ymax), expand = expansion(mult = c(0, 0)),
                      labels = function(x) paste0(round(100 * x), "%")) +
   labs(x = "wealth band, $ billion", y = "share of billionaires", title = "What the Forbes list shows") +
@@ -396,13 +394,13 @@ ggplot(st, aes(b, y, fill = part, alpha = part)) +
 
 .pull-right[
 ```{r pareto-fig-typical, fig.width=5, fig.height=2.9}
-hfig(bands$pareto_sh, "#1f77b4", "What wealth data usually show")
+hfig(bands$pareto_sh, "#9a9a9a", "What wealth data usually show")
 ```
 ]
 
 Bars are shares of the `r bn(ps$total_count_proj, 0)` billionaires a Pareto tail puts above $1 billion. **Right:** in wealth and tax
 data, top fortunes usually follow a Pareto tail, where each step down holds many more people.
-**Left:** Forbes lists only part of each band below $4.5 billion. The pale red is what it misses
+**Left:** Forbes lists only part of each band below $4.5 billion. The pale violet is what it misses
 (`r pct(bands$miss_sh[1])` of all billionaires in the lowest band alone). Fitted to the Forbes list above $4.5 billion, that shape implies
 **`r bn(ps$total_count_proj, 0)`** billionaires above $1 billion, not `r ps$total_count_emp`.
 
@@ -489,9 +487,9 @@ en <- read.csv("../../../comparison/export/r/ends.csv")
 stopifnot(abs(t5$wealth_tax_revenue[1] + t5$extra_ca_inctax_sales[1] - loss[1] * f5 -
               en$bsz_model[en$horizon_setting == "own" & en$output == "b"]) < 0.01)
 d[1, ] <- paste0("<b>", d[1, ], "</b>")
-d$tot[1] <- paste0('<span style="display:inline-block; background:#fff3e0; border:2px solid #e65100; ',
+d$tot[1] <- paste0('<span style="display:inline-block; border:1.2px solid #111111; ',
                    'padding:1px 6px; font-weight:700;">$', bn(t5$wealth_tax_revenue[1] + t5$extra_ca_inctax_sales[1] - loss[1] * f5, 1),
-                   'B<br><span style="font-size:70%; color:#e65100;">MAIN ESTIMATE<sup>1</sup></span></span>')
+                   'B<br><span style="font-size:70%; color:#111111;">MAIN ESTIMATE<sup>1</sup></span></span>')
 knitr::kable(d, format = "html", escape = FALSE, align = "lrrrr",
   col.names = c("Scenario", "Wealth tax collected<br>(once)",
                 "Extra income tax<br>from selling assets<br>(once)",
@@ -536,12 +534,12 @@ guess <- c("Avoidance and evasion", "Share that is leaving", "Avoidance, less vi
            "Share paid by selling", "Aggressive leavers")   # origin labels: data/inputs.csv
 movers <- as.character(rows$input[rows$hi - rows$lo > 1e-9 & rows$input %in% guess])
 ggplot(rows, aes(y = input)) +
-  geom_segment(aes(x = lo, xend = hi, yend = input), linewidth = 7, colour = "#1f6fce") +
-  geom_vline(xintercept = base$net, colour = "#e65100") +
+  geom_segment(aes(x = lo, xend = hi, yend = input), linewidth = 7, colour = "#6a2f86") +
+  geom_vline(xintercept = base$net, colour = "#111111") +
   labs(x = "main estimate, $ billion (other inputs at the base scenario)", y = NULL)
 ```
 
-.small[Orange line: the main estimate, $`r bn(base$net)` billion (wealth tax + extra income tax &minus;
+.small[The vertical line: the main estimate, $`r bn(base$net)` billion (wealth tax + extra income tax &minus;
 income tax lost). Of the five guesses, `r length(movers)` move it on their own:
 `r tolower(paste(paste(head(movers, -1), collapse = ", "), tail(movers, 1), sep = " and "))`.
 Counting the missing billionaires is research, and only raises it. Every input and its origin:

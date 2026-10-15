@@ -8,8 +8,8 @@ format:
     toc-depth: 2
     toc-location: left
     embed-resources: true
-    theme: cosmo
-    css: repro.css
+    theme: [cosmo, ../../assets/paper.scss]
+    css: [repro.css, ../../assets/paper.css]
 execute:
   echo: false
   warning: false

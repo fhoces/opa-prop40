@@ -14,14 +14,14 @@ code.sourceCode { font-size: 0.8rem; }
    loosely from index.html's palette since this document uses the Quarto
    theme rather than those custom properties directly. */
 .site-nav {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 0.78rem;
-  color: #8994a0;
-  border-bottom: 1px solid #e2e7ec;
+  font-family: "STIX Two Text", "STIXGeneral", "Times New Roman", Times, serif;
+  font-size: 13.5px;
+  color: #666666;
+  border-bottom: 1px solid #cfcfcf;
   padding-bottom: 0.7rem;
   margin-bottom: 1.6rem;
 }
-.site-nav a { color: #2a78d6; text-decoration: none; }
+.site-nav a { color: #1d4e89; text-decoration: none; }
 .site-nav a:hover { text-decoration: underline; }
 .site-nav p { margin: 0; }
 .site-nav p + p { margin-top: 0.15rem; }
@@ -70,13 +70,13 @@ mjx-container[jax="CHTML"][display="true"] {
 .table-scroll table { margin: 0; }
 
 /* Author credit under the bottom site-nav, as on the other OPA sites. */
-.credit { font-size: 0.8em; color: #8994a0; margin-top: -1rem; }
-.credit a { color: #2a78d6; text-decoration: none; }
+.credit { font-size: 0.8em; color: #666666; margin-top: -1rem; }
+.credit a { color: #1d4e89; text-decoration: none; }
 .credit a:hover { text-decoration: underline; }
 
 /* Report folds: the detail under a section's claim sentence, closed by default. */
 details.report-fold { margin: 0.4rem 0 1.2rem; }
-details.report-fold > summary { cursor: pointer; color: #2a78d6; font-weight: 500; }
+details.report-fold > summary { cursor: pointer; color: #1d4e89; font-weight: 500; }
 details.report-fold[open] > summary { margin-bottom: 0.8rem; }
 
 /* Long inline code in running text wraps instead of widening the page on a phone. */

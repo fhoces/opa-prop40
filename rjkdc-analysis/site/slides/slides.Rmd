@@ -6,7 +6,7 @@ output:
     self_contained: true
     includes:
       in_header: mathjax-config.html
-    css: [default, default-fonts]
+    css: [default, ../../../assets/paper.css, ../../../assets/paper-slides.css]
     nature:
       highlightStyle: github
       highlightLines: true
@@ -84,14 +84,12 @@ the pipeline, its tests and every exported CSV
 .small table { font-size: 70%; }
 .tiny table { font-size: 62%; width: 100%; }
 .highlight-box {
-  background: #fff3e0;
-  border-left: 4px solid #e65100;
+  border-left: 1px solid #666666;
   padding: 0.5em 1em;
   margin: 0.5em 0;
 }
 .blue-box {
-  background: #e3f2fd;
-  border-left: 4px solid #1565c0;
+  border-left: 1px solid #666666;
   padding: 0.5em 1em;
   margin: 0.5em 0;
 }
@@ -100,13 +98,13 @@ a.reflink {
   text-decoration: none;
   border-bottom: 1px dotted #9aa6b2;
 }
-a.reflink:hover { color: #1a237e; border-bottom-color: #1a237e; }
+a.reflink:hover { color: #1d4e89; border-bottom-color: #1d4e89; }
 .site-nav {
   font-size: 11px;
   color: #5b6873;
   margin: 0 0 14px;
 }
-.site-nav a { color: #1a237e; text-decoration: none; }
+.site-nav a { color: #1d4e89; text-decoration: none; }
 .site-nav a:hover { text-decoration: underline; }
 
 .remark-slide-content.opa-slide { position: relative; z-index: 0; overflow: hidden; }
@@ -115,11 +113,11 @@ a.reflink:hover { color: #1a237e; border-bottom-color: #1a237e; }
 .opa-slide .credit {
   position: absolute; left: 2em; bottom: 48px; font-size: 65%; color: #5b6873;
 }
-.opa-slide .credit a { color: #1a237e; }
+.opa-slide .credit a { color: #1d4e89; }
 .opa-intro { font-size: 92%; max-width: 30em; margin: 0 auto 1.1em; }
 .opa-legend { font-size: 85%; line-height: 1.75; max-width: 34em; margin: 0 auto;
               text-align: left; }
-.opa-intro a, .opa-legend a { color: #1a237e; }
+.opa-intro a, .opa-legend a { color: #1d4e89; }
 .opa-mark {
   position: absolute; top: 26px; right: 34px; height: 190px; width: auto;
   opacity: 0.218; z-index: -1; pointer-events: none;
@@ -130,8 +128,8 @@ a.reflink:hover { color: #1a237e; border-bottom-color: #1a237e; }
 table.dt { border-collapse: collapse; width: 100%; font-size: 80%; }
 table.dt td, table.dt th { padding: 4px 8px; border-bottom: 1px solid #e2e7ec; text-align: right; }
 table.dt td:first-child, table.dt th:first-child { text-align: left; }
-.og { font-size: 70%; padding: 1px 6px; border-radius: 2px; border: 1px solid #d98a5b; color: #b4541f; }
-.og.data { border-color: #6b9bd6; color: #1f5fae; }
+.og { font-size: 70%; padding: 1px 6px; border: 1px dashed #444444; color: #444444; }
+.og.data { border-style: solid; }
 .footnote { font-size: 60%; color: #5b6873; bottom: 3.6em; left: 3.4em; padding-right: 6em; }
 ```
 
@@ -146,7 +144,7 @@ Part of an Open Policy Analysis of the JR analysis (Jaros and Rauh, 2026) of Cal
 # Deck Map
 
 <table style="width:100%; font-size:85%; border-collapse:collapse;">
-<tr style="background:#e8eaf6;"><th style="text-align:left; padding:6px;">Part</th><th style="text-align:left; padding:6px;">What it covers</th><th style="padding:6px;">Starts at</th></tr>
+<tr><th style="text-align:left; padding:6px;">Part</th><th style="text-align:left; padding:6px;">What it covers</th><th style="padding:6px;">Starts at</th></tr>
 <tr><td style="padding:6px;"><b>1. The claim</b></td><td style="padding:6px;">What is being estimated, the one equation, the headline number</td><td style="text-align:center;"><a href="#part-claim">go</a></td></tr>
 <tr><td style="padding:6px;"><b>2. The revenue</b></td><td style="padding:6px;">From $94B before anyone leaves to "about $30B" (Sec 4)</td><td style="text-align:center;"><a href="#part-revenue">go</a></td></tr>
 <tr><td style="padding:6px;"><b>3. The income tax</b></td><td style="padding:6px;">How much billionaires pay each year, and why it is a range (Sec 5.1)</td><td style="text-align:center;"><a href="#part-income">go</a></td></tr>
@@ -237,7 +235,7 @@ d <- data.frame(
            "Pre-filing leavers and\nZuckerberg out (4.4)", "Times q = 0.50\n(4.4)"),
   v = c(rc$baseline_precise, nc$domestic_total_grown, nc$ceiling_recomputed, ncol$recognized, ncol$central))
 d$step <- factor(d$step, levels = d$step)
-ggplot(d, aes(step, v)) + geom_col(fill = c(rep("#1f6fce", 4), "#eb6834"), width = 0.6) +
+ggplot(d, aes(step, v)) + geom_col(fill = c(rep("#9a9a9a", 4), "#1f6b3b"), width = 0.6) +
   geom_text(aes(label = sprintf("%.2f", v)), vjust = -0.4, size = 5) +
   labs(x = NULL, y = "$B") + ylim(0, 112)
 ```
@@ -300,8 +298,8 @@ among the top $K$ filers (Table 9).
 
 ```{r table8, fig.width=5.6, fig.height=3.6}
 ggplot(t8, aes(K, mean_fy25)) +
-  geom_ribbon(aes(ymin = p05_fy25, ymax = p95_fy25), fill = "#1f6fce", alpha = 0.18) +
-  geom_line(colour = "#1f6fce", linewidth = 1) + geom_point(colour = "#1f6fce") +
+  geom_ribbon(aes(ymin = p05_fy25, ymax = p95_fy25), fill = "#1f6b3b", alpha = 0.18) +
+  geom_line(colour = "#1f6b3b", linewidth = 1) + geom_point(colour = "#1f6b3b") +
   geom_vline(xintercept = 500, linetype = 2) +
   labs(x = "pool size K", y = "$B per year") + theme_minimal(base_size = 13)
 ```
@@ -326,7 +324,7 @@ name: perpetuity
 
 ```{r mult, fig.height=3.2}
 r <- seq(0.01, 0.06, by = 0.0005)
-ggplot(data.frame(r, m = 1 / r), aes(100 * r, m)) + geom_line(linewidth = 1, colour = "#eb6834") +
+ggplot(data.frame(r, m = 1 / r), aes(100 * r, m)) + geom_line(linewidth = 1, colour = "#1f6b3b") +
   annotate("point", x = c(1.5, 3, 4.5), y = 1 / c(0.015, 0.03, 0.045), size = 3) +
   annotate("text", x = c(1.5, 3, 4.5), y = 1 / c(0.015, 0.03, 0.045) + 9,
            label = sprintf("%.0f", 1 / c(0.015, 0.03, 0.045)), size = 5) +
@@ -397,7 +395,7 @@ from 0 has the same **mean** as a coin flip on 72, not the same distribution. Lo
 ggplot(data.frame(npv = mcn$draws$npv), aes(npv, fill = npv < 0)) +
   geom_histogram(binwidth = 5, boundary = 0) +
   geom_vline(xintercept = mean(mcn$draws$npv), linetype = 2) +
-  scale_fill_manual(values = c(`TRUE` = "#eb6834", `FALSE` = "#1f6fce"), guide = "none") +
+  scale_fill_manual(values = c(`TRUE` = "#9a9a9a", `FALSE` = "#555555"), guide = "none") +
   coord_cartesian(xlim = c(-250, 70)) + labs(x = "NPV, $B", y = "draws") + theme_minimal(base_size = 13)
 ```
 

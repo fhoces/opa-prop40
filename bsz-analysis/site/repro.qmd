@@ -12,8 +12,8 @@ format:
     embed-resources: true
     fig-align: center
     tbl-cap-location: top
-    theme: cosmo
-    css: repro.css
+    theme: [cosmo, ../../assets/paper.scss]
+    css: [repro.css, ../../assets/paper.css]
 execute:
   echo: true
   warning: false
@@ -635,7 +635,7 @@ band. The 0.025 is the average rate forgone in that band: the Act's rate rises f
 
 The figure compares the two distributions. Each bar is a share of the
 `r bn(par$total_count_proj, 0)` billionaires a Pareto tail puts above \$1 billion. On the left,
-solid red is what Forbes lists and pale red is what it misses. On the right is the Pareto tail
+solid violet is what Forbes lists and pale violet is what it misses. On the right is the Pareto tail
 itself, the shape top wealth usually takes in wealth and tax data.
 
 ```{r}
@@ -658,8 +658,8 @@ d$b <- factor(d$b, levels = labs_b)
 d$part <- factor(d$part, levels = c("missing", "listed by Forbes", "Pareto tail"))
 ggplot(d, aes(b, y, fill = part)) +
   geom_col(width = 0.8) + facet_wrap(~panel) +
-  scale_fill_manual(values = c("missing" = "#d6272840", "listed by Forbes" = "#d62728",
-                               "Pareto tail" = "#1f77b4"), name = NULL) +
+  scale_fill_manual(values = c("missing" = "#6a2f8640", "listed by Forbes" = "#6a2f86",
+                               "Pareto tail" = "#9a9a9a"), name = NULL) +
   scale_y_continuous(labels = function(x) paste0(round(100 * x), "%")) +
   labs(x = "wealth band, $ billion", y = "share of billionaires") +
   theme_minimal(base_size = 13) +

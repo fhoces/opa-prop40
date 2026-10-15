@@ -13,8 +13,8 @@ format:
     embed-resources: true
     fig-align: center
     tbl-cap-location: top
-    theme: cosmo
-    css: repro.css
+    theme: [cosmo, ../../assets/paper.scss]
+    css: [repro.css, ../../assets/paper.css]
 engine: knitr
 execute:
   echo: true
@@ -388,7 +388,7 @@ $$N(y) = A\,y^{-\alpha}, \qquad S(k, n) = \left(\frac{k}{n}\right)^{(\alpha - 1)
 d <- data.frame(y = pf$thresholds, n = pf$filer_counts)
 ggplot(d, aes(y, n)) +
   geom_abline(intercept = log10(pf$A), slope = -pf$alpha, linetype = 2, colour = "grey50") +
-  geom_point(size = 2.5, colour = "#1f6fce") +
+  geom_point(size = 2.5, colour = "#1f6b3b") +
   scale_x_log10(labels = scales::label_dollar(scale = 1e-6, suffix = "M")) +
   scale_y_log10(labels = scales::label_comma()) +
   labs(x = "AGI threshold", y = "Returns above the threshold") +
@@ -535,13 +535,13 @@ expectation. The explorer shows the exact expectations and says so.
 ```{r}
 #| label: f-npv
 #| code-summary: "R code for the NPV distribution figure"
-#| fig-cap: "The distribution of simulated NPV (paper Figure 3, PDF p.35). Draws below zero in orange; the dashed line is the mean."
+#| fig-cap: "The distribution of simulated NPV (paper Figure 3, PDF p.35). Draws below zero in the lighter gray; the dashed line is the mean."
 #| fig-width: 7
 #| fig-height: 3.4
 ggplot(data.frame(npv = mcn$draws$npv), aes(npv, fill = npv < 0)) +
   geom_histogram(binwidth = 5, boundary = 0) +
   geom_vline(xintercept = mean(mcn$draws$npv), linetype = 2) +
-  scale_fill_manual(values = c(`TRUE` = "#eb6834", `FALSE` = "#1f6fce"), guide = "none") +
+  scale_fill_manual(values = c(`TRUE` = "#9a9a9a", `FALSE` = "#555555"), guide = "none") +
   coord_cartesian(xlim = c(-250, 70)) +
   labs(x = "NPV, $B", y = "draws") + theme_minimal(base_size = 11)
 ```

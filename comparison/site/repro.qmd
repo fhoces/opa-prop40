@@ -12,8 +12,8 @@ format:
     embed-resources: true
     fig-align: center
     tbl-cap-location: top
-    theme: cosmo
-    css: repro.css
+    theme: [cosmo, ../../assets/paper.scss]
+    css: [repro.css, ../../assets/paper.css]
 execute:
   echo: false
   warning: false
@@ -526,8 +526,8 @@ for (i in seq_along(B)) {
 wf <- do.call(rbind, rows)
 ggplot(wf) +
   geom_rect(aes(xmin = i - 0.38, xmax = i + 0.38, ymin = pmin(y0, y1), ymax = pmax(y0, y1), fill = fill)) +
-  scale_fill_manual(values = c("an analysis's estimate" = "#5b6873", "model difference" = "#a8b2bb",
-                               "step that raises it" = "#1f6fce", "step that lowers it" = "#eb6834"), name = NULL) +
+  scale_fill_manual(values = c("an analysis's estimate" = "#222222", "model difference" = "#c8c8c8",
+                               "step that raises it" = "#555555", "step that lowers it" = "#9a9a9a"), name = NULL) +
   # horizontal bars, the BSZ estimate at the top, so the labels read on a phone
   scale_x_reverse(breaks = wf$i, labels = wf$short) + coord_flip() +
   labs(x = NULL, y = "$ billion") + theme_minimal(base_size = 12) +

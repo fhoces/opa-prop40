@@ -10,8 +10,8 @@ format:
     code-fold: true
     code-summary: "code"
     embed-resources: true
-    theme: cosmo
-    css: repro.css
+    theme: [cosmo, ../../assets/paper.scss]
+    css: [repro.css, ../../assets/paper.css]
 engine: knitr
 execute:
   echo: false

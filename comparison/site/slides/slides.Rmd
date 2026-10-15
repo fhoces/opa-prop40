@@ -6,7 +6,7 @@ output:
     self_contained: true
     includes:
       in_header: mathjax-config.html
-    css: [default, default-fonts]
+    css: [default, ../../../assets/paper.css, ../../../assets/paper-slides.css]
     nature:
       highlightStyle: github
       highlightLines: true
@@ -119,14 +119,12 @@ and [the materials page](../materials.html), the code, its tests and every expor
 .small { font-size: 80%; }
 .tiny { font-size: 65%; }
 .highlight-box {
-  background: #fff3e0;
-  border-left: 4px solid #e65100;
+  border-left: 1px solid #666666;
   padding: 0.5em 1em;
   margin: 0.5em 0;
 }
 .blue-box {
-  background: #e3f2fd;
-  border-left: 4px solid #1565c0;
+  border-left: 1px solid #666666;
   padding: 0.5em 1em;
   margin: 0.5em 0;
 }
@@ -135,7 +133,7 @@ and [the materials page](../materials.html), the code, its tests and every expor
   color: #5b6873;
   margin: 0 0 14px;
 }
-.site-nav a { color: #1a237e; text-decoration: none; }
+.site-nav a { color: #1d4e89; text-decoration: none; }
 .site-nav a:hover { text-decoration: underline; }
 
 .remark-slide-content.opa-slide { position: relative; z-index: 0; overflow: hidden; }
@@ -144,11 +142,11 @@ and [the materials page](../materials.html), the code, its tests and every expor
 .opa-slide .credit {
   position: absolute; left: 2em; bottom: 48px; font-size: 65%; color: #5b6873;
 }
-.opa-slide .credit a { color: #1a237e; }
+.opa-slide .credit a { color: #1d4e89; }
 .opa-intro { font-size: 92%; max-width: 30em; margin: 0 auto 1.1em; }
 .opa-legend { font-size: 85%; line-height: 1.75; max-width: 34em; margin: 0 auto;
               text-align: left; }
-.opa-intro a, .opa-legend a { color: #1a237e; }
+.opa-intro a, .opa-legend a { color: #1d4e89; }
 .opa-mark {
   position: absolute; top: 26px; right: 34px; height: 190px; width: auto;
   opacity: 0.218; z-index: -1; pointer-events: none;
@@ -160,16 +158,16 @@ table.dt { border-collapse: collapse; width: 100%; font-size: 80%; margin-top: 0
 table.dt td, table.dt th { padding: 4px 8px; border-bottom: 1px solid #e2e7ec; text-align: right; }
 table.dt td:first-child, table.dt th:first-child { text-align: left; }
 table.dt tr.tot td { font-weight: 600; border-top: 2px solid #5b6873; }
-table.dt th { background: #e8eaf6; }
-.og { font-size: 80%; padding: 1px 6px; border-radius: 2px; border: 1px solid #d98a5b; color: #b4541f; white-space: nowrap; }
-.og.data { border-color: #6b9bd6; color: #1f5fae; }
-.og.scenario { border-color: #8a8f96; color: #4a5058; }
+table.dt th { background: none; }
+.og { font-size: 80%; padding: 1px 6px; border: 1px dashed #444444; color: #444444; white-space: nowrap; }
+.og.data { border-style: solid; }
+.og.scenario { border-color: transparent; font-style: italic; }
 .footnote { font-size: 60%; color: #5b6873; bottom: 3.6em; left: 3.4em; padding-right: 6em; }
 .pseudo-eq { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: center;
              gap: 6px 8px; margin: 0.8em 0 0.6em; }
 .pseudo-eq .term { display: inline-flex; flex-direction: column; align-items: center;
                    min-width: 4.5em; max-width: 7.2em; text-align: center;
-                   border: 1px solid #c5cae9; border-radius: 6px; padding: 4px 6px; background: #fafbff; }
+                   padding: 4px 6px; }
 .pseudo-eq .term b { font-size: 120%; font-weight: 600; }
 .pseudo-eq .term small { font-size: 62%; color: #5b6873; line-height: 1.3; }
 .pseudo-eq .op { font-size: 130%; color: #5b6873; padding-top: 8px; }
@@ -189,7 +187,7 @@ Part of the comparison of the two analyses of California Proposition 40:
 # Deck Map
 
 <table style="width:100%; font-size:85%; border-collapse:collapse;">
-<tr style="background:#e8eaf6;"><th style="text-align:left; padding:6px;">Part</th><th style="text-align:left; padding:6px;">What it covers</th><th style="padding:6px;">Starts at</th></tr>
+<tr><th style="text-align:left; padding:6px;">Part</th><th style="text-align:left; padding:6px;">What it covers</th><th style="padding:6px;">Starts at</th></tr>
 <tr><td style="padding:6px;"><b>1. Two estimates</b></td><td style="padding:6px;">The two main estimates, and why they cannot be read against each other as printed</td><td style="text-align:center;"><a href="#estimates">go</a></td></tr>
 <tr><td style="padding:6px;"><b>2. One function</b></td><td style="padding:6px;">The common output, and one estimating function built up one term at a time</td><td style="text-align:center;"><a href="#term-wealth">go</a></td></tr>
 <tr><td style="padding:6px;"><b>3. The bridge</b></td><td style="padding:6px;">Switching one input at a time, Shapley values, and the waterfall</td><td style="text-align:center;"><a href="#shapley-toy">go</a></td></tr>
@@ -442,8 +440,8 @@ ggplot(wf) +
   geom_hline(yintercept = 0, colour = "#5b6873", linewidth = 0.4) +
   geom_rect(aes(xmin = i - 0.38, xmax = i + 0.38, ymin = pmin(y0, y1), ymax = pmax(y0, y1), fill = fill)) +
   geom_text(aes(x = i, y = ly, label = lab, vjust = vj), size = 3.6) +
-  scale_fill_manual(values = c("an analysis's estimate" = "#5b6873", "model difference" = "#a8b2bb",
-                               "step that raises it" = "#1f6fce", "step that lowers it" = "#eb6834"), name = NULL) +
+  scale_fill_manual(values = c("an analysis's estimate" = "#222222", "model difference" = "#c8c8c8",
+                               "step that raises it" = "#555555", "step that lowers it" = "#9a9a9a"), name = NULL) +
   scale_x_continuous(breaks = wf$i, labels = wf$short) +
   scale_y_continuous(expand = expansion(mult = c(0.12, 0.08))) +
   labs(x = NULL, y = "$ billion") + theme_minimal(base_size = 13) +
