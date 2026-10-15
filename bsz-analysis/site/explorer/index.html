@@ -342,7 +342,10 @@
     row.className = "dial";
     var label = document.createElement("div");
     label.className = "label";
-    label.textContent = dial.label;
+    // the name first, small, and the symbol under it, large, as on the comparison explorer
+    var word = document.createElement("span");
+    word.className = "sym-word"; word.textContent = dial.label;
+    label.appendChild(word);
     var sym = document.createElement("span");
     sym.className = "sym"; sym.textContent = dial.sym;
     label.appendChild(sym);
