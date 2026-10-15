@@ -77,6 +77,7 @@
     line-height: 1; color: var(--ink); font-variant-numeric: tabular-nums; }
   .headline .def { font-size: 15px; color: var(--ink-2); line-height: 1.45; margin-top: 2px; }
   .headline .sub { font-size: 12px; color: var(--ink-3); line-height: 1.45; margin-top: 4px; }
+  .headline .sub a { color: var(--series-1); }
   .header-layer { height: 110px; width: auto; opacity: 0.218; align-self: flex-end;
     margin-bottom: 8px; pointer-events: none; }
   @media (max-width: 860px) {
@@ -107,8 +108,22 @@
   .dial:last-child { border-bottom: 0; }
   .dial .label { font-weight: 500; font-size: 14.5px; }
   .dial .label .sym { font-family: var(--mono); font-size: 12.5px; color: var(--ink-3); margin-left: 6px; }
-  .dial .desc { font-size: 12.5px; color: var(--ink-2); line-height: 1.35; margin-top: 1px; }
-  .levels { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 8px; }
+  .dial .desc { font-size: 12.5px; color: var(--ink-2); line-height: 1.4; margin-top: 2px; }
+  .dial .desc a.more { color: var(--series-1); text-decoration: none; margin-left: 4px; }
+  .dial .desc a.more:hover { text-decoration: underline; }
+  .levels { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 8px; position: relative; }
+  /* Each level button has its own short tip, as on the BSZ explorer. A mouse opens it by
+     hovering and keyboard focus opens it too; a touch screen has no hover, so there a tap on a
+     button opens its tip (and selects the level), a second tap closes it, and a tap elsewhere
+     closes it (the script sets .open). The tip spans the row of buttons, so it never runs off a
+     narrow screen. */
+  .levels .tip { display: none; position: absolute; z-index: 30; left: 0; top: calc(100% + 6px);
+                 width: 100%; max-width: 26em; background: var(--panel); color: var(--ink-2);
+                 border: 1px solid var(--rule); border-radius: 4px; padding: 7px 10px;
+                 box-shadow: 0 6px 18px rgba(16, 21, 25, .14); font-family: var(--sans);
+                 font-size: 12.5px; font-weight: 400; line-height: 1.45; pointer-events: none; }
+  @media (hover: hover) { .levels button:hover + .tip { display: block; } }
+  .levels button:focus-visible + .tip, .levels .tip.open { display: block; }
   .levels button {
     font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 13px;
     color: var(--ink-2); background: var(--chip); border: 1px solid transparent;
@@ -157,6 +172,17 @@
   th { color: var(--ink-3); font-weight: 500; }
 
   .note { margin-top: 32px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 12.5px; color: var(--ink-2); }
+  details.fold.notes { margin-top: 28px; border-top: 1px solid var(--rule); padding-top: 10px; font-size: 12.5px; color: var(--ink-2); }
+  details.fold > summary { cursor: pointer; font-size: 13.5px; font-weight: 500; padding: 6px 0; color: var(--ink); }
+  details.fold[open] > summary { margin-bottom: 8px; }
+  details.fold a { color: var(--series-1); }
+  /* On a narrow screen the headline scrolls away while the reader moves the dials, so a thin
+     bar at the top repeats it once the headline is out of view (the script sets .show). */
+  .sticky-result { display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 40;
+                   background: var(--paper); border-bottom: 1px solid var(--rule); padding: 6px 16px;
+                   font-family: var(--mono); font-size: 14px; font-weight: 500; color: var(--ink);
+                   font-variant-numeric: tabular-nums; }
+  @media (max-width: 860px) { .sticky-result.show { display: block; } }
   .note code { font-family: var(--mono); font-size: 11.5px; background: var(--chip); padding: 1px 4px; }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
   footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--ink-3); }
@@ -168,6 +194,7 @@
 </head>
 <body>
 
+<div class="sticky-result" id="sticky" aria-hidden="true">This setting: <span id="sticky-value"></span></div>
 <div class="wrap">
   <p class="site-nav">
     <span class="nav-row">JR analysis of California Proposition 40:
@@ -184,24 +211,19 @@
     <div class="hero-left">
       <h1>What the Billionaire Tax Act is worth to the state, by the JR method</h1>
       <p class="standfirst">
-        Jaros and Rauh (JR; NBER, September 2026; the first version was by Rauh, Jaros, Kearney, Doran
-        and Cosso) estimate the Act's fiscal effect as its one-time wealth tax revenue minus the present
-        value of income tax lost for ever when billionaires leave:
-        NPV = WT &minus; f&middot;C / r, where NPV is the net present value, WT the wealth tax
-        collected once, f the share of the income tax base that leaves, C the annual California
-        income tax that base pays, and r the discount rate. They report the average over 100,000 random draws of
-        those inputs. This page recomputes that average, and the share of draws below zero,
-        for every combination of seven inputs. It is this project's <strong>open output</strong>:
-        all 2,187 combinations are precomputed, so the outcomes update as you click.
+        Jaros and Rauh (JR, NBER, September 2026) find that the one-time billionaire tax leaves
+        California poorer on average. The wealth tax is collected once, but billionaires who leave
+        stop paying income tax for ever. Six of the seven inputs below are guesswork. Move them and
+        the estimate updates.
       </p>
     </div>
     <div class="headline">
       <img class="header-layer" src="../assets/opa/opa-assumptions-solo.png" alt="" aria-hidden="true">
       <span class="name" id="cell-name"></span>
       <span class="value" id="cell-value"></span>
-      <span class="def">Defined as the one-time wealth tax revenue minus the present value of
-        California income tax lost for ever to billionaires who leave (NPV = WT &minus; f&middot;C / r),
-        averaged over the authors' Monte Carlo draws: 100,000 random runs of their model.</span>
+      <span class="def">NPV = WT &minus; f&middot;C / r. The wealth tax collected once (WT), minus the
+        income tax lost for ever when billionaires leave, which is the share that leaves (f) times the
+        yearly tax (C), divided by the discount rate (r). Averaged over 100,000 random draws.</span>
       <span class="sub" id="cell-sub"></span>
     </div>
   </header>
@@ -214,22 +236,18 @@
            to match the named scenarios the real grid exports. -->
       <div class="presets" id="presets"></div>
 
-      <div class="note">
-        <strong>How this grid differs from the paper.</strong> Each cell is the exact
-        expectation of the authors' formula (a closed form, since the draws are independent
-        uniforms) and an exact share of negative outcomes (numerical integration, accurate to
-        about 0.01 points), not a new random draw. At the main estimate's setting this gives
-        <span id="gap-text"></span> The gap is not an error: the paper prints one seeded run of
-        100,000 draws (a run started from a fixed seed number, so it gives the same draws every
-        time). Monte Carlo error on the mean is about &plusmn;0.5 ($B), four standard errors (one
-        standard error is the printed SD, 37.6, over &radic;100,000, about 0.12). The labels
-        after each input name (data, research, guesswork) follow the report's
-        <a href="../repro.html#every-input-by-origin">every input, by origin</a> table. The
-        litigation dial and the growth dial are readings the paper's text states but its code
-        does not implement; see <a href="../materials.html#mismatches">mismatches 3 and 5</a>.
+      <details class="fold notes">
+        <summary>Notes</summary>
+        <p>Each setting shows the exact average of the authors' formula, not a new random run. At
+        the main setting that is <span id="gap-text"></span> The printed figure comes from one
+        seeded run, and the gap is sampling error (<a href="../repro.html#step-npv">report, Step 6</a>).
+        The input labels follow the report's
+        <a href="../repro.html#every-input-by-origin">input table</a>. The litigation and growth dials
+        read the paper's text, which its code does not implement
+        (<a href="../materials.html#mismatches">mismatches 3 and 5</a>).</p>
         <!-- Lesson O3: when the tool departs from the source analysis's own
              convention, say how and give the size of the gap, here. -->
-      </div>
+      </details>
     </section>
 
     <section>
@@ -242,9 +260,8 @@
         <div class="table-scroll">
           <table id="cmp">
             <caption style="caption-side:top; text-align:left; font-size:12px; color:var(--ink-3); padding-bottom:8px;">
-              Exact expectations for the setting you chose, next to the NBER setting (the main
-              estimate); the first row is the authors' printed mean, from their seeded run.
-              $B are billions of dollars, present value at the time the tax is collected.
+              Your setting beside the main estimate. The first row is the authors' printed mean.
+              The others are exact averages. $B: billions of dollars, today's value.
             </caption>
             <thead><tr id="cmp-head"><th>Outcome</th><th>This setting</th></tr></thead>
             <tbody></tbody>
@@ -253,7 +270,8 @@
       </details>
       <p class="fn" id="hl-fn"><sup>1</sup> The main estimate is the authors' own headline: the mean
       NPV in Jaros and Rauh, NBER (the National Bureau of Economic Research) chapter c15504,
-      September 2026 (PDF p.1).</p>
+      September 2026 (PDF p.1). It revises a March 2026 first version by Rauh, Jaros, Kearney,
+      Doran and Cosso.</p>
     </section>
   </div>
   <footer>
@@ -295,6 +313,13 @@
   // ---- build the dial rack from G.dials: no per-dial code here, so a new
   // project's own dials/levels/labels/descriptions just work. -------------
   var rack = document.getElementById("rack");
+  // Tips: a mouse shows a level's tip on hover; a tap shows it, a second tap hides it, one is
+  // open at a time, and a tap elsewhere closes it (the same code as the BSZ explorer).
+  var lastPointer = "mouse";
+  function closeTips(keep) {
+    document.querySelectorAll(".levels .tip.open").forEach(function (t) { if (t !== keep) t.classList.remove("open"); });
+  }
+  function toggleTip(tip) { closeTips(tip); tip.classList.toggle("open"); }
   G.dials.forEach(function (dial, di) {
     var row = document.createElement("div");
     row.className = "dial";
@@ -304,7 +329,7 @@
     label.textContent = dial.label;
     var sym = document.createElement("span");
     sym.className = "sym";
-    sym.textContent = dial.key;
+    sym.textContent = dial.sym;
     label.appendChild(sym);
     if (dial.origin) {
       var og = document.createElement("span");
@@ -313,9 +338,17 @@
       label.appendChild(og);
     }
 
+    // One line of definition, then a plain link to the report section that explains the dial.
     var desc = document.createElement("div");
     desc.className = "desc";
     desc.textContent = dial.desc || "";
+    if (dial.more) {
+      var more = document.createElement("a");
+      more.className = "more";
+      more.href = "../repro.html#" + dial.more;
+      more.textContent = "more";
+      desc.appendChild(more);
+    }
 
     var levels = document.createElement("div");
     levels.className = "levels";
@@ -326,8 +359,23 @@
       var txt = dial.labels ? dial.labels[li] : (+value).toFixed(2);
       b.textContent = txt;
       b.setAttribute("aria-label", dial.label + ", " + txt);
-      b.addEventListener("click", function () { state[di] = li; render(); });
-      levels.appendChild(b);
+      var tip = document.createElement("div");
+      tip.className = "tip"; tip.setAttribute("role", "tooltip");
+      tip.id = "tip-" + dial.key + "-" + li;
+      // The main estimate's level (the authors' NBER value) closes with its kind; the other
+      // levels' tips say whose they are (the first version's, or this OPA's).
+      var authors = li === G.named[MAIN][di];
+      tip.textContent = dial.tips[li] + (authors ? " Kind: " + dial.origin + "." : "");
+      b.setAttribute("aria-describedby", tip.id);
+      // A touch tap toggles this button's tip and closes any other; a mouse click does not
+      // (hover already shows the tip). The tap still selects the level.
+      b.addEventListener("pointerdown", function (e) { lastPointer = e.pointerType; });
+      b.addEventListener("click", function (e) {
+        e.stopPropagation();
+        if (lastPointer === "touch" || lastPointer === "pen") toggleTip(tip);
+        state[di] = li; render();
+      });
+      levels.appendChild(b); levels.appendChild(tip);
     });
 
     row.appendChild(label);
@@ -335,6 +383,7 @@
     row.appendChild(levels);
     rack.appendChild(row);
   });
+  document.addEventListener("click", function () { closeTips(null); });
 
   // ---- preset buttons, one per named scenario in the grid ---------------
   var presets = document.getElementById("presets");
@@ -364,8 +413,8 @@
   function usd(x) { return (x < 0 ? "\u2212$" : "$") + Math.abs(x).toFixed(1); }
   var P = {}; (G.preferred || []).forEach(function (p) { P[p.key] = p; });
   var gt = document.getElementById("gap-text");
-  if (gt && P[MAIN]) gt.textContent = f2(G.snap[namedIdx[MAIN]][0]) + " against the printed " +
-    f1(P[MAIN].printed_npv) + ".";
+  if (gt && P[MAIN]) gt.textContent = f2(G.snap[namedIdx[MAIN]][0]) + ", against the printed " +
+    f1(P[MAIN].printed_npv) + " that the headline shows.";
 
   // The mean NPV the page shows for cell i: at the NBER setting the authors' printed mean
   // (the overview's number), anywhere else this grid's exact expectation.
@@ -424,16 +473,28 @@
     var name = i === namedIdx[MAIN] ? MAIN : null;
     // The headline: at the NBER setting, the authors' printed mean (the overview's number);
     // anywhere else, this grid's exact expectation for the setting on screen.
-    document.getElementById("cell-name").innerHTML = "Main estimate<sup>1</sup>, " +
-      (name ? HEAD[name] + ", as printed" : "a setting the authors did not publish");
+    document.getElementById("cell-name").innerHTML = name
+      ? "Main estimate<sup>1</sup>, " + HEAD[name] + ", as printed"
+      : "This setting (not published by the authors)";
     var p = name ? P[name] : null;
-    document.getElementById("cell-value").textContent = usd(npvOf(i)) + "B";
-    document.getElementById("cell-sub").textContent = p
-      ? "As printed: the mean NPV (" + p.printed_page + "); " + p.printed_pct_negative +
-        "% of draws below zero (p.35, Figure 3 note; the text prints 85%). " +
-        "Seeded rerun of the authors' script (one run of the random draws from a fixed seed number, 2026): " +
-        f2(p.mc_npv) + "; exact expectation of this setting, its average computed by formula: " + f2(snap[0]) + "."
-      : "Exact expectation of the authors' formula at this setting, with " + snap[1].toFixed(1) + "% of outcomes below zero.";
+    var shown = usd(npvOf(i)) + "B";
+    document.getElementById("cell-value").textContent = shown;
+    document.getElementById("sticky-value").textContent = shown;
+    var sub = document.getElementById("cell-sub");
+    sub.textContent = "";
+    if (p) {
+      sub.appendChild(document.createTextNode("As printed (" + p.printed_page + "): " +
+        p.printed_pct_negative + "% of draws fall below zero. This page's exact average: " +
+        f2(snap[0]) + " ("));
+      var why = document.createElement("a");
+      why.href = "../repro.html#step-npv";
+      why.textContent = "why";
+      sub.appendChild(why);
+      sub.appendChild(document.createTextNode(")."));
+    } else {
+      sub.textContent = "Exact average of the authors' formula at this setting. " +
+        snap[1].toFixed(1) + "% of outcomes fall below zero.";
+    }
 
     tbody.textContent = "";
     // First row: the authors' printed mean (their seeded run), the number the box above shows
@@ -475,6 +536,17 @@
 
   render();
   window.addEventListener("resize", function () { drawBars(idx(state)); });
+
+  // The sticky result bar (narrow screens only, by CSS): shown once the headline block has
+  // scrolled out of view above the screen.
+  var hd = document.querySelector(".headline"), bar = document.getElementById("sticky");
+  if (hd && bar && "IntersectionObserver" in window) {
+    new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        bar.classList.toggle("show", !en.isIntersecting && en.boundingClientRect.top < 0);
+      });
+    }).observe(hd);
+  }
 })();
 </script>
 
