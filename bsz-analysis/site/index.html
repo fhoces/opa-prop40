@@ -128,6 +128,9 @@
   }
 
   .card p.lead { margin: 2px 0 14px; }
+  .card h3 a { color: inherit; text-decoration: none; }
+  .card h3 a:hover { text-decoration: underline; }
+  .card p a { color: var(--accent); }
   .card-subgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .subcard {
     display: block; padding: 12px 14px; border: 1px solid var(--rule);
@@ -218,6 +221,9 @@
   details.fold > .fold-body { margin-top: 14px; }
   details.fold:not([open]) > .fold-body { display: none; }
   details.fold > .fold-body > h2 { margin-top: 24px; }
+  details.method { margin: 10px 0 14px; }
+  details.method > summary { cursor: pointer; font-size: 14px; color: var(--accent); }
+  details.method[open] > summary { margin-bottom: 8px; }
   footer .credit { margin: 10px 0 0; font-size: 85%; color: var(--ink-3); }
   /* The two-panel comparison in the last fold: the original analysis beside this OPA. */
   .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 18px 0 4px; }
@@ -249,18 +255,11 @@
   <p class="eyebrow">Open Policy Analysis for:</p>
   <h1>California Proposition 40, Analysis From Boll, Saez, Zucman (BSZ)</h1>
   <p class="byline">
-    Proposition 40, the Billionaire Tax Act, would tax people who lived in California on
-    1 January 2026 and are worth $1 billion or more: once, at 5% of their whole net worth as
-    valued on 31 December 2026, paid in five equal yearly installments. <cite>Boll, Saez and
-    Zucman</cite> (BSZ) estimate it at about $100 billion ($104 billion in their Table 5; NBER
-    Working Paper 35218, August 2026; NBER is the National Bureau of Economic Research, which
-    circulates working papers). This site reproduces that estimate from the paper and its
-    workbook, and marks which of its inputs are data and which are guesses.
-    This site follows the
-    <a href="https://doi.org/10.1093/scipol/scaa067">Open
-    Policy Analysis</a> (OPA) framework, so what the analysis
-    concludes, how it gets there, and what to run yourself stay in separate,
-    checkable places.
+    Proposition 40, the Billionaire Tax Act, would tax California residents worth $1 billion
+    or more, once, at 5% of their net worth. <cite>Boll, Saez and Zucman</cite> (BSZ) estimate
+    it raises about $100 billion. This
+    <a href="https://doi.org/10.1093/scipol/scaa067">Open Policy Analysis</a> (OPA) reproduces
+    that estimate and marks which inputs are data and which are guesses.
   </p>
 </header>
 
@@ -269,13 +268,11 @@
   <span class="value" id="hl-main">$106.8B</span>
   <span class="def">Defined as the wealth tax, plus the extra income tax from assets sold to pay it,
     minus the income tax lost to billionaires who leave, counted over 5 years in today's dollars
-    (present value at 3% a year). The authors' own headline is the wealth tax alone; this total
-    is this OPA's choice (footnote 1).</span>
-  <p class="fn"><sup>1</sup> The main estimate is not the authors' choice: BSZ's headline is the
-    wealth tax alone, about $100 billion in the abstract and $104 billion in Table 5, reproduced
-    here as <span id="hl-wt">$103.8 billion</span>. This OPA uses the total because it compares
-    more directly with the <a href="../../rjkdc-analysis/site/">JR analysis</a>'s net present
-    value; the <a href="../../index.html">comparison overview</a> puts both on one definition.</p>
+    (present value at 3% a year). <a href="repro.html#the-main-estimate">More in the report</a>.</span>
+  <p class="fn"><sup>1</sup> BSZ's headline is the wealth tax alone: $104 billion in their Table 5,
+    <span id="hl-wt">$103.8 billion</span> here. This OPA adds the income tax effects to compare
+    with the <a href="../../rjkdc-analysis/site/">JR analysis</a>.
+    <a href="repro.html#the-main-estimate">Why</a>.</p>
 </div>
 <script src="explorer/grid.js"></script>
 <script>
@@ -337,20 +334,20 @@
     </div>
   </div>
 
-  <a class="card wide" href="https://github.com/fhoces/opa-prop40/tree/main/bsz-analysis">
+  <div class="card wide">
     <div class="card-row">
       <div class="card-text">
         <span class="kicker">Open Materials</span>
-        <h3>Materials for computational reproduction &rarr;</h3>
-        <p>The R pipeline (built with <code>{targets}</code>, the R package that runs the pipeline's steps in order and records which outputs are current), the SQL and Python reproduction from the authors' raw data, the test
-        suite, every exported CSV and the source manifest with checksums. A guided summary is on the
-        materials page, linked in the text below.</p>
+        <h3><a href="https://github.com/fhoces/opa-prop40/tree/main/bsz-analysis">Materials for computational reproduction &rarr;</a></h3>
+        <p>The R pipeline, its Python twin, the SQL that rebuilds several of the workbook's data
+        sheets from raw data the authors shared (not public), the test suite and every exported CSV.
+        A guided tour is on the <a href="materials.html">materials page</a>.</p>
       </div>
       <div class="card-icon-box" aria-hidden="true">
         <img src="assets/opa/opa-materials.png" alt="">
       </div>
     </div>
-  </a>
+  </div>
 </div>
 
 <details class="fold" id="what-the-model-says">
@@ -375,22 +372,16 @@ The other rows are the authors' own sensitivity checks.</p>
 </table>
 </div>
 <p class="fn" style="font-size:12.5px; color:var(--ink-3); margin-top:8px;"><sup>2</sup> Total = wealth tax +
-extra income tax &minus; income tax lost (present value, 5 years at 3%). Whose choice the total is:
-footnote 1 above.</p>
+extra income tax &minus; income tax lost (present value, 5 years at 3%).</p>
 
 <p style="margin-top:14px;">The yearly income tax loss has no end date in Table 5. The authors
 argue it should last about as long as the five payment years; the <a href="../../rjkdc-analysis/site/">JR analysis</a> (Jaros and Rauh; first version Rauh, Jaros, Kearney, Doran and Cosso) counts it forever; BSZ call treating the responses as permanent "the main flaw in the scoring analysis of Rauh et al." (PDF p.22, fn.29). The revenue itself moves with only
 two guesses: the avoidance rate, and whether anyone left California before 1 January 2026.
 See <a href="repro.html#every-input-by-origin">every input, by origin</a>.</p>
-<p style="margin-top:14px;"><strong>What this OPA does not estimate.</strong> Both analyses, and so this OPA, take the
-measure as written (full text in <a href="../../docs/initiative/README.md">docs/initiative/</a>): the
-5% rate, the 1 January 2026 residency date, the 31 December 2026 valuation date and payment in
-five yearly installments, with the wealth tax counted at its face value, not discounted over the
-five years. Neither analysis estimates the day-to-day movement of the Forbes base (GGSS, the
-Galle, Gamage, Saez and Shanske expert report written in support of the measure, note a range of
-$87 billion to $107 billion between January and July 2026, p.4 fn.8). The BSZ analysis alone
-adds the income tax from assets sold to pay the tax; the JR analysis alone weights the revenue
-by the chance the Act survives in court. Nothing is added to either here.</p>
+<p style="margin-top:14px;"><strong>What this OPA does not estimate.</strong> Both analyses take the
+measure as written (<a href="../../docs/initiative/README.md">docs/initiative/</a>). Neither models
+day-to-day moves in the Forbes base. Each adds one thing the other leaves out: the BSZ analysis the
+income tax from asset sales, the JR analysis the chance the Act survives in court.</p>
   </div>
 </details>
 
@@ -410,10 +401,8 @@ by the chance the Act survives in court. Nothing is added to either here.</p>
         within the tolerances the README lists (1e-4 for Table 5; 1e-3 to 1e-2 for the formula
         sheets, where the workbook rounds to cents). Figures are checked for structure and anchor values</td></tr>
     <tr><td>The authors' workbook</td>
-        <td>Four rows of the billionaire list pasted twice (rows 1342 to 1345 repeat 1338 to
-        1341), giving 244 billionaires instead of 240; the pipeline drops the repeat; the
-        workbook's own aggregate sheet and the paper already count 240, so no published number
-        is affected</td></tr>
+        <td>Four rows of the billionaire list appear twice, giving 244 billionaires instead of
+        240. The pipeline drops the repeat. No published number changes</td></tr>
     <tr><td>Not reproduced</td>
         <td>The paper's Figure 8 and Appendix Figure A1 (wealth relative to AGI); the raw data behind the workbook
         (Forbes, tax statistics, SEC filings), which is taken as given</td></tr>
@@ -431,10 +420,14 @@ Test counts, scripts and the source manifest are on the <a href="materials.html"
   <div class="fold-body">
 <p>The numbers on this page reproduce and are tested; what is still
 being completed is the author's own review of each part, recorded in the last column below, and
-the credit interview.</p>
+the author's questionnaire on who did what.</p>
+<p>The author and Claude Code built this together. The table shows who led each object, by group
+of <a href="https://credit.niso.org/">CRediT</a> roles, and how closely the author has checked it.</p>
+<details class="method">
+<summary>How the table was made</summary>
 <p>This work was a collaboration between the author and Claude Code (Opus and Sonnet
 models) across many sessions, not an AI working alone. The table records who led the work on
-each public object of the BSZ analysis, using the <a href="https://credit.niso.org/">CRediT</a>
+each public object of the BSZ analysis, using the CRediT
 contributor roles. The author gave these answers in a questionnaire on 2026-10-01; they were not
 inferred from commit history. The author answered the roles once and applied the same answers
 to every object on all three pages, and answered the verification question object by object.
@@ -445,6 +438,7 @@ formal analysis, investigation, software, validation, visualization) and <em>wri
 is one role, coloured by who led it (key below the table). The last column is not part of
 CRediT. It records how closely the author has checked the object. The role-by-role answers are
 in <a href="https://github.com/fhoces/opa-prop40/blob/main/bsz-analysis/site/credit/CREDIT.md">CREDIT.md</a>.</p>
+</details>
 
 <div class="table-scroll">
 <table class="ai-use">
@@ -486,19 +480,15 @@ original authors have not reviewed it.</p>
 <details class="fold" id="difference">
   <summary><h2>Difference between this OPA and the original analysis</h2></summary>
   <div class="fold-body">
+<p>The claims are the authors'. What this OPA changes is what a reader can check and change.</p>
+
 <p>Everything of substance on this site belongs to the original analysis: Boll, Saez and
    Zucman, <cite><a href="https://www.nber.org/papers/w35218">California Billionaires: Wealth,
    Taxes, and Wealth Tax Revenue Estimates</a></cite>, NBER Working Paper 35218 (August 2026). The
    data work, the method, the four scenarios of Table 5 and every conclusion drawn from them are
    the authors' work. This site adds no data and no new model.</p>
 
-<p>The original analysis publishes all three layers, the third in part. The paper gives the
-   <strong>output</strong> (a wealth tax of about $100 billion, $104 billion in Table 5) and the
-   <strong>details</strong> of how it was produced (the method, the other tables and the figures).
-   The authors also post <strong>materials</strong>: the workbook behind the paper's tables, a
-   public download from Emmanuel Saez's Berkeley web page, whose formulas compute Table 5. The code
-   that builds the workbook's data sheets is not public, and some of the raw data behind them are
-   proprietary. The authors shared a
+<p>The authors shared a
    replication bundle of code and data with this project, on condition that it not be shared
    publicly. The numbers on this page come from the public workbook.</p>
 
@@ -522,8 +512,7 @@ original authors have not reviewed it.</p>
   </figure>
 </div>
 
-<p style="margin-top:14px;">So the difference is not in what is claimed but in what can be
-   checked and changed. This OPA rebuilds Table 5 and most of the paper's tables and figures in R,
+<p style="margin-top:14px;">This OPA rebuilds Table 5 and most of the paper's tables and figures in R,
    with a Python twin and a test suite. It sorts every input by origin: data, research or
    guesswork. Its main estimate nets the income tax effects into one total, which is this OPA's
    choice, not the authors' (footnote 1). The explorer adds settings the authors did not publish.
