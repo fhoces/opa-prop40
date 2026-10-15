@@ -183,13 +183,16 @@
     font-size: 11.5px; line-height: 15px; color: var(--ink); font-weight: 500; white-space: nowrap; }
   .sl-note { display: block; font-size: 11.5px; color: var(--ink-3); font-style: italic; line-height: 1.35; }
   .sl-note:empty { display: none; }
-  /* The explanation of a slider: shown while the pointer is over it or a key has focus in it. */
+  /* The explanation of a slider: shown while the mouse is over it or a key has focus in it.
+     A touch screen has no hover, so there a tap shows it and a second tap hides it (.tip-on). */
   .sl-tip { position: absolute; left: 0; right: 0; bottom: calc(100% - 4px); z-index: 6;
     background: var(--panel); color: var(--ink); border: 1px solid var(--rule); border-radius: 6px;
     padding: 8px 10px; font-size: 12.5px; line-height: 1.45; box-shadow: 0 4px 14px rgba(0,0,0,.14);
     pointer-events: none; visibility: hidden; opacity: 0;
     transition: opacity 120ms ease 250ms, visibility 0s linear 370ms; }
-  .sl:hover .sl-tip, .sl:focus-within .sl-tip { visibility: visible; opacity: 1; transition-delay: 250ms, 0s; }
+  @media (hover: hover) { .sl:hover .sl-tip, .sl:focus-within .sl-tip { visibility: visible; opacity: 1; transition-delay: 250ms, 0s; } }
+  .sl:has(:focus-visible) .sl-tip, .sl.tip-on .sl-tip { visibility: visible; opacity: 1; transition-delay: 0s, 0s; }
+  .sl.tip-on .sl-tip, .info.tip-on .info-tip { pointer-events: auto; }
   .sl-tip b { font-weight: 600; }
   .sl.is-inert .sl-cur { color: var(--ink-3); font-weight: 400; }
   .panel-note { font-size: 12px; color: var(--ink-2); margin: 8px 0 0; line-height: 1.45; }
@@ -220,7 +223,8 @@
     background: var(--panel); color: var(--ink); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px;
     font-size: 12.5px; line-height: 1.45; box-shadow: 0 4px 14px rgba(0,0,0,.14); visibility: hidden; opacity: 0;
     transition: opacity 120ms ease 150ms; pointer-events: none; }
-  .info:hover .info-tip, .info:focus .info-tip { visibility: visible; opacity: 1; }
+  @media (hover: hover) { .info:hover .info-tip, .info:focus .info-tip { visibility: visible; opacity: 1; } }
+  .info:focus-visible .info-tip, .info.tip-on .info-tip { visibility: visible; opacity: 1; }
   .sl label .sym { font-family: var(--serif); font-style: italic; font-size: 18px; font-weight: 600; }
   /* A dial shown by its symbol: the symbol in a narrow left column, the slider beside it. */
   .sl.has-sym { display: grid; grid-template-columns: 58px minmax(0, 1fr); column-gap: 4px; align-items: start; }
@@ -336,12 +340,12 @@
         <li class="sl-box" role="group" aria-labelledby="bsz-revenue-head">
           <div class="sl-box-head">
             <p class="box-eq" id="bsz-revenue-head">Wealth tax collected = 5% &times; (W &minus; D) &times; (1 &minus; a) &times; q</p>
-            <p class="box-lead">The wealth on the list, less what has already left, less avoidance, times the chance the tax survives in court. <span class="info" tabindex="0" aria-describedby="bsz-revenue-more">more<span class="info-tip" role="tooltip" id="bsz-revenue-more">The four dials multiply each other, so the effect of one depends on where the others stand. W and D are valued on the same Forbes list. Hover over a dial for what each analysis assumes.</span></span></p>
+            <p class="box-lead">The wealth on the list, less what has already left, less avoidance, times the chance the tax survives in court. <span class="info" tabindex="0" aria-describedby="bsz-revenue-more">more<span class="info-tip" role="tooltip" id="bsz-revenue-more">The four dials multiply each other, so the effect of one depends on where the others stand. W and D are valued on the same Forbes list. Hover over or tap a dial for what each analysis assumes.</span></span></p>
           </div>
           <ul class="sl-list">
         <li class="sl has-sym" data-id="base_list">
           <label for="bsz-base_list"><b><span class="sym">W</span></b> <span class="sl-title"><span class="sr">Forbes source</span></span></label>
-          <span class="sl-tip" role="tooltip" id="bsz-base_list-tip">W, forbes source. Which Forbes list the base comes from, and so the wealth the tax applies to before departures and behaviour. Forbes 2026: the BSZ analysis values California's billionaires on 1 July 2026 (250 people, $2,157 billion without the non-US citizens). Forbes 2025: the JR analysis takes the 2025 list (212 people, with Ellison, Houston and Snyder removed and Sacks added) and grows it 7% to the 31 December 2026 valuation date ($2,027 billion). Two positions: one list or the other. Kind: data.</span>
+          <span class="sl-tip" role="tooltip" id="bsz-base_list-tip">W, Forbes source. Which Forbes list the base comes from, and so the wealth the tax applies to before departures and behaviour. Forbes 2026: the BSZ analysis values California's billionaires on 1 July 2026 (250 people, $2,157 billion without the non-US citizens). Forbes 2025: the JR analysis takes the 2025 list (212 people, with Ellison, Houston and Snyder removed and Sacks added) and grows it 7% to the 31 December 2026 valuation date ($2,027 billion). Two positions: one list or the other. Kind: data.</span>
           <div class="sl-row"><span class="sl-end sl-lo">Forbes 2026</span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0"></i><i style="--t:1"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-base_list" min="0" max="1" step="1" value="0" data-panel="bsz" data-id="base_list" aria-describedby="bsz-base_list-tip"><output class="sl-cur" for="bsz-base_list">Forbes 2026</output></span><span class="sl-end sl-hi">Forbes 2025</span></div>
           <span class="sl-note"></span>
         </li>
@@ -368,7 +372,7 @@
         <li class="sl-box" role="group" aria-labelledby="bsz-loss-head">
           <div class="sl-box-head">
             <p class="box-eq" id="bsz-loss-head">Income tax lost = f &times; C &times; A(H)</p>
-            <p class="box-lead">The share of billionaires' income tax that leaves, times that income tax per year, counted over H years. <span class="info" tabindex="0" aria-describedby="bsz-loss-more">more<span class="info-tip" role="tooltip" id="bsz-loss-more">A(H) is what $1 a year for H years is worth today, at the 1.5% to 4.5% discount rates both analyses use: about 5 for 5 years, about 37 for ever. The three dials multiply each other. In the BSZ analysis f also follows D in the box above. Hover over a dial for what each analysis assumes.</span></span></p>
+            <p class="box-lead">The share of billionaires' income tax that leaves, times that income tax per year, counted over H years. <span class="info" tabindex="0" aria-describedby="bsz-loss-more">more<span class="info-tip" role="tooltip" id="bsz-loss-more">A(H) is what $1 a year for H years is worth today, at the 1.5% to 4.5% discount rates both analyses use: about 5 for 5 years, about 37 for ever. The three dials multiply each other. In the BSZ analysis f also follows D in the box above. Hover over or tap a dial for what each analysis assumes.</span></span></p>
           </div>
           <ul class="sl-list">
         <li class="sl has-sym" data-id="income_loss_share">
@@ -442,12 +446,12 @@
         <li class="sl-box" role="group" aria-labelledby="rjkdc-revenue-head">
           <div class="sl-box-head">
             <p class="box-eq" id="rjkdc-revenue-head">Wealth tax collected = 5% &times; (W &minus; D) &times; (1 &minus; a) &times; q</p>
-            <p class="box-lead">The wealth on the list, less what has already left, less avoidance, times the chance the tax survives in court. <span class="info" tabindex="0" aria-describedby="rjkdc-revenue-more">more<span class="info-tip" role="tooltip" id="rjkdc-revenue-more">The four dials multiply each other, so the effect of one depends on where the others stand. W and D are valued on the same Forbes list. Hover over a dial for what each analysis assumes.</span></span></p>
+            <p class="box-lead">The wealth on the list, less what has already left, less avoidance, times the chance the tax survives in court. <span class="info" tabindex="0" aria-describedby="rjkdc-revenue-more">more<span class="info-tip" role="tooltip" id="rjkdc-revenue-more">The four dials multiply each other, so the effect of one depends on where the others stand. W and D are valued on the same Forbes list. Hover over or tap a dial for what each analysis assumes.</span></span></p>
           </div>
           <ul class="sl-list">
         <li class="sl has-sym" data-id="base_list">
           <label for="rjkdc-base_list"><b><span class="sym">W</span></b> <span class="sl-title"><span class="sr">Forbes source</span></span></label>
-          <span class="sl-tip" role="tooltip" id="rjkdc-base_list-tip">W, forbes source. Which Forbes list the base comes from, and so the wealth the tax applies to before departures and behaviour. Forbes 2026: the BSZ analysis values California's billionaires on 1 July 2026 (250 people, $2,157 billion without the non-US citizens). Forbes 2025: the JR analysis takes the 2025 list (212 people, with Ellison, Houston and Snyder removed and Sacks added) and grows it 7% to the 31 December 2026 valuation date ($2,027 billion). Two positions: one list or the other. Kind: data.</span>
+          <span class="sl-tip" role="tooltip" id="rjkdc-base_list-tip">W, Forbes source. Which Forbes list the base comes from, and so the wealth the tax applies to before departures and behaviour. Forbes 2026: the BSZ analysis values California's billionaires on 1 July 2026 (250 people, $2,157 billion without the non-US citizens). Forbes 2025: the JR analysis takes the 2025 list (212 people, with Ellison, Houston and Snyder removed and Sacks added) and grows it 7% to the 31 December 2026 valuation date ($2,027 billion). Two positions: one list or the other. Kind: data.</span>
           <div class="sl-row"><span class="sl-end sl-lo">Forbes 2026</span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0"></i><i style="--t:1"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-base_list" min="0" max="1" step="1" value="0" data-panel="rjkdc" data-id="base_list" aria-describedby="rjkdc-base_list-tip" dir="rtl"><output class="sl-cur" for="rjkdc-base_list">Forbes 2025</output></span><span class="sl-end sl-hi">Forbes 2025</span></div>
           <span class="sl-note"></span>
         </li>
@@ -474,7 +478,7 @@
         <li class="sl-box" role="group" aria-labelledby="rjkdc-loss-head">
           <div class="sl-box-head">
             <p class="box-eq" id="rjkdc-loss-head">Income tax lost = f &times; C &times; A(H)</p>
-            <p class="box-lead">The share of billionaires' income tax that leaves, times that income tax per year, counted over H years. <span class="info" tabindex="0" aria-describedby="rjkdc-loss-more">more<span class="info-tip" role="tooltip" id="rjkdc-loss-more">A(H) is what $1 a year for H years is worth today, at the 1.5% to 4.5% discount rates both analyses use: about 5 for 5 years, about 37 for ever. The three dials multiply each other. In the BSZ analysis f also follows D in the box above. Hover over a dial for what each analysis assumes.</span></span></p>
+            <p class="box-lead">The share of billionaires' income tax that leaves, times that income tax per year, counted over H years. <span class="info" tabindex="0" aria-describedby="rjkdc-loss-more">more<span class="info-tip" role="tooltip" id="rjkdc-loss-more">A(H) is what $1 a year for H years is worth today, at the 1.5% to 4.5% discount rates both analyses use: about 5 for 5 years, about 37 for ever. The three dials multiply each other. In the BSZ analysis f also follows D in the box above. Hover over or tap a dial for what each analysis assumes.</span></span></p>
           </div>
           <ul class="sl-list">
         <li class="sl has-sym" data-id="income_loss_share">
@@ -785,6 +789,24 @@
     });
   });
   renderPanels();
+
+  // A touch screen has no hover. A tap on a dial, or on "more", shows its explanation; a second
+  // tap, or a tap anywhere else, hides it. Sliding a dial is not a tap, so it leaves tips alone.
+  var tapAt = null;
+  document.addEventListener("pointerdown", function (e) {
+    tapAt = e.pointerType === "touch" ? { x: e.clientX, y: e.clientY } : null;
+  }, true);
+  document.addEventListener("pointercancel", function () { tapAt = null; }, true);
+  document.addEventListener("pointerup", function (e) {
+    if (!tapAt || e.pointerType !== "touch") return;
+    var moved = Math.abs(e.clientX - tapAt.x) + Math.abs(e.clientY - tapAt.y) > 10;
+    tapAt = null;
+    if (moved) return;
+    var host = e.target.closest ? e.target.closest(".info, .sl") : null;
+    var show = host && !host.classList.contains("tip-on");
+    Array.prototype.slice.call(document.querySelectorAll(".tip-on")).forEach(function (h) { h.classList.remove("tip-on"); });
+    if (show) host.classList.add("tip-on");
+  }, true);
 })();
 </script>
 

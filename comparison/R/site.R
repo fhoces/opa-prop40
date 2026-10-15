@@ -95,11 +95,11 @@ EXPLORER_BOXES <- list(
   revenue = list(ids = c("base_list", "confirmed_departures", "avoidance", "litigation_survival"),
                  eq = "Wealth tax collected = 5% &times; (W &minus; D) &times; (1 &minus; a) &times; q",
                  lead = "The wealth on the list, less what has already left, less avoidance, times the chance the tax survives in court.",
-                 more = "The four dials multiply each other, so the effect of one depends on where the others stand. W and D are valued on the same Forbes list. Hover over a dial for what each analysis assumes."),
+                 more = "The four dials multiply each other, so the effect of one depends on where the others stand. W and D are valued on the same Forbes list. Hover over or tap a dial for what each analysis assumes."),
   loss = list(ids = c("income_loss_share", "income_level", "horizon"),
               eq = "Income tax lost = f &times; C &times; A(H)",
               lead = "The share of billionaires' income tax that leaves, times that income tax per year, counted over H years.",
-              more = "A(H) is what $1 a year for H years is worth today, at the 1.5% to 4.5% discount rates both analyses use: about 5 for 5 years, about 37 for ever. The three dials multiply each other. In the BSZ analysis f also follows D in the box above. Hover over a dial for what each analysis assumes."))
+              more = "A(H) is what $1 a year for H years is worth today, at the 1.5% to 4.5% discount rates both analyses use: about 5 for 5 years, about 37 for ever. The three dials multiply each other. In the BSZ analysis f also follows D in the box above. Hover over or tap a dial for what each analysis assumes."))
 # Each dial shows only its symbol; the name and the explanation are in its hover box.
 DIAL_SYMBOLS <- c(base_list = "W", confirmed_departures = "D", avoidance = "a",
                   litigation_survival = "q", income_loss_share = "f", income_level = "C",
@@ -286,7 +286,7 @@ render_site <- function(root = comparison_root(),
   step_row <- function(panel, id) {
     i <- match(id, steps$step_id); tx <- dial_texts(inp, id)
     slider_row(panel, id, unname(DIAL_SYMBOLS[id]), unname(short_labels[id]),
-               paste0(DIAL_SYMBOLS[[id]], ", ", tolower(unname(short_labels[id])), ". ", slider_tips[[id]]),
+               paste0(DIAL_SYMBOLS[[id]], ", ", sub("^forbes", "Forbes", tolower(unname(short_labels[id]))), ". ", slider_tips[[id]]),
                tx$bsz, tx$rjkdc, slider_max(id), sym = TRUE)
   }
   box <- function(panel, key) {

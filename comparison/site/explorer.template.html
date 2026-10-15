@@ -183,13 +183,16 @@
     font-size: 11.5px; line-height: 15px; color: var(--ink); font-weight: 500; white-space: nowrap; }
   .sl-note { display: block; font-size: 11.5px; color: var(--ink-3); font-style: italic; line-height: 1.35; }
   .sl-note:empty { display: none; }
-  /* The explanation of a slider: shown while the pointer is over it or a key has focus in it. */
+  /* The explanation of a slider: shown while the mouse is over it or a key has focus in it.
+     A touch screen has no hover, so there a tap shows it and a second tap hides it (.tip-on). */
   .sl-tip { position: absolute; left: 0; right: 0; bottom: calc(100% - 4px); z-index: 6;
     background: var(--panel); color: var(--ink); border: 1px solid var(--rule); border-radius: 6px;
     padding: 8px 10px; font-size: 12.5px; line-height: 1.45; box-shadow: 0 4px 14px rgba(0,0,0,.14);
     pointer-events: none; visibility: hidden; opacity: 0;
     transition: opacity 120ms ease 250ms, visibility 0s linear 370ms; }
-  .sl:hover .sl-tip, .sl:focus-within .sl-tip { visibility: visible; opacity: 1; transition-delay: 250ms, 0s; }
+  @media (hover: hover) { .sl:hover .sl-tip, .sl:focus-within .sl-tip { visibility: visible; opacity: 1; transition-delay: 250ms, 0s; } }
+  .sl:has(:focus-visible) .sl-tip, .sl.tip-on .sl-tip { visibility: visible; opacity: 1; transition-delay: 0s, 0s; }
+  .sl.tip-on .sl-tip, .info.tip-on .info-tip { pointer-events: auto; }
   .sl-tip b { font-weight: 600; }
   .sl.is-inert .sl-cur { color: var(--ink-3); font-weight: 400; }
   .panel-note { font-size: 12px; color: var(--ink-2); margin: 8px 0 0; line-height: 1.45; }
@@ -220,7 +223,8 @@
     background: var(--panel); color: var(--ink); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px;
     font-size: 12.5px; line-height: 1.45; box-shadow: 0 4px 14px rgba(0,0,0,.14); visibility: hidden; opacity: 0;
     transition: opacity 120ms ease 150ms; pointer-events: none; }
-  .info:hover .info-tip, .info:focus .info-tip { visibility: visible; opacity: 1; }
+  @media (hover: hover) { .info:hover .info-tip, .info:focus .info-tip { visibility: visible; opacity: 1; } }
+  .info:focus-visible .info-tip, .info.tip-on .info-tip { visibility: visible; opacity: 1; }
   .sl label .sym { font-family: var(--serif); font-style: italic; font-size: 18px; font-weight: 600; }
   /* A dial shown by its symbol: the symbol in a narrow left column, the slider beside it. */
   .sl.has-sym { display: grid; grid-template-columns: 58px minmax(0, 1fr); column-gap: 4px; align-items: start; }
@@ -608,6 +612,24 @@
     });
   });
   renderPanels();
+
+  // A touch screen has no hover. A tap on a dial, or on "more", shows its explanation; a second
+  // tap, or a tap anywhere else, hides it. Sliding a dial is not a tap, so it leaves tips alone.
+  var tapAt = null;
+  document.addEventListener("pointerdown", function (e) {
+    tapAt = e.pointerType === "touch" ? { x: e.clientX, y: e.clientY } : null;
+  }, true);
+  document.addEventListener("pointercancel", function () { tapAt = null; }, true);
+  document.addEventListener("pointerup", function (e) {
+    if (!tapAt || e.pointerType !== "touch") return;
+    var moved = Math.abs(e.clientX - tapAt.x) + Math.abs(e.clientY - tapAt.y) > 10;
+    tapAt = null;
+    if (moved) return;
+    var host = e.target.closest ? e.target.closest(".info, .sl") : null;
+    var show = host && !host.classList.contains("tip-on");
+    Array.prototype.slice.call(document.querySelectorAll(".tip-on")).forEach(function (h) { h.classList.remove("tip-on"); });
+    if (show) host.classList.add("tip-on");
+  }, true);
 })();
 </script>
 
