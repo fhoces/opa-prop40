@@ -34,3 +34,10 @@ When an OPA is complete:
 
 Files this handoff owns: `*/site/credit/*`, the credit fold on the JR and comparison overview
 pages, and this folder. The other session will not edit them.
+
+## Status: complete (2026-10-15)
+
+All ten objects answered. Confirmed with the author: Funding acquisition and Resources are N/A on
+JR Slides, JR Repository, and the comparison Report, Slides and Repository. The comparison Explorer
+and Overview page keep Resources = AI lead, stated in a sentence on the page (Resources is in none of
+the three groups). Both CREDIT.md files and both overview tables are rebuilt from these answers.
