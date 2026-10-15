@@ -16,6 +16,49 @@ test_that("the explorer loads the data file with the hash of its content", {
   expect_true(grepl(sprintf('comparison-data.js?v=%s"', h), read_page(explorer), fixed = TRUE))
 })
 
+test_that("the BSZ panel's Apply block repeats the equation's labels in words, each button with its term's dials", {
+  dp <- read_csv_plain(file.path(root, "comparison", "export", "r", "dial_path.csv"))
+  html <- read_page(explorer)
+  eq <- regmatches(html, regexpr('<div class="pseudo-eq".*?</div>', html))
+  ap <- regmatches(html, regexpr('<div class="apply-eq".*?</div>', html))
+  expect_length(ap, 1)
+  # inside the BSZ panel, after its head and before its first box; the JR panel has none
+  at <- function(x) regexpr(x, html, fixed = TRUE)[[1]]
+  expect_gt(at('<div class="apply-eq"'), at('<p class="ph-now">With these sliders <b id="now-bsz"'))
+  expect_lt(at('<div class="apply-eq"'), at('<span id="bsz-revenue-head">Wealth tax collected</span>'))
+  expect_identical(lengths(regmatches(html, gregexpr('class="apply-eq"', html, fixed = TRUE))), 1L)
+  # the same six labels as the top equation, in order, and no amounts
+  top <- regmatches(eq, gregexpr("(?<=<small>)[^<]*(?=</small>)", eq, perl = TRUE))[[1]]
+  terms <- regmatches(ap, gregexpr('<span class="ap-term">.*?</button></span></span>', ap))[[1]]
+  words <- trimws(gsub("&nbsp;", " ", gsub("<[^>]*>", "", sub("<button.*$", "", terms)), fixed = TRUE))
+  expect_length(top, 6)
+  expect_identical(words, top)
+  expect_false(grepl("$", ap, fixed = TRUE))
+  # the buttons: Reset, one Apply per middle term, Apply all
+  btn <- regmatches(ap, gregexpr("<button[^>]*>[^<]*</button>", ap))[[1]]
+  expect_identical(sub(".*>([^<]*)</button>$", "\\1", btn), c("Reset", rep("Apply", 4), "Apply all"))
+  dials <- strsplit(sub('.*data-dials="([^"]*)".*', "\\1", btn), " ", fixed = TRUE)
+  # each middle term's dials, from the grouping rule (D, q, the loss box, the rest) with the
+  # minor switch read as its three dials
+  main <- match(c("confirmed_departures", "litigation_survival"), dp$step_id)
+  loss <- match(c("income_loss_share", "income_level", "horizon", "discount_rate"), dp$step_id)
+  rest <- setdiff(seq_len(nrow(dp)), c(main, loss))
+  expand <- function(i) unlist(lapply(dp$step_id[i], function(id) if (id == "minor_inputs") EXPLORER_MINOR else id))
+  want <- list(expand(main[1]), expand(main[2]), expand(loss), expand(rest))
+  expect_identical(want[[4]], c("base_list", "avoidance", "noncitizens", "real_estate", "asset_sales"))
+  expect_identical(dials[2:5], want)
+  expect_identical(dials[2:5], eq_term_dials(dp))
+  expect_identical(dials[[1]], unlist(want))
+  expect_identical(dials[[6]], unlist(want))
+  # every dial of the BSZ panel except the switch, once each
+  ids <- regmatches(html, gregexpr('(?<=data-panel="bsz" data-id=")[a-z_]+', html, perl = TRUE))[[1]]
+  expect_setequal(dials[[1]], setdiff(ids, "minor_inputs"))
+  # each Apply button names the top term it marks, and starts unpressed
+  steps <- sub('.*data-steps="([^"]*)".*', "\\1", btn[2:5])
+  for (st in steps) expect_true(grepl(sprintf('<span class="term" data-steps="%s">', st), eq, fixed = TRUE), label = st)
+  expect_true(all(grepl('aria-pressed="false"', btn[2:5], fixed = TRUE)))
+})
+
 test_that("both pages carry the pseudo-equation: D and q, the loss box added up, the rest added up, BSZ to JR", {
   en <- read_csv_plain(file.path(root, "comparison", "export", "r", "ends.csv"))
   eb <- en[en$horizon_setting == "own" & en$output == "b", ]

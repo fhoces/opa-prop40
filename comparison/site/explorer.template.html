@@ -223,6 +223,21 @@
   .pseudo-eq .term.is-walk { outline: 2px solid var(--walk, var(--ink-3)); outline-offset: 3px; }
   .pseudo-eq[data-walk="bsz"] { --walk: var(--bsz); }
   .pseudo-eq[data-walk="rjkdc"] { --walk: var(--jr); }
+  /* A term the BSZ panel's Apply block has applied (all its dials at the JR values). */
+  .pseudo-eq .term.is-applied { outline: 2px solid var(--bsz); outline-offset: 3px; }
+  /* The Apply block: the equation above in words, inside the BSZ panel above its first box,
+     a small button after each term (paper look: text face, square corners, ink and link only). */
+  .apply-eq { margin: 0 0 6px; padding: 0 0 7px; border-bottom: 1px solid var(--rule-2);
+    font-family: var(--serif); font-size: 12.5px; line-height: 1.8; color: var(--ink); }
+  .ap-op { color: var(--ink); margin: 0 1px; }
+  .ap-tie { white-space: nowrap; }
+  .ap-btn { font-family: var(--serif); font-size: 12px; line-height: 1.25; padding: 0 5px; margin: 0 2px 0 1px;
+    color: var(--link); background: transparent; border: 1px solid var(--link); border-radius: 0;
+    cursor: pointer; white-space: nowrap; vertical-align: 1px; touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent; }
+  .ap-btn[aria-pressed="true"] { color: var(--ink); border-color: var(--ink); font-weight: 600; }
+  @media (hover: hover) { .ap-btn:hover { text-decoration: underline; } }
+  .ap-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
   .eq-note { font-size: 12.5px; color: var(--ink-2); margin: 10px 0 0; line-height: 1.45; max-width: 62em; }
   .eq-note a { color: var(--link); }
   @media (max-width: 980px) {
@@ -320,6 +335,7 @@
           <p class="ph-src">The BSZ analysis's main estimate<sup>1</sup> (Boll, Saez and Zucman, August 2026)</p>
           <p class="ph-now">With these sliders <b id="now-bsz" aria-live="polite">{{bsz_end_b}}</b></p>
         </div>
+{{apply_eq}}
         <ul class="sl-list" aria-label="The BSZ panel's sliders">
 {{sliders_bsz}}
         </ul>
@@ -614,7 +630,7 @@
     svg.setAttribute("data-bsz", vb.toFixed(9));
     svg.setAttribute("data-rjkdc", vr.toFixed(9));
   }
-  function renderPanels() { PANELS.forEach(updatePanel); drawBars(); }
+  function renderPanels() { PANELS.forEach(updatePanel); drawBars(); syncApply(); }
   function minorSwitch(panel) { return SL[panel].filter(function (i) { return i.dataset.id === "minor_inputs"; })[0]; }
   function minorDials(panel) { return SL[panel].filter(function (i) { return MINOR.indexOf(i.dataset.id) >= 0; }); }
   PANELS.forEach(function (p) {
@@ -671,6 +687,37 @@
       if (WALK[p] === NP) { setWalk(p, 0); endWalk(p); } else setWalk(p, WALK[p] + 1);
     });
     SL[p].forEach(function (inp) { inp.addEventListener("input", function () { endWalk(p); }); });
+  });
+  // ---- Apply: the equation in words above the BSZ panel's first box. A term's button moves
+  // its dials (data-dials) to the JR end, or back if they are all there already; "Reset" and
+  // "Apply all" move every dial. A press does what a hand move does: the minor switch follows
+  // its three dials, the walk ends, the panel recomputes. renderPanels() calls syncApply(), so
+  // the buttons follow the dials however they moved (by hand, the walk, the panel's Reset):
+  // a term shows "Applied" and is marked in the top equation when all its dials are at the JR end.
+  var AP = Array.prototype.slice.call(document.querySelectorAll(".apply-eq .ap-btn"));
+  function dialsOf(btn) { return btn.dataset.dials.split(" "); }
+  function bszDial(id) { return $("bsz-" + id); }
+  function atJR(ids) { return ids.every(function (id) { var d = bszDial(id); return +d.value === +d.max; }); }
+  function syncApply() {
+    if (!AP) return;
+    AP.forEach(function (b) {
+      if (b.dataset.act !== "term") return;
+      var on = atJR(dialsOf(b));
+      b.setAttribute("aria-pressed", on ? "true" : "false");
+      b.textContent = on ? "Applied" : "Apply";
+      var t = EQ && EQ.querySelector('.term[data-steps="' + b.dataset.steps + '"]');
+      if (t) t.classList.toggle("is-applied", on);
+    });
+  }
+  AP.forEach(function (b) {
+    b.addEventListener("click", function () {
+      var ids = dialsOf(b), act = b.dataset.act;
+      var to = act === "all" ? true : act === "reset" ? false : !atJR(ids);
+      ids.forEach(function (id) { var d = bszDial(id); d.value = to ? d.max : "0"; });
+      minorSwitch("bsz").value = minorDials("bsz").every(function (d) { return +d.value === +d.max; }) ? "1" : "0";
+      endWalk("bsz");
+      renderPanels();
+    });
   });
   Array.prototype.slice.call(document.querySelectorAll("button.reset:not(.walk)")).forEach(function (btn) {
     btn.addEventListener("click", function () {
