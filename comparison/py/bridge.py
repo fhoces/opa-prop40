@@ -185,6 +185,33 @@ def slider_sample(sup, rauh, ladder, n=300, seed=20261014):
     return rows
 
 
+# The dial path (twin of dial_path() in R/model.R): the BSZ panel with every dial at 0, the
+# dials moved in the explorer's order, each to its far end; the minor switch moves its three
+# inputs together. A term is what one move changes.
+EXPLORER_MINOR = ["noncitizens", "real_estate", "asset_sales"]
+EXPLORER_DIAL_ORDER = ["base_list", "confirmed_departures", "avoidance", "litigation_survival",
+                       "income_loss_share", "income_level", "horizon", "minor_inputs"]
+DIAL_PATH_SYMBOLS = {"base_list": "W", "confirmed_departures": "D", "avoidance": "a",
+                     "litigation_survival": "q", "income_loss_share": "f", "income_level": "C",
+                     "horizon": "H", "minor_inputs": "minor"}
+
+
+def dial_path(sup, rauh, ladder, order=EXPLORER_DIAL_ORDER):
+    titles = {s[0]: s[2] for s in STEPS}
+    titles["minor_inputs"] = "Three minor inputs"
+    pos = {}
+    prev = slider_value(sup, rauh, "bsz", pos, ladder)
+    rows = []
+    for k, id in enumerate(order, start=1):
+        for d in (EXPLORER_MINOR if id == "minor_inputs" else [id]):
+            pos[d] = slider_max(d)
+        cur = slider_value(sup, rauh, "bsz", pos, ladder)
+        rows.append({"step": k, "step_id": id, "symbol": DIAL_PATH_SYMBOLS[id], "title": titles[id],
+                     "from": prev, "to": cur, "change": cur - prev})
+        prev = cur
+    return rows
+
+
 def coalition_values(sup, rauh, players, output):
     """v[mask]: score_common() with the players whose bit is set (bit i = players[i]) at the
     JR value and the rest at the BSZ value. The explorer's switchboard reads these."""
@@ -373,7 +400,8 @@ def build_all(k):
             {"key": "f_rauh", "value": s_r["f"]}, {"key": "C_rauh", "value": rauh["C"]}]
     return {"bridge": bridge, "ends": ends, "endpoints": endpoints, "anchors": anchors,
             "loss": loss, "hoopes": hoopes, "meta": meta, "switchboard": board,
-            "slider_sample": slider_sample(sup, rauh, ladder)}
+            "slider_sample": slider_sample(sup, rauh, ladder),
+            "dial_path": dial_path(sup, rauh, ladder)}
 
 
 def fmt(v):

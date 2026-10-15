@@ -187,6 +187,41 @@ slider_sample <- function(bi, n = 300, seed = 20261014) {
   out
 }
 
+# The dial path (author decision 2026-10-15): the pseudo-equation and the report's bridge
+# read one path through the explorer's own dials, not Shapley averages. Start from the BSZ
+# panel with every dial at 0 (the BSZ values) and move the dials in the order the explorer
+# prints them, each to its far end (the JR value); a term is what one move changes. The
+# order is the revenue box's dials, the loss box's dials, then the minor switch, which moves
+# its three inputs (noncitizens, real_estate, asset_sales) together. site.R checks that this
+# is the page's order. The JR panel walks the same states in reverse.
+EXPLORER_MINOR <- c("noncitizens", "real_estate", "asset_sales")
+EXPLORER_DIAL_ORDER <- c("base_list", "confirmed_departures", "avoidance", "litigation_survival",
+                         "income_loss_share", "income_level", "horizon", "minor_inputs")
+DIAL_PATH_SYMBOLS <- c(base_list = "W", confirmed_departures = "D", avoidance = "a",
+                       litigation_survival = "q", income_loss_share = "f", income_level = "C",
+                       horizon = "H", minor_inputs = "minor")
+DIAL_PATH_TITLES <- c(minor_inputs = "Three minor inputs")
+dial_ids <- function(id) if (id == "minor_inputs") EXPLORER_MINOR else id
+dial_path <- function(bi, order = EXPLORER_DIAL_ORDER) {
+  st <- bridge_steps()
+  pos <- list()
+  prev <- slider_value(bi, "bsz", pos)
+  rows <- lapply(seq_along(order), function(k) {
+    id <- order[k]
+    for (d in dial_ids(id)) pos[[d]] <<- slider_max(d)
+    cur <- slider_value(bi, "bsz", pos)
+    title <- if (id %in% names(DIAL_PATH_TITLES)) DIAL_PATH_TITLES[[id]] else st$title[st$step_id == id]
+    out <- data.frame(step = k, step_id = id, symbol = DIAL_PATH_SYMBOLS[[id]], title = title,
+                      from = prev, to = cur, change = cur - prev, stringsAsFactors = FALSE)
+    prev <<- cur
+    out
+  })
+  out <- do.call(rbind, rows)
+  out$step <- as.integer(out$step)
+  rownames(out) <- NULL
+  out
+}
+
 # The value of every coalition: v[mask + 1] is score_common() with the players whose bit
 # is set in `mask` (bit i-1 = players[i]) at the JR value and the rest at the BSZ value.
 # mask 0 is the all-BSZ setting, mask 2^n - 1 the all-JR one (comparison/export/r/switchboard.csv).
