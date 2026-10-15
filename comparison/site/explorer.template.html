@@ -503,11 +503,23 @@
     var other = panel === "bsz" ? "rjkdc" : "bsz";
     if (id === "minor_inputs") return (p === 0) === (panel === "bsz") ? "BSZ values" : "JR values";
     var e = INPUT[id];
+    if (id === "income_loss_share") return pct(fEnds(panel)[p === 0 ? panel : other]);
     if (p === 0) return e[panel + "_text"];
     if (p === e.max) return e[other + "_text"];
     if (id === "confirmed_departures")   // the middle stop: the BSZ analysis's own four leavers
       return "BSZ four, " + fmtValue("W_core", (1 - x.lam) * x.dep_b + x.lam * x.dep_j);
     return fmtValue(e.input[0], x[e.input[0]]);
+  }
+  // The share-lost dial's two ends: f under each analysis's rule, with every other dial where
+  // it stands. The BSZ rule adds the leavers' own income tax to the movers' share, so it
+  // moves with D and a; the JR rule adds a flat 45% to the movers' share.
+  function pct(v) { return Math.round(100 * v) + "%"; }
+  function fEnds(panel) {
+    var pos = positions(panel), own = {}, far = {}, k;
+    for (k in pos) { own[k] = pos[k]; far[k] = pos[k]; }
+    own.income_loss_share = 0; far.income_loss_share = INPUT.income_loss_share.max;
+    var a = M.scoreCommon(value(panel, own).x).f, b = M.scoreCommon(value(panel, far).x).f;
+    return panel === "bsz" ? { bsz: a, rjkdc: b } : { bsz: b, rjkdc: a };
   }
   // A slider can have no effect at the other sliders' positions (the inputs of a box
   // multiply each other, so one at zero silences the others); it then says so.
@@ -522,6 +534,11 @@
       var txt = valueText(panel, id, p, r.x);
       var out = inp.parentNode.querySelector(".sl-cur");
       out.textContent = txt;
+      if (id === "income_loss_share") {
+        var fe = fEnds(panel), row = inp.closest(".sl-row");
+        row.querySelector(".sl-lo").textContent = pct(fe.bsz);
+        row.querySelector(".sl-hi").textContent = pct(fe.rjkdc);
+      }
       // under the thumb: the JR panel's sliders run right to left
       var frac = panel === "bsz" ? p / max : 1 - p / max;
       out.style.left = "calc(9px + " + frac + " * (100% - 18px))";

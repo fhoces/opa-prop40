@@ -74,8 +74,12 @@ step_texts <- function(inp, id) {
   out
 }
 # The two ends as an explorer dial prints them: the short form where there is one.
-dial_texts <- function(inp, id) {
+# The share-lost dial's ends are f itself at each analysis's inputs (bi, from bridge_inputs());
+# the page script then rewrites them from the other dials' positions.
+dial_texts <- function(inp, id, bi = NULL) {
   tx <- step_texts(inp, id)
+  if (id == "income_loss_share" && !is.null(bi))
+    return(list(bsz = pct(score_common(bi$sup)[["f"]]), rjkdc = pct(score_common(bi$rauh)[["f"]])))
   list(bsz = tx$bsz_short %||% tx$bsz, rjkdc = tx$rjkdc_short %||% tx$rjkdc)
 }
 
@@ -251,14 +255,13 @@ render_site <- function(root = comparison_root(),
       money(bi0$ladder$dep_b[2], 0), money(bi0$ladder$dep_b[3], 0), money(bi0$ladder$dep_j[3], 0)),
     avoidance = "The share of the tax lost to avoidance and evasion other than leaving. The BSZ analysis allows 10%. The JR analysis allows none. Kind: guesswork.",
     litigation_survival = "The chance that the Act survives a constitutional challenge, applied to the revenue. The BSZ analysis takes the Act as written and collected in full. The JR analysis weights the revenue by 50%, the accounting threshold for a tax that is more likely than not to stand; its simulation draws the revenue anywhere between zero and the ceiling, which has the same average. Kind: guesswork.",
-    income_loss_share = sprintf(paste(
-      "How much of billionaires' yearly California income tax the state loses when some of them leave. Two rules, so two positions.",
-      "What leavers paid (the BSZ analysis): the state loses the income tax the people who leave were paying, from their SEC filings and a wealth-based rate for the rest, plus its 5%% of movers.",
-      "With nobody gone that is %s a year; at the D dial's middle stop, %s a year more.",
-      "%s of all (the JR analysis): the state loses %s of every billionaire's income tax, the middle of its 30%% to 60%% range, whoever leaves.",
-      "Kind: data (BSZ) against guesswork (JR)."),
-      money(bi0$sup$alpha * bi0$sup$m * bi0$sup$C, 2), money(bi0$ladder$L[2], 2),
-      pct(bi0$rauh$f0, 0), pct(bi0$rauh$f0, 0)),
+    income_loss_share = sprintf(paste0(
+      "The share of billionaires' income tax lost because people leave California.\n",
+      "BSZ: what the leavers paid. %s with nobody gone (the half of avoidance done by moving), %s with D at its middle stop.\n",
+      "JR: %s of all of it, whoever leaves (the middle of a 30%% to 60%% guess).\n",
+      "Each end shows f where the other dials stand, so moving D or a changes it."),
+      pct(score_common(bi0$sup)[["f"]]),
+      pct(bi0$sup$alpha * bi0$sup$m + bi0$ladder$L[2] / bi0$sup$C), pct(bi0$rauh$f0)),
     income_level = "Billionaires' yearly California income tax, the amount at risk each year. The BSZ analysis: about $3.1 billion from tax data, since top wealth holders earn about half of what top earners do. The JR analysis: $4.55 billion, the midpoint of a $3.3 billion to $5.8 billion range from two model bounds. Kind: research (BSZ) against guesswork (JR).",
     horizon = sprintf("How many years the income tax loss is counted. The BSZ analysis: 5 years, about the payment period, with responses temporary. The JR analysis: for ever, discounted at %s to %s. The slider's five settings are %s. Kind: scenario.",
                       tok$r_min, tok$r_max, hz_words),
@@ -279,12 +282,12 @@ render_site <- function(root = comparison_root(),
       panel, id, if (sym) paste0('<span class="sym">', esc(name), '</span>',
                                  if (!is.na(DIAL_WORDS[id])) paste0('<span class="sym-word">', DIAL_WORDS[[id]], '</span>') else "")
                  else esc(name),
-      if (sym) paste0('<span class="sr">', esc(title), '</span>') else esc(title), esc(tip), bsz_txt, rj_txt, as.integer(max),
+      if (sym) paste0('<span class="sr">', esc(title), '</span>') else esc(title), gsub("\n", "<br>", esc(tip), fixed = TRUE), bsz_txt, rj_txt, as.integer(max),
       if (rtl) " is-rtl" else "", ticks, if (rtl) ' dir="rtl"' else "",
       if (rtl) rj_txt else bsz_txt, if (sym) " has-sym" else "")
   }
   step_row <- function(panel, id) {
-    i <- match(id, steps$step_id); tx <- dial_texts(inp, id)
+    i <- match(id, steps$step_id); tx <- dial_texts(inp, id, bi0)
     slider_row(panel, id, unname(DIAL_SYMBOLS[id]), unname(short_labels[id]),
                paste0(DIAL_SYMBOLS[[id]], ", ", sub("^forbes", "Forbes", tolower(unname(short_labels[id]))), ". ", slider_tips[[id]]),
                tx$bsz, tx$rjkdc, slider_max(id), sym = TRUE)
@@ -316,7 +319,7 @@ render_site <- function(root = comparison_root(),
     '        <li class="sl-minor"><details class="minor-fold"><summary>Show the three inputs one by one</summary>\n',
     '          <ul class="sl-list">\n',
     paste(vapply(EXPLORER_MINOR, function(id) {
-      i <- match(id, steps$step_id); tx <- dial_texts(inp, id)
+      i <- match(id, steps$step_id); tx <- dial_texts(inp, id, bi0)
       slider_row(panel, id, unname(short_labels[id]), steps$title[i], minor_tips[[id]],
                  tx$bsz, tx$rjkdc, slider_max(id))
     }, ""), collapse = "\n"), "\n",
@@ -493,8 +496,8 @@ render_site <- function(root = comparison_root(),
     inputs = lapply(seq_len(nrow(steps)), function(i) list(
       id = steps$step_id[i], input = I(step_inputs[[steps$step_id[i]]]), max = slider_max(steps$step_id[i]),
       short = unname(short_labels[steps$step_id[i]]),
-      bsz_text = dial_texts(inp, steps$step_id[i])$bsz,
-      rjkdc_text = dial_texts(inp, steps$step_id[i])$rjkdc)),
+      bsz_text = dial_texts(inp, steps$step_id[i], bi)$bsz,
+      rjkdc_text = dial_texts(inp, steps$step_id[i], bi)$rjkdc)),
     minor = EXPLORER_MINOR)
   # The explorer shows the net fiscal effect, output (b), only, and the bridge at each
   # analysis's own horizon; output (a) and the common horizons stay in the exports, the

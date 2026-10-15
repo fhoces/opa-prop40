@@ -377,8 +377,8 @@
           <ul class="sl-list">
         <li class="sl has-sym" data-id="income_loss_share">
           <label for="bsz-income_loss_share"><b><span class="sym">f</span><span class="sym-word">share lost</span></b> <span class="sl-title"><span class="sr">Share lost</span></span></label>
-          <span class="sl-tip" role="tooltip" id="bsz-income_loss_share-tip">f, share lost. How much of billionaires' yearly California income tax the state loses when some of them leave. Two rules, so two positions. What leavers paid (the BSZ analysis): the state loses the income tax the people who leave were paying, from their SEC filings and a wealth-based rate for the rest, plus its 5% of movers. With nobody gone that is $0.15B a year; at the D dial's middle stop, $0.36B a year more. 45% of all (the JR analysis): the state loses 45% of every billionaire's income tax, the middle of its 30% to 60% range, whoever leaves. Kind: data (BSZ) against guesswork (JR).</span>
-          <div class="sl-row"><span class="sl-end sl-lo">what leavers paid</span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0"></i><i style="--t:1"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-income_loss_share" min="0" max="1" step="1" value="0" data-panel="bsz" data-id="income_loss_share" aria-describedby="bsz-income_loss_share-tip"><output class="sl-cur" for="bsz-income_loss_share">what leavers paid</output></span><span class="sl-end sl-hi">45% of all</span></div>
+          <span class="sl-tip" role="tooltip" id="bsz-income_loss_share-tip">f, share lost. The share of billionaires' income tax lost because people leave California.<br>BSZ: what the leavers paid. 5% with nobody gone (the half of avoidance done by moving), 17% with D at its middle stop.<br>JR: 45% of all of it, whoever leaves (the middle of a 30% to 60% guess).<br>Each end shows f where the other dials stand, so moving D or a changes it.</span>
+          <div class="sl-row"><span class="sl-end sl-lo">5%</span><span class="sl-track"><span class="sl-ticks" aria-hidden="true"><i style="--t:0"></i><i style="--t:1"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="bsz-income_loss_share" min="0" max="1" step="1" value="0" data-panel="bsz" data-id="income_loss_share" aria-describedby="bsz-income_loss_share-tip"><output class="sl-cur" for="bsz-income_loss_share">5%</output></span><span class="sl-end sl-hi">45%</span></div>
           <span class="sl-note"></span>
         </li>
         <li class="sl has-sym" data-id="income_level">
@@ -483,8 +483,8 @@
           <ul class="sl-list">
         <li class="sl has-sym" data-id="income_loss_share">
           <label for="rjkdc-income_loss_share"><b><span class="sym">f</span><span class="sym-word">share lost</span></b> <span class="sl-title"><span class="sr">Share lost</span></span></label>
-          <span class="sl-tip" role="tooltip" id="rjkdc-income_loss_share-tip">f, share lost. How much of billionaires' yearly California income tax the state loses when some of them leave. Two rules, so two positions. What leavers paid (the BSZ analysis): the state loses the income tax the people who leave were paying, from their SEC filings and a wealth-based rate for the rest, plus its 5% of movers. With nobody gone that is $0.15B a year; at the D dial's middle stop, $0.36B a year more. 45% of all (the JR analysis): the state loses 45% of every billionaire's income tax, the middle of its 30% to 60% range, whoever leaves. Kind: data (BSZ) against guesswork (JR).</span>
-          <div class="sl-row"><span class="sl-end sl-lo">what leavers paid</span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0"></i><i style="--t:1"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-income_loss_share" min="0" max="1" step="1" value="0" data-panel="rjkdc" data-id="income_loss_share" aria-describedby="rjkdc-income_loss_share-tip" dir="rtl"><output class="sl-cur" for="rjkdc-income_loss_share">45% of all</output></span><span class="sl-end sl-hi">45% of all</span></div>
+          <span class="sl-tip" role="tooltip" id="rjkdc-income_loss_share-tip">f, share lost. The share of billionaires' income tax lost because people leave California.<br>BSZ: what the leavers paid. 5% with nobody gone (the half of avoidance done by moving), 17% with D at its middle stop.<br>JR: 45% of all of it, whoever leaves (the middle of a 30% to 60% guess).<br>Each end shows f where the other dials stand, so moving D or a changes it.</span>
+          <div class="sl-row"><span class="sl-end sl-lo">5%</span><span class="sl-track is-rtl"><span class="sl-ticks" aria-hidden="true"><i style="--t:0"></i><i style="--t:1"></i></span><span class="sl-other" aria-hidden="true"></span><input type="range" class="sl-in" id="rjkdc-income_loss_share" min="0" max="1" step="1" value="0" data-panel="rjkdc" data-id="income_loss_share" aria-describedby="rjkdc-income_loss_share-tip" dir="rtl"><output class="sl-cur" for="rjkdc-income_loss_share">45%</output></span><span class="sl-end sl-hi">45%</span></div>
           <span class="sl-note"></span>
         </li>
         <li class="sl has-sym" data-id="income_level">
@@ -605,7 +605,7 @@
   </footer>
 </div>
 
-<script src="../../../assets/comparison-data.js?v=bca1d2a9"></script>
+<script src="../../../assets/comparison-data.js?v=27b16392"></script>
 <script src="model.js"></script>
 <script>
 (function () {
@@ -680,11 +680,23 @@
     var other = panel === "bsz" ? "rjkdc" : "bsz";
     if (id === "minor_inputs") return (p === 0) === (panel === "bsz") ? "BSZ values" : "JR values";
     var e = INPUT[id];
+    if (id === "income_loss_share") return pct(fEnds(panel)[p === 0 ? panel : other]);
     if (p === 0) return e[panel + "_text"];
     if (p === e.max) return e[other + "_text"];
     if (id === "confirmed_departures")   // the middle stop: the BSZ analysis's own four leavers
       return "BSZ four, " + fmtValue("W_core", (1 - x.lam) * x.dep_b + x.lam * x.dep_j);
     return fmtValue(e.input[0], x[e.input[0]]);
+  }
+  // The share-lost dial's two ends: f under each analysis's rule, with every other dial where
+  // it stands. The BSZ rule adds the leavers' own income tax to the movers' share, so it
+  // moves with D and a; the JR rule adds a flat 45% to the movers' share.
+  function pct(v) { return Math.round(100 * v) + "%"; }
+  function fEnds(panel) {
+    var pos = positions(panel), own = {}, far = {}, k;
+    for (k in pos) { own[k] = pos[k]; far[k] = pos[k]; }
+    own.income_loss_share = 0; far.income_loss_share = INPUT.income_loss_share.max;
+    var a = M.scoreCommon(value(panel, own).x).f, b = M.scoreCommon(value(panel, far).x).f;
+    return panel === "bsz" ? { bsz: a, rjkdc: b } : { bsz: b, rjkdc: a };
   }
   // A slider can have no effect at the other sliders' positions (the inputs of a box
   // multiply each other, so one at zero silences the others); it then says so.
@@ -699,6 +711,11 @@
       var txt = valueText(panel, id, p, r.x);
       var out = inp.parentNode.querySelector(".sl-cur");
       out.textContent = txt;
+      if (id === "income_loss_share") {
+        var fe = fEnds(panel), row = inp.closest(".sl-row");
+        row.querySelector(".sl-lo").textContent = pct(fe.bsz);
+        row.querySelector(".sl-hi").textContent = pct(fe.rjkdc);
+      }
       // under the thumb: the JR panel's sliders run right to left
       var frac = panel === "bsz" ? p / max : 1 - p / max;
       out.style.left = "calc(9px + " + frac + " * (100% - 18px))";
