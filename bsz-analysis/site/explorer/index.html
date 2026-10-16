@@ -226,6 +226,7 @@
       <p class="small">Each input is tagged by origin: <b>data</b>, <b>research</b> (a published estimate)
       or <b>guesswork</b> (set by assumption, argued for but not measured).
       <a class="more" href="../repro.html#every-input-by-origin">Every input, by origin</a> lists them all.</p>
+      <p class="small" id="fixed-inputs"></p>
 
     </section>
 
@@ -327,6 +328,19 @@
   document.getElementById("pref-wt").textContent = "$" + rev.toFixed(1) + " billion";
   document.getElementById("gap").textContent = "$" + G.facts.row4_phasein_gap.toFixed(1) + " billion";
 
+  // ---- the inputs no dial moves, read from G.facts (not typed) --------------
+  var fixed = document.getElementById("fixed-inputs");
+  fixed.appendChild(document.createTextNode(
+    "Fixed in every setting: billionaires' yearly California income tax, $" + G.facts.C.toFixed(2) +
+    " billion (BSZ Table 2), and the yearly loss counted for " + G.facts.pv_years + " years " +
+    "(this OPA's reading of BSZ's example) at " + (+(G.facts.pv_rate * 100).toFixed(2)) + "%. " +
+    "The other fixed inputs are in the "));
+  var fixedLink = document.createElement("a");
+  fixedLink.className = "more"; fixedLink.href = "../repro.html#every-input-by-origin";
+  fixedLink.textContent = "report's table of every input";
+  fixed.appendChild(fixedLink);
+  fixed.appendChild(document.createTextNode("."));
+
   // ---- dial rack --------------------------------------------------------
   // The avoidance rate of the less visible billionaires only applies to the billionaires
   // Forbes misses, so it is shown under that switch and greyed out while the switch is off.
@@ -410,8 +424,9 @@
     "Base": "Table 5 row 1: the Forbes list, every input at the authors' value.",
     "Missing billionaires": "adds about " + Math.round(nAdd) + " smaller fortunes ($1B to $4.5B) that Forbes " +
       "misses, estimated with a Pareto extrapolation and taxed with 20% avoidance (Table 5 row 2).",
-    "Leavers": "four billionaires left before 1 January 2026 and escape the tax. Three more leave " +
-      "later, taking their income tax (Table 5 row 3).",
+    "Leavers": "assumes four billionaires (Page, Thiel, Hankey, Kalanick) left before 1 January 2026 " +
+      "and escape the tax, which BSZ call an aggressive assumption. Three more leave later, taking " +
+      "their income tax (Table 5 row 3).",
     "Missing + leavers": "both changes together (Table 5 row 4)."
   };
   // Each line links to the report's derivation of that Table 5 row.

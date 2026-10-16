@@ -28,8 +28,8 @@ settings.
 
 ## What was checked
 
-The main estimate of the JR analysis is a mean net present value of −$38.9 billion (NBER chapter,
-September 2026, p.35). This OPA computes it as −$38.98 billion exactly, and as −$38.89 billion
+The main estimate of the JR analysis is a mean net present value of [−$38.9 billion]{style="white-space:nowrap"} (NBER chapter,
+September 2026, p.35). This OPA computes it as [−$38.98 billion]{style="white-space:nowrap"} exactly, and as [−$38.89 billion]{style="white-space:nowrap"}
 with the authors' random seed. The September chapter prints no net present value under other
 assumptions. The first version (SSRN, March 2026) prints four, and the authors' public repository
 holds one more. Each check below sets the same assumptions in this OPA and compares the result

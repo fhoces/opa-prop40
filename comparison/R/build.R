@@ -9,7 +9,7 @@ HORIZONS <- c(5, 10, 20, 30, 50, Inf)
 # the income tax base that leaves. The ceiling is the script's literal, 72 (the person-level
 # file gives 72.05; the JR analysis's mismatch 4), so that the function returns the authors'
 # own expectation exactly. The discount rate is 3% at the BSZ end (BSZ_RATE_ID in model.R) and,
-# at the JR end, the one rate worth the same as the authors' draw r ~ U[r_min, r_max]:
+# at the JR end, the one rate worth the same as the authors' draw (r - g) ~ U[r_min, r_max]:
 # r_jr = 1 / E_r[1/r], computed here from the JR contract (jr_discount_rate() in model.R).
 bridge_inputs <- function(k) {
   si <- k$bsz$inputs; so <- k$bsz$outputs
@@ -90,19 +90,19 @@ bridge_input_table <- function(bi) {
       "BSZ export sell_share (BSZ PDF p.24)"),
     rauh_source = c(
       "excluded as too uncertain to collect: 28 international billionaires, $146.3B (treaty preemption and the Act's apportionment clause, \u00a750306(b); JR export nber_international_net_worth; NBER chapter Sec. 3.5, PDF pp.17-18)",
-      "JR export baseline_net_worth (212 billionaires, 2025 Forbes list) grown 7% to 31 Dec 2026 (JR export nber_growth_rate; NBER README, chapter p.19)",
+      "chapter Sec. 3.2, PDF pp.12-13 ($2,027.4B at 7% growth); JR export baseline_net_worth (212 billionaires, 2025 Forbes list) grown 7% to 31 Dec 2026 (JR export nber_growth_rate; NBER README, chapter p.19)",
       "the Forbes 2025 list grown 7% (1 = JR list)",
-      "1 - nber_domestic_grown / (5% x grown base) from the JR export: the person-level file nets out directly held real estate (NBER README; chapter p.19)",
+      "chapter Table 6, PDF p.17 (residential real estate excluded); 1 - nber_domestic_grown / (5% x grown base) from the JR export: the person-level file nets out directly held real estate (NBER README; chapter p.19)",
       "the seven publicly reported moves (Page, Brin, Thiel, Hankey, Spielberg, Kalanick, Sacks) valued on the BSZ list: BSZ exports pre2026_leavers_wealth and brin_wealth (Table 5, 1 Jul 2026), plus Spielberg and Sacks at the JR file's net worth (JR export nber_spielberg_sacks_net_worth), as the BSZ workbook does not list them by name",
-      "the same seven on the JR list: (nber_domestic_grown - 72) / 5%, the script's ceiling literal (NPV_dist_v8.R:19; the person-level file sums to 72.05, mismatch 4)",
+      "chapter Table 7, PDF p.21; the same seven on the JR list: (nber_domestic_grown - 72) / 5%, the script's ceiling literal (NPV_dist_v8.R:19; the person-level file sums to 72.05, mismatch 4)",
       "the seven's own income tax as the BSZ analysis counts it: BSZ exports pre2026_leavers_annual_inctax and brin_annual_inctax, plus Spielberg and Sacks at resid_inctax_rate (used only under the BSZ rule for the share lost)",
       "none: no avoidance allowance (NBER chapter Secs. 4-5)",
-      "q = 0.50, the ASC 740-10 'more likely than not' threshold (NBER README assumptions table; the script draws WT ~ U[0, 72], whose mean is 0.5 x 72; mismatch 5)",
-      "not used: the share lost does not follow who leaves",
-      "midpoint of f ~ U[0.30, 0.60], drawn independently of the revenue (NPV_dist_v8.R; chapter Sec. 5.4): guesswork",
-      "midpoint of C ~ U[3.3, 5.8] (NPV_dist_v8.R:21; chapter pp.29-31): guesswork, the K = 500 floor is the authors' judgement",
+      "q = 0.50 'as our central estimate', the ASC 740-10 'more likely than not' threshold (chapter eq. 3, PDF pp.19-20; NBER README). The script draws WT ~ U[0, 72], whose mean is 0.5 x 72; its comment says the draw 'embeds litigation range', and the chapter also grounds the 0 floor in unreported departures (fn.32, PDF p.34; mismatch 5)",
+      "the BSZ rule (the leavers' own tax) is not applied",
+      "midpoint of f ~ U[0.30, 0.60], drawn independently of the revenue, 'centered conservatively around the observed wealth-base departure fraction' and covering departures 'not publicly documented' (chapter PDF p.31 and p.33; eq. 19, PDF p.35; NPV_dist_v8.R:20): guesswork",
+      "midpoint of C ~ U[3.3, 5.8] (chapter Sec. 5.1, Table 9, PDF pp.28-30; NPV_dist_v8.R:21): the top is the Pareto fit at K = 212; the floor's K = 500 is the authors' judgement ('a reasonable lower bound', PDF p.28)",
       "perpetuity: departed billionaires are assumed not to return (chapter Sec. 5.2, eqs. 13-14, PDF pp.30-32)",
-      "the one rate worth the same as the draw (r \u2212 g) ~ U[1.5%, 4.5%], the real rate net of the loss's growth (JR export rauh_mc_r_min and rauh_mc_r_max; NPV_dist_v8.R:22; chapter eq. 18, PDF p.35, anchored at p.32): 1 / E[1/(r \u2212 g)] = 0.03 / ln(3) (derived)",
+      "the one rate worth the same as the draw (r \u2212 g) ~ U[1.5%, 4.5%], the real rate net of the loss's growth (chapter PDF p.32 and eq. 18, PDF p.35; JR export rauh_mc_r_min and rauh_mc_r_max; NPV_dist_v8.R:22): 1 / E[1/(r \u2212 g)] = 0.03 / ln(3) (derived)",
       "not modelled"),
     stringsAsFactors = FALSE)
 }

@@ -67,15 +67,17 @@ it uses the hard-coded 72.
 **NBER README** assumptions table: "Litigation risk: Probability the Act survives constitutional
 challenge, q = 0.50 (ASC 740-10 'more likely than not'), applied to the recognized base" - listed
 as a defining feature of the litigation-weighted approach.
-**Code**, `NPV_dist_v8.R:19`: `wt_min <- 0; wt_max <- 72`. No `q` variable and no `* 0.5` anywhere
-in the file.
+**Code**, `NPV_dist_v8.R:19`: `wt_min <- 0;    wt_max <- 72      # wealth-tax revenue ($B), embeds litigation range`.
+The script's header, lines 5-6: `WT ~ U[$0B, $72B] wealth tax revenue (0 = Act struck down; 72 = ceiling after confirmed departures)`.
+No `q` variable and no `* 0.5` anywhere in the file.
 
-The only place a 0.5 could be hiding is that `E[U(0, 72)] = 36 = 0.5 * 72`, i.e. drawing `WT`
+The script's comment says the draw "embeds litigation range": `E[U(0, 72)] = 36 = 0.5 * 72`, i.e. drawing `WT`
 uniformly from 0 to the ceiling has the *same expected value* as multiplying the ceiling by 0.5.
 The README states q = 0.50 for the point estimate (0.50 × 59.15 = 29.6, eqs. 6-8) and a uniform
 draw from 0 (struck down) to 72 for the simulation; the draw and q applied to the 72 ceiling
 (the chapter's central estimate, PDF p.33) share a mean, 36, but not a distribution. The code has no
-separate q. We reproduce the code as shipped (wt ~ U[0, 72]).
+separate q. We reproduce the code as shipped (wt ~ U[0, 72]). The chapter also grounds the 0 floor
+in unreported departures (fn.32, PDF p.34).
 
 ## 6. Baseline revenue: the workbook's precise 94.30 vs. the printed 94.20
 

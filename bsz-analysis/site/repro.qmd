@@ -104,7 +104,8 @@ stopifnot(identical(inp$vintage, "august"))
 
 bn  <- function(x, d = 1) formatC(x, format = "f", digits = d, big.mark = ",")
 usd <- function(x, d = 1) paste0("\\$", bn(x, d), " billion")
-pvf   <- site_pv_factor()   # 5 years at 3% (R/site_exports.R); same definition as the deck and explorer
+pv_r  <- site_pv_rate; pv_H <- site_pv_years   # the rate and the years behind pvf (R/site_exports.R)
+pvf   <- site_pv_factor(pv_r, pv_H)   # 5 years at 3%; same definition as the deck and explorer
 main1 <- t5$wealth_tax_revenue[1] + t5$extra_ca_inctax_sales[1] + t5$annual_ca_inctax_loss[1] * pvf
 pct <- function(x, d = 1) paste0(formatC(100 * x, format = "f", digits = d), "%")
 show <- function(df) knitr::kable(df, format = "html", escape = TRUE,
@@ -136,7 +137,7 @@ twin_html("the setup",
 
 California's Proposition 40, the Billionaire Tax Act, would levy, once, a 5% tax on the
 whole net worth of people who lived in California on 1 January 2026 and are worth \$1 billion
-or more, valued on 31 December 2026 and paid 1% a year over five years. BSZ's paper and the
+or more, valued on 31 December 2026 and payable 1% a year over five years. BSZ's paper and the
 GGSS expert report carry the same number. Reproducing one reproduces the other.
 
 ::: {.callout-note collapse="true" title="The two documents"}
@@ -191,11 +192,12 @@ that the inputs are right.
 
 ### How to read this report
 
-Text in blockquotes is quoted from the paper. Everything else is ours. Page numbers are
+Text in blockquotes is quoted from the paper. Everything else is this OPA's text. Page numbers are
 **PDF pages** of the August 2026 working paper; the printed folio runs two lower in the main
 text. Every number in running text is computed when this page is rendered, from the
 pipeline's stored results (open any "code" fold to see which one). Tables and figures are
-the pipeline's own `gt` and `ggplot2` objects. Where the pipeline numbers a figure differently
+the pipeline's own `gt` and `ggplot2` objects (the R packages that draw the tables and the
+figures). Where the pipeline numbers a figure differently
 from the paper, the text says so.
 
 ### Notation, in one place
@@ -524,7 +526,7 @@ move the revenue (see [Every input, by origin](#every-input-by-origin)).
 
 $$T = \tau\,W^{\text{tax}} = 0.05 \times `r bn(t5$taxable_wealth[1])` = `r bn(t5$wealth_tax_revenue[1])`.$$
 That is Table 5's row 1, printed as `r usd(wt_printed, 0)` and reproduced here as
-`r usd(t5$wealth_tax_revenue[1])`, collected once (in five annual installments). Before avoidance, 5% of the base would be
+`r usd(t5$wealth_tax_revenue[1])`, collected once (payable in five annual installments). Before avoidance, 5% of the base would be
 `r usd(0.05 * inp$W0)`; avoidance costs `r usd(0.05 * inp$W0 - t5$wealth_tax_revenue[1])`.
 
 ### Step 4: extra state income tax from selling assets {#step-4-extra-state-income-tax-from-selling-assets}
@@ -597,7 +599,7 @@ The main estimate adds the three pieces. It counts the yearly loss for 5 years (
 3% a year, the middle of the 1.5% to 4.5% range from which the [JR analysis](../../rjkdc-analysis/site/) draws its rate
 (BSZ give no rate):
 $$\begin{aligned}
-M &= T + E + L \times \frac{1 - 1.03^{-5}}{0.03} \\
+M &= T + E + L \times \frac{1 - `r format(1 + pv_r)`^{-`r pv_H`}}{`r format(pv_r)`} \\
   &= `r bn(t5$wealth_tax_revenue[1], 2)` + `r bn(t5$extra_ca_inctax_sales[1], 2)` - `r bn(-t5$annual_ca_inctax_loss[1], 3)` \times `r bn(pvf, 2)` \\
   &= `r bn(main1, 2)`.
 \end{aligned}$$
@@ -712,7 +714,7 @@ show(lv)
 ```
 
 Taxable wealth falls to $0.9\,(W_0 - W_{pre})$, where $W_{pre}$ = `r usd(inp$W_pre)` is the
-wealth of the four who left before 1 January 2026, and revenue
+wealth of the four assumed to have left before 1 January 2026, and revenue
 to `r usd(t5$wealth_tax_revenue[3])`. The yearly income tax loss grows to
 `r usd(-t5$annual_ca_inctax_loss[3], 2)`, still small, because the SEC data show the top three
 pay little income tax relative to their wealth. Whether any of these people has actually
@@ -724,7 +726,7 @@ dispute (`comparison/DISPUTES.md`, row 3).
 This scenario adds the missing billionaires to the leavers scenario: `r usd(t5$wealth_tax_revenue[4])`,
 with a yearly income tax loss of `r usd(-t5$annual_ca_inctax_loss[4], 2)`. One detail: it does **not**
 subtract the phase-in deduction that the missing billionaires scenario subtracts for the same
-added billionaires (`Tab5!F9` against `Tab5!F7`). We reproduce the workbook as it is. A consistent
+added billionaires (`Tab5!F9` against `Tab5!F7`). This OPA reproduces the workbook as it is. A consistent
 treatment would lower it by `r usd(inp$row4_phasein_gap)`. We list this under
 [What reproduces](#what-reproduces).
 
@@ -798,7 +800,8 @@ see the [introduction](#introduction).
 ### How far the guesses move the result
 
 The explorer holds every combination of the six assumptions. Here each one moves on its own,
-with the others at the base scenario:
+with the others at the base scenario. The rows are sorted by how far each moves the main
+estimate, widest range first, as in the slide deck's chart:
 
 ```{r}
 #| label: one-at-a-time
@@ -821,8 +824,12 @@ rng <- do.call(rbind, lapply(dials, function(d) {
     `wealth tax, $B` = paste(bn(min(g$wealth_tax_revenue)), "to", bn(max(g$wealth_tax_revenue))),
     `income tax lost, $B/yr` = paste(bn(-max(g$annual_ca_inctax_loss), 2), "to",
                                      bn(-min(g$annual_ca_inctax_loss), 2)),
+    width = diff(range(g$main_estimate)),
     check.names = FALSE)
 }))
+# Widest range of the main estimate first, as the deck's tornado chart sorts them.
+rng <- rng[order(-rng$width), names(rng) != "width"]
+rownames(rng) <- NULL
 show(rng)
 ```
 
@@ -903,6 +910,24 @@ tr("tab_a1_gt")
 ```
 :::
 
+```{r}
+#| label: tab-a1-years
+#| code-summary: "R code for the annualized row against the workbook"
+a1_pb   <- attr(tr("tab_a1_gt"), "panel_b")
+a1_ours <- unlist(a1_pb[a1_pb$year == "Annualized growth", -1])   # this reproduction, 44 years
+a1_xl   <- unlist(read_sheet("TabA1", range = "B18:G18"))       # workbook cache, 43 years
+stopifnot(length(a1_ours) == 6, length(a1_xl) == 6)
+a1_pct  <- function(x) paste0(formatC(100 * x, format = "f", digits = 1), "%")   # as the table prints it
+a1_diff <- a1_pct(a1_ours) != a1_pct(a1_xl)
+and_join <- function(x) if (length(x) < 2) x else
+  paste(paste(head(x, -1), collapse = ", "), tail(x, 1), sep = " and ")
+```
+
+The paper and the workbook (`TabA1!B18:G18`) annualize this growth over 43 years. 1982 to
+2026 is 44 years, which this reproduction uses, so the row prints
+`r and_join(a1_pct(a1_ours)[a1_diff])` where the paper prints
+`r and_join(a1_pct(a1_xl)[a1_diff])`.
+
 ## Appendix Figures A2 and A3
 
 Appendix Figure A2 shows the California income tax billionaires pay as a share of all California
@@ -937,14 +962,14 @@ tr("fig_a3")
 
 # Every input, by origin {#every-input-by-origin}
 
-This section is not in the paper. It sorts every input of the one-time estimate by how much
-evidence stands behind it, which is the first question a reader who wants to argue with the
-result has to answer.
+This section is not in the paper. It sorts every input of the one-time estimate, and the two
+the main estimate adds (the years counted and the rate), by how much evidence stands behind
+each. That is the first question a reader who wants to argue with the result has to answer.
 
 - **data**: read off a public source, and in principle re-collectable from it.
 - **research**: an estimate from a published study, including the authors' own.
 - **guesswork**: set by assumption; argued for, but not measured.
-- **scenario**: a choice about which policy is being estimated.
+- **scenario**: a choice about which policy, or which world, is being estimated.
 - **derived**: implied by other rows. **convention**: a date.
 
 ```{r}
@@ -1024,6 +1049,12 @@ does not print (a count of families as a percentage, growth rates rounded to who
 kept the May workbook's labels (GDP for AGI, 2025 for 2026, .0002% for .001%, 2025 dollars for
 2026 dollars). Both were fixed in the display code on 15 October 2026. The values the tests
 check did not change.
+
+**An annualizing gap in Appendix Table A1 (open).** The workbook (`TabA1!B18:G18`) and the
+paper annualize the 1982 to 2026 growth over 43 years. This reproduction uses 44, as the
+workbook's own Table 1 does (`Tab1!C18:H18`), so `r sum(a1_diff)` cells of the row print lower
+than the paper (see [Appendix Table A1](#appendix-table-a1-us-billionaires)). The tests compare
+whole columns and do not catch it. Whether to use 43 or 44 is left to the author.
 
 **What is not reproduced.**
 

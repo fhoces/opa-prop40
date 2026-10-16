@@ -21,8 +21,9 @@ test_that("income tax MC matches Table 8's printed cells (p.17)", {
   # Printed to 2 decimals; our fitted alpha (1.4379...) differs from the
   # paper's rounded-for-display 1.44 by enough to move even the
   # deterministic K=212 cell by ~0.003, so all rows get the same
-  # printed-rounding tolerance rather than K=212 getting an exact match.
-  tol <- 0.01
+  # printed-rounding tolerance, half the last printed digit (0.005; the
+  # largest gap is 0.0048), rather than K=212 getting an exact match.
+  tol <- 0.005
   for (i in seq_len(nrow(merged))) {
     expect_equal(merged$mean_fy25[i], merged$mean[i], tolerance = tol / abs(merged$mean[i]))
     expect_equal(merged$p05_fy25[i], merged$p05[i], tolerance = tol / abs(merged$p05[i]))

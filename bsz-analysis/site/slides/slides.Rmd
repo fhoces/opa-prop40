@@ -1,6 +1,6 @@
 ---
 title: "An Open Policy Analysis of “California Billionaires: Wealth, Taxes, and Wealth Tax Revenue Estimates”"
-subtitle: "by Jasper Boll, Emmanuel Saez and Gabriel Zucman (BSZ)"
+subtitle: "A reproduction of the paper by Jasper Boll, Emmanuel Saez and Gabriel Zucman (BSZ, NBER, August 2026)"
 output:
   xaringan::moon_reader:
     self_contained: true
@@ -23,15 +23,18 @@ knitr::opts_chunk$set(
 library(ggplot2)
 theme_set(theme_minimal(base_size = 15))
 
-# Every number in this deck is read from the CSVs the targets pipeline writes
+# Every number in this deck is read from the files the targets pipeline writes
 # (bsz-analysis/_targets.R: site_tab5_csv, site_tab5_printed_csv, site_inputs_csv,
-# site_grid_csv, site_leavers_csv). Nothing below is retyped.
+# site_grid_csv, site_leavers_csv, and site_grid_js for the present value's years and
+# rate). Nothing below is retyped.
 t5  <- read.csv("../data/tab5.csv")
 t5p <- read.csv("../data/tab5-vs-printed.csv")   # each Table 5 cell beside the digit the paper prints
 wt_printed <- t5p$printed[t5p$column == "wealth_tax_revenue" & t5p$row == 1]   # row 1, PDF p.39
 stopifnot(length(wt_printed) == 1)
 ins <- read.csv("../data/inputs.csv", stringsAsFactors = FALSE)
 grd <- read.csv("../data/grid.csv")
+gjs <- grep("^window\\.__GRID__ = ", readLines("../explorer/grid.js", warn = FALSE, encoding = "UTF-8"), value = TRUE)
+facts <- jsonlite::fromJSON(sub(";\\s*$", "", sub("^window\\.__GRID__ = ", "", gjs)))$facts   # pv_rate, pv_years
 lv  <- read.csv("../data/leavers.csv", stringsAsFactors = FALSE)
 tst <- read.csv("../data/test-results.csv", stringsAsFactors = FALSE)
 W0 <- t5$wealth[1]; n0 <- t5$n_billionaires[1]
@@ -197,7 +200,7 @@ class: center, middle, inverse
 
 - a **one-time** 5% tax on net worth
 - on California residents on **1 January 2026**
-- paid 1% a year over **five years**
+- payable 1% a year over **five years**
 - wealth valued on 31 December 2026
 
 Directly held real estate is excluded; business real estate is not.
@@ -250,7 +253,7 @@ because the tax has never existed.
 
 $$T = \tau \, W^{\text{tax}} = 0.05 \times `r bn(t5$taxable_wealth[1])` = `r bn(t5$wealth_tax_revenue[1])`$$
 
-That is Table 5's row 1: **$`r bn(t5$wealth_tax_revenue[1])` billion reproduced (printed $`r bn(wt_printed, 0)` billion), once**, paid in five
+That is Table 5's row 1: **$`r bn(t5$wealth_tax_revenue[1])` billion reproduced (printed $`r bn(wt_printed, 0)` billion), once**, payable in five
 yearly installments of about $`r bn(t5$wealth_tax_revenue[1] / 5)` billion.
 
 ```{r fig-waterfall, fig.height=3.2}
@@ -452,7 +455,7 @@ knitr::kable(x, format = "html", align = "llrr")
 ]
 
 .pull-right[
-Assume the four who left **before** 1 January escape the tax, and three more leave later.
+Assume four (Page, Thiel, Hankey, Kalanick) left **before** 1 January, which BSZ call aggressive, and escape the tax; three more leave later.
 Revenue falls to **$`r bn(t5$wealth_tax_revenue[3])` billion**; the yearly income tax loss
 rises to **$`r bn(-t5$annual_ca_inctax_loss[3], 2)` billion**. The **missing + leavers** scenario applies
 this and the missing billionaires scenario together.
@@ -471,10 +474,9 @@ name: bottom-line
 
 ```{r bottom-line-tab}
 # Present value of the yearly loss over BSZ's 5-year horizon at one rate, 3%, the middle
-# of the JR analysis's 1.5%-4.5% range. The comparison overview averages over that range
-# instead (comparison/R/model.R); the two agree to within $0.01B, checked here.
-ann <- function(r, H = 5) (1 - (1 + r)^(-H)) / r
-f5  <- ann(0.03)
+# of the JR analysis's 1.5%-4.5% range; the years and the rate are the pipeline's (grid.js).
+ann <- function(r, H) (1 - (1 + r)^(-H)) / r
+f5  <- ann(facts$pv_rate, facts$pv_years)
 ls_ <- read.csv("../../../comparison/export/r/loss.csv")
 loss <- -t5$annual_ca_inctax_loss
 stopifnot(abs(loss[1] * f5 - ls_$pv_5yr[ls_$source_id == "bsz_row1"]) < 0.01,
@@ -502,10 +504,9 @@ knitr::kable(d, format = "html", escape = FALSE, align = "lrrrr",
 
 .highlight-box[
 The income tax loss recurs every year the leavers stay away, so it is a **present value** over a
-horizon of about 5 years (BSZ's example) at **3% a year**, the middle of the [JR analysis](../../../rjkdc-analysis/site/)'s 1.5% to 4.5% range (BSZ give no rate).
+horizon of `r facts$pv_years` years (BSZ's example) at **`r 100 * facts$pv_rate`% a year**, the middle of the [JR analysis](../../../rjkdc-analysis/site/)'s 1.5% to 4.5% range (BSZ give no rate).
+Change any assumption and watch the main estimate move: **[the explorer](../explorer/)**.
 ]
-
-**Change any assumption and watch the main estimate move: [the explorer](../explorer/).**
 
 .small[<sup>1</sup> Not the authors' choice: BSZ's headline is the wealth tax alone, about $100 billion (Table 5 prints
 $`r bn(wt_printed, 0)` billion; reproduced as $`r bn(t5$wealth_tax_revenue[1])` billion).
@@ -517,17 +518,17 @@ name: part-guess
 
 # How far does each guess move the main estimate?
 
-```{r tornado, fig.height=3.0}
+```{r tornado, fig.height=2.6}
 keys <- c(avoidance = "Avoidance and evasion", mobility_share = "Share that is leaving",
           avoidance_small = "Avoidance, less visible", sell_share = "Share paid by selling",
           pareto = "Count missing billionaires", leavers = "Aggressive leavers")
 # The main estimate: wealth tax + extra income tax - present value of the yearly income
-# tax loss over 5 years at 3% (as on the bottom-line slide), for every cell of the grid.
-pv5 <- (1 - 1.03^(-5)) / 0.03
-grd$net <- grd$wealth_tax_revenue + grd$extra_ca_inctax_sales + grd$annual_ca_inctax_loss * pv5
+# tax loss (as on the bottom-line slide), for every cell of the grid, as the pipeline
+# computes it (grid.csv).
+grd$net <- grd$main_estimate
 base <- grd[row1, ]
 stopifnot(abs(base$net - (t5$wealth_tax_revenue[1] + t5$extra_ca_inctax_sales[1] +
-                          t5$annual_ca_inctax_loss[1] * pv5)) < 1e-9)
+                          t5$annual_ca_inctax_loss[1] * f5)) < 1e-9)
 rows <- do.call(rbind, lapply(names(keys), function(k) {
   keep <- Reduce(`&`, lapply(setdiff(names(keys), k), function(o) abs(grd[[o]] - base[[o]]) < 1e-9))
   data.frame(input = keys[[k]], lo = min(grd$net[keep]), hi = max(grd$net[keep]))
@@ -546,9 +547,8 @@ ggplot(rows, aes(y = input)) +
 income tax lost). Of the five guesses, `r length(movers)` move it on their own:
 `r tolower(paste(paste(head(movers, -1), collapse = ", "), tail(movers, 1), sep = " and "))`.
 Counting the missing billionaires is research, and only raises it. Every input and its origin:
-[report](../repro.html#every-input-by-origin).]
-
-**Try any combination of the guesses: [the explorer](../explorer/).**
+[report](../repro.html#every-input-by-origin). Try any combination of the guesses in
+**[the explorer](../explorer/)**.]
 
 ---
 name: part-repro

@@ -308,19 +308,24 @@ build_tab5 <- function(tab5_r) {
       avoidance_rate        = "Avoidance rate",
       wealth_tax_revenue    = "Wealth tax revenue ($B)",
       extra_ca_inctax_sales = "Extra CA inctax from sales ($B)",
-      annual_ca_inctax_loss = "Annual CA inctax loss ($B)"
+      annual_ca_inctax_loss = "Annual temporary CA income tax loss from leavers ($B)"   # BSZ's header, PDF p.39
     ) |>
-    gt::fmt_number(columns = c(n_billionaires, wealth, taxable_wealth,
-                                wealth_tax_revenue, extra_ca_inctax_sales,
-                                annual_ca_inctax_loss),
+    # Decimals as the paper prints Table 5 (PDF p.39): whole counts, the loss to the cent
+    # of a billion, one decimal for the rest.
+    gt::fmt_number(columns = n_billionaires, decimals = 0, use_seps = TRUE) |>
+    gt::fmt_number(columns = c(wealth, taxable_wealth,
+                                wealth_tax_revenue, extra_ca_inctax_sales),
                    decimals = 1, use_seps = TRUE) |>
+    gt::fmt_number(columns = annual_ca_inctax_loss, decimals = 2) |>
     gt::fmt_percent(columns = avoidance_rate, decimals = 1) |>
     gt::tab_source_note(source_note = gt::md(paste(
       "**Notes:** Scenarios assume a one-time 5% wealth tax. Wealth tax revenue =",
       "taxable_wealth × 5%. Extra CA income tax from sales reflects forced",
       "asset sales to pay the tax (33% realization × 80% LTCG-taxable × 13.3%",
-      "CA rate). Annual CA inctax loss is the steady-state revenue forgone from",
-      "billionaires leaving California. Source: `tab5_r`."
+      "CA rate). The income tax loss \"is annual but temporary if the wealth tax",
+      "is one-time\" (BSZ Table 5 note, PDF p.39). In row 1, half of the 10%",
+      "avoidance is billionaires who moved (\"half due to mobility\").",
+      "Source: `tab5_r`."
     )))
 
   attr(tab, "panel") <- panel

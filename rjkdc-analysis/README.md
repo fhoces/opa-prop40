@@ -16,7 +16,7 @@ kept in [`review/`](../review/README.md).
 <img align="right" width="340" src="site/assets/opa/opa-materials-wordmark.png" alt="Open Policy Analysis, Materials layer">
 
 1 - **Open Output.** [An interactive explorer](https://fhoces.github.io/opa-prop40/rjkdc-analysis/site/explorer/) that shows the main estimate and
-lets you move the seven inputs behind it. Materials can be found in [`site/explorer/`](site/explorer/).
+lets you move the authors' five inputs and two settings this OPA adds. Materials can be found in [`site/explorer/`](site/explorer/).
 
 2 - **Open Analysis.** An open policy report in the form of a [dynamic document](https://fhoces.github.io/opa-prop40/rjkdc-analysis/site/repro.html),
 which details all data, code and assumptions in the analysis, and [slides](https://fhoces.github.io/opa-prop40/rjkdc-analysis/site/slides/slides.html)

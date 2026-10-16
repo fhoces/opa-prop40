@@ -379,6 +379,6 @@ test_that("compute_top4taxes matches Excel formula cells", {
   expect_equal(avg$property_tax_per_wealth, num_col("O", 27:28), tolerance = 1e-6)
   expect_equal(avg$check_wealth_decomp,     num_col("P", 27:28), tolerance = 1e-7)
   expect_equal(avg$income_per_wealth,       num_col("R", 27:28), tolerance = 1e-5)
-  expect_equal(avg$avg_wealth_m,            num_col("S", 27:28), tolerance = 1)
-  expect_equal(avg$economic_income_m,       num_col("T", 27:28), tolerance = 1e-1)
+  expect_equal(avg$avg_wealth_m,            num_col("S", 27:28), tolerance = 1e-2)
+  expect_equal(avg$economic_income_m,       num_col("T", 27:28), tolerance = 1e-2)
 })

@@ -4,7 +4,10 @@ test_that("SSRN NPV MC matches the paper's printed Sec 5.5 summary (p.20)", {
   tol <- mc_tol(s$sd, s$n)
   expect_equal(s$mean, -24.7, tolerance = tol / 24.7)
   expect_equal(s$median, -19.1, tolerance = tol / 19.1)
-  expect_equal(s$pct_negative, 71, tolerance = 1)
+  # Absolute, in points (scale = 1): the printed integer's rounding plus four standard errors
+  # of a share, about 1.07 points.
+  p <- s$pct_negative / 100
+  expect_equal(s$pct_negative, 71, tolerance = 0.5 + 400 * sqrt(p * (1 - p) / s$n), scale = 1)
 })
 
 test_that("NBER NPV MC matches the NBER README's printed summary", {
@@ -13,7 +16,10 @@ test_that("NBER NPV MC matches the NBER README's printed summary", {
   tol <- mc_tol(s$sd, s$n)
   expect_equal(s$mean, -38.9, tolerance = tol / 38.9)
   expect_equal(s$median, -35.3, tolerance = tol / 35.3)
-  expect_equal(s$pct_negative, 85.2, tolerance = 0.5)
+  # Absolute, in points (scale = 1): the printed digit's rounding plus four standard errors
+  # of a share, about 0.50 points.
+  p <- s$pct_negative / 100
+  expect_equal(s$pct_negative, 85.2, tolerance = 0.05 + 400 * sqrt(p * (1 - p) / s$n), scale = 1)
 })
 
 test_that("SSRN NPV MC reproduces from the authors' own NPV_dist.R", {

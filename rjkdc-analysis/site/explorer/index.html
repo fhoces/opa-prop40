@@ -182,7 +182,8 @@
       <p class="standfirst">
         Jaros and Rauh (JR, NBER, September 2026) find that the one-time billionaire tax leaves
         California poorer on average. The wealth tax is collected once, but billionaires who leave
-        stop paying income tax for ever. Six of the seven inputs below are guesswork. Move them and
+        stop paying income tax for ever. Four of the authors' five inputs below are guesswork; the
+        extra litigation weight and further growth dials are this OPA's additions. Move them and
         the estimate updates.
       </p>
     </div>
@@ -216,10 +217,13 @@
         seeded run, and the gap is sampling error (<a href="../repro.html#step-npv">report, Step 6</a>).
         The input labels follow the report's
         <a href="../repro.html#every-input-by-origin">input table</a>. The litigation dial reads the
-        README's q, which the code does not apply separately
+        chapter's q (PDF pp.19-20), which the code does not apply separately
         (<a href="../materials.html#mismatches">mismatch 5</a>). The growth dial is this OPA's
         illustration of growth beyond the authors' r &minus; g
         (<a href="../materials.html#mismatches">mismatch 3</a>).</p>
+        <p>The share below zero sums up the authors' independent, uniform draws over ranges that are
+        themselves guesswork. It is not a probability that the tax loses money: it moves with those
+        ranges, as the explorer's Rate 1.5% and Rate 4.5% settings show.</p>
         <!-- Lesson O3: when the tool departs from the source analysis's own
              convention, say how and give the size of the gap, here. -->
       </details>
@@ -263,8 +267,9 @@
   "use strict";
   var G = window.__GRID__;
   // The main estimate is the NBER setting (Jaros and Rauh, September 2026); the page opens
-  // on it and cites only that version. ORDER adds the paper's own scenarios on that setting
-  // (the rate fixed at 1.5% or 4.5%, PDF p.32; q = 0.5, PDF p.33). The grid's first-version
+  // on it and cites only that version. ORDER adds three settings on it
+  // (the rate fixed at 1.5% or 4.5%, the paper's scenarios, PDF p.32; q = 0.5, this OPA's
+  // reading of the chapter's q, PDF pp.19-20). The grid's first-version
   // setting (ssrn) stays for the pipeline and the report; this page does not show it.
   var MAIN = "nber";
   var ORDER = [MAIN, "rate15", "rate45", "q50"];
@@ -273,16 +278,16 @@
   var COLHEAD = { nber: "Main estimate (NBER, September 2026)" };
   // The headline's name for each paper scenario, and its one-line key under the buttons.
   var SCEN = { rate15: "Rate 1.5% scenario (PDF p.32)", rate45: "Rate 4.5% scenario (PDF p.32)",
-               q50: "Litigation weight q = 0.5 (PDF p.33)" };
+               q50: "Litigation weight q = 0.5 (this OPA's reading)" };
   var KEY = {
     rate15: "the main setting with r − g, the discount rate net of growth, fixed at 1.5%, the " +
       "S&P 500 dividend yield, the authors' measure of r − g. " +
       "The paper presents it as a scenario, with 3.0% and 4.5% (PDF p.32).",
     rate45: "the main setting with r − g, the discount rate net of growth, fixed at 4.5%, the " +
       "highest of the paper's three scenario rates (PDF p.32).",
-    q50: "the main setting with the wealth tax multiplied by a 0.50 chance that the Act survives " +
-      "in court, as the paper's text states (PDF p.33). The revenue floor rises to 35, so the 0 " +
-      "floor does not count the litigation risk a second time."
+    q50: "this OPA's reading of the chapter's q (PDF pp.19-20) as a multiplier on the draw, with " +
+      "the floor raised to the first version's 35 so the risk is not counted twice. The chapter " +
+      "applies q to its point estimate instead (PDF p.23)."
   };
   var KEY_REPORT = { rate15: "perpetuity", rate45: "perpetuity", q50: "monte-carlo" };
   function nlabel(k) { return (G.named_labels && G.named_labels[k]) || (k.charAt(0).toUpperCase() + k.slice(1)); }

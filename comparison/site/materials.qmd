@@ -101,9 +101,9 @@ passed, `r sum(res$failed)` failed**, in `r nrow(res)` test blocks. The files ch
 - `test-endpoints.R`: each end of the bridge against the number its authors print (BSZ
   Table 5 row 1, the NBER mean NPV; NBER is the National Bureau of Economic Research, which
   circulates working papers), plus the earlier figures the code still checks: the
-  headline of GGSS (the Galle, Gamage, Saez and Shanske expert report of July 2026, written in
-  support of the measure), behind the BSZ analysis, and the March 2026 version of the JR
-  analysis. The bridge itself ends at the September 2026 version.
+  headline of GGSS (the Galle, Gamage, Saez and Shanske expert report of July 2026, by some of
+  the experts who drafted the initiative, GGSS p.1), behind the BSZ analysis, and the March
+  2026 version of the JR analysis. The bridge itself ends at the September 2026 version.
 - `test-shapley.R`: the Shapley steps sum exactly to the gap in every setting, and match a
   brute-force average over orders (a Shapley value: a step's effect averaged over every order
   the inputs could be switched in, so the steps add up to the gap).
@@ -111,8 +111,9 @@ passed, `r sum(res$failed)` failed**, in `r nrow(res)` test blocks. The files ch
 - `test-sources.R`: every transcribed input has a label, a source and a page.
 - `test-site.R`: the overview page and the explorer are exactly the generator's output, have
   no unfilled token or em-dash, show the key numbers and the two main estimates, the explorer's
-  data file carries the same two values, the switchboard's all-off and all-on settings equal the
-  two ends in every horizon setting, the explorer's slider panels start and end at the two
+  data file carries the same two values, the switchboard (the common function's value for every
+  on/off mix of the `r nrow(bridge_steps())` inputs) equals the two ends at its all-off and all-on
+  settings in every horizon setting, the explorer's slider panels start and end at the two
   analyses' estimates, `site/explorer/model.js` (run with node) returns the R value on every mix
   in `slider_sample.csv` to 1e-9, the explorer shows no gross revenue number, and every
   relative link resolves.
@@ -148,8 +149,9 @@ scroll(show(data.frame(
 
 ```{r}
 #| results: asis
+n_args <- nrow(read.csv(file.path(root, "comparison", "export", "r", "inputs.csv")))
 desc <- c(
-  "inputs.csv" = "the disputed inputs: one row per bridge step, both analyses' values and sources",
+  "inputs.csv" = sprintf("the disputed inputs: one row per argument of the common function (%d), grouped by bridge step, both analyses' values and sources", n_args),
   "bridge.csv" = "every step's Shapley value and one-order value, for each output and horizon setting",
   "ends.csv" = "the two ends of every bridge (BSZ, Jaros and Rauh NBER) for each output and horizon setting, and the model difference at the JR end (zero by construction, kept as a check)",
   "endpoints.csv" = "each end against the number its authors print",
@@ -168,6 +170,9 @@ scroll(show(data.frame(
   contents = unname(desc))))
 own_a <- subset(rd("ends.csv"), horizon_setting == "own" & output == "a")
 ```
+
+In `inputs.csv`, the `supporting_*` columns hold the BSZ analysis's values and sources, and the
+`rauh_*` columns the JR analysis's.
 
 `loss.csv`'s last column, `net_at_nber_revenue_perpetuity`, nets each loss in perpetuity
 against the JR analysis's expected revenue (`r usd(own_a$rauh_own)`, in `ends.csv` and
@@ -189,8 +194,9 @@ edited by hand except these two transcriptions.
 
 The comparison reads no third-party file at run time. Each analysis's sources are listed on its
 own materials page ([BSZ](../../bsz-analysis/site/materials.html),
-[JR](../../rjkdc-analysis/site/materials.html)). The two documents only the comparison
-uses are recorded in the manifest with where to get them and their SHA-256:
+[JR](../../rjkdc-analysis/site/materials.html)). The comparison alone uses three documents.
+Two of them, Hoopes (2026) and the LAO's ballot analysis, are recorded in this manifest with
+where to get them and their SHA-256:
 
 ```{r}
 #| results: asis
@@ -203,7 +209,9 @@ scroll(show(data.frame(
   terms = ds$terms, check.names = FALSE)))
 ```
 
-Full rows: `r link("comparison/DATA-SOURCES.csv")`. Neither PDF is redistributed.
+Full rows: `r link("comparison/DATA-SOURCES.csv")`. Neither PDF is redistributed. The third is
+Walczak (California Tax Foundation, 22 April 2026), whose row is in the JR manifest
+(`r link("rjkdc-analysis/DATA-SOURCES.csv")`).
 
 The GGSS expert report (20 July 2026), which the bridge cites for the non-citizen residents,
 the avoidance allowance and the litigation step, and the GGSS response to Rauh (17 March 2026),

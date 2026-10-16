@@ -474,7 +474,7 @@ authors&#39; own code and data and taught step by step, following the
 &lt;img src=&quot;../assets/opa/opa-details.png&quot; class=&quot;opa-mark&quot; alt=&quot;&quot;&gt;
 
 .opa-legend[
-**Open Output**: [the explorer](../explorer/), the mean NPV for every combination of seven inputs&lt;br&gt;
+**Open Output**: [the explorer](../explorer/), the mean NPV for every combination of seven dials (the authors&#39; five inputs and two settings this OPA adds)&lt;br&gt;
 **Open Analysis**: [the report](../repro.html), and this deck&lt;br&gt;
 **Open Materials**: [the repository](https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis),
 the pipeline, its tests and every exported CSV
@@ -612,7 +612,7 @@ name: headline
 version, March 2026, was by Rauh, Jaros, Kearney, Doran and Cosso)
 
 .big[−$38.9B]
-mean NPV; 85.2% of outcomes negative (PDF p.35, Figure 3 note; 85% in the text, p.1)&lt;sup&gt;1&lt;/sup&gt;&lt;br&gt;
+mean NPV; 85.2% of outcomes negative (a summary of the draws&#39; ranges, not a probability; PDF p.35, Figure 3 note; 85% in the text, p.1)&lt;sup&gt;1&lt;/sup&gt;&lt;br&gt;
 revenue &quot;approximately 30 billion&quot; ($28.4B to $35.6B)
 
 Reproduced: &amp;minus;38.89 (the authors&#39; seeded run, replayed draw for draw) and
@@ -721,8 +721,9 @@ name: perpetuity
 The paper values a growing loss, so the rate is `\(r - g\)`, anchored at 1.5% (the S&amp;P 500 dividend
 yield). The Monte Carlo draws `\(r - g\)` from 1.5% to 4.5%; one sentence after it writes `\(C/r\)`
 ([mismatch 3](../materials.html#mismatches)).
-Whether the loss lasts **for ever** or only a few years (five is BSZ&#39;s example) is the main objection of the [BSZ analysis](../../../bsz-analysis/site/) (Boll, Saez
-and Zucman).
+The authors count the loss **for ever** because the Act permanently lifts the cap on taxing
+intangible property (PDF p.32). The [BSZ analysis](../../../bsz-analysis/site/) (Boll, Saez and
+Zucman) objects that it lasts only a few years (five is its example).
 ]
 
 ---
@@ -764,9 +765,10 @@ Draw 100,000 times, independently:
 
 .small[
 Revenue is drawn **from zero**: mean 36 = 0.5 × 72. The code never
-multiplies by `\(q\)`; this zero is its only trace ([mismatch 5](../materials.html#mismatches)). A uniform draw
+multiplies by `\(q\)`; this zero is its only trace of `\(q\)`, and the chapter also grounds it in unreported
+departures (fn.32; [mismatch 5](../materials.html#mismatches)). A uniform draw
 from 0 has the same **mean** as a coin flip on 72, not the same distribution. Lost income tax is
-**not** scaled by `\(q\)`: people who left do not come back if the Act is struck down.
+**not** scaled by `\(q\)`: leavers do not come back if the Act is struck down.
 ]
 
 ]
@@ -797,7 +799,7 @@ name: seven-inputs
 &lt;table class=&quot;dt&quot;&gt;&lt;tr&gt;&lt;th&gt;Input&lt;/th&gt;&lt;th&gt;Values in the explorer&lt;/th&gt;&lt;th&gt;Origin&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lowest revenue the draw can pick ($B)&lt;/td&gt;&lt;td&gt;0; 35; 45.59&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Highest revenue the draw can pick ($B)&lt;/td&gt;&lt;td&gt;55.10; 67.51; 72&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og data&#39;&gt;data&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Extra litigation weight on the revenue&lt;/td&gt;&lt;td&gt;1 (none extra); 0.75; 0.50&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Billionaires&#39; yearly California income tax ($B)&lt;/td&gt;&lt;td&gt;3.3 to 5.8; 3.3 only; 5.8 only&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Discount rate net of growth&lt;/td&gt;&lt;td&gt;1.5% to 4.5%; 1.5% only; 4.5% only&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Share of the income tax base that leaves&lt;/td&gt;&lt;td&gt;1 - WT/94.2; 0.30 to 0.60; 0.283 fixed&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Further growth of the lost income tax&lt;/td&gt;&lt;td&gt;0; 0.5%; 1.0%&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 
 .highlight-box[
-6 of the 7 are guesswork.
+4 of the authors&#39; 5 inputs are guesswork; the litigation weight and further growth rows are this OPA&#39;s settings.
 The data (Forbes, FTB, the Pareto fit) set the scale; the sign is decided by the guesses.
 [Try them in the explorer](../explorer/).
 ]

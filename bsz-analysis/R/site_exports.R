@@ -28,11 +28,11 @@ site_dials <- function() {
   list(
     list(key = "avoidance", label = "Avoidance and evasion", sym = "α",
          origin = "guesswork",
-         desc = "The share of the wealth on the Forbes list that escapes the tax.",
+         desc = "The share of the wealth on the Forbes list that escapes the tax (a on the comparison explorer).",
          report = "step-2-avoidance-and-evasion",
          levels = c(0, 0.05, 0.10, 0.15, 0.20, 0.30), default = 3L, fmt = "pct",
          tips = site_level_tips(6L, 3L, "10%",
-           "BSZ: 10%, from an expert report's judgment that enforcement keeps avoidance small. Not an estimate (BSZ PDF p.23).")),
+           "BSZ: 10%, covering every behavioural response, moves included. Their expert report argues enforcement keeps it small (GGSS p.4).")),
     list(key = "mobility_share", label = "Share of avoidance that is leaving", sym = "m",
          origin = "guesswork",
          desc = "The part of avoidance done by leaving California, the only part that costs income tax.",
@@ -83,7 +83,7 @@ site_named_rows <- function() {
 
 # The main estimate: the one-time wealth tax, plus the one-time extra income tax from
 # selling assets, minus the present value of the yearly income tax lost to leavers over
-# BSZ's horizon of about 5 years (PDF p.27), discounted at 3% a year (the middle of the
+# the 5 years of BSZ's example (PDF p.27), discounted at 3% a year (the middle of the
 # 1.5% to 4.5% range the JR analysis draws; BSZ give no rate). Same definition as the deck.
 site_pv_rate  <- 0.03
 site_pv_years <- 5
@@ -125,7 +125,9 @@ build_site_grid <- function(inp) {
   tibble::as_tibble(as.data.frame(do.call(rbind, rows)))
 }
 
-# Every input of the one-time estimate, with its value and origin label.
+# Every input of the one-time estimate, and the two the main estimate adds (H and r, the
+# horizon and rate of site_pv_factor(), read from site_pv_years and site_pv_rate), with
+# each one's value and origin label.
 build_site_inputs <- function(inp) {
   lv <- inp$leavers
   tibble::tribble(
@@ -172,7 +174,13 @@ build_site_inputs <- function(inp) {
       sprintf("$%.2f B/yr", inp$leaver_loss), "derived",
       "Top-3 company income tax from SEC data (Tab3 row 13) plus a wealth-proportional rate on the rest (Tab5!F19+F24).",
     "date", "Valuation date", "1 Jul 2026", "convention",
-      "The Act values wealth at 31 Dec 2026; BSZ and GGSS estimate on the latest Forbes snapshot."
+      "The Act values wealth at 31 Dec 2026; BSZ and GGSS estimate on the latest Forbes snapshot.",
+    "H", "Years the yearly income tax loss is counted (main estimate only)",
+      sprintf("%d years", as.integer(site_pv_years)), "scenario",
+      "This OPA's reading of BSZ's example ('If they last say only 5 years', PDF p.27); Table 5 gives no horizon.",
+    "r", "Discount rate for that loss (main estimate only)",
+      sprintf("%g%%", 100 * site_pv_rate), "scenario",
+      "This OPA's choice, the middle of the JR analysis's 1.5% to 4.5% range; BSZ give no rate."
   )
 }
 

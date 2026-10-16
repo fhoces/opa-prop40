@@ -9,7 +9,7 @@ test_that("rank-implied income schedule matches the paper's top-212 share (p.16)
   sched <- compute_pareto_income_schedule(fit)
   # "the top 212 positions collectively account for ... 38.8% of bracket tax
   # liability" (p.16, footnote 12).
-  expect_equal(round(sched$continuous_top_share * 100, 1), 38.8, tolerance = 0.1)
+  expect_equal(round(sched$continuous_top_share * 100, 1), 38.8)
   # "For the top 212 of 4,729 filers, this implies a 39.0% share ... $4.3
   # billion in Tax Year 2023" (p.15, eq.16 discussion) - this is the
   # DISCRETE (unrescaled) share, distinct from the continuous 38.8% above.

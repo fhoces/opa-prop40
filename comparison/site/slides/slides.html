@@ -732,6 +732,9 @@ table.dt th { background: none; }
 .claims td, .claims th { vertical-align: top; text-align: left !important; }
 table.dt td.l, table.dt th.l { text-align: left; }
 .nb { white-space: nowrap; }
+/* The smaller-steps slide: a tighter table so its four notes fit under it. */
+.remark-slide-content.tight-table table.dt { font-size: 72%; margin-top: 0.3em; }
+.remark-slide-content.tight-table table.dt td, .remark-slide-content.tight-table table.dt th { padding: 2px 6px; }
 &lt;/style&gt;
 
 # Artificial intelligence and Open Policy Analysis
@@ -846,8 +849,8 @@ authors&#39; Monte Carlo; their seeded run prints &lt;span class=&quot;nb&quot;&
 The one published comparison, Hoopes (2026), draws this gap for earlier versions of the two analyses as a waterfall; this project&#39;s own waterfall is [in the appendix](#waterfall).
 
 The next three slides take the three largest steps on this path, *D*, *q* and *H*, in path
-order. The sizes depend on the order. Averaged over every order (the report&#39;s order-free check),
-the three largest are *q* (chance it survives court), *f* (share lost) and *H* (years counted). Each of the next three slides says what both analyses
+order. The sizes depend on the order, because the inputs multiply each other. Averaged over
+every order (the report&#39;s order-free check), the three largest are *q* (chance it survives court), *f* (share lost) and *H* (years counted). Each of the next three slides says what both analyses
 assume, why, and what kind of claim it is:
 
 .small[
@@ -950,18 +953,21 @@ larger than the JR row&#39;s last column. The rate dial moves next.
 
 ---
 name: smaller
+class: tight-table
 
 # The smaller steps
 
-&lt;table class=&quot;dt&quot;&gt;&lt;tr&gt;&lt;th&gt;Input&lt;/th&gt;&lt;th&gt;BSZ value&lt;/th&gt;&lt;th&gt;JR value&lt;/th&gt;&lt;th class=&quot;l&quot;&gt;Kind of claim&lt;/th&gt;&lt;th&gt;Step on the path, (b)&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;i&gt;f&lt;/i&gt;, Share of billionaire income tax lost&lt;/td&gt;&lt;td&gt;what leavers paid&lt;/td&gt;&lt;td&gt;45% of all&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;guesswork&lt;/td&gt;&lt;td&gt;−$5.0B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;i&gt;C&lt;/i&gt;, Billionaires&#39; annual CA income tax&lt;/td&gt;&lt;td&gt;$3.06B/yr&lt;/td&gt;&lt;td&gt;$4.55B/yr&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;research vs guesswork&lt;/td&gt;&lt;td&gt;−$3.4B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;i&gt;r&lt;/i&gt;, Discount rate for the lost income tax&lt;/td&gt;&lt;td&gt;3%&lt;/td&gt;&lt;td&gt;2.73%&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;scenario vs derived&lt;/td&gt;&lt;td&gt;−$7.5B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;i&gt;W&lt;/i&gt;, Forbes source: which list and valuation date&lt;/td&gt;&lt;td&gt;Forbes 2026, $2,157B&lt;/td&gt;&lt;td&gt;Forbes 2025 grown 7%, $2,027.4B&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;data&lt;/td&gt;&lt;td&gt;−$2.2B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;i&gt;a&lt;/i&gt;, Avoidance and evasion allowance&lt;/td&gt;&lt;td&gt;10.0%&lt;/td&gt;&lt;td&gt;0.0%&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;guesswork&lt;/td&gt;&lt;td&gt;+$12.5B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Three minor inputs&lt;/td&gt;&lt;td&gt;$150B; 0.0%; 1/3&lt;/td&gt;&lt;td&gt;$0B; 0.5%; 0%&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;data vs guesswork, data, guesswork&lt;/td&gt;&lt;td&gt;−$5.4B&lt;/td&gt;&lt;/tr&gt;&lt;tr class=&quot;tot&quot;&gt;&lt;td&gt;The six together&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;−$11.0B&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;table class=&quot;dt&quot;&gt;&lt;tr&gt;&lt;th&gt;Input&lt;/th&gt;&lt;th&gt;BSZ value&lt;/th&gt;&lt;th&gt;JR value&lt;/th&gt;&lt;th class=&quot;l&quot;&gt;Kind of claim&lt;/th&gt;&lt;th&gt;Step on the path, (b)&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;i&gt;f&lt;/i&gt;, Share of billionaire income tax lost&lt;/td&gt;&lt;td&gt;the movers&#39; proportional share, plus named leavers&#39; own tax&lt;/td&gt;&lt;td&gt;45% of all&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;guesswork&lt;/td&gt;&lt;td&gt;−$5.0B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;i&gt;C&lt;/i&gt;, Billionaires&#39; annual CA income tax&lt;/td&gt;&lt;td&gt;$3.06B/yr&lt;/td&gt;&lt;td&gt;$4.55B/yr&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;research vs guesswork&lt;/td&gt;&lt;td&gt;−$3.4B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;i&gt;r&lt;/i&gt;, Discount rate for the lost income tax&lt;/td&gt;&lt;td&gt;3%&lt;/td&gt;&lt;td&gt;2.73%&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;scenario vs derived&lt;/td&gt;&lt;td&gt;−$7.5B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;i&gt;W&lt;/i&gt;, Forbes source: which list and valuation date&lt;/td&gt;&lt;td&gt;Forbes 2026, $2,157B&lt;/td&gt;&lt;td&gt;Forbes 2025 grown 7%, $2,027.4B&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;data&lt;/td&gt;&lt;td&gt;−$2.2B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;i&gt;a&lt;/i&gt;, Avoidance and evasion allowance&lt;/td&gt;&lt;td&gt;10.0%&lt;/td&gt;&lt;td&gt;0.0%&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;guesswork&lt;/td&gt;&lt;td&gt;+$12.5B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Three minor inputs&lt;/td&gt;&lt;td&gt;$150B; 0.0%; 1/3&lt;/td&gt;&lt;td&gt;$0B; 0.5%; 0%&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;data vs guesswork, data, guesswork&lt;/td&gt;&lt;td&gt;−$5.4B&lt;/td&gt;&lt;/tr&gt;&lt;tr class=&quot;tot&quot;&gt;&lt;td&gt;The six together&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;−$11.0B&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 
 .small[
-- **Share of income tax lost**: the BSZ analysis counts what the leavers paid. At its benchmark
-  these are the avoiders who move (50% of its 10% allowance),
-  assumed to take a proportional share of the income tax (BSZ PDF p.24); named leavers&#39; tax comes
-  from filings. The JR analysis takes a flat 45% of all billionaires&#39; income tax, the
-  middle of a 30% to 60% draw. The step is small because it comes before the
-  horizon, while the loss lasts 5 years.
+- **Share of income tax lost**: at its benchmark the BSZ analysis counts the avoiders who move
+  (50% of its 10% allowance), each taking a proportional share of
+  the income tax (BSZ PDF p.24), plus named leavers&#39; tax from filings. The JR analysis takes a
+  flat 45% of all billionaires&#39; income tax, the middle of a 30% to
+  60% draw set around the 28.6% of wealth that left, to cover
+  unreported moves (chapter PDF pp.31, 33). The step is small here because it comes before the
+  horizon, while the loss lasts 5 years. Averaged over every order it is among
+  the three largest.
 - **Yearly income tax**: BSZ take the 2019 to 2025 average from tax statistics and research. JR
   take the middle of a range whose floor is the authors&#39; judgement.
 - **Avoidance and evasion allowance** is the one step that raises the estimate: the JR analysis

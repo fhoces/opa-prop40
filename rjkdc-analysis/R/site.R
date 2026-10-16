@@ -61,7 +61,7 @@ site_dials <- function(revenue_chain) {
     list(key = "wt_lo", sym = "WT", label = "Lowest revenue the draw can pick ($B)",
          origin = "guesswork",
          desc = "The bottom of the range the model draws the wealth tax revenue from.",
-         tips = c("The NBER script. The 0, the Act struck down, is its only trace of litigation risk (mismatch 5).",
+         tips = c("The NBER script. The 0 stands for the Act struck down and for unreported departures (chapter fn.32).",
                   "The first version's floor (March 2026), a semi-elasticity of 12 to 13.",
                   "The first version's literature-calibrated revenue (March 2026)."),
          more = "step-wt",
@@ -79,7 +79,7 @@ site_dials <- function(revenue_chain) {
                     sprintf("%.2f", ss$wt_max), sprintf("%g", nb$wt_max))),
     list(key = "q", sym = "q", label = "Extra litigation weight on the revenue",
          origin = "guesswork",
-         desc = sprintf("Multiplies the revenue again, on top of the draw's 0 floor, which already halves its mean (%g = 0.5 × %g). The NBER README states q = 0.50. The script has no separate multiplier (mismatch 5).",
+         desc = sprintf("Multiplies the revenue again, on top of the draw's 0 floor, which already halves its mean (%g = 0.5 × %g). The chapter sets q = 0.50 (PDF pp.19-20). The script has no separate multiplier (mismatch 5).",
                         0.5 * nb$wt_max, nb$wt_max),
          tips = c(sprintf("The script. Its 0 revenue floor already halves the mean revenue (%g = 0.5 × %g).",
                           0.5 * nb$wt_max, nb$wt_max),
@@ -140,10 +140,10 @@ site_dials <- function(revenue_chain) {
 
 # Named settings (level indices into site_dials()). ssrn and nber are the two printed
 # versions; ssrn stays for the pipeline and the report but the explorer does not show it.
-# The other three are the paper's own scenarios on the main (nber) setting: the rate fixed
-# at each end of its draw, the two single rates the paper presents with 3.0% (PDF p.32),
-# and the litigation weight q = 0.5 the text states (PDF p.33), applied as a multiplier
-# with the 35 revenue floor so the 0 floor does not count the risk a second time.
+# The other three sit on the main (nber) setting: the rate fixed at each end of its draw,
+# the two single rates the paper presents with 3.0% (PDF p.32), and this OPA's reading of
+# the chapter's q = 0.5 (PDF pp.19-20) as a multiplier, with the 35 revenue floor so the 0
+# floor does not count the risk a second time.
 site_named <- function() {
   list(
     ssrn = c(wt_lo = 1, wt_hi = 1, q = 0, c = 0, rate = 0, f = 0, g = 0),

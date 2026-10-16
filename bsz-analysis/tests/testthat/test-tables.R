@@ -60,8 +60,8 @@ test_that("build_tab1 panel B reproduces Tab1 sheet 1982 + current year + ratios
   expect_equal(pb$wealth_top0002_b,     xl$B, tolerance = 1e-2)
   expect_equal(pb$wealth_per_family_b,  xl$C, tolerance = 1e-3)
   expect_equal(pb$n_ca_families_m,      xl$D, tolerance = 1e-3)
-  expect_equal(pb$ca_gdp_2025dollars_b, xl$E, tolerance = 1e-1)
-  expect_equal(pb$gdp_per_family_k,     xl$F, tolerance = 1)
+  expect_equal(pb$ca_gdp_2025dollars_b, xl$E, tolerance = 1e-3)
+  expect_equal(pb$gdp_per_family_k,     xl$F, tolerance = 1e-3)
 })
 
 test_that("build_tab2 reproduces Tab2 sheet 2019-2025 + average row", {
@@ -127,11 +127,11 @@ test_that("build_tab3 reproduces Tab3 sheet per-billionaire CA income tax + weal
   expect_equal(p$huang[8],      xl$D[8],  tolerance = 1e-3)
   expect_equal(p$all_top4[8],   xl$E[8],  tolerance = 1e-3)
   # Wealth rows
-  expect_equal(p$page[9:10],       xl$A[9:10],  tolerance = 1)
-  expect_equal(p$brin[9:10],       xl$B[9:10],  tolerance = 1)
-  expect_equal(p$zuckerberg[9:10], xl$C[9:10],  tolerance = 1)
-  expect_equal(p$huang[9:10],      xl$D[9:10],  tolerance = 1)
-  expect_equal(p$all_top4[9:10],   xl$E[9:10],  tolerance = 1)
+  expect_equal(p$page[9:10],       xl$A[9:10],  tolerance = 1e-3)
+  expect_equal(p$brin[9:10],       xl$B[9:10],  tolerance = 1e-3)
+  expect_equal(p$zuckerberg[9:10], xl$C[9:10],  tolerance = 1e-3)
+  expect_equal(p$huang[9:10],      xl$D[9:10],  tolerance = 1e-3)
+  expect_equal(p$all_top4[9:10],   xl$E[9:10],  tolerance = 1e-3)
   # Ratio row
   expect_equal(p$page[11],       xl$A[11],  tolerance = 1e-5)
   expect_equal(p$brin[11],       xl$B[11],  tolerance = 1e-5)

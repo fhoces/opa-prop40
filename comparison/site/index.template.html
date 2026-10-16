@@ -298,15 +298,17 @@
   <h1>California Proposition 40, Reconciliation of the Two Analyses</h1>
   <p class="byline">
     Proposition 40, the Billionaire Tax Act, would tax Californians worth $1 billion or more
-    once, at 5% of their net worth, paid over five years. The
+    once, at 5% of their net worth, payable over five years. The
     <a href="bsz-analysis/site/">BSZ analysis</a> (Boll, Saez and Zucman, NBER, August 2026)
-    finds that it raises money for the state. The
+    finds that it raises about {{bsz_printed}} of wealth tax. The
     <a href="rjkdc-analysis/site/">JR analysis</a> (Jaros and Rauh, NBER, September 2026) finds
-    that it leaves the state about {{nber_npv_round}} poorer (the chapter prints a mean of
-    {{nber_printed}}), because billionaires who leave stop paying California income tax for ever.
+    that it leaves the state about {{nber_npv_round}} poorer (their paper prints an average of
+    <span style="white-space:nowrap">{{nber_printed}}</span>), because billionaires who leave stop paying California income tax for ever.
     This page puts both on one definition and shows which
     assumptions make the difference. It follows the
-    <a href="https://doi.org/10.1093/scipol/scaa067">Open Policy Analysis</a> (OPA) framework.
+    <a href="https://doi.org/10.1093/scipol/scaa067">Open Policy Analysis</a> (OPA) framework:
+    the result, the method and the materials each have their own page, and every input is marked
+    by the kind of evidence behind it.
   </p>
 </header>
 
@@ -315,15 +317,15 @@
     <div class="hl">
       <span class="name">BSZ main estimate<sup><a href="#fn1" id="fnref1-bsz">1</a></sup></span>
       <a class="value" href="bsz-analysis/site/" title="Open the BSZ analysis overview" id="hl-bsz">{{hl_bsz}}</a>
-      <span class="def">Net total: the wealth tax plus the income tax it changes, over 5 years, in today's dollars</span>
+      <span class="def">Net total: the wealth tax, plus income tax from assets sold to pay it, minus income tax lost to leavers over 5 years, in today's dollars</span>
     </div>
     <div class="hl">
       <span class="name">JR main estimate<sup><a href="#fn1" id="fnref1-jr">1</a></sup></span>
       <a class="value" href="rjkdc-analysis/site/" title="Open the JR analysis overview" id="hl-rjkdc">{{hl_rjkdc}}</a>
-      <span class="def">Net present value: the wealth tax minus the income tax lost for ever, in today's dollars. It is the exact average of the authors' model. Jaros and Rauh (September 2026) print {{nber_printed}} from one run.</span>
+      <span class="def">Net present value: the wealth tax minus the income tax lost for ever, in today's dollars. It is the exact average of the authors' model. Jaros and Rauh (September 2026) print <span style="white-space:nowrap">{{nber_printed}}</span>, the average of one simulation of 100,000 random draws.</span>
     </div>
   </div>
-  <p class="def" style="margin:6px 0 0">Today's dollars (present value): what income tax lost in future years is worth now. Both analyses count the wealth tax at face value, although it is paid over five years.</p>
+  <p class="def" style="margin:6px 0 0">Today's dollars (present value): what income tax lost in future years is worth now. Both analyses count the wealth tax at face value. The Act lets it be paid in five yearly installments, each later one with a deferral charge of 7.5% a year on the unpaid balance, which neither analysis counts.</p>
 </div>
 
 <section class="eq-box" id="what-separates" aria-labelledby="eq-title">
@@ -383,7 +385,8 @@
       <div class="card-text">
         <span class="kicker">Open Materials</span>
         <h3>Materials for computational reproduction &rarr;</h3>
-        <p>The R code that computes every number on this page, its Python twin, the test suite,
+        <p>The R code that computes every number on this page, its Python twin (the same
+        computation written again in Python and checked against the R result), the test suite,
         every exported CSV and the values copied from the PDFs, with their page. A guided summary is on the
         materials page, linked in the text below.</p>
       </div>
@@ -398,7 +401,7 @@
   <a class="subopa-card" href="bsz-analysis/site/">
     <span class="kicker">BSZ analysis: a revenue estimate</span>
     <h3>Boll, Saez, Zucman, NBER WP 35218 (Aug 2026) &rarr;</h3>
-    <p>Static estimation on the Forbes list with a 10% avoidance allowance.</p>
+    <p>The Forbes list on 1 July 2026, less a 10% allowance for avoidance and evasion, half of it billionaires who moved away.</p>
     <span class="headline">Main estimate, net total: {{hl_bsz}}</span>
     <span class="headline">Table 5 row 1, wealth tax: {{bsz_row1}} (the paper prints {{bsz_printed}})</span>
     <div class="card-icon-box" aria-hidden="true"><img src="assets/opa/opa-all.png" alt=""></div>
@@ -468,7 +471,8 @@ original authors have not reviewed it.</p>
    compares earlier versions: the February 2026 GGSS expert report (Galle, Gamage, Saez and
    Shanske), on which the BSZ analysis builds, and the March 2026 JR analysis. Its Figure 2
    prints no values and comes with no code or data, so its steps cannot be recomputed. This OPA
-   uses the latest versions, publishes the code, and bridges the two estimates step by step. The
+   uses the latest versions, publishes the code, and bridges the two estimates step by step (a
+   sequence of steps from one main estimate to the other, one input at a time). The
    <a href="comparison/site/repro.html#the-hoopes-comparison">report</a> sets his bars beside this
    bridge, difference by difference.</p>
 
@@ -520,13 +524,17 @@ versions than this site. So the two do not line up step for step.</p>
 {{quantity_survey_mini}}
 {{quantity_table_root}}
 {{quantity_survey_root}}
-<p class="small">"Guesswork on data" is a judgement applied to observed facts. "Derived" is a value computed from the analysis's own inputs:
-the JR discount rate is the one rate worth the same as the authors' random draw of it.</p>
+<p class="small">Kinds: <b>data</b> (settled by observable facts), <b>research</b> (a published
+estimate), <b>guesswork</b> (asserted without data or a study behind it), <b>guesswork on data</b> (a
+judgement applied to observed facts), <b>scenario</b> (a choice of which world is estimated) and
+<b>derived</b> (computed from the analysis's own inputs: the JR discount rate is the one rate worth
+the same as the authors' random draw of it). A source ending in .R is a script in the authors'
+repository.</p>
   </div>
 </details>
 
 <section class="footnotes" aria-label="Footnotes">
-  <p class="fn" id="fn1"><sup>1</sup> The main estimate on each analysis's overview page. The BSZ number is this
+  <p class="fn" id="fn1"><sup>1</sup> The number each analysis's overview page leads with, out of the many settings each analysis can be run at. The BSZ number is this
     OPA's net total over 5 years at 3%: the {{bsz_row1}} wealth tax (Table 5 row 1), plus income
     tax from asset sales, minus income tax lost to leavers. BSZ's own headline is the wealth tax
     alone. The JR number is the authors' mean net present value in perpetuity. {{jr_fn_root}} The

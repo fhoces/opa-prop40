@@ -313,7 +313,7 @@
         <a class="hl" href="../../../rjkdc-analysis/site/" title="Open the JR analysis overview">
           <span class="name">JR main estimate<sup>1</sup></span>
           <span class="value" id="hl-rjkdc">{{hl_rjkdc}}</span>
-          <span class="def">Net present value: the wealth tax minus the income tax lost for ever, in today's dollars. This is the exact average of the authors' model, which they print as {{nber_printed}} from one run.</span>
+          <span class="def">Net present value: the wealth tax minus the income tax lost for ever, in today's dollars. This is the exact average of the authors' model. They print <span style="white-space:nowrap">{{nber_printed}}</span>, the average of one simulation of 100,000 random draws.</span>
         </a>
       </div>
     </div>
@@ -379,28 +379,41 @@
 
   <section class="quantities" id="quantities" aria-labelledby="q-title">
     <h3 id="q-title">But what are the actual quantities?</h3>
+    <p class="q-sub">Each dial's two ends above give both analyses' values. The
+    <a href="../../../index.html#differences">overview's table of differences</a> sets them side by
+    side with their sources.</p>
 {{quantity_survey_x}}
   </section>
 
   <details class="fold notes" id="notes-estimates">
     <summary>Notes on the two estimates and the conventions</summary>
     <div class="note">
-    <p class="fn"><sup>1</sup> The main estimate on each analysis's overview page, each defined its own way. The BSZ
+    <p class="fn"><sup>1</sup> The number each analysis's overview page leads with, out of the many settings each analysis can be run at, each defined its own way. The BSZ
     analysis's is a net total over 5 years: the wealth tax (Table 5 row 1), plus extra income
     tax from assets sold to pay it, minus the income tax lost to billionaires who leave, for 5
     years at {{r_bsz}}. BSZ's own headline is the wealth tax alone; the net total is this OPA's choice,
     explained on the <a href="../../../bsz-analysis/site/">BSZ analysis overview</a>. The JR
-    analysis's is a perpetuity net present value, averaged over the authors' Monte Carlo draws
+    analysis's is a perpetuity net present value, averaged over the authors' Monte Carlo draws (a
+    simulation that draws the uncertain inputs at random many times and averages the results)
     (Jaros and Rauh, NBER chapter c15504, Tax Policy and the Economy vol. 41, September 2026).
     {{jr_fn_x}}</p>
     <p class="fn">The net fiscal effect puts both on one definition, and the panels start at its
     two ends. The BSZ end is <b>{{bsz_end_b}}</b> and the JR end <b>{{jr_end_b}}</b>, a gap of <b>{{gap_b}}</b>.
     The discount rate is a dial: {{r_bsz}} at the BSZ end, the rate the BSZ overview uses, and
     {{r_jr}} at the JR end, the one rate worth the same as the authors' random draw of it.</p>
-    <p class="fn">Conventions. All amounts are billions of dollars at the assessment date. The
-    wealth tax is counted at face value when assessed and undiscounted, as both analyses do (the
-    BSZ analysis values the base on 1 July 2026; the JR analysis grows its 2025 Forbes base by
-    {{nber_growth}} to 31 December 2026). The lost income tax is a flat yearly amount, discounted
+    <p class="fn">The litigation dial, q, is at 50% at the JR end. The JR explorer's litigation
+    dial reads 1 at the main estimate, because there the revenue draw from 0 to the ceiling
+    already halves the mean revenue. This explorer applies the same half as q = 50% of the
+    ceiling.</p>
+    <p class="fn">Conventions. All amounts are billions of dollars. Present values are as of the
+    date the wealth tax is assessed, and the first year of lost income tax is counted one year
+    later. The wealth tax is counted at face value when assessed and undiscounted, as both
+    analyses do (the BSZ analysis values the base on 1 July 2026; the JR analysis grows its 2025
+    Forbes base by {{nber_growth}} to 31 December 2026). The Act lets a taxpayer pay at once or in
+    five yearly installments, each later one with a deferral charge of 7.5% a year on the unpaid
+    balance (&sect;50301(c)), and an Optional Deferral Account (&sect;50304) can delay the tax on
+    illiquid assets. Neither analysis counts either provision, and this OPA does not estimate
+    them. The lost income tax is a flat yearly amount, discounted
     at the rate dial's value. The JR analysis's rate is a real rate net of the growth of the lost
     tax, r − g (chapter eqs. 14 and 18; one sentence writes r alone, the JR analysis's
     <a href="../../../rjkdc-analysis/site/materials.html#mismatches">mismatch 3</a>), so a flat
@@ -434,11 +447,11 @@
       <a href="../../../assets/comparison-data.js">comparison-data.js</a> (what this page reads).
       A test fails if <code>comparison-data.js</code> or this page differs from the generator's
       output.</p>
-      <p><strong>Kinds.</strong> Each slider's explanation ends with the kind of its two values:
+      <p><strong>Kinds.</strong> Each end's tip ends with the kind of that analysis's value:
       <b>data</b> (settled by observable facts), <b>research</b> (a published estimate),
       <b>guesswork</b> (asserted without data or a study behind it), <b>guesswork on data</b> (a
       judgement applied to observed facts), <b>scenario</b> (a choice of which world is
-      estimated) and <b>derived</b> (computed from the analysis's own inputs). "A vs B" reads the BSZ value's kind against the JR value's.</p>
+      estimated) and <b>derived</b> (computed from the analysis's own inputs).</p>
       <p><strong>The function.</strong> The <a href="../repro.html#the-two-ends">report</a> states
       the estimating function line by line. The BSZ panel's sliders move only the BSZ bar and the JR
       panel's sliders only the JR bar.</p>

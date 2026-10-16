@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-10-15">
+<meta name="dcterms.date" content="2026-10-16">
 
 <title>Prop 40, BSZ analysis: the materials</title>
 <style>
@@ -2532,7 +2532,7 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 15, 2026</p>
+      <p class="date">October 16, 2026</p>
     </div>
   </div>
   
@@ -2561,7 +2561,7 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> tools/site-test-results.R        <span class="co"># the full test suite; writes site/data/test-results.csv</span></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> site <span class="kw">&amp;&amp;</span> <span class="ex">quarto</span> render repro.qmd <span class="kw">&amp;&amp;</span> <span class="ex">quarto</span> render materials.qmd</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> slides <span class="kw">&amp;&amp;</span> <span class="ex">Rscript</span> <span class="at">-e</span> <span class="st">&#39;rmarkdown::render(&quot;slides.Rmd&quot;)&#39;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The pipeline is an R <a href="https://docs.ropensci.org/targets/"><code>{targets}</code></a> project. The default workbook vintage (the dated version of the workbook a number comes from) is August 2026; <code>BSZ_VINTAGE=may</code> switches every vintage-dependent path, column and constant to May. <code>CAWTBSZ_MATERIALS</code> points the pipeline at the sources if they are not in <code>original-materials/</code>.</p>
+<p>The pipeline is an R <a href="https://docs.ropensci.org/targets/"><code>{targets}</code></a> project (an R package that runs the pipeline’s steps in order and records which outputs are current). The default workbook vintage (the dated version of the workbook a number comes from) is August 2026; <code>BSZ_VINTAGE=may</code> switches every vintage-dependent path, column and constant to May. <code>CAWTBSZ_MATERIALS</code> points the pipeline at the sources if they are not in <code>original-materials/</code>.</p>
 <p>Every computation also has a Python twin in <a href="https://github.com/fhoces/opa-prop40/blob/main/bsz-analysis/py/"><code>py/</code></a>, with the same function names as in <code>R/</code>. After <code>pip install -r requirements.txt</code>, the command <code>python py/run_export.py</code> (about 2 seconds) writes the same results to <code>export/py/</code>, and <a href="https://github.com/fhoces/opa-prop40/blob/main/bsz-analysis/tests/testthat/test-py-parity.R"><code>tests/testthat/test-py-parity.R</code></a> checks each file against R’s. The report’s code folds show both languages.</p>
 </section>
 <section id="tests" class="level2">
@@ -2766,12 +2766,12 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 </tr>
 <tr class="even">
 <td style="text-align: left;"><a href="https://github.com/fhoces/opa-prop40/blob/main/bsz-analysis/R/site_exports.R"><code>R/site_exports.R</code></a></td>
-<td style="text-align: right;">255</td>
+<td style="text-align: right;">263</td>
 <td style="text-align: left;">this site&#39;s data: the dials, the grid (computed by compute_tab5.R), input origins</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><a href="https://github.com/fhoces/opa-prop40/blob/main/bsz-analysis/R/tables.R"><code>R/tables.R</code></a></td>
-<td style="text-align: right;">710</td>
+<td style="text-align: right;">715</td>
 <td style="text-align: left;">the six gt tables</td>
 </tr>
 <tr class="even">
@@ -2817,7 +2817,7 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 </tr>
 <tr class="even">
 <td style="text-align: left;"><a href="data/inputs.csv"><code>inputs.csv</code></a></td>
-<td style="text-align: right;">18</td>
+<td style="text-align: right;">20</td>
 <td style="text-align: right;">5</td>
 <td style="text-align: left;">every input of the one-time estimate, with value, origin label and source</td>
 </tr>
@@ -2955,7 +2955,7 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 </table>
 </div>
 </div>
-<p>Full rows, including what each source feeds: <a href="https://github.com/fhoces/opa-prop40/blob/main/bsz-analysis/DATA-SOURCES.csv"><code>DATA-SOURCES.csv</code></a>; the column definitions: <a href="https://github.com/fhoces/opa-prop40/blob/main/bsz-analysis/DATA-SOURCES.md"><code>DATA-SOURCES.md</code></a>. The author-shared bundle is confidential and is not used by anything published here.</p>
+<p>Full rows, including what each source feeds: <a href="https://github.com/fhoces/opa-prop40/blob/main/bsz-analysis/DATA-SOURCES.csv"><code>DATA-SOURCES.csv</code></a>; the column definitions: <a href="https://github.com/fhoces/opa-prop40/blob/main/bsz-analysis/DATA-SOURCES.md"><code>DATA-SOURCES.md</code></a>. The author-shared bundle is confidential. The SQL in <code>sql/</code> rebuilds the workbook’s data sheets from it and checks them against the public workbook; only that comparison is reported, and none of the bundle’s contents is committed or shown.</p>
 </section>
 <section id="what-the-checks-found" class="level2">
 <h2 class="anchored" data-anchor-id="what-the-checks-found">What the checks found</h2>
@@ -2964,6 +2964,7 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 <li><strong>Two implicit readings</strong> in Table 5 (the literal 5% income tax loss share; row 4 omitting row 2’s phase-in deduction), kept at the workbook’s behaviour and disclosed on the <a href="explorer/">explorer</a>.</li>
 <li><strong>Two printed cells</strong> of Table 5 (the income tax loss in rows 2 and 3) that the paper rounds differently from its own workbook.</li>
 <li><strong>A display error</strong> in this reproduction’s Tables 1 and A1: the display put Panel B’s values under Panel A’s headers and formats and kept the May workbook’s labels (GDP for AGI, 2025 for 2026); fixed in the display code on 2026-10-15.</li>
+<li><strong>An annualizing gap in Appendix Table A1</strong>: the workbook (<code>TabA1!B18:G18</code>) and the paper annualize the 1982 to 2026 growth over 43 years, and this reproduction over 44, so three cells of the row print lower than the paper. The tests compare whole columns and do not catch it. Which to use is a question for the author.</li>
 <li><strong>A malformed row in our own source manifest</strong>: two <code>provider</code> fields contained an unquoted comma, which shifted every later column for any CSV reader; quoted on 2026-09-23.</li>
 <li><strong>Not reproduced</strong>: the paper’s Figure 8 and Appendix Figure A1 (wealth relative to AGI), and the raw data behind the workbook, which the pipeline takes as given.</li>
 </ul>

@@ -103,6 +103,6 @@ with every internal link resolving.
   of the bridge is checked against). Until 2026-10-14 the bridge ended at the March 2026
   version (51.26, -24.7) and reached September in one extra step; it now uses September's
   values directly.
-- The Monte Carlo ranges (WT floor 35, C in [3.3, 5.8], r - g in [1.5%, 4.5%], NBER f in
-  [0.30, 0.60]) are read from the JR contract (`rauh_mc_*`, `nber_mc_*` rows). The rate range
+- The Monte Carlo ranges (WT in [0, 72], where the March version's floor was 35, C in
+  [3.3, 5.8], r - g in [1.5%, 4.5%], NBER f in [0.30, 0.60]) are read from the JR contract (`rauh_mc_*`, `nber_mc_*` rows). The rate range
   gives the JR end of the rate dial, 1 / E[1/r]; `score_common()` takes one rate per end.

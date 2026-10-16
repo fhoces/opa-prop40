@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-10-15">
+<meta name="dcterms.date" content="2026-10-16">
 
 <title>Prop 40, the comparison: the materials</title>
 <style>
@@ -2538,7 +2538,7 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 15, 2026</p>
+      <p class="date">October 16, 2026</p>
     </div>
   </div>
   
@@ -2733,11 +2733,11 @@ skipped
 </div>
 <p>Run while this page was rendered: <strong>1014 expectations passed, 0 failed</strong>, in 53 test blocks. The files check:</p>
 <ul>
-<li><code>test-endpoints.R</code>: each end of the bridge against the number its authors print (BSZ Table 5 row 1, the NBER mean NPV; NBER is the National Bureau of Economic Research, which circulates working papers), plus the earlier figures the code still checks: the headline of GGSS (the Galle, Gamage, Saez and Shanske expert report of July 2026, written in support of the measure), behind the BSZ analysis, and the March 2026 version of the JR analysis. The bridge itself ends at the September 2026 version.</li>
+<li><code>test-endpoints.R</code>: each end of the bridge against the number its authors print (BSZ Table 5 row 1, the NBER mean NPV; NBER is the National Bureau of Economic Research, which circulates working papers), plus the earlier figures the code still checks: the headline of GGSS (the Galle, Gamage, Saez and Shanske expert report of July 2026, by some of the experts who drafted the initiative, GGSS p.1), behind the BSZ analysis, and the March 2026 version of the JR analysis. The bridge itself ends at the September 2026 version.</li>
 <li><code>test-shapley.R</code>: the Shapley steps sum exactly to the gap in every setting, and match a brute-force average over orders (a Shapley value: a step’s effect averaged over every order the inputs could be switched in, so the steps add up to the gap).</li>
 <li><code>test-parity.R</code>: the R exports are current, and the Python twin’s agree with them to 1e-9.</li>
 <li><code>test-sources.R</code>: every transcribed input has a label, a source and a page.</li>
-<li><code>test-site.R</code>: the overview page and the explorer are exactly the generator’s output, have no unfilled token or em-dash, show the key numbers and the two main estimates, the explorer’s data file carries the same two values, the switchboard’s all-off and all-on settings equal the two ends in every horizon setting, the explorer’s slider panels start and end at the two analyses’ estimates, <code>site/explorer/model.js</code> (run with node) returns the R value on every mix in <code>slider_sample.csv</code> to 1e-9, the explorer shows no gross revenue number, and every relative link resolves.</li>
+<li><code>test-site.R</code>: the overview page and the explorer are exactly the generator’s output, have no unfilled token or em-dash, show the key numbers and the two main estimates, the explorer’s data file carries the same two values, the switchboard (the common function’s value for every on/off mix of the 11 inputs) equals the two ends at its all-off and all-on settings in every horizon setting, the explorer’s slider panels start and end at the two analyses’ estimates, <code>site/explorer/model.js</code> (run with node) returns the R value on every mix in <code>slider_sample.csv</code> to 1e-9, the explorer shows no gross revenue number, and every relative link resolves.</li>
 </ul>
 <p>GitHub Actions rebuilds the exports in R and Python on a clean runner and runs the suite on every push that touches <code>comparison/</code> or either analysis’s export contract (<code>.github/workflows/comparison-ci.yml</code>). It does not render the Quarto pages.</p>
 </section>
@@ -2797,7 +2797,7 @@ every number the page shows, written to export/r/*.csv
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/R/site.R"><code>R/site.R</code></a>
 </td>
 <td style="text-align:right;">
-889
+926
 </td>
 <td style="text-align:left;">
 renders the overview page (index.html), the explorer (site/explorer/index.html) and their data file from site/index.template.html and site/explorer.template.html
@@ -2852,7 +2852,7 @@ score_common() and the slider rule ported to JavaScript; the explorer’s panels
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/site/repro.qmd"><code>site/repro.qmd</code></a>
 </td>
 <td style="text-align:right;">
-894
+943
 </td>
 <td style="text-align:left;">
 the reproduction report
@@ -2863,7 +2863,7 @@ the reproduction report
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/site/slides/slides.Rmd"><code>site/slides/slides.Rmd</code></a>
 </td>
 <td style="text-align:right;">
-1044
+1049
 </td>
 <td style="text-align:left;">
 the slide deck: what is in the report and where the main differences come from (xaringan; every number read from export/r/)
@@ -2874,7 +2874,7 @@ the slide deck: what is in the report and where the main differences come from (
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/site/materials.qmd"><code>site/materials.qmd</code></a>
 </td>
 <td style="text-align:right;">
-261
+269
 </td>
 <td style="text-align:left;">
 this page
@@ -2916,7 +2916,7 @@ contents
 7
 </td>
 <td style="text-align:left;">
-the disputed inputs: one row per bridge step, both analyses’ values and sources
+the disputed inputs: one row per argument of the common function (15), grouped by bridge step, both analyses’ values and sources
 </td>
 </tr>
 <tr>
@@ -3048,12 +3048,13 @@ the common function’s value for every mix of switches (bit i of mask = dispute
 </tbody>
 </table>
 </div>
+<p>In <code>inputs.csv</code>, the <code>supporting_*</code> columns hold the BSZ analysis’s values and sources, and the <code>rauh_*</code> columns the JR analysis’s.</p>
 <p><code>loss.csv</code>’s last column, <code>net_at_nber_revenue_perpetuity</code>, nets each loss in perpetuity against the JR analysis’s expected revenue ($36.0B, in <code>ends.csv</code> and <code>anchors.csv</code>).</p>
 <p><code>comparison/export/py/</code> holds the same files from the Python twin (without <code>inputs.csv</code>). The explorer reads <code>assets/comparison-data.js</code>, written by <code>R/site.R</code> from these files. Its two slider panels read the two input vectors from the same data file and compute each panel’s estimate in the browser with <code>site/explorer/model.js</code>, which follows <code>slider_inputs()</code> in <code>R/model.R</code>: positions 1 to 3 are evenly spaced between the two values, and the horizon steps through 5, 10, 20 and 50 years and a perpetuity. The inputs the comparison transcribes itself are in <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/data/document-inputs.csv"><code>comparison/data/document-inputs.csv</code></a> (19 rows, each with an origin label, a source and a page) and <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/data/hoopes-fig2.csv"><code>comparison/data/hoopes-fig2.csv</code></a> (Hoopes’s Figure 2, read off the chart). None is edited by hand except these two transcriptions.</p>
 </section>
 <section id="sources" class="level2">
 <h2 class="anchored" data-anchor-id="sources">Sources</h2>
-<p>The comparison reads no third-party file at run time. Each analysis’s sources are listed on its own materials page (<a href="../../bsz-analysis/site/materials.html">BSZ</a>, <a href="../../rjkdc-analysis/site/materials.html">JR</a>). The two documents only the comparison uses are recorded in the manifest with where to get them and their SHA-256:</p>
+<p>The comparison reads no third-party file at run time. Each analysis’s sources are listed on its own materials page (<a href="../../bsz-analysis/site/materials.html">BSZ</a>, <a href="../../rjkdc-analysis/site/materials.html">JR</a>). The comparison alone uses three documents. Two of them, Hoopes (2026) and the LAO’s ballot analysis, are recorded in this manifest with where to get them and their SHA-256:</p>
 <div class="table-scroll">
 <table class="table table-sm">
 <thead>
@@ -3113,7 +3114,7 @@ public-government-document (not committed per repo policy)
 </tbody>
 </table>
 </div>
-<p>Full rows: <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/DATA-SOURCES.csv"><code>comparison/DATA-SOURCES.csv</code></a>. Neither PDF is redistributed.</p>
+<p>Full rows: <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/DATA-SOURCES.csv"><code>comparison/DATA-SOURCES.csv</code></a>. Neither PDF is redistributed. The third is Walczak (California Tax Foundation, 22 April 2026), whose row is in the JR manifest (<a href="https://github.com/fhoces/opa-prop40/blob/main/rjkdc-analysis/DATA-SOURCES.csv"><code>rjkdc-analysis/DATA-SOURCES.csv</code></a>).</p>
 <p>The GGSS expert report (20 July 2026), which the bridge cites for the non-citizen residents, the avoidance allowance and the litigation step, and the GGSS response to Rauh (17 March 2026), which <code>DISPUTES.md</code> cites for the March 2026 disputes, are listed in the BSZ analysis’s manifest, <a href="https://github.com/fhoces/opa-prop40/blob/main/bsz-analysis/DATA-SOURCES.csv"><code>bsz-analysis/DATA-SOURCES.csv</code></a>, with their URLs on Saez’s Berkeley page.</p>
 </section>
 <section id="what-the-checks-found" class="level2">

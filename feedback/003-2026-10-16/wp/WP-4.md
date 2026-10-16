@@ -1,0 +1,40 @@
+# WP-4: BSZ report, table display, deck and two test files
+Owner: opus. Status: done.
+
+## Changed
+- `bsz-analysis/R/tables.R` `build_tab5()` (A-14, E-13): counts print with no decimals (250, 620), the loss column with two (row 1 now −0.15, as BSZ print it), the rest with one as before. The loss column's header is now "Annual temporary CA income tax loss from leavers ($B)" (BSZ's header, PDF p.39). In the note, the "steady-state" sentence is replaced by: The income tax loss "is annual but temporary if the wealth tax is one-time" (BSZ Table 5 note, PDF p.39). In row 1, half of the 10% avoidance is billionaires who moved ("half due to mobility"). The quote was checked against the PDF text of p.39. `long_labels` and every panel value are unchanged, so the `tab5_panel` snapshot is unaffected (Q10).
+- `bsz-analysis/site/repro.qmd`, setup chunk (E-17): `pv_r <- site_pv_rate; pv_H <- site_pv_years`, and `pvf <- site_pv_factor(pv_r, pv_H)`.
+- `repro.qmd` line 140 (E-01): "paid 1% a year over five years" becomes "payable 1% a year over five years".
+- `repro.qmd` "How to read this report" (V-22, E-21): "Everything else is ours." becomes "Everything else is this OPA's text."; `gt` and `ggplot2` are glossed as "(the R packages that draw the tables and the figures)".
+- `repro.qmd` "The main estimate" formula (E-17): `\frac{1 - 1.03^{-5}}{0.03}` now prints `format(1 + pv_r)`, `pv_H` and `format(pv_r)`, read from the pipeline. It renders as 1.03, 5 and 0.03 today.
+- `repro.qmd` leavers scenario (A-12): "the wealth of the four who left" becomes "the wealth of the four assumed to have left".
+- `repro.qmd` missing + leavers scenario (V-22): "We reproduce the workbook as it is." becomes "This OPA reproduces the workbook as it is."
+- `repro.qmd` "How far the guesses move the result" (E-15): the rows are sorted by the width of the main-estimate range, widest first, and row names are reset. The lead sentence now ends: "The rows are sorted by how far each moves the main estimate, widest range first, as in the slide deck's chart:". Measured order: avoidance (37.94), missing billionaires (24.69), leavers (17.20), selling (11.05), share leaving (1.40), less visible (0).
+- `repro.qmd` under Appendix Table A1 (A-15): a new chunk `tab-a1-years` reads the reproduction's annualized row from `tab_a1_gt` and the workbook's cached `TabA1!B18:G18` through `read_sheet()`. It formats both as the table prints them and keeps only the cells that differ. The sentence below it reads: "The paper and the workbook (`TabA1!B18:G18`) annualize this growth over 43 years. 1982 to 2026 is 44 years, which this reproduction uses, so the row prints 7.4%, 6.0% and 2.5% where the paper prints 7.6%, 6.2% and 2.6%." All of these figures are computed. I checked them against the store, and the workbook values round to the digits the paper prints.
+- `repro.qmd` "Mismatches found" (A-15): a new open item, "An annualizing gap in Appendix Table A1 (open)". It says the workbook's own Table 1 uses 44 years (`Tab1!C18:H18`, checked with openpyxl: TabA1 row 18 is `^(1/43)`, Tab1 row 18 is `^(1/44)`). It gives the count of differing cells (computed, 3), says the tests compare whole columns and miss it, and leaves 43 or 44 to the author.
+- `repro.qmd` "Every input, by origin" (E-14): the lead now reads "every input of the one-time estimate, and the two the main estimate adds (the years counted and the rate)". The sentence was split in two for length. The scenario definition is now "a choice about which policy, or which world, is being estimated". The `stopifnot()` at the guesswork count stays true, because WP-3's two new rows are "scenario".
+- `bsz-analysis/site/slides/slides.Rmd` line 3 (V-23): the subtitle is now "A reproduction of the paper by Jasper Boll, Emmanuel Saez and Gabriel Zucman (BSZ, NBER, August 2026)".
+- `slides.Rmd` line 203 and lines 256-257 (E-01): "paid 1% a year" becomes "payable 1% a year", and "paid in five yearly installments" becomes "payable in five yearly installments".
+- `slides.Rmd` leavers slide (A-12): the sentence now reads "Assume four (Page, Thiel, Hankey, Kalanick) left **before** 1 January, which BSZ call aggressive, and escape the tax; three more leave later."
+- `slides.Rmd` setup and bottom-line chunk (E-17): the setup reads `facts` (`pv_rate`, `pv_years`) from `../explorer/grid.js` (target `site_grid_js`), and the header comment now names that file. `f5 <- ann(facts$pv_rate, facts$pv_years)` replaces `ann(0.03)`. The comment's stale second sentence is dropped. Both comparison `stopifnot()` checks are kept.
+- `slides.Rmd` tornado chunk (E-17): `grd$net <- grd$main_estimate` replaces the typed `pv5`. The `stopifnot()` now checks the pipeline's main estimate against Table 5 with `f5`. I evaluated it against the current files and the gap is 5.7e-14.
+- `bsz-analysis/tests/testthat/test-tables.R` (E-05): lines 63 and 64 (Table 1 Panel B AGI and AGI per family) go to `1e-3`. Lines 130-134 (Table 3 wealth rows) go to `1e-3`. Lines 249-254 (A1) are unchanged (Q1).
+- `bsz-analysis/tests/testthat/test-compute.R` (E-05): lines 382 and 383 (`avg_wealth_m`, `economic_income_m`) go to `1e-2`. I checked all nine tightened comparisons against the stored targets with `testthat::compare()`. Each passes with a mean relative difference of 0, or about 1.8e-16 for the two `top4taxes` rows.
+
+## Needs a local render
+- `bsz-analysis/site/repro.html`, from `repro.qmd` and the `tab5_gt` target that `tables.R` builds: `cd bsz-analysis && Rscript -e 'targets::tar_make()' && Rscript tests/testthat.R`, then `quarto render site/repro.qmd`. The new `tab-a1-years` chunk needs the workbook in `original-materials/`, as the Table 5 check already does.
+- `bsz-analysis/site/slides/slides.html`: `Rscript -e 'rmarkdown::render("bsz-analysis/site/slides/slides.Rmd")'` with `RSTUDIO_PANDOC` set, after the `tar_make()` above, because the deck now reads `site/explorer/grid.js`. Check three slides as images: the title slide (longer subtitle), "Leavers scenario: who may have left" (its sentence grew by about eight words in a half-width column), and "Step 3: the revenue".
+
+## Needs a follow-up (files outside the package)
+- None required. WP-3 covers the A1 disclosure on the overview and the materials page, and the two input rows behind item 5.
+
+## Could not do
+- Screenshot check (`screenshot.cjs`): Playwright is not installed (00-run.md). The changed pages are sources and need a render first anyway.
+
+## Noticed on the way (not changed)
+- `repro.qmd` still types the horizon and rate in prose: line 166 ("over 5 years at 3%"), lines 598-600 ("for 5 years ... discounted at 3% a year"), and the bottom-line table's column name "present value, 5 years at 3%". The deck types them too, in the bottom-line column header "(present value, 5 years)" and in its highlight box ("about 5 years ... 3% a year"). The formula and the computations now read the pipeline, so this text would go stale if the rate changed. `pv_r` and `pv_H` are now defined in the report's setup for this.
+- `repro.qmd` line 529, "collected once (in five annual installments)", states installments as a fact. E-01 lists this line, but the plan did not. Suggest "collected once (payable in five annual installments)".
+- `repro.qmd` still has other "we" and "ours": line 494 "We build the base scenario", line 730 "We list this under" (in the same paragraph as the edited line 729), "agree with ours" under "Table 5, reproduced", "We read it as" in "Readings the workbook leaves implicit", and the heading "A display error in Tables 1 and A1 (ours)". V-22 named only the two lines changed.
+- The deck's "Checked, found, and not checked" slide lists what was found but not the A1 annualizing gap.
+- Table 5's header "Extra CA inctax from sales ($B)" still abbreviates "income tax". The paper's header is "Extra CA income tax from asset sales to pay wealth tax".
+- The tightened Table 1 and Table 3 checks sit in `test-tables.R`, which the README's tolerance table does not list. The README's `top4taxes_r` bound (1e-4 / 1e-2) still holds.

@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-10-15">
+<meta name="dcterms.date" content="2026-10-16">
 
 <title>Prop 40, JR analysis: the materials</title>
 <style>
@@ -2534,7 +2534,7 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 15, 2026</p>
+      <p class="date">October 16, 2026</p>
     </div>
   </div>
   
@@ -2662,7 +2662,7 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 </div>
 <p><strong>29 tests (159 expectations): 29 tests passed, 0 failed, 0 skipped</strong>, run on 2026-10-14 with R 4.4.0, with the authors’ repository available. They come in four kinds:</p>
 <ol type="1">
-<li><strong>Against the paper’s printed number</strong>, at printed rounding for deterministic figures, or within four Monte Carlo standard errors for simulated ones.</li>
+<li><strong>Against the paper’s printed number</strong>: Table 9 at the printed rounding; the simulated figures within four Monte Carlo standard errors (plus the printed rounding for the share negative); the baseline revenue and the ceiling, where the print differs from the authors’ workbook and person-level file (mismatches 6 and 4), against those files.</li>
 <li><strong>Against the authors’ own scripts</strong>, run unmodified from a scratch copy (plot and CSV paths redirected, no logic changed; <code>tests/testthat/helper-author-scripts.R</code>).</li>
 <li><strong>Parity between the R and Python exports</strong> (<code>test-parity.R</code>): deterministic steps to 1e-6, Monte Carlo steps within a documented tolerance (numpy cannot share R’s random stream).</li>
 <li><strong>The site</strong> (<code>test-site.R</code>): the explorer’s <code>grid.js</code> and <code>site/data/headlines.csv</code> must be byte-identical to the exporter’s output; grid cells must equal the pipeline’s analytic means and brute-force Monte Carlo; the printed-value transcription must agree with the pipeline; every number typed into the landing page must still match its source.</li>
@@ -3057,8 +3057,8 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 </section>
 <section id="q-0.50-litigation-survival-weight-has-no-explicit-multiplier-in-the-code" class="level3">
 <h3 class="anchored" data-anchor-id="q-0.50-litigation-survival-weight-has-no-explicit-multiplier-in-the-code">5. <code>q = 0.50</code> litigation-survival weight has no explicit multiplier in the code</h3>
-<p><strong>NBER README</strong> assumptions table: “Litigation risk: Probability the Act survives constitutional challenge, q = 0.50 (ASC 740-10 ‘more likely than not’), applied to the recognized base” - listed as a defining feature of the litigation-weighted approach. <strong>Code</strong>, <code>NPV_dist_v8.R:19</code>: <code>wt_min &lt;- 0; wt_max &lt;- 72</code>. No <code>q</code> variable and no <code>* 0.5</code> anywhere in the file.</p>
-<p>The only place a 0.5 could be hiding is that <code>E[U(0, 72)] = 36 = 0.5 * 72</code>, i.e. drawing <code>WT</code> uniformly from 0 to the ceiling has the <em>same expected value</em> as multiplying the ceiling by 0.5. The README states q = 0.50 for the point estimate (0.50 × 59.15 = 29.6, eqs. 6-8) and a uniform draw from 0 (struck down) to 72 for the simulation; the draw and q applied to the 72 ceiling (the chapter’s central estimate, PDF p.33) share a mean, 36, but not a distribution. The code has no separate q. We reproduce the code as shipped (wt ~ U[0, 72]).</p>
+<p><strong>NBER README</strong> assumptions table: “Litigation risk: Probability the Act survives constitutional challenge, q = 0.50 (ASC 740-10 ‘more likely than not’), applied to the recognized base” - listed as a defining feature of the litigation-weighted approach. <strong>Code</strong>, <code>NPV_dist_v8.R:19</code>: <code>wt_min &lt;- 0;    wt_max &lt;- 72      # wealth-tax revenue ($B), embeds litigation range</code>. The script’s header, lines 5-6: <code>WT ~ U[$0B, $72B] wealth tax revenue (0 = Act struck down; 72 = ceiling after confirmed departures)</code>. No <code>q</code> variable and no <code>* 0.5</code> anywhere in the file.</p>
+<p>The script’s comment says the draw “embeds litigation range”: <code>E[U(0, 72)] = 36 = 0.5 * 72</code>, i.e. drawing <code>WT</code> uniformly from 0 to the ceiling has the <em>same expected value</em> as multiplying the ceiling by 0.5. The README states q = 0.50 for the point estimate (0.50 × 59.15 = 29.6, eqs. 6-8) and a uniform draw from 0 (struck down) to 72 for the simulation; the draw and q applied to the 72 ceiling (the chapter’s central estimate, PDF p.33) share a mean, 36, but not a distribution. The code has no separate q. We reproduce the code as shipped (wt ~ U[0, 72]). The chapter also grounds the 0 floor in unreported departures (fn.32, PDF p.34).</p>
 </section>
 <section id="baseline-revenue-the-workbooks-precise-94.30-vs.-the-printed-94.20" class="level3">
 <h3 class="anchored" data-anchor-id="baseline-revenue-the-workbooks-precise-94.30-vs.-the-printed-94.20">6. Baseline revenue: the workbook’s precise 94.30 vs. the printed 94.20</h3>

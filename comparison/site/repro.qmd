@@ -52,20 +52,27 @@ mv <- function(key) ex$meta$value[ex$meta$key == key]
 r3 <- rate_txt(mv("r_bsz")); r_jr <- rate_txt(mv("r_jr"))
 r_lo <- pct(mv("r_min_jr"), 1); r_hi <- pct(mv("r_max_jr"), 1)
 # The three largest steps averaged over every order (the Shapley check), on output (b) at each
-# analysis's own horizon, named for the introduction: the path's ranking depends on its order.
+# analysis's own horizon, and the three largest on the explorer's path. The introduction names
+# both lists in words (the path's ranking depends on its order); stop if either changes.
 b_own_b <- br[br$horizon_setting == "own" & br$output == "b", ]
 shap3_ids <- b_own_b$step_id[order(-abs(b_own_b$shapley))][1:3]
-shap3 <- paste0("the ", unname(DIAL_NAMES[shap3_ids]), " (", unname(DIAL_SYMBOLS[shap3_ids]), ")")
-shap3 <- paste0(paste(shap3[1:2], collapse = ", "), " and ", shap3[3])
+path3_ids <- dp$step_id[order(-abs(dp$change))][1:3]
+stopifnot(setequal(path3_ids, c("horizon", "litigation_survival", "confirmed_departures")),
+          setequal(shap3_ids, c("litigation_survival", "income_loss_share", "horizon")))
 # A(H, r): what 1 a year for H years is worth today at the rate r
+# A signed amount stays on one line: a browser may break a line between a minus sign and the
+# dollar sign, so amounts are wrapped in a no-wrap span, in running text (usd()) and in the
+# tables (show(), which also catches amounts inside the source texts).
+nobr <- function(x) ifelse(nzchar(x), sprintf('<span style="white-space:nowrap">%s</span>', x), x)
+nobr_amounts <- function(x) gsub("([\u2212+-]\\$[0-9][0-9,.]*B)", '<span style="white-space:nowrap">\\1</span>', x)
 # Money in running text: a dollar sign in markdown starts a formula, so escape it.
-usd <- function(x, d = 1, signed = FALSE) gsub("$", "\\$", money(x, d, signed), fixed = TRUE)
+usd <- function(x, d = 1, signed = FALSE) nobr(gsub("$", "\\$", money(x, d, signed), fixed = TRUE))
 # Two pandoc traps in raw HTML tables: a bare dollar sign can pair with the next one into
 # a formula across cells, and "(a)" in a cell reads as a list marker that leaves the
 # surrounding <div> unclosed. Every table writes both as HTML entities.
 ent <- function(x) gsub("\\(([a-z])\\)", "&#40;\\1)", gsub("$", "&#36;", x, fixed = TRUE))
 show <- function(df) {
-  df[] <- lapply(df, function(x) if (is.character(x)) ent(x) else x)
+  df[] <- lapply(df, function(x) if (is.character(x)) ent(nobr_amounts(x)) else x)
   names(df) <- ent(names(df))
   knitr::kable(df, format = "html", escape = FALSE, row.names = FALSE, table.attr = 'class="table table-sm"')
 }
@@ -118,19 +125,22 @@ worth. The [BSZ analysis](../../bsz-analysis/site/) estimates about
 `r usd(epv("bsz_tab5_row1", "printed_value"), 0)` of wealth tax. The
 [JR analysis](../../rjkdc-analysis/site/) finds the state
 **`r usd(-epv("rauh_nber_npv", "printed_value"))`** poorer in today's dollars, because
-billionaires who leave stop paying California income tax for ever. On the explorer's path,
-three inputs separate the two most: how long the lost income tax is counted, the chance the
-tax survives a court challenge, and the wealth of billionaires who have already left. The sizes
-depend on the order the dials move in. Averaged over every order (the order-free check at the
-end of [The bridge](#the-bridge)), the three largest are `r shap3`. This report puts both on
-one output and walks from one to the other.
+billionaires who leave stop paying California income tax for ever. Two inputs are among the
+three largest both on the explorer's path and averaged over every order: how long the lost
+income tax is counted, and the chance the tax survives a court challenge. The third depends on
+the order, because the inputs multiply each other: a departure matters more when more wealth
+is left to tax. On the explorer's path it is the wealth of billionaires who have already left.
+Averaged over every order (the order-free check at the end of [The bridge](#the-bridge)) it is
+the share of income tax lost, which shares a large joint effect with the years counted. This
+report puts both on one output and walks from one to the other.
 
 <details class="report-fold"><summary>Versions and citations</summary>
 
 Proposition 40, the Billionaire Tax Act, taxes people who lived in California on 1 January
 2026 and are worth \$1 billion or more. The tax is 5% of their whole net worth as valued on
-31 December 2026, paid in five equal yearly installments. This report cites each analysis in
-its latest version.
+31 December 2026. It is payable at once or in five equal yearly installments, and each later
+installment carries a deferral charge of 7.5% a year on the unpaid balance (§50301(c)). This
+report cites each analysis in its latest version.
 
 The BSZ analysis is Boll, Saez and Zucman, NBER WP 35218 (August 2026). NBER is the National
 Bureau of Economic Research, which circulates working papers. Its Table 5 row 1 prints
@@ -232,12 +242,16 @@ away. The one rate worth the same is r = 1 / E[1/r] = 0.03 / ln(3) =
 from the authors' draw). It matches the draw exactly only for a loss that lasts for ever. With
 it the common function returns the authors' exact mean.
 
-**Conventions.** All amounts are billions of dollars at the assessment date. The wealth tax is
-counted at its face value when assessed (the BSZ analysis values the base on 1 July 2026; the
-JR analysis's September version grows the base it used in March, the 2025 Forbes list, by
-`r pct(pick(k$rjkdc$inputs, "nber_growth_rate"))` to 31 December 2026), undiscounted although
-the Act collects it in five yearly installments; both analyses do this, so the comparison
-follows them. The lost income tax is a flat yearly amount, discounted at the rate dial's value.
+**Conventions.** All amounts are billions of dollars. Present values are as of the date the
+wealth tax is assessed, and the first year of lost income tax is counted one year later. The
+wealth tax is counted at its face value when assessed (the BSZ analysis values the base on 1
+July 2026; the JR analysis's September version grows the base it used in March, the 2025
+Forbes list, by `r pct(pick(k$rjkdc$inputs, "nber_growth_rate"))` to 31 December 2026),
+undiscounted, as both analyses count it, and the comparison follows them. The Act lets a
+taxpayer pay at once or in five yearly installments, each later one with a deferral charge of
+7.5% a year on the unpaid balance (§50301(c)). An Optional Deferral Account (§50304) can delay
+the tax on illiquid assets. Neither analysis counts either provision, and this OPA does not
+estimate them. The lost income tax is a flat yearly amount, discounted at the rate dial's value.
 The JR analysis's rate is a real rate net of the growth of the lost tax, r &minus; g (chapter
 eqs. 14 and 18), so a flat loss at that rate is the chapter's growing loss. Its code, eq. 18
 and its NBER README all draw r &minus; g; one sentence after eq. 19 writes r alone (the JR
@@ -410,8 +424,10 @@ The JR main estimate is the JR end: the exact mean of the authors' Monte Carlo.
 is the tax rate times the base, less the avoidance allowance. The base is the
 `r usd(sup$W_core + sup$W_noncit, 0)` that Forbes lists for California's billionaires on 1 July
 2026, the non-US-citizen residents (`r usd(sup$W_noncit, 0)`) included. The BSZ analysis
-applies no real-estate deduction, no departures before the tax and no mobility response to a
-one-time tax. So the wealth tax is `r pct(sup$tau)` &times;
+applies no real-estate deduction and removes no named leaver from the base. Its
+`r pct(sup$alpha)` avoidance allowance includes the `r pct(sup$alpha * sup$m)` of billionaires
+who left before 1 January 2026 (BSZ PDF p.24), which is where its income tax loss comes from.
+So the wealth tax is `r pct(sup$tau)` &times;
 `r usd(sup$W_core + sup$W_noncit, 0)` &times; (1 &minus; `r pct(sup$alpha)`) =
 `r usd(v_sup[["a"]], 3)`, which is Table 5 row 1 (printed
 `r usd(epv("bsz_tab5_row1", "printed_value"), 0)`, PDF p.39). Output (b) adds
@@ -502,21 +518,20 @@ path_texts <- function(id) {
        rjkdc = paste(vapply(tx, `[[`, "", "rjkdc"), collapse = "; "))
 }
 pt <- lapply(dp$step_id, path_texts)
-# a signed amount stays on one line (no break after the minus sign)
-nobr <- function(x) ifelse(nzchar(x), sprintf('<span style="white-space:nowrap">%s</span>', x), x)
+# a signed amount stays on one line: show() wraps it (nobr_amounts() in the setup)
 path_rows <- data.frame(
   Dial = ifelse(dp$step_id == "minor_inputs", esc(dp$title),
                 sprintf("<i>%s</i>, %s", dp$symbol, esc(dp$title))),
   `DISPUTES row` = vapply(pt, `[[`, "", "row"), Kind = vapply(pt, `[[`, "", "kind"),
   `BSZ value` = vapply(pt, `[[`, "", "bsz"), `JR value` = vapply(pt, `[[`, "", "rjkdc"),
-  Change = nobr(vapply(dp$change, money, "", digits = 2, signed = TRUE)),
-  `Running value` = nobr(vapply(dp$to, money, "", digits = 2)), check.names = FALSE)
+  Change = vapply(dp$change, money, "", digits = 2, signed = TRUE),
+  `Running value` = vapply(dp$to, money, "", digits = 2), check.names = FALSE)
 blank <- function(label, change, run) data.frame(Dial = label, `DISPUTES row` = "", Kind = "",
   `BSZ value` = "", `JR value` = "", Change = change, `Running value` = run, check.names = FALSE)
 cat("\n**Output (b), net fiscal effect, each analysis's own horizon.** The horizon dial moves from the BSZ analysis's 5 years to a perpetuity.\n\n")
-scroll(show(rbind(blank("<b>BSZ end, (b)</b>", "", nobr(money(dp$from[1], 2))), path_rows,
-                  blank("Sum of the steps", nobr(money(sum(dp$change), 2, TRUE)), ""),
-                  blank("<b>JR end, (b), the JR main estimate</b>", "", nobr(money(eb$rauh_own, 2))))))
+scroll(show(rbind(blank("<b>BSZ end, (b)</b>", "", money(dp$from[1], 2)), path_rows,
+                  blank("Sum of the steps", money(sum(dp$change), 2, TRUE), ""),
+                  blank("<b>JR end, (b), the JR main estimate</b>", "", money(eb$rauh_own, 2)))))
 ```
 
 Reading the table: the horizon step is the largest because it moves after f and C, when the
@@ -554,7 +569,7 @@ ggplot(wf) +
   theme(legend.position = "bottom", panel.grid.major.y = element_blank(), panel.grid.minor = element_blank())
 ```
 
-<details class="report-fold" id="the-shapley-check"><summary>An order-free check: the Shapley average</summary>
+<details class="report-fold" id="the-shapley-check"><summary><span id="order-free-check"></span>An order-free check: the Shapley average</summary>
 
 The path's steps depend on the order the dials move in. The same dial moved earlier or later
 changes the estimate by a different amount, because the inputs multiply each other. The
@@ -604,6 +619,30 @@ bt <- function(o) {
 cat("\n**Output (b), net fiscal effect, each analysis's own horizon.** The horizon step switches from the BSZ analysis's 5 years to a perpetuity.\n\n"); bt("b")
 ```
 
+```{r}
+# The joint effect of two inputs, which the Shapley average splits equally between them: the
+# common function's second difference, read from the switchboard (output (b), own horizons;
+# bit i-1 of mask is step i of bridge_steps()). At the BSZ values it is
+# v(i,j) - v(i) - v(j) + v(none); at the JR values the same, both moved back from the all-JR mix.
+sb <- read_csv_plain(file.path(root, "comparison", "export", "r", "switchboard.csv"))
+sb <- sb[sb$output == "b" & sb$horizon_setting == "own", ]
+sv <- function(m) sb$value[sb$mask == m]
+bit <- function(id) 2^(match(id, steps$step_id) - 1)
+all_on <- 2^nrow(steps) - 1
+joint <- function(i, j, at_jr = FALSE) {
+  a <- bit(i); b <- bit(j)
+  if (at_jr) sv(all_on) - sv(all_on - a) - sv(all_on - b) + sv(all_on - a - b)
+  else sv(a + b) - sv(a) - sv(b) + sv(0)
+}
+fh_bsz <- joint("income_loss_share", "horizon")
+fh_jr <- joint("income_loss_share", "horizon", at_jr = TRUE)
+# The text calls the share lost and the years counted the largest pair: check every pair.
+pairs <- combn(steps$step_id, 2)
+stopifnot(length(fh_bsz) == 1, length(fh_jr) == 1,
+          all(abs(fh_bsz) >= abs(apply(pairs, 2, function(p) joint(p[1], p[2]))) - 1e-9),
+          all(abs(fh_jr) >= abs(apply(pairs, 2, function(p) joint(p[1], p[2], at_jr = TRUE))) - 1e-9))
+```
+
 Reading the (b) table: the three largest Shapley steps are
 ```{r}
 #| results: asis
@@ -614,6 +653,10 @@ The horizon is the largest step read in Hoopes's order
 (`r usd(b_b$sequential[b_b$step_id == "horizon"], 1, TRUE)`, switched last, when the loss is
 already JR-sized) but `r usd(b_b$shapley[b_b$step_id == "horizon"], 1, TRUE)` averaged over
 orders, because a perpetuity multiplies whatever annual loss the other inputs imply.
+The Shapley average splits each interaction equally between the inputs that create it. The
+largest is between the share lost and the years counted: at the BSZ values, moving both
+changes the estimate by `r usd(fh_bsz, 1, TRUE)` more than moving each alone
+(`r usd(fh_jr, 1, TRUE)` at the JR values), and half of it sits in each one's average.
 One step raises the number: the JR analysis applies no avoidance allowance beyond migration,
 so dropping the BSZ analysis's `r pct(sup$alpha)` adds
 `r usd(b_b$shapley[b_b$step_id == "avoidance"], 1, TRUE)` on (b) and
@@ -728,6 +771,11 @@ scroll(show(data.frame(
   `Our steps` = esc(hz$our_steps), check.names = FALSE)))
 ```
 
+Our column follows Hoopes's construction. Its revenue rows are steps on output (a), starting
+from the BSZ wealth tax (`r usd(ea$bsz_model)`), and its last row adds the JR analysis's whole
+income tax loss. The "One order" column of the (b) table in [the order-free
+check](#order-free-check) reads the same order on the net fiscal effect, so its sizes differ.
+
 The "Galle estimate" bar is clipped by the chart's frame at
 `r usd(hz$hoopes[hz$step_id == "galle_estimate"], 0)`; its value is taken from the note's text
 (p.3), so the reading uncertainty printed with it is the digitizer's default for every bar,
@@ -743,8 +791,9 @@ co-author.
 
 ```{r}
 #| results: asis
-# hoopes_differences() is in R/site.R; a dollar sign in markdown starts a formula, so escape it
-cat(paste0("- ", gsub("$", "\\$", hoopes_differences(ex, k), fixed = TRUE)), sep = "\n")
+# hoopes_differences() is in R/site.R; a dollar sign in markdown starts a formula, so escape it,
+# and a signed amount stays on one line
+cat(paste0("- ", gsub("$", "\\$", nobr_amounts(hoopes_differences(ex, k)), fixed = TRUE)), sep = "\n")
 cat("\n")
 ```
 

@@ -64,7 +64,8 @@ cd site && quarto render repro.qmd && quarto render materials.qmd
 cd slides && Rscript -e 'rmarkdown::render("slides.Rmd")'
 ```
 
-The pipeline is an R [`{targets}`](https://docs.ropensci.org/targets/) project. The
+The pipeline is an R [`{targets}`](https://docs.ropensci.org/targets/) project (an R package
+that runs the pipeline's steps in order and records which outputs are current). The
 default workbook vintage (the dated version of the workbook a number comes from) is August
 2026; `BSZ_VINTAGE=may` switches every
 vintage-dependent path, column and constant to May. `CAWTBSZ_MATERIALS` points the
@@ -176,8 +177,9 @@ show(data.frame(
 ```
 
 Full rows, including what each source feeds: `r link("DATA-SOURCES.csv")`; the column
-definitions: `r link("DATA-SOURCES.md")`. The author-shared bundle is confidential and is not
-used by anything published here.
+definitions: `r link("DATA-SOURCES.md")`. The author-shared bundle is confidential. The SQL in
+`sql/` rebuilds the workbook's data sheets from it and checks them against the public workbook;
+only that comparison is reported, and none of the bundle's contents is committed or shown.
 
 ## What the checks found
 
@@ -192,6 +194,10 @@ used by anything published here.
 - **A display error** in this reproduction's Tables 1 and A1: the display put Panel B's values
   under Panel A's headers and formats and kept the May workbook's labels (GDP for AGI, 2025 for
   2026); fixed in the display code on 2026-10-15.
+- **An annualizing gap in Appendix Table A1**: the workbook (`TabA1!B18:G18`) and the paper
+  annualize the 1982 to 2026 growth over 43 years, and this reproduction over 44, so three cells
+  of the row print lower than the paper. The tests compare whole columns and do not catch it.
+  Which to use is a question for the author.
 - **A malformed row in our own source manifest**: two `provider` fields contained an
   unquoted comma, which shifted every later column for any CSV reader; quoted on 2026-09-23.
 - **Not reproduced**: the paper's Figure 8 and Appendix Figure A1 (wealth relative to AGI), and the

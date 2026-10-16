@@ -241,7 +241,8 @@
     or more, once, at 5% of their net worth. <cite>Boll, Saez and Zucman</cite> (BSZ) estimate
     it raises about $100 billion. This
     <a href="https://doi.org/10.1093/scipol/scaa067">Open Policy Analysis</a> (OPA) reproduces
-    that estimate and marks which inputs are data and which are guesses.
+    that estimate, adds its income tax effects to get the main estimate below, and marks which
+    inputs are data and which are guesses.
   </p>
 </header>
 
@@ -472,13 +473,20 @@ extra income tax &minus; income tax lost (present value, 5 years at 3%).<br>
 <p style="margin-top:14px;">The yearly income tax loss has no end date in Table 5. The authors
 argue the losses should be temporary and give five years, the payment period, as an example
 ("If they last say only 5 years", PDF p.27). The main estimate's five years are this OPA's
-reading of that example. The <a href="../../rjkdc-analysis/site/">JR analysis</a> (Jaros and Rauh; first version Rauh, Jaros, Kearney, Doran and Cosso) counts it forever; BSZ call treating the responses as permanent "the main flaw in the scoring analysis of Rauh et al." (PDF p.22, fn.29). The revenue itself moves with only
+reading of that example. The <a href="../../rjkdc-analysis/site/">JR analysis</a> (Jaros and Rauh; first version Rauh, Jaros, Kearney, Doran and Cosso) counts it forever; BSZ call treating the responses as permanent "the main flaw in the scoring analysis of Rauh et al." (PDF p.22, fn.29). The JR analysis
+assumes leavers do not come back, because the Act permanently lifts the constitutional cap on
+taxes on intangible property and lets the Legislature change the Act by a two-thirds vote
+(chapter PDF p.32). The revenue itself moves with only
 two guesses: the avoidance rate, and whether anyone left California before 1 January 2026.
 See <a href="repro.html#every-input-by-origin">every input, by origin</a>.</p>
 <p style="margin-top:14px;"><strong>What this OPA does not estimate.</strong> Both analyses take the
-measure as written (<a href="../../docs/initiative/README.md">docs/initiative/</a>). Neither models
-day-to-day moves in the Forbes base. Each adds one thing the other leaves out: the BSZ analysis the
-income tax from asset sales, the JR analysis the chance the Act survives in court.</p>
+measure as written (<a href="../../docs/initiative/README.md">docs/initiative/</a>), with the wealth
+tax at face value. Neither counts the deferral charge of 7.5% a year that the Act adds to
+installment payments. Neither predicts the Forbes base on the 31 December 2026 valuation date. The
+BSZ analysis uses the 1 July 2026 list (BSZ's website tracks the estimate day by day, PDF p.23),
+and the JR analysis grows the 2025 list by 7%. The BSZ analysis alone counts the income tax from
+asset sales and the non-US-citizen residents. The JR analysis alone weights the revenue by the
+chance the Act survives in court.</p>
   </div>
 </details>
 
@@ -496,7 +504,10 @@ income tax from asset sales, the JR analysis the chance the Act survives in cour
     <tr><td>Tables 1 to 4 and A1, Figures 1 to 7, 9 and A2 to A4</td>
         <td>Every formula cell the pipeline re-derives matches the workbook's cached value
         within the tolerances the README lists (1e-4 for Table 5; 1e-3 to 1e-2 for the formula
-        sheets, where the workbook rounds to cents). Figures are checked for structure and anchor values</td></tr>
+        sheets, where the workbook rounds to cents). Figures are checked for structure and anchor values.
+        One exception: Appendix Table A1's annualized growth row. This reproduction annualizes
+        over 44 years (1982 to 2026), the workbook and the paper over 43, so three of its cells
+        print lower than the paper (see the report)</td></tr>
     <tr><td>The authors' workbook</td>
         <td>Four 2025 rows of the workbook's year-by-year billionaire list (<code>data_sec_all</code>) appear
         twice, giving 244 billionaires for 2025 instead of 240; the estimate itself uses the

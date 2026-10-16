@@ -232,7 +232,7 @@
   <h1>California Proposition 40, Analysis From Jaros and Rauh (JR) <a class="ai-badge ai-badge-yellow" href="#how-ai-was-used">AI generated, partially reviewed</a></h1>
   <p class="byline">
     Proposition 40, the Billionaire Tax Act, would tax Californians worth $1 billion or more once,
-    at 5% of their net worth, paid over five years. The JR analysis argues the state ends up
+    at 5% of their net worth, payable over five years. The JR analysis argues the state ends up
     poorer, because billionaires who leave take their income tax with them for ever. This site
     reproduces Jaros and Rauh,
     <cite><a href="https://www.nber.org/system/files/chapters/c15504/c15504.pdf">The Net Present
@@ -282,7 +282,8 @@
       <div class="card-text">
         <span class="kicker">Open Output</span>
         <h3>Explore the main estimate and its assumptions &rarr;</h3>
-        <p>Move the seven inputs of the authors' simulation and watch the estimate and the share of
+        <p>Move the five inputs of the authors' simulation, and two settings this OPA adds (an
+           extra litigation weight and further growth), and watch the estimate and the share of
            negative outcomes change. It opens on the main estimate, and every combination is
            precomputed.</p>
       </div>
@@ -385,7 +386,7 @@ author has not yet reviewed these checks.</p>
 
 <div class="note">
   <strong>A note on the source.</strong> The authors released their workbooks, scripts and
-  person-level data under an MIT licence. We do not redistribute them or the paper: the pipeline
+  person-level data under an MIT licence. This OPA does not redistribute them or the paper: the pipeline
   reads a local clone pinned at commit <code>25e84dd</code>, and the source manifest lists each file
   with its SHA-256 hash.
 </div>
@@ -425,11 +426,12 @@ author has not yet reviewed these checks.</p>
     <span class="kicker">This OPA</span>
     <svg viewBox="0 0 300 290" role="img" aria-label="This OPA: output, assumptions, details and materials stacked tightly in one vertical plane; the output and assumptions layers together make the open output" xmlns="http://www.w3.org/2000/svg"><polygon points="58,181 150,227 150,253 58,207" fill="#002547"/><polygon points="150,227 242,181 242,207 150,253" fill="#003262"/><polygon points="150,135 242,181 150,227 58,181" fill="#0b4a7c"/><text transform="matrix(0.894 -0.447 0 1 196.0 222.7)" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-weight="600" font-size="10" letter-spacing="1.5" fill="#fff">MATERIALS</text><polygon points="58,150 150,196 150,222 58,176" fill="#1581ab"/><polygon points="150,196 242,150 242,176 150,222" fill="#1582b8"/><polygon points="150,104 242,150 150,196 58,150" fill="#1484c5"/><text transform="matrix(0.894 -0.447 0 1 196.0 191.7)" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-weight="600" font-size="11" letter-spacing="1.5" fill="#fff">DETAILS</text><polygon points="58,110 150,156 150,182 58,136" fill="#c97f0a"/><polygon points="150,156 242,110 242,136 150,182" fill="#e08e0b"/><polygon points="150,64 242,110 150,156 58,110" fill="#f39c12"/><text transform="matrix(0.894 -0.447 0 1 196.0 151.7)" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-weight="600" font-size="9" letter-spacing="1.2" fill="#fff">ASSUMPTIONS</text><polygon points="58,80 150,126 150,152 58,106" fill="#da9516"/><polygon points="150,126 242,80 242,106 150,152" fill="#eca516"/><polygon points="150,34 242,80 150,126 58,80" fill="#fcb415"/><text transform="matrix(0.894 -0.447 0 1 196.0 121.7)" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-weight="600" font-size="11" letter-spacing="1.5" fill="#fff">OUTPUT</text></svg>
     <figcaption><strong>Three layers, tightly connected.</strong> The open output has two parts, the output and the assumptions that produce it, and the explorer lets a reader move the assumptions. The
-      <a href="explorer/">explorer</a> holds the exact expected NPV for all 2,187 settings of the
-      seven Monte Carlo inputs, computed by the code in the
-      <a href="https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis">repository</a>. The
+      <a href="explorer/">explorer</a> holds the exact expected NPV, computed by the code in the
+      <a href="https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis">repository</a>, for
+      all 2,187 settings of its seven dials: the five ranges of the authors' Monte Carlo and two
+      settings this OPA adds. The
       <a href="repro.html">report</a> derives the main estimate step by step, and the test suite
-      holds every comparison with the printed digits.</figcaption>
+      holds each comparison with the printed digits except the SD.</figcaption>
   </figure>
 </div>
 
@@ -447,10 +449,11 @@ author has not yet reviewed these checks.</p>
   <summary><h2>What the model says <a class="fold-link" href="#what-the-model-says" aria-label="Link to this section">#</a></h2></summary>
   <div class="fold-body">
 <p>The Act collects a wealth tax once; billionaires who leave stop paying California income
-   tax for ever. The authors value that lost stream as a growing perpetuity: a loss that grows
-   each year is worth 1/(r &minus; g) times this year's amount today, where r &minus; g, the real
-   discount rate net of the growth of the lost tax, is drawn between 1.5% and 4.5% and anchored on
-   the S&amp;P 500 dividend yield (PDF pp.31-32). They subtract it: NPV = revenue &minus; (share of
+   tax for ever. To put a loss that lasts for ever, and grows each year, into today's dollars, the
+   authors divide this year's loss by a small rate: the interest rate minus the loss's yearly
+   growth, r &minus; g. Each run of their model picks that rate between 1.5% and 4.5%. The low end
+   is the S&amp;P 500 dividend yield, their measure of r &minus; g (PDF pp.31-32). They subtract that
+   loss from the revenue: NPV = revenue &minus; (share of
    the income tax base that leaves) &times; (annual income tax) / (r &minus; g).
    They report the average NPV over 100,000 random draws of those inputs: the main estimate,
    <strong>&minus;$38.9 billion</strong> (Jaros and Rauh, NBER, September 2026).<sup>1</sup>
@@ -471,6 +474,9 @@ author has not yet reviewed these checks.</p>
 </table>
 </div>
 
+<p style="margin-top:14px;">The share below zero sums up the authors' independent, uniform draws
+   over ranges that are themselves guesswork. It is not a probability that the tax loses money: it
+   moves with those ranges, as the explorer's Rate 1.5% and Rate 4.5% settings show.</p>
 <p style="margin-top:14px;">Printed values are from NBER PDF pp.1, 23 and 35. The numbers show three
    things. First, the result is driven by the loss term: roughly 75 of present value lost against
    36 collected. At the draws' 1.5% to 4.5% values of r &minus; g, a dollar a year for ever, growing, is
@@ -481,15 +487,21 @@ author has not yet reviewed these checks.</p>
    paper calls collectible. The chapter uses 36 as its central revenue in the break-even analysis
    (p.33) and treats both 72 and 30 as upper bounds that assume no undocumented departures
    (p.24).</p>
-<p style="margin-top:14px;">Third, of the seven inputs that move the answer, six are guesswork. The
-   <a href="explorer/">explorer</a> shows how far each one moves it. Whether the income tax loss
-   really lasts for ever is the main point the <a href="../../bsz-analysis/site/">BSZ analysis</a>
+<p style="margin-top:14px;">Third, of the five inputs of the authors' simulation, four are guesswork,
+   and the explorer adds two settings of its own. The <a href="explorer/">explorer</a> shows how far
+   each one moves the estimate. The authors assume leavers do not come back, because the Act
+   permanently lifts the constitutional cap on taxes on intangible property and lets the
+   Legislature change the Act by a two-thirds vote (chapter PDF p.32). Whether the income tax loss
+   lasts for ever is the main point the <a href="../../bsz-analysis/site/">BSZ analysis</a>
    (Boll, Saez and Zucman) disputes.</p>
-<p style="margin-top:14px;"><strong>What this OPA does not estimate.</strong> It takes the measure as
-   written (<a href="../../docs/initiative/README.md">docs/initiative/</a>), with the wealth tax at
-   face value. The BSZ analysis alone adds the income tax from assets sold to pay the tax. The JR
-   analysis alone weights the revenue by the chance the Act survives in court. Nothing is added to
-   either here.</p>
+<p style="margin-top:14px;"><strong>What this OPA does not estimate.</strong> Both analyses take the
+   measure as written (<a href="../../docs/initiative/README.md">docs/initiative/</a>), with the
+   wealth tax at face value. Neither counts the deferral charge of 7.5% a year that the Act adds to
+   installment payments. Neither predicts the Forbes base on the 31 December 2026 valuation date.
+   The BSZ analysis uses the 1 July 2026 list (BSZ's website tracks the estimate day by day, PDF
+   p.23), and the JR analysis grows the 2025 list by 7%. The BSZ analysis alone counts the income
+   tax from asset sales and the non-US-citizen residents. The JR analysis alone weights the revenue
+   by the chance the Act survives in court.</p>
   </div>
 </details>
 
@@ -527,13 +539,13 @@ author has not yet reviewed these checks.</p>
 
 <p style="margin-top:14px;"><strong>"Match"</strong> means the reproduced value rounds to the printed
 digit for deterministic figures, and lies within four Monte Carlo standard errors for simulated ones.
-The test suite holds every comparison; the <a href="materials.html">materials page</a> gives its
-current count.<sup>2</sup></p>
+The test suite holds each of these comparisons except the SD, which is shown but not tested. The
+<a href="materials.html">materials page</a> gives its current count.<sup>2</sup></p>
 
-<p style="margin-top:14px;">Along the way we found <strong>nine mismatches</strong> between the
+<p style="margin-top:14px;">Along the way this OPA found <strong>nine mismatches</strong> between the
 authors' text, their READMEs and their code. Four concern the September chapter. The other five
-concern only the March first version.<sup>3</sup> We reproduce the code as shipped and record each
-one:</p>
+concern only the March first version.<sup>3</sup> This OPA reproduces the code as shipped and records
+each one:</p>
 <ol start="3" style="margin:0 0 14px; padding-left:22px; color:var(--ink-2); font-size:15px;">
   <li>The chapter's draw is r &minus; g, the real discount rate net of the growth of the lost income tax: eq. 18, the code and the NBER README all say so. One sentence after eq. 19 writes C/r instead (p.35).</li>
   <li>The revenue ceiling is 72 in the script, 72.06 in the README and in the paper's eq. 4 (p.22), and 72.05 in the person-level data.</li>

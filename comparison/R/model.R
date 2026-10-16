@@ -35,7 +35,7 @@
 # comparison/data/document-inputs.csv (BSZ_RATE_ID; the BSZ analysis gives no rate, and 3% is
 # the rate the BSZ overview uses for its 5-year loss). The JR end takes r_jr = 1 / E_r[1/r],
 # the one rate whose perpetuity equals the average perpetuity over the authors' draw
-# r ~ U[r_min, r_max]: (r_max - r_min) / ln(r_max / r_min) = 0.03 / ln(3) = 2.73%, computed in
+# (r - g) ~ U[r_min, r_max]: (r_max - r_min) / ln(r_max / r_min) = 0.03 / ln(3) = 2.73%, computed in
 # bridge_inputs() from the JR contract's rauh_mc_r_min and rauh_mc_r_max.
 
 BSZ_RATE_ID <- "common_discount_rate"
@@ -281,7 +281,7 @@ sequential_bridge <- function(sup, rauh, order, output = c("a", "b")) {
 }
 
 # The JR analysis's own expectation (Jaros and Rauh, NBER, September 2026, NPV_dist_v8.R):
-# WT ~ U[0, 72], f ~ U[0.30, 0.60] independent of WT, C ~ U[3.3, 5.8], r ~ U[1.5%, 4.5%],
+# WT ~ U[0, 72], f ~ U[0.30, 0.60] independent of WT, C ~ U[3.3, 5.8], (r - g) ~ U[1.5%, 4.5%],
 # all independent, so E[NPV] = E[WT] - E[f] E[C] E_r[annuity(r, H)]. At H = Inf this is
 # -38.980; the printed -38.9 is one seeded run of the same draws, which differs by sampling error
 # (p.1 and p.35).

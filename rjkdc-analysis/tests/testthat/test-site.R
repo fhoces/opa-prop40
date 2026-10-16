@@ -121,9 +121,18 @@ test_that("every number typed into the landing page matches its source", {
   for (e in expected) expect_true(grepl(e, html, fixed = TRUE), info = e)
   # the SSRN printed mean is the exact expectation to the printed digit
   expect_equal(round(h("ssrn", "analytic_mean_npv"), 1), h("ssrn", "mc_mean_npv", "printed"))
-  # "roughly 75 ... lost" and "six are guesswork"
+  # "roughly 75 ... lost" and "four are guesswork"
   expect_equal(round(mean(c(h("ssrn", "pv_lost"), h("nber", "pv_lost")))), 75)
-  expect_true(grepl("six\n   are guesswork", html, fixed = TRUE) || grepl("six are guesswork", html, fixed = TRUE))
+  # The count covers the authors' own inputs only: every dial except this OPA's q and g. The
+  # origins do not depend on the revenue chain, so a stub stands in for it.
+  dials <- site_dials(list(confirmed6_ceiling = NA_real_, literature_calibrated = NA_real_,
+                           expanded10_estimate = NA_real_))
+  own <- Filter(function(d) !d$key %in% c("q", "g"), dials)
+  n_guess <- sum(vapply(own, function(d) d$origin == "guesswork", logical(1)))
+  words <- c("one", "two", "three", "four", "five", "six", "seven")
+  flat <- gsub("\\s+", " ", html)
+  expect_true(grepl(sprintf("of the %s inputs of the authors' simulation, %s are guesswork",
+                            words[length(own)], words[n_guess]), flat, fixed = TRUE))
   # nine mismatches listed, as in MISMATCHES.md
   n_mm <- sum(grepl("^## [0-9]+\\.", readLines(project_path("MISMATCHES.md"))))
   expect_equal(n_mm, 9)

@@ -40,6 +40,9 @@ h <- function(v, q, col = "reproduced") hl[[col]][hl$version == v & hl$quantity 
 out <- function(id, col = "value") outputs[[col]][outputs$output_id == id]
 inp <- function(id) inputs$value[inputs$input_id == id]
 dials <- site_dials(rc)
+# the authors' Monte Carlo inputs; q and g are this OPA's settings, named on the seven-inputs slide
+own_dials <- Filter(function(d) !d$key %in% c("q", "g"), dials)
+stopifnot(length(dials) - length(own_dials) == 2)
 mm_lines <- sub("^## ", "", grep("^## [0-9]+\\.", readLines("../../MISMATCHES.md"), value = TRUE))
 mm_first <- grepl("^[0-9]+\\. First version: ", mm_lines)
 # The break-even table at the paper's central revenue (q x 72) and midpoint income tax
@@ -67,7 +70,7 @@ authors' own code and data and taught step by step, following the
 <img src="../assets/opa/opa-details.png" class="opa-mark" alt="">
 
 .opa-legend[
-**Open Output**: [the explorer](../explorer/), the mean NPV for every combination of seven inputs<br>
+**Open Output**: [the explorer](../explorer/), the mean NPV for every combination of seven dials (the authors' five inputs and two settings this OPA adds)<br>
 **Open Analysis**: [the report](../repro.html), and this deck<br>
 **Open Materials**: [the repository](https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis),
 the pipeline, its tests and every exported CSV
@@ -205,7 +208,7 @@ name: headline
 version, March 2026, was by Rauh, Jaros, Kearney, Doran and Cosso)
 
 .big[`r usdb(h("nber","mc_mean_npv","printed"))`]
-mean NPV; `r h("nber","mc_pct_negative","printed")`% of outcomes negative (PDF p.35, Figure 3 note; 85% in the text, p.1)<sup>1</sup><br>
+mean NPV; `r h("nber","mc_pct_negative","printed")`% of outcomes negative (a summary of the draws' ranges, not a probability; PDF p.35, Figure 3 note; 85% in the text, p.1)<sup>1</sup><br>
 revenue "approximately 30 billion" (`r usdb(h("nber","revenue_range_low","printed"))` to `r usdb(h("nber","revenue_range_high","printed"))`)
 
 Reproduced: `r num(mcn$summary$mean, 2)` (the authors' seeded run, replayed draw for draw) and
@@ -336,8 +339,9 @@ ggplot(data.frame(r, m = 1 / r), aes(100 * r, m)) + geom_line(linewidth = 1, col
 The paper values a growing loss, so the rate is $r - g$, anchored at 1.5% (the S&P 500 dividend
 yield). The Monte Carlo draws $r - g$ from 1.5% to 4.5%; one sentence after it writes $C/r$
 ([mismatch 3](../materials.html#mismatches)).
-Whether the loss lasts **for ever** or only a few years (five is BSZ's example) is the main objection of the [BSZ analysis](../../../bsz-analysis/site/) (Boll, Saez
-and Zucman).
+The authors count the loss **for ever** because the Act permanently lifts the cap on taxing
+intangible property (PDF p.32). The [BSZ analysis](../../../bsz-analysis/site/) (Boll, Saez and
+Zucman) objects that it lasts only a few years (five is its example).
 ]
 
 ---
@@ -383,9 +387,10 @@ Draw 100,000 times, independently:
 
 .small[
 Revenue is drawn **from zero**: mean `r num(h("nber","mc_expected_revenue"), 0)` = 0.5 × 72. The code never
-multiplies by $q$; this zero is its only trace ([mismatch 5](../materials.html#mismatches)). A uniform draw
+multiplies by $q$; this zero is its only trace of $q$, and the chapter also grounds it in unreported
+departures (fn.32; [mismatch 5](../materials.html#mismatches)). A uniform draw
 from 0 has the same **mean** as a coin flip on 72, not the same distribution. Lost income tax is
-**not** scaled by $q$: people who left do not come back if the Act is struck down.
+**not** scaled by $q$: leavers do not come back if the Act is struck down.
 ]
 
 ]
@@ -427,7 +432,7 @@ cat("</table>")
 ```
 
 .highlight-box[
-`r sum(vapply(dials, function(d) d$origin == "guesswork", TRUE))` of the `r length(dials)` are guesswork.
+`r sum(vapply(own_dials, function(d) d$origin == "guesswork", TRUE))` of the authors' `r length(own_dials)` inputs are guesswork; the litigation weight and further growth rows are this OPA's settings.
 The data (Forbes, FTB, the Pareto fit) set the scale; the sign is decided by the guesses.
 [Try them in the explorer](../explorer/).
 ]

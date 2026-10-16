@@ -41,12 +41,13 @@ def site_level_tips(n, default, authors, why):
 def site_dials():
     return [
         dict(key="avoidance", label="Avoidance and evasion", sym="α", origin="guesswork",
-             desc="The share of the wealth on the Forbes list that escapes the tax.",
+             desc="The share of the wealth on the Forbes list that escapes the tax (a on the "
+                  "comparison explorer).",
              report="step-2-avoidance-and-evasion",
              levels=[0, 0.05, 0.10, 0.15, 0.20, 0.30], default=3, fmt="pct",
-             tips=site_level_tips(6, 3, "10%", "BSZ: 10%, from an expert report's judgment that "
-                                               "enforcement keeps avoidance small. Not an "
-                                               "estimate (BSZ PDF p.23).")),
+             tips=site_level_tips(6, 3, "10%", "BSZ: 10%, covering every behavioural response, "
+                                               "moves included. Their expert report argues "
+                                               "enforcement keeps it small (GGSS p.4).")),
         dict(key="mobility_share", label="Share of avoidance that is leaving", sym="m",
              origin="guesswork",
              desc="The part of avoidance done by leaving California, the only part that costs "
@@ -174,6 +175,13 @@ def build_site_inputs(inp):
          "Top-3 company income tax from SEC data (Tab3 row 13) plus a wealth-proportional rate on the rest (Tab5!F19+F24)."),
         ("date", "Valuation date", "1 Jul 2026", "convention",
          "The Act values wealth at 31 Dec 2026; BSZ and GGSS estimate on the latest Forbes snapshot."),
+        # The two inputs the main estimate adds: the horizon and rate of site_pv_factor().
+        ("H", "Years the yearly income tax loss is counted (main estimate only)",
+         f"{int(SITE_PV_YEARS)} years", "scenario",
+         "This OPA's reading of BSZ's example ('If they last say only 5 years', PDF p.27); Table 5 gives no horizon."),
+        ("r", "Discount rate for that loss (main estimate only)",
+         "%g%%" % (100 * SITE_PV_RATE), "scenario",
+         "This OPA's choice, the middle of the JR analysis's 1.5% to 4.5% range; BSZ give no rate."),
     ]
     return pd.DataFrame(rows, columns=["symbol", "input", "value", "origin", "basis"])
 
