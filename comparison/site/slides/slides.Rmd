@@ -125,6 +125,18 @@ analysis, at `r usd(rj_main)`. A reader sees two numbers and cannot tell which a
 the gap. An Open Policy Analysis makes each one checkable, from the output to the code.
 
 ---
+name: why-opa-3
+
+# How do we move from many analyses to one?
+
+.center[<img src="../../../assets/figures/evidence-to-policy-competing-from-analysis.svg" style="width:52%;" alt="Two competing policy analyses of the same policy: one shows only gains and leads Decision Maker 1 to support it; the other shows only losses and leads Decision Maker 2 to oppose it.">]
+
+Both analyses estimate the same quantity, so they can be put on one footing. This deck does it in three steps.<br>
+**1. One quantity:** one output both analyses can be estimated on, the net fiscal effect in today's dollars.<br>
+**2. Both analyses on it:** each analysis reproduced and computed on that output.<br>
+**3. One input at a time:** a walk from one estimate to the other, so each disagreement has a size in dollars.
+
+---
 
 name: opa-frame
 class: center, middle, opa-slide
