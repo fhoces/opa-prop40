@@ -299,6 +299,7 @@ class: big-bullets
 .cmp-kicker { display: block; font-size: 70%; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: #666; margin-bottom: 4px; }
 .cmp-arrow { font-size: 160%; color: #999; }
 /* disclosure: the overview's credit table at slide size. */
+.ai-badge.inline { font-size: 0.72em; margin-left: 0.1em; vertical-align: 0.05em; }
 .ai-use-slide table.ai-use { width: 100%; font-size: 70%; border-collapse: collapse; }
 .ai-use-slide table.ai-use th, .ai-use-slide table.ai-use td { text-align: left; padding: 4px 8px; border-bottom: 1px solid #e4e4e4; }
 .ai-use-slide .table-subhead { font-size: 75%; color: #666; }
@@ -442,7 +443,7 @@ tab <- sub('<span class="table-subhead">this page</span>', '<span class="table-s
 cat('<div class="ai-use-slide">', gsub("\n\\s*", " ", tab), gsub("\n\\s*", " ", key), "</div>")
 ```
 
-An example from the [BSZ analysis OPA](../../../bsz-analysis/site/). The columns group the 14 roles of the [CRediT contributor taxonomy](https://credit.niso.org/) (ANSI/NISO Z39.104-2022) into three: ideas and direction, doing the work, and writing. The last column, **human verification**, is our addition: how closely the author has checked each part.
+An example from the [BSZ analysis OPA](../../../bsz-analysis/site/). The columns group the 14 roles of the [CRediT contributor taxonomy](https://credit.niso.org/) (ANSI/NISO Z39.104-2022) into three: ideas and direction, doing the work, and writing. The last column, **human verification**, is our addition: how closely the author has checked each part. When an object is lightly reviewed or not reviewed, its title carries a badge: <span class="ai-badge ai-badge-yellow inline">AI generated, partially reviewed</span> or <span class="ai-badge ai-badge-red inline">AI generated, not reviewed yet</span>.
 
 
 ---
