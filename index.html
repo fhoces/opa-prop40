@@ -219,6 +219,9 @@
   .hl-pair { display: flex; flex-wrap: wrap; gap: 14px 48px; }
   .hl-pair .hl { display: flex; flex-direction: column; gap: 2px; flex: 0 1 300px; min-width: 0; }
   .hl-pair .def { max-width: 22em; }
+  /* Each main estimate links to its analysis's overview (author request 2026-10-15). */
+  .headline a.value { color: var(--ink); text-decoration: none; }
+  .headline a.value:hover, .headline a.value:focus { text-decoration: underline; text-underline-offset: 4px; }
   .headline .name { font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
     color: var(--ink-3); font-weight: 500; }
   .headline .value { font-family: var(--serif); font-size: 40px; font-weight: 600; line-height: 1;
@@ -310,12 +313,12 @@
   <div class="hl-pair">
     <div class="hl">
       <span class="name">BSZ main estimate<sup><a href="#fn1" id="fnref1-bsz">1</a></sup></span>
-      <span class="value" id="hl-bsz">$106.8B</span>
+      <a class="value" href="bsz-analysis/site/" title="Open the BSZ analysis overview" id="hl-bsz">$106.8B</a>
       <span class="def">Net total: the wealth tax plus the income tax it changes, over 5 years, in today's dollars</span>
     </div>
     <div class="hl">
       <span class="name">JR main estimate<sup><a href="#fn1" id="fnref1-jr">1</a></sup></span>
-      <span class="value" id="hl-rjkdc">−$39.0B</span>
+      <a class="value" href="rjkdc-analysis/site/" title="Open the JR analysis overview" id="hl-rjkdc">−$39.0B</a>
       <span class="def">Net present value: the wealth tax minus the income tax lost for ever, in today's dollars, averaged over the authors' model runs (Jaros and Rauh, September 2026)</span>
     </div>
   </div>
