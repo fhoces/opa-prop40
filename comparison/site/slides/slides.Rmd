@@ -177,7 +177,7 @@ class: head-beside
 name: why-opa-5
 class: head-beside, head-small
 
-# With transparency: Open Policy Analysis
+# With transparency: Open Policy Analysis<sup>1</sup>
 
 .beside.mid[
 - <b style="color:#d4880f">Open output</b>: one main estimate, with each assumption as a dial a reader can move.
@@ -187,6 +187,7 @@ class: head-beside, head-small
 
 .fig-pinned.fig-split[<img class="half-bottom" src="../../../assets/figures/evidence-to-policy-competing-from-analysis-opa.svg" aria-hidden="true" alt="The same two competing analyses, each now an Open Policy Analysis with its output, assumptions, details and materials open; one shows only gains and leads Decision Maker 1 to support the policy, the other only losses and leads Decision Maker 2 to oppose it."><img class="half-top" src="../../../assets/figures/evidence-to-policy-competing-from-analysis-opa.svg" alt="The same two competing analyses, each now an Open Policy Analysis with its output, assumptions, details and materials open; one shows only gains and leads Decision Maker 1 to support the policy, the other only losses and leads Decision Maker 2 to oppose it.">]
 
+.footnote.beside[<sup>1</sup> Hoces de la Guardia, F., Grant, S. and Miguel, E. (2021), ["A framework for open policy analysis"](https://doi.org/10.1093/scipol/scaa067), *Science and Public Policy*.]
 
 ---
 name: why-opa-6
@@ -234,30 +235,6 @@ name: contents
 3. A brief description of each OPA
 4. A summary of where the main differences are
 ]
-
----
-
-name: opa-frame
-class: center, middle, opa-slide
-
-# An Open Comparison
-
-.opa-intro[
-Two analyses of California's Billionaire Tax Act reach opposite signs. This deck puts both on
-one common output and walks from one to the other, one disputed input at a time, following the
-[Open Policy Analysis](https://doi.org/10.1093/scipol/scaa067) framework.
-]
-
-<img src="../assets/opa/opa-details.png" class="opa-mark" alt="">
-
-.opa-legend[
-**Open Output**: [the explorer](../explorer/), the two main estimates with one slider per disputed input<br>
-**Open Analysis**: [the report](../repro.html), and this deck<br>
-**Open Materials**: [the repository](https://github.com/fhoces/opa-prop40/tree/main/comparison)
-and [the materials page](../materials.html), the code, its tests and every exported CSV
-]
-
-.credit[OPA done by [Fernando Hoces de la Guardia](https://fhoces.github.io), using [agentic coding tools](../../../index.html#how-ai-was-used)]
 
 ---
 
