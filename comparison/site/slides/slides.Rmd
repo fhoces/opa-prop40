@@ -779,6 +779,7 @@ stopifnot(abs(sum(hz$ours, na.rm = TRUE) - eb$jr_model) < 1e-9)
 The residency bars agree. The income tax bars differ by `r usd(abs(hz$hoopes[hz$step_id == "income_tax_loss"] - hz$ours[hz$step_id == "income_tax_loss"]))`. The departures and behaviour bars differ because
 the versions differ: September counts seven departures on a grown base and adds the litigation
 weight; March used an elasticity response and ten "expanded" departures, which September does not.
+This project's own waterfall, on the September version, is [in the appendix](#waterfall).
 ]
 
 ---
