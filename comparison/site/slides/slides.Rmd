@@ -606,6 +606,8 @@ compare_figs("index.html")
 ```
 ]
 
+
+.footnote[The one published comparison, [Hoopes (2026)](#hoopes), draws this gap for earlier versions of the two analyses as a waterfall; this project's own waterfall is [in the appendix](#waterfall).]
 ---
 name: contents-3
 
@@ -678,8 +680,6 @@ judgements included. **scenario**: a choice of which world to estimate, which ne
 studies settle. **derived**: computed from the analysis's own inputs.
 ]
 
-
-.footnote[The one published comparison, [Hoopes (2026)](#hoopes), draws this gap for earlier versions of the two analyses as a waterfall; this project's own waterfall is [in the appendix](#waterfall).]
 ---
 name: diff-departed
 
