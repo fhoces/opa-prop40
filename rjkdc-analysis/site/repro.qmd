@@ -156,7 +156,7 @@ read from the pipeline (`R/npv_mc.R`, `R/nber_final.R`); the draw ranges are the
 ### Step 1: the wealth tax collected, $WT$ {#step-wt}
 
 The script draws $WT \sim U[`r nb$wt_min`, `r nb$wt_max`]$ (\$B). The top, `r nb$wt_max`, is
-the revenue if the Act survives in court, after removing the seven confirmed departures. Summing
+the revenue if the Act survives in court, after removing the seven publicly reported moves. Summing
 the authors' person-level file `final.csv` gives \$`r num(nc$ceiling_recomputed, 2)`B for the same
 quantity, so the script's round 72 is close ([mismatch 4](materials.html#mismatches)). The bottom,
 `r nb$wt_min`, is the Act struck down. The mean of the draw is
@@ -251,7 +251,7 @@ fold("Python code for the main estimate", "python", c(
 
 This section builds the revenue. The base is \$`r num(rc$baseline_precise, 2)`B before anyone
 leaves and grows to \$`r num(nc$domestic_total_grown, 2)`B by the valuation date. Removing the
-seven confirmed departures leaves \$`r num(nc$ceiling_recomputed, 2)`B. Leaving out three
+seven publicly reported moves leaves \$`r num(nc$ceiling_recomputed, 2)`B. Leaving out three
 pre-filing departures and Zuckerberg, and halving for the chance the Act is struck down, gives
 the paper's about \$30B (p.23).
 
@@ -285,13 +285,13 @@ $$E[R] = q \times R_{\text{recognized}}$$
 
 They borrow this
 test from the accounting rule for uncertain tax positions in company accounts (ASC 740-10,
-PDF p.20). It works at two levels. For each taxpayer: confirmed departures, pre-filing departures
+PDF p.20). It works at two levels. For each taxpayer: publicly reported moves, pre-filing departures
 and billionaires imputed from a Pareto curve are left out of the recognized base,
 $R_{\text{recognized}}$. For the Act as a whole: $q$ is the probability that the Act survives
 constitutional challenge, set at `r num(ncol$q, 2)` (PDF pp.19-20). That value comes from the accounting
 standard's 50% threshold, not from a legal assessment of the challenges, so it is **guesswork**.
 
-### 4.3 The seven confirmed departures (Table 7, eq. 4)
+### 4.3 The seven publicly reported moves (Table 7, eq. 4)
 
 Page, Brin, Thiel, Hankey, Spielberg, Kalanick and Sacks moved out between the initiative's filing
 and the 1 January 2026 residency date (Table 7, PDF p.21). Removing their
@@ -356,7 +356,7 @@ lit_loss
 The authors keep only the moving part,
 `r inp("brulhart_semi_elasticity")`, and apply it to the 5-point rate in log form: the base
 shrinks by **`r pct(100 * lit_loss)`** (PDF p.24). Table 8 (PDF p.25) sets this beside the observed
-28.6% from the seven confirmed departures. This check does not enter the main estimate. Two
+28.6% from the seven publicly reported moves. This check does not enter the main estimate. Two
 things to notice. First, the Swiss estimate is for a recurring annual tax. The paper argues that
 taxpayers price the Act as the start of a recurring regime, so the recurring-tax estimate is the
 right benchmark (PDF p.25). Second, the [BSZ analysis](../../bsz-analysis/site/) (Boll, Saez and
@@ -609,7 +609,7 @@ page_nber <- c(revenue_baseline = "19", nber_domestic_grown = "19", nber_ceiling
                npv_mc_nber_median = "35", npv_mc_nber_pct_negative = "35")
 what_nber <- c(revenue_baseline = "Baseline revenue, before anyone leaves ($B)",
                nber_domestic_grown = "Baseline grown 7% to the valuation date ($B)",
-               nber_ceiling = "Revenue left after the seven confirmed departures ($B)",
+               nber_ceiling = "Revenue left after the seven publicly reported moves ($B)",
                nber_international = "Net worth of the non-US-citizen residents left out ($B)",
                pareto_alpha = "Pareto tail parameter, alpha",
                income_tax_mc_k212 = "Yearly income tax C, billionaires among the top 212 filers ($B)",
@@ -704,7 +704,7 @@ Section 5.1 above (its Table 8 is the chapter's Table 9). Its revenue part and i
 differ.
 
 **Revenue.** It starts from the same \$`r num(out("revenue_baseline","printed_value"), 2)`B baseline,
-without growth to a valuation date or a litigation discount. Six confirmed departures leave
+without growth to a valuation date or a litigation discount. Six publicly reported moves leave
 \$`r num(rc$confirmed6_ceiling, 2)`B (printed \$`r out("revenue_confirmed6","printed_value")`B,
 p.11); ten reported departures leave \$`r num(rc$expanded10_estimate, 2)`B (printed
 \$`r out("revenue_expanded10","printed_value")`B, p.13). The Swiss semi-elasticity, applied

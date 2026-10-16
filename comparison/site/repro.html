@@ -2435,10 +2435,10 @@ body.pg-explorer .panel-head .reset { font-family: var(--serif); font-size: 13.5
 body.pg-explorer .sl-in:focus-visible, body.pg-explorer .panel-head .reset:focus-visible,
 body.pg-explorer .levels button:focus-visible { outline-color: var(--ink); }
 
-body.pg-explorer .dial .label .sym-word { display: block; font-size: 10.5px; font-weight: 400; color: var(--ink-3);
-line-height: 1.15; margin-bottom: 1px; }
-body.pg-explorer .dial .label .sym { font-family: var(--serif); font-style: italic; font-size: 18px; font-weight: 600;
-color: var(--ink); margin-left: 0; margin-right: 8px; line-height: 1.2; }
+body.pg-explorer .dial .label .sym-word { display: block; font-size: 14.5px; font-weight: 600; color: var(--ink);
+line-height: 1.2; margin-bottom: 2px; }
+body.pg-explorer .dial .label .sym { font-family: var(--serif); font-style: italic; font-size: 13px; font-weight: 400;
+color: var(--ink-3); margin-left: 0; margin-right: 8px; line-height: 1.2; }
 body.pg-explorer .levels button { font-size: 14px; }
 body.pg-explorer .levels button.is-default { box-shadow: none; border-bottom: 2px solid var(--ink-2); padding-bottom: 5px; }
 body.pg-explorer .presets button { font-family: var(--serif); font-size: 14px; }
@@ -2449,6 +2449,45 @@ body.pg-explorer details.fold > summary { font-size: 15px; font-weight: 400; }
 body.pg-explorer table { font-size: 14px; }
 body.pg-explorer th, body.pg-explorer td { font-family: var(--serif); }
 @media (max-width: 420px) { body.pg-explorer .box-eq { font-size: 15px; } }
+
+.quantities { margin-top: 30px; }
+.quantities h3 { margin: 0 0 4px; }
+.q-sub { margin: 0 0 10px; font-size: 14.5px; color: var(--ink-2); max-width: 62em; }
+.q-table { width: 100%; border-collapse: collapse; font-size: 13px; line-height: 1.4;
+border-top: 1.5px solid var(--ink); border-bottom: 1.5px solid var(--ink); }
+.q-table th { text-align: left; font-weight: 600; font-size: 12.5px; padding: 6px 8px; vertical-align: bottom;
+border-bottom: 1px solid var(--ink); }
+.q-table td { padding: 6px 8px; vertical-align: top; border-top: 1px solid var(--rule-2); }
+.q-table tbody tr:first-child td { border-top: 0; }
+.q-table td:first-child { white-space: nowrap; }
+.q-table td:first-child i { font-family: var(--serif); font-size: 15px; }
+.q-table .q-word { color: var(--ink-2); }
+.q-table .q-line { display: block; }
+.q-table .q-line + .q-line { margin-top: 6px; }
+.q-table .q-cred { color: var(--ink-3); }
+.q-foot { font-size: 12.5px; color: var(--ink-2); margin: 8px 0 0; }
+.q-foot a { color: var(--link); }
+@media (max-width: 600px) {
+.q-table thead { display: none; }
+.q-table, .q-table tbody, .q-table tr, .q-table td { display: block; width: auto; }
+.q-table tr { padding: 6px 0; border-top: 1px solid var(--rule); }
+.q-table tbody tr:first-child { border-top: 0; }
+.q-table td { border-top: 0; padding: 3px 0; }
+.q-table td:first-child { white-space: normal; font-weight: 600; }
+.q-table td:not(:first-child)::before { content: attr(data-label); display: block;
+font-size: 11.5px; color: var(--ink-3); }
+}
+
+.q-cta { text-align: center; margin: 18px 0 8px; }
+.q-survey { display: inline-block; font-family: var(--serif); font-size: 20px; font-weight: 600; line-height: 1.3;
+padding: 12px 22px; color: var(--paper); background: var(--ink); border: 1px solid var(--ink); border-radius: 0;
+text-decoration: none; max-width: 30em; }
+.q-survey:hover, .q-survey:focus-visible { background: var(--link); border-color: var(--link); color: var(--paper); }
+.q-survey.is-off { color: var(--ink-3); background: transparent; border-color: var(--rule); cursor: default; }
+.q-share { text-align: center; font-size: 14px; color: var(--ink-2); margin: 0 auto; max-width: 36em; }
+.q-copy { font-family: var(--serif); font-size: 13px; margin-left: 6px; padding: 1px 8px; color: var(--link);
+background: transparent; border: 1px solid var(--link); border-radius: 0; cursor: pointer; white-space: nowrap; }
+.q-copy.is-done { color: var(--ink); border-color: var(--ink); }
 </style>
 </head>
 
@@ -2709,7 +2748,7 @@ The seven quantities, step by step
 <p><span id="step-revenue"></span>Steps 1 to 3 give the wealth tax collected, the explorer’s 5% × (W − D) × (1 − a) × q. In the code, 5% is <code>tau</code>, and W is <code>(W_core + W_noncit) * (1 - re)</code>: the list’s wealth with two of the minor inputs. D and q keep their names, and a is <code>alpha</code>.</p>
 <ol type="1">
 <li><p><code>R0 = tau * (W_core + W_noncit) * (1 - re)</code>: the revenue with no behavioural response. <code>tau</code> is the tax rate; <code>W_core</code> (the base) and <code>W_noncit</code> (the non-US-citizen residents) are in billions of dollars (“Forbes source: which list and valuation date”, “Non-US-citizen residents”); <code>re</code> is the share of the revenue the real-estate deduction removes (“Real-estate deduction”).</p></li>
-<li><p><code>S = 1 - d_conf</code>: the share of the base still taxed. <code>d_conf = D / Wn</code> is the share of the base that had already left (“Billionaires already departed”): <code>D</code> is their wealth, valued on the Forbes list in use (<code>lam</code> picks it), and <code>Wn</code> the base net of real estate. The departures dial has three stops: none, the BSZ analysis’s aggressive scenario (Table 5 row 3) and the JR analysis’s seven. For the JR analysis, <code>R0 * S</code> is its ceiling, the most the tax can collect after the seven confirmed departures.</p></li>
+<li><p><code>S = 1 - d_conf</code>: the share of the base still taxed. <code>d_conf = D / Wn</code> is the share of the base that had already left (“Billionaires already departed”): <code>D</code> is their wealth, valued on the Forbes list in use (<code>lam</code> picks it), and <code>Wn</code> the base net of real estate. The departures dial has three stops: none, the BSZ analysis’s aggressive scenario (Table 5 row 3) and the JR analysis’s seven. For the JR analysis, <code>R0 * S</code> is its ceiling, the most the tax can collect after the seven publicly reported moves.</p></li>
 <li><p><code>WT = R0 * (1 - alpha) * S * q</code>: output (a), the gross one-time revenue, after the avoidance allowance <code>alpha</code>, a share of the base (“Avoidance and evasion allowance”), weighted by <code>q</code>, the chance that the Act survives a court challenge (the step “Chance the tax does not survive litigation” moves it from 1 to the JR value). The JR Monte Carlo draws the revenue anywhere between zero (struck down) and the ceiling; the mean of that draw is the ceiling times one half, its <code>q</code>.</p></li>
 <li><p><code>X = WT * s * g * t_cg</code>: the extra income tax from assets sold to pay. <code>s</code> is the share of the tax paid by selling assets (“Extra income tax from selling assets to pay”), <code>g</code> the capital-gain share of a sale and <code>t_cg</code> the top California rate on realized gains. <span id="step-loss"></span>Steps 5 and 6 give the income tax lost, the explorer’s f × C × A(H, r). A(H, r) is <code>annuity(r, H)</code>, about 4.6 for 5 years at 3% and 36.6 for ever at 2.73%.</p></li>
 <li><p><code>f = alpha*m + own * L / C + f0</code>: the share of billionaire income tax lost (“Share of billionaire income tax lost”). The first term is the BSZ movers’ share (<code>m</code> is the part of the avoidance allowance that is people leaving California). Under the BSZ rule (<code>own = 1</code>) the leavers’ own income tax, <code>L</code> dollars a year as BSZ Table 5 counts it for the people at the departures stop, is lost. Under the JR rule (<code>own = 0</code>) a flat share <code>f0</code> is lost whoever leaves (the JR analysis’s independent draw of 30% to 60%). At the aggressive stop the BSZ end reproduces Table 5 row 3 in all three columns.</p></li>
@@ -2739,7 +2778,7 @@ The endpoint checks
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">isTRUE</span>(<span class="fu">all.equal</span>(tau, <span class="fu">pick</span>(si, <span class="st">&quot;tax_rate&quot;</span>))))</span>
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  base_r  <span class="ot">&lt;-</span> <span class="fu">pick</span>(oi, <span class="st">&quot;baseline_net_worth&quot;</span>) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">pick</span>(oi, <span class="st">&quot;nber_growth_rate&quot;</span>))   <span class="co"># 2,027.4 at 31 Dec 2026</span></span>
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  R0_r    <span class="ot">&lt;-</span> <span class="fu">pick</span>(oo, <span class="st">&quot;nber_domestic_grown&quot;</span>)           <span class="co"># 100.906, 5% of the grown base net of real estate</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  ceiling <span class="ot">&lt;-</span> <span class="fu">pick</span>(oi, <span class="st">&quot;nber_ceiling_hardcoded&quot;</span>)        <span class="co"># 72, after the seven confirmed departures</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  ceiling <span class="ot">&lt;-</span> <span class="fu">pick</span>(oi, <span class="st">&quot;nber_ceiling_hardcoded&quot;</span>)        <span class="co"># 72, after the seven publicly reported moves</span></span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Departed wealth, the same people valued on each list. On the BSZ list (1 Jul 2026,</span></span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Table 5): the four pre-2026 leavers, plus Brin, plus Spielberg and Sacks, whom the BSZ</span></span>
 <span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># workbook does not list by name and who are valued at the JR file&#39;s net worth. On the JR</span></span>
@@ -2971,7 +3010,7 @@ Steps 1 to 4, and output (a)
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">isTRUE</span>(<span class="fu">all.equal</span>(tau, <span class="fu">pick</span>(si, <span class="st">&quot;tax_rate&quot;</span>))))</span>
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  base_r  <span class="ot">&lt;-</span> <span class="fu">pick</span>(oi, <span class="st">&quot;baseline_net_worth&quot;</span>) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">pick</span>(oi, <span class="st">&quot;nber_growth_rate&quot;</span>))   <span class="co"># 2,027.4 at 31 Dec 2026</span></span>
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  R0_r    <span class="ot">&lt;-</span> <span class="fu">pick</span>(oo, <span class="st">&quot;nber_domestic_grown&quot;</span>)           <span class="co"># 100.906, 5% of the grown base net of real estate</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  ceiling <span class="ot">&lt;-</span> <span class="fu">pick</span>(oi, <span class="st">&quot;nber_ceiling_hardcoded&quot;</span>)        <span class="co"># 72, after the seven confirmed departures</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  ceiling <span class="ot">&lt;-</span> <span class="fu">pick</span>(oi, <span class="st">&quot;nber_ceiling_hardcoded&quot;</span>)        <span class="co"># 72, after the seven publicly reported moves</span></span>
 <span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Departed wealth, the same people valued on each list. On the BSZ list (1 Jul 2026,</span></span>
 <span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Table 5): the four pre-2026 leavers, plus Brin, plus Spielberg and Sacks, whom the BSZ</span></span>
 <span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># workbook does not list by name and who are valued at the JR file&#39;s net worth. On the JR</span></span>
@@ -4666,7 +4705,7 @@ NBER p.1 abstract, p.23 (0.5 x the recognized base, Zuckerberg excluded)
 <span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">isTRUE</span>(<span class="fu">all.equal</span>(tau, <span class="fu">pick</span>(si, <span class="st">&quot;tax_rate&quot;</span>))))</span>
 <span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  base_r  <span class="ot">&lt;-</span> <span class="fu">pick</span>(oi, <span class="st">&quot;baseline_net_worth&quot;</span>) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">pick</span>(oi, <span class="st">&quot;nber_growth_rate&quot;</span>))   <span class="co"># 2,027.4 at 31 Dec 2026</span></span>
 <span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  R0_r    <span class="ot">&lt;-</span> <span class="fu">pick</span>(oo, <span class="st">&quot;nber_domestic_grown&quot;</span>)           <span class="co"># 100.906, 5% of the grown base net of real estate</span></span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  ceiling <span class="ot">&lt;-</span> <span class="fu">pick</span>(oi, <span class="st">&quot;nber_ceiling_hardcoded&quot;</span>)        <span class="co"># 72, after the seven confirmed departures</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  ceiling <span class="ot">&lt;-</span> <span class="fu">pick</span>(oi, <span class="st">&quot;nber_ceiling_hardcoded&quot;</span>)        <span class="co"># 72, after the seven publicly reported moves</span></span>
 <span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Departed wealth, the same people valued on each list. On the BSZ list (1 Jul 2026,</span></span>
 <span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Table 5): the four pre-2026 leavers, plus Brin, plus Spielberg and Sacks, whom the BSZ</span></span>
 <span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># workbook does not list by name and who are valued at the JR file&#39;s net worth. On the JR</span></span>
@@ -4736,7 +4775,7 @@ NBER p.1 abstract, p.23 (0.5 x the recognized base, Zuckerberg excluded)
 <span id="cb13-80"><a href="#cb13-80" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;JR export baseline_net_worth (212 billionaires, 2025 Forbes list) grown 7% to 31 Dec 2026 (JR export nber_growth_rate; NBER README, chapter p.19)&quot;</span>,</span>
 <span id="cb13-81"><a href="#cb13-81" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;the Forbes 2025 list grown 7% (1 = JR list)&quot;</span>,</span>
 <span id="cb13-82"><a href="#cb13-82" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;1 - nber_domestic_grown / (5% x grown base) from the JR export: the person-level file nets out directly held real estate (NBER README; chapter p.19)&quot;</span>,</span>
-<span id="cb13-83"><a href="#cb13-83" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;the seven confirmed departures (Page, Brin, Thiel, Hankey, Spielberg, Kalanick, Sacks) valued on the BSZ list: BSZ exports pre2026_leavers_wealth and brin_wealth (Table 5, 1 Jul 2026), plus Spielberg and Sacks at the JR file&#39;s net worth (JR export nber_spielberg_sacks_net_worth), as the BSZ workbook does not list them by name&quot;</span>,</span>
+<span id="cb13-83"><a href="#cb13-83" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;the seven publicly reported moves (Page, Brin, Thiel, Hankey, Spielberg, Kalanick, Sacks) valued on the BSZ list: BSZ exports pre2026_leavers_wealth and brin_wealth (Table 5, 1 Jul 2026), plus Spielberg and Sacks at the JR file&#39;s net worth (JR export nber_spielberg_sacks_net_worth), as the BSZ workbook does not list them by name&quot;</span>,</span>
 <span id="cb13-84"><a href="#cb13-84" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;the same seven on the JR list: (nber_domestic_grown - 72) / 5%, the script&#39;s ceiling literal (NPV_dist_v8.R:19; the person-level file sums to 72.05, mismatch 4)&quot;</span>,</span>
 <span id="cb13-85"><a href="#cb13-85" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;the seven&#39;s own income tax as the BSZ analysis counts it: BSZ exports pre2026_leavers_annual_inctax and brin_annual_inctax, plus Spielberg and Sacks at resid_inctax_rate (used only under the BSZ rule for the share lost)&quot;</span>,</span>
 <span id="cb13-86"><a href="#cb13-86" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;none: no avoidance allowance (NBER chapter Secs. 4-5)&quot;</span>,</span>
@@ -4882,7 +4921,7 @@ guesswork on data
 <b>none</b>. benchmark taxes all 1 Jan 2026 residents (BSZ PDF p.23); the aggressive row 3 (Page, Thiel, Hankey, Kalanick, BSZ export pre2026_leavers_wealth) is the dial’s middle stop
 </td>
 <td style="text-align:left;">
-<b>the JR seven: $614B on the BSZ list, $578B on the JR list</b>. the seven confirmed departures (Page, Brin, Thiel, Hankey, Spielberg, Kalanick, Sacks) valued on the BSZ list: BSZ exports pre2026_leavers_wealth and brin_wealth (Table 5, 1 Jul 2026), plus Spielberg and Sacks at the JR file’s net worth (JR export nber_spielberg_sacks_net_worth), as the BSZ workbook does not list them by name; the same seven on the JR list: (nber_domestic_grown - 72) / 5%, the script’s ceiling literal (NPV_dist_v8.R:19; the person-level file sums to 72.05, mismatch 4)
+<b>the JR seven: $614B on the BSZ list, $578B on the JR list</b>. the seven publicly reported moves (Page, Brin, Thiel, Hankey, Spielberg, Kalanick, Sacks) valued on the BSZ list: BSZ exports pre2026_leavers_wealth and brin_wealth (Table 5, 1 Jul 2026), plus Spielberg and Sacks at the JR file’s net worth (JR export nber_spielberg_sacks_net_worth), as the BSZ workbook does not list them by name; the same seven on the JR list: (nber_domestic_grown - 72) / 5%, the script’s ceiling literal (NPV_dist_v8.R:19; the person-level file sums to 72.05, mismatch 4)
 </td>
 </tr>
 <tr>

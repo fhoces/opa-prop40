@@ -50,9 +50,9 @@ compute_export_inputs <- function(pareto_fit, revenue_chain, nber_ceiling) {
       "R/nber_final.R:compute_nber_ceiling() from final.csv", NA_real_,
     "nber_international_net_worth", "nber", "28 international billionaires excluded from the domestic base", nber_ceiling$international_net_worth, "$B", "data", "author-shared",
       "final.csv (panel == international, net_worth_usd)", NA_real_,
-    "nber_departed_four_grown", "nber", "Grown taxable wealth of 4 of the 7 confirmed departures (Page, Thiel, Hankey, Kalanick)", nber_ceiling$departed_four_grown, "$B", "data", "author-shared",
+    "nber_departed_four_grown", "nber", "Grown taxable wealth of 4 of the 7 publicly reported moves (Page, Thiel, Hankey, Kalanick)", nber_ceiling$departed_four_grown, "$B", "data", "author-shared",
       "final.csv (removed_departed rows, wealth_in_tax_base_usd_7pct)", NA_real_,
-    "nber_spielberg_sacks_net_worth", "nber", "Net worth of 2 of the 7 confirmed departures (Spielberg, Sacks)", nber_ceiling$spielberg_sacks_net_worth, "$B", "data", "author-shared",
+    "nber_spielberg_sacks_net_worth", "nber", "Net worth of 2 of the 7 publicly reported moves (Spielberg, Sacks)", nber_ceiling$spielberg_sacks_net_worth, "$B", "data", "author-shared",
       "final.csv (removed_departed rows, net_worth_usd)", NA_real_
   )
 }

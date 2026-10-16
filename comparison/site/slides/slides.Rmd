@@ -318,7 +318,7 @@ cat("</table>")
 .small[
 The BSZ base is California's billionaires on 1 July 2026, non-US citizens included. The JR base
 is the 2025 Forbes list grown `r pct(pick(oi, "nber_growth_rate"))` to 31 December 2026, net of
-real estate, after seven confirmed departures. The **litigation weight *q*** is the chance the Act
+real estate, after seven publicly reported moves. The **litigation weight *q*** is the chance the Act
 survives a court challenge; the revenue is multiplied by it.
 ]
 
@@ -518,7 +518,7 @@ claim_table <- function(bsz, jr) {
 ```{r claims-dep, results="asis"}
 claim_table(
   "<b>Nobody counts as departed.</b> The benchmark taxes everyone resident in California on 1 January 2026 (BSZ PDF p.23). Its aggressive scenario (Table 5 row 3) assumes four of them left: Page, Thiel, Hankey and Kalanick.",
-  sprintf("<b>Seven confirmed departures</b> (Page, Brin, Thiel, Hankey, Spielberg, Kalanick and Sacks) are taken out of the base before the tax: %s of its wealth (NPV_dist_v8.R:19).", pct(dshare(rj), 1)))
+  sprintf("<b>Seven publicly reported moves</b> (Page, Brin, Thiel, Hankey, Spielberg, Kalanick and Sacks) are taken out of the base before the tax: %s of its wealth (NPV_dist_v8.R:19).", pct(dshare(rj), 1)))
 ```
 
 .pull-left[

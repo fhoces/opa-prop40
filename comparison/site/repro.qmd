@@ -290,7 +290,7 @@ their names, and a is `alpha`.
    the Forbes list in use (`lam` picks it), and `Wn` the base net of real estate. The departures
    dial has three stops: none, the BSZ analysis's aggressive scenario (Table 5 row 3) and the JR
    analysis's seven. For the JR analysis, `R0 * S` is its ceiling, the most the tax can collect
-   after the seven confirmed departures.
+   after the seven publicly reported moves.
 3. `WT = R0 * (1 - alpha) * S * q`: output (a), the gross one-time revenue, after the avoidance
    allowance `alpha`, a share of the base ("Avoidance and evasion allowance"), weighted by `q`,
    the chance that the Act survives a court challenge (the step "Chance the tax does not

@@ -19,5 +19,5 @@ nber_growth_rate,nber,Growth applied to the Jan-1-2026 snapshot to the Dec-31-20
 nber_ceiling_hardcoded,nber,"wt_max literal in NPV_dist_v8.R (script uses this, not the value re-derived from final.csv)",72,$B,data,author-shared,NPV_dist_v8.R:19,
 nber_ceiling_recomputed,nber,wt_max re-derived from final.csv: domestic total minus 7 removed_departed rows,72.05146171776506,$B,derived,author-shared,py/nber_final.py:compute_nber_ceiling() from final.csv,
 nber_international_net_worth,nber,28 international billionaires excluded from the domestic base,146.3,$B,data,author-shared,"final.csv (panel == international, net_worth_usd)",
-nber_departed_four_grown,nber,"Grown taxable wealth of 4 of the 7 confirmed departures (Page, Thiel, Hankey, Kalanick)",314.822569,$B,data,author-shared,"final.csv (removed_departed rows, wealth_in_tax_base_usd_7pct)",
-nber_spielberg_sacks_net_worth,nber,"Net worth of 2 of the 7 confirmed departures (Spielberg, Sacks)",9.0,$B,data,author-shared,"final.csv (removed_departed rows, net_worth_usd)",
+nber_departed_four_grown,nber,"Grown taxable wealth of 4 of the 7 publicly reported moves (Page, Thiel, Hankey, Kalanick)",314.822569,$B,data,author-shared,"final.csv (removed_departed rows, wealth_in_tax_base_usd_7pct)",
+nber_spielberg_sacks_net_worth,nber,"Net worth of 2 of the 7 publicly reported moves (Spielberg, Sacks)",9.0,$B,data,author-shared,"final.csv (removed_departed rows, net_worth_usd)",

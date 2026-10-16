@@ -2454,7 +2454,7 @@ body.pg h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(26px,
 line-height: 1.2; letter-spacing: 0; text-wrap: balance; }
 body.pg h3 { font-weight: 600; font-size: 17.5px; }
 body.pg code { font-family: var(--mono); color: var(--ink); border-radius: 0; }
-body.pg .formula { font-family: var(--mono); border-radius: 0; }
+body.pg .formula { font-family: var(--mono); font-size: 12.5px; border-radius: 0; }
 
 body.pg .eyebrow, body.pg .kicker, body.pg .headline .name, body.pg .sl-head,
 body.pg .control-group .lbl, body.pg .preferred .kicker {
@@ -2569,7 +2569,11 @@ body.pg-explorer .sl-cur { font-size: 13px; }
 body.pg-explorer .panel-head .reset { font-family: var(--serif); font-size: 13.5px; }
 body.pg-explorer .sl-in:focus-visible, body.pg-explorer .panel-head .reset:focus-visible,
 body.pg-explorer .levels button:focus-visible { outline-color: var(--ink); }
-body.pg-explorer .dial .label .sym { font-family: var(--serif); font-style: italic; font-size: 15px; }
+
+body.pg-explorer .dial .label .sym-word { display: block; font-size: 14.5px; font-weight: 600; color: var(--ink);
+line-height: 1.2; margin-bottom: 2px; }
+body.pg-explorer .dial .label .sym { font-family: var(--serif); font-style: italic; font-size: 13px; font-weight: 400;
+color: var(--ink-3); margin-left: 0; margin-right: 8px; line-height: 1.2; }
 body.pg-explorer .levels button { font-size: 14px; }
 body.pg-explorer .levels button.is-default { box-shadow: none; border-bottom: 2px solid var(--ink-2); padding-bottom: 5px; }
 body.pg-explorer .presets button { font-family: var(--serif); font-size: 14px; }
@@ -2579,6 +2583,46 @@ body.pg-explorer .note, body.pg-explorer details.fold.notes { font-size: 13.5px;
 body.pg-explorer details.fold > summary { font-size: 15px; font-weight: 400; }
 body.pg-explorer table { font-size: 14px; }
 body.pg-explorer th, body.pg-explorer td { font-family: var(--serif); }
+@media (max-width: 420px) { body.pg-explorer .box-eq { font-size: 15px; } }
+
+.quantities { margin-top: 30px; }
+.quantities h3 { margin: 0 0 4px; }
+.q-sub { margin: 0 0 10px; font-size: 14.5px; color: var(--ink-2); max-width: 62em; }
+.q-table { width: 100%; border-collapse: collapse; font-size: 13px; line-height: 1.4;
+border-top: 1.5px solid var(--ink); border-bottom: 1.5px solid var(--ink); }
+.q-table th { text-align: left; font-weight: 600; font-size: 12.5px; padding: 6px 8px; vertical-align: bottom;
+border-bottom: 1px solid var(--ink); }
+.q-table td { padding: 6px 8px; vertical-align: top; border-top: 1px solid var(--rule-2); }
+.q-table tbody tr:first-child td { border-top: 0; }
+.q-table td:first-child { white-space: nowrap; }
+.q-table td:first-child i { font-family: var(--serif); font-size: 15px; }
+.q-table .q-word { color: var(--ink-2); }
+.q-table .q-line { display: block; }
+.q-table .q-line + .q-line { margin-top: 6px; }
+.q-table .q-cred { color: var(--ink-3); }
+.q-foot { font-size: 12.5px; color: var(--ink-2); margin: 8px 0 0; }
+.q-foot a { color: var(--link); }
+@media (max-width: 600px) {
+.q-table thead { display: none; }
+.q-table, .q-table tbody, .q-table tr, .q-table td { display: block; width: auto; }
+.q-table tr { padding: 6px 0; border-top: 1px solid var(--rule); }
+.q-table tbody tr:first-child { border-top: 0; }
+.q-table td { border-top: 0; padding: 3px 0; }
+.q-table td:first-child { white-space: normal; font-weight: 600; }
+.q-table td:not(:first-child)::before { content: attr(data-label); display: block;
+font-size: 11.5px; color: var(--ink-3); }
+}
+
+.q-cta { text-align: center; margin: 18px 0 8px; }
+.q-survey { display: inline-block; font-family: var(--serif); font-size: 20px; font-weight: 600; line-height: 1.3;
+padding: 12px 22px; color: var(--paper); background: var(--ink); border: 1px solid var(--ink); border-radius: 0;
+text-decoration: none; max-width: 30em; }
+.q-survey:hover, .q-survey:focus-visible { background: var(--link); border-color: var(--link); color: var(--paper); }
+.q-survey.is-off { color: var(--ink-3); background: transparent; border-color: var(--rule); cursor: default; }
+.q-share { text-align: center; font-size: 14px; color: var(--ink-2); margin: 0 auto; max-width: 36em; }
+.q-copy { font-family: var(--serif); font-size: 13px; margin-left: 6px; padding: 1px 8px; color: var(--link);
+background: transparent; border: 1px solid var(--link); border-radius: 0; cursor: pointer; white-space: nowrap; }
+.q-copy.is-done { color: var(--ink); border-color: var(--ink); }
 </style>
 </head>
 
@@ -2607,7 +2651,7 @@ body.pg-explorer th, body.pg-explorer td { font-family: var(--serif); }
   <ul class="collapse">
   <li><a href="#the-baseline-before-anyone-leaves-eqs.-1-and-2" id="toc-the-baseline-before-anyone-leaves-eqs.-1-and-2" class="nav-link" data-scroll-target="#the-baseline-before-anyone-leaves-eqs.-1-and-2">4.1 The baseline, before anyone leaves (eqs. 1 and 2)</a></li>
   <li><a href="#the-collectibility-principle-eq.-3" id="toc-the-collectibility-principle-eq.-3" class="nav-link" data-scroll-target="#the-collectibility-principle-eq.-3">4.2 The collectibility principle (eq. 3)</a></li>
-  <li><a href="#the-seven-confirmed-departures-table-7-eq.-4" id="toc-the-seven-confirmed-departures-table-7-eq.-4" class="nav-link" data-scroll-target="#the-seven-confirmed-departures-table-7-eq.-4">4.3 The seven confirmed departures (Table 7, eq. 4)</a></li>
+  <li><a href="#the-seven-publicly-reported-moves-table-7-eq.-4" id="toc-the-seven-publicly-reported-moves-table-7-eq.-4" class="nav-link" data-scroll-target="#the-seven-publicly-reported-moves-table-7-eq.-4">4.3 The seven publicly reported moves (Table 7, eq. 4)</a></li>
   <li><a href="#the-litigation-discount-and-the-collectible-estimate-eqs.-5-to-8" id="toc-the-litigation-discount-and-the-collectible-estimate-eqs.-5-to-8" class="nav-link" data-scroll-target="#the-litigation-discount-and-the-collectible-estimate-eqs.-5-to-8">4.4 The litigation discount and the collectible estimate (eqs. 5 to 8)</a></li>
   <li><a href="#validation-against-the-literature-table-8" id="toc-validation-against-the-literature-table-8" class="nav-link" data-scroll-target="#validation-against-the-literature-table-8">4.5 Validation against the literature (Table 8)</a></li>
   </ul></li>
@@ -2807,7 +2851,7 @@ body.pg-explorer th, body.pg-explorer td { font-family: var(--serif); }
 <p>The main estimate is the paper’s mean net present value, printed as <strong>−38.9 $B</strong> (PDF p.1 and p.35). The authors get it from a Monte Carlo: they draw four inputs at random 100,000 times, compute <span class="math inline">\(NPV = WT - f \cdot C / r\)</span> for each draw, and average. Because the four draws are independent, the average has an exact value too, and we build it one input at a time. Every number below is read from the pipeline (<code>R/npv_mc.R</code>, <code>R/nber_final.R</code>); the draw ranges are the defaults of <code>compute_npv_mc_nber()</code>, which copies the authors’ script <code>NPV_dist_v8.R</code>.</p>
 <section id="step-wt" class="level3">
 <h3 class="anchored" data-anchor-id="step-wt">Step 1: the wealth tax collected, <span class="math inline">\(WT\)</span></h3>
-<p>The script draws <span class="math inline">\(WT \sim U[0, 72]\)</span> ($B). The top, 72, is the revenue if the Act survives in court, after removing the seven confirmed departures. Summing the authors’ person-level file <code>final.csv</code> gives $72.05B for the same quantity, so the script’s round 72 is close (<a href="materials.html#mismatches">mismatch 4</a>). The bottom, 0, is the Act struck down. The mean of the draw is <span class="math display">\[E[WT] = \frac{0 + 72}{2} = 36.00.\]</span> This is the paper’s central revenue, <span class="math inline">\(q \times 72\)</span> with a survival chance <span class="math inline">\(q\)</span> = 0.50 (PDF p.33). The 0 lower bound is <strong>guesswork</strong>.</p>
+<p>The script draws <span class="math inline">\(WT \sim U[0, 72]\)</span> ($B). The top, 72, is the revenue if the Act survives in court, after removing the seven publicly reported moves. Summing the authors’ person-level file <code>final.csv</code> gives $72.05B for the same quantity, so the script’s round 72 is close (<a href="materials.html#mismatches">mismatch 4</a>). The bottom, 0, is the Act struck down. The mean of the draw is <span class="math display">\[E[WT] = \frac{0 + 72}{2} = 36.00.\]</span> This is the paper’s central revenue, <span class="math inline">\(q \times 72\)</span> with a survival chance <span class="math inline">\(q\)</span> = 0.50 (PDF p.33). The 0 lower bound is <strong>guesswork</strong>.</p>
 </section>
 <section id="step-f" class="level3">
 <h3 class="anchored" data-anchor-id="step-f">Step 2: the share of the income tax base that leaves, <span class="math inline">\(f\)</span></h3>
@@ -2937,7 +2981,7 @@ Python code for the main estimate
 </section>
 <section id="section-4-the-wealth-tax-revenue" class="level2">
 <h2 class="anchored" data-anchor-id="section-4-the-wealth-tax-revenue">Section 4: the wealth tax revenue</h2>
-<p>This section builds the revenue. The base is $94.30B before anyone leaves and grows to $100.91B by the valuation date. Removing the seven confirmed departures leaves $72.05B. Leaving out three pre-filing departures and Zuckerberg, and halving for the chance the Act is struck down, gives the paper’s about $30B (p.23).</p>
+<p>This section builds the revenue. The base is $94.30B before anyone leaves and grows to $100.91B by the valuation date. Removing the seven publicly reported moves leaves $72.05B. Leaving out three pre-filing departures and Zuckerberg, and halving for the chance the Act is struck down, gives the paper’s about $30B (p.23).</p>
 <section id="the-baseline-before-anyone-leaves-eqs.-1-and-2" class="level3">
 <h3 class="anchored" data-anchor-id="the-baseline-before-anyone-leaves-eqs.-1-and-2">4.1 The baseline, before anyone leaves (eqs. 1 and 2)</h3>
 <p>Take each of the <span class="math inline">\(N\)</span> = 212 California billionaires on the 2025 Forbes list (with the authors’ corrections), subtract their directly held residential real estate (TRRE, total residential real estate; the Act exempts it), multiply what is left by the 5% rate, and add up. Their aggregate net worth is $1,894.8B. The authors’ workbook sums this row by row to <strong>$94.30B</strong>; the paper prints $94.20B (PDF p.19, eq. 2). The difference is <a href="materials.html#mismatches">mismatch 6</a>.</p>
@@ -2948,10 +2992,10 @@ Python code for the main estimate
 <h3 class="anchored" data-anchor-id="the-collectibility-principle-eq.-3">4.2 The collectibility principle (eq. 3)</h3>
 <p>The authors count revenue only when it is “more likely than not” to be collected.</p>
 <p><span class="math display">\[E[R] = q \times R_{\text{recognized}}\]</span></p>
-<p>They borrow this test from the accounting rule for uncertain tax positions in company accounts (ASC 740-10, PDF p.20). It works at two levels. For each taxpayer: confirmed departures, pre-filing departures and billionaires imputed from a Pareto curve are left out of the recognized base, <span class="math inline">\(R_{\text{recognized}}\)</span>. For the Act as a whole: <span class="math inline">\(q\)</span> is the probability that the Act survives constitutional challenge, set at 0.50 (PDF pp.19-20). That value comes from the accounting standard’s 50% threshold, not from a legal assessment of the challenges, so it is <strong>guesswork</strong>.</p>
+<p>They borrow this test from the accounting rule for uncertain tax positions in company accounts (ASC 740-10, PDF p.20). It works at two levels. For each taxpayer: publicly reported moves, pre-filing departures and billionaires imputed from a Pareto curve are left out of the recognized base, <span class="math inline">\(R_{\text{recognized}}\)</span>. For the Act as a whole: <span class="math inline">\(q\)</span> is the probability that the Act survives constitutional challenge, set at 0.50 (PDF pp.19-20). That value comes from the accounting standard’s 50% threshold, not from a legal assessment of the challenges, so it is <strong>guesswork</strong>.</p>
 </section>
-<section id="the-seven-confirmed-departures-table-7-eq.-4" class="level3">
-<h3 class="anchored" data-anchor-id="the-seven-confirmed-departures-table-7-eq.-4">4.3 The seven confirmed departures (Table 7, eq. 4)</h3>
+<section id="the-seven-publicly-reported-moves-table-7-eq.-4" class="level3">
+<h3 class="anchored" data-anchor-id="the-seven-publicly-reported-moves-table-7-eq.-4">4.3 The seven publicly reported moves (Table 7, eq. 4)</h3>
 <p>Page, Brin, Thiel, Hankey, Spielberg, Kalanick and Sacks moved out between the initiative’s filing and the 1 January 2026 residency date (Table 7, PDF p.21). Removing their $28.85B leaves <strong>$72.05B</strong> in <code>final.csv</code>. The paper (eq. 4, p.22) and the authors’ README print $72.06B, the difference of two figures each rounded to two decimals (100.91 − 28.85), and the script hard-codes 72 (<a href="materials.html#mismatches">mismatch 4</a>): one unrounded value, its rounding and a round literal. The paper then asks how big a behavioural response that is. It divides the share of revenue lost by the rate change, in percentage points (eq. 4, PDF p.22):</p>
 <p><span class="math display">\[\varepsilon = \frac{\%\Delta \text{TaxBase}}{\Delta \text{TaxRate (p.p.)}}
 = \frac{(100.9 - 72.06)/100.9}{5}\]</span></p>
@@ -2988,7 +3032,7 @@ Python code for the main estimate
 <pre><code>[1] 0.4110104</code></pre>
 </div>
 </div>
-<p>The authors keep only the moving part, 10.32, and apply it to the 5-point rate in log form: the base shrinks by <strong>41.1%</strong> (PDF p.24). Table 8 (PDF p.25) sets this beside the observed 28.6% from the seven confirmed departures. This check does not enter the main estimate. Two things to notice. First, the Swiss estimate is for a recurring annual tax. The paper argues that taxpayers price the Act as the start of a recurring regime, so the recurring-tax estimate is the right benchmark (PDF p.25). Second, the <a href="../../bsz-analysis/site/">BSZ analysis</a> (Boll, Saez and Zucman) disputes exactly this transfer (<a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/DISPUTES.md">disputes row 1</a>).</p>
+<p>The authors keep only the moving part, 10.32, and apply it to the 5-point rate in log form: the base shrinks by <strong>41.1%</strong> (PDF p.24). Table 8 (PDF p.25) sets this beside the observed 28.6% from the seven publicly reported moves. This check does not enter the main estimate. Two things to notice. First, the Swiss estimate is for a recurring annual tax. The paper argues that taxpayers price the Act as the start of a recurring regime, so the recurring-tax estimate is the right benchmark (PDF p.25). Second, the <a href="../../bsz-analysis/site/">BSZ analysis</a> (Boll, Saez and Zucman) disputes exactly this transfer (<a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/DISPUTES.md">disputes row 1</a>).</p>
 </section>
 </section>
 <section id="section-5.1-the-income-tax-the-billionaires-pay" class="level2">
@@ -3430,14 +3474,14 @@ Python code for the main estimate
 <tr class="even">
 <td style="text-align: left;">nber_departed_four_grown</td>
 <td style="text-align: left;">data</td>
-<td style="text-align: left;">Grown taxable wealth of 4 of the 7 confirmed departures (Page, Thiel, Hankey, Kalanick)</td>
+<td style="text-align: left;">Grown taxable wealth of 4 of the 7 publicly reported moves (Page, Thiel, Hankey, Kalanick)</td>
 <td style="text-align: left;">314.823</td>
 <td style="text-align: left;">final.csv (removed_departed rows, wealth_in_tax_base_usd_7pct)</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">nber_spielberg_sacks_net_worth</td>
 <td style="text-align: left;">data</td>
-<td style="text-align: left;">Net worth of 2 of the 7 confirmed departures (Spielberg, Sacks)</td>
+<td style="text-align: left;">Net worth of 2 of the 7 publicly reported moves (Spielberg, Sacks)</td>
 <td style="text-align: left;">9</td>
 <td style="text-align: left;">final.csv (removed_departed rows, net_worth_usd)</td>
 </tr>
@@ -3549,7 +3593,7 @@ Python code for the main estimate
 <span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>               <span class="at">npv_mc_nber_median =</span> <span class="st">&quot;35&quot;</span>, <span class="at">npv_mc_nber_pct_negative =</span> <span class="st">&quot;35&quot;</span>)</span>
 <span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>what_nber <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">revenue_baseline =</span> <span class="st">&quot;Baseline revenue, before anyone leaves ($B)&quot;</span>,</span>
 <span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>               <span class="at">nber_domestic_grown =</span> <span class="st">&quot;Baseline grown 7% to the valuation date ($B)&quot;</span>,</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>               <span class="at">nber_ceiling =</span> <span class="st">&quot;Revenue left after the seven confirmed departures ($B)&quot;</span>,</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>               <span class="at">nber_ceiling =</span> <span class="st">&quot;Revenue left after the seven publicly reported moves ($B)&quot;</span>,</span>
 <span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>               <span class="at">nber_international =</span> <span class="st">&quot;Net worth of the non-US-citizen residents left out ($B)&quot;</span>,</span>
 <span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>               <span class="at">pareto_alpha =</span> <span class="st">&quot;Pareto tail parameter, alpha&quot;</span>,</span>
 <span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>               <span class="at">income_tax_mc_k212 =</span> <span class="st">&quot;Yearly income tax C, billionaires among the top 212 filers ($B)&quot;</span>,</span>
@@ -3629,7 +3673,7 @@ Python code for the main estimate
 <td style="text-align: left;">19</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Revenue left after the seven confirmed departures ($B)</td>
+<td style="text-align: left;">Revenue left after the seven publicly reported moves ($B)</td>
 <td style="text-align: right;">72.05150</td>
 <td style="text-align: right;">72.06</td>
 <td style="text-align: right;">0.00850</td>
@@ -3759,7 +3803,7 @@ Python code for the main estimate
 <section id="appendix-first-version" class="level2">
 <h2 class="anchored" data-anchor-id="appendix-first-version">Appendix: the authors’ first version (March 2026)</h2>
 <p>This appendix is not part of the account above. It records what the pipeline also reproduces: the authors’ first version, Rauh, Jaros, Kearney, Doran and Cosso, <em>The Net Present Value of the Billionaire Tax Act</em>, Hoover Institution, SSRN 6340778 (17 March 2026). Page numbers in this appendix are that version’s PDF pages. Its Pareto fit and income tax Monte Carlo are the ones in Section 5.1 above (its Table 8 is the chapter’s Table 9). Its revenue part and its Monte Carlo differ.</p>
-<p><strong>Revenue.</strong> It starts from the same $94.20B baseline, without growth to a valuation date or a litigation discount. Six confirmed departures leave $67.51B (printed $67.51B, p.11); ten reported departures leave $55.10B (printed $55.1B, p.13). The Swiss semi-elasticity, applied linearly (10.32 × 5 = 51.6% of the base), gives $45.59B (printed $45.59B, p.14). The preferred “approximately $40 billion (range: $35-46 billion)” (p.14) is not computed anywhere in the authors’ code. Every step after the baseline uses a typed 94.2 rather than the workbook’s 94.30 (mismatch 6).</p>
+<p><strong>Revenue.</strong> It starts from the same $94.20B baseline, without growth to a valuation date or a litigation discount. Six publicly reported moves leave $67.51B (printed $67.51B, p.11); ten reported departures leave $55.10B (printed $55.1B, p.13). The Swiss semi-elasticity, applied linearly (10.32 × 5 = 51.6% of the base), gives $45.59B (printed $45.59B, p.14). The preferred “approximately $40 billion (range: $35-46 billion)” (p.14) is not computed anywhere in the authors’ code. Every step after the baseline uses a typed 94.2 rather than the workbook’s 94.30 (mismatch 6).</p>
 <p><strong>NPV by scenario and break-even (its Tables 9 and 10).</strong> The departure share is tied to revenue, <span class="math inline">\(f = 1 - WT/94.2\)</span>, so revenue lost and income tax lost move together.</p>
 <details class="code-fold">
 <summary>R code for the first version’s Table 9</summary>
@@ -4833,7 +4877,7 @@ Python code for the main estimate
 <span id="cb25-158"><a href="#cb25-158" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 1: the wealth tax collected, $WT$ {#step-wt}</span></span>
 <span id="cb25-159"><a href="#cb25-159" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-160"><a href="#cb25-160" aria-hidden="true" tabindex="-1"></a>The script draws $WT \sim U<span class="co">[</span><span class="ot">`r nb$wt_min`, `r nb$wt_max`</span><span class="co">]</span>$ (\$B). The top, <span class="in">`r nb$wt_max`</span>, is</span>
-<span id="cb25-161"><a href="#cb25-161" aria-hidden="true" tabindex="-1"></a>the revenue if the Act survives in court, after removing the seven confirmed departures. Summing</span>
+<span id="cb25-161"><a href="#cb25-161" aria-hidden="true" tabindex="-1"></a>the revenue if the Act survives in court, after removing the seven publicly reported moves. Summing</span>
 <span id="cb25-162"><a href="#cb25-162" aria-hidden="true" tabindex="-1"></a>the authors&#39; person-level file <span class="in">`final.csv`</span> gives \$<span class="in">`r num(nc$ceiling_recomputed, 2)`</span>B for the same</span>
 <span id="cb25-163"><a href="#cb25-163" aria-hidden="true" tabindex="-1"></a>quantity, so the script&#39;s round 72 is close (<span class="co">[</span><span class="ot">mismatch 4</span><span class="co">](materials.html#mismatches)</span>). The bottom,</span>
 <span id="cb25-164"><a href="#cb25-164" aria-hidden="true" tabindex="-1"></a><span class="in">`r nb$wt_min`</span>, is the Act struck down. The mean of the draw is</span>
@@ -4928,7 +4972,7 @@ Python code for the main estimate
 <span id="cb25-255"><a href="#cb25-255" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-256"><a href="#cb25-256" aria-hidden="true" tabindex="-1"></a>This section builds the revenue. The base is \$<span class="in">`r num(rc$baseline_precise, 2)`</span>B before anyone</span>
 <span id="cb25-257"><a href="#cb25-257" aria-hidden="true" tabindex="-1"></a>leaves and grows to \$<span class="in">`r num(nc$domestic_total_grown, 2)`</span>B by the valuation date. Removing the</span>
-<span id="cb25-258"><a href="#cb25-258" aria-hidden="true" tabindex="-1"></a>seven confirmed departures leaves \$<span class="in">`r num(nc$ceiling_recomputed, 2)`</span>B. Leaving out three</span>
+<span id="cb25-258"><a href="#cb25-258" aria-hidden="true" tabindex="-1"></a>seven publicly reported moves leaves \$<span class="in">`r num(nc$ceiling_recomputed, 2)`</span>B. Leaving out three</span>
 <span id="cb25-259"><a href="#cb25-259" aria-hidden="true" tabindex="-1"></a>pre-filing departures and Zuckerberg, and halving for the chance the Act is struck down, gives</span>
 <span id="cb25-260"><a href="#cb25-260" aria-hidden="true" tabindex="-1"></a>the paper&#39;s about \$30B (p.23).</span>
 <span id="cb25-261"><a href="#cb25-261" aria-hidden="true" tabindex="-1"></a></span>
@@ -4962,13 +5006,13 @@ Python code for the main estimate
 <span id="cb25-289"><a href="#cb25-289" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-290"><a href="#cb25-290" aria-hidden="true" tabindex="-1"></a>They borrow this</span>
 <span id="cb25-291"><a href="#cb25-291" aria-hidden="true" tabindex="-1"></a>test from the accounting rule for uncertain tax positions in company accounts (ASC 740-10,</span>
-<span id="cb25-292"><a href="#cb25-292" aria-hidden="true" tabindex="-1"></a>PDF p.20). It works at two levels. For each taxpayer: confirmed departures, pre-filing departures</span>
+<span id="cb25-292"><a href="#cb25-292" aria-hidden="true" tabindex="-1"></a>PDF p.20). It works at two levels. For each taxpayer: publicly reported moves, pre-filing departures</span>
 <span id="cb25-293"><a href="#cb25-293" aria-hidden="true" tabindex="-1"></a>and billionaires imputed from a Pareto curve are left out of the recognized base,</span>
 <span id="cb25-294"><a href="#cb25-294" aria-hidden="true" tabindex="-1"></a>$R_{\text{recognized}}$. For the Act as a whole: $q$ is the probability that the Act survives</span>
 <span id="cb25-295"><a href="#cb25-295" aria-hidden="true" tabindex="-1"></a>constitutional challenge, set at <span class="in">`r num(ncol$q, 2)`</span> (PDF pp.19-20). That value comes from the accounting</span>
 <span id="cb25-296"><a href="#cb25-296" aria-hidden="true" tabindex="-1"></a>standard&#39;s 50% threshold, not from a legal assessment of the challenges, so it is **guesswork**.</span>
 <span id="cb25-297"><a href="#cb25-297" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-298"><a href="#cb25-298" aria-hidden="true" tabindex="-1"></a><span class="fu">### 4.3 The seven confirmed departures (Table 7, eq. 4)</span></span>
+<span id="cb25-298"><a href="#cb25-298" aria-hidden="true" tabindex="-1"></a><span class="fu">### 4.3 The seven publicly reported moves (Table 7, eq. 4)</span></span>
 <span id="cb25-299"><a href="#cb25-299" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-300"><a href="#cb25-300" aria-hidden="true" tabindex="-1"></a>Page, Brin, Thiel, Hankey, Spielberg, Kalanick and Sacks moved out between the initiative&#39;s filing</span>
 <span id="cb25-301"><a href="#cb25-301" aria-hidden="true" tabindex="-1"></a>and the 1 January 2026 residency date (Table 7, PDF p.21). Removing their</span>
@@ -5033,7 +5077,7 @@ Python code for the main estimate
 <span id="cb25-364"><a href="#cb25-364" aria-hidden="true" tabindex="-1"></a>The authors keep only the moving part,</span>
 <span id="cb25-365"><a href="#cb25-365" aria-hidden="true" tabindex="-1"></a><span class="in">`r inp(&quot;brulhart_semi_elasticity&quot;)`</span>, and apply it to the 5-point rate in log form: the base</span>
 <span id="cb25-366"><a href="#cb25-366" aria-hidden="true" tabindex="-1"></a>shrinks by **`r pct(100 * lit_loss)`** (PDF p.24). Table 8 (PDF p.25) sets this beside the observed</span>
-<span id="cb25-367"><a href="#cb25-367" aria-hidden="true" tabindex="-1"></a>28.6% from the seven confirmed departures. This check does not enter the main estimate. Two</span>
+<span id="cb25-367"><a href="#cb25-367" aria-hidden="true" tabindex="-1"></a>28.6% from the seven publicly reported moves. This check does not enter the main estimate. Two</span>
 <span id="cb25-368"><a href="#cb25-368" aria-hidden="true" tabindex="-1"></a>things to notice. First, the Swiss estimate is for a recurring annual tax. The paper argues that</span>
 <span id="cb25-369"><a href="#cb25-369" aria-hidden="true" tabindex="-1"></a>taxpayers price the Act as the start of a recurring regime, so the recurring-tax estimate is the</span>
 <span id="cb25-370"><a href="#cb25-370" aria-hidden="true" tabindex="-1"></a>right benchmark (PDF p.25). Second, the <span class="co">[</span><span class="ot">BSZ analysis</span><span class="co">](../../bsz-analysis/site/)</span> (Boll, Saez and</span>
@@ -5286,7 +5330,7 @@ Python code for the main estimate
 <span id="cb25-633"><a href="#cb25-633" aria-hidden="true" tabindex="-1"></a>               <span class="at">npv_mc_nber_median =</span> <span class="st">&quot;35&quot;</span>, <span class="at">npv_mc_nber_pct_negative =</span> <span class="st">&quot;35&quot;</span>)</span>
 <span id="cb25-634"><a href="#cb25-634" aria-hidden="true" tabindex="-1"></a>what_nber <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">revenue_baseline =</span> <span class="st">&quot;Baseline revenue, before anyone leaves ($B)&quot;</span>,</span>
 <span id="cb25-635"><a href="#cb25-635" aria-hidden="true" tabindex="-1"></a>               <span class="at">nber_domestic_grown =</span> <span class="st">&quot;Baseline grown 7% to the valuation date ($B)&quot;</span>,</span>
-<span id="cb25-636"><a href="#cb25-636" aria-hidden="true" tabindex="-1"></a>               <span class="at">nber_ceiling =</span> <span class="st">&quot;Revenue left after the seven confirmed departures ($B)&quot;</span>,</span>
+<span id="cb25-636"><a href="#cb25-636" aria-hidden="true" tabindex="-1"></a>               <span class="at">nber_ceiling =</span> <span class="st">&quot;Revenue left after the seven publicly reported moves ($B)&quot;</span>,</span>
 <span id="cb25-637"><a href="#cb25-637" aria-hidden="true" tabindex="-1"></a>               <span class="at">nber_international =</span> <span class="st">&quot;Net worth of the non-US-citizen residents left out ($B)&quot;</span>,</span>
 <span id="cb25-638"><a href="#cb25-638" aria-hidden="true" tabindex="-1"></a>               <span class="at">pareto_alpha =</span> <span class="st">&quot;Pareto tail parameter, alpha&quot;</span>,</span>
 <span id="cb25-639"><a href="#cb25-639" aria-hidden="true" tabindex="-1"></a>               <span class="at">income_tax_mc_k212 =</span> <span class="st">&quot;Yearly income tax C, billionaires among the top 212 filers ($B)&quot;</span>,</span>
@@ -5381,7 +5425,7 @@ Python code for the main estimate
 <span id="cb25-732"><a href="#cb25-732" aria-hidden="true" tabindex="-1"></a>differ.</span>
 <span id="cb25-733"><a href="#cb25-733" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-734"><a href="#cb25-734" aria-hidden="true" tabindex="-1"></a>**Revenue.** It starts from the same \$<span class="in">`r num(out(&quot;revenue_baseline&quot;,&quot;printed_value&quot;), 2)`</span>B baseline,</span>
-<span id="cb25-735"><a href="#cb25-735" aria-hidden="true" tabindex="-1"></a>without growth to a valuation date or a litigation discount. Six confirmed departures leave</span>
+<span id="cb25-735"><a href="#cb25-735" aria-hidden="true" tabindex="-1"></a>without growth to a valuation date or a litigation discount. Six publicly reported moves leave</span>
 <span id="cb25-736"><a href="#cb25-736" aria-hidden="true" tabindex="-1"></a>\$<span class="in">`r num(rc$confirmed6_ceiling, 2)`</span>B (printed \$<span class="in">`r out(&quot;revenue_confirmed6&quot;,&quot;printed_value&quot;)`</span>B,</span>
 <span id="cb25-737"><a href="#cb25-737" aria-hidden="true" tabindex="-1"></a>p.11); ten reported departures leave \$<span class="in">`r num(rc$expanded10_estimate, 2)`</span>B (printed</span>
 <span id="cb25-738"><a href="#cb25-738" aria-hidden="true" tabindex="-1"></a>\$<span class="in">`r out(&quot;revenue_expanded10&quot;,&quot;printed_value&quot;)`</span>B, p.13). The Swiss semi-elasticity, applied</span>

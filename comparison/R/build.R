@@ -22,7 +22,7 @@ bridge_inputs <- function(k) {
   stopifnot(isTRUE(all.equal(tau, pick(si, "tax_rate"))))
   base_r  <- pick(oi, "baseline_net_worth") * (1 + pick(oi, "nber_growth_rate"))   # 2,027.4 at 31 Dec 2026
   R0_r    <- pick(oo, "nber_domestic_grown")           # 100.906, 5% of the grown base net of real estate
-  ceiling <- pick(oi, "nber_ceiling_hardcoded")        # 72, after the seven confirmed departures
+  ceiling <- pick(oi, "nber_ceiling_hardcoded")        # 72, after the seven publicly reported moves
   # Departed wealth, the same people valued on each list. On the BSZ list (1 Jul 2026,
   # Table 5): the four pre-2026 leavers, plus Brin, plus Spielberg and Sacks, whom the BSZ
   # workbook does not list by name and who are valued at the JR file's net worth. On the JR
@@ -93,7 +93,7 @@ bridge_input_table <- function(bi) {
       "JR export baseline_net_worth (212 billionaires, 2025 Forbes list) grown 7% to 31 Dec 2026 (JR export nber_growth_rate; NBER README, chapter p.19)",
       "the Forbes 2025 list grown 7% (1 = JR list)",
       "1 - nber_domestic_grown / (5% x grown base) from the JR export: the person-level file nets out directly held real estate (NBER README; chapter p.19)",
-      "the seven confirmed departures (Page, Brin, Thiel, Hankey, Spielberg, Kalanick, Sacks) valued on the BSZ list: BSZ exports pre2026_leavers_wealth and brin_wealth (Table 5, 1 Jul 2026), plus Spielberg and Sacks at the JR file's net worth (JR export nber_spielberg_sacks_net_worth), as the BSZ workbook does not list them by name",
+      "the seven publicly reported moves (Page, Brin, Thiel, Hankey, Spielberg, Kalanick, Sacks) valued on the BSZ list: BSZ exports pre2026_leavers_wealth and brin_wealth (Table 5, 1 Jul 2026), plus Spielberg and Sacks at the JR file's net worth (JR export nber_spielberg_sacks_net_worth), as the BSZ workbook does not list them by name",
       "the same seven on the JR list: (nber_domestic_grown - 72) / 5%, the script's ceiling literal (NPV_dist_v8.R:19; the person-level file sums to 72.05, mismatch 4)",
       "the seven's own income tax as the BSZ analysis counts it: BSZ exports pre2026_leavers_annual_inctax and brin_annual_inctax, plus Spielberg and Sacks at resid_inctax_rate (used only under the BSZ rule for the share lost)",
       "none: no avoidance allowance (NBER chapter Secs. 4-5)",

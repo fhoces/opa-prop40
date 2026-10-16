@@ -231,7 +231,7 @@ name: revenue
 
 ```{r revchain, fig.height=3.4}
 d <- data.frame(
-  step = c("No one leaves\n(4.1)", "Grown 7% to the\nvaluation date (4.1)", "7 confirmed\ndepartures (4.3)",
+  step = c("No one leaves\n(4.1)", "Grown 7% to the\nvaluation date (4.1)", "7 publicly reported\nmoves (4.3)",
            "Pre-filing leavers and\nZuckerberg out (4.4)", "Times q = 0.50\n(4.4)"),
   v = c(rc$baseline_precise, nc$domestic_total_grown, nc$ceiling_recomputed, ncol$recognized, ncol$central))
 d$step <- factor(d$step, levels = d$step)
