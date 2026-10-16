@@ -4,7 +4,7 @@
 # reviewed carries a badge next to its title, yellow for lightly reviewed and red for not
 # reviewed, linking to the credit section (#how-ai-was-used). The level is read from
 # site/credit/credit-answers.json, so a badge cannot drift from the author's answers.
-BADGE_TEXT <- c(yellow = "AI generated, not fully reviewed yet", red = "AI generated, not reviewed yet")
+BADGE_TEXT <- c(yellow = "AI generated, partially reviewed", red = "AI generated, not reviewed yet")
 badge_level <- function(v) {
   if (v %in% c("Reviewed", "Understood")) return("none")
   if (v %in% c("Lightly reviewed", "Lightly checked")) return("yellow")
