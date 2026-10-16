@@ -398,6 +398,7 @@
     simulation that draws the uncertain inputs at random many times and averages the results)
     (Jaros and Rauh, NBER chapter c15504, Tax Policy and the Economy vol. 41, September 2026).
     {{jr_fn_x}}</p>
+    <p class="fn" id="fn-eq"><sup>2</sup> {{eq_fn_x}}</p>
     <p class="fn">The net fiscal effect puts both on one definition, and the panels start at its
     two ends. The BSZ end is <b>{{bsz_end_b}}</b> and the JR end <b>{{jr_end_b}}</b>, a gap of <b>{{gap_b}}</b>.
     The discount rate is a dial: {{r_bsz}} at the BSZ end, the rate the BSZ overview uses, and
@@ -727,6 +728,13 @@
   // its three dials, the walk ends, the panel recomputes. renderPanels() calls syncApply(), so
   // the buttons follow the dials however they moved (by hand, the walk, the panel's Reset):
   // a term shows "Applied" and is marked in the top equation when all its dials are at the JR end.
+  // A footnote link opens the notes fold before jumping to the note.
+  Array.prototype.slice.call(document.querySelectorAll("a.fn-link")).forEach(function (a) {
+    a.addEventListener("click", function () {
+      var t = document.querySelector(a.getAttribute("href")), d = t && t.closest("details");
+      if (d) d.open = true;
+    });
+  });
   var AP = Array.prototype.slice.call(document.querySelectorAll(".apply-eq .ap-btn"));
   function dialsOf(btn) { return btn.dataset.dials.split(" "); }
   function bszDial(id) { return $("bsz-" + id); }

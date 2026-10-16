@@ -330,7 +330,7 @@
   <span class="eq-step"><span class="op">+</span><span class="term" data-steps="7 8 9"><b>$4.89B</b><small>The other three steps together (W, a, the minor switch)</small></span></span>
   <span class="eq-step"><span class="op">=</span><span class="term" data-end="9"><b>−$38.98B</b><small>JR estimate</small></span></span>
 </div>
-    <p class="eq-note">Move the BSZ panel's dials to their far ends, term by term from left to right. The D and q terms are those two steps of that walk. Lost income tax is the four loss-box dials of the walk added up (H, f, C and r). The last term is the other three steps added up (W, a and the minor switch). The Walk the path button in each panel does it for you. The <a href="../repro.html#the-bridge">report</a> gives all nine steps. Each amount is what its group changes when the dials move in this order. It is not a total, and its size depends on the order, because the inputs multiply each other: a departure matters more when more wealth is left to tax. The report's <a href="../repro.html#order-free-check">order-free check</a> averages each input's step over every order the dials could move in. The amounts are rounded to two decimals and add up exactly to the JR estimate, <span style="white-space:nowrap">−$38.98B</span>. For scale, the lost income tax itself is worth <span style="white-space:nowrap">$75.0B</span> today in the JR analysis and <span style="white-space:nowrap">$0.7B</span> in the BSZ analysis.</p>
+    <p class="eq-note">Each amount is what its dials change when moved from left to right, as the Walk the path button does.<sup><a class="fn-link" href="#fn-eq">2</a></sup></p>
   </section>
 
   <section class="board" id="panels" aria-labelledby="board-title">
@@ -563,7 +563,7 @@
 
   <section class="eq-box apply-box" id="apply" aria-labelledby="apply-title">
     <h2 id="apply-title">What separates the two numbers</h2>
-    <p class="ap-lead">Apply to the BSZ panel, from left to right: each button moves its term's dials to the JR values and unlocks the next one, so each press changes the estimate by its amount in the equation. Moved first, <i>q</i> would take <span style="white-space:nowrap">−$53.75B</span> instead of <span style="white-space:nowrap">−$39.44B</span>, because it would also halve the tax on the billionaires who already left.</p>
+    <p class="ap-lead">Apply to the BSZ panel, from left to right.<sup><a class="fn-link" href="#fn-eq">2</a></sup></p>
 <div class="pseudo-eq apply-eq" role="group" aria-label="The equation above in words: each button moves those dials of the BSZ panel to the JR values, or back">
   <span class="term"><b class="ap-label">BSZ estimate</b><button type="button" class="ap-btn" data-act="reset" data-dials="confirmed_departures litigation_survival income_loss_share income_level horizon discount_rate base_list avoidance noncitizens real_estate asset_sales">Reset</button></span>
   <span class="eq-step"><span class="op">&minus;</span><span class="term"><b class="ap-label">Billionaires already departed<br>(D)</b><button type="button" class="ap-btn" data-act="term" data-dials="confirmed_departures" data-steps="1" aria-pressed="false">Apply</button></span></span>
@@ -598,6 +598,7 @@
     simulation that draws the uncertain inputs at random many times and averages the results)
     (Jaros and Rauh, NBER chapter c15504, Tax Policy and the Economy vol. 41, September 2026).
     The paper prints −$38.9B, the average of one seeded run of 100,000 draws. The exact average of the same formula is −$38.98B, used throughout this page (<a href="../repro.html#the-main-estimate">report</a>, <a href="../../../rjkdc-analysis/site/repro.html#step-npv">Step 6 of the JR analysis's report</a>). A seeded run starts the random draws from a fixed number, so it gives the same draws every time.</p>
+    <p class="fn" id="fn-eq"><sup>2</sup> Move the BSZ panel's dials to their far ends, term by term from left to right. The D and q terms are those two steps of that walk. Lost income tax is the four loss-box dials of the walk added up (H, f, C and r). The last term is the other three steps added up (W, a and the minor switch). The Walk the path button in each panel does it for you. The <a href="../repro.html#the-bridge">report</a> gives all nine steps. Each amount is what its group changes when the dials move in this order. It is not a total, and its size depends on the order, because the inputs multiply each other: a departure matters more when more wealth is left to tax. The report's <a href="../repro.html#order-free-check">order-free check</a> averages each input's step over every order the dials could move in. The amounts are rounded to two decimals and add up exactly to the JR estimate, <span style="white-space:nowrap">−$38.98B</span>. For scale, the lost income tax itself is worth <span style="white-space:nowrap">$75.0B</span> today in the JR analysis and <span style="white-space:nowrap">$0.7B</span> in the BSZ analysis. The Apply buttons work from left to right, each unlocking the next, so each press changes the estimate by its amount in the equation. Moved first, <i>q</i> would take <span style="white-space:nowrap">−$53.75B</span> instead of <span style="white-space:nowrap">−$39.44B</span>, because it would also halve the tax on the billionaires who already left.</p>
     <p class="fn">The net fiscal effect puts both on one definition, and the panels start at its
     two ends. The BSZ end is <b>$106.8B</b> and the JR end <b>−$39.0B</b>, a gap of <b>$145.8B</b>.
     The discount rate is a dial: 3% at the BSZ end, the rate the BSZ overview uses, and
@@ -927,6 +928,13 @@
   // its three dials, the walk ends, the panel recomputes. renderPanels() calls syncApply(), so
   // the buttons follow the dials however they moved (by hand, the walk, the panel's Reset):
   // a term shows "Applied" and is marked in the top equation when all its dials are at the JR end.
+  // A footnote link opens the notes fold before jumping to the note.
+  Array.prototype.slice.call(document.querySelectorAll("a.fn-link")).forEach(function (a) {
+    a.addEventListener("click", function () {
+      var t = document.querySelector(a.getAttribute("href")), d = t && t.closest("details");
+      if (d) d.open = true;
+    });
+  });
   var AP = Array.prototype.slice.call(document.querySelectorAll(".apply-eq .ap-btn"));
   function dialsOf(btn) { return btn.dataset.dials.split(" "); }
   function bszDial(id) { return $("bsz-" + id); }
