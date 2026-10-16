@@ -22,7 +22,7 @@ execute:
 ---
 
 ::: {.site-nav}
-Comparison of the two analyses of California Proposition 40:
+Prop 40 comparison:
 [Overview](../../index.html) &middot; Open Output: [Explorer](explorer/index.html) &middot; Open Analysis: Report (here) and [Slides](slides/slides.html) &middot;
 [Open Materials](https://github.com/fhoces/opa-prop40/tree/main/comparison)
 
@@ -67,6 +67,9 @@ nobr <- function(x) ifelse(nzchar(x), sprintf('<span style="white-space:nowrap">
 nobr_amounts <- function(x) gsub("([\u2212+-]\\$[0-9][0-9,.]*B)", '<span style="white-space:nowrap">\\1</span>', x)
 # Money in running text: a dollar sign in markdown starts a formula, so escape it.
 usd <- function(x, d = 1, signed = FALSE) nobr(gsub("$", "\\$", money(x, d, signed), fixed = TRUE))
+# The BSZ authors' rounded headline ("about $100 billion", the abstract's rounding of Table 5's
+# $104 billion; the endpoint ggss_headline holds the same rounding), as the root page words it.
+bsz_round_words <- nobr(sprintf("\\$%s billion", format(epv("ggss_headline"))))
 # Two pandoc traps in raw HTML tables: a bare dollar sign can pair with the next one into
 # a formula across cells, and "(a)" in a cell reads as a list marker that leaves the
 # surrounding <div> unclosed. Every table writes both as HTML entities.
@@ -122,9 +125,11 @@ twin_fold <- function(exhibit, fns, py = fns) {
 
 Proposition 40 would tax Californians worth \$1 billion or more once, at 5% of their net
 worth. The [BSZ analysis](../../bsz-analysis/site/) estimates about
-`r usd(epv("bsz_tab5_row1", "printed_value"), 0)` of wealth tax. The
-[JR analysis](../../rjkdc-analysis/site/) finds the state
-**`r usd(-epv("rauh_nber_npv", "printed_value"))`** poorer in today's dollars, because
+`r bsz_round_words` of wealth tax (its Table 5 prints
+`r usd(epv("bsz_tab5_row1", "printed_value"), 0)`). The
+[JR analysis](../../rjkdc-analysis/site/) finds the state about
+**`r usd(-eb$jr_own, 0)`** poorer in today's dollars (their paper prints an average of
+`r usd(epv("rauh_nber_npv", "printed_value"))`), because
 billionaires who leave stop paying California income tax for ever. Two inputs are among the
 three largest both on the explorer's path and averaged over every order: how long the lost
 income tax is counted, and the chance the tax survives a court challenge. The third depends on
@@ -925,7 +930,7 @@ twin_html("the setup",
 
 
 ::: {.site-nav}
-Comparison of the two analyses of California Proposition 40:
+Prop 40 comparison:
 [Overview](../../index.html) &middot; Open Output: [Explorer](explorer/index.html) &middot; Open Analysis: Report (here) and [Slides](slides/slides.html) &middot;
 [Open Materials](https://github.com/fhoces/opa-prop40/tree/main/comparison)
 

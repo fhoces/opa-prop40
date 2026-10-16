@@ -388,6 +388,7 @@ background: transparent; border: 1px solid var(--link); border-radius: 0; cursor
 
 a.q-survey { color: var(--paper) !important; text-decoration: none !important; }
 .q-mini { display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0 16px; }
+.q-mini .q-for { align-self: center; font-size: 14px; color: var(--ink-2); }
 .q-survey.q-survey-mini { font-size: 15px; padding: 5px 14px; }
 .q-copy.q-copy-mini { font-size: 15px; padding: 5px 14px; margin-left: 0; }
 
@@ -397,6 +398,9 @@ letter-spacing: 0; line-height: 1.35; text-decoration: none !important; white-sp
 .ai-badge:hover, .ai-badge:focus { text-decoration: underline !important; }
 a.ai-badge-yellow, .ai-badge-yellow { background: #f5c518; color: #3b2c00 !important; }
 a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; }
+
+.ai-badge-line { margin: 0 0 12px; font-size: 15px; color: var(--ink-2); }
+.ai-badge-line .ai-badge { font-size: 0.9em; margin-left: 0.35em; }
 </style>
     <style type="text/css">
 body, .remark-slide-content, .remark-slide-content h1, .remark-slide-content h2, .remark-slide-content h3 {
@@ -544,7 +548,7 @@ table.dt td:first-child, table.dt th:first-child { text-align: left; }
 &lt;/style&gt;
 
 .site-nav[
-Part of an Open Policy Analysis of the JR analysis (Jaros and Rauh, 2026) of California Proposition 40:
+JR analysis of California Proposition 40:
 [Open Output (the explorer)](../explorer/) &amp;middot; Open Analysis:
 [Report](../repro.html) and Slides (here) &amp;middot;
 [Open Materials](https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis) &amp;middot;
@@ -798,7 +802,7 @@ name: seven-inputs
 
 # The seven inputs that move the answer
 
-&lt;table class=&quot;dt&quot;&gt;&lt;tr&gt;&lt;th&gt;Input&lt;/th&gt;&lt;th&gt;Values in the explorer&lt;/th&gt;&lt;th&gt;Origin&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lowest revenue the draw can pick ($B)&lt;/td&gt;&lt;td&gt;0; 35; 45.59&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Highest revenue the draw can pick ($B)&lt;/td&gt;&lt;td&gt;55.10; 67.51; 72&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og data&#39;&gt;data&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Extra litigation weight on the revenue&lt;/td&gt;&lt;td&gt;1 (none extra); 0.75; 0.50&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Billionaires&#39; yearly California income tax ($B)&lt;/td&gt;&lt;td&gt;3.3 to 5.8; 3.3 only; 5.8 only&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Discount rate net of growth&lt;/td&gt;&lt;td&gt;1.5% to 4.5%; 1.5% only; 4.5% only&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Share of the income tax base that leaves&lt;/td&gt;&lt;td&gt;1 - WT/94.2; 0.30 to 0.60; 0.283 fixed&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Further growth of the lost income tax&lt;/td&gt;&lt;td&gt;0; 0.5%; 1.0%&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;table class=&quot;dt&quot;&gt;&lt;tr&gt;&lt;th&gt;Input&lt;/th&gt;&lt;th&gt;Values in the explorer&lt;/th&gt;&lt;th&gt;Origin&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lowest revenue the draw can pick ($B)&lt;/td&gt;&lt;td&gt;0; 35; 45.59&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Highest revenue the draw can pick ($B)&lt;/td&gt;&lt;td&gt;55.10; 67.51; 72&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og data&#39;&gt;data&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Extra litigation weight on the revenue&lt;/td&gt;&lt;td&gt;1 (none extra); 0.75; 0.50&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Billionaires&#39; yearly California income tax ($B)&lt;/td&gt;&lt;td&gt;3.3 to 5.8; 3.3 only; 5.8 only&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Discount rate net of growth&lt;/td&gt;&lt;td&gt;1.5% to 4.5%; 1.5% only; 4.5% only&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Share of the income tax base that leaves&lt;/td&gt;&lt;td&gt;1 − WT/94.2; 0.30 to 0.60; 0.283 fixed&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Further growth of the lost income tax&lt;/td&gt;&lt;td&gt;0; 0.5%; 1.0%&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 
 .highlight-box[
 4 of the authors&#39; 5 inputs are guesswork; the litigation weight and further growth rows are this OPA&#39;s settings.

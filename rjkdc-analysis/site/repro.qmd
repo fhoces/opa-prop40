@@ -614,7 +614,11 @@ scroll(kable(odf, caption = "Inputs by origin (export/r/inputs.csv, then the exp
 #| label: origins-count
 #| results: asis
 #| code-summary: "R code for the input counts"
-cnt <- as.data.frame(table(factor(odf$origin, levels = c("data", "research", "guesswork", "scenario", "derived"))))
+# The levels list every origin present, so no row falls out of the count.
+origin_levels <- union(c("data", "research", "guesswork", "guesswork on data", "scenario", "derived"),
+                       unique(odf$origin))
+cnt <- as.data.frame(table(factor(odf$origin, levels = origin_levels)))
+stopifnot(sum(cnt$Freq) == nrow(odf))
 names(cnt) <- c("origin", "rows")
 scroll(kable(cnt, caption = paste0("Rows of the table above (", nrow(odf), "), by origin. ",
                                    "The last ", length(dials), " rows are the explorer's dials.")))

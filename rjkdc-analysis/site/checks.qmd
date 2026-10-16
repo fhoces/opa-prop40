@@ -1,7 +1,7 @@
 ---
 title: "Prop 40, JR analysis: checks against the paper's variations"
 subtitle: "The net present value under every other set of assumptions the authors print"
-date: 2026-10-16
+date: today
 format:
   html:
     toc: true

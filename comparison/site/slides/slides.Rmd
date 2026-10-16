@@ -43,6 +43,9 @@ mv  <- function(key) ex$meta$value[ex$meta$key == key]
 rj_main  <- eb$jr_own   # the JR main estimate: the exact expectation of the authors' model (author decision 2026-10-15)
 rj_print <- epv("rauh_nber_npv", "printed_value")
 bsz_print <- epv("bsz_tab5_row1", "printed_value")
+# the March 2026 (SSRN) mean net present value, from the JR export contract, for slide 2's
+# "$25/39 billion" (consistency review 004, C-10)
+rj_march <- pick(k$rjkdc$outputs, "npv_mc_ssrn_mean")
 oi <- k$rjkdc$inputs
 ceiling72 <- pick(oi, "nber_ceiling_hardcoded")
 f_lo <- pick(oi, "nber_mc_f_min"); f_hi <- pick(oi, "nber_mc_f_max")
@@ -179,7 +182,7 @@ $1 billion or more, payable over five years, with the revenue mainly for health 
 <img src="figs/prop40/yes-panel.png" alt="The Yes on 40 campaign page, small, with the line it circles zoomed in: research estimates Prop 40 could raise about $100 billion.">
 ]
 .arg.arg-no[
-.arg-text[**Against:** a "poorly designed tax scheme". Among the reasons: $25/`r round(abs(rj_main))` billion in
+.arg-text[**Against:** a "poorly designed tax scheme". Among the reasons: $`r round(abs(rj_march))`/`r round(abs(rj_main))` billion in
   lost revenue (the JR analysis, March/September versions).]
 <img src="figs/prop40/no-panel.png" alt="The No on 40 campaign page, small, with the sentence it circles zoomed in: a poorly designed tax scheme that will cost the state budget billions of dollars.">
 ]

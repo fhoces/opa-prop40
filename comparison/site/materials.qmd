@@ -17,7 +17,7 @@ execute:
 ---
 
 ::: {.site-nav}
-Comparison of the two analyses of California Proposition 40:
+Prop 40 comparison:
 [Overview](../../index.html) &middot; Open Output: [Explorer](explorer/index.html) &middot; Open Analysis: [Report](repro.html) and [Slides](slides/slides.html) &middot;
 [Open Materials](https://github.com/fhoces/opa-prop40/tree/main/comparison) (this page is its guide)
 
@@ -258,7 +258,7 @@ The full crosswalk of disputed inputs, with every page reference checked against
   the March 2026 version of the JR analysis (see the [report's Hoopes section](repro.html#the-hoopes-comparison)).
 
 ::: {.site-nav}
-Comparison of the two analyses of California Proposition 40:
+Prop 40 comparison:
 [Overview](../../index.html) &middot; Open Output: [Explorer](explorer/index.html) &middot; Open Analysis: [Report](repro.html) and [Slides](slides/slides.html) &middot;
 [Open Materials](https://github.com/fhoces/opa-prop40/tree/main/comparison) (this page is its guide)
 

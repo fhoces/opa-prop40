@@ -1,7 +1,7 @@
 ---
 title: "Prop 40, BSZ analysis: checks against the paper's variations"
 subtitle: "The wealth tax revenue under every other set of assumptions the paper prints"
-date: 2026-10-15
+date: today
 format:
   html:
     toc: true

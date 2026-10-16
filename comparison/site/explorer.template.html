@@ -389,12 +389,12 @@
   <details class="fold notes" id="notes-estimates">
     <summary>Notes on the two estimates and the conventions</summary>
     <div class="note">
-    <p class="fn"><sup>1</sup> The number each analysis's overview page leads with, out of the many settings each analysis can be run at, each defined its own way. The BSZ
-    analysis's is a net total over 5 years: the wealth tax (Table 5 row 1), plus extra income
+    <p class="fn"><sup>1</sup> {{fn1_lead}} Each is defined its own way. The BSZ
+    number is a net total over 5 years: the wealth tax (Table 5 row 1), plus extra income
     tax from assets sold to pay it, minus the income tax lost to billionaires who leave, for 5
     years at {{r_bsz}}. BSZ's own headline is the wealth tax alone; the net total is this OPA's choice,
     explained on the <a href="../../../bsz-analysis/site/">BSZ analysis overview</a>. The JR
-    analysis's is a perpetuity net present value, averaged over the authors' Monte Carlo draws (a
+    number is a perpetuity net present value, averaged over the authors' Monte Carlo draws (a
     simulation that draws the uncertain inputs at random many times and averages the results)
     (Jaros and Rauh, NBER chapter c15504, Tax Policy and the Economy vol. 41, September 2026).
     {{jr_fn_x}}</p>
@@ -518,7 +518,7 @@
     switch (input) {
       case "W_noncit": case "W_core": return "$" + withCommas(v.toFixed(1)) + "B";
       case "re": case "d_conf": case "alpha": return (100 * v).toFixed(1) + "%";
-      case "s": return (100 * v).toFixed(0) + "%";
+      case "s": return Math.abs(v - 1 / 3) < 1e-9 ? "1/3" : (100 * v).toFixed(0) + "%";   // as fmt_input()
       case "q": case "f0": return (100 * v).toFixed(0) + "%";
       case "own": return v.toFixed(2);
       case "C": return "$" + v.toFixed(2) + "B/yr";

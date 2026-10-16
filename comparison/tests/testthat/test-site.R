@@ -16,6 +16,18 @@ test_that("the explorer loads the data file with the hash of its content", {
   expect_true(grepl(sprintf('comparison-data.js?v=%s"', h), read_page(explorer), fixed = TRUE))
 })
 
+test_that("every comparison page opens its nav line with the same prefix", {
+  # the shorter form of 3b6ef55 on the generated pages and the Quarto sources alike
+  # (consistency review 004, C-11)
+  srcs <- c(pages, repro = file.path(root, "comparison", "site", "repro.qmd"),
+            materials = file.path(root, "comparison", "site", "materials.qmd"))
+  for (p in srcs) {
+    html <- read_page(p)
+    expect_true(grepl("Prop 40 comparison:", html, fixed = TRUE), label = p)
+    expect_false(grepl("Comparison of the two analyses of California Proposition 40:", html, fixed = TRUE), label = p)
+  }
+})
+
 test_that("the Apply block, after the two panels, is the top equation's grid with labels and buttons", {
   dp <- read_csv_plain(file.path(root, "comparison", "export", "r", "dial_path.csv"))
   html <- read_page(explorer)

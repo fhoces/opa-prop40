@@ -97,7 +97,7 @@ directly skips that setup and reports spurious errors. `.github/workflows/rjkdc-
 clones the authors' repo at the pinned SHA, rebuilds R and Python, and runs the suite on every
 push touching `rjkdc-analysis/`.
 
-Three kinds, per file:
+Four kinds, per file:
 
 1. **Vs. the paper's printed number**, at printed rounding (deterministic figures) or within
    `4 * sd / sqrt(n)` Monte Carlo error (simulated figures - see each test file for why that
@@ -109,6 +109,10 @@ Three kinds, per file:
 3. **Parity between `export/r/` and `export/py/`** (`test-parity.R`): deterministic steps to
    1e-6, Monte-Carlo-derived outputs within a documented tolerance (numpy cannot share R's RNG
    stream, so these are independent simulations of the same algorithm, not a bit-for-bit replay).
+4. **The site** (`test-site.R`): the explorer's `grid.js` and `site/data/headlines.csv` must be
+   byte-identical to the exporter's output; grid cells must equal the pipeline's analytic means and
+   brute-force Monte Carlo; the printed-value transcription must agree with the pipeline; every
+   number typed into the landing page must still match its source.
 
 ## Python twin (`py/`)
 

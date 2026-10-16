@@ -140,7 +140,7 @@ table.dt td:first-child, table.dt th:first-child { text-align: left; }
 ```
 
 .site-nav[
-Part of an Open Policy Analysis of the JR analysis (Jaros and Rauh, 2026) of California Proposition 40:
+JR analysis of California Proposition 40:
 [Open Output (the explorer)](../explorer/) &middot; Open Analysis:
 [Report](../repro.html) and Slides (here) &middot;
 [Open Materials](https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis) &middot;

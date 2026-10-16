@@ -76,8 +76,8 @@ step_texts <- function(inp, id) {
   if (id == "base_list") ii <- ii[ii$input == "W_core", ]
   out <- list(bsz = fmt_input(ii$input, ii$bsz_value), rjkdc = fmt_input(ii$input, ii$jr_value),
               bsz_source = ii$bsz_source, rjkdc_source = ii$jr_source)
-  # the explorer's asset-sales dial prints whole percentages at every stop, the tables keep 1/3
-  if (id == "asset_sales") { out$bsz_short <- pct(ii$bsz_value, 0); out$rjkdc_short <- pct(ii$jr_value, 0) }
+  # the asset-sales share prints as fmt_input() has it ("1/3" at the BSZ end) on every page,
+  # the explorer's dial ends and the overview's table included (consistency review 004, C-07)
   # the explorer's dial ends name the list, the tables keep the dollars
   if (id == "base_list") {
     out$bsz_short <- "Forbes 2026"; out$rjkdc_short <- "Forbes 2025"
@@ -136,7 +136,13 @@ eq_terms <- function(dp) {
     "The last term is the other %s steps added up (%s)."),
     and_list(dp$symbol[main]), words[length(main)], words[length(loss)], and_list(loss_syms),
     words[length(rest)], and_list(rest_names))
-  list(main = main, loss = loss, rest = rest, terms = terms, note = note, n_words = words[nrow(dp)])
+  # why the label puts H first, and the order the walk moves the four (consistency review 004,
+  # C-13): said once, in the explorer's footnote 2; stop if H's step stops being the largest
+  stopifnot(identical(dp$symbol[loss][which.max(abs(dp$change[loss]))], "H"))
+  loss_order <- sprintf("H is listed first because its step is the largest. The walk moves the four in the order %s.",
+                        and_list(dp$symbol[loss]))
+  list(main = main, loss = loss, rest = rest, terms = terms, note = note, loss_order = loss_order,
+       n_words = words[nrow(dp)])
 }
 # The dials each term of eq_terms() moves, one character vector per term: the term's path steps
 # with the minor switch read as its three dials (dial_ids() in model.R). The explorer's Apply
@@ -335,6 +341,9 @@ render_site <- function(root = comparison_root(),
   tok$ggss_scoring <- money(epv("ggss_scoring"), 1)
   tok$bsz_row1 <- money(epv("bsz_tab5_row1"), 1)
   tok$bsz_printed <- money(ep$printed_value[ep$endpoint_id == "bsz_tab5_row1"], 0)   # the digit the paper prints
+  # the authors' rounded headline in words, "about $100 billion" (the abstract's rounding of Table 5;
+  # ggss_headline holds the same rounding), as the BSZ pages word it (consistency review 004, C-04)
+  tok$bsz_round_words <- sprintf("$%s billion", format(epv("ggss_headline")))
   tok$bsz_row1_exact <- money(epv("bsz_tab5_row1"), 3)
   # the comparison's pages print the JR estimate as the exact expectation of the authors' model
   # (author decision 2026-10-15); footnote 1 gives the paper's seeded-run figure
@@ -373,6 +382,15 @@ render_site <- function(root = comparison_root(),
     money(rj_printed, 1), money(eb$jr_own, 2), report, jr_report)
   tok$jr_fn_root <- jr_fn("comparison/site/repro.html#the-main-estimate", "rjkdc-analysis/site/repro.html#step-npv")
   tok$jr_fn_x <- jr_fn("../repro.html#the-main-estimate", "../../../rjkdc-analysis/site/repro.html#step-npv")
+  # Footnote 1's first sentences, on both pages: which number each analysis's overview leads
+  # with (the BSZ overview the net total, the JR overview the printed figure) and which one
+  # this page uses (consistency review 004, C-05).
+  tok$fn1_lead <- sprintf(paste(
+    "Each analysis can be run at many settings.",
+    "The BSZ overview leads with %s, this OPA's net total.",
+    "The JR overview leads with the printed %s.",
+    "This page uses the exact average of the same formula, %s, shown as %s."),
+    money(eb$bsz_model, 1), money(rj_printed, 1), money(eb$jr_own, 2), money(eb$jr_own, 1))
   # The gap on (b), stated in the explorer's footnote, not in the headline.
   gap_b <- eb$bsz_model - eb$jr_model
   tok$gap_b <- money(gap_b, 1)
@@ -808,7 +826,7 @@ render_site <- function(root = comparison_root(),
   # The explorer's note names the dial letters and the Walk the path button.
   eq_note <- function(href, panel, walk, of_href) paste0(
     "Move the ", panel, "'s dials to their far ends, term by term from left to right. ", esc(et$note), " ",
-    walk,
+    esc(et$loss_order), " ", walk,
     sprintf("The <a href=\"%s\">report</a> gives all %s steps.", href, et$n_words),
     order_note(of_href))
   tok$pseudo_eq_note_x <- paste0("Each amount is what its dials change when moved from left to right, ",
