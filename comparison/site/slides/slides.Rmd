@@ -643,6 +643,10 @@ sh_name <- function(id) if (id %in% names(DIAL_SYMBOLS)) sprintf("*%s* (%s)", DI
   tolower(steps$title[steps$step_id == id])
 sh_three <- vapply(sh_ids, sh_name, "")
 sh_three <- paste0(paste(head(sh_three, -1), collapse = ", "), " and ", tail(sh_three, 1))
+# On the deck the four terms are numbered (i) to (iv), the order the next slides take them in,
+# in place of the dial letters the overview and the explorer print.
+et$terms$label <- paste0(sub(" [(][^)]*[)]$", "", et$terms$label), " (", c("i", "ii", "iii", "iv"), ")")
+stopifnot(nrow(et$terms) == 4)
 term <- function(j) with(et$terms[j, ], sprintf('<span class="eq-step"><span class="op">%s</span><span class="term"><b>%s</b><small>%s</small></span></span>',
                             if (change < 0) "&minus;" else "+", money(abs(change), 2), esc(label)))
 cat('<div class="pseudo-eq">',
@@ -658,9 +662,7 @@ exactly. The JR estimate here is the exact average of the
 authors' Monte Carlo; their seeded run prints `r usd(rj_print)`.
 ]
 
-The next three slides take the three largest steps on this path, `r three_syms`, in path
-order. The sizes depend on the order, because the inputs multiply each other. Averaged over
-every order (the report's order-free check), the three largest are `r sh_three`. Each of the next three slides says what both analyses
+The next slides take the four terms one at a time, (i) to (iv). Each says what both analyses
 assume, why, and what kind of claim it is:
 
 .small[
@@ -675,7 +677,7 @@ studies settle. **derived**: computed from the analysis's own inputs.
 ---
 name: diff-departed
 
-# Difference 1: who has already left?
+# (i) Who has already left?
 
 ```{r claims-fn}
 claim_table <- function(bsz, jr) {
@@ -714,7 +716,7 @@ of the revenue is lost in full.
 ---
 name: diff-litigation
 
-# Difference 2: will the tax survive in court?
+# (ii) Will the tax survive in court?
 
 ```{r claims-lit, results="asis"}
 claim_table(
@@ -746,7 +748,7 @@ leave.
 name: diff-horizon
 class: wide-right
 
-# Difference 3: for how long is the income tax lost?
+# (iii) For how long is the income tax lost?
 
 ```{css, echo=FALSE}
 /* diff-horizon: both claim cells run five lines, so the dollars box takes the wider column
@@ -798,7 +800,7 @@ larger than the JR row's last column. The rate dial moves next.
 name: diff-loss-rest
 class: tight-table
 
-# Difference 3, continued: *f*, *C* and *r*
+# (iii), continued: *f*, *C* and *r*
 
 ```{r tab-loss-rest, results="asis"}
 # The loss box's dials other than the horizon (eq_terms(): Lost income tax (H, f, C, r)), in path
@@ -840,7 +842,7 @@ cat("</table>")
 name: smaller
 class: tight-table
 
-# The smaller steps
+# (iv) The other three steps
 
 ```{r tab-rest, results="asis"}
 # the equation's last term: the path steps outside D, q and the loss box (eq_terms()), in path
