@@ -535,6 +535,18 @@ The three columns are the three strategies of [the earlier slide](#ai-challenges
 ]
 
 ---
+name: contents-2
+
+# Contents
+
+.toc[
+1. <span class="toc-done">Motivation</span>
+2. <span class="toc-done">Artificial intelligence and Open Policy Analysis</span>
+3. [A brief description of each OPA](#opa-bsz)
+4. [A summary of where the main differences are](#pseudo-eq)
+]
+
+---
 name: opa-bsz
 class: opa-card
 
@@ -592,6 +604,18 @@ The comparison puts both analyses on one common output, the net fiscal effect (t
 ```{r cmp-comparison, results="asis"}
 compare_figs("index.html")
 ```
+]
+
+---
+name: contents-3
+
+# Contents
+
+.toc[
+1. <span class="toc-done">Motivation</span>
+2. <span class="toc-done">Artificial intelligence and Open Policy Analysis</span>
+3. <span class="toc-done">A brief description of each OPA</span>
+4. [A summary of where the main differences are](#pseudo-eq)
 ]
 
 ---
