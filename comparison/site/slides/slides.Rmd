@@ -353,13 +353,6 @@ table.dt td.l, table.dt th.l { text-align: left; }
 .nb { white-space: nowrap; }
 ```
 
-.site-nav[
-Part of the comparison of the two analyses of California Proposition 40:
-[Overview](../../../index.html) &middot; Open Output: [Explorer](../explorer/) &middot; Open Analysis:
-[Report](../repro.html) and Slides (here) &middot;
-[Open Materials](https://github.com/fhoces/opa-prop40/tree/main/comparison)
-]
-
 # Artificial intelligence and Open Policy Analysis
 
 - Open Policy Analysis has been around for several years (Hoces de la Guardia, 2017; Hoces de la Guardia, Grant and Miguel, 2021).<sup>1</sup>
