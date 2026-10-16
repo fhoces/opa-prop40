@@ -231,12 +231,14 @@ name: contents
 
 .toc[
 1. <span class="toc-done">Motivation</span>
-2. Artificial intelligence and Open Policy Analysis
+2. [Artificial intelligence and Open Policy Analysis](#ai-opa)
 3. A brief description of each OPA
 4. A summary of where the main differences are
 ]
 
 ---
+name: ai-opa
+
 
 ```{css, echo=FALSE}
 .remark-code, .remark-inline-code { font-size: 80%; }
@@ -350,22 +352,14 @@ Part of the comparison of the two analyses of California Proposition 40:
 [Open Materials](https://github.com/fhoces/opa-prop40/tree/main/comparison)
 ]
 
-# Deck Map
+# Artificial intelligence and Open Policy Analysis
 
-<table style="width:100%; font-size:85%; border-collapse:collapse;">
-<tr><th style="text-align:left; padding:6px;">Part</th><th style="text-align:left; padding:6px;">What it covers</th><th style="padding:6px;">Starts at</th></tr>
-<tr><td style="padding:6px;"><b>1. Two estimates</b></td><td style="padding:6px;">The two main estimates, and why they cannot be read against each other as printed</td><td style="text-align:center;"><a href="#estimates">go</a></td></tr>
-<tr><td style="padding:6px;"><b>2. One function</b></td><td style="padding:6px;">The common output, and one estimating function built up one term at a time</td><td style="text-align:center;"><a href="#term-wealth">go</a></td></tr>
-<tr><td style="padding:6px;"><b>3. The bridge</b></td><td style="padding:6px;">Switching one input at a time along the dial path, and the waterfall</td><td style="text-align:center;"><a href="#one-at-a-time">go</a></td></tr>
-<tr><td style="padding:6px;"><b>4. The main differences</b></td><td style="padding:6px;">Departed wealth, litigation and the horizon, then the smaller steps</td><td style="text-align:center;"><a href="#pseudo-eq">go</a></td></tr>
-<tr><td style="padding:6px;"><b>5. Checks</b></td><td style="padding:6px;">The one published comparison (Hoopes 2026), what reproduces, where to go next</td><td style="text-align:center;"><a href="#hoopes">go</a></td></tr>
-</table>
+- Open Policy Analysis has been around for several years (Hoces de la Guardia, 2017; Hoces de la Guardia, Grant and Miguel, 2021).<sup>1</sup>
+- Several organizations have moved to increase transparency in documentation, materials and visualizations, but none to the degree proposed in the original framework.
+- One explanation could be the cost of generating an OPA. Previous prototypes took several months of work to generate one OPA.
+- With the help of agentic coding, the cost of generating an OPA has dropped substantially. This project created three OPAs in four to six days of work.
 
-.blue-box[
-Every number in this deck is computed when the deck is rendered, from the files the comparison's
-code writes (`comparison/export/r/`) and the two analyses' own exported inputs and outputs.
-Nothing is retyped except the authors' printed values.
-]
+.footnote[<sup>1</sup> Hoces de la Guardia, F. (2017), "How Transparency and Reproducibility Can Connect Research and Policy: A Case Study of the Minimum Wage Policy Estimates", PhD dissertation, Pardee RAND Graduate School. Hoces de la Guardia, F., Grant, S. and Miguel, E. (2021), ["A framework for open policy analysis"](https://doi.org/10.1093/scipol/scaa067), *Science and Public Policy*.]
 
 ---
 name: estimates
