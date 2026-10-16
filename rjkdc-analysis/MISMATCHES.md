@@ -1,6 +1,6 @@
 # Mismatches
 
-Mismatches 1, 2, 7, 8 and 9 concern only the authors' first version (Rauh, Jaros, Kearney, Doran and Cosso, Hoover Institution, SSRN 6340778, March 2026), which the pipeline also reproduces. Mismatches 3 to 6 concern the NBER chapter.
+Mismatches 1, 2, 7, 8 and 9 concern only the authors' first version (Rauh, Jaros, Kearney, Doran and Cosso, Hoover Institution, SSRN 6340778, March 2026), which the pipeline also reproduces. Mismatches 3 to 6 and 10 concern the NBER chapter (10 is in the first version too).
 
 One numbered item per code/paper or doc/code discrepancy found while reproducing Jaros and Rauh,
 *The Net Present Value of the California Billionaire Tax Act* (NBER chapter c15504, Tax Policy and the Economy vol. 41, September 2026;
@@ -139,3 +139,22 @@ expectation, while the shipped seed-2026 run gives -$24.77B. The printed sd ($38
 remains unexplained; a different run or code state is the likeliest source. The NBER
 version's printed summary (mean -$38.9B, median -$35.3B, 85.2% negative), by contrast, reproduces
 from `NPV_dist_v8.R` to within Monte Carlo noise with no directional gap.
+
+## 10. The top 212's share of bracket tax is printed as 39.0% and as 38.8% for one formula
+
+**NBER chapter**, PDF p.27, after eq. 10: "For the top 212 of 4,729 filers, this implies a 39.0%
+share of bracket tax liability, or approximately $4.3 billion in Tax Year 2023."
+**NBER chapter**, PDF p.28: "the continuous Pareto share S(212, 4,729) = (212/4,729)^((α−1)/α) =
+38.8% of bracket tax liability."
+**First-version paper**: the same two sentences, p.15 (after eq. 16, 39.0%) and p.16 (38.8%).
+**Code**, `NPV_data/monte_carlo_sim.R:68-70`: computes the continuous share,
+`(212 / 4729)^((alpha - 1) / alpha)` = 38.85% at the fitted alpha of 1.4379, and the share of the
+top 212 in the rank-implied schedule before rescaling, 34.75%, then rescales the schedule so the
+top 212 hold the continuous share.
+
+The text prints one formula with two values. The code's continuous share rounds to 38.8%, and
+no step of the code gives 39.0% (the formula at the rounded alpha of 1.44 gives 38.7%). The
+$4.3 billion follows from 38.8% as well (0.3885 x 11.1 = 4.31). The income tax draws use the
+rescaled schedule, so no number downstream changes. `tests/testthat/test-pareto.R` holds the
+continuous share against the printed 38.8% and the unrescaled share against 34.75%; the printed
+39.0% is recorded here, not tested.

@@ -204,8 +204,8 @@
       <h2>The inputs</h2>
       <div class="rack" id="rack"></div>
       <!-- One button per setting in ORDER (named in R/site.R::site_named()), then the
-           grid's highest and lowest mean NPV (leaving out the cells that pair q below 1 with
-           the 0 floor); the key explains the paper's scenarios and the two extremes. -->
+           grid's highest mean NPV (leaving out the cells that pair q below 1 with the 0
+           floor); the key explains the paper's scenarios and the highest setting. -->
       <p class="presets-h">Jump to a setting</p>
       <div class="presets" id="presets"></div>
       <dl class="scen-key" id="scen-key"></dl>
@@ -382,9 +382,9 @@
   });
   document.addEventListener("click", function () { closeTips(null); });
 
-  // ---- preset buttons: the settings in ORDER, then the grid's highest and lowest
-  // mean NPV (leaving out the cells that count litigation twice); a key line for each
-  // paper scenario, linked to the report, and one for the two extremes -----
+  // ---- preset buttons: the settings in ORDER, then the grid's highest mean NPV
+  // (leaving out the cells that count litigation twice); a key line for each paper
+  // scenario, linked to the report, and one for the highest setting -----
   var presets = document.getElementById("presets");
   ORDER.forEach(function (name) {
     var b = document.createElement("button");
@@ -400,7 +400,7 @@
     for (var k = SIZES.length - 1; k >= 0; k--) { l[k] = i % SIZES[k]; i = Math.floor(i / SIZES[k]); }
     return l;
   }
-  // The extremes leave out the cells that pair q below 1 with the 0 revenue floor: the q dial's
+  // The highest setting leaves out the cells that pair q below 1 with the 0 revenue floor: the q dial's
   // own tip says that pairing counts the litigation risk twice. The dials are found by key.
   var DQ = -1, DLO = -1;
   G.dials.forEach(function (d, di) { if (d.key === "q") DQ = di; if (d.key === "wt_lo") DLO = di; });
@@ -409,13 +409,12 @@
     var l = levelsOf(i);
     return !(l[DLO] === 0 && l[DQ] > 0);
   }
-  var iMax = -1, iMin = -1;
+  var iMax = -1;
   G.snap.forEach(function (s, i) {
     if (!counted(i)) return;
     if (iMax < 0 || s[0] > G.snap[iMax][0]) iMax = i;
-    if (iMin < 0 || s[0] < G.snap[iMin][0]) iMin = i;
   });
-  [["Highest in the grid", iMax], ["Lowest in the grid", iMin]].forEach(function (e) {
+  [["Highest in the grid", iMax]].forEach(function (e) {
     var b = document.createElement("button");
     b.type = "button"; b.className = "ext";
     b.textContent = e[0] + " (" + usd(G.snap[e[1]][0]) + "B)";
@@ -432,10 +431,10 @@
     dd.appendChild(a);
     keyEl.appendChild(dt); keyEl.appendChild(dd);
   });
-  var dtx = document.createElement("dt"); dtx.textContent = "Highest and Lowest in the grid: ";
+  var dtx = document.createElement("dt"); dtx.textContent = "Highest in the grid: ";
   var ddx = document.createElement("dd");
-  ddx.textContent = "the grid's extremes, leaving out settings the q dial says count litigation " +
-    "risk twice. They can combine this OPA's illustrative levels and are not JR results.";
+  ddx.textContent = "the grid's highest mean NPV, leaving out settings the q dial says count " +
+    "litigation risk twice. It can combine this OPA's illustrative levels and is not a JR result.";
   keyEl.appendChild(dtx); keyEl.appendChild(ddx);
 
   // ---- table header + body, one column per named scenario plus "this

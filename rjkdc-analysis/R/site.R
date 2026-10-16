@@ -272,3 +272,72 @@ write_site_grid_js <- function(site_grid, revenue_chain, site_headlines,
   ), path)
   path
 }
+
+# ---- Checks page (site/checks.qmd) ------------------------------------------
+# The checks page builds its tables from the explorer's own data file, so it shows the
+# values the explorer shows (author answer 2026-10-16, item 23); tests/testthat/test-site.R
+# pins the rendered page to this file.
+read_site_grid_js <- function(path = "site/explorer/grid.js") {
+  js <- readLines(path, warn = FALSE)
+  js <- paste(js[grepl("^window.__GRID__", js)], collapse = "")
+  jsonlite::fromJSON(sub(";\\s*$", "", sub("^window.__GRID__ = ", "", js)), simplifyVector = FALSE)
+}
+
+# One cell of grid.js: `changes` (named level indices) applied to the named setting `from`,
+# found in the same mixed-radix order as the explorer's idx() (the last dial varies fastest).
+site_grid_js_cell <- function(G, changes = integer(0), from = "nber") {
+  keys <- vapply(G$dials, `[[`, "", "key")
+  lv <- setNames(unlist(G$named[[from]]), keys)
+  lv[names(changes)] <- changes
+  sizes <- vapply(G$dials, function(d) length(d$labels), integer(1))
+  i <- 0L
+  for (k in seq_along(lv)) i <- i * sizes[k] + lv[[k]]
+  setNames(unlist(G$snap[[i + 1L]]), c("mean_npv", "pct_negative", "wt_collected", "pv_lost"))
+}
+
+# The settings the papers do not print, each made from the main (NBER) setting. The litigation
+# weight comes as the explorer's paired setting (q = 0.5 with the 35 floor, site_named()$q50),
+# because with the 0 floor it counts the risk twice (author answer 2026-10-16, item 2). Row
+# text is built from the dials' own labels, so no value is typed here.
+site_checks_settings <- function(G) {
+  d <- setNames(G$dials, vapply(G$dials, `[[`, "", "key"))
+  lab <- function(k, i) sub(" (only|fixed)$", "", d[[k]]$labels[[i + 1L]])
+  usd <- function(x) if (x == "0") "$0" else paste0("$", x, "B")
+  main <- setNames(unlist(G$named$nber), names(d))
+  at_main <- function(k) d[[k]]$labels[[main[[k]] + 1L]]
+  q50 <- setNames(unlist(G$named$q50), names(d))
+  q50 <- q50[q50 != main]
+  stopifnot(setequal(names(q50), c("q", "wt_lo")))
+  list(
+    list(text = "None, the main assumptions, for reference", changes = integer(0)),
+    list(text = sprintf("r − g, the discount rate net of growth, fixed at %s (instead of drawn from %s)",
+                        lab("rate", 1), at_main("rate")), changes = c(rate = 1L)),
+    list(text = sprintf("r − g, the discount rate net of growth, fixed at %s", lab("rate", 2)),
+         changes = c(rate = 2L)),
+    list(text = sprintf("Revenue multiplied by a chance of surviving in court of %s, with the lowest revenue the draw can pick raised to %s (instead of %s) so the risk is not counted twice (the explorer's \"%s\")",
+                        d$q$labels[[q50[["q"]] + 1L]], usd(lab("wt_lo", q50[["wt_lo"]])), usd(at_main("wt_lo")),
+                        G$named_labels$q50),
+         changes = q50),
+    list(text = sprintf("Yearly income tax fixed at $%sB (instead of drawn from $%sB)",
+                        lab("c", 1), sub(" to ", "B to $", at_main("c"))), changes = c(c = 1L)),
+    list(text = sprintf("Yearly income tax fixed at $%sB", lab("c", 2)), changes = c(c = 2L)),
+    list(text = sprintf("Lost income tax grows a further %s a year on top of the authors' r − g (this OPA's illustration)",
+                        lab("g", 1)), changes = c(g = 1L)),
+    list(text = sprintf("Lost income tax grows a further %s a year on top of the authors' r − g (this OPA's illustration)",
+                        sub("[.]0%$", "%", lab("g", 2))), changes = c(g = 2L)),
+    list(text = sprintf("Lowest revenue the draw can pick of %s (instead of %s)",
+                        usd(lab("wt_lo", 1)), usd(at_main("wt_lo"))), changes = c(wt_lo = 1L)),
+    list(text = sprintf("Share of the income tax base that leaves fixed at %s (instead of drawn from %s)",
+                        lab("f", 2), at_main("f")), changes = c(f = 2L))
+  )
+}
+
+# The table of those settings: the mean NPV and the share below zero of each, from grid.js.
+site_checks_table <- function(G) {
+  s <- site_checks_settings(G)
+  do.call(rbind, lapply(s, function(x) {
+    v <- site_grid_js_cell(G, x$changes)
+    data.frame(setting = x$text, mean_npv = v[["mean_npv"]], pct_negative = v[["pct_negative"]],
+               stringsAsFactors = FALSE)
+  }))
+}

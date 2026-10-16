@@ -1,7 +1,10 @@
 # export/{r,py}/inputs.csv + outputs.csv. Schema fixed by the brief:
 #   inputs.csv:  input_id, version, description, value, unit, label, provenance, source, page
 #   outputs.csv: output_id, version, value, unit, printed_value, printed_page, abs_diff
-# label in {data, research, guesswork, scenario} (OPA input taxonomy).
+# label in {data, research, guesswork, scenario} (OPA input taxonomy), plus "derived" (computed
+# from other rows) and "guesswork on data" (a measured value moved by an assumed number: the 7%
+# growth of the 2025 list to the valuation date; author answer 2026-10-16). provenance is "public"
+# on every row: the authors' repository is public under an MIT licence (author answer 2026-10-16).
 
 compute_export_inputs <- function(pareto_fit, revenue_chain, nber_ceiling) {
   # Monte Carlo ranges come from the simulation functions' own defaults, so the
@@ -42,17 +45,17 @@ compute_export_inputs <- function(pareto_fit, revenue_chain, nber_ceiling) {
       "NPV_dist_v8.R; Jaros and Rauh NBER c15504 Sec 5.4", 35,
     "q_litigation_survival", "nber", "Probability the Act survives constitutional challenge (ASC 740-10 more-likely-than-not)", 0.50, "probability", "guesswork", "public",
       "NBER_2026_litigation_weighted/README.md (assumptions table); not an explicit multiplier in NPV_dist_v8.R - see MISMATCHES.md #5", NA_real_,
-    "nber_growth_rate", "nber", "Growth applied to the Jan-1-2026 snapshot to the Dec-31-2026 valuation date", 0.07, "rate", "data", "author-shared",
+    "nber_growth_rate", "nber", "Growth applied to the Jan-1-2026 snapshot to the Dec-31-2026 valuation date", 0.07, "rate", "guesswork on data", "public",
       "final.csv (net_worth_usd_7pct column); NBER README assumptions table", NA_real_,
-    "nber_ceiling_hardcoded", "nber", "wt_max literal in NPV_dist_v8.R (script uses this, not the value re-derived from final.csv)", 72, "$B", "data", "author-shared",
+    "nber_ceiling_hardcoded", "nber", "wt_max literal in NPV_dist_v8.R (script uses this, not the value re-derived from final.csv)", 72, "$B", "data", "public",
       "NPV_dist_v8.R:19", NA_real_,
-    "nber_ceiling_recomputed", "nber", "wt_max re-derived from final.csv: domestic total minus 7 removed_departed rows", nber_ceiling$ceiling_recomputed, "$B", "derived", "author-shared",
+    "nber_ceiling_recomputed", "nber", "wt_max re-derived from final.csv: domestic total minus 7 removed_departed rows", nber_ceiling$ceiling_recomputed, "$B", "derived", "public",
       "R/nber_final.R:compute_nber_ceiling() from final.csv", NA_real_,
-    "nber_international_net_worth", "nber", "28 international billionaires excluded from the domestic base", nber_ceiling$international_net_worth, "$B", "data", "author-shared",
+    "nber_international_net_worth", "nber", "28 international billionaires excluded from the domestic base", nber_ceiling$international_net_worth, "$B", "data", "public",
       "final.csv (panel == international, net_worth_usd)", NA_real_,
-    "nber_departed_four_grown", "nber", "Grown taxable wealth of 4 of the 7 publicly reported moves (Page, Thiel, Hankey, Kalanick)", nber_ceiling$departed_four_grown, "$B", "data", "author-shared",
+    "nber_departed_four_grown", "nber", "Grown taxable wealth of 4 of the 7 publicly reported moves (Page, Thiel, Hankey, Kalanick)", nber_ceiling$departed_four_grown, "$B", "data", "public",
       "final.csv (removed_departed rows, wealth_in_tax_base_usd_7pct)", NA_real_,
-    "nber_spielberg_sacks_net_worth", "nber", "Net worth of 2 of the 7 publicly reported moves (Spielberg, Sacks)", nber_ceiling$spielberg_sacks_net_worth, "$B", "data", "author-shared",
+    "nber_spielberg_sacks_net_worth", "nber", "Net worth of 2 of the 7 publicly reported moves (Spielberg, Sacks)", nber_ceiling$spielberg_sacks_net_worth, "$B", "data", "public",
       "final.csv (removed_departed rows, net_worth_usd)", NA_real_
   )
 }

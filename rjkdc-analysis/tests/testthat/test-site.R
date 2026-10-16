@@ -129,14 +129,16 @@ test_that("every number typed into the landing page matches its source", {
                            expanded10_estimate = NA_real_))
   own <- Filter(function(d) !d$key %in% c("q", "g"), dials)
   n_guess <- sum(vapply(own, function(d) d$origin == "guesswork", logical(1)))
-  words <- c("one", "two", "three", "four", "five", "six", "seven")
+  words <- c("one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten",
+             "eleven", "twelve")
   flat <- gsub("\\s+", " ", html)
   expect_true(grepl(sprintf("of the %s inputs of the authors' simulation, %s are guesswork",
                             words[length(own)], words[n_guess]), flat, fixed = TRUE))
-  # nine mismatches listed, as in MISMATCHES.md
+  # ten mismatches listed, as in MISMATCHES.md (the tenth added 2026-10-16, author answer 17)
   n_mm <- sum(grepl("^## [0-9]+\\.", readLines(project_path("MISMATCHES.md"))))
-  expect_equal(n_mm, 9)
-  expect_equal(lengths(regmatches(html, gregexpr("<li>", html))), n_mm)
+  expect_equal(n_mm, 10)
+  expect_equal(lengths(regmatches(html, gregexpr("<li( value=\"[0-9]+\")?>", html))), n_mm)
+  expect_true(grepl(sprintf("<strong>%s mismatches</strong>", words[n_mm]), flat, fixed = TRUE))
 })
 
 test_that("every explorer dial carries an OPA origin label", {
@@ -166,4 +168,41 @@ test_that("the explorer draws the outcomes chart above the table and cites only 
   expect_equal(unname(site_named()$q50[c("rate", "q", "wt_lo")]), c(0, 2, 1))
   expect_false(grepl("pref-card", html, fixed = TRUE))
   expect_false(grepl("SSRN March 2026", html, fixed = TRUE))
+})
+
+test_that("the checks page's tables are built from the explorer's grid, not copied", {
+  # Author answers 2026-10-16: the tables are generated from grid.js in an R chunk (item 23),
+  # and the two litigation rows with the 0 floor give way to the explorer's paired setting,
+  # q = 0.5 with the 35 floor (item 2).
+  G <- read_site_grid_js(site_path("explorer", "grid.js"))
+  tab <- site_checks_table(G)
+  expect_equal(nrow(tab), 10)
+  expect_equal(tab$mean_npv[1], site_grid_js_cell(G, from = "nber")[["mean_npv"]])
+  q50 <- site_grid_js_cell(G, from = "q50")
+  expect_equal(sum(tab$mean_npv == q50[["mean_npv"]]), 1)
+  expect_equal(round(q50[["mean_npv"]], 1), -48.2)
+  expect_false(any(grepl("surviving in court", tab$setting) & !grepl("raised to", tab$setting)))
+  # the rendered page shows exactly these values, row by row
+  html <- paste(readLines(site_path("checks.html"), warn = FALSE), collapse = "\n")
+  part <- strsplit(html, "<th[^>]*>Setting changed from the main assumptions</th>")[[1]]
+  expect_length(part, 2)
+  body <- sub("</table>.*", "", part[2])
+  rows <- regmatches(body, gregexpr("(?s)<tr[^>]*>.*?</tr>", body, perl = TRUE))[[1]]
+  cells <- lapply(rows, function(r) gsub("<[^>]+>", "", regmatches(r, gregexpr("(?s)<td[^>]*>.*?</td>", r, perl = TRUE))[[1]]))
+  cells <- Filter(length, cells)
+  expect_length(cells, nrow(tab))
+  expect_identical(vapply(cells, `[`, "", 2), vapply(tab$mean_npv, minus, "", d = 2))
+  expect_identical(vapply(cells, `[`, "", 3), paste0(vapply(tab$pct_negative, minus, "", d = 1), "%"))
+  # the variations table: the first version's Monte Carlo from the grid, Table 9 from the pipeline
+  expect_true(grepl(sprintf("<td[^>]*>%s</td>", minus(site_grid_js_cell(G, from = "ssrn")[["mean_npv"]], 2)), html))
+  t9 <- compute_npv_table9()
+  for (s in unique(t9$scenario)) {
+    x <- t9[t9$scenario == s, ]; x <- x[order(x$r), ]
+    v <- vapply(x$npv, function(z) if (z < 0) minus(z, 2) else paste0("+", minus(z, 2)), "")
+    expect_true(grepl(paste(v, collapse = " / "), html, fixed = TRUE), info = s)
+  }
+  # no hand-copied table is left in the source
+  qmd <- readLines(site_path("checks.qmd"), warn = FALSE)
+  expect_false(any(grepl("were copied", qmd)))
+  expect_false(any(grepl("^\\| *(None, the main|Main assumptions)", qmd)))
 })

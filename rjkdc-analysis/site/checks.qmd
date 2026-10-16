@@ -1,15 +1,22 @@
 ---
 title: "Prop 40, JR analysis: checks against the paper's variations"
 subtitle: "The net present value under every other set of assumptions the authors print"
-date: 2026-10-15
+date: 2026-10-16
 format:
   html:
     toc: true
     toc-depth: 2
     toc-location: left
+    code-fold: true
+    code-summary: "code"
     embed-resources: true
     theme: [cosmo, ../../assets/paper.scss]
     css: [repro.css, ../../assets/paper.css]
+engine: knitr
+execute:
+  echo: true
+  warning: false
+  message: false
 ---
 
 ::: {.site-nav}
@@ -21,7 +28,82 @@ JR analysis of California Proposition 40:
 Also in this project: [Comparison overview](../../index.html) &middot; [BSZ analysis overview](../../bsz-analysis/site/)
 :::
 
-All four variations the JR papers print reproduce at the paper's rounding. A fifth, in the
+```{r}
+#| label: setup
+#| code-summary: "R code for the setup: every number on this page is read here"
+suppressPackageStartupMessages(library(knitr))
+for (f in list.files("../R", pattern = "\\.R$", full.names = TRUE)) source(f)
+# The explorer's own data file, read as the explorer reads it (R/site.R)
+G <- read_site_grid_js("explorer/grid.js")
+hl <- read.csv("data/headlines.csv")
+printed <- read.csv("data/printed-tables.csv")
+h <- function(v, q, col = "reproduced") hl[[col]][hl$version == v & hl$quantity == q]
+ss <- formals(compute_npv_mc_ssrn)
+num <- function(x, d = 1, plus = FALSE) {
+  s <- formatC(abs(x), format = "f", digits = d, big.mark = ",")
+  ifelse(x < 0, paste0("−", s), if (plus) paste0("+", s) else s)
+}
+words <- function(n) c("one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten")[n]
+dollars <- function(x) gsub("$", "\\$", x, fixed = TRUE)   # a literal $ in a markdown table cell
+md_table <- function(d) {
+  d[] <- lapply(d, dollars)
+  cat("\n\n::: {.table-scroll}\n\n", paste(kable(d, format = "pipe", align = "l"), collapse = "\n"),
+      "\n\n:::\n\n", sep = "")
+}
+main <- site_grid_js_cell(G, from = "nber")[["mean_npv"]]
+seeded <- h("nber", "mc_mean_npv")
+# the first version's Monte Carlo: the explorer's "ssrn" setting
+first <- site_grid_js_cell(G, from = "ssrn")[["mean_npv"]]
+# the first version's Table 9, recomputed (the explorer cannot fix the revenue at one value)
+t9 <- compute_npv_table9()
+p9 <- printed[printed$table == "table9" & printed$column == "npv", ]
+t9$printed <- p9$printed[match(paste0(t9$scenario, "@", t9$r), p9$row)]
+# the repository's 2% case (NPV_plots/npv_decomposition_2pct.pdf prints -67.2): no OPA setting;
+# hand-built inputs so that f = 1 - WT/baseline equals the script's 0.554 (as in
+# feedback/scenario-tests-2026-10-15/jr-sensitivity.R, case 5)
+base2 <- 0.02 * ss$baseline_revenue / 0.05
+two_pct <- compute_npv_table9(baseline = base2,
+  scenarios = list(two_pct = list(label = "2%", WT = (1 - 0.554) * base2, C = 4.55)), r_values = 0.03)$npv
+match_word <- function(printed, ...) if (any(round(c(...), 1) == printed)) "Match" else "No match"
+nine <- list(six_confirmed = "Six departures", central = "Central", lit_calibrated = "Literature calibrated")
+rows9 <- lapply(names(nine), function(s) {
+  x <- t9[t9$scenario == s, ]
+  x <- x[order(x$r), ]
+  data.frame(
+    Variation = sprintf("%s: revenue $%sB, income tax $%sB a year, share lost %s%%", nine[[s]],
+                        sub("0$", "", formatC(x$WT[1], format = "f", digits = 2)),
+                        sub("0$", "", formatC(x$C[1], format = "f", digits = 2)), num(100 * x$f[1], 1)),
+    Source = "SSRN, Table 9",
+    Printed = paste(num(x$printed, 1, plus = TRUE), collapse = " / "),
+    `This OPA` = paste(num(x$npv, 2, plus = TRUE), collapse = " / "),
+    Result = if (all(round(x$npv, 1) == x$printed)) "Match" else "No match",
+    `How to set it` = "R code", check.names = FALSE)
+})
+dl <- function(k, i) G$dials[[which(vapply(G$dials, `[[`, "", "key") == k)]]$labels[[i + 1L]]
+sl <- unlist(G$named$ssrn); names(sl) <- vapply(G$dials, `[[`, "", "key")
+results <- rbind(
+  data.frame(Variation = "Main assumptions, for reference", Source = "NBER, p.35",
+             Printed = num(h("nber", "mc_mean_npv", "printed"), 1),
+             `This OPA` = sprintf("%s (seeded run %s)", num(main, 2), num(seeded, 2)),
+             Result = match_word(h("nber", "mc_mean_npv", "printed"), main, seeded),
+             `How to set it` = "Explorer, as it opens", check.names = FALSE),
+  data.frame(Variation = sprintf("Revenue drawn from $%sB to $%sB, and the share lost tied to the revenue (f = 1 − revenue / %s)",
+                                 dl("wt_lo", sl[["wt_lo"]]), dl("wt_hi", sl[["wt_hi"]]), ss$baseline_revenue),
+             Source = "SSRN, p.20", Printed = num(h("ssrn", "mc_mean_npv", "printed"), 1),
+             `This OPA` = num(first, 2), Result = match_word(h("ssrn", "mc_mean_npv", "printed"), first),
+             `How to set it` = sprintf("Explorer: from the main setting, set the lowest revenue to %s, the highest to %s and the share lost to \"%s\"",
+                                       dl("wt_lo", sl[["wt_lo"]]), dl("wt_hi", sl[["wt_hi"]]), dl("f", sl[["f"]])),
+             check.names = FALSE),
+  do.call(rbind, rows9),
+  data.frame(Variation = "Tax rate 2% instead of 5%, central inputs, r − g of 3%",
+             Source = "Authors' repository, a plot", Printed = num(-67.2, 1), `This OPA` = "none",
+             Result = "Cannot be set", `How to set it` = "None", check.names = FALSE))
+n_printed <- nrow(results) - 2                  # the variations the papers print
+n_match <- sum(results$Result[2:(n_printed + 1)] == "Match")
+settings <- site_checks_table(G)
+```
+
+All `r words(n_printed)` variations the JR papers print `r if (n_match == n_printed) "reproduce" else paste0("are checked; ", words(n_match), " reproduce")` at the paper's rounding. A fifth, in the
 authors' repository, uses a lower tax rate, which cannot be set in this OPA. None of the five
 changes a single assumption, so the papers give no printed check of the explorer's named
 settings.
@@ -29,7 +111,7 @@ settings.
 ## What was checked
 
 The main estimate of the JR analysis is a mean net present value of [−$38.9 billion]{style="white-space:nowrap"} (NBER chapter,
-September 2026, p.35). This OPA computes it as [−$38.98 billion]{style="white-space:nowrap"} exactly, and as [−$38.89 billion]{style="white-space:nowrap"}
+September 2026, p.35). This OPA computes it as [−$`r num(abs(main), 2)` billion]{style="white-space:nowrap"} exactly, and as [−$`r num(abs(seeded), 2)` billion]{style="white-space:nowrap"}
 with the authors' random seed. The September chapter prints no net present value under other
 assumptions. The first version (SSRN, March 2026) prints four, and the authors' public repository
 holds one more. Each check below sets the same assumptions in this OPA and compares the result
@@ -42,26 +124,20 @@ scenario of its Table 9 fixes four inputs at single values.
 ## Results
 
 All figures are net present values in billions of dollars. Table 9 prints three values per
-scenario, one for each value of r − g (1.5%, 3% and 4.5%). "Match" means this OPA's value rounds to
+scenario, one for each value of r − g (`r r9 <- paste0(100 * sort(unique(t9$r)), "%"); paste(paste(head(r9, -1), collapse = ", "), "and", tail(r9, 1))`). "Match" means this OPA's value rounds to
 the printed figure.
 
-::: {.table-scroll}
-
-| Variation | Source | Printed | This OPA | Result | How to set it |
-|---|---|---|---|---|---|
-| Main assumptions, for reference | NBER, p.35 | −38.9 | −38.98 (seeded run −38.89) | Match | Explorer, as it opens |
-| Revenue drawn from $35B to $67.51B, and the share lost tied to the revenue (f = 1 − revenue / 94.2) | SSRN, p.20 | −24.7 | −24.71 | Match | Explorer: from the main setting, set the lowest revenue to 35, the highest to 67.51 and the share lost to "1 - WT/94.2" |
-| Six departures: revenue $67.51B, income tax $3.3B a year, share lost 28.3% | SSRN, Table 9 | +5.2 / +36.3 / +46.7 | +5.18 / +36.34 / +46.73 | Match | R code |
-| Central: revenue $42.0B, income tax $4.55B a year, share lost 55.4% | SSRN, Table 9 | −126.1 / −42.0 / −14.0 | −126.09 / −42.04 / −14.03 | Match | R code |
-| Literature calibrated: revenue $35.0B, income tax $5.8B a year, share lost 62.8% | SSRN, Table 9 | −208.0 / −86.5 / −46.0 | −208.00 / −86.50 / −46.00 | Match | R code |
-| Tax rate 2% instead of 5%, central inputs, r − g of 3% | Authors' repository, a plot | −67.2 | none | Cannot be set | None |
-
-:::
+```{r}
+#| label: results
+#| results: asis
+#| code-summary: "R code for the results table"
+md_table(results)
+```
 
 ## What could not be checked
 
 **The tax rate.** This OPA has no setting for a wealth tax rate other than 5%. The repository's 2%
-case is reproduced only by building its inputs by hand (−67.22).
+case is reproduced only by building its inputs by hand (`r num(two_pct, 2)`).
 
 **The explorer's named settings.** The explorer offers "Rate 1.5%" and "Rate 4.5%", each of
 which changes one input from the main estimate, and "Litigation weight q = 0.5", which changes two
@@ -91,43 +167,39 @@ records.
 
 ## Settings the papers do not print
 
-This OPA lets a reader change assumptions the papers hold fixed. The table below lists ten such
-changes, each made one at a time from the September chapter's main assumptions, with the result
-this OPA gives. The papers print no figure for any of them, so they are untested against the
-authors' own work.
+This OPA lets a reader change assumptions the papers hold fixed. The table below lists
+`r words(nrow(settings) - 1)` such changes, each made from the September chapter's main
+assumptions, with the result this OPA gives. Each changes one assumption, except the litigation
+weight, which the explorer pairs with a higher revenue floor. The papers print no figure for any of
+them, so they are untested against the authors' own work.
 
 We have sent this table to the original authors, requesting them to test whether they obtain the
 same results. We will update the responses here.
 
 The mean net present value is in billions of dollars. This OPA computes the exact average of the
 authors' formula over the same random draws, not a new seeded run. A seeded run of the authors'
-script differs from it by sampling error only (at the main setting, −38.89 against −38.98). Each setting can be made
-in the [explorer](explorer/).
+script differs from it by sampling error only (at the main setting, `r num(seeded, 2)` against `r num(main, 2)`). Each setting can be made
+in the [explorer](explorer/), and each value below is the one the explorer shows.
 
-::: {.table-scroll}
+```{r}
+#| label: settings
+#| results: asis
+#| code-summary: "R code for the settings table, read from the explorer's grid.js"
+md_table(data.frame(
+  `Setting changed from the main assumptions` = settings$setting,
+  `Mean net present value` = num(settings$mean_npv, 2),
+  `Share of runs below zero` = paste0(num(settings$pct_negative, 1), "%"),
+  `Authors' result` = c("", rep("Pending", nrow(settings) - 1)),
+  check.names = FALSE))
+```
 
-| Setting changed from the main assumptions | Mean net present value | Share of runs below zero | Authors' result |
-|---|---|---|---|
-| None, the main assumptions, for reference | −38.98 | 85.3% | |
-| r − g, the discount rate net of growth, fixed at 1.5% (instead of drawn from 1.5% to 4.5%) | −100.50 | 100.0% | Pending |
-| r − g, the discount rate net of growth, fixed at 4.5% | −9.50 | 63.2% | Pending |
-| Revenue multiplied by a chance of surviving in court of 0.75 | −47.98 | 94.6% | Pending |
-| Revenue multiplied by a chance of surviving in court of 0.50 | −56.98 | 99.5% | Pending |
-| Yearly income tax fixed at $3.3B (instead of drawn from $3.3B to $5.8B) | −18.38 | 71.1% | Pending |
-| Yearly income tax fixed at $5.8B | −59.58 | 94.7% | Pending |
-| Lost income tax grows a further 0.5% a year on top of the authors' r − g (this OPA's illustration) | −58.62 | 90.9% | Pending |
-| Lost income tax grows a further 1% a year on top of the authors' r − g (this OPA's illustration) | −96.81 | 95.1% | Pending |
-| Lowest revenue the draw can pick of $35B (instead of $0) | −21.48 | 71.8% | Pending |
-| Share of the income tax base that leaves fixed at 0.283 (instead of drawn from 0.30 to 0.60) | −11.21 | 64.0% | Pending |
+The litigation row raises the lowest revenue with q, as the explorer's "`r G$named_labels$q50`"
+setting does. The draw's 0 floor already halves the mean revenue (0.5 × `r formals(compute_npv_mc_nber)$wt_max`), so q with that
+floor would count the risk of the Act being struck down twice.
 
-:::
+The share of runs below zero is exact (`r num(settings$pct_negative[1], 1)`%). The authors' seeded run gives
+`r num(h("nber", "mc_pct_negative"), 2)`%, printed `r h("nber", "mc_pct_negative", "printed")`%.
 
-The two litigation rows keep the draw's 0 floor, which already halves the revenue (0.5 × 72), so
-they count the risk of the Act being struck down twice. The explorer's "Litigation weight q = 0.5"
-raises the floor to 35 instead.
-
-The share of runs below zero is exact (85.3%). The authors' seeded run gives 85.17%, printed
-85.2%.
-
-The values were copied from the explorer's data file, `site/explorer/grid.js`, which the pipeline
-writes, on 15 October 2026.
+The two tables are built when this page is rendered: the settings from the explorer's data file,
+`site/explorer/grid.js`, and the variations from the same pipeline, so they cannot drift from the
+explorer. `tests/testthat/test-site.R` checks the rendered page against that file.

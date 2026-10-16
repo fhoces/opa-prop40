@@ -103,7 +103,8 @@ scroll(kable(rbind(ts[, c("file", "tests", "expectations", "passed", "failed", "
 They come in four kinds:
 
 1. **Against the paper's printed number**: Table 9 at the printed rounding; the simulated figures
-   within four Monte Carlo standard errors (plus the printed rounding for the share negative); the
+   within four Monte Carlo standard errors (plus the printed rounding for the share negative; for
+   the SD, four standard errors of an SD); the
    baseline revenue and the ceiling, where the print differs from the authors' workbook and
    person-level file (mismatches 6 and 4), against those files.
 2. **Against the authors' own scripts**, run unmodified from a scratch copy (plot and CSV paths
@@ -148,7 +149,7 @@ csvs <- c(file.path("export/r", list.files(file.path(root, "export/r"), pattern 
           file.path("export/py", list.files(file.path(root, "export/py"), pattern = "[.]csv$")),
           file.path("site/data", list.files("data", pattern = "[.]csv$")),
           "DATA-SOURCES.csv")
-what <- c("export/r/inputs.csv" = "every input: value, OPA label (data / research / guesswork / scenario / derived), source, page",
+what <- c("export/r/inputs.csv" = "every input: value, OPA label (data / research / guesswork / scenario / derived / guesswork on data), source, page",
           "export/r/outputs.csv" = "every headline figure: reproduced value, printed value, page, absolute difference",
           "export/py/inputs.csv" = "the Python twin's inputs (same schema)",
           "export/py/outputs.csv" = "the Python twin's outputs (same schema)",
@@ -187,7 +188,7 @@ scroll(kable(ds[, c("file", "provider", "obtained_via", "date_obtained", "url_or
 
 ## What the checks found {#mismatches}
 
-Nine mismatches between the authors' text, their READMEs and their code. The pipeline reproduces the
+`r c("One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve")[sum(grepl("^## [0-9]+[.]", readLines(file.path(root, "MISMATCHES.md"))))]` mismatches between the authors' text, their READMEs and their code. The pipeline reproduces the
 code as shipped and records each one here.
 
 ```{r}

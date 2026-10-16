@@ -42,3 +42,17 @@ test_that("each object the author has not fully reviewed carries the matching ba
     "Repository" = file.path(base, "README.md"),
     "Overview page" = file.path(base, "site", "index.html")))
 })
+
+test_that("the badge sits on a line of its own, off the authors' names and the paper's title", {
+  # Author answer 2026-10-16 (item 3): "This OPA site: <badge>" on its own line under the
+  # overview's title, and in the deck's subtitle, never inside a title, where it could read as a
+  # label on the authors' work.
+  base <- testthat::test_path("..", "..")
+  badge <- '<a class="ai-badge ai-badge-[a-z]+" href="[^"]*#how-ai-was-used">'
+  ov <- paste(readLines(file.path(base, "site", "index.html"), warn = FALSE), collapse = "\n")
+  expect_false(grepl(paste0("<h1>[^<]*", badge), ov))
+  expect_true(grepl(paste0('<p class="badge-line">This OPA site: ', badge), ov))
+  deck <- readLines(file.path(base, "site", "slides", "slides.Rmd"), warn = FALSE)
+  expect_false(grepl("ai-badge", grep("^title:", deck, value = TRUE)))
+  expect_true(grepl(paste0("This OPA site: ", badge), grep("^subtitle:", deck, value = TRUE)))
+})

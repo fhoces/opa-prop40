@@ -20,6 +20,9 @@ test_that("NBER NPV MC matches the NBER README's printed summary", {
   # of a share, about 0.50 points.
   p <- s$pct_negative / 100
   expect_equal(s$pct_negative, 85.2, tolerance = 0.05 + 400 * sqrt(p * (1 - p) / s$n), scale = 1)
+  # The SD (PDF p.35), absolute (scale = 1): four standard errors of an SD over 100,000 draws,
+  # 4 x sd / sqrt(2n), about 0.34 (author answer 2026-10-16). The seeded run gives 37.62.
+  expect_equal(s$sd, 37.6, tolerance = 0.34, scale = 1)
 })
 
 test_that("SSRN NPV MC reproduces from the authors' own NPV_dist.R", {

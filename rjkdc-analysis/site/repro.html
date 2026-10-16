@@ -2777,7 +2777,7 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 <ul>
 <li><strong>Open Output</strong>: <a href="explorer/">the explorer</a>, the mean net present value and share of negative outcomes for every combination of seven dials: the five ranges of the authors’ Monte Carlo and two settings this OPA adds</li>
 <li><strong>Open Analysis</strong>: this document, and <a href="slides/slides.html">the slide deck</a></li>
-<li><strong>Open Materials</strong>: <a href="https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis">the repository</a>, every script, test, CSV and source (guide, with all nine mismatches found along the way: <a href="materials.html">the materials page</a>)</li>
+<li><strong>Open Materials</strong>: <a href="https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis">the repository</a>, every script, test, CSV and source (guide, with all ten mismatches found along the way: <a href="materials.html">the materials page</a>)</li>
 </ul>
 </div>
 <div class="callout callout-style-default callout-note callout-titled" title="Sources and how they are read">
@@ -3462,7 +3462,7 @@ Python code for the main estimate
 </tr>
 <tr class="even">
 <td style="text-align: left;">nber_growth_rate</td>
-<td style="text-align: left;">data</td>
+<td style="text-align: left;">guesswork on data</td>
 <td style="text-align: left;">Growth applied to the Jan-1-2026 snapshot to the Dec-31-2026 valuation date</td>
 <td style="text-align: left;">0.07</td>
 <td style="text-align: left;">final.csv (net_worth_usd_7pct column); NBER README assumptions table</td>
@@ -3575,7 +3575,7 @@ Python code for the main estimate
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">data</td>
-<td style="text-align: right;">11</td>
+<td style="text-align: right;">10</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">research</td>
@@ -3748,12 +3748,13 @@ Python code for the main estimate
 <span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste0</span>(mm_lines[<span class="sc">!</span>mm_first], <span class="at">collapse =</span> <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>),</span>
 <span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;</span><span class="sc">\n\n</span><span class="st">Full text: [the materials page](materials.html#mismatches).</span><span class="sc">\n</span><span class="st">&quot;</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
-<p>Nine discrepancies were found between the authors’ text, their READMEs and their code. Four of them concern the chapter. This OPA records them rather than fixing them.<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a></p>
+<p>Ten discrepancies were found between the authors’ text, their READMEs and their code. Five of them concern the chapter. This OPA records them rather than fixing them.<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a></p>
 <ol start="3" type="1">
 <li>The sentence after eq. 19 writes C/r where the draw is (r - g)</li>
 <li>NBER ceiling: hard-coded 72 vs. 72.05/72.06 derivable from <code>final.csv</code></li>
 <li><code>q = 0.50</code> litigation-survival weight has no explicit multiplier in the code</li>
 <li>Baseline revenue: the workbook’s precise 94.30 vs. the printed 94.20</li>
+<li>The top 212’s share of bracket tax is printed as 39.0% and as 38.8% for one formula</li>
 </ol>
 <p>Full text: <a href="materials.html#mismatches">the materials page</a>.</p>
 <section id="internal-identities" class="level3">
@@ -4847,7 +4848,7 @@ Python code for the main estimate
 <span id="cb25-104"><a href="#cb25-104" aria-hidden="true" tabindex="-1"></a>  Carlo and two settings this OPA adds</span>
 <span id="cb25-105"><a href="#cb25-105" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Open Analysis**: this document, and <span class="co">[</span><span class="ot">the slide deck</span><span class="co">](slides/slides.html)</span></span>
 <span id="cb25-106"><a href="#cb25-106" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Open Materials**: <span class="co">[</span><span class="ot">the repository</span><span class="co">](https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis)</span>, every script, test, CSV and</span>
-<span id="cb25-107"><a href="#cb25-107" aria-hidden="true" tabindex="-1"></a>  source (guide, with all nine mismatches found along the way: <span class="co">[</span><span class="ot">the materials page</span><span class="co">](materials.html)</span>)</span>
+<span id="cb25-107"><a href="#cb25-107" aria-hidden="true" tabindex="-1"></a>  source (guide, with all <span class="in">`r tolower(c(&quot;One&quot;, &quot;Two&quot;, &quot;Three&quot;, &quot;Four&quot;, &quot;Five&quot;, &quot;Six&quot;, &quot;Seven&quot;, &quot;Eight&quot;, &quot;Nine&quot;, &quot;Ten&quot;, &quot;Eleven&quot;, &quot;Twelve&quot;)[sum(grepl(&quot;^## [0-9]+[.]&quot;, readLines(file.path(&quot;..&quot;, &quot;MISMATCHES.md&quot;))))])`</span> mismatches found along the way: <span class="co">[</span><span class="ot">the materials page</span><span class="co">](materials.html)</span>)</span>
 <span id="cb25-108"><a href="#cb25-108" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb25-109"><a href="#cb25-109" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-110"><a href="#cb25-110" aria-hidden="true" tabindex="-1"></a>::: {.callout-note collapse=&quot;true&quot; title=&quot;Sources and how they are read&quot;}</span>

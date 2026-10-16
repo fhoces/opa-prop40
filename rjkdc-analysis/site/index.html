@@ -35,6 +35,8 @@
     letter-spacing: -0.015em; margin: 0 0 12px;
   }
   .byline { color: var(--ink-2); font-size: 15px; margin: 0; }
+  .badge-line { color: var(--ink-2); font-size: 14px; margin: 0 0 12px; }
+  .badge-line .ai-badge { margin-left: 0.35em; font-size: 0.9em; }
   .site-nav { font-family: var(--serif); font-size: 11.5px; color: var(--ink-3); margin: 0 0 16px; }
   .site-nav a { color: var(--link); text-decoration: none; }
   .site-nav a:hover { text-decoration: underline; }
@@ -229,10 +231,12 @@
 
 <header>
   <p class="eyebrow">Open Policy Analysis for:</p>
-  <h1>California Proposition 40, Analysis From Jaros and Rauh (JR) <a class="ai-badge ai-badge-yellow" href="#how-ai-was-used">AI generated, partially reviewed</a></h1>
+  <h1>California Proposition 40, Analysis From Jaros and Rauh (JR)</h1>
+  <p class="badge-line">This OPA site: <a class="ai-badge ai-badge-yellow" href="#how-ai-was-used">AI generated, partially reviewed</a></p>
   <p class="byline">
-    Proposition 40, the Billionaire Tax Act, would tax Californians worth $1 billion or more once,
-    at 5% of their net worth, payable over five years. The JR analysis argues the state ends up
+    Proposition 40, the Billionaire Tax Act, would tax, once, people who lived in California on
+    1 January 2026 and are worth $1 billion or more, at 5% of their net worth, payable over five
+    years. The JR analysis argues the state ends up
     poorer, because billionaires who leave take their income tax with them for ever. This site
     reproduces Jaros and Rauh,
     <cite><a href="https://www.nber.org/system/files/chapters/c15504/c15504.pdf">The Net Present
@@ -324,7 +328,7 @@
         <span class="kicker">Open Materials</span>
         <h3>Materials for computational reproduction &rarr;</h3>
         <p>The R pipeline and its Python twin, the tests, every exported CSV, the source files'
-        hashes, and the nine mismatches between the authors' text, READMEs and code.</p>
+        hashes, and the ten mismatches between the authors' text, READMEs and code.</p>
       </div>
       <div class="card-icon-box" aria-hidden="true">
         <img src="assets/opa/opa-materials.png" alt="">
@@ -409,7 +413,7 @@ author has not yet reviewed these checks.</p>
    <a href="https://github.com/bjaros20/wealth_tax">github.com/bjaros20/wealth_tax</a> (MIT
    licence), gives the <strong>materials</strong>: workbooks, R scripts and person-level data.
    What a reader cannot easily see is where the three disagree. The text, the READMEs and the code
-   differ in nine places across the two versions, four of them in the September version (see the
+   differ in ten places across the two versions, five of them in the September version (see the
    <a href="materials.html#mismatches">materials page</a>).</p>
 
 <div class="compare">
@@ -417,7 +421,7 @@ author has not yet reviewed these checks.</p>
     <span class="kicker">The original analysis</span>
     <svg viewBox="0 0 300 290" role="img" aria-label="The original analysis: output, details and materials layers, all solid, apart from each other and not lined up" xmlns="http://www.w3.org/2000/svg"><polygon points="0,216 92,262 92,288 0,242" fill="#002547"/><polygon points="92,262 184,216 184,242 92,288" fill="#003262"/><polygon points="92,170 184,216 92,262 0,216" fill="#0b4a7c"/><text transform="matrix(0.894 -0.447 0 1 138.0 257.7)" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-weight="600" font-size="10" letter-spacing="1.5" fill="#fff">MATERIALS</text><polygon points="116,138 208,184 208,210 116,164" fill="#1581ab"/><polygon points="208,184 300,138 300,164 208,210" fill="#1582b8"/><polygon points="208,92 300,138 208,184 116,138" fill="#1484c5"/><text transform="matrix(0.894 -0.447 0 1 254.0 179.7)" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-weight="600" font-size="11" letter-spacing="1.5" fill="#fff">DETAILS</text><polygon points="0,52 92,98 92,124 0,78" fill="#da9516"/><polygon points="92,98 184,52 184,78 92,124" fill="#eca516"/><polygon points="92,6 184,52 92,98 0,52" fill="#fcb415"/><text transform="matrix(0.894 -0.447 0 1 138.0 93.7)" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-weight="600" font-size="11" letter-spacing="1.5" fill="#fff">OUTPUT</text></svg>
     <figcaption><strong>Three layers, all published, not lined up.</strong> In the version
-      reproduced, the text, the READMEs and the code disagree in four places. The headline comes
+      reproduced, the text, the READMEs and the code disagree in five places. The headline comes
       from one seeded run, and its revenue draws average 36, above the 30 the text calls
       collectible. The chapter uses 36 as its central revenue in the break-even analysis (p.33)
       and treats both 72 and 30 as upper bounds that assume no undocumented departures (p.24).</figcaption>
@@ -431,7 +435,7 @@ author has not yet reviewed these checks.</p>
       all 2,187 settings of its seven dials: the five ranges of the authors' Monte Carlo and two
       settings this OPA adds. The
       <a href="repro.html">report</a> derives the main estimate step by step, and the test suite
-      holds each comparison with the printed digits except the SD.</figcaption>
+      holds each comparison with the printed digits.</figcaption>
   </figure>
 </div>
 
@@ -539,11 +543,11 @@ author has not yet reviewed these checks.</p>
 
 <p style="margin-top:14px;"><strong>"Match"</strong> means the reproduced value rounds to the printed
 digit for deterministic figures, and lies within four Monte Carlo standard errors for simulated ones.
-The test suite holds each of these comparisons except the SD, which is shown but not tested. The
+The test suite holds each of these comparisons, the SD included. The
 <a href="materials.html">materials page</a> gives its current count.<sup>2</sup></p>
 
-<p style="margin-top:14px;">Along the way this OPA found <strong>nine mismatches</strong> between the
-authors' text, their READMEs and their code. Four concern the September chapter. The other five
+<p style="margin-top:14px;">Along the way this OPA found <strong>ten mismatches</strong> between the
+authors' text, their READMEs and their code. Five concern the September chapter. The other five
 concern only the March first version.<sup>3</sup> This OPA reproduces the code as shipped and records
 each one:</p>
 <ol start="3" style="margin:0 0 14px; padding-left:22px; color:var(--ink-2); font-size:15px;">
@@ -551,6 +555,7 @@ each one:</p>
   <li>The revenue ceiling is 72 in the script, 72.06 in the README and in the paper's eq. 4 (p.22), and 72.05 in the person-level data.</li>
   <li>The paper sets the litigation weight q, the chance the Act survives in court, at 0.50. The code never multiplies by q. Its revenue draw from 0 to 72 has the same mean, 0.5 &times; 72, but a different spread.</li>
   <li>The baseline revenue sums to 94.30 in the authors' workbook, and the grown person-level data give the same; the text prints 94.20 (p.19).</li>
+  <li value="10">The text prints one formula, the top 212's share of bracket tax, as 39.0% (p.27) and as 38.8% (p.28). The code gives 38.85%, and 34.75% before it rescales the schedule.</li>
 </ol>
 <p>Full text, with file and line references: <a href="materials.html#mismatches">materials page</a>.</p>
 

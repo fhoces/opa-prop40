@@ -1,7 +1,7 @@
 ---
-title: 'The Net Present Value of the California Billionaire Tax Act <a class="ai-badge ai-badge-yellow" href="../index.html#how-ai-was-used">AI generated, partially reviewed</a>'
+title: "The Net Present Value of the California Billionaire Tax Act"
 pagetitle: "The Net Present Value of the California Billionaire Tax Act"
-subtitle: "Teaching deck: JR's fiscal estimate of California Proposition 40 (Jaros and Rauh, NBER, September 2026; first version by Rauh, Jaros, Kearney, Doran and Cosso)"
+subtitle: 'Teaching deck: JR''s fiscal estimate of California Proposition 40 (Jaros and Rauh, NBER, September 2026; first version by Rauh, Jaros, Kearney, Doran and Cosso)<br><span class="badge-line">This OPA site: <a class="ai-badge ai-badge-yellow" href="../index.html#how-ai-was-used">AI generated, partially reviewed</a></span>'
 output:
   xaringan::moon_reader:
     self_contained: true
@@ -135,6 +135,8 @@ table.dt td:first-child, table.dt th:first-child { text-align: left; }
 .og { font-size: 70%; padding: 1px 6px; border: 1px dashed #444444; color: #444444; }
 .og.data { border-style: solid; }
 .footnote { font-size: 60%; color: #5b6873; bottom: 3.6em; left: 3.4em; padding-right: 6em; }
+.badge-line { font-size: 60%; font-weight: 400; }
+.badge-line .ai-badge { font-size: 0.85em; }
 ```
 
 .site-nav[

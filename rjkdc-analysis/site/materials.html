@@ -2585,6 +2585,14 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 </thead>
 <tbody>
 <tr class="odd">
+<td style="text-align: left;">test-ai-badges.R</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">test-income-tax-mc.R</td>
 <td style="text-align: right;">2</td>
 <td style="text-align: right;">25</td>
@@ -2592,7 +2600,7 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">test-nber-final.R</td>
 <td style="text-align: right;">3</td>
 <td style="text-align: right;">10</td>
@@ -2600,15 +2608,15 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">test-npv-mc.R</td>
 <td style="text-align: right;">5</td>
-<td style="text-align: right;">12</td>
+<td style="text-align: right;">13</td>
 <td style="text-align: right;">5</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">test-npv-tables.R</td>
 <td style="text-align: right;">3</td>
 <td style="text-align: right;">7</td>
@@ -2616,7 +2624,7 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">test-pareto.R</td>
 <td style="text-align: right;">3</td>
 <td style="text-align: right;">6</td>
@@ -2624,7 +2632,7 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">test-parity.R</td>
 <td style="text-align: right;">3</td>
 <td style="text-align: right;">39</td>
@@ -2632,7 +2640,7 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">test-revenue-chain.R</td>
 <td style="text-align: right;">2</td>
 <td style="text-align: right;">8</td>
@@ -2640,19 +2648,19 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">test-site.R</td>
-<td style="text-align: right;">8</td>
-<td style="text-align: right;">52</td>
-<td style="text-align: right;">8</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">73</td>
+<td style="text-align: right;">10</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">total</td>
-<td style="text-align: right;">29</td>
-<td style="text-align: right;">159</td>
-<td style="text-align: right;">29</td>
+<td style="text-align: right;">33</td>
+<td style="text-align: right;">199</td>
+<td style="text-align: right;">33</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
 </tr>
@@ -2660,9 +2668,9 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 </table>
 
 </div>
-<p><strong>29 tests (159 expectations): 29 tests passed, 0 failed, 0 skipped</strong>, run on 2026-10-14 with R 4.4.0, with the authors’ repository available. They come in four kinds:</p>
+<p><strong>33 tests (199 expectations): 33 tests passed, 0 failed, 0 skipped</strong>, run on 2026-10-16 with R 4.4.0, with the authors’ repository available. They come in four kinds:</p>
 <ol type="1">
-<li><strong>Against the paper’s printed number</strong>: Table 9 at the printed rounding; the simulated figures within four Monte Carlo standard errors (plus the printed rounding for the share negative); the baseline revenue and the ceiling, where the print differs from the authors’ workbook and person-level file (mismatches 6 and 4), against those files.</li>
+<li><strong>Against the paper’s printed number</strong>: Table 9 at the printed rounding; the simulated figures within four Monte Carlo standard errors (plus the printed rounding for the share negative; for the SD, four standard errors of an SD); the baseline revenue and the ceiling, where the print differs from the authors’ workbook and person-level file (mismatches 6 and 4), against those files.</li>
 <li><strong>Against the authors’ own scripts</strong>, run unmodified from a scratch copy (plot and CSV paths redirected, no logic changed; <code>tests/testthat/helper-author-scripts.R</code>).</li>
 <li><strong>Parity between the R and Python exports</strong> (<code>test-parity.R</code>): deterministic steps to 1e-6, Monte Carlo steps within a documented tolerance (numpy cannot share R’s random stream).</li>
 <li><strong>The site</strong> (<code>test-site.R</code>): the explorer’s <code>grid.js</code> and <code>site/data/headlines.csv</code> must be byte-identical to the exporter’s output; grid cells must equal the pipeline’s analytic means and brute-force Monte Carlo; the printed-value transcription must agree with the pipeline; every number typed into the landing page must still match its source.</li>
@@ -2914,7 +2922,7 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 <tr class="odd">
 <td style="text-align: left;"><a href="https://github.com/fhoces/opa-prop40/blob/main/rjkdc-analysis/export/r/inputs.csv"><code>export/r/inputs.csv</code></a></td>
 <td style="text-align: right;">22</td>
-<td style="text-align: left;">every input: value, OPA label (data / research / guesswork / scenario / derived), source, page</td>
+<td style="text-align: left;">every input: value, OPA label (data / research / guesswork / scenario / derived / guesswork on data), source, page</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><a href="https://github.com/fhoces/opa-prop40/blob/main/rjkdc-analysis/export/r/outputs.csv"><code>export/r/outputs.csv</code></a></td>
@@ -2943,7 +2951,7 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><a href="https://github.com/fhoces/opa-prop40/blob/main/rjkdc-analysis/site/data/test-summary.csv"><code>site/data/test-summary.csv</code></a></td>
-<td style="text-align: right;">8</td>
+<td style="text-align: right;">9</td>
 <td style="text-align: left;">test counts per file (tests/count_tests.R)</td>
 </tr>
 <tr class="even">
@@ -3033,8 +3041,8 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 </section>
 <section id="mismatches" class="level2">
 <h2 class="anchored" data-anchor-id="mismatches">What the checks found</h2>
-<p>Nine mismatches between the authors’ text, their READMEs and their code. The pipeline reproduces the code as shipped and records each one here.</p>
-<p>Mismatches 1, 2, 7, 8 and 9 concern only the authors’ first version (Rauh, Jaros, Kearney, Doran and Cosso, Hoover Institution, SSRN 6340778, March 2026), which the pipeline also reproduces. Mismatches 3 to 6 concern the NBER chapter.</p>
+<p>Ten mismatches between the authors’ text, their READMEs and their code. The pipeline reproduces the code as shipped and records each one here.</p>
+<p>Mismatches 1, 2, 7, 8 and 9 concern only the authors’ first version (Rauh, Jaros, Kearney, Doran and Cosso, Hoover Institution, SSRN 6340778, March 2026), which the pipeline also reproduces. Mismatches 3 to 6 and 10 concern the NBER chapter (10 is in the first version too).</p>
 <p>One numbered item per code/paper or doc/code discrepancy found while reproducing Jaros and Rauh, <em>The Net Present Value of the California Billionaire Tax Act</em> (NBER chapter c15504, Tax Policy and the Economy vol. 41, September 2026; first version by Rauh, Jaros, Kearney, Doran and Cosso, March 2026). By design, we do not “fix” the authors: we reproduce their code as run, record the discrepancy, and where it matters expose the alternative reading as a parameter with both readings under test.</p>
 <section id="first-version-the-printed-wt-upper-bound-67.1-vs.-the-codes-literal-67.51" class="level3">
 <h3 class="anchored" data-anchor-id="first-version-the-printed-wt-upper-bound-67.1-vs.-the-codes-literal-67.51">1. First version: the printed WT upper bound (67.1) vs. the code’s literal (67.51)</h3>
@@ -3077,6 +3085,11 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 <section id="first-version-the-printed-monte-carlo-summary-mean--24.7b-sd-38.4b-does-not-exactly-reproduce" class="level3">
 <h3 class="anchored" data-anchor-id="first-version-the-printed-monte-carlo-summary-mean--24.7b-sd-38.4b-does-not-exactly-reproduce">9. First version: the printed Monte Carlo summary (mean -$24.7B, sd $38.4B) does not exactly reproduce</h3>
 <p>Running the authors’ own unmodified <code>NPV_data/NPV_dist.R</code> from a scratch copy (seed 2026, n=100,000, <code>wt_max &lt;- 67.51</code> as shipped) gives <strong>mean -$24.8B, median -$19.1B, sd $38.6B, 71.0% negative</strong> on this machine/R version - matching our R port to 1e-9 (<code>tests/testthat/test-npv-mc.R</code>) but off by ~$0.1-0.2B from the paper’s printed mean/sd (median and %negative match exactly). We checked whether the eq. 22 typo (mismatch #1, 67.1 vs 67.51) explains the gap by re-running with <code>wt_max &lt;- 67.1</code>: it does not - that moves the mean <em>further</em> from the printed value (to -$25.3B). The gap is within Monte Carlo error for one run (our tolerance: <code>4 * sd / sqrt(n)</code> =~ $0.5B). A fixed seed gives the same draw on every run, so repeated runs cannot show whether the gap is systematic. What does explain the printed mean: the draws are independent uniforms, so the expectation has a closed form, E[WT] - (1 - E[WT]/94.2) x E[C] x E[1/r], with E[1/r] = ln(0.045/0.015)/0.03. That gives <strong>-$24.707B</strong>, which rounds to the printed -$24.7B (re-verified by the main session, 2026-09-23). So the printed mean matches the model’s exact expectation, while the shipped seed-2026 run gives -$24.77B. The printed sd ($38.4B vs $38.6B) remains unexplained; a different run or code state is the likeliest source. The NBER version’s printed summary (mean -$38.9B, median -$35.3B, 85.2% negative), by contrast, reproduces from <code>NPV_dist_v8.R</code> to within Monte Carlo noise with no directional gap.</p>
+</section>
+<section id="the-top-212s-share-of-bracket-tax-is-printed-as-39.0-and-as-38.8-for-one-formula" class="level3">
+<h3 class="anchored" data-anchor-id="the-top-212s-share-of-bracket-tax-is-printed-as-39.0-and-as-38.8-for-one-formula">10. The top 212’s share of bracket tax is printed as 39.0% and as 38.8% for one formula</h3>
+<p><strong>NBER chapter</strong>, PDF p.27, after eq. 10: “For the top 212 of 4,729 filers, this implies a 39.0% share of bracket tax liability, or approximately $4.3 billion in Tax Year 2023.” <strong>NBER chapter</strong>, PDF p.28: “the continuous Pareto share S(212, 4,729) = (212/4,729)^((α−1)/α) = 38.8% of bracket tax liability.” <strong>First-version paper</strong>: the same two sentences, p.15 (after eq. 16, 39.0%) and p.16 (38.8%). <strong>Code</strong>, <code>NPV_data/monte_carlo_sim.R:68-70</code>: computes the continuous share, <code>(212 / 4729)^((alpha - 1) / alpha)</code> = 38.85% at the fitted alpha of 1.4379, and the share of the top 212 in the rank-implied schedule before rescaling, 34.75%, then rescales the schedule so the top 212 hold the continuous share.</p>
+<p>The text prints one formula with two values. The code’s continuous share rounds to 38.8%, and no step of the code gives 39.0% (the formula at the rounded alpha of 1.44 gives 38.7%). The $4.3 billion follows from 38.8% as well (0.3885 x 11.1 = 4.31). The income tax draws use the rescaled schedule, so no number downstream changes. <code>tests/testthat/test-pareto.R</code> holds the continuous share against the printed 38.8% and the unrescaled share against 34.75%; the printed 39.0% is recorded here, not tested.</p>
 <div class="site-nav">
 <p>JR analysis of California Proposition 40: <a href="index.html">Overview</a> · Open Output: <a href="explorer/">Explorer</a> · Open Analysis: <a href="repro.html">Report</a> and <a href="slides/slides.html">Slides</a> · <a href="https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis">Open Materials</a> (this page is its guide)</p>
 <p>Also in this project: <a href="../../index.html">Comparison overview</a> · <a href="../../bsz-analysis/site/">BSZ analysis overview</a></p>

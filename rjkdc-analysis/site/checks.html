@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-10-15">
+<meta name="dcterms.date" content="2026-10-16">
 
 <title>Prop 40, JR analysis: checks against the paper’s variations</title>
 <style>
@@ -2533,7 +2533,7 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 15, 2026</p>
+      <p class="date">October 16, 2026</p>
     </div>
   </div>
   
@@ -2549,6 +2549,81 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 <p>JR analysis of California Proposition 40: <a href="index.html">Overview</a> · Open Output: <a href="explorer/">Explorer</a> · Open Analysis: <a href="repro.html">Report</a> and <a href="slides/slides.html">Slides</a> · <a href="https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis">Open Materials</a> (<a href="materials.html">guide</a>)</p>
 <p>Also in this project: <a href="../../index.html">Comparison overview</a> · <a href="../../bsz-analysis/site/">BSZ analysis overview</a></p>
 </div>
+<div class="cell">
+<details class="code-fold">
+<summary>R code for the setup: every number on this page is read here</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(knitr))</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (f <span class="cf">in</span> <span class="fu">list.files</span>(<span class="st">&quot;../R&quot;</span>, <span class="at">pattern =</span> <span class="st">&quot;</span><span class="sc">\\</span><span class="st">.R$&quot;</span>, <span class="at">full.names =</span> <span class="cn">TRUE</span>)) <span class="fu">source</span>(f)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># The explorer&#39;s own data file, read as the explorer reads it (R/site.R)</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>G <span class="ot">&lt;-</span> <span class="fu">read_site_grid_js</span>(<span class="st">&quot;explorer/grid.js&quot;</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>hl <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;data/headlines.csv&quot;</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>printed <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;data/printed-tables.csv&quot;</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>h <span class="ot">&lt;-</span> <span class="cf">function</span>(v, q, <span class="at">col =</span> <span class="st">&quot;reproduced&quot;</span>) hl[[col]][hl<span class="sc">$</span>version <span class="sc">==</span> v <span class="sc">&amp;</span> hl<span class="sc">$</span>quantity <span class="sc">==</span> q]</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>ss <span class="ot">&lt;-</span> <span class="fu">formals</span>(compute_npv_mc_ssrn)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>num <span class="ot">&lt;-</span> <span class="cf">function</span>(x, <span class="at">d =</span> <span class="dv">1</span>, <span class="at">plus =</span> <span class="cn">FALSE</span>) {</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  s <span class="ot">&lt;-</span> <span class="fu">formatC</span>(<span class="fu">abs</span>(x), <span class="at">format =</span> <span class="st">&quot;f&quot;</span>, <span class="at">digits =</span> d, <span class="at">big.mark =</span> <span class="st">&quot;,&quot;</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ifelse</span>(x <span class="sc">&lt;</span> <span class="dv">0</span>, <span class="fu">paste0</span>(<span class="st">&quot;−&quot;</span>, s), <span class="cf">if</span> (plus) <span class="fu">paste0</span>(<span class="st">&quot;+&quot;</span>, s) <span class="cf">else</span> s)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>words <span class="ot">&lt;-</span> <span class="cf">function</span>(n) <span class="fu">c</span>(<span class="st">&quot;one&quot;</span>, <span class="st">&quot;two&quot;</span>, <span class="st">&quot;three&quot;</span>, <span class="st">&quot;four&quot;</span>, <span class="st">&quot;five&quot;</span>, <span class="st">&quot;six&quot;</span>, <span class="st">&quot;seven&quot;</span>, <span class="st">&quot;eight&quot;</span>, <span class="st">&quot;nine&quot;</span>, <span class="st">&quot;ten&quot;</span>)[n]</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>dollars <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">gsub</span>(<span class="st">&quot;$&quot;</span>, <span class="st">&quot;</span><span class="sc">\\</span><span class="st">$&quot;</span>, x, <span class="at">fixed =</span> <span class="cn">TRUE</span>)   <span class="co"># a literal $ in a markdown table cell</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>md_table <span class="ot">&lt;-</span> <span class="cf">function</span>(d) {</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  d[] <span class="ot">&lt;-</span> <span class="fu">lapply</span>(d, dollars)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">&quot;</span><span class="sc">\n\n</span><span class="st">::: {.table-scroll}</span><span class="sc">\n\n</span><span class="st">&quot;</span>, <span class="fu">paste</span>(<span class="fu">kable</span>(d, <span class="at">format =</span> <span class="st">&quot;pipe&quot;</span>, <span class="at">align =</span> <span class="st">&quot;l&quot;</span>), <span class="at">collapse =</span> <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>),</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;</span><span class="sc">\n\n</span><span class="st">:::</span><span class="sc">\n\n</span><span class="st">&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;&quot;</span>)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>main <span class="ot">&lt;-</span> <span class="fu">site_grid_js_cell</span>(G, <span class="at">from =</span> <span class="st">&quot;nber&quot;</span>)[[<span class="st">&quot;mean_npv&quot;</span>]]</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>seeded <span class="ot">&lt;-</span> <span class="fu">h</span>(<span class="st">&quot;nber&quot;</span>, <span class="st">&quot;mc_mean_npv&quot;</span>)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co"># the first version&#39;s Monte Carlo: the explorer&#39;s &quot;ssrn&quot; setting</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>first <span class="ot">&lt;-</span> <span class="fu">site_grid_js_cell</span>(G, <span class="at">from =</span> <span class="st">&quot;ssrn&quot;</span>)[[<span class="st">&quot;mean_npv&quot;</span>]]</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co"># the first version&#39;s Table 9, recomputed (the explorer cannot fix the revenue at one value)</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>t9 <span class="ot">&lt;-</span> <span class="fu">compute_npv_table9</span>()</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>p9 <span class="ot">&lt;-</span> printed[printed<span class="sc">$</span>table <span class="sc">==</span> <span class="st">&quot;table9&quot;</span> <span class="sc">&amp;</span> printed<span class="sc">$</span>column <span class="sc">==</span> <span class="st">&quot;npv&quot;</span>, ]</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>t9<span class="sc">$</span>printed <span class="ot">&lt;-</span> p9<span class="sc">$</span>printed[<span class="fu">match</span>(<span class="fu">paste0</span>(t9<span class="sc">$</span>scenario, <span class="st">&quot;@&quot;</span>, t9<span class="sc">$</span>r), p9<span class="sc">$</span>row)]</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="co"># the repository&#39;s 2% case (NPV_plots/npv_decomposition_2pct.pdf prints -67.2): no OPA setting;</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co"># hand-built inputs so that f = 1 - WT/baseline equals the script&#39;s 0.554 (as in</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="co"># feedback/scenario-tests-2026-10-15/jr-sensitivity.R, case 5)</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>base2 <span class="ot">&lt;-</span> <span class="fl">0.02</span> <span class="sc">*</span> ss<span class="sc">$</span>baseline_revenue <span class="sc">/</span> <span class="fl">0.05</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>two_pct <span class="ot">&lt;-</span> <span class="fu">compute_npv_table9</span>(<span class="at">baseline =</span> base2,</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">scenarios =</span> <span class="fu">list</span>(<span class="at">two_pct =</span> <span class="fu">list</span>(<span class="at">label =</span> <span class="st">&quot;2%&quot;</span>, <span class="at">WT =</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="fl">0.554</span>) <span class="sc">*</span> base2, <span class="at">C =</span> <span class="fl">4.55</span>)), <span class="at">r_values =</span> <span class="fl">0.03</span>)<span class="sc">$</span>npv</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>match_word <span class="ot">&lt;-</span> <span class="cf">function</span>(printed, ...) <span class="cf">if</span> (<span class="fu">any</span>(<span class="fu">round</span>(<span class="fu">c</span>(...), <span class="dv">1</span>) <span class="sc">==</span> printed)) <span class="st">&quot;Match&quot;</span> <span class="cf">else</span> <span class="st">&quot;No match&quot;</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>nine <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">six_confirmed =</span> <span class="st">&quot;Six departures&quot;</span>, <span class="at">central =</span> <span class="st">&quot;Central&quot;</span>, <span class="at">lit_calibrated =</span> <span class="st">&quot;Literature calibrated&quot;</span>)</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>rows9 <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="fu">names</span>(nine), <span class="cf">function</span>(s) {</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> t9[t9<span class="sc">$</span>scenario <span class="sc">==</span> s, ]</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> x[<span class="fu">order</span>(x<span class="sc">$</span>r), ]</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">Variation =</span> <span class="fu">sprintf</span>(<span class="st">&quot;%s: revenue $%sB, income tax $%sB a year, share lost %s%%&quot;</span>, nine[[s]],</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">sub</span>(<span class="st">&quot;0$&quot;</span>, <span class="st">&quot;&quot;</span>, <span class="fu">formatC</span>(x<span class="sc">$</span>WT[<span class="dv">1</span>], <span class="at">format =</span> <span class="st">&quot;f&quot;</span>, <span class="at">digits =</span> <span class="dv">2</span>)),</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">sub</span>(<span class="st">&quot;0$&quot;</span>, <span class="st">&quot;&quot;</span>, <span class="fu">formatC</span>(x<span class="sc">$</span>C[<span class="dv">1</span>], <span class="at">format =</span> <span class="st">&quot;f&quot;</span>, <span class="at">digits =</span> <span class="dv">2</span>)), <span class="fu">num</span>(<span class="dv">100</span> <span class="sc">*</span> x<span class="sc">$</span>f[<span class="dv">1</span>], <span class="dv">1</span>)),</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">Source =</span> <span class="st">&quot;SSRN, Table 9&quot;</span>,</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">Printed =</span> <span class="fu">paste</span>(<span class="fu">num</span>(x<span class="sc">$</span>printed, <span class="dv">1</span>, <span class="at">plus =</span> <span class="cn">TRUE</span>), <span class="at">collapse =</span> <span class="st">&quot; / &quot;</span>),</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">This OPA</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">paste</span>(<span class="fu">num</span>(x<span class="sc">$</span>npv, <span class="dv">2</span>, <span class="at">plus =</span> <span class="cn">TRUE</span>), <span class="at">collapse =</span> <span class="st">&quot; / &quot;</span>),</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">Result =</span> <span class="cf">if</span> (<span class="fu">all</span>(<span class="fu">round</span>(x<span class="sc">$</span>npv, <span class="dv">1</span>) <span class="sc">==</span> x<span class="sc">$</span>printed)) <span class="st">&quot;Match&quot;</span> <span class="cf">else</span> <span class="st">&quot;No match&quot;</span>,</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">How to set it</span><span class="st">`</span> <span class="ot">=</span> <span class="st">&quot;R code&quot;</span>, <span class="at">check.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>dl <span class="ot">&lt;-</span> <span class="cf">function</span>(k, i) G<span class="sc">$</span>dials[[<span class="fu">which</span>(<span class="fu">vapply</span>(G<span class="sc">$</span>dials, <span class="st">`</span><span class="at">[[</span><span class="st">`</span>, <span class="st">&quot;&quot;</span>, <span class="st">&quot;key&quot;</span>) <span class="sc">==</span> k)]]<span class="sc">$</span>labels[[i <span class="sc">+</span> <span class="dv">1</span>L]]</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>sl <span class="ot">&lt;-</span> <span class="fu">unlist</span>(G<span class="sc">$</span>named<span class="sc">$</span>ssrn); <span class="fu">names</span>(sl) <span class="ot">&lt;-</span> <span class="fu">vapply</span>(G<span class="sc">$</span>dials, <span class="st">`</span><span class="at">[[</span><span class="st">`</span>, <span class="st">&quot;&quot;</span>, <span class="st">&quot;key&quot;</span>)</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">rbind</span>(</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">Variation =</span> <span class="st">&quot;Main assumptions, for reference&quot;</span>, <span class="at">Source =</span> <span class="st">&quot;NBER, p.35&quot;</span>,</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>             <span class="at">Printed =</span> <span class="fu">num</span>(<span class="fu">h</span>(<span class="st">&quot;nber&quot;</span>, <span class="st">&quot;mc_mean_npv&quot;</span>, <span class="st">&quot;printed&quot;</span>), <span class="dv">1</span>),</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>             <span class="st">`</span><span class="at">This OPA</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sprintf</span>(<span class="st">&quot;%s (seeded run %s)&quot;</span>, <span class="fu">num</span>(main, <span class="dv">2</span>), <span class="fu">num</span>(seeded, <span class="dv">2</span>)),</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>             <span class="at">Result =</span> <span class="fu">match_word</span>(<span class="fu">h</span>(<span class="st">&quot;nber&quot;</span>, <span class="st">&quot;mc_mean_npv&quot;</span>, <span class="st">&quot;printed&quot;</span>), main, seeded),</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>             <span class="st">`</span><span class="at">How to set it</span><span class="st">`</span> <span class="ot">=</span> <span class="st">&quot;Explorer, as it opens&quot;</span>, <span class="at">check.names =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">Variation =</span> <span class="fu">sprintf</span>(<span class="st">&quot;Revenue drawn from $%sB to $%sB, and the share lost tied to the revenue (f = 1 − revenue / %s)&quot;</span>,</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>                                 <span class="fu">dl</span>(<span class="st">&quot;wt_lo&quot;</span>, sl[[<span class="st">&quot;wt_lo&quot;</span>]]), <span class="fu">dl</span>(<span class="st">&quot;wt_hi&quot;</span>, sl[[<span class="st">&quot;wt_hi&quot;</span>]]), ss<span class="sc">$</span>baseline_revenue),</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>             <span class="at">Source =</span> <span class="st">&quot;SSRN, p.20&quot;</span>, <span class="at">Printed =</span> <span class="fu">num</span>(<span class="fu">h</span>(<span class="st">&quot;ssrn&quot;</span>, <span class="st">&quot;mc_mean_npv&quot;</span>, <span class="st">&quot;printed&quot;</span>), <span class="dv">1</span>),</span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>             <span class="st">`</span><span class="at">This OPA</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">num</span>(first, <span class="dv">2</span>), <span class="at">Result =</span> <span class="fu">match_word</span>(<span class="fu">h</span>(<span class="st">&quot;ssrn&quot;</span>, <span class="st">&quot;mc_mean_npv&quot;</span>, <span class="st">&quot;printed&quot;</span>), first),</span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>             <span class="st">`</span><span class="at">How to set it</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sprintf</span>(<span class="st">&quot;Explorer: from the main setting, set the lowest revenue to %s, the highest to %s and the share lost to </span><span class="sc">\&quot;</span><span class="st">%s</span><span class="sc">\&quot;</span><span class="st">&quot;</span>,</span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>                                       <span class="fu">dl</span>(<span class="st">&quot;wt_lo&quot;</span>, sl[[<span class="st">&quot;wt_lo&quot;</span>]]), <span class="fu">dl</span>(<span class="st">&quot;wt_hi&quot;</span>, sl[[<span class="st">&quot;wt_hi&quot;</span>]]), <span class="fu">dl</span>(<span class="st">&quot;f&quot;</span>, sl[[<span class="st">&quot;f&quot;</span>]])),</span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>             <span class="at">check.names =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>  <span class="fu">do.call</span>(rbind, rows9),</span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">Variation =</span> <span class="st">&quot;Tax rate 2% instead of 5%, central inputs, r − g of 3%&quot;</span>,</span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>             <span class="at">Source =</span> <span class="st">&quot;Authors&#39; repository, a plot&quot;</span>, <span class="at">Printed =</span> <span class="fu">num</span>(<span class="sc">-</span><span class="fl">67.2</span>, <span class="dv">1</span>), <span class="st">`</span><span class="at">This OPA</span><span class="st">`</span> <span class="ot">=</span> <span class="st">&quot;none&quot;</span>,</span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>             <span class="at">Result =</span> <span class="st">&quot;Cannot be set&quot;</span>, <span class="st">`</span><span class="at">How to set it</span><span class="st">`</span> <span class="ot">=</span> <span class="st">&quot;None&quot;</span>, <span class="at">check.names =</span> <span class="cn">FALSE</span>))</span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>n_printed <span class="ot">&lt;-</span> <span class="fu">nrow</span>(results) <span class="sc">-</span> <span class="dv">2</span>                  <span class="co"># the variations the papers print</span></span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>n_match <span class="ot">&lt;-</span> <span class="fu">sum</span>(results<span class="sc">$</span>Result[<span class="dv">2</span><span class="sc">:</span>(n_printed <span class="sc">+</span> <span class="dv">1</span>)] <span class="sc">==</span> <span class="st">&quot;Match&quot;</span>)</span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>settings <span class="ot">&lt;-</span> <span class="fu">site_checks_table</span>(G)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
 <p>All four variations the JR papers print reproduce at the paper’s rounding. A fifth, in the authors’ repository, uses a lower tax rate, which cannot be set in this OPA. None of the five changes a single assumption, so the papers give no printed check of the explorer’s named settings.</p>
 <section id="what-was-checked" class="level2">
 <h2 class="anchored" data-anchor-id="what-was-checked">What was checked</h2>
@@ -2558,74 +2633,78 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 <section id="results" class="level2">
 <h2 class="anchored" data-anchor-id="results">Results</h2>
 <p>All figures are net present values in billions of dollars. Table 9 prints three values per scenario, one for each value of r − g (1.5%, 3% and 4.5%). “Match” means this OPA’s value rounds to the printed figure.</p>
+<details class="code-fold">
+<summary>R code for the results table</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">md_table</span>(results)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
 <div class="table-scroll">
 <table class="caption-top table">
 <colgroup>
-<col style="width: 16%">
-<col style="width: 16%">
-<col style="width: 16%">
-<col style="width: 16%">
-<col style="width: 16%">
-<col style="width: 16%">
+<col style="width: 32%">
+<col style="width: 8%">
+<col style="width: 7%">
+<col style="width: 8%">
+<col style="width: 4%">
+<col style="width: 38%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Variation</th>
-<th>Source</th>
-<th>Printed</th>
-<th>This OPA</th>
-<th>Result</th>
-<th>How to set it</th>
+<th style="text-align: left;">Variation</th>
+<th style="text-align: left;">Source</th>
+<th style="text-align: left;">Printed</th>
+<th style="text-align: left;">This OPA</th>
+<th style="text-align: left;">Result</th>
+<th style="text-align: left;">How to set it</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Main assumptions, for reference</td>
-<td>NBER, p.35</td>
-<td>−38.9</td>
-<td>−38.98 (seeded run −38.89)</td>
-<td>Match</td>
-<td>Explorer, as it opens</td>
+<td style="text-align: left;">Main assumptions, for reference</td>
+<td style="text-align: left;">NBER, p.35</td>
+<td style="text-align: left;">−38.9</td>
+<td style="text-align: left;">−38.98 (seeded run −38.89)</td>
+<td style="text-align: left;">Match</td>
+<td style="text-align: left;">Explorer, as it opens</td>
 </tr>
 <tr class="even">
-<td>Revenue drawn from $35B to $67.51B, and the share lost tied to the revenue (f = 1 − revenue / 94.2)</td>
-<td>SSRN, p.20</td>
-<td>−24.7</td>
-<td>−24.71</td>
-<td>Match</td>
-<td>Explorer: from the main setting, set the lowest revenue to 35, the highest to 67.51 and the share lost to “1 - WT/94.2”</td>
+<td style="text-align: left;">Revenue drawn from $35B to $67.51B, and the share lost tied to the revenue (f = 1 − revenue / 94.2)</td>
+<td style="text-align: left;">SSRN, p.20</td>
+<td style="text-align: left;">−24.7</td>
+<td style="text-align: left;">−24.71</td>
+<td style="text-align: left;">Match</td>
+<td style="text-align: left;">Explorer: from the main setting, set the lowest revenue to 35, the highest to 67.51 and the share lost to “1 - WT/94.2”</td>
 </tr>
 <tr class="odd">
-<td>Six departures: revenue $67.51B, income tax $3.3B a year, share lost 28.3%</td>
-<td>SSRN, Table 9</td>
-<td>+5.2 / +36.3 / +46.7</td>
-<td>+5.18 / +36.34 / +46.73</td>
-<td>Match</td>
-<td>R code</td>
+<td style="text-align: left;">Six departures: revenue $67.51B, income tax $3.3B a year, share lost 28.3%</td>
+<td style="text-align: left;">SSRN, Table 9</td>
+<td style="text-align: left;">+5.2 / +36.3 / +46.7</td>
+<td style="text-align: left;">+5.18 / +36.34 / +46.73</td>
+<td style="text-align: left;">Match</td>
+<td style="text-align: left;">R code</td>
 </tr>
 <tr class="even">
-<td>Central: revenue $42.0B, income tax $4.55B a year, share lost 55.4%</td>
-<td>SSRN, Table 9</td>
-<td>−126.1 / −42.0 / −14.0</td>
-<td>−126.09 / −42.04 / −14.03</td>
-<td>Match</td>
-<td>R code</td>
+<td style="text-align: left;">Central: revenue $42.0B, income tax $4.55B a year, share lost 55.4%</td>
+<td style="text-align: left;">SSRN, Table 9</td>
+<td style="text-align: left;">−126.1 / −42.0 / −14.0</td>
+<td style="text-align: left;">−126.09 / −42.04 / −14.03</td>
+<td style="text-align: left;">Match</td>
+<td style="text-align: left;">R code</td>
 </tr>
 <tr class="odd">
-<td>Literature calibrated: revenue $35.0B, income tax $5.8B a year, share lost 62.8%</td>
-<td>SSRN, Table 9</td>
-<td>−208.0 / −86.5 / −46.0</td>
-<td>−208.00 / −86.50 / −46.00</td>
-<td>Match</td>
-<td>R code</td>
+<td style="text-align: left;">Literature calibrated: revenue $35.0B, income tax $5.8B a year, share lost 62.8%</td>
+<td style="text-align: left;">SSRN, Table 9</td>
+<td style="text-align: left;">−208.0 / −86.5 / −46.0</td>
+<td style="text-align: left;">−208.00 / −86.50 / −46.00</td>
+<td style="text-align: left;">Match</td>
+<td style="text-align: left;">R code</td>
 </tr>
 <tr class="even">
-<td>Tax rate 2% instead of 5%, central inputs, r − g of 3%</td>
-<td>Authors’ repository, a plot</td>
-<td>−67.2</td>
-<td>none</td>
-<td>Cannot be set</td>
-<td>None</td>
+<td style="text-align: left;">Tax rate 2% instead of 5%, central inputs, r − g of 3%</td>
+<td style="text-align: left;">Authors’ repository, a plot</td>
+<td style="text-align: left;">−67.2</td>
+<td style="text-align: left;">none</td>
+<td style="text-align: left;">Cannot be set</td>
+<td style="text-align: left;">None</td>
 </tr>
 </tbody>
 </table>
@@ -2640,104 +2719,107 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 <h2 class="anchored" data-anchor-id="who-ran-these-checks">Who ran these checks</h2>
 <p>Claude Code agents chose the variations from the papers and ran the checks on 15 October 2026. The scripts were then rerun once, in a separate session, with the same results. The author has not yet reviewed these checks.</p>
 <p>To rerun them from the repository root, with a clone of the authors’ repository:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">RAUH_REPO_DIR</span><span class="op">=&lt;</span>path to the authors<span class="st">&#39; repository&gt;</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="st">Rscript feedback/scenario-tests-2026-10-15/jr-sensitivity.R</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">RAUH_REPO_DIR</span><span class="op">=&lt;</span>path to the authors<span class="st">&#39; repository&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="st">Rscript feedback/scenario-tests-2026-10-15/jr-sensitivity.R</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The full record, with the source of every figure, is in <a href="https://github.com/fhoces/opa-prop40/blob/main/feedback/scenario-tests-2026-10-15/jr-sensitivity.md">jr-sensitivity.md</a>. A second record, <a href="https://github.com/fhoces/opa-prop40/blob/main/feedback/scenario-tests-2026-10-15/jr.md">jr.md</a>, checks ten other numbers the papers print. Seven match and two are close (mismatches 4, 6 and 9, and a semi-elasticity of 5.73 against 5.72 from the chapter’s own inputs). The chapter’s “expanded departures” (Table 8, about 42% of the base) matches no grouping of the authors’ departure records.</p>
 </section>
 <section id="settings-the-papers-do-not-print" class="level2">
 <h2 class="anchored" data-anchor-id="settings-the-papers-do-not-print">Settings the papers do not print</h2>
-<p>This OPA lets a reader change assumptions the papers hold fixed. The table below lists ten such changes, each made one at a time from the September chapter’s main assumptions, with the result this OPA gives. The papers print no figure for any of them, so they are untested against the authors’ own work.</p>
+<p>This OPA lets a reader change assumptions the papers hold fixed. The table below lists nine such changes, each made from the September chapter’s main assumptions, with the result this OPA gives. Each changes one assumption, except the litigation weight, which the explorer pairs with a higher revenue floor. The papers print no figure for any of them, so they are untested against the authors’ own work.</p>
 <p>We have sent this table to the original authors, requesting them to test whether they obtain the same results. We will update the responses here.</p>
-<p>The mean net present value is in billions of dollars. This OPA computes the exact average of the authors’ formula over the same random draws, not a new seeded run. A seeded run of the authors’ script differs from it by sampling error only (at the main setting, −38.89 against −38.98). Each setting can be made in the <a href="explorer/">explorer</a>.</p>
+<p>The mean net present value is in billions of dollars. This OPA computes the exact average of the authors’ formula over the same random draws, not a new seeded run. A seeded run of the authors’ script differs from it by sampling error only (at the main setting, −38.89 against −38.98). Each setting can be made in the <a href="explorer/">explorer</a>, and each value below is the one the explorer shows.</p>
+<details class="code-fold">
+<summary>R code for the settings table, read from the explorer’s grid.js</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">md_table</span>(<span class="fu">data.frame</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Setting changed from the main assumptions</span><span class="st">`</span> <span class="ot">=</span> settings<span class="sc">$</span>setting,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Mean net present value</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">num</span>(settings<span class="sc">$</span>mean_npv, <span class="dv">2</span>),</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Share of runs below zero</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">paste0</span>(<span class="fu">num</span>(settings<span class="sc">$</span>pct_negative, <span class="dv">1</span>), <span class="st">&quot;%&quot;</span>),</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Authors&#39; result</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;&quot;</span>, <span class="fu">rep</span>(<span class="st">&quot;Pending&quot;</span>, <span class="fu">nrow</span>(settings) <span class="sc">-</span> <span class="dv">1</span>)),</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">check.names =</span> <span class="cn">FALSE</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
 <div class="table-scroll">
 <table class="caption-top table">
 <colgroup>
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
+<col style="width: 77%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 5%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Setting changed from the main assumptions</th>
-<th>Mean net present value</th>
-<th>Share of runs below zero</th>
-<th>Authors’ result</th>
+<th style="text-align: left;">Setting changed from the main assumptions</th>
+<th style="text-align: left;">Mean net present value</th>
+<th style="text-align: left;">Share of runs below zero</th>
+<th style="text-align: left;">Authors’ result</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>None, the main assumptions, for reference</td>
-<td>−38.98</td>
-<td>85.3%</td>
-<td></td>
+<td style="text-align: left;">None, the main assumptions, for reference</td>
+<td style="text-align: left;">−38.98</td>
+<td style="text-align: left;">85.3%</td>
+<td style="text-align: left;"></td>
 </tr>
 <tr class="even">
-<td>r − g, the discount rate net of growth, fixed at 1.5% (instead of drawn from 1.5% to 4.5%)</td>
-<td>−100.50</td>
-<td>100.0%</td>
-<td>Pending</td>
+<td style="text-align: left;">r − g, the discount rate net of growth, fixed at 1.5% (instead of drawn from 1.5% to 4.5%)</td>
+<td style="text-align: left;">−100.50</td>
+<td style="text-align: left;">100.0%</td>
+<td style="text-align: left;">Pending</td>
 </tr>
 <tr class="odd">
-<td>r − g, the discount rate net of growth, fixed at 4.5%</td>
-<td>−9.50</td>
-<td>63.2%</td>
-<td>Pending</td>
+<td style="text-align: left;">r − g, the discount rate net of growth, fixed at 4.5%</td>
+<td style="text-align: left;">−9.50</td>
+<td style="text-align: left;">63.2%</td>
+<td style="text-align: left;">Pending</td>
 </tr>
 <tr class="even">
-<td>Revenue multiplied by a chance of surviving in court of 0.75</td>
-<td>−47.98</td>
-<td>94.6%</td>
-<td>Pending</td>
+<td style="text-align: left;">Revenue multiplied by a chance of surviving in court of 0.50, with the lowest revenue the draw can pick raised to $35B (instead of $0) so the risk is not counted twice (the explorer’s “Litigation weight q = 0.5”)</td>
+<td style="text-align: left;">−48.23</td>
+<td style="text-align: left;">99.0%</td>
+<td style="text-align: left;">Pending</td>
 </tr>
 <tr class="odd">
-<td>Revenue multiplied by a chance of surviving in court of 0.50</td>
-<td>−56.98</td>
-<td>99.5%</td>
-<td>Pending</td>
+<td style="text-align: left;">Yearly income tax fixed at $3.3B (instead of drawn from $3.3B to $5.8B)</td>
+<td style="text-align: left;">−18.38</td>
+<td style="text-align: left;">71.1%</td>
+<td style="text-align: left;">Pending</td>
 </tr>
 <tr class="even">
-<td>Yearly income tax fixed at $3.3B (instead of drawn from $3.3B to $5.8B)</td>
-<td>−18.38</td>
-<td>71.1%</td>
-<td>Pending</td>
+<td style="text-align: left;">Yearly income tax fixed at $5.8B</td>
+<td style="text-align: left;">−59.58</td>
+<td style="text-align: left;">94.7%</td>
+<td style="text-align: left;">Pending</td>
 </tr>
 <tr class="odd">
-<td>Yearly income tax fixed at $5.8B</td>
-<td>−59.58</td>
-<td>94.7%</td>
-<td>Pending</td>
+<td style="text-align: left;">Lost income tax grows a further 0.5% a year on top of the authors’ r − g (this OPA’s illustration)</td>
+<td style="text-align: left;">−58.62</td>
+<td style="text-align: left;">90.9%</td>
+<td style="text-align: left;">Pending</td>
 </tr>
 <tr class="even">
-<td>Lost income tax grows a further 0.5% a year on top of the authors’ r − g (this OPA’s illustration)</td>
-<td>−58.62</td>
-<td>90.9%</td>
-<td>Pending</td>
+<td style="text-align: left;">Lost income tax grows a further 1% a year on top of the authors’ r − g (this OPA’s illustration)</td>
+<td style="text-align: left;">−96.81</td>
+<td style="text-align: left;">95.1%</td>
+<td style="text-align: left;">Pending</td>
 </tr>
 <tr class="odd">
-<td>Lost income tax grows a further 1% a year on top of the authors’ r − g (this OPA’s illustration)</td>
-<td>−96.81</td>
-<td>95.1%</td>
-<td>Pending</td>
+<td style="text-align: left;">Lowest revenue the draw can pick of $35B (instead of $0)</td>
+<td style="text-align: left;">−21.48</td>
+<td style="text-align: left;">71.8%</td>
+<td style="text-align: left;">Pending</td>
 </tr>
 <tr class="even">
-<td>Lowest revenue the draw can pick of $35B (instead of $0)</td>
-<td>−21.48</td>
-<td>71.8%</td>
-<td>Pending</td>
-</tr>
-<tr class="odd">
-<td>Share of the income tax base that leaves fixed at 0.283 (instead of drawn from 0.30 to 0.60)</td>
-<td>−11.21</td>
-<td>64.0%</td>
-<td>Pending</td>
+<td style="text-align: left;">Share of the income tax base that leaves fixed at 0.283 (instead of drawn from 0.30 to 0.60)</td>
+<td style="text-align: left;">−11.21</td>
+<td style="text-align: left;">64.0%</td>
+<td style="text-align: left;">Pending</td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>The two litigation rows keep the draw’s 0 floor, which already halves the revenue (0.5 × 72), so they count the risk of the Act being struck down twice. The explorer’s “Litigation weight q = 0.5” raises the floor to 35 instead.</p>
+<p>The litigation row raises the lowest revenue with q, as the explorer’s “Litigation weight q = 0.5” setting does. The draw’s 0 floor already halves the mean revenue (0.5 × 72), so q with that floor would count the risk of the Act being struck down twice.</p>
 <p>The share of runs below zero is exact (85.3%). The authors’ seeded run gives 85.17%, printed 85.2%.</p>
-<p>The values were copied from the explorer’s data file, <code>site/explorer/grid.js</code>, which the pipeline writes, on 15 October 2026.</p>
+<p>The two tables are built when this page is rendered: the settings from the explorer’s data file, <code>site/explorer/grid.js</code>, and the variations from the same pipeline, so they cannot drift from the explorer. <code>tests/testthat/test-site.R</code> checks the rendered page against that file.</p>
 </section>
 
 </main>

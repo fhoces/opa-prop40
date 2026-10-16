@@ -102,7 +102,7 @@ Following the [Open Policy Analysis](https://doi.org/10.1093/scipol/scaa067) fra
   Carlo and two settings this OPA adds
 - **Open Analysis**: this document, and [the slide deck](slides/slides.html)
 - **Open Materials**: [the repository](https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis), every script, test, CSV and
-  source (guide, with all nine mismatches found along the way: [the materials page](materials.html))
+  source (guide, with all `r tolower(c("One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve")[sum(grepl("^## [0-9]+[.]", readLines(file.path("..", "MISMATCHES.md"))))])` mismatches found along the way: [the materials page](materials.html))
 :::
 
 ::: {.callout-note collapse="true" title="Sources and how they are read"}

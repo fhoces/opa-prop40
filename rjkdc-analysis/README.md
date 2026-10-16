@@ -128,7 +128,10 @@ cannot avoid and don't affect correctness of the comparison):
 `inputs.csv` (`input_id, version, description, value, unit, label, provenance, source, page`) and
 `outputs.csv` (`output_id, version, value, unit, printed_value, printed_page, abs_diff`), one row
 per key figure cited in this README's table above. `label` follows the OPA input taxonomy (data /
-research / guesswork / scenario).[^scenario] The inputs also carry the Monte Carlo
+research / guesswork / scenario), plus `derived` for a value computed from other rows and
+`guesswork on data` for the 7% growth that moves the 2025 list to the valuation date.[^scenario]
+`provenance` is `public` on every row: the authors' repository is public under an MIT licence.
+The inputs also carry the Monte Carlo
 draw ranges (`rauh_mc_*`, `nber_mc_*`), taken from the simulation functions' own defaults, which
 `../comparison/` reads from here.
 
@@ -145,9 +148,9 @@ with `quarto render site/repro.qmd && quarto render site/materials.qmd`.
 ## What reproduces, what doesn't
 
 Every headline number in the table above reproduces from the authors' own code to within the
-tolerances documented in `tests/testthat/`. `MISMATCHES.md` lists nine discrepancies found along
+tolerances documented in `tests/testthat/`. `MISMATCHES.md` lists ten discrepancies found along
 the way, between the paper's prose and its own code and between the paper and the NBER README.
-Four concern the chapter.[^mm] We do not fix any of these; the pipeline reproduces the code as shipped and records where it
+Five concern the chapter (one of them, #10, is in the first version too).[^mm] We do not fix any of these; the pipeline reproduces the code as shipped and records where it
 disagrees with the surrounding text.
 
 [^mm]: The other five concern only the first version. One of them (mismatch #9) is a case where
