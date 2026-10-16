@@ -7,9 +7,9 @@ test_that("Shapley steps sum exactly to the total gap, every setting and output"
   for (st in unique(en$horizon_setting)) for (o in c("a", "b")) {
     e <- en[en$horizon_setting == st & en$output == o, ]
     b <- br[br$horizon_setting == st & br$output == o, ]
-    expect_equal(sum(b$shapley), e$rauh_model - e$bsz_model, tolerance = 1e-10,
+    expect_equal(sum(b$shapley), e$jr_model - e$bsz_model, tolerance = 1e-10,
                  label = paste(st, o, "Shapley"))
-    expect_equal(sum(b$sequential), e$rauh_model - e$bsz_model, tolerance = 1e-10,
+    expect_equal(sum(b$sequential), e$jr_model - e$bsz_model, tolerance = 1e-10,
                  label = paste(st, o, "sequential"))
   }
 })
@@ -19,9 +19,9 @@ test_that("the full chain closes: GGSS printed -> BSZ -> the steps -> JR Septemb
     e <- en[en$horizon_setting == "own" & en$output == o, ]
     ggss <- res$endpoints$value[res$endpoints$endpoint_id == "ggss_headline"]
     b <- br[br$horizon_setting == "own" & br$output == o, ]
-    chain <- e$bsz_model + sum(b$shapley) + e$rauh_residual
-    expect_equal(chain, e$rauh_own, tolerance = 1e-12, label = o)
-    expect_lt(abs(e$rauh_residual), 1e-9)
+    chain <- e$bsz_model + sum(b$shapley) + e$jr_residual
+    expect_equal(chain, e$jr_own, tolerance = 1e-12, label = o)
+    expect_lt(abs(e$jr_residual), 1e-9)
   }
 })
 

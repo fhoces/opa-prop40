@@ -1,4 +1,4 @@
-"step_id","input","supporting_value","rauh_value","unit","supporting_source","rauh_source"
+"step_id","input","bsz_value","jr_value","unit","bsz_source","jr_source"
 "noncitizens","W_noncit",150,0,"$B","GGSS 20 Jul 2026 p.2 fn.1 (24 people, about $150B); BSZ PDF p.54 ($132B at 1 Jan)","excluded as too uncertain to collect: 28 international billionaires, $146.3B (treaty preemption and the Act's apportionment clause, §50306(b); JR export nber_international_net_worth; NBER chapter Sec. 3.5, PDF pp.17-18)"
 "base_list","W_core",2157,2027.436,"$B","BSZ export baseline_net_worth ($2,307B, 1 Jul 2026; BSZ PDF p.24, GGSS p.4) minus the non-citizens","chapter Sec. 3.2, PDF pp.12-13 ($2,027.4B at 7% growth); JR export baseline_net_worth (212 billionaires, 2025 Forbes list) grown 7% to 31 Dec 2026 (JR export nber_growth_rate; NBER README, chapter p.19)"
 "base_list","lam",0,1,"list","the Forbes 2026 list (0 = BSZ list)","the Forbes 2025 list grown 7% (1 = JR list)"

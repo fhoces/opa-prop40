@@ -176,14 +176,14 @@ This report is part of the comparison's [Open Policy Analysis](https://doi.org/1
 analysis's net total over 5 years, **`r usd(eb$bsz_model)`** (this OPA's construction from
 Table 5 row 1), and the JR analysis's mean net present value in perpetuity,
 **`r usd(epv("rauh_nber_npv", "printed_value"))`** as printed (NBER, September 2026) and
-**`r usd(eb$rauh_own)`** as computed exactly here. On
+**`r usd(eb$jr_own)`** as computed exactly here. On
 the common output (b), the net fiscal effect, they are the bridge's two ends. The BSZ end is
 the same `r usd(eb$bsz_model)`. The JR number is the exact expectation of the authors' Monte
-Carlo, the average computed by formula: `r usd(eb$rauh_own, 2)`, the JR end. Jaros and Rauh
+Carlo, the average computed by formula: `r usd(eb$jr_own, 2)`, the JR end. Jaros and Rauh
 print `r usd(epv("rauh_nber_npv", "printed_value"))` from one seeded run of that Monte Carlo (a
 run of the random draws started from a fixed seed number, so it gives the same draws every
 time). The gap between the two ends,
-`r usd(eb$bsz_model - eb$rauh_model)`, is what the bridge explains. The arithmetic is in
+`r usd(eb$bsz_model - eb$jr_model)`, is what the bridge explains. The arithmetic is in
 [The two main estimates](#the-main-estimate).
 
 **Neither analysis reports the other's number, or the gap.** Each keeps its own main estimate
@@ -220,7 +220,7 @@ comes first, because it is the question both main estimates answer:
 The horizon H is itself disputed. The BSZ analysis argues that the losses should be temporary
 and gives five years, the payment period, as an example ("If they last say only 5 years", BSZ
 PDF p.27); its Table 5 itself takes no stand on how long they last. The
-`r fmt_input("H", inp$supporting_value[inp$input == "H"])` at the BSZ end are this OPA's
+`r fmt_input("H", inp$bsz_value[inp$input == "H"])` at the BSZ end are this OPA's
 reading of that example. The JR analysis counts the losses forever, because it assumes
 departed billionaires do not return once the Act permanently lifts the cap on intangible
 property taxes (chapter PDF p.32).
@@ -269,8 +269,8 @@ dv <- function(id) as.numeric(d$value[d$input_id == id])
 tab <- data.frame(
   Analysis = c("BSZ analysis: Boll, Saez and Zucman, NBER WP 35218, Table 5 row 1 (Aug 2026)",
                "JR analysis: Jaros and Rauh, NBER c15504 (Sep 2026)"),
-  `(b) net fiscal effect` = c(money(eb$bsz_model, 1), money(eb$rauh_model, 2)),
-  `(a) gross revenue` = c(money(ea$bsz_model, 1), money(ea$rauh_own, 1)),
+  `(b) net fiscal effect` = c(money(eb$bsz_model, 1), money(eb$jr_model, 2)),
+  `(a) gross revenue` = c(money(ea$bsz_model, 1), money(ea$jr_own, 1)),
   `What the authors print` = c(
     sprintf("%s revenue (PDF p.39); no net figure", money(epv("bsz_tab5_row1", "printed_value"), 0)),
     sprintf("mean NPV %s (one seeded run); revenue 'approximately %s' (p.1)",
@@ -289,7 +289,7 @@ authors' own Monte Carlo, computed exactly rather than by drawing.
 # One function, both ends {#the-two-ends}
 
 One function gives both ends of the net fiscal effect: **`r usd(eb$bsz_model)`** at the BSZ
-inputs (discounted at `r r3`) and **`r usd(eb$rauh_model)`** at the JR inputs (discounted at
+inputs (discounted at `r r3`) and **`r usd(eb$jr_model)`** at the JR inputs (discounted at
 `r r_jr`), the JR analysis's own exact mean.
 
 One estimating function, `score_common()`, takes every disputed input as an argument. Each
@@ -300,6 +300,32 @@ both outputs. The draws are independent, so the expectation is the inputs at the
 the rate at the one value worth the same as its draw ([above](#the-discount-rate)). The JR
 values are those of that version, the latest (its code and person-level file are in the
 authors' public repository).
+
+```{r}
+# The JR end in closed form (R/model.R rauh_nber_expectation()): the revenue, the share lost and
+# the yearly income tax at the means of their uniform draws, and the rate term at the mean of
+# 1/(r - g) over its draw. The draws are independent, so the mean of the product is the product
+# of the means. Stop if the closed form and the export disagree.
+oi0 <- k$rjkdc$inputs
+cf_wt <- (0 + pick(oi0, "nber_ceiling_hardcoded")) / 2
+cf_f  <- (pick(oi0, "nber_mc_f_min") + pick(oi0, "nber_mc_f_max")) / 2
+cf_c  <- (pick(oi0, "rauh_mc_c_min") + pick(oi0, "rauh_mc_c_max")) / 2
+cf_a  <- expected_annuity(Inf, pick(oi0, "rauh_mc_r_min"), pick(oi0, "rauh_mc_r_max"))
+cf_npv <- cf_wt - cf_f * cf_c * cf_a
+stopifnot(isTRUE(all.equal(cf_npv, eb$jr_own)))
+sgn <- function(x, d) paste0(if (x < 0) "&minus;" else "", formatC(abs(x), format = "f", digits = d))
+```
+
+In billions of dollars, with WT the wealth tax, f the share of the income tax base that leaves,
+C the yearly income tax of California's billionaires and r &minus; g the discount rate net of
+the loss's growth:
+
+<p class="display-line">E[NPV] = E[WT] &minus; E[f] &times; E[C] &times; E[1/(r &minus; g)]
+= `r format(cf_wt)` &minus; `r format(cf_f)` &times; `r format(cf_c)` &times;
+`r formatC(cf_a, format = "f", digits = 2)` = `r sgn(cf_npv, 2)`</p>
+
+The `r usd(epv("rauh_nber_npv", "printed_value"))` that the authors print is the average of one
+seeded run of the same draws, so it differs from this mean by simulation noise.
 
 In words, the function computes seven quantities in order.
 
@@ -380,8 +406,8 @@ scroll(show(data.frame(
 ```
 
 The BSZ differences are rounding of the printed number. The JR difference is the sampling
-error of the authors' one seeded run: the exact mean of the Monte Carlo, `r usd(eb$rauh_own, 2)`,
-rounds to `r usd(eb$rauh_own)`, while their run of it prints
+error of the authors' one seeded run: the exact mean of the Monte Carlo, `r usd(eb$jr_own, 2)`,
+rounds to `r usd(eb$jr_own)`, while their run of it prints
 `r usd(epv("rauh_nber_npv", "printed_value"))`.
 
 </details>
@@ -398,7 +424,7 @@ nber <- rauh_nber_expectation(wt_min = 0, wt_max = pick(oi, "nber_ceiling_hardco
                               c_min = pick(oi, "rauh_mc_c_min"), c_max = pick(oi, "rauh_mc_c_max"),
                               r_min = pick(oi, "rauh_mc_r_min"), r_max = pick(oi, "rauh_mc_r_max"))
 v_rj <- score_common(bi$rauh)                 # the JR end, both outputs
-rj_main <- eb$rauh_own                              # the JR main estimate: the exact expectation (author decision 2026-10-15)
+rj_main <- eb$jr_own                              # the JR main estimate: the exact expectation (author decision 2026-10-15)
 rj_run <- epv("rauh_nber_npv", "contract_value")    # the authors' seeded run, as the JR pipeline reproduces it
 f_mid <- (pick(oi, "nber_mc_f_min") + pick(oi, "nber_mc_f_max")) / 2
 c_mid <- (pick(oi, "rauh_mc_c_min") + pick(oi, "rauh_mc_c_max")) / 2
@@ -406,16 +432,16 @@ a_inf <- expected_annuity(Inf, pick(oi, "rauh_mc_r_min"), pick(oi, "rauh_mc_r_ma
 a_one <- annuity(bi$rauh$r, Inf)                                                        # 1/r at r_jr: the same
 gap_b <- v_sup[["b"]] - v_rj[["b"]]
 gap <- v_sup[["a"]] - v_rj[["a"]]
-stopifnot(isTRUE(all.equal(v_sup[["b"]], eb$bsz_model)), isTRUE(all.equal(v_rj[["b"]], eb$rauh_model)),
-          isTRUE(all.equal(nber[["b"]], eb$rauh_own)), abs(v_rj[["b"]] - nber[["b"]]) < 1e-9,
+stopifnot(isTRUE(all.equal(v_sup[["b"]], eb$bsz_model)), isTRUE(all.equal(v_rj[["b"]], eb$jr_model)),
+          isTRUE(all.equal(nber[["b"]], eb$jr_own)), abs(v_rj[["b"]] - nber[["b"]]) < 1e-9,
           isTRUE(all.equal(a_one, a_inf)),
-          isTRUE(all.equal(v_sup[["a"]], ea$bsz_model)), isTRUE(all.equal(nber[["a"]], ea$rauh_own)),
+          isTRUE(all.equal(v_sup[["a"]], ea$bsz_model)), isTRUE(all.equal(nber[["a"]], ea$jr_own)),
           isTRUE(all.equal(v_rj[["a"]], nber[["a"]])))
 ```
 
 The BSZ main estimate is **`r usd(eb$bsz_model)`** and the JR main estimate
 **`r usd(rj_main)`**. On the common output the two ends are
-`r usd(eb$bsz_model)` and `r usd(eb$rauh_model)`, a gap of **`r usd(eb$bsz_model - eb$rauh_model)`**.
+`r usd(eb$bsz_model)` and `r usd(eb$jr_model)`, a gap of **`r usd(eb$bsz_model - eb$jr_model)`**.
 The JR main estimate is the JR end: the exact mean of the authors' Monte Carlo.
 
 <details class="report-fold"><summary>Steps 1 to 4, and output (a)</summary>
@@ -470,7 +496,7 @@ b_a <- br[br$horizon_setting == "own" & br$output == "a", ]
 b_b <- br[br$horizon_setting == "own" & br$output == "b", ]
 stopifnot(abs(sum(b_b$shapley) + gap_b) < 1e-9, abs(sum(b_a$shapley) + gap) < 1e-9,
           abs(sum(dp$change) + gap_b) < 1e-9,
-          max(abs(own$rauh_residual)) < 1e-9)
+          max(abs(own$jr_residual)) < 1e-9)
 # The introduction names the three largest steps of the dial path in words; stop if they change.
 top3p <- dp[order(-abs(dp$change)), ][1:3, ]
 stopifnot(identical(top3p$step_id, c("horizon", "litigation_survival", "confirmed_departures")))
@@ -531,7 +557,7 @@ blank <- function(label, change, run) data.frame(Dial = label, `DISPUTES row` = 
 cat("\n**Output (b), net fiscal effect, each analysis's own horizon.** The horizon dial moves from the BSZ analysis's 5 years to a perpetuity.\n\n")
 scroll(show(rbind(blank("<b>BSZ end, (b)</b>", "", money(dp$from[1], 2)), path_rows,
                   blank("Sum of the steps", money(sum(dp$change), 2, TRUE), ""),
-                  blank("<b>JR end, (b), the JR main estimate</b>", "", money(eb$rauh_own, 2)))))
+                  blank("<b>JR end, (b), the JR main estimate</b>", "", money(eb$jr_own, 2)))))
 ```
 
 Reading the table: the horizon step is the largest because it moves after f and C, when the
@@ -557,7 +583,7 @@ wf <- rbind(
   data.frame(i = 1, short = unname(short_labels["bsz"]), y0 = 0, y1 = dp$from[1], fill = "an analysis's estimate"),
   data.frame(i = 1 + seq_len(nrow(dp)), short = wf_short, y0 = dp$from, y1 = dp$to,
              fill = ifelse(dp$change >= 0, "step that raises it", "step that lowers it")),
-  data.frame(i = nrow(dp) + 2, short = unname(short_labels["nber"]), y0 = 0, y1 = eb$rauh_model, fill = "an analysis's estimate"))
+  data.frame(i = nrow(dp) + 2, short = unname(short_labels["nber"]), y0 = 0, y1 = eb$jr_model, fill = "an analysis's estimate"))
 ggplot(wf) +
   geom_rect(aes(xmin = i - 0.38, xmax = i + 0.38, ymin = pmin(y0, y1), ymax = pmax(y0, y1), fill = fill)) +
   scale_fill_manual(values = c("an analysis's estimate" = "#222222",
@@ -613,7 +639,7 @@ bt <- function(o) {
   top <- data.frame(Step = sprintf("<b>BSZ end, (%s)</b>", o), `DISPUTES row` = "", Kind = "", `BSZ value` = "",
                     `JR value` = "", Shapley = money(e$bsz_model, 2), `One order` = money(e$bsz_model, 2), check.names = FALSE)
   bot <- data.frame(Step = sprintf("<b>JR end, (%s)</b>", o), `DISPUTES row` = "", Kind = "", `BSZ value` = "",
-                    `JR value` = "", Shapley = money(e$rauh_model, 2), `One order` = money(e$rauh_model, 2), check.names = FALSE)
+                    `JR value` = "", Shapley = money(e$jr_model, 2), `One order` = money(e$jr_model, 2), check.names = FALSE)
   scroll(show(rbind(top, rows, extra, bot)))
 }
 cat("\n**Output (b), net fiscal effect, each analysis's own horizon.** The horizon step switches from the BSZ analysis's 5 years to a perpetuity.\n\n"); bt("b")
@@ -851,10 +877,10 @@ maxdiff <- if (py_ok) max(vapply(c("ends", "bridge", "endpoints", "dial_path"), 
 - **Both ends.** At the all-BSZ inputs the estimating function returns BSZ Table 5 row 1
   exactly (`r usd(ea$bsz_model, 3)`), and its net on (b) (`r usd(eb$bsz_model, 3)`). At the
   inputs of the JR analysis's September 2026 version it returns that version's exact expected
-  revenue on (a), `r usd(ea$rauh_own, 3)`. It uses the script's ceiling literal, 72, rather
+  revenue on (a), `r usd(ea$jr_own, 3)`. It uses the script's ceiling literal, 72, rather
   than the 72.05 the person-level file sums to (the JR analysis's mismatch 4), so that the two
   agree exactly. On (b), with the rate at `r r_jr` (1 / E[1/r] over the authors' draw), it
-  returns the authors' exact Monte Carlo mean, `r usd(eb$rauh_own, 3)`, to 1e-9, against the
+  returns the authors' exact Monte Carlo mean, `r usd(eb$jr_own, 3)`, to 1e-9, against the
   printed `r usd(epv("rauh_nber_npv", "printed_value"))` from one seeded run.
   `test-endpoints.R` checks both, and that one over `r r_jr` equals the average of 1/r over the draw.
 - **The bridge is the explorer's own.** `test-dial-path.R` checks that the nine steps of the

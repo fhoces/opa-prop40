@@ -40,7 +40,7 @@ own <- en[en$horizon_setting == "own", ]
 ea <- own[own$output == "a", ]; eb <- own[own$output == "b", ]
 epv <- function(id, col = "value") ep[[col]][ep$endpoint_id == id]
 mv  <- function(key) ex$meta$value[ex$meta$key == key]
-rj_main  <- eb$rauh_own   # the JR main estimate: the exact expectation of the authors' model (author decision 2026-10-15)
+rj_main  <- eb$jr_own   # the JR main estimate: the exact expectation of the authors' model (author decision 2026-10-15)
 rj_print <- epv("rauh_nber_npv", "printed_value")
 bsz_print <- epv("bsz_tab5_row1", "printed_value")
 oi <- k$rjkdc$inputs
@@ -55,7 +55,7 @@ num <- function(x, d = 2) formatC(x, format = "f", digits = d, big.mark = ",")
 # The bridge on output (b) at each analysis's own horizon, and on (a).
 bb <- br[br$horizon_setting == "own" & br$output == "b", ]
 ba <- br[br$horizon_setting == "own" & br$output == "a", ]
-gap_b <- eb$bsz_model - eb$rauh_model
+gap_b <- eb$bsz_model - eb$jr_model
 steps <- bridge_steps()
 # The discount rate at each end (the rate dial, author decision 2026-10-15): 3% at the BSZ end,
 # at the JR end the one rate worth the same as the authors' draw of r - g between r_lo and r_hi.
@@ -92,14 +92,32 @@ compare_figs <- function(page) {
   cat('<div class="cmp">', one(figs[1]), '<span class="cmp-arrow">&rarr;</span>', one(figs[2]), '</div>', sep = "")
 }
 
+# Counts the opa-bsz and opa-jr slides print, read from the two analyses' own files so they
+# cannot drift (author request 2026-10-16): the JR analysis's recorded mismatches
+# (rjkdc-analysis/MISMATCHES.md, one "## n." heading each), and the settings on each checks page
+# (the rendered table under "Settings the paper(s) does/do not print", less its reference row).
+n_words <- function(n) c("one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+                         "ten", "eleven", "twelve")[n]
+jr_mismatches <- sum(grepl("^## [0-9]+[.]", readLines(file.path(root, "rjkdc-analysis", "MISMATCHES.md"), warn = FALSE)))
+checks_settings <- function(page) {
+  h <- paste(readLines(file.path(root, page), warn = FALSE), collapse = "\n")
+  sec <- regmatches(h, regexpr('(?s)<section id="settings-the-(paper-does|papers-do)-not-print".*?</section>', h, perl = TRUE))
+  tb <- regmatches(sec, regexpr("(?s)<tbody>.*?</tbody>", sec, perl = TRUE))
+  stopifnot(length(tb) == 1)
+  lengths(regmatches(tb, gregexpr("<tr", tb, fixed = TRUE))) - 1L
+}
+bsz_settings <- checks_settings("bsz-analysis/site/checks.html")
+jr_settings <- checks_settings("rjkdc-analysis/site/checks.html")
+cap1 <- function(x) paste0(toupper(substring(x, 1, 1)), substring(x, 2))
+
 # The share of the base already departed at an end; used in the main body and the appendix.
 dshare <- function(x) score_common(x)[["d_conf"]]
 
 # Ties to the pipeline: a drift fails the render instead of shipping.
 stopifnot(
   isTRUE(all.equal(vs[["a"]], ea$bsz_model)), isTRUE(all.equal(vs[["b"]], eb$bsz_model)),
-  isTRUE(all.equal(vr[["a"]], ea$rauh_own)),  isTRUE(all.equal(vr[["b"]], eb$rauh_model)),
-  abs(eb$rauh_model - eb$rauh_own) < 1e-9,
+  isTRUE(all.equal(vr[["a"]], ea$jr_own)),  isTRUE(all.equal(vr[["b"]], eb$jr_model)),
+  abs(eb$jr_model - eb$jr_own) < 1e-9,
   abs(sum(bb$shapley) + gap_b) < 1e-9,
   abs(sum(bb$sequential) + gap_b) < 1e-9,
   abs(sum(dp$change) + gap_b) < 1e-9, identical(dp$step_id, DIAL_PATH_ORDER),
@@ -141,7 +159,7 @@ $1 billion or more, payable over five years, with the revenue mainly for health 
 .quote-src[*The New York Times Magazine*, [14 October 2026](https://www.nytimes.com/2026/10/14/magazine/california-billionaires-tax.html)]
 ]
 
-.footnote[Arguments from the official voter guide: California Secretary of State, *Official Voter Information Guide*, general election of 3 November 2026, Proposition 40, arguments in favor and against.]
+.footnote[Arguments from the official voter guide: California Secretary of State, *Official Voter Information Guide*, general election of 3 November 2026, Proposition 40, [argument in favor (p.56) and argument against (p.57)](https://voterguide.sos.ca.gov/propositions/40/arguments-rebuttals.htm).]
 
 ---
 
@@ -218,7 +236,7 @@ class: head-beside
 # With transparency
 
 .beside[Once we can thoroughly appraise each policy analysis, we can understand their differences and
-draw a third OPA in between the two. This lays the foundations for resolving the differences and
+build a third OPA that bridges the two, one input at a time. This lays the foundations for resolving the differences and
 moving closer to a common reality.]
 
 .fig-pinned.fig-split.fig-tall[<img src="../../../assets/figures/evidence-to-policy-competing-from-analysis-opa-third.svg" alt="The two competing analyses, each an Open Policy Analysis, and a third Open Policy Analysis between them, drawn from both.">]
@@ -420,11 +438,11 @@ class: mid-bullets
 
 - Agentic coding tools can substantially reduce the cost of generating fully reproducible and transparent policy analysis. But can we trust the final output?
 - Two challenges: **reliability** (did it make up a result?) and **intelligibility** (are the exposition, methods and code easy to digest for different audiences?).
-- Reliability verification is key. When an OPA is built by the same authors or organization, verification is trivial. When it is built by outside analysts (as in this case), different strategies can be taken:
+- Reliability verification is key. When an OPA is built by the same authors or organization, verification is much easier. When it is built by outside analysts (as in this case), different strategies can be taken:
   - A thorough review of each layer, to confirm that the output is accurate.
   - Running the paper's robustness cases through the OPA, to see if it generates the same results.
   - Generating a set of tests where the OPA estimates under conditions that are not in the original paper, and asking the authors to run those scenarios in their model to verify that they obtain the same results.
-- Here we adopt a combination of the three strategies above, and disclose for each component of the OPA what has been AI generated, what has been reviewed and what has been verified. Whenever a component has not been fully reviewed, a badge in its title says so.
+- Here we adopt a combination of the three strategies above, and disclose for each component of the OPA what has been AI generated, what has been reviewed and what has been verified. Each analysis's pages carry a badge that says how far they have been reviewed.
 
 
 ---
@@ -455,7 +473,7 @@ class: opa-card
 .pull-left[
 Boll, Saez and Zucman estimate the one-time tax at about $100 billion of wealth tax. This OPA rebuilds their Table 5 from the authors' public workbook, in R with a Python twin and tests, and nets the income tax effects into one main estimate of `r usd(eb$bsz_model)`.
 
-**What reproduces.** All 28 cells of Table 5 match the workbook, and 26 round to the digit the paper prints. Every variation the paper prints reproduces (7 of 7). Ten settings the paper does not print have been sent to the authors to test. [Checks](../../../bsz-analysis/site/checks.html)
+**What reproduces.** All 28 cells of Table 5 match the workbook, and 26 round to the digit the paper prints. Every variation the paper prints reproduces (7 of 7). `r cap1(n_words(bsz_settings))` settings the paper does not print have been sent to the authors to test. [Checks](../../../bsz-analysis/site/checks.html)
 
 [The BSZ analysis overview](../../../bsz-analysis/site/)
 ]
@@ -475,7 +493,7 @@ class: opa-card
 .pull-left[
 Jaros and Rauh find a mean net present value of `r usd(rj_print)`: the wealth tax minus the income tax lost for ever when billionaires leave. This OPA reruns the authors' own code as shipped, in R with a Python twin and tests, and computes the exact average of their Monte Carlo, `r usd(rj_main, 2)`.
 
-**What reproduces.** The main estimate reproduces from the authors' code, and nine mismatches between their text, READMEs and code are recorded. Every variation the papers print reproduces (4 of 4). Ten settings the papers do not print have been sent to the authors to test. [Checks](../../../rjkdc-analysis/site/checks.html)
+**What reproduces.** The main estimate reproduces from the authors' code, and `r n_words(jr_mismatches)` mismatches between their text, READMEs and code are recorded. Every variation the papers print reproduces (4 of 4). `r cap1(n_words(jr_settings))` settings the papers do not print have been sent to the authors to test. [Checks](../../../rjkdc-analysis/site/checks.html)
 
 [The JR analysis overview](../../../rjkdc-analysis/site/)
 ]
@@ -532,17 +550,17 @@ sh_name <- function(id) if (id %in% names(DIAL_SYMBOLS)) sprintf("*%s* (%s)", DI
 sh_three <- vapply(sh_ids, sh_name, "")
 sh_three <- paste0(paste(head(sh_three, -1), collapse = ", "), " and ", tail(sh_three, 1))
 term <- function(j) with(et$terms[j, ], sprintf('<span class="eq-step"><span class="op">%s</span><span class="term"><b>%s</b><small>%s</small></span></span>',
-                            if (change < 0) "&minus;" else "+", money(abs(change), 1), esc(label)))
+                            if (change < 0) "&minus;" else "+", money(abs(change), 2), esc(label)))
 cat('<div class="pseudo-eq">',
-    sprintf('<span class="term"><b>%s</b><small>BSZ estimate</small></span>', money(eb$bsz_model, 1)),
+    sprintf('<span class="term"><b>%s</b><small>BSZ estimate</small></span>', money(eb$bsz_model, 2)),
     paste(vapply(seq_len(nrow(et$terms)), term, ""), collapse = ""),
-    sprintf('<span class="eq-step"><span class="op">&asymp;</span><span class="term"><b>%s</b><small>JR estimate</small></span></span>', money(eb$rauh_model, 1)),
+    sprintf('<span class="eq-step"><span class="op">=</span><span class="term"><b>%s</b><small>JR estimate</small></span></span>', money(eb$jr_model, 2)),
     '</div>', sep = "")
 ```
 
 .small[
-`r et$note` The terms add up
-exactly; "about equal" is only rounding. The JR estimate here is the exact average of the
+`r et$note` At two decimals the terms add up
+exactly. The JR estimate here is the exact average of the
 authors' Monte Carlo; their seeded run prints `r usd(rj_print)`.
 ]
 
@@ -748,7 +766,7 @@ for (i in which(keep)) {
 cat(sprintf('<tr class="tot"><td>Where the waterfall ends</td><td>%s</td><td>%s</td></tr>',
             money(sum(hz$hoopes, na.rm = TRUE), 1), money(sum(hz$ours, na.rm = TRUE), 1)))
 cat("</table>")
-stopifnot(abs(sum(hz$ours, na.rm = TRUE) - eb$rauh_model) < 1e-9)
+stopifnot(abs(sum(hz$ours, na.rm = TRUE) - eb$jr_model) < 1e-9)
 ```
 
 .small[
@@ -769,7 +787,7 @@ name: next
 .small[
 - At the BSZ inputs the function returns Table 5 row 1, `r usd(ea$bsz_model, 3)` (printed `r usd(bsz_print, 0)`).
 - At the JR inputs, with the rate at `r r_jr`, it returns the exact average of the authors' Monte Carlo,
-  `r usd(eb$rauh_own, 3)` (printed `r usd(rj_print)` from one seeded run).
+  `r usd(eb$jr_own, 3)` (printed `r usd(rj_print)` from one seeded run).
 - Each step on the dial path is the change from moving one dial, in R and in the browser. The steps add up to the gap by construction. The report's order-free check, each input's Shapley value (its step averaged over every order the inputs could be switched in), adds up too, and a test checks it against a brute-force average over orders.
 - A Python twin writes the same tables. The largest difference from R is `r if (py_ok) formatC(maxdiff, format = "e", digits = 1) else "not checked"`; the tests require 1e-9.
 - **Not reproduced here:** the comparison takes each analysis's exported inputs and outputs as
@@ -862,7 +880,7 @@ cat('<table class="dt"><tr><th>Analysis</th><th>(a) gross revenue</th><th>(b) ne
 cat(sprintf('<tr><td>BSZ analysis</td><td>%s</td><td><b>%s</b></td><td>%s revenue (Table 5 row 1); no net figure</td></tr>',
             usd(ea$bsz_model), usd(eb$bsz_model), usd(bsz_print, 0)))
 cat(sprintf('<tr><td>JR analysis</td><td>%s</td><td><b>%s</b></td><td>mean NPV %s from one seeded run; revenue "approximately %s"</td></tr>',
-            usd(ea$rauh_own), usd(eb$rauh_model), usd(rj_print), usd(pick(k$docs, "nber_headline_revenue"), 0)))
+            usd(ea$jr_own), usd(eb$jr_model), usd(rj_print), usd(pick(k$docs, "nber_headline_revenue"), 0)))
 cat("</table>")
 ```
 
@@ -971,13 +989,13 @@ cat("</table>")
 - **Assets sold to pay.** BSZ assume `r fmt_input("s", sup$s)` of the tax is paid by selling
   assets, `r pct(sup$g, 0)` of each sale is a taxable gain, and California taxes gains at
   `r pct(sup$t_cg, 1)`. The JR analysis does not model it.
-- **The JR end** is `r usd(eb$rauh_model, 2)`, the exact average of the authors' Monte Carlo.
+- **The JR end** is `r usd(eb$jr_model, 2)`, the exact average of the authors' Monte Carlo.
   They print `r usd(rj_print)` from one seeded run of it.
 ]
 
 .blue-box[
 The same function gives both ends. The gap to explain is
-`r usd(eb$bsz_model, 2)` &minus; (`r usd(eb$rauh_model, 2)`) = **`r usd(gap_b, 2)`**.
+`r usd(eb$bsz_model, 2)` &minus; (`r usd(eb$jr_model, 2)`) = **`r usd(gap_b, 2)`**.
 ]
 
 ---
@@ -1029,8 +1047,8 @@ lab_of <- function(id) if (id == "minor_inputs") "Minor inputs" else unname(shor
 wf <- rbind(
   data.frame(short = short_labels[["bsz"]], y0 = 0, y1 = dp$from[1], v = dp$from[1], type = "total"),
   data.frame(short = vapply(dp$step_id, lab_of, ""), y0 = dp$from, y1 = dp$to, v = dp$change, type = "step"),
-  data.frame(short = short_labels[["nber"]], y0 = 0, y1 = eb$rauh_model, v = eb$rauh_model, type = "total"))
-stopifnot(abs(dp$from[1] - eb$bsz_model) < 1e-9, abs(dp$to[nrow(dp)] - eb$rauh_model) < 1e-9)
+  data.frame(short = short_labels[["nber"]], y0 = 0, y1 = eb$jr_model, v = eb$jr_model, type = "total"))
+stopifnot(abs(dp$from[1] - eb$bsz_model) < 1e-9, abs(dp$to[nrow(dp)] - eb$jr_model) < 1e-9)
 wf$i <- seq_len(nrow(wf))
 wf$fill <- ifelse(wf$type == "total", "an analysis's estimate",
                   ifelse(wf$v >= 0, "step that raises it", "step that lowers it"))

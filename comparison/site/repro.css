@@ -81,3 +81,6 @@ details.report-fold[open] > summary { margin-bottom: 0.8rem; }
 
 /* Long inline code in running text wraps instead of widening the page on a phone. */
 p code, li code { overflow-wrap: anywhere; }
+
+/* A one-line formula with its numbers filled in (the JR end in closed form). */
+.display-line { text-align: center; margin: 1em 0; }

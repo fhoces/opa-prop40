@@ -16,10 +16,10 @@ test_that("the nine changes add up to the JR estimate minus the BSZ estimate", {
   expect_identical(dp$symbol, c("D", "q", "f", "C", "H", "r", "W", "a", "minor"))
   expect_identical(DIAL_PATH_ORDER, eq_path_order())
   expect_equal(nrow(dp), 9L)
-  expect_equal(sum(dp$change), eb$rauh_own - eb$bsz_model, tolerance = 1e-9)
+  expect_equal(sum(dp$change), eb$jr_own - eb$bsz_model, tolerance = 1e-9)
   expect_lt(abs(dp$from[1] - eb$bsz_model), 1e-9)
   # the path ends at the JR analysis's own expectation, -38.98
-  expect_lt(abs(dp$to[9] - eb$rauh_own), 1e-9)
+  expect_lt(abs(dp$to[9] - eb$jr_own), 1e-9)
   expect_equal(money(dp$to[9], 1), "\u2212$39.0B")
   # the rate step sits after H in the loss box, with D, q, f, C and H already at the JR end
   expect_identical(dp$symbol[6], "r")

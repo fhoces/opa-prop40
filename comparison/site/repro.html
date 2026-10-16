@@ -2263,6 +2263,8 @@ details.report-fold > summary { cursor: pointer; color: #1d4e89; font-weight: 50
 details.report-fold[open] > summary { margin-bottom: 0.8rem; }
 
 p code, li code { overflow-wrap: anywhere; }
+
+.display-line { text-align: center; margin: 1em 0; }
 </style>
 <style type="text/css">
 @font-face {
@@ -2491,6 +2493,7 @@ background: transparent; border: 1px solid var(--link); border-radius: 0; cursor
 
 a.q-survey { color: var(--paper) !important; text-decoration: none !important; }
 .q-mini { display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0 16px; }
+.q-mini .q-for { align-self: center; font-size: 14px; color: var(--ink-2); }
 .q-survey.q-survey-mini { font-size: 15px; padding: 5px 14px; }
 .q-copy.q-copy-mini { font-size: 15px; padding: 5px 14px; margin-left: 0; }
 
@@ -2500,6 +2503,9 @@ letter-spacing: 0; line-height: 1.35; text-decoration: none !important; white-sp
 .ai-badge:hover, .ai-badge:focus { text-decoration: underline !important; }
 a.ai-badge-yellow, .ai-badge-yellow { background: #f5c518; color: #3b2c00 !important; }
 a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; }
+
+.ai-badge-line { margin: 0 0 12px; font-size: 15px; color: var(--ink-2); }
+.ai-badge-line .ai-badge { font-size: 0.9em; margin-left: 0.35em; }
 </style>
 </head>
 
@@ -2630,7 +2636,7 @@ Versions and citations
 <span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">annual_loss =</span> f <span class="sc">*</span> x<span class="sc">$</span>C, <span class="at">annuity =</span> A, <span class="at">PV =</span> PV)</span>
 <span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/model.R, lines 295-300</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/model.R, lines 299-304</span></span>
 <span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>expected_annuity <span class="ot">&lt;-</span> <span class="cf">function</span>(H, r_min, r_max) {</span>
 <span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is.infinite</span>(H)) <span class="fu">return</span>(<span class="fu">log</span>(r_max <span class="sc">/</span> r_min) <span class="sc">/</span> (r_max <span class="sc">-</span> r_min))</span>
 <span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (H <span class="sc">==</span> <span class="dv">0</span>) <span class="fu">return</span>(<span class="dv">0</span>)</span>
@@ -2638,10 +2644,10 @@ Versions and citations
 <span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  stats<span class="sc">::</span><span class="fu">integrate</span>(f, r_min, r_max, <span class="at">rel.tol =</span> <span class="fl">1e-12</span>, <span class="at">abs.tol =</span> <span class="dv">0</span>)<span class="sc">$</span>value <span class="sc">/</span> (r_max <span class="sc">-</span> r_min)</span>
 <span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/model.R, lines 302-302</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/model.R, lines 306-306</span></span>
 <span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>jr_discount_rate <span class="ot">&lt;-</span> <span class="cf">function</span>(r_min, r_max) <span class="dv">1</span> <span class="sc">/</span> <span class="fu">expected_annuity</span>(<span class="cn">Inf</span>, r_min, r_max)</span>
 <span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/model.R, lines 304-308</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/model.R, lines 308-312</span></span>
 <span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>rauh_nber_expectation <span class="ot">&lt;-</span> <span class="cf">function</span>(wt_min, wt_max, f_min, f_max, c_min, c_max, r_min, r_max, <span class="at">H =</span> <span class="cn">Inf</span>) {</span>
 <span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>  e_wt <span class="ot">&lt;-</span> (wt_min <span class="sc">+</span> wt_max) <span class="sc">/</span> <span class="dv">2</span></span>
 <span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="at">a =</span> e_wt, <span class="at">b =</span> e_wt <span class="sc">-</span> (f_min <span class="sc">+</span> f_max) <span class="sc">/</span> <span class="dv">2</span> <span class="sc">*</span> (c_min <span class="sc">+</span> c_max) <span class="sc">/</span> <span class="dv">2</span> <span class="sc">*</span></span>
@@ -2751,6 +2757,11 @@ mean NPV <span style="white-space:nowrap">−$38.9B</span> (one seeded run); rev
 <h1>One function, both ends</h1>
 <p>One function gives both ends of the net fiscal effect: <strong><span style="white-space:nowrap">$106.8B</span></strong> at the BSZ inputs (discounted at 3%) and <strong><span style="white-space:nowrap">−$39.0B</span></strong> at the JR inputs (discounted at 2.73%), the JR analysis’s own exact mean.</p>
 <p>One estimating function, <code>score_common()</code>, takes every disputed input as an argument. Each argument takes either the BSZ analysis’s value or the JR analysis’s. At the all-BSZ setting the function must return the BSZ end: Table 5 row 1 on (a), and its net on (b). At the all-JR setting it must return the exact expectation of the September 2026 version’s Monte Carlo, on both outputs. The draws are independent, so the expectation is the inputs at their means, with the rate at the one value worth the same as its draw (<a href="#the-discount-rate">above</a>). The JR values are those of that version, the latest (its code and person-level file are in the authors’ public repository).</p>
+<p>In billions of dollars, with WT the wealth tax, f the share of the income tax base that leaves, C the yearly income tax of California’s billionaires and r − g the discount rate net of the loss’s growth:</p>
+<p class="display-line">
+E[NPV] = E[WT] − E[f] × E[C] × E[1/(r − g)] = 36 − 0.45 × 4.55 × 36.62 = −38.98
+</p>
+<p>The <span style="white-space:nowrap">−$38.9B</span> that the authors print is the average of one seeded run of the same draws, so it differs from this mean by simulation noise.</p>
 <p>In words, the function computes seven quantities in order.</p>
 <details class="report-fold">
 <summary>
@@ -3073,7 +3084,7 @@ Steps 1 to 4, and output (a)
 <span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a>    <span class="at">annual_loss =</span> f <span class="sc">*</span> x<span class="sc">$</span>C, <span class="at">annuity =</span> A, <span class="at">PV =</span> PV)</span>
 <span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/model.R, lines 304-308</span></span>
+<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/model.R, lines 308-312</span></span>
 <span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a>rauh_nber_expectation <span class="ot">&lt;-</span> <span class="cf">function</span>(wt_min, wt_max, f_min, f_max, c_min, c_max, r_min, r_max, <span class="at">H =</span> <span class="cn">Inf</span>) {</span>
 <span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a>  e_wt <span class="ot">&lt;-</span> (wt_min <span class="sc">+</span> wt_max) <span class="sc">/</span> <span class="dv">2</span></span>
 <span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="at">a =</span> e_wt, <span class="at">b =</span> e_wt <span class="sc">-</span> (f_min <span class="sc">+</span> f_max) <span class="sc">/</span> <span class="dv">2</span> <span class="sc">*</span> (c_min <span class="sc">+</span> c_max) <span class="sc">/</span> <span class="dv">2</span> <span class="sc">*</span></span>
@@ -3157,7 +3168,7 @@ Steps 1 to 4, and output (a)
 <a href="#" class="lang on" data-lang="r">R</a> or <a href="#" class="lang" data-lang="py">Python</a> code for the bridge table and the figure
 </summary>
 <div class="lang-r">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/model.R, lines 143-168</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/model.R, lines 147-172</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>slider_inputs <span class="ot">&lt;-</span> <span class="cf">function</span>(from, to, positions, <span class="at">ladder =</span> <span class="cn">NULL</span>) {</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> from</span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (st <span class="cf">in</span> <span class="fu">names</span>(step_inputs)) {</span>
@@ -3185,7 +3196,7 @@ Steps 1 to 4, and output (a)
 <span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>  x</span>
 <span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/model.R, lines 171-176</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/model.R, lines 175-180</span></span>
 <span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>slider_value <span class="ot">&lt;-</span> <span class="cf">function</span>(bi, <span class="at">panel =</span> <span class="fu">c</span>(<span class="st">&quot;bsz&quot;</span>, <span class="st">&quot;rjkdc&quot;</span>), positions) {</span>
 <span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>  panel <span class="ot">&lt;-</span> <span class="fu">match.arg</span>(panel)</span>
 <span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>  from <span class="ot">&lt;-</span> <span class="cf">if</span> (panel <span class="sc">==</span> <span class="st">&quot;bsz&quot;</span>) bi<span class="sc">$</span>sup <span class="cf">else</span> bi<span class="sc">$</span>rauh</span>
@@ -3193,7 +3204,7 @@ Steps 1 to 4, and output (a)
 <span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">score_common</span>(<span class="fu">slider_inputs</span>(from, to, positions, bi<span class="sc">$</span>ladder))[[<span class="st">&quot;b&quot;</span>]]</span>
 <span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/model.R, lines 222-240</span></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/model.R, lines 226-244</span></span>
 <span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>dial_path <span class="ot">&lt;-</span> <span class="cf">function</span>(bi, <span class="at">order =</span> DIAL_PATH_ORDER) {</span>
 <span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>  st <span class="ot">&lt;-</span> <span class="fu">bridge_steps</span>()</span>
 <span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>  pos <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
@@ -3456,7 +3467,7 @@ scenario vs derived
 7
 </td>
 <td style="text-align:left;">
-data
+data vs guesswork on data
 </td>
 <td style="text-align:left;">
 Forbes 2026, $2,157B
@@ -3502,7 +3513,7 @@ Three minor inputs
 8, 7, (not a row)
 </td>
 <td style="text-align:left;">
-data vs guesswork, data, guesswork
+data vs guesswork, guesswork vs data, guesswork
 </td>
 <td style="text-align:left;">
 $150B; 0.0%; 1/3
@@ -3585,14 +3596,14 @@ Figure 1: Output (b), the dial path: the explorer’s dials moved in the equati
 <a href="#" class="lang on" data-lang="r">R</a> or <a href="#" class="lang" data-lang="py">Python</a> code for the Shapley tables
 </summary>
 <div class="lang-r">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/model.R, lines 111-115</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/model.R, lines 115-119</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>switch_inputs <span class="ot">&lt;-</span> <span class="cf">function</span>(sup, rauh, on) {</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> sup</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (st <span class="cf">in</span> on) <span class="cf">for</span> (nm <span class="cf">in</span> step_inputs[[st]]) x[[nm]] <span class="ot">&lt;-</span> rauh[[nm]]</span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  x</span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/model.R, lines 255-269</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/model.R, lines 259-273</span></span>
 <span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>shapley_bridge <span class="ot">&lt;-</span> <span class="cf">function</span>(sup, rauh, players, <span class="at">output =</span> <span class="fu">c</span>(<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>), <span class="at">v =</span> <span class="cn">NULL</span>) {</span>
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  output <span class="ot">&lt;-</span> <span class="fu">match.arg</span>(output)</span>
 <span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">length</span>(players)</span>
@@ -3609,7 +3620,7 @@ Figure 1: Output (b), the dial path: the explorer’s dials moved in the equati
 <span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>  stats<span class="sc">::</span><span class="fu">setNames</span>(phi, players)</span>
 <span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/model.R, lines 271-281</span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a><span class="co"># comparison/R/model.R, lines 275-285</span></span>
 <span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>sequential_bridge <span class="ot">&lt;-</span> <span class="cf">function</span>(sup, rauh, order, <span class="at">output =</span> <span class="fu">c</span>(<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>)) {</span>
 <span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>  output <span class="ot">&lt;-</span> <span class="fu">match.arg</span>(output)</span>
 <span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>  prev <span class="ot">&lt;-</span> <span class="fu">score_common</span>(sup)[[output]]</span>
@@ -3741,7 +3752,7 @@ Forbes source: which list and valuation date
 7
 </td>
 <td style="text-align:left;">
-data
+data vs guesswork on data
 </td>
 <td style="text-align:left;">
 Forbes 2026, $2,157B
@@ -3764,7 +3775,7 @@ Real-estate deduction
 7
 </td>
 <td style="text-align:left;">
-data
+guesswork vs data
 </td>
 <td style="text-align:left;">
 0.0%
@@ -4088,7 +4099,7 @@ Forbes source: which list and valuation date
 7
 </td>
 <td style="text-align:left;">
-data
+data vs guesswork on data
 </td>
 <td style="text-align:left;">
 Forbes 2026, $2,157B
@@ -4111,7 +4122,7 @@ Real-estate deduction
 7
 </td>
 <td style="text-align:left;">
-data
+guesswork vs data
 </td>
 <td style="text-align:left;">
 0.0%
@@ -4412,15 +4423,15 @@ The two revenue figures
 <span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a>        <span class="at">horizon_setting =</span> st, <span class="at">output =</span> out, <span class="at">step_id =</span> ids,</span>
 <span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a>        <span class="at">shapley =</span> <span class="fu">unname</span>(full_sh), <span class="at">sequential =</span> <span class="fu">unname</span>(full_sq),</span>
 <span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a>        <span class="at">sequential_rank =</span> <span class="fu">match</span>(ids, <span class="fu">sequential_order</span>()), <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a>      <span class="co"># rauh_own is the JR analysis&#39;s own expectation (its rate drawn between r_min and</span></span>
-<span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a>      <span class="co"># r_max); rauh_residual, what the common function at the JR inputs misses of it, is</span></span>
+<span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a>      <span class="co"># jr_own is the JR analysis&#39;s own expectation (its rate drawn between r_min and</span></span>
+<span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a>      <span class="co"># r_max); jr_residual, what the common function at the JR inputs misses of it, is</span></span>
 <span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a>      <span class="co"># zero in perpetuity (the JR rate r_jr is defined so) and kept so the identity is</span></span>
 <span id="cb11-50"><a href="#cb11-50" aria-hidden="true" tabindex="-1"></a>      <span class="co"># tested, not assumed. At a finite common horizon it is what one rate misses of the</span></span>
 <span id="cb11-51"><a href="#cb11-51" aria-hidden="true" tabindex="-1"></a>      <span class="co"># annuity averaged over the draw, f0 C (annuity(r_jr, H) - E_r[annuity(r, H)]).</span></span>
 <span id="cb11-52"><a href="#cb11-52" aria-hidden="true" tabindex="-1"></a>      ends[[<span class="fu">length</span>(ends) <span class="sc">+</span> <span class="dv">1</span>]] <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb11-53"><a href="#cb11-53" aria-hidden="true" tabindex="-1"></a>        <span class="at">horizon_setting =</span> st, <span class="at">output =</span> out,</span>
-<span id="cb11-54"><a href="#cb11-54" aria-hidden="true" tabindex="-1"></a>        <span class="at">bsz_model =</span> v_sup[[out]], <span class="at">rauh_model =</span> v_rauh[[out]],</span>
-<span id="cb11-55"><a href="#cb11-55" aria-hidden="true" tabindex="-1"></a>        <span class="at">rauh_own =</span> own_n[[out]], <span class="at">rauh_residual =</span> own_n[[out]] <span class="sc">-</span> v_rauh[[out]],</span>
+<span id="cb11-54"><a href="#cb11-54" aria-hidden="true" tabindex="-1"></a>        <span class="at">bsz_model =</span> v_sup[[out]], <span class="at">jr_model =</span> v_rauh[[out]],</span>
+<span id="cb11-55"><a href="#cb11-55" aria-hidden="true" tabindex="-1"></a>        <span class="at">jr_own =</span> own_n[[out]], <span class="at">jr_residual =</span> own_n[[out]] <span class="sc">-</span> v_rauh[[out]],</span>
 <span id="cb11-56"><a href="#cb11-56" aria-hidden="true" tabindex="-1"></a>        <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb11-57"><a href="#cb11-57" aria-hidden="true" tabindex="-1"></a>    }</span>
 <span id="cb11-58"><a href="#cb11-58" aria-hidden="true" tabindex="-1"></a>  }</span>
@@ -4448,7 +4459,7 @@ The two revenue figures
 <span id="cb11-80"><a href="#cb11-80" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;JR mean NPV, analytic expectation of the Monte Carlo = model at all-JR inputs (the rate at 1 / E[1/r])&quot;</span>),</span>
 <span id="cb11-81"><a href="#cb11-81" aria-hidden="true" tabindex="-1"></a>    <span class="at">value =</span> <span class="fu">c</span>(ea<span class="sc">$</span>bsz_model <span class="sc">+</span> (ggss_printed <span class="sc">-</span> ea<span class="sc">$</span>bsz_model),</span>
 <span id="cb11-82"><a href="#cb11-82" aria-hidden="true" tabindex="-1"></a>              ea<span class="sc">$</span>bsz_model, ea<span class="sc">$</span>bsz_model, eb<span class="sc">$</span>bsz_model,</span>
-<span id="cb11-83"><a href="#cb11-83" aria-hidden="true" tabindex="-1"></a>              ea<span class="sc">$</span>rauh_own, eb<span class="sc">$</span>rauh_own),</span>
+<span id="cb11-83"><a href="#cb11-83" aria-hidden="true" tabindex="-1"></a>              ea<span class="sc">$</span>jr_own, eb<span class="sc">$</span>jr_own),</span>
 <span id="cb11-84"><a href="#cb11-84" aria-hidden="true" tabindex="-1"></a>    <span class="at">printed_value =</span> <span class="fu">c</span>(ggss_printed, <span class="fu">pick</span>(so, <span class="st">&quot;ggss_scoring&quot;</span>, <span class="st">&quot;printed_value&quot;</span>),</span>
 <span id="cb11-85"><a href="#cb11-85" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">pick</span>(so, <span class="st">&quot;tab5_row1_wealth_tax_revenue&quot;</span>, <span class="st">&quot;printed_value&quot;</span>), <span class="cn">NA</span>,</span>
 <span id="cb11-86"><a href="#cb11-86" aria-hidden="true" tabindex="-1"></a>                      <span class="cn">NA</span>, <span class="fu">pick</span>(oo, <span class="st">&quot;npv_mc_nber_mean&quot;</span>, <span class="st">&quot;printed_value&quot;</span>)),</span>
@@ -4465,11 +4476,11 @@ The two revenue figures
 <span id="cb11-97"><a href="#cb11-97" aria-hidden="true" tabindex="-1"></a>    <span class="at">label =</span> <span class="fu">c</span>(<span class="fu">sprintf</span>(<span class="st">&quot;Expected WT in the Monte Carlo behind the %s mean NPV&quot;</span>,</span>
 <span id="cb11-98"><a href="#cb11-98" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">formatC</span>(<span class="fu">pick</span>(oo, <span class="st">&quot;npv_mc_nber_mean&quot;</span>, <span class="st">&quot;printed_value&quot;</span>), <span class="at">format =</span> <span class="st">&quot;f&quot;</span>, <span class="at">digits =</span> <span class="dv">1</span>)),</span>
 <span id="cb11-99"><a href="#cb11-99" aria-hidden="true" tabindex="-1"></a>              <span class="st">&quot;Preferred estimate, &#39;approximately $30 billion&#39;&quot;</span>),</span>
-<span id="cb11-100"><a href="#cb11-100" aria-hidden="true" tabindex="-1"></a>    <span class="at">value =</span> <span class="fu">c</span>(ea<span class="sc">$</span>rauh_own, <span class="fu">pick</span>(d, <span class="st">&quot;nber_headline_revenue&quot;</span>)),</span>
+<span id="cb11-100"><a href="#cb11-100" aria-hidden="true" tabindex="-1"></a>    <span class="at">value =</span> <span class="fu">c</span>(ea<span class="sc">$</span>jr_own, <span class="fu">pick</span>(d, <span class="st">&quot;nber_headline_revenue&quot;</span>)),</span>
 <span id="cb11-101"><a href="#cb11-101" aria-hidden="true" tabindex="-1"></a>    <span class="at">where =</span> <span class="fu">c</span>(<span class="st">&quot;NBER p.35, NPV_dist_v8.R (WT uniform between 0 and the 72 ceiling)&quot;</span>,</span>
 <span id="cb11-102"><a href="#cb11-102" aria-hidden="true" tabindex="-1"></a>              <span class="st">&quot;NBER p.1 abstract, p.23 (0.5 x the recognized base, Zuckerberg excluded)&quot;</span>),</span>
 <span id="cb11-103"><a href="#cb11-103" aria-hidden="true" tabindex="-1"></a>    <span class="at">default =</span> <span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>), <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb11-104"><a href="#cb11-104" aria-hidden="true" tabindex="-1"></a>  anchors<span class="sc">$</span>residual_vs_model <span class="ot">&lt;-</span> anchors<span class="sc">$</span>value <span class="sc">-</span> ea<span class="sc">$</span>rauh_model</span>
+<span id="cb11-104"><a href="#cb11-104" aria-hidden="true" tabindex="-1"></a>  anchors<span class="sc">$</span>residual_vs_model <span class="ot">&lt;-</span> anchors<span class="sc">$</span>value <span class="sc">-</span> ea<span class="sc">$</span>jr_model</span>
 <span id="cb11-105"><a href="#cb11-105" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-106"><a href="#cb11-106" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ---- annual income tax loss: every source on one scale ------------------------</span></span>
 <span id="cb11-107"><a href="#cb11-107" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 5-year values at the BSZ end&#39;s rate (3%), perpetuities at the JR end&#39;s (r_jr, 2.73%), so</span></span>
@@ -4491,7 +4502,7 @@ The two revenue figures
 <span id="cb11-123"><a href="#cb11-123" aria-hidden="true" tabindex="-1"></a>  loss<span class="sc">$</span>pv_5yr <span class="ot">&lt;-</span> loss<span class="sc">$</span>annual_loss <span class="sc">*</span> A5</span>
 <span id="cb11-124"><a href="#cb11-124" aria-hidden="true" tabindex="-1"></a>  loss<span class="sc">$</span>pv_perpetuity <span class="ot">&lt;-</span> loss<span class="sc">$</span>annual_loss <span class="sc">*</span> Ainf</span>
 <span id="cb11-125"><a href="#cb11-125" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Each loss netted against the JR analysis&#39;s expected revenue on (a), in perpetuity.</span></span>
-<span id="cb11-126"><a href="#cb11-126" aria-hidden="true" tabindex="-1"></a>  loss<span class="sc">$</span>net_at_nber_revenue_perpetuity <span class="ot">&lt;-</span> ea<span class="sc">$</span>rauh_own <span class="sc">-</span> loss<span class="sc">$</span>pv_perpetuity</span>
+<span id="cb11-126"><a href="#cb11-126" aria-hidden="true" tabindex="-1"></a>  loss<span class="sc">$</span>net_at_nber_revenue_perpetuity <span class="ot">&lt;-</span> ea<span class="sc">$</span>jr_own <span class="sc">-</span> loss<span class="sc">$</span>pv_perpetuity</span>
 <span id="cb11-127"><a href="#cb11-127" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-128"><a href="#cb11-128" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ---- Hoopes (2026) Figure 2 beside a Hoopes-shaped chain of ours ----------------</span></span>
 <span id="cb11-129"><a href="#cb11-129" aria-hidden="true" tabindex="-1"></a>  hz <span class="ot">&lt;-</span> k<span class="sc">$</span>hoopes</span>
@@ -4504,8 +4515,8 @@ The two revenue figures
 <span id="cb11-136"><a href="#cb11-136" aria-hidden="true" tabindex="-1"></a>            <span class="at">additional_movers =</span> <span class="cn">NA</span>,</span>
 <span id="cb11-137"><a href="#cb11-137" aria-hidden="true" tabindex="-1"></a>            <span class="at">additional_behavioral_response =</span> <span class="fu">sq</span>(<span class="fu">c</span>(<span class="st">&quot;avoidance&quot;</span>, <span class="st">&quot;litigation_survival&quot;</span>)),</span>
 <span id="cb11-138"><a href="#cb11-138" aria-hidden="true" tabindex="-1"></a>            <span class="at">real_estate_exclusion =</span> <span class="fu">sq</span>(<span class="st">&quot;real_estate&quot;</span>),</span>
-<span id="cb11-139"><a href="#cb11-139" aria-hidden="true" tabindex="-1"></a>            <span class="at">rauh_rounding =</span> ea<span class="sc">$</span>rauh_residual,</span>
-<span id="cb11-140"><a href="#cb11-140" aria-hidden="true" tabindex="-1"></a>            <span class="at">income_tax_loss =</span> eb<span class="sc">$</span>rauh_model <span class="sc">-</span> ea<span class="sc">$</span>rauh_model)</span>
+<span id="cb11-139"><a href="#cb11-139" aria-hidden="true" tabindex="-1"></a>            <span class="at">rauh_rounding =</span> ea<span class="sc">$</span>jr_residual,</span>
+<span id="cb11-140"><a href="#cb11-140" aria-hidden="true" tabindex="-1"></a>            <span class="at">income_tax_loss =</span> eb<span class="sc">$</span>jr_model <span class="sc">-</span> ea<span class="sc">$</span>jr_model)</span>
 <span id="cb11-141"><a href="#cb11-141" aria-hidden="true" tabindex="-1"></a>  hoopes <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">step_id =</span> <span class="fu">names</span>(ours), <span class="at">ours =</span> <span class="fu">unname</span>(ours), <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb11-142"><a href="#cb11-142" aria-hidden="true" tabindex="-1"></a>  hoopes<span class="sc">$</span>hoopes <span class="ot">&lt;-</span> hz<span class="sc">$</span>delta[<span class="fu">match</span>(hoopes<span class="sc">$</span>step_id, hz<span class="sc">$</span>step_id)]</span>
 <span id="cb11-143"><a href="#cb11-143" aria-hidden="true" tabindex="-1"></a>  hoopes<span class="sc">$</span>hoopes_uncertainty <span class="ot">&lt;-</span> hz<span class="sc">$</span>uncertainty[<span class="fu">match</span>(hoopes<span class="sc">$</span>step_id, hz<span class="sc">$</span>step_id)]</span>
@@ -4573,8 +4584,8 @@ The two revenue figures
 <span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a>                               <span class="st">&quot;sequential_rank&quot;</span>: SEQUENTIAL.index(sid) <span class="op">+</span> <span class="dv">1</span>,</span>
 <span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a>                               <span class="st">&quot;disputes_row&quot;</span>: row, <span class="st">&quot;title&quot;</span>: title, <span class="st">&quot;kind&quot;</span>: kind})</span>
 <span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a>            ends.append({<span class="st">&quot;horizon_setting&quot;</span>: st, <span class="st">&quot;output&quot;</span>: out,</span>
-<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;bsz_model&quot;</span>: v_sup[out], <span class="st">&quot;rauh_model&quot;</span>: v_rauh[out],</span>
-<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;rauh_own&quot;</span>: own_n[out], <span class="st">&quot;rauh_residual&quot;</span>: own_n[out] <span class="op">-</span> v_rauh[out]})</span>
+<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;bsz_model&quot;</span>: v_sup[out], <span class="st">&quot;jr_model&quot;</span>: v_rauh[out],</span>
+<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;jr_own&quot;</span>: own_n[out], <span class="st">&quot;jr_residual&quot;</span>: own_n[out] <span class="op">-</span> v_rauh[out]})</span>
 <span id="cb12-44"><a href="#cb12-44" aria-hidden="true" tabindex="-1"></a>    bridge.sort(key<span class="op">=</span><span class="kw">lambda</span> r: (r[<span class="st">&quot;horizon_setting&quot;</span>], r[<span class="st">&quot;output&quot;</span>], IDS.index(r[<span class="st">&quot;step_id&quot;</span>])))</span>
 <span id="cb12-45"><a href="#cb12-45" aria-hidden="true" tabindex="-1"></a>    board.sort(key<span class="op">=</span><span class="kw">lambda</span> r: (r[<span class="st">&quot;output&quot;</span>], settings.index(r[<span class="st">&quot;horizon_setting&quot;</span>]), r[<span class="st">&quot;mask&quot;</span>]))</span>
 <span id="cb12-46"><a href="#cb12-46" aria-hidden="true" tabindex="-1"></a>    ea <span class="op">=</span> [e <span class="cf">for</span> e <span class="kw">in</span> ends <span class="cf">if</span> e[<span class="st">&quot;horizon_setting&quot;</span>] <span class="op">==</span> <span class="st">&quot;own&quot;</span> <span class="kw">and</span> e[<span class="st">&quot;output&quot;</span>] <span class="op">==</span> <span class="st">&quot;a&quot;</span>][<span class="dv">0</span>]</span>
@@ -4586,14 +4597,14 @@ The two revenue figures
 <span id="cb12-52"><a href="#cb12-52" aria-hidden="true" tabindex="-1"></a>            (<span class="st">&quot;ggss_scoring&quot;</span>, ea[<span class="st">&quot;bsz_model&quot;</span>], pick(so, <span class="st">&quot;ggss_scoring&quot;</span>, <span class="st">&quot;printed_value&quot;</span>)),</span>
 <span id="cb12-53"><a href="#cb12-53" aria-hidden="true" tabindex="-1"></a>            (<span class="st">&quot;bsz_tab5_row1&quot;</span>, ea[<span class="st">&quot;bsz_model&quot;</span>], pick(so, <span class="st">&quot;tab5_row1_wealth_tax_revenue&quot;</span>, <span class="st">&quot;printed_value&quot;</span>)),</span>
 <span id="cb12-54"><a href="#cb12-54" aria-hidden="true" tabindex="-1"></a>            (<span class="st">&quot;bsz_net_constructed&quot;</span>, eb[<span class="st">&quot;bsz_model&quot;</span>], math.nan),</span>
-<span id="cb12-55"><a href="#cb12-55" aria-hidden="true" tabindex="-1"></a>            (<span class="st">&quot;rauh_nber_revenue_mc&quot;</span>, ea[<span class="st">&quot;rauh_own&quot;</span>], math.nan),</span>
-<span id="cb12-56"><a href="#cb12-56" aria-hidden="true" tabindex="-1"></a>            (<span class="st">&quot;rauh_nber_npv&quot;</span>, eb[<span class="st">&quot;rauh_own&quot;</span>], pick(oo, <span class="st">&quot;npv_mc_nber_mean&quot;</span>, <span class="st">&quot;printed_value&quot;</span>))]</span>
+<span id="cb12-55"><a href="#cb12-55" aria-hidden="true" tabindex="-1"></a>            (<span class="st">&quot;rauh_nber_revenue_mc&quot;</span>, ea[<span class="st">&quot;jr_own&quot;</span>], math.nan),</span>
+<span id="cb12-56"><a href="#cb12-56" aria-hidden="true" tabindex="-1"></a>            (<span class="st">&quot;rauh_nber_npv&quot;</span>, eb[<span class="st">&quot;jr_own&quot;</span>], pick(oo, <span class="st">&quot;npv_mc_nber_mean&quot;</span>, <span class="st">&quot;printed_value&quot;</span>))]</span>
 <span id="cb12-57"><a href="#cb12-57" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> eid, v, p <span class="kw">in</span> vals:</span>
 <span id="cb12-58"><a href="#cb12-58" aria-hidden="true" tabindex="-1"></a>        endpoints.append({<span class="st">&quot;endpoint_id&quot;</span>: eid, <span class="st">&quot;value&quot;</span>: v, <span class="st">&quot;printed_value&quot;</span>: p,</span>
 <span id="cb12-59"><a href="#cb12-59" aria-hidden="true" tabindex="-1"></a>                          <span class="st">&quot;abs_diff_printed&quot;</span>: <span class="bu">abs</span>(v <span class="op">-</span> p)})</span>
 <span id="cb12-60"><a href="#cb12-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-61"><a href="#cb12-61" aria-hidden="true" tabindex="-1"></a>    anchors <span class="op">=</span> [{<span class="st">&quot;anchor_id&quot;</span>: a, <span class="st">&quot;value&quot;</span>: v, <span class="st">&quot;residual_vs_model&quot;</span>: v <span class="op">-</span> ea[<span class="st">&quot;rauh_model&quot;</span>]} <span class="cf">for</span> a, v <span class="kw">in</span> [</span>
-<span id="cb12-62"><a href="#cb12-62" aria-hidden="true" tabindex="-1"></a>        (<span class="st">&quot;mc_expected&quot;</span>, ea[<span class="st">&quot;rauh_own&quot;</span>]),</span>
+<span id="cb12-61"><a href="#cb12-61" aria-hidden="true" tabindex="-1"></a>    anchors <span class="op">=</span> [{<span class="st">&quot;anchor_id&quot;</span>: a, <span class="st">&quot;value&quot;</span>: v, <span class="st">&quot;residual_vs_model&quot;</span>: v <span class="op">-</span> ea[<span class="st">&quot;jr_model&quot;</span>]} <span class="cf">for</span> a, v <span class="kw">in</span> [</span>
+<span id="cb12-62"><a href="#cb12-62" aria-hidden="true" tabindex="-1"></a>        (<span class="st">&quot;mc_expected&quot;</span>, ea[<span class="st">&quot;jr_own&quot;</span>]),</span>
 <span id="cb12-63"><a href="#cb12-63" aria-hidden="true" tabindex="-1"></a>        (<span class="st">&quot;preferred_about_30&quot;</span>, pick(d, <span class="st">&quot;nber_headline_revenue&quot;</span>))]]</span>
 <span id="cb12-64"><a href="#cb12-64" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-65"><a href="#cb12-65" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 5-year values at the BSZ end&#39;s rate, perpetuities at the JR end&#39;s (see R/build.R)</span></span>
@@ -4608,7 +4619,7 @@ The two revenue figures
 <span id="cb12-74"><a href="#cb12-74" aria-hidden="true" tabindex="-1"></a>                    (<span class="st">&quot;walczak_high&quot;</span>, pick(d, <span class="st">&quot;walczak_loss_high&quot;</span>))]:</span>
 <span id="cb12-75"><a href="#cb12-75" aria-hidden="true" tabindex="-1"></a>        loss.append({<span class="st">&quot;source_id&quot;</span>: sid, <span class="st">&quot;annual_loss&quot;</span>: al, <span class="st">&quot;pv_5yr&quot;</span>: al <span class="op">*</span> A5,</span>
 <span id="cb12-76"><a href="#cb12-76" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;pv_perpetuity&quot;</span>: al <span class="op">*</span> Ainf,</span>
-<span id="cb12-77"><a href="#cb12-77" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;net_at_nber_revenue_perpetuity&quot;</span>: ea[<span class="st">&quot;rauh_own&quot;</span>] <span class="op">-</span> al <span class="op">*</span> Ainf})</span>
+<span id="cb12-77"><a href="#cb12-77" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;net_at_nber_revenue_perpetuity&quot;</span>: ea[<span class="st">&quot;jr_own&quot;</span>] <span class="op">-</span> al <span class="op">*</span> Ainf})</span>
 <span id="cb12-78"><a href="#cb12-78" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-79"><a href="#cb12-79" aria-hidden="true" tabindex="-1"></a>    hz <span class="op">=</span> {r[<span class="st">&quot;step_id&quot;</span>]: r <span class="cf">for</span> r <span class="kw">in</span> k[<span class="st">&quot;hoopes&quot;</span>]}</span>
 <span id="cb12-80"><a href="#cb12-80" aria-hidden="true" tabindex="-1"></a>    sqa <span class="op">=</span> {r[<span class="st">&quot;step_id&quot;</span>]: r[<span class="st">&quot;sequential&quot;</span>] <span class="cf">for</span> r <span class="kw">in</span> bridge</span>
@@ -4621,8 +4632,8 @@ The two revenue figures
 <span id="cb12-87"><a href="#cb12-87" aria-hidden="true" tabindex="-1"></a>            (<span class="st">&quot;additional_behavioral_response&quot;</span>,</span>
 <span id="cb12-88"><a href="#cb12-88" aria-hidden="true" tabindex="-1"></a>             sqa[<span class="st">&quot;avoidance&quot;</span>] <span class="op">+</span> sqa[<span class="st">&quot;litigation_survival&quot;</span>]),</span>
 <span id="cb12-89"><a href="#cb12-89" aria-hidden="true" tabindex="-1"></a>            (<span class="st">&quot;real_estate_exclusion&quot;</span>, sqa[<span class="st">&quot;real_estate&quot;</span>]),</span>
-<span id="cb12-90"><a href="#cb12-90" aria-hidden="true" tabindex="-1"></a>            (<span class="st">&quot;rauh_rounding&quot;</span>, ea[<span class="st">&quot;rauh_residual&quot;</span>]),</span>
-<span id="cb12-91"><a href="#cb12-91" aria-hidden="true" tabindex="-1"></a>            (<span class="st">&quot;income_tax_loss&quot;</span>, eb[<span class="st">&quot;rauh_model&quot;</span>] <span class="op">-</span> ea[<span class="st">&quot;rauh_model&quot;</span>])]</span>
+<span id="cb12-90"><a href="#cb12-90" aria-hidden="true" tabindex="-1"></a>            (<span class="st">&quot;rauh_rounding&quot;</span>, ea[<span class="st">&quot;jr_residual&quot;</span>]),</span>
+<span id="cb12-91"><a href="#cb12-91" aria-hidden="true" tabindex="-1"></a>            (<span class="st">&quot;income_tax_loss&quot;</span>, eb[<span class="st">&quot;jr_model&quot;</span>] <span class="op">-</span> ea[<span class="st">&quot;jr_model&quot;</span>])]</span>
 <span id="cb12-92"><a href="#cb12-92" aria-hidden="true" tabindex="-1"></a>    hoopes <span class="op">=</span> [{<span class="st">&quot;step_id&quot;</span>: sid, <span class="st">&quot;ours&quot;</span>: v,</span>
 <span id="cb12-93"><a href="#cb12-93" aria-hidden="true" tabindex="-1"></a>               <span class="st">&quot;hoopes&quot;</span>: num(hz[sid][<span class="st">&quot;delta&quot;</span>]) <span class="cf">if</span> sid <span class="kw">in</span> hz <span class="cf">else</span> math.nan,</span>
 <span id="cb12-94"><a href="#cb12-94" aria-hidden="true" tabindex="-1"></a>               <span class="st">&quot;hoopes_uncertainty&quot;</span>: num(hz[sid][<span class="st">&quot;uncertainty&quot;</span>]) <span class="cf">if</span> sid <span class="kw">in</span> hz <span class="cf">else</span> math.nan}</span>
@@ -4760,13 +4771,13 @@ NBER p.1 abstract, p.23 (0.5 x the recognized base, Zuckerberg excluded)
 <span id="cb13-53"><a href="#cb13-53" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;litigation_survival&quot;</span>, <span class="st">&quot;income_loss_share&quot;</span>, <span class="st">&quot;income_loss_share&quot;</span>,</span>
 <span id="cb13-54"><a href="#cb13-54" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;income_level&quot;</span>, <span class="st">&quot;horizon&quot;</span>, <span class="st">&quot;discount_rate&quot;</span>, <span class="st">&quot;asset_sales&quot;</span>),</span>
 <span id="cb13-55"><a href="#cb13-55" aria-hidden="true" tabindex="-1"></a>    <span class="at">input =</span> <span class="fu">c</span>(<span class="st">&quot;W_noncit&quot;</span>, <span class="st">&quot;W_core&quot;</span>, <span class="st">&quot;lam&quot;</span>, <span class="st">&quot;re&quot;</span>, <span class="st">&quot;dep_b&quot;</span>, <span class="st">&quot;dep_j&quot;</span>, <span class="st">&quot;L&quot;</span>, <span class="st">&quot;alpha&quot;</span>, <span class="st">&quot;q&quot;</span>, <span class="st">&quot;own&quot;</span>, <span class="st">&quot;f0&quot;</span>, <span class="st">&quot;C&quot;</span>, <span class="st">&quot;H&quot;</span>, <span class="st">&quot;r&quot;</span>, <span class="st">&quot;s&quot;</span>),</span>
-<span id="cb13-56"><a href="#cb13-56" aria-hidden="true" tabindex="-1"></a>    <span class="at">supporting_value =</span> <span class="fu">c</span>(s<span class="sc">$</span>W_noncit, s<span class="sc">$</span>W_core, s<span class="sc">$</span>lam, s<span class="sc">$</span>re, s<span class="sc">$</span>dep_b, s<span class="sc">$</span>dep_j, s<span class="sc">$</span>L, s<span class="sc">$</span>alpha, s<span class="sc">$</span>q, s<span class="sc">$</span>own, s<span class="sc">$</span>f0,</span>
+<span id="cb13-56"><a href="#cb13-56" aria-hidden="true" tabindex="-1"></a>    <span class="at">bsz_value =</span> <span class="fu">c</span>(s<span class="sc">$</span>W_noncit, s<span class="sc">$</span>W_core, s<span class="sc">$</span>lam, s<span class="sc">$</span>re, s<span class="sc">$</span>dep_b, s<span class="sc">$</span>dep_j, s<span class="sc">$</span>L, s<span class="sc">$</span>alpha, s<span class="sc">$</span>q, s<span class="sc">$</span>own, s<span class="sc">$</span>f0,</span>
 <span id="cb13-57"><a href="#cb13-57" aria-hidden="true" tabindex="-1"></a>                         s<span class="sc">$</span>C, s<span class="sc">$</span>H, s<span class="sc">$</span>r, s<span class="sc">$</span>s),</span>
-<span id="cb13-58"><a href="#cb13-58" aria-hidden="true" tabindex="-1"></a>    <span class="at">rauh_value =</span> <span class="fu">c</span>(r<span class="sc">$</span>W_noncit, r<span class="sc">$</span>W_core, r<span class="sc">$</span>lam, r<span class="sc">$</span>re, r<span class="sc">$</span>dep_b, r<span class="sc">$</span>dep_j, r<span class="sc">$</span>L, r<span class="sc">$</span>alpha, r<span class="sc">$</span>q, r<span class="sc">$</span>own, r<span class="sc">$</span>f0,</span>
+<span id="cb13-58"><a href="#cb13-58" aria-hidden="true" tabindex="-1"></a>    <span class="at">jr_value =</span> <span class="fu">c</span>(r<span class="sc">$</span>W_noncit, r<span class="sc">$</span>W_core, r<span class="sc">$</span>lam, r<span class="sc">$</span>re, r<span class="sc">$</span>dep_b, r<span class="sc">$</span>dep_j, r<span class="sc">$</span>L, r<span class="sc">$</span>alpha, r<span class="sc">$</span>q, r<span class="sc">$</span>own, r<span class="sc">$</span>f0,</span>
 <span id="cb13-59"><a href="#cb13-59" aria-hidden="true" tabindex="-1"></a>                   r<span class="sc">$</span>C, r<span class="sc">$</span>H, r<span class="sc">$</span>r, r<span class="sc">$</span>s),</span>
 <span id="cb13-60"><a href="#cb13-60" aria-hidden="true" tabindex="-1"></a>    <span class="at">unit =</span> <span class="fu">c</span>(<span class="st">&quot;$B&quot;</span>, <span class="st">&quot;$B&quot;</span>, <span class="st">&quot;list&quot;</span>, <span class="st">&quot;share&quot;</span>, <span class="st">&quot;$B&quot;</span>, <span class="st">&quot;$B&quot;</span>, <span class="st">&quot;$B/yr&quot;</span>, <span class="st">&quot;share&quot;</span>, <span class="st">&quot;probability&quot;</span>, <span class="st">&quot;rule&quot;</span>, <span class="st">&quot;share&quot;</span>,</span>
 <span id="cb13-61"><a href="#cb13-61" aria-hidden="true" tabindex="-1"></a>             <span class="st">&quot;$B/yr&quot;</span>, <span class="st">&quot;years&quot;</span>, <span class="st">&quot;rate&quot;</span>, <span class="st">&quot;share&quot;</span>),</span>
-<span id="cb13-62"><a href="#cb13-62" aria-hidden="true" tabindex="-1"></a>    <span class="at">supporting_source =</span> <span class="fu">c</span>(</span>
+<span id="cb13-62"><a href="#cb13-62" aria-hidden="true" tabindex="-1"></a>    <span class="at">bsz_source =</span> <span class="fu">c</span>(</span>
 <span id="cb13-63"><a href="#cb13-63" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;GGSS 20 Jul 2026 p.2 fn.1 (24 people, about $150B); BSZ PDF p.54 ($132B at 1 Jan)&quot;</span>,</span>
 <span id="cb13-64"><a href="#cb13-64" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;BSZ export baseline_net_worth ($2,307B, 1 Jul 2026; BSZ PDF p.24, GGSS p.4) minus the non-citizens&quot;</span>,</span>
 <span id="cb13-65"><a href="#cb13-65" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;the Forbes 2026 list (0 = BSZ list)&quot;</span>,</span>
@@ -4782,7 +4793,7 @@ NBER p.1 abstract, p.23 (0.5 x the recognized base, Zuckerberg excluded)
 <span id="cb13-75"><a href="#cb13-75" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;BSZ PDF p.27 (&#39;If they last say only 5 years&#39;)&quot;</span>,</span>
 <span id="cb13-76"><a href="#cb13-76" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;no rate in the BSZ analysis: 3%, the rate this OPA&#39;s BSZ overview uses for the 5-year loss (bsz-analysis/R/site_exports.R, site_pv_rate), the middle of the JR draw (scenario)&quot;</span>,</span>
 <span id="cb13-77"><a href="#cb13-77" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;BSZ export sell_share (BSZ PDF p.24)&quot;</span>),</span>
-<span id="cb13-78"><a href="#cb13-78" aria-hidden="true" tabindex="-1"></a>    <span class="at">rauh_source =</span> <span class="fu">c</span>(</span>
+<span id="cb13-78"><a href="#cb13-78" aria-hidden="true" tabindex="-1"></a>    <span class="at">jr_source =</span> <span class="fu">c</span>(</span>
 <span id="cb13-79"><a href="#cb13-79" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;excluded as too uncertain to collect: 28 international billionaires, $146.3B (treaty preemption and the Act&#39;s apportionment clause, \u00a750306(b); JR export nber_international_net_worth; NBER chapter Sec. 3.5, PDF pp.17-18)&quot;</span>,</span>
 <span id="cb13-80"><a href="#cb13-80" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;chapter Sec. 3.2, PDF pp.12-13 ($2,027.4B at 7% growth); JR export baseline_net_worth (212 billionaires, 2025 Forbes list) grown 7% to 31 Dec 2026 (JR export nber_growth_rate; NBER README, chapter p.19)&quot;</span>,</span>
 <span id="cb13-81"><a href="#cb13-81" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;the Forbes 2025 list grown 7% (1 = JR list)&quot;</span>,</span>
@@ -4893,7 +4904,7 @@ data vs guesswork
 Forbes source: which list and valuation date
 </td>
 <td style="text-align:left;">
-data
+data vs guesswork on data
 </td>
 <td style="text-align:left;">
 <b>Forbes 2026, $2,157B</b>. BSZ export baseline_net_worth ($2,307B, 1 Jul 2026; BSZ PDF p.24, GGSS p.4) minus the non-citizens
@@ -4910,7 +4921,7 @@ data
 Real-estate deduction
 </td>
 <td style="text-align:left;">
-data
+guesswork vs data
 </td>
 <td style="text-align:left;">
 <b>0.0%</b>. no separate deduction (BSZ PDF p.24: 90% x 5% x $2,307B)
@@ -5113,15 +5124,15 @@ guesswork
 <span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a>        <span class="at">horizon_setting =</span> st, <span class="at">output =</span> out, <span class="at">step_id =</span> ids,</span>
 <span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a>        <span class="at">shapley =</span> <span class="fu">unname</span>(full_sh), <span class="at">sequential =</span> <span class="fu">unname</span>(full_sq),</span>
 <span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a>        <span class="at">sequential_rank =</span> <span class="fu">match</span>(ids, <span class="fu">sequential_order</span>()), <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb15-47"><a href="#cb15-47" aria-hidden="true" tabindex="-1"></a>      <span class="co"># rauh_own is the JR analysis&#39;s own expectation (its rate drawn between r_min and</span></span>
-<span id="cb15-48"><a href="#cb15-48" aria-hidden="true" tabindex="-1"></a>      <span class="co"># r_max); rauh_residual, what the common function at the JR inputs misses of it, is</span></span>
+<span id="cb15-47"><a href="#cb15-47" aria-hidden="true" tabindex="-1"></a>      <span class="co"># jr_own is the JR analysis&#39;s own expectation (its rate drawn between r_min and</span></span>
+<span id="cb15-48"><a href="#cb15-48" aria-hidden="true" tabindex="-1"></a>      <span class="co"># r_max); jr_residual, what the common function at the JR inputs misses of it, is</span></span>
 <span id="cb15-49"><a href="#cb15-49" aria-hidden="true" tabindex="-1"></a>      <span class="co"># zero in perpetuity (the JR rate r_jr is defined so) and kept so the identity is</span></span>
 <span id="cb15-50"><a href="#cb15-50" aria-hidden="true" tabindex="-1"></a>      <span class="co"># tested, not assumed. At a finite common horizon it is what one rate misses of the</span></span>
 <span id="cb15-51"><a href="#cb15-51" aria-hidden="true" tabindex="-1"></a>      <span class="co"># annuity averaged over the draw, f0 C (annuity(r_jr, H) - E_r[annuity(r, H)]).</span></span>
 <span id="cb15-52"><a href="#cb15-52" aria-hidden="true" tabindex="-1"></a>      ends[[<span class="fu">length</span>(ends) <span class="sc">+</span> <span class="dv">1</span>]] <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb15-53"><a href="#cb15-53" aria-hidden="true" tabindex="-1"></a>        <span class="at">horizon_setting =</span> st, <span class="at">output =</span> out,</span>
-<span id="cb15-54"><a href="#cb15-54" aria-hidden="true" tabindex="-1"></a>        <span class="at">bsz_model =</span> v_sup[[out]], <span class="at">rauh_model =</span> v_rauh[[out]],</span>
-<span id="cb15-55"><a href="#cb15-55" aria-hidden="true" tabindex="-1"></a>        <span class="at">rauh_own =</span> own_n[[out]], <span class="at">rauh_residual =</span> own_n[[out]] <span class="sc">-</span> v_rauh[[out]],</span>
+<span id="cb15-54"><a href="#cb15-54" aria-hidden="true" tabindex="-1"></a>        <span class="at">bsz_model =</span> v_sup[[out]], <span class="at">jr_model =</span> v_rauh[[out]],</span>
+<span id="cb15-55"><a href="#cb15-55" aria-hidden="true" tabindex="-1"></a>        <span class="at">jr_own =</span> own_n[[out]], <span class="at">jr_residual =</span> own_n[[out]] <span class="sc">-</span> v_rauh[[out]],</span>
 <span id="cb15-56"><a href="#cb15-56" aria-hidden="true" tabindex="-1"></a>        <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb15-57"><a href="#cb15-57" aria-hidden="true" tabindex="-1"></a>    }</span>
 <span id="cb15-58"><a href="#cb15-58" aria-hidden="true" tabindex="-1"></a>  }</span>
@@ -5149,7 +5160,7 @@ guesswork
 <span id="cb15-80"><a href="#cb15-80" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;JR mean NPV, analytic expectation of the Monte Carlo = model at all-JR inputs (the rate at 1 / E[1/r])&quot;</span>),</span>
 <span id="cb15-81"><a href="#cb15-81" aria-hidden="true" tabindex="-1"></a>    <span class="at">value =</span> <span class="fu">c</span>(ea<span class="sc">$</span>bsz_model <span class="sc">+</span> (ggss_printed <span class="sc">-</span> ea<span class="sc">$</span>bsz_model),</span>
 <span id="cb15-82"><a href="#cb15-82" aria-hidden="true" tabindex="-1"></a>              ea<span class="sc">$</span>bsz_model, ea<span class="sc">$</span>bsz_model, eb<span class="sc">$</span>bsz_model,</span>
-<span id="cb15-83"><a href="#cb15-83" aria-hidden="true" tabindex="-1"></a>              ea<span class="sc">$</span>rauh_own, eb<span class="sc">$</span>rauh_own),</span>
+<span id="cb15-83"><a href="#cb15-83" aria-hidden="true" tabindex="-1"></a>              ea<span class="sc">$</span>jr_own, eb<span class="sc">$</span>jr_own),</span>
 <span id="cb15-84"><a href="#cb15-84" aria-hidden="true" tabindex="-1"></a>    <span class="at">printed_value =</span> <span class="fu">c</span>(ggss_printed, <span class="fu">pick</span>(so, <span class="st">&quot;ggss_scoring&quot;</span>, <span class="st">&quot;printed_value&quot;</span>),</span>
 <span id="cb15-85"><a href="#cb15-85" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">pick</span>(so, <span class="st">&quot;tab5_row1_wealth_tax_revenue&quot;</span>, <span class="st">&quot;printed_value&quot;</span>), <span class="cn">NA</span>,</span>
 <span id="cb15-86"><a href="#cb15-86" aria-hidden="true" tabindex="-1"></a>                      <span class="cn">NA</span>, <span class="fu">pick</span>(oo, <span class="st">&quot;npv_mc_nber_mean&quot;</span>, <span class="st">&quot;printed_value&quot;</span>)),</span>
@@ -5166,11 +5177,11 @@ guesswork
 <span id="cb15-97"><a href="#cb15-97" aria-hidden="true" tabindex="-1"></a>    <span class="at">label =</span> <span class="fu">c</span>(<span class="fu">sprintf</span>(<span class="st">&quot;Expected WT in the Monte Carlo behind the %s mean NPV&quot;</span>,</span>
 <span id="cb15-98"><a href="#cb15-98" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">formatC</span>(<span class="fu">pick</span>(oo, <span class="st">&quot;npv_mc_nber_mean&quot;</span>, <span class="st">&quot;printed_value&quot;</span>), <span class="at">format =</span> <span class="st">&quot;f&quot;</span>, <span class="at">digits =</span> <span class="dv">1</span>)),</span>
 <span id="cb15-99"><a href="#cb15-99" aria-hidden="true" tabindex="-1"></a>              <span class="st">&quot;Preferred estimate, &#39;approximately $30 billion&#39;&quot;</span>),</span>
-<span id="cb15-100"><a href="#cb15-100" aria-hidden="true" tabindex="-1"></a>    <span class="at">value =</span> <span class="fu">c</span>(ea<span class="sc">$</span>rauh_own, <span class="fu">pick</span>(d, <span class="st">&quot;nber_headline_revenue&quot;</span>)),</span>
+<span id="cb15-100"><a href="#cb15-100" aria-hidden="true" tabindex="-1"></a>    <span class="at">value =</span> <span class="fu">c</span>(ea<span class="sc">$</span>jr_own, <span class="fu">pick</span>(d, <span class="st">&quot;nber_headline_revenue&quot;</span>)),</span>
 <span id="cb15-101"><a href="#cb15-101" aria-hidden="true" tabindex="-1"></a>    <span class="at">where =</span> <span class="fu">c</span>(<span class="st">&quot;NBER p.35, NPV_dist_v8.R (WT uniform between 0 and the 72 ceiling)&quot;</span>,</span>
 <span id="cb15-102"><a href="#cb15-102" aria-hidden="true" tabindex="-1"></a>              <span class="st">&quot;NBER p.1 abstract, p.23 (0.5 x the recognized base, Zuckerberg excluded)&quot;</span>),</span>
 <span id="cb15-103"><a href="#cb15-103" aria-hidden="true" tabindex="-1"></a>    <span class="at">default =</span> <span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>), <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb15-104"><a href="#cb15-104" aria-hidden="true" tabindex="-1"></a>  anchors<span class="sc">$</span>residual_vs_model <span class="ot">&lt;-</span> anchors<span class="sc">$</span>value <span class="sc">-</span> ea<span class="sc">$</span>rauh_model</span>
+<span id="cb15-104"><a href="#cb15-104" aria-hidden="true" tabindex="-1"></a>  anchors<span class="sc">$</span>residual_vs_model <span class="ot">&lt;-</span> anchors<span class="sc">$</span>value <span class="sc">-</span> ea<span class="sc">$</span>jr_model</span>
 <span id="cb15-105"><a href="#cb15-105" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-106"><a href="#cb15-106" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ---- annual income tax loss: every source on one scale ------------------------</span></span>
 <span id="cb15-107"><a href="#cb15-107" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 5-year values at the BSZ end&#39;s rate (3%), perpetuities at the JR end&#39;s (r_jr, 2.73%), so</span></span>
@@ -5192,7 +5203,7 @@ guesswork
 <span id="cb15-123"><a href="#cb15-123" aria-hidden="true" tabindex="-1"></a>  loss<span class="sc">$</span>pv_5yr <span class="ot">&lt;-</span> loss<span class="sc">$</span>annual_loss <span class="sc">*</span> A5</span>
 <span id="cb15-124"><a href="#cb15-124" aria-hidden="true" tabindex="-1"></a>  loss<span class="sc">$</span>pv_perpetuity <span class="ot">&lt;-</span> loss<span class="sc">$</span>annual_loss <span class="sc">*</span> Ainf</span>
 <span id="cb15-125"><a href="#cb15-125" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Each loss netted against the JR analysis&#39;s expected revenue on (a), in perpetuity.</span></span>
-<span id="cb15-126"><a href="#cb15-126" aria-hidden="true" tabindex="-1"></a>  loss<span class="sc">$</span>net_at_nber_revenue_perpetuity <span class="ot">&lt;-</span> ea<span class="sc">$</span>rauh_own <span class="sc">-</span> loss<span class="sc">$</span>pv_perpetuity</span>
+<span id="cb15-126"><a href="#cb15-126" aria-hidden="true" tabindex="-1"></a>  loss<span class="sc">$</span>net_at_nber_revenue_perpetuity <span class="ot">&lt;-</span> ea<span class="sc">$</span>jr_own <span class="sc">-</span> loss<span class="sc">$</span>pv_perpetuity</span>
 <span id="cb15-127"><a href="#cb15-127" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-128"><a href="#cb15-128" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ---- Hoopes (2026) Figure 2 beside a Hoopes-shaped chain of ours ----------------</span></span>
 <span id="cb15-129"><a href="#cb15-129" aria-hidden="true" tabindex="-1"></a>  hz <span class="ot">&lt;-</span> k<span class="sc">$</span>hoopes</span>
@@ -5205,8 +5216,8 @@ guesswork
 <span id="cb15-136"><a href="#cb15-136" aria-hidden="true" tabindex="-1"></a>            <span class="at">additional_movers =</span> <span class="cn">NA</span>,</span>
 <span id="cb15-137"><a href="#cb15-137" aria-hidden="true" tabindex="-1"></a>            <span class="at">additional_behavioral_response =</span> <span class="fu">sq</span>(<span class="fu">c</span>(<span class="st">&quot;avoidance&quot;</span>, <span class="st">&quot;litigation_survival&quot;</span>)),</span>
 <span id="cb15-138"><a href="#cb15-138" aria-hidden="true" tabindex="-1"></a>            <span class="at">real_estate_exclusion =</span> <span class="fu">sq</span>(<span class="st">&quot;real_estate&quot;</span>),</span>
-<span id="cb15-139"><a href="#cb15-139" aria-hidden="true" tabindex="-1"></a>            <span class="at">rauh_rounding =</span> ea<span class="sc">$</span>rauh_residual,</span>
-<span id="cb15-140"><a href="#cb15-140" aria-hidden="true" tabindex="-1"></a>            <span class="at">income_tax_loss =</span> eb<span class="sc">$</span>rauh_model <span class="sc">-</span> ea<span class="sc">$</span>rauh_model)</span>
+<span id="cb15-139"><a href="#cb15-139" aria-hidden="true" tabindex="-1"></a>            <span class="at">rauh_rounding =</span> ea<span class="sc">$</span>jr_residual,</span>
+<span id="cb15-140"><a href="#cb15-140" aria-hidden="true" tabindex="-1"></a>            <span class="at">income_tax_loss =</span> eb<span class="sc">$</span>jr_model <span class="sc">-</span> ea<span class="sc">$</span>jr_model)</span>
 <span id="cb15-141"><a href="#cb15-141" aria-hidden="true" tabindex="-1"></a>  hoopes <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">step_id =</span> <span class="fu">names</span>(ours), <span class="at">ours =</span> <span class="fu">unname</span>(ours), <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb15-142"><a href="#cb15-142" aria-hidden="true" tabindex="-1"></a>  hoopes<span class="sc">$</span>hoopes <span class="ot">&lt;-</span> hz<span class="sc">$</span>delta[<span class="fu">match</span>(hoopes<span class="sc">$</span>step_id, hz<span class="sc">$</span>step_id)]</span>
 <span id="cb15-143"><a href="#cb15-143" aria-hidden="true" tabindex="-1"></a>  hoopes<span class="sc">$</span>hoopes_uncertainty <span class="ot">&lt;-</span> hz<span class="sc">$</span>uncertainty[<span class="fu">match</span>(hoopes<span class="sc">$</span>step_id, hz<span class="sc">$</span>step_id)]</span>
@@ -5274,8 +5285,8 @@ guesswork
 <span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a>                               <span class="st">&quot;sequential_rank&quot;</span>: SEQUENTIAL.index(sid) <span class="op">+</span> <span class="dv">1</span>,</span>
 <span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a>                               <span class="st">&quot;disputes_row&quot;</span>: row, <span class="st">&quot;title&quot;</span>: title, <span class="st">&quot;kind&quot;</span>: kind})</span>
 <span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a>            ends.append({<span class="st">&quot;horizon_setting&quot;</span>: st, <span class="st">&quot;output&quot;</span>: out,</span>
-<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;bsz_model&quot;</span>: v_sup[out], <span class="st">&quot;rauh_model&quot;</span>: v_rauh[out],</span>
-<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;rauh_own&quot;</span>: own_n[out], <span class="st">&quot;rauh_residual&quot;</span>: own_n[out] <span class="op">-</span> v_rauh[out]})</span>
+<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;bsz_model&quot;</span>: v_sup[out], <span class="st">&quot;jr_model&quot;</span>: v_rauh[out],</span>
+<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;jr_own&quot;</span>: own_n[out], <span class="st">&quot;jr_residual&quot;</span>: own_n[out] <span class="op">-</span> v_rauh[out]})</span>
 <span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a>    bridge.sort(key<span class="op">=</span><span class="kw">lambda</span> r: (r[<span class="st">&quot;horizon_setting&quot;</span>], r[<span class="st">&quot;output&quot;</span>], IDS.index(r[<span class="st">&quot;step_id&quot;</span>])))</span>
 <span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a>    board.sort(key<span class="op">=</span><span class="kw">lambda</span> r: (r[<span class="st">&quot;output&quot;</span>], settings.index(r[<span class="st">&quot;horizon_setting&quot;</span>]), r[<span class="st">&quot;mask&quot;</span>]))</span>
 <span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a>    ea <span class="op">=</span> [e <span class="cf">for</span> e <span class="kw">in</span> ends <span class="cf">if</span> e[<span class="st">&quot;horizon_setting&quot;</span>] <span class="op">==</span> <span class="st">&quot;own&quot;</span> <span class="kw">and</span> e[<span class="st">&quot;output&quot;</span>] <span class="op">==</span> <span class="st">&quot;a&quot;</span>][<span class="dv">0</span>]</span>
@@ -5287,14 +5298,14 @@ guesswork
 <span id="cb16-52"><a href="#cb16-52" aria-hidden="true" tabindex="-1"></a>            (<span class="st">&quot;ggss_scoring&quot;</span>, ea[<span class="st">&quot;bsz_model&quot;</span>], pick(so, <span class="st">&quot;ggss_scoring&quot;</span>, <span class="st">&quot;printed_value&quot;</span>)),</span>
 <span id="cb16-53"><a href="#cb16-53" aria-hidden="true" tabindex="-1"></a>            (<span class="st">&quot;bsz_tab5_row1&quot;</span>, ea[<span class="st">&quot;bsz_model&quot;</span>], pick(so, <span class="st">&quot;tab5_row1_wealth_tax_revenue&quot;</span>, <span class="st">&quot;printed_value&quot;</span>)),</span>
 <span id="cb16-54"><a href="#cb16-54" aria-hidden="true" tabindex="-1"></a>            (<span class="st">&quot;bsz_net_constructed&quot;</span>, eb[<span class="st">&quot;bsz_model&quot;</span>], math.nan),</span>
-<span id="cb16-55"><a href="#cb16-55" aria-hidden="true" tabindex="-1"></a>            (<span class="st">&quot;rauh_nber_revenue_mc&quot;</span>, ea[<span class="st">&quot;rauh_own&quot;</span>], math.nan),</span>
-<span id="cb16-56"><a href="#cb16-56" aria-hidden="true" tabindex="-1"></a>            (<span class="st">&quot;rauh_nber_npv&quot;</span>, eb[<span class="st">&quot;rauh_own&quot;</span>], pick(oo, <span class="st">&quot;npv_mc_nber_mean&quot;</span>, <span class="st">&quot;printed_value&quot;</span>))]</span>
+<span id="cb16-55"><a href="#cb16-55" aria-hidden="true" tabindex="-1"></a>            (<span class="st">&quot;rauh_nber_revenue_mc&quot;</span>, ea[<span class="st">&quot;jr_own&quot;</span>], math.nan),</span>
+<span id="cb16-56"><a href="#cb16-56" aria-hidden="true" tabindex="-1"></a>            (<span class="st">&quot;rauh_nber_npv&quot;</span>, eb[<span class="st">&quot;jr_own&quot;</span>], pick(oo, <span class="st">&quot;npv_mc_nber_mean&quot;</span>, <span class="st">&quot;printed_value&quot;</span>))]</span>
 <span id="cb16-57"><a href="#cb16-57" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> eid, v, p <span class="kw">in</span> vals:</span>
 <span id="cb16-58"><a href="#cb16-58" aria-hidden="true" tabindex="-1"></a>        endpoints.append({<span class="st">&quot;endpoint_id&quot;</span>: eid, <span class="st">&quot;value&quot;</span>: v, <span class="st">&quot;printed_value&quot;</span>: p,</span>
 <span id="cb16-59"><a href="#cb16-59" aria-hidden="true" tabindex="-1"></a>                          <span class="st">&quot;abs_diff_printed&quot;</span>: <span class="bu">abs</span>(v <span class="op">-</span> p)})</span>
 <span id="cb16-60"><a href="#cb16-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-61"><a href="#cb16-61" aria-hidden="true" tabindex="-1"></a>    anchors <span class="op">=</span> [{<span class="st">&quot;anchor_id&quot;</span>: a, <span class="st">&quot;value&quot;</span>: v, <span class="st">&quot;residual_vs_model&quot;</span>: v <span class="op">-</span> ea[<span class="st">&quot;rauh_model&quot;</span>]} <span class="cf">for</span> a, v <span class="kw">in</span> [</span>
-<span id="cb16-62"><a href="#cb16-62" aria-hidden="true" tabindex="-1"></a>        (<span class="st">&quot;mc_expected&quot;</span>, ea[<span class="st">&quot;rauh_own&quot;</span>]),</span>
+<span id="cb16-61"><a href="#cb16-61" aria-hidden="true" tabindex="-1"></a>    anchors <span class="op">=</span> [{<span class="st">&quot;anchor_id&quot;</span>: a, <span class="st">&quot;value&quot;</span>: v, <span class="st">&quot;residual_vs_model&quot;</span>: v <span class="op">-</span> ea[<span class="st">&quot;jr_model&quot;</span>]} <span class="cf">for</span> a, v <span class="kw">in</span> [</span>
+<span id="cb16-62"><a href="#cb16-62" aria-hidden="true" tabindex="-1"></a>        (<span class="st">&quot;mc_expected&quot;</span>, ea[<span class="st">&quot;jr_own&quot;</span>]),</span>
 <span id="cb16-63"><a href="#cb16-63" aria-hidden="true" tabindex="-1"></a>        (<span class="st">&quot;preferred_about_30&quot;</span>, pick(d, <span class="st">&quot;nber_headline_revenue&quot;</span>))]]</span>
 <span id="cb16-64"><a href="#cb16-64" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-65"><a href="#cb16-65" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 5-year values at the BSZ end&#39;s rate, perpetuities at the JR end&#39;s (see R/build.R)</span></span>
@@ -5309,7 +5320,7 @@ guesswork
 <span id="cb16-74"><a href="#cb16-74" aria-hidden="true" tabindex="-1"></a>                    (<span class="st">&quot;walczak_high&quot;</span>, pick(d, <span class="st">&quot;walczak_loss_high&quot;</span>))]:</span>
 <span id="cb16-75"><a href="#cb16-75" aria-hidden="true" tabindex="-1"></a>        loss.append({<span class="st">&quot;source_id&quot;</span>: sid, <span class="st">&quot;annual_loss&quot;</span>: al, <span class="st">&quot;pv_5yr&quot;</span>: al <span class="op">*</span> A5,</span>
 <span id="cb16-76"><a href="#cb16-76" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;pv_perpetuity&quot;</span>: al <span class="op">*</span> Ainf,</span>
-<span id="cb16-77"><a href="#cb16-77" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;net_at_nber_revenue_perpetuity&quot;</span>: ea[<span class="st">&quot;rauh_own&quot;</span>] <span class="op">-</span> al <span class="op">*</span> Ainf})</span>
+<span id="cb16-77"><a href="#cb16-77" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;net_at_nber_revenue_perpetuity&quot;</span>: ea[<span class="st">&quot;jr_own&quot;</span>] <span class="op">-</span> al <span class="op">*</span> Ainf})</span>
 <span id="cb16-78"><a href="#cb16-78" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-79"><a href="#cb16-79" aria-hidden="true" tabindex="-1"></a>    hz <span class="op">=</span> {r[<span class="st">&quot;step_id&quot;</span>]: r <span class="cf">for</span> r <span class="kw">in</span> k[<span class="st">&quot;hoopes&quot;</span>]}</span>
 <span id="cb16-80"><a href="#cb16-80" aria-hidden="true" tabindex="-1"></a>    sqa <span class="op">=</span> {r[<span class="st">&quot;step_id&quot;</span>]: r[<span class="st">&quot;sequential&quot;</span>] <span class="cf">for</span> r <span class="kw">in</span> bridge</span>
@@ -5322,8 +5333,8 @@ guesswork
 <span id="cb16-87"><a href="#cb16-87" aria-hidden="true" tabindex="-1"></a>            (<span class="st">&quot;additional_behavioral_response&quot;</span>,</span>
 <span id="cb16-88"><a href="#cb16-88" aria-hidden="true" tabindex="-1"></a>             sqa[<span class="st">&quot;avoidance&quot;</span>] <span class="op">+</span> sqa[<span class="st">&quot;litigation_survival&quot;</span>]),</span>
 <span id="cb16-89"><a href="#cb16-89" aria-hidden="true" tabindex="-1"></a>            (<span class="st">&quot;real_estate_exclusion&quot;</span>, sqa[<span class="st">&quot;real_estate&quot;</span>]),</span>
-<span id="cb16-90"><a href="#cb16-90" aria-hidden="true" tabindex="-1"></a>            (<span class="st">&quot;rauh_rounding&quot;</span>, ea[<span class="st">&quot;rauh_residual&quot;</span>]),</span>
-<span id="cb16-91"><a href="#cb16-91" aria-hidden="true" tabindex="-1"></a>            (<span class="st">&quot;income_tax_loss&quot;</span>, eb[<span class="st">&quot;rauh_model&quot;</span>] <span class="op">-</span> ea[<span class="st">&quot;rauh_model&quot;</span>])]</span>
+<span id="cb16-90"><a href="#cb16-90" aria-hidden="true" tabindex="-1"></a>            (<span class="st">&quot;rauh_rounding&quot;</span>, ea[<span class="st">&quot;jr_residual&quot;</span>]),</span>
+<span id="cb16-91"><a href="#cb16-91" aria-hidden="true" tabindex="-1"></a>            (<span class="st">&quot;income_tax_loss&quot;</span>, eb[<span class="st">&quot;jr_model&quot;</span>] <span class="op">-</span> ea[<span class="st">&quot;jr_model&quot;</span>])]</span>
 <span id="cb16-92"><a href="#cb16-92" aria-hidden="true" tabindex="-1"></a>    hoopes <span class="op">=</span> [{<span class="st">&quot;step_id&quot;</span>: sid, <span class="st">&quot;ours&quot;</span>: v,</span>
 <span id="cb16-93"><a href="#cb16-93" aria-hidden="true" tabindex="-1"></a>               <span class="st">&quot;hoopes&quot;</span>: num(hz[sid][<span class="st">&quot;delta&quot;</span>]) <span class="cf">if</span> sid <span class="kw">in</span> hz <span class="cf">else</span> math.nan,</span>
 <span id="cb16-94"><a href="#cb16-94" aria-hidden="true" tabindex="-1"></a>               <span class="st">&quot;hoopes_uncertainty&quot;</span>: num(hz[sid][<span class="st">&quot;uncertainty&quot;</span>]) <span class="cf">if</span> sid <span class="kw">in</span> hz <span class="cf">else</span> math.nan}</span>
@@ -5766,6 +5777,40 @@ derived
 JR
 </td>
 <td style="text-align:left;">
+Preferred revenue estimate (abstract and Sec 4.5)
+</td>
+<td style="text-align:left;">
+40 $B
+</td>
+<td style="text-align:left;">
+Rauh et al. SSRN 6340778 abstract p.1 and Sec 4.5 p.14 (range 35-46)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+derived
+</td>
+<td style="text-align:left;">
+JR
+</td>
+<td style="text-align:left;">
+NBER preferred revenue estimate (range 28-36)
+</td>
+<td style="text-align:left;">
+30 $B
+</td>
+<td style="text-align:left;">
+Jaros and Rauh NBER c15504 abstract
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+derived
+</td>
+<td style="text-align:left;">
+JR
+</td>
+<td style="text-align:left;">
 NBER mean NPV (printed)
 </td>
 <td style="text-align:left;">
@@ -5828,40 +5873,6 @@ LAO Prop 40 ballot analysis, Fiscal Effects
 </tr>
 <tr>
 <td style="text-align:left;">
-guesswork
-</td>
-<td style="text-align:left;">
-JR
-</td>
-<td style="text-align:left;">
-Preferred revenue estimate (abstract and Sec 4.5)
-</td>
-<td style="text-align:left;">
-40 $B
-</td>
-<td style="text-align:left;">
-Rauh et al. SSRN 6340778 abstract p.1 and Sec 4.5 p.14 (range 35-46)
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-guesswork
-</td>
-<td style="text-align:left;">
-JR
-</td>
-<td style="text-align:left;">
-NBER preferred revenue estimate (range 28-36)
-</td>
-<td style="text-align:left;">
-30 $B
-</td>
-<td style="text-align:left;">
-Jaros and Rauh NBER c15504 abstract
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 scenario
 </td>
 <td style="text-align:left;">
@@ -5914,7 +5925,7 @@ Jaros and Rauh NBER c15504 Sec. 5.2, eqs. 13-14 (a growing perpetuity; departed 
 </tbody>
 </table>
 </div>
-<p>19 transcribed inputs: data 7, derived 4, guesswork 5, scenario 3.</p>
+<p>19 transcribed inputs: data 7, derived 6, guesswork 3, scenario 3.</p>
 </details>
 </section>
 <section id="what-reproduces" class="level1">

@@ -259,6 +259,7 @@ body.pg-explorer th, body.pg-explorer td { font-family: var(--serif); }
 /* The two smaller survey buttons at the top of the overview's differences fold. */
 a.q-survey { color: var(--paper) !important; text-decoration: none !important; }
 .q-mini { display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0 16px; }
+.q-mini .q-for { align-self: center; font-size: 14px; color: var(--ink-2); }
 .q-survey.q-survey-mini { font-size: 15px; padding: 5px 14px; }
 .q-copy.q-copy-mini { font-size: 15px; padding: 5px 14px; margin-left: 0; }
 
@@ -272,3 +273,8 @@ a.q-survey { color: var(--paper) !important; text-decoration: none !important; }
 .ai-badge:hover, .ai-badge:focus { text-decoration: underline !important; }
 a.ai-badge-yellow, .ai-badge-yellow { background: #f5c518; color: #3b2c00 !important; }
 a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; }
+/* The badge on a line of its own under an overview's title ("This OPA site: <badge>"), so it is
+   not read as a label on the authors' paper (author answer 2026-10-16). Shared by the BSZ and JR
+   overviews; the comparison overview carries no badge while its answer is "Understood". */
+.ai-badge-line { margin: 0 0 12px; font-size: 15px; color: var(--ink-2); }
+.ai-badge-line .ai-badge { font-size: 0.9em; margin-left: 0.35em; }

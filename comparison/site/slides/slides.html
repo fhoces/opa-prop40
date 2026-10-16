@@ -389,6 +389,7 @@ background: transparent; border: 1px solid var(--link); border-radius: 0; cursor
 
 a.q-survey { color: var(--paper) !important; text-decoration: none !important; }
 .q-mini { display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0 16px; }
+.q-mini .q-for { align-self: center; font-size: 14px; color: var(--ink-2); }
 .q-survey.q-survey-mini { font-size: 15px; padding: 5px 14px; }
 .q-copy.q-copy-mini { font-size: 15px; padding: 5px 14px; margin-left: 0; }
 
@@ -398,6 +399,9 @@ letter-spacing: 0; line-height: 1.35; text-decoration: none !important; white-sp
 .ai-badge:hover, .ai-badge:focus { text-decoration: underline !important; }
 a.ai-badge-yellow, .ai-badge-yellow { background: #f5c518; color: #3b2c00 !important; }
 a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; }
+
+.ai-badge-line { margin: 0 0 12px; font-size: 15px; color: var(--ink-2); }
+.ai-badge-line .ai-badge { font-size: 0.9em; margin-left: 0.35em; }
 </style>
     <style type="text/css">
 body, .remark-slide-content, .remark-slide-content h1, .remark-slide-content h2, .remark-slide-content h3 {
@@ -483,7 +487,7 @@ $1 billion or more, payable over five years, with the revenue mainly for health 
 .quote-src[*The New York Times Magazine*, [14 October 2026](https://www.nytimes.com/2026/10/14/magazine/california-billionaires-tax.html)]
 ]
 
-.footnote[Arguments from the official voter guide: California Secretary of State, *Official Voter Information Guide*, general election of 3 November 2026, Proposition 40, arguments in favor and against.]
+.footnote[Arguments from the official voter guide: California Secretary of State, *Official Voter Information Guide*, general election of 3 November 2026, Proposition 40, [argument in favor (p.56) and argument against (p.57)](https://voterguide.sos.ca.gov/propositions/40/arguments-rebuttals.htm).]
 
 ---
 
@@ -560,7 +564,7 @@ class: head-beside
 # With transparency
 
 .beside[Once we can thoroughly appraise each policy analysis, we can understand their differences and
-draw a third OPA in between the two. This lays the foundations for resolving the differences and
+build a third OPA that bridges the two, one input at a time. This lays the foundations for resolving the differences and
 moving closer to a common reality.]
 
 .fig-pinned.fig-split.fig-tall[&lt;img src=&quot;../../../assets/figures/evidence-to-policy-competing-from-analysis-opa-third.svg&quot; alt=&quot;The two competing analyses, each an Open Policy Analysis, and a third Open Policy Analysis between them, drawn from both.&quot;&gt;]
@@ -762,11 +766,11 @@ class: mid-bullets
 
 - Agentic coding tools can substantially reduce the cost of generating fully reproducible and transparent policy analysis. But can we trust the final output?
 - Two challenges: **reliability** (did it make up a result?) and **intelligibility** (are the exposition, methods and code easy to digest for different audiences?).
-- Reliability verification is key. When an OPA is built by the same authors or organization, verification is trivial. When it is built by outside analysts (as in this case), different strategies can be taken:
+- Reliability verification is key. When an OPA is built by the same authors or organization, verification is much easier. When it is built by outside analysts (as in this case), different strategies can be taken:
   - A thorough review of each layer, to confirm that the output is accurate.
   - Running the paper&#39;s robustness cases through the OPA, to see if it generates the same results.
   - Generating a set of tests where the OPA estimates under conditions that are not in the original paper, and asking the authors to run those scenarios in their model to verify that they obtain the same results.
-- Here we adopt a combination of the three strategies above, and disclose for each component of the OPA what has been AI generated, what has been reviewed and what has been verified. Whenever a component has not been fully reviewed, a badge in its title says so.
+- Here we adopt a combination of the three strategies above, and disclose for each component of the OPA what has been AI generated, what has been reviewed and what has been verified. Each analysis&#39;s pages carry a badge that says how far they have been reviewed.
 
 
 ---
@@ -806,7 +810,7 @@ class: opa-card
 .pull-left[
 Jaros and Rauh find a mean net present value of &lt;span class=&quot;nb&quot;&gt;−$38.9B&lt;/span&gt;: the wealth tax minus the income tax lost for ever when billionaires leave. This OPA reruns the authors&#39; own code as shipped, in R with a Python twin and tests, and computes the exact average of their Monte Carlo, &lt;span class=&quot;nb&quot;&gt;−$38.98B&lt;/span&gt;.
 
-**What reproduces.** The main estimate reproduces from the authors&#39; code, and nine mismatches between their text, READMEs and code are recorded. Every variation the papers print reproduces (4 of 4). Ten settings the papers do not print have been sent to the authors to test. [Checks](../../../rjkdc-analysis/site/checks.html)
+**What reproduces.** The main estimate reproduces from the authors&#39; code, and ten mismatches between their text, READMEs and code are recorded. Every variation the papers print reproduces (4 of 4). Nine settings the papers do not print have been sent to the authors to test. [Checks](../../../rjkdc-analysis/site/checks.html)
 
 [The JR analysis overview](../../../rjkdc-analysis/site/)
 ]
@@ -845,11 +849,11 @@ moves the explorer&#39;s BSZ panel dials one at a time to the JR values, in the 
 path). Each amount is what its dials change.
 ]
 
-&lt;div class=&quot;pseudo-eq&quot;&gt;&lt;span class=&quot;term&quot;&gt;&lt;b&gt;$106.8B&lt;/b&gt;&lt;small&gt;BSZ estimate&lt;/small&gt;&lt;/span&gt;&lt;span class=&quot;eq-step&quot;&gt;&lt;span class=&quot;op&quot;&gt;&amp;minus;&lt;/span&gt;&lt;span class=&quot;term&quot;&gt;&lt;b&gt;$29.9B&lt;/b&gt;&lt;small&gt;Billionaires already departed (D)&lt;/small&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;eq-step&quot;&gt;&lt;span class=&quot;op&quot;&gt;&amp;minus;&lt;/span&gt;&lt;span class=&quot;term&quot;&gt;&lt;b&gt;$39.4B&lt;/b&gt;&lt;small&gt;Chance the tax does not survive litigation (q)&lt;/small&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;eq-step&quot;&gt;&lt;span class=&quot;op&quot;&gt;&amp;minus;&lt;/span&gt;&lt;span class=&quot;term&quot;&gt;&lt;b&gt;$81.3B&lt;/b&gt;&lt;small&gt;Lost income tax (H, f, C, r)&lt;/small&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;eq-step&quot;&gt;&lt;span class=&quot;op&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;term&quot;&gt;&lt;b&gt;$4.9B&lt;/b&gt;&lt;small&gt;The other three steps together (W, a, the minor switch)&lt;/small&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;eq-step&quot;&gt;&lt;span class=&quot;op&quot;&gt;&amp;asymp;&lt;/span&gt;&lt;span class=&quot;term&quot;&gt;&lt;b&gt;−$39.0B&lt;/b&gt;&lt;small&gt;JR estimate&lt;/small&gt;&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;pseudo-eq&quot;&gt;&lt;span class=&quot;term&quot;&gt;&lt;b&gt;$106.80B&lt;/b&gt;&lt;small&gt;BSZ estimate&lt;/small&gt;&lt;/span&gt;&lt;span class=&quot;eq-step&quot;&gt;&lt;span class=&quot;op&quot;&gt;&amp;minus;&lt;/span&gt;&lt;span class=&quot;term&quot;&gt;&lt;b&gt;$29.89B&lt;/b&gt;&lt;small&gt;Billionaires already departed (D)&lt;/small&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;eq-step&quot;&gt;&lt;span class=&quot;op&quot;&gt;&amp;minus;&lt;/span&gt;&lt;span class=&quot;term&quot;&gt;&lt;b&gt;$39.44B&lt;/b&gt;&lt;small&gt;Chance the tax does not survive litigation (q)&lt;/small&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;eq-step&quot;&gt;&lt;span class=&quot;op&quot;&gt;&amp;minus;&lt;/span&gt;&lt;span class=&quot;term&quot;&gt;&lt;b&gt;$81.34B&lt;/b&gt;&lt;small&gt;Lost income tax (H, f, C, r)&lt;/small&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;eq-step&quot;&gt;&lt;span class=&quot;op&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;term&quot;&gt;&lt;b&gt;$4.89B&lt;/b&gt;&lt;small&gt;The other three steps together (W, a, the minor switch)&lt;/small&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;eq-step&quot;&gt;&lt;span class=&quot;op&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;term&quot;&gt;&lt;b&gt;−$38.98B&lt;/b&gt;&lt;small&gt;JR estimate&lt;/small&gt;&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;
 
 .small[
-The D and q terms are those two steps of that walk. Lost income tax is the four loss-box dials of the walk added up (H, f, C and r). The last term is the other three steps added up (W, a and the minor switch). The terms add up
-exactly; &quot;about equal&quot; is only rounding. The JR estimate here is the exact average of the
+The D and q terms are those two steps of that walk. Lost income tax is the four loss-box dials of the walk added up (H, f, C and r). The last term is the other three steps added up (W, a and the minor switch). At two decimals the terms add up
+exactly. The JR estimate here is the exact average of the
 authors&#39; Monte Carlo; their seeded run prints &lt;span class=&quot;nb&quot;&gt;−$38.9B&lt;/span&gt;.
 ]
 
@@ -964,7 +968,7 @@ class: tight-table
 
 # The smaller steps
 
-&lt;table class=&quot;dt&quot;&gt;&lt;tr&gt;&lt;th&gt;Input&lt;/th&gt;&lt;th&gt;BSZ value&lt;/th&gt;&lt;th&gt;JR value&lt;/th&gt;&lt;th class=&quot;l&quot;&gt;Kind of claim&lt;/th&gt;&lt;th&gt;Step on the path, (b)&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;i&gt;f&lt;/i&gt;, Share of billionaire income tax lost&lt;/td&gt;&lt;td&gt;the movers&#39; proportional share, plus named leavers&#39; own tax&lt;/td&gt;&lt;td&gt;45% of all&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;guesswork&lt;/td&gt;&lt;td&gt;−$5.0B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;i&gt;C&lt;/i&gt;, Billionaires&#39; annual CA income tax&lt;/td&gt;&lt;td&gt;$3.06B/yr&lt;/td&gt;&lt;td&gt;$4.55B/yr&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;research vs guesswork&lt;/td&gt;&lt;td&gt;−$3.4B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;i&gt;r&lt;/i&gt;, Discount rate for the lost income tax&lt;/td&gt;&lt;td&gt;3%&lt;/td&gt;&lt;td&gt;2.73%&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;scenario vs derived&lt;/td&gt;&lt;td&gt;−$7.5B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;i&gt;W&lt;/i&gt;, Forbes source: which list and valuation date&lt;/td&gt;&lt;td&gt;Forbes 2026, $2,157B&lt;/td&gt;&lt;td&gt;Forbes 2025 grown 7%, $2,027.4B&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;data&lt;/td&gt;&lt;td&gt;−$2.2B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;i&gt;a&lt;/i&gt;, Avoidance and evasion allowance&lt;/td&gt;&lt;td&gt;10.0%&lt;/td&gt;&lt;td&gt;0.0%&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;guesswork&lt;/td&gt;&lt;td&gt;+$12.5B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Three minor inputs&lt;/td&gt;&lt;td&gt;$150B; 0.0%; 1/3&lt;/td&gt;&lt;td&gt;$0B; 0.5%; 0%&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;data vs guesswork, data, guesswork&lt;/td&gt;&lt;td&gt;−$5.4B&lt;/td&gt;&lt;/tr&gt;&lt;tr class=&quot;tot&quot;&gt;&lt;td&gt;The six together&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;−$11.0B&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;table class=&quot;dt&quot;&gt;&lt;tr&gt;&lt;th&gt;Input&lt;/th&gt;&lt;th&gt;BSZ value&lt;/th&gt;&lt;th&gt;JR value&lt;/th&gt;&lt;th class=&quot;l&quot;&gt;Kind of claim&lt;/th&gt;&lt;th&gt;Step on the path, (b)&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;i&gt;f&lt;/i&gt;, Share of billionaire income tax lost&lt;/td&gt;&lt;td&gt;the movers&#39; proportional share, plus named leavers&#39; own tax&lt;/td&gt;&lt;td&gt;45% of all&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;guesswork&lt;/td&gt;&lt;td&gt;−$5.0B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;i&gt;C&lt;/i&gt;, Billionaires&#39; annual CA income tax&lt;/td&gt;&lt;td&gt;$3.06B/yr&lt;/td&gt;&lt;td&gt;$4.55B/yr&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;research vs guesswork&lt;/td&gt;&lt;td&gt;−$3.4B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;i&gt;r&lt;/i&gt;, Discount rate for the lost income tax&lt;/td&gt;&lt;td&gt;3%&lt;/td&gt;&lt;td&gt;2.73%&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;scenario vs derived&lt;/td&gt;&lt;td&gt;−$7.5B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;i&gt;W&lt;/i&gt;, Forbes source: which list and valuation date&lt;/td&gt;&lt;td&gt;Forbes 2026, $2,157B&lt;/td&gt;&lt;td&gt;Forbes 2025 grown 7%, $2,027.4B&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;data vs guesswork on data&lt;/td&gt;&lt;td&gt;−$2.2B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;i&gt;a&lt;/i&gt;, Avoidance and evasion allowance&lt;/td&gt;&lt;td&gt;10.0%&lt;/td&gt;&lt;td&gt;0.0%&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;guesswork&lt;/td&gt;&lt;td&gt;+$12.5B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Three minor inputs&lt;/td&gt;&lt;td&gt;$150B; 0.0%; 1/3&lt;/td&gt;&lt;td&gt;$0B; 0.5%; 0%&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;data vs guesswork, guesswork vs data, guesswork&lt;/td&gt;&lt;td&gt;−$5.4B&lt;/td&gt;&lt;/tr&gt;&lt;tr class=&quot;tot&quot;&gt;&lt;td&gt;The six together&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;−$11.0B&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 
 .small[
 - **Share of income tax lost**: at its benchmark the BSZ analysis counts the avoiders who move

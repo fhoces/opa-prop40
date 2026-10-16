@@ -66,13 +66,13 @@ bridge_input_table <- function(bi) {
                 "litigation_survival", "income_loss_share", "income_loss_share",
                 "income_level", "horizon", "discount_rate", "asset_sales"),
     input = c("W_noncit", "W_core", "lam", "re", "dep_b", "dep_j", "L", "alpha", "q", "own", "f0", "C", "H", "r", "s"),
-    supporting_value = c(s$W_noncit, s$W_core, s$lam, s$re, s$dep_b, s$dep_j, s$L, s$alpha, s$q, s$own, s$f0,
+    bsz_value = c(s$W_noncit, s$W_core, s$lam, s$re, s$dep_b, s$dep_j, s$L, s$alpha, s$q, s$own, s$f0,
                          s$C, s$H, s$r, s$s),
-    rauh_value = c(r$W_noncit, r$W_core, r$lam, r$re, r$dep_b, r$dep_j, r$L, r$alpha, r$q, r$own, r$f0,
+    jr_value = c(r$W_noncit, r$W_core, r$lam, r$re, r$dep_b, r$dep_j, r$L, r$alpha, r$q, r$own, r$f0,
                    r$C, r$H, r$r, r$s),
     unit = c("$B", "$B", "list", "share", "$B", "$B", "$B/yr", "share", "probability", "rule", "share",
              "$B/yr", "years", "rate", "share"),
-    supporting_source = c(
+    bsz_source = c(
       "GGSS 20 Jul 2026 p.2 fn.1 (24 people, about $150B); BSZ PDF p.54 ($132B at 1 Jan)",
       "BSZ export baseline_net_worth ($2,307B, 1 Jul 2026; BSZ PDF p.24, GGSS p.4) minus the non-citizens",
       "the Forbes 2026 list (0 = BSZ list)",
@@ -88,7 +88,7 @@ bridge_input_table <- function(bi) {
       "BSZ PDF p.27 ('If they last say only 5 years')",
       "no rate in the BSZ analysis: 3%, the rate this OPA's BSZ overview uses for the 5-year loss (bsz-analysis/R/site_exports.R, site_pv_rate), the middle of the JR draw (scenario)",
       "BSZ export sell_share (BSZ PDF p.24)"),
-    rauh_source = c(
+    jr_source = c(
       "excluded as too uncertain to collect: 28 international billionaires, $146.3B (treaty preemption and the Act's apportionment clause, \u00a750306(b); JR export nber_international_net_worth; NBER chapter Sec. 3.5, PDF pp.17-18)",
       "chapter Sec. 3.2, PDF pp.12-13 ($2,027.4B at 7% growth); JR export baseline_net_worth (212 billionaires, 2025 Forbes list) grown 7% to 31 Dec 2026 (JR export nber_growth_rate; NBER README, chapter p.19)",
       "the Forbes 2025 list grown 7% (1 = JR list)",
@@ -152,15 +152,15 @@ build_all <- function(k = read_contracts()) {
         horizon_setting = st, output = out, step_id = ids,
         shapley = unname(full_sh), sequential = unname(full_sq),
         sequential_rank = match(ids, sequential_order()), stringsAsFactors = FALSE)
-      # rauh_own is the JR analysis's own expectation (its rate drawn between r_min and
-      # r_max); rauh_residual, what the common function at the JR inputs misses of it, is
+      # jr_own is the JR analysis's own expectation (its rate drawn between r_min and
+      # r_max); jr_residual, what the common function at the JR inputs misses of it, is
       # zero in perpetuity (the JR rate r_jr is defined so) and kept so the identity is
       # tested, not assumed. At a finite common horizon it is what one rate misses of the
       # annuity averaged over the draw, f0 C (annuity(r_jr, H) - E_r[annuity(r, H)]).
       ends[[length(ends) + 1]] <- data.frame(
         horizon_setting = st, output = out,
-        bsz_model = v_sup[[out]], rauh_model = v_rauh[[out]],
-        rauh_own = own_n[[out]], rauh_residual = own_n[[out]] - v_rauh[[out]],
+        bsz_model = v_sup[[out]], jr_model = v_rauh[[out]],
+        jr_own = own_n[[out]], jr_residual = own_n[[out]] - v_rauh[[out]],
         stringsAsFactors = FALSE)
     }
   }
@@ -188,7 +188,7 @@ build_all <- function(k = read_contracts()) {
       "JR mean NPV, analytic expectation of the Monte Carlo = model at all-JR inputs (the rate at 1 / E[1/r])"),
     value = c(ea$bsz_model + (ggss_printed - ea$bsz_model),
               ea$bsz_model, ea$bsz_model, eb$bsz_model,
-              ea$rauh_own, eb$rauh_own),
+              ea$jr_own, eb$jr_own),
     printed_value = c(ggss_printed, pick(so, "ggss_scoring", "printed_value"),
                       pick(so, "tab5_row1_wealth_tax_revenue", "printed_value"), NA,
                       NA, pick(oo, "npv_mc_nber_mean", "printed_value")),
@@ -205,11 +205,11 @@ build_all <- function(k = read_contracts()) {
     label = c(sprintf("Expected WT in the Monte Carlo behind the %s mean NPV",
                       formatC(pick(oo, "npv_mc_nber_mean", "printed_value"), format = "f", digits = 1)),
               "Preferred estimate, 'approximately $30 billion'"),
-    value = c(ea$rauh_own, pick(d, "nber_headline_revenue")),
+    value = c(ea$jr_own, pick(d, "nber_headline_revenue")),
     where = c("NBER p.35, NPV_dist_v8.R (WT uniform between 0 and the 72 ceiling)",
               "NBER p.1 abstract, p.23 (0.5 x the recognized base, Zuckerberg excluded)"),
     default = c(TRUE, FALSE), stringsAsFactors = FALSE)
-  anchors$residual_vs_model <- anchors$value - ea$rauh_model
+  anchors$residual_vs_model <- anchors$value - ea$jr_model
 
   # ---- annual income tax loss: every source on one scale ------------------------
   # 5-year values at the BSZ end's rate (3%), perpetuities at the JR end's (r_jr, 2.73%), so
@@ -231,7 +231,7 @@ build_all <- function(k = read_contracts()) {
   loss$pv_5yr <- loss$annual_loss * A5
   loss$pv_perpetuity <- loss$annual_loss * Ainf
   # Each loss netted against the JR analysis's expected revenue on (a), in perpetuity.
-  loss$net_at_nber_revenue_perpetuity <- ea$rauh_own - loss$pv_perpetuity
+  loss$net_at_nber_revenue_perpetuity <- ea$jr_own - loss$pv_perpetuity
 
   # ---- Hoopes (2026) Figure 2 beside a Hoopes-shaped chain of ours ----------------
   hz <- k$hoopes
@@ -244,8 +244,8 @@ build_all <- function(k = read_contracts()) {
             additional_movers = NA,
             additional_behavioral_response = sq(c("avoidance", "litigation_survival")),
             real_estate_exclusion = sq("real_estate"),
-            rauh_rounding = ea$rauh_residual,
-            income_tax_loss = eb$rauh_model - ea$rauh_model)
+            rauh_rounding = ea$jr_residual,
+            income_tax_loss = eb$jr_model - ea$jr_model)
   hoopes <- data.frame(step_id = names(ours), ours = unname(ours), stringsAsFactors = FALSE)
   hoopes$hoopes <- hz$delta[match(hoopes$step_id, hz$step_id)]
   hoopes$hoopes_uncertainty <- hz$uncertainty[match(hoopes$step_id, hz$step_id)]

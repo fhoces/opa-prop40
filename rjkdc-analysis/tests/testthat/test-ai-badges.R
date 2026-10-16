@@ -51,7 +51,7 @@ test_that("the badge sits on a line of its own, off the authors' names and the p
   badge <- '<a class="ai-badge ai-badge-[a-z]+" href="[^"]*#how-ai-was-used">'
   ov <- paste(readLines(file.path(base, "site", "index.html"), warn = FALSE), collapse = "\n")
   expect_false(grepl(paste0("<h1>[^<]*", badge), ov))
-  expect_true(grepl(paste0('<p class="badge-line">This OPA site: ', badge), ov))
+  expect_true(grepl(paste0('<p class="ai-badge-line">This OPA site: ', badge), ov))
   deck <- readLines(file.path(base, "site", "slides", "slides.Rmd"), warn = FALSE)
   expect_false(grepl("ai-badge", grep("^title:", deck, value = TRUE)))
   expect_true(grepl(paste0("This OPA site: ", badge), grep("^subtitle:", deck, value = TRUE)))

@@ -61,23 +61,23 @@ step_texts <- function(inp, id) {
   if (id == "income_loss_share") {
     k <- ii[ii$input == "own", ]; f <- ii[ii$input == "f0", ]
     return(list(bsz = "the movers' proportional share, plus named leavers' own tax",
-                rjkdc = sprintf("%s of all", fmt_input("f0", f$rauh_value)),
-                bsz_source = paste(k$supporting_source, f$supporting_source, sep = "; "),
-                rjkdc_source = paste(f$rauh_source, k$rauh_source, sep = "; ")))
+                rjkdc = sprintf("%s of all", fmt_input("f0", f$jr_value)),
+                bsz_source = paste(k$bsz_source, f$bsz_source, sep = "; "),
+                rjkdc_source = paste(f$jr_source, k$jr_source, sep = "; ")))
   }
   if (id == "confirmed_departures") {
     b <- ii[ii$input == "dep_b", ]; j <- ii[ii$input == "dep_j", ]
     return(list(bsz = "no named leaver",
                 rjkdc = sprintf("the JR seven: %s on the BSZ list, %s on the JR list",
-                                money(b$rauh_value, 0), money(j$rauh_value, 0)),
-                bsz_source = b$supporting_source, rjkdc_source = paste(b$rauh_source, j$rauh_source, sep = "; "),
+                                money(b$jr_value, 0), money(j$jr_value, 0)),
+                bsz_source = b$bsz_source, rjkdc_source = paste(b$jr_source, j$jr_source, sep = "; "),
                 bsz_short = "None named", rjkdc_short = "JR seven"))
   }
   if (id == "base_list") ii <- ii[ii$input == "W_core", ]
-  out <- list(bsz = fmt_input(ii$input, ii$supporting_value), rjkdc = fmt_input(ii$input, ii$rauh_value),
-              bsz_source = ii$supporting_source, rjkdc_source = ii$rauh_source)
+  out <- list(bsz = fmt_input(ii$input, ii$bsz_value), rjkdc = fmt_input(ii$input, ii$jr_value),
+              bsz_source = ii$bsz_source, rjkdc_source = ii$jr_source)
   # the explorer's asset-sales dial prints whole percentages at every stop, the tables keep 1/3
-  if (id == "asset_sales") { out$bsz_short <- pct(ii$supporting_value, 0); out$rjkdc_short <- pct(ii$rauh_value, 0) }
+  if (id == "asset_sales") { out$bsz_short <- pct(ii$bsz_value, 0); out$rjkdc_short <- pct(ii$jr_value, 0) }
   # the explorer's dial ends name the list, the tables keep the dollars
   if (id == "base_list") {
     out$bsz_short <- "Forbes 2026"; out$rjkdc_short <- "Forbes 2025"
@@ -178,7 +178,7 @@ DIAL_SYMBOLS <- c(base_list = "W", confirmed_departures = "D", avoidance = "a",
 # revenue box too, 2026-10-15).
 DIAL_WORDS <- c(base_list = "wealth", confirmed_departures = "departed", avoidance = "avoidance",
                 litigation_survival = "litigation", income_loss_share = "share lost",
-                income_level = "yearly tax revenue", horizon = "years", discount_rate = "rate")
+                income_level = "yearly income tax", horizon = "years", discount_rate = "rate")
 # The quantities table (render_site()): the four answers the OPA author's credibility column can
 # take, the longest a value-and-why cell may run, and the short source a cell cites, cut from the
 # source columns of export/r/inputs.csv (the first page, section or script line they name).
@@ -248,7 +248,7 @@ build_series <- function(ex) {
           rowlab <- if (grepl("^\\d", b$disputes_row[i])) paste0("DISPUTES row ", b$disputes_row[i], ", ") else "not a DISPUTES row, "
           add(b$step_id[i], "step", b[[m]][i], b$title[i], paste0(rowlab, b$kind[i]))
         }
-        add("nber", "total", e$rauh_model,
+        add("nber", "total", e$jr_model,
             if (o == "a") "JR analysis (Jaros and Rauh, NBER, September 2026): expected revenue in the Monte Carlo"
             else paste0("JR analysis (Jaros and Rauh, NBER, September 2026): mean NPV", Hlab))
         out[[st]][[o]][[m]] <- L
@@ -283,11 +283,11 @@ hoopes_differences <- function(ex, k) {
     sprintf("<b>Vintage.</b> Hoopes's estimate uses the February GGSS text: %s billionaires, %s of wealth, %s gross, %s after 10%% avoidance, rounded up to %s (p.3 fn.1). The July GGSS text covers %s billionaires and %s: %s after avoidance, rounded down to %s. The same printed headline hides a rounding of %s in one vintage and of %s in the other.",
             dv("hoopes_n_billionaires"), money(dv("hoopes_wealth"), 0),
             money(dv("hoopes_gross"), 0), money(dv("hoopes_net"), 0), tok$ggss_headline,
-            n_sup, money(inp$supporting_value[inp$input == "W_core"] + inp$supporting_value[inp$input == "W_noncit"], 0),
+            n_sup, money(inp$bsz_value[inp$input == "W_core"] + inp$bsz_value[inp$input == "W_noncit"], 0),
             money(epv("ggss_scoring"), 1), tok$ggss_headline,
             money(epv("ggss_headline") - dv("hoopes_net"), 0, TRUE), money(-ho("ggss_rounding"), 1, TRUE)),
     sprintf("<b>Residency.</b> His bar is %s, close to Rauh's own %s for dropping Ellison, Houston and Snyder and adding Sacks (Rauh p.5). By July the BSZ analysis has itself dropped Ellison, so our step is a different quantity: the %s of non-US-citizen residents Rauh omits plus the list and valuation-date difference, %s in one order.",
-            hfmt(hs_("residency_correction"), NA), money(-dv("rauh_residency_correction"), 2), money(inp$supporting_value[inp$input == "W_noncit"], 0), money(ho("residency_correction"), 1, TRUE)),
+            hfmt(hs_("residency_correction"), NA), money(-dv("rauh_residency_correction"), 2), money(inp$bsz_value[inp$input == "W_noncit"], 0), money(ho("residency_correction"), 1, TRUE)),
     sprintf("<b>Confirmed departures.</b> His bar is %s; Rauh's own step is %s before avoidance (%s to %s, p.11), and ours is %s at that point of the order. We could not trace his figure to a number in Rauh et al.",
             hfmt(hs_("confirmed_departures"), NA), money(opp("revenue_confirmed6") - opp("revenue_baseline"), 2, TRUE),
             opp("revenue_baseline"), opp("revenue_confirmed6"), money(ho("confirmed_departures"), 1, TRUE)),
@@ -298,16 +298,16 @@ hoopes_differences <- function(ex, k) {
             hfmt(hs_("additional_behavioral_response"), NA), opp("revenue_expanded10"), opp("revenue_literature_calibrated"),
             money(opp("revenue_literature_calibrated") - opp("revenue_expanded10"), 2, TRUE),
             money(ho("additional_behavioral_response"), 1, TRUE),
-            fmt_input("alpha", inp$supporting_value[inp$input == "alpha"])),
+            fmt_input("alpha", inp$bsz_value[inp$input == "alpha"])),
     sprintf("<b>Real estate.</b> His bar is drawn near zero (%s read off the chart), while his text says the exclusion reduces the base by about %s (p.4). The two are consistent: %s of base is about %s of revenue at 5%%. Ours is %s.",
             hfmt(hs_("real_estate_exclusion"), hz$hoopes_uncertainty[hz$step_id == "real_estate_exclusion"]),
             money(dv("hoopes_real_estate_base"), 0), money(dv("hoopes_real_estate_base"), 0),
             money(0.05 * dv("hoopes_real_estate_base"), 1), money(ho("real_estate_exclusion"), 2, TRUE)),
     sprintf("<b>Level before income tax.</b> His revenue level before the income-tax bar is about %s, near the March 2026 version's preferred 'about %s' (p.14). Ours ends at %s, the expected revenue in the Monte Carlo behind the September 2026 version's mean NPV (its text prefers 'approximately %s', p.1).",
-            money(hz_pre, 1), money(dv("rauh_headline_revenue"), 0), money(ea$rauh_own, 2), money(dv("nber_headline_revenue"), 0)),
+            money(hz_pre, 1), money(dv("rauh_headline_revenue"), 0), money(ea$jr_own, 2), money(dv("nber_headline_revenue"), 0)),
     sprintf("<b>Income tax.</b> His single bar, %s, ends at %s, close to the March 2026 version's %s. Ours is %s, the September 2026 version's present value of lost income tax against %s of revenue, and we split it into five labelled steps (the share lost, the income tax level, the horizon, the discount rate, asset-sale tax), which interact with the base steps.",
             hfmt(hs_("income_tax_loss"), NA), money(hz_end, 1), money(opp("npv_mc_ssrn_mean"), 1), money(ho("income_tax_loss"), 2, TRUE),
-            money(ea$rauh_own, 2)),
+            money(ea$jr_own, 2)),
     "<b>Order and labels.</b> His is one sequential order, with no provenance labels. Ours moves the explorer's dials in the order of the equation at the top (D, q, the loss box's dials, then the rest), with each step labelled data, research, guesswork, scenario or derived (\"A vs B\" reads the BSZ value's kind against the JR value's). The Shapley average (a step's effect averaged over every order the inputs could be switched in) checks it without choosing an order, and the column here reads our steps in his order.",
     "<b>Steps he does not have.</b> The non-US-citizen residents, the BSZ analysis's avoidance allowance being dropped, the asset-sale income tax, and the litigation weight of the September 2026 version (which postdates his note)."
   )
@@ -338,9 +338,9 @@ render_site <- function(root = comparison_root(),
   tok$bsz_row1_exact <- money(epv("bsz_tab5_row1"), 3)
   # the comparison's pages print the JR estimate as the exact expectation of the authors' model
   # (author decision 2026-10-15); footnote 1 gives the paper's seeded-run figure
-  tok$nber_npv <- money(eb$rauh_own, 1)
+  tok$nber_npv <- money(eb$jr_own, 1)
   # the overview's first paragraph rounds it to whole billions and names the chapter's own figure
-  tok$nber_npv_round <- money(-eb$rauh_own, 0)
+  tok$nber_npv_round <- money(-eb$jr_own, 0)
   # The discount rate at each end (the rate dial, author decision 2026-10-15), from the exports:
   # 3% at the BSZ end, 1 / E[1/r] over the JR draw at the JR end.
   tok$r_bsz <- rate_txt(mv("r_bsz")); tok$r_jr <- rate_txt(mv("r_jr"))
@@ -355,12 +355,12 @@ render_site <- function(root = comparison_root(),
   # run (the contract row npv_mc_nber_mean, printed -$38.9B); footnote 1 says so, and the JR
   # analysis's own pages keep the printed figure. The explorer reads the same values from
   # assets/comparison-data.js.
-  rj_main <- eb$rauh_own
+  rj_main <- eb$jr_own
   rj_printed <- ep$printed_value[ep$endpoint_id == "rauh_nber_npv"]
   tok$nber_printed <- money(rj_printed, 1)
   tok$hl_bsz <- money(eb$bsz_model, 1)
   tok$hl_rjkdc <- money(rj_main, 1)
-  tok$jr_end_b <- money(eb$rauh_model, 1)
+  tok$jr_end_b <- money(eb$jr_model, 1)
   tok$bsz_end_b <- money(eb$bsz_model, 1)
   # Footnote 1's provenance sentence for the JR number, on both pages (hrefs per page).
   # The last sentence glosses "seeded run" (test-site.R pins the first two together, so the gloss
@@ -370,18 +370,18 @@ render_site <- function(root = comparison_root(),
     "The exact average of the same formula is %s, used throughout this page",
     "(<a href=\"%s\">report</a>, <a href=\"%s\">Step 6 of the JR analysis's report</a>).",
     "A seeded run starts the random draws from a fixed number, so it gives the same draws every time."),
-    money(rj_printed, 1), money(eb$rauh_own, 2), report, jr_report)
+    money(rj_printed, 1), money(eb$jr_own, 2), report, jr_report)
   tok$jr_fn_root <- jr_fn("comparison/site/repro.html#the-main-estimate", "rjkdc-analysis/site/repro.html#step-npv")
   tok$jr_fn_x <- jr_fn("../repro.html#the-main-estimate", "../../../rjkdc-analysis/site/repro.html#step-npv")
   # The gap on (b), stated in the explorer's footnote, not in the headline.
-  gap_b <- eb$bsz_model - eb$rauh_model
+  gap_b <- eb$bsz_model - eb$jr_model
   tok$gap_b <- money(gap_b, 1)
   # Output (a), the secondary setting.
-  gap <- ea$bsz_model - ea$rauh_own
+  gap <- ea$bsz_model - ea$jr_own
   tok$gap_a <- money(gap, 1)
   tok$gap_a_signed <- money(-gap, 1)
   tok$bsz_end_a <- money(ea$bsz_model, 1)
-  tok$nber_end_a <- money(ea$rauh_own, 1)
+  tok$nber_end_a <- money(ea$jr_own, 1)
 
   # ---- the bridge series for the data file (the report draws the chart) ----
   series <- build_series(ex)
@@ -466,7 +466,7 @@ render_site <- function(root = comparison_root(),
       bsz = "BSZ: about the payment period, treating the responses as temporary.",
       rjkdc = "JR: for ever, since leavers are assumed not to return once the Act permanently lifts the intangible property tax cap."),
     # the JR draw is r - g, the real rate net of the lost tax's growth (chapter eqs. 14 and 18);
-    # one rate matches the draw's average only for a perpetuity (model.R, rauh_residual)
+    # one rate matches the draw's average only for a perpetuity (model.R, jr_residual)
     discount_rate = c(
       bsz = sprintf("%s: the rate this OPA applies to the BSZ analysis's 5-year loss, the middle of the JR range. BSZ give no rate.",
                     tok$r_bsz),
@@ -509,7 +509,7 @@ render_site <- function(root = comparison_root(),
   q_cell <- function(id, side) {
     ii <- inp[inp$step_id == id, ]
     if (id == "income_loss_share" && side == "rjkdc") ii <- ii[order(ii$input != "f0"), ]
-    src <- ii[[if (side == "bsz") "supporting_source" else "rauh_source"]]
+    src <- ii[[if (side == "bsz") "bsz_source" else "jr_source"]]
     hit <- quantity_source(unlist(regmatches(src, regexpr(QUANTITY_SOURCE_PATTERN, src))))
     tip <- sub("^[^:]{1,14}: ", "", end_tips[[id]][[side]])
     tip <- paste0(toupper(substr(tip, 1, 1)), substring(tip, 2))
@@ -553,7 +553,7 @@ render_site <- function(root = comparison_root(),
   # The same table on the explorer and in the overview's "The differences" fold (author request
   # 2026-10-15); only the link to the report differs by page.
   q_table <- function(report) paste0(
-    '    <p class="q-sub">All these are empirical quantities. Their values should not depend on whether one\n',
+    '    <p class="q-sub">Most of these are empirical quantities; H and r are scenario choices. Their values should not depend on whether one\n',
     '    supports or opposes a wealth tax. An expert should be able to appraise each value from more to less\n',
     '    credible.</p>\n',
     '    <table class="q-table">\n',
@@ -576,11 +576,11 @@ render_site <- function(root = comparison_root(),
                           esc(sv$url[1]), esc(paste(sv$url, collapse = " ")))
     else '<span class="q-survey is-off" aria-disabled="true">Take the survey: what do you think these values are? (opening soon)</span>',
     '</p>\n',
-    '    <p class="q-share">Share this survey with people you think have expertise in this area, to learn what they think these values are.',
+    '    <p class="q-share">The survey is primarily for economists and policy analysts. Share this survey with people you think have expertise in this area, to learn what they think these values are.',
     if (nrow(sv)) paste0(' <button type="button" class="q-copy" data-url="', SURVEY_SHARE_URL, '">Copy link</button>') else "",
     '</p>')
   tok$quantity_survey_x <- paste0(
-    '    <p class="q-sub">All these are empirical quantities. Their values should not depend on whether one\n',
+    '    <p class="q-sub">Most of these are empirical quantities; H and r are scenario choices. Their values should not depend on whether one\n',
     '    supports or opposes a wealth tax. An expert should be able to appraise each value from more to less\n',
     '    credible.</p>\n', survey_button)
   # the overview's differences fold: the same button under its table (author request 2026-10-15)
@@ -593,6 +593,7 @@ render_site <- function(root = comparison_root(),
     sprintf('<a class="q-survey q-survey-mini" href="%s" data-links="%s" target="_blank" rel="noopener">Take the survey</a>',
             esc(sv$url[1]), esc(paste(sv$url, collapse = " "))),
     sprintf('<button type="button" class="q-copy q-copy-mini" data-url="%s">Share the survey: copy link</button>', SURVEY_SHARE_URL),
+    '<span class="q-for">The survey is primarily for economists and policy analysts.</span>',
     '</p>') else ""
   # Which analysis's value sits at the left end of dial `id` in `panel`: the smaller one (ties
   # and the minor switch, whose two ends are not numbers, keep the BSZ value at the left). The
@@ -718,7 +719,12 @@ render_site <- function(root = comparison_root(),
   jr_label <- "JR estimate"
   # the six labels, left to right; the top equation and the Apply block both print these
   eq_labels <- c("BSZ estimate", et$terms$label, jr_label)
-  eq_ops <- c("", ifelse(et$terms$change < 0, "&minus;", "+"), "&asymp;")
+  # The last sign is "=" (author decision 2026-10-16): every amount prints to two decimals, and
+  # at two decimals the rounded terms add up exactly to the rounded JR end. Stop if they ever do not.
+  eq_ops <- c("", ifelse(et$terms$change < 0, "&minus;", "+"), "=")
+  stopifnot(abs(round_half_out(eb$bsz_model, 2) +
+                  sum(sign(et$terms$change) * round_half_out(abs(et$terms$change), 2)) -
+                  sign(eb$jr_model) * round_half_out(abs(eb$jr_model), 2)) < 1e-9)
   # One builder for both equations (author request 2026-10-15: the Apply block mirrors the top
   # equation, so both share this markup and its CSS). `inner` is each term's content, `attrs`
   # each term's attributes; the first term has no sign, and each later sign sits in one
@@ -731,14 +737,14 @@ render_site <- function(root = comparison_root(),
               eq_ops[j], term_attrs[j], inner[j]), ""), collapse = "\n"), "\n",
     '</div>')
   say <- function(j) sprintf("%s %s for %s", if (et$terms$change[j] < 0) "minus" else "plus",
-                             money(abs(et$terms$change[j]), 1), tolower(et$terms$label[j]))
-  eq_amounts <- c(money(eb$bsz_model, 1), money(abs(et$terms$change), 1), money(eb$rauh_model, 1))
+                             money(abs(et$terms$change[j]), 2), tolower(et$terms$label[j]))
+  eq_amounts <- c(money(eb$bsz_model, 2), money(abs(et$terms$change), 2), money(eb$jr_model, 2))
   pseudo_eq <- function(page) eq_html(
     "pseudo-eq",
     paste0(' role="img" aria-label="', esc(sprintf(
-      "The BSZ estimate, %s, %s, gives about the JR estimate, %s.",
-      money(eb$bsz_model, 1), paste(vapply(seq_len(nrow(et$terms)), say, ""), collapse = ", "),
-      money(eb$rauh_model, 1))), '"'),
+      "The BSZ estimate, %s, %s, equals the JR estimate, %s.",
+      money(eb$bsz_model, 2), paste(vapply(seq_len(nrow(et$terms)), say, ""), collapse = ", "),
+      money(eb$jr_model, 2))), '"'),
     # the overview's labels drop the bracketed dial letters (author request 2026-10-15): the
     # letters name the explorer's dials, which the overview does not show
     sprintf("<b>%s</b><small>%s</small>", eq_amounts,
@@ -768,8 +774,7 @@ render_site <- function(root = comparison_root(),
     rep("", length(eq_labels)))
   tok$pseudo_eq <- pseudo_eq("root")
   # Both notes end by saying the terms depend on the path's order, and why, and are not totals;
-  # that the rounded terms add up to the JR end only to rounding (the unrounded sum, the BSZ end
-  # plus every step of the path, is the JR end exactly); and the two analyses' own present values
+  # that the amounts, at two decimals, add up exactly to the JR end; and the two analyses' own present values
   # of lost income tax for scale (the equation's loss term is a change along the path, not either
   # of these). The order-free check is the report's fold #order-free-check; the link names no
   # method (test-site.R bans the method's name on both pages). Every amount is kept on one line
@@ -780,9 +785,9 @@ render_site <- function(root = comparison_root(),
     "and its size depends on the order, because the inputs multiply each other: a departure",
     "matters more when more wealth is left to tax. The report's <a href=\"%s\">order-free check</a>",
     "averages each input's step over every order the dials could move in. The amounts are rounded",
-    "to one decimal. Unrounded, they add up exactly to %s. For scale, the lost income tax itself",
+    "to two decimals and add up exactly to the JR estimate, %s. For scale, the lost income tax itself",
     "is worth %s today in the JR analysis and %s in the BSZ analysis."),
-    href, nowrap(money(eb$bsz_model + sum(dp$change), 2)),
+    href, nowrap(money(eb$jr_model, 2)),
     nowrap(money(score_common(bi0$rauh)[["PV"]], 1)), nowrap(money(score_common(bi0$sup)[["PV"]], 1)))
   # The explorer's note names the dial letters and the Walk the path button.
   eq_note <- function(href, panel, walk, of_href) paste0(
@@ -830,7 +835,7 @@ render_site <- function(root = comparison_root(),
     sprintf('    <tr><td>Hoopes, SSRN 6428578</td><td>2026 (uses the February GGSS text)</td><td>%s billionaires, %s (p.3 fn.1)</td></tr>',
             dv("hoopes_n_billionaires"), money(dv("hoopes_wealth"), 0)),
     sprintf('    <tr><td>GGSS expert report</td><td>updated 20 Jul 2026</td><td>%s billionaires, %s at 1 Jul 2026, non-citizens included, Ellison excluded</td></tr>',
-            n_sup, money(inp$supporting_value[inp$input == "W_core"] + inp$supporting_value[inp$input == "W_noncit"], 0)),
+            n_sup, money(inp$bsz_value[inp$input == "W_core"] + inp$bsz_value[inp$input == "W_noncit"], 0)),
     '    <tr><td>Boll, Saez, Zucman, NBER WP 35218</td><td>Aug 2026 revision</td><td>same 1 Jul 2026 base; Table 5 adds missing billionaires and leaver scenarios</td></tr>',
     sprintf('    <tr><td>Jaros and Rauh, NBER c15504</td><td>Sep 2026</td><td>Rauh\'s base grown %s to 31 Dec 2026, seven departures, litigation weight</td></tr>', pct(pick(k$rjkdc$inputs, "nber_growth_rate"))),
     # the LAO's three bounds (LAO pp.2-3); the income tax one is read from document-inputs.csv
@@ -859,7 +864,7 @@ render_site <- function(root = comparison_root(),
   # rjkdc_end_b).
   headline <- list(bsz = eb$bsz_model, rjkdc = rj_main,
                    rjkdc_printed = rj_printed,
-                   bsz_end_b = eb$bsz_model, rjkdc_end_b = eb$rauh_model)
+                   bsz_end_b = eb$bsz_model, rjkdc_end_b = eb$jr_model)
   # The sliders: the two input vectors (bridge_inputs(), full precision; the perpetuity is
   # written "Inf"), the horizon settings and the number of steps of slider_inputs(), and for
   # each slider the arguments it moves (one, or two for the share-lost step) and its two

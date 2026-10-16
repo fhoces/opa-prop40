@@ -64,7 +64,7 @@ test_that("the Apply block, after the two panels, is the top equation's grid wit
   # the estimate, so its sign is a plus
   ops <- regmatches(ap, gregexpr('(?<=<span class="op">)[^<]*(?=</span>)', ap, perl = TRUE))[[1]]
   ch <- c(dp$change[main], sum(dp$change[loss]), sum(dp$change[rest]))
-  expect_identical(ops, c(ifelse(ch < 0, "&minus;", "+"), "&asymp;"))
+  expect_identical(ops, c(ifelse(ch < 0, "&minus;", "+"), "="))
   expect_gt(ch[4], 0)
   # each Apply button names the top term it marks, and starts unpressed
   steps <- sub('.*data-steps="([^"]*)".*', "\\1", btn[2:5])
@@ -101,10 +101,10 @@ test_that("pressing the Apply buttons left to right gives each printed term exac
   expect_lt(max(abs(v - c(dp$from[1], dp$to[last]))), 1e-9)
   # each press changes the panel by the printed term: same amount, same sign
   d <- diff(v)
-  expect_identical(vapply(abs(d), money, "", 1), b[2:5])
+  expect_identical(vapply(abs(d), money, "", 2), b[2:5])
   expect_identical(ifelse(d < 0, "&minus;", "+"), ops[1:4])
-  expect_identical(money(v[1], 1), b[1]); expect_identical(money(v[5], 1), b[6])
-  expect_identical(b[2:5], c("$29.9B", "$39.4B", "$81.3B", "$4.9B"))
+  expect_identical(money(v[1], 2), b[1]); expect_identical(money(v[5], 2), b[6])
+  expect_identical(b[2:5], c("$29.89B", "$39.44B", "$81.34B", "$4.89B"))
   expect_identical(ops[4], "+")
 })
 
@@ -112,7 +112,7 @@ test_that("both pages carry the pseudo-equation: D and q, the loss box added up,
   en <- read_csv_plain(file.path(root, "comparison", "export", "r", "ends.csv"))
   eb <- en[en$horizon_setting == "own" & en$output == "b", ]
   dp <- read_csv_plain(file.path(root, "comparison", "export", "r", "dial_path.csv"))
-  expect_equal(eb$bsz_model + sum(dp$change), eb$rauh_own, tolerance = 1e-9)
+  expect_equal(eb$bsz_model + sum(dp$change), eb$jr_own, tolerance = 1e-9)
   ep <- read_csv_plain(file.path(root, "comparison", "export", "r", "endpoints.csv"))
   for (p in pages) {
     html <- read_page(p)
@@ -131,28 +131,30 @@ test_that("both pages carry the pseudo-equation: D and q, the loss box added up,
     lt <- function(x) if (identical(p, explorer)) paste0(" (", x, ")") else ""
     pins <- c(vapply(main, function(i) sprintf(
       '<span class="term" data-steps="%d"><b>%s</b><small>%s%s</small></span>',
-      i, money(abs(dp$change[i]), 1), dp$title[i], lt(dp$symbol[i])), ""),
+      i, money(abs(dp$change[i]), 2), dp$title[i], lt(dp$symbol[i])), ""),
       sprintf('<span class="term" data-steps="%s"><b>%s</b><small>Lost income tax%s</small></span>',
-              paste(loss, collapse = " "), money(abs(sum(dp$change[loss])), 1), lt("H, f, C, r")),
+              paste(loss, collapse = " "), money(abs(sum(dp$change[loss])), 2), lt("H, f, C, r")),
       sprintf('<span class="term" data-steps="%s"><b>%s</b><small>The other three steps together%s</small></span>',
-              paste(rest, collapse = " "), money(abs(sum(dp$change[rest])), 1), lt("W, a, the minor switch")))
+              paste(rest, collapse = " "), money(abs(sum(dp$change[rest])), 2), lt("W, a, the minor switch")))
     if (!identical(p, explorer)) expect_false(grepl("\\([A-Za-z, ]+\\)</small>", eq), label = "no letters on the overview")
     at <- vapply(pins, function(x) regexpr(x, eq, fixed = TRUE)[[1]], 0)
     expect_true(all(at > 0), label = paste(p, "terms"))
     expect_true(all(diff(at) > 0), label = paste(p, "term order"))
     expect_identical(lengths(regmatches(eq, gregexpr('class="term"', eq, fixed = TRUE))), 6L, label = paste(p, "six terms"))
-    # the four printed terms take the printed BSZ estimate to within rounding of the printed JR
-    # estimate (the page prints "about", &asymp;): in the equation's order the rounded terms sum
-    # to -38.9 against the printed -39.0
-    printed <- round(c(dp$change[main], sum(dp$change[loss]), sum(dp$change[rest])), 1)
-    expect_lte(abs(round(eb$bsz_model, 1) + sum(printed) - round(eb$rauh_own, 1)), 0.1 + 1e-9, label = paste(p, "sum"))
-    expect_true(grepl('<span class="op">&asymp;</span><span class="term" data-end=', eq, fixed = TRUE), label = paste(p, "about"))
+    # the four printed terms take the printed BSZ estimate exactly to the printed JR estimate
+    # (author decision 2026-10-16: "=", every amount to two decimals, 106.80 - 29.89 - 39.44 -
+    # 81.34 + 4.89 = -38.98)
+    printed <- round(c(dp$change[main], sum(dp$change[loss]), sum(dp$change[rest])), 2)
+    expect_lt(abs(round(eb$bsz_model, 2) + sum(printed) - round(eb$jr_own, 2)), 1e-9, label = paste(p, "sum"))
+    expect_true(grepl('<span class="op">=</span><span class="term" data-end=', eq, fixed = TRUE), label = paste(p, "equals"))
+    expect_false(grepl("&asymp;", eq, fixed = TRUE), label = paste(p, "no about"))
+    expect_true(grepl(sprintf('<b>%s</b><small>BSZ estimate</small>', money(eb$bsz_model, 2)), eq, fixed = TRUE), label = p)
     # BSZ at the left, JR at the right
     expect_lt(regexpr("<small>BSZ estimate</small>", eq, fixed = TRUE)[[1]], at[1])
     expect_gt(max(gregexpr("JR estimate", eq, fixed = TRUE)[[1]]), at[length(at)])
     # the printed end is the JR estimate, the authors' exact mean (-$39.0B), and no rate-gap note is left
-    expect_true(grepl(sprintf('<b>%s</b><small>JR estimate</small>', money(eb$rauh_own, 1)), eq, fixed = TRUE), label = p)
-    expect_identical(money(eb$rauh_own, 1), "\u2212$39.0B")
+    expect_true(grepl(sprintf('<b>%s</b><small>JR estimate</small>', money(eb$jr_own, 2)), eq, fixed = TRUE), label = p)
+    expect_identical(money(eb$jr_own, 1), "\u2212$39.0B")
     expect_false(grepl("eq-gap", html, fixed = TRUE), label = p)
     for (x in c("rate gap", "one 3% rate", "worth about $6.7B")) expect_false(grepl(x, html, fixed = TRUE), label = paste(p, x))
     # no Shapley numbers or wording on either page
@@ -208,15 +210,15 @@ test_that("key numbers appear on the pages as computed", {
   expect_true(grepl(money(v("bsz_tab5_row1"), 1), html, fixed = TRUE))
   # the overview's table of the two analyses on the common output went on 2026-10-15 (it is in
   # the report): the JR estimate is the equation's right end
-  expect_true(grepl(money(eb$rauh_model, 1), html, fixed = TRUE))
+  expect_true(grepl(money(eb$jr_model, 1), html, fixed = TRUE))
   # the explorer's footnote: both ends and the gap on the net fiscal effect, output (b)
   expect_true(grepl(sprintf("The BSZ end is <b>%s</b> and the JR end <b>%s</b>, a gap of <b>%s</b>.",
-                            money(eb$bsz_model, 1), money(eb$rauh_model, 1), money(eb$bsz_model - eb$rauh_model, 1)),
+                            money(eb$bsz_model, 1), money(eb$jr_model, 1), money(eb$bsz_model - eb$jr_model, 1)),
                     ex_html, fixed = TRUE))
   # the explorer shows the net fiscal effect only: no output setting, no gross revenue
   # number (the two ends on output (a), its gap, Table 5 row 1), no output (a) in its data file
   expect_false(grepl("data-out=", ex_html, fixed = TRUE))
-  for (x in c(money(ea$bsz_model, 1), money(ea$rauh_own, 1), money(ea$bsz_model - ea$rauh_own, 1),
+  for (x in c(money(ea$bsz_model, 1), money(ea$jr_own, 1), money(ea$bsz_model - ea$jr_own, 1),
               money(ea$bsz_model, 3)))
     expect_false(grepl(x, ex_html, fixed = TRUE), label = paste("explorer shows", x))
   txt <- read_page(file.path(root, "assets", "comparison-data.js"))
@@ -238,7 +240,7 @@ test_that("the switchboard: all off is the BSZ end, all on is the JR end", {
       g <- g[order(g$mask), ]
       expect_equal(nrow(g), 2^n, label = paste(st, o, "rows"))
       expect_equal(g$value[g$mask == 0], e$bsz_model, tolerance = 1e-9, label = paste(st, o, "all off"))
-      expect_equal(g$value[nrow(g)], e$rauh_model, tolerance = 1e-9,
+      expect_equal(g$value[nrow(g)], e$jr_model, tolerance = 1e-9,
                    label = paste(st, o, "all on"))
     }
   }
@@ -336,8 +338,8 @@ test_that("the sliders' ends are the two analyses, and the departures dial stops
   all_at <- function(p) stats::setNames(as.list(rep(p, length(ids))), ids)
   far <- stats::setNames(as.list(vapply(ids, slider_max, 0L)), ids)
   expect_equal(slider_value(bi, "bsz", all_at(0)), eb$bsz_model, tolerance = 1e-12)
-  expect_equal(slider_value(bi, "rjkdc", all_at(0)), eb$rauh_model, tolerance = 1e-12)
-  expect_equal(slider_value(bi, "bsz", far), eb$rauh_model, tolerance = 1e-12)
+  expect_equal(slider_value(bi, "rjkdc", all_at(0)), eb$jr_model, tolerance = 1e-12)
+  expect_equal(slider_value(bi, "bsz", far), eb$jr_model, tolerance = 1e-12)
   expect_equal(slider_value(bi, "rjkdc", far), eb$bsz_model, tolerance = 1e-12)
   # the far positions are the other analysis's values exactly; the horizon steps through the settings
   xf <- slider_inputs(bi$sup, bi$rauh, far, bi$ladder)
@@ -428,8 +430,8 @@ test_that("model.js returns the R values on every slider mix of the sample, to 1
   en <- read_csv_plain(file.path(root, "comparison", "export", "r", "ends.csv"))
   eb <- en[en$horizon_setting == "own" & en$output == "b", ]
   expect_lt(abs(v[ss$panel == "bsz" & ss$draw == 1] - eb$bsz_model), 1e-9)
-  expect_lt(abs(v[ss$panel == "rjkdc" & ss$draw == 1] - eb$rauh_model), 1e-9)
-  expect_lt(abs(v[ss$panel == "bsz" & ss$draw == 2] - eb$rauh_model), 1e-9)
+  expect_lt(abs(v[ss$panel == "rjkdc" & ss$draw == 1] - eb$jr_model), 1e-9)
+  expect_lt(abs(v[ss$panel == "bsz" & ss$draw == 2] - eb$jr_model), 1e-9)
   expect_lt(abs(v[ss$panel == "rjkdc" & ss$draw == 2] - eb$bsz_model), 1e-9)
 })
 
@@ -439,7 +441,7 @@ test_that("the headline is the two main estimates; the bridge's two ends under (
   ep <- read_csv_plain(file.path(root, "comparison", "export", "r", "endpoints.csv"))
   # the JR headline on the comparison's pages is the exact expectation of the authors' model
   # (author decision 2026-10-15); the paper's seeded run stays in footnote 1
-  rj <- eb$rauh_own
+  rj <- eb$jr_own
   rj_run <- ep$contract_value[ep$endpoint_id == "rauh_nber_npv"]
   rj_printed <- ep$printed_value[ep$endpoint_id == "rauh_nber_npv"]
   # the two values, pinned: BSZ net total over 5 years; JR NBER exact mean NPV
@@ -451,13 +453,13 @@ test_that("the headline is the two main estimates; the bridge's two ends under (
   # under (b) the two ends are the BSZ net constructed from Table 5 row 1 and the analytic
   # expectation of the NBER Monte Carlo, which the seeded run approximates
   expect_equal(eb$bsz_model, ep$value[ep$endpoint_id == "bsz_net_constructed"])
-  expect_equal(eb$rauh_own, ep$value[ep$endpoint_id == "rauh_nber_npv"])
-  expect_lt(abs(eb$rauh_model - eb$rauh_own), 1e-9)
-  expect_equal(round(eb$rauh_own, 2), -38.98)
+  expect_equal(eb$jr_own, ep$value[ep$endpoint_id == "rauh_nber_npv"])
+  expect_lt(abs(eb$jr_model - eb$jr_own), 1e-9)
+  expect_equal(round(eb$jr_own, 2), -38.98)
   # the Shapley steps between them add up
   br <- read_csv_plain(file.path(root, "comparison", "export", "r", "bridge.csv"))
   b <- br[br$horizon_setting == "own" & br$output == "b", ]
-  expect_equal(sum(b$shapley), eb$rauh_model - eb$bsz_model,
+  expect_equal(sum(b$shapley), eb$jr_model - eb$bsz_model,
                tolerance = 1e-9)
   for (p in pages) {
     html <- read_page(p)
@@ -481,12 +483,12 @@ test_that("the headline is the two main estimates; the bridge's two ends under (
   # the JR panel head and its "With these sliders" line read the same number at the start
   ex_html <- read_page(explorer)
   expect_true(grepl(sprintf('id="ph-rjkdc-main">%s<', money(rj, 1)), ex_html, fixed = TRUE))
-  expect_true(grepl(sprintf('id="now-rjkdc" aria-live="polite">%s<', money(eb$rauh_model, 1)), ex_html, fixed = TRUE))
+  expect_true(grepl(sprintf('id="now-rjkdc" aria-live="polite">%s<', money(eb$jr_model, 1)), ex_html, fixed = TRUE))
   expect_false(grepl("seeded run prints", ex_html, fixed = TRUE))
   B <- D$series$own$b$shapley
   expect_equal(B[[1]]$id, "bsz"); expect_equal(B[[1]]$value, eb$bsz_model)
-  expect_equal(B[[length(B)]]$id, "nber"); expect_equal(B[[length(B)]]$value, eb$rauh_model)
-  expect_equal(D$headline$rjkdc_end_b, eb$rauh_model)
+  expect_equal(B[[length(B)]]$id, "nber"); expect_equal(B[[length(B)]]$value, eb$jr_model)
+  expect_equal(D$headline$rjkdc_end_b, eb$jr_model)
   expect_null(D$headline$jr_rate_gap)
   # neither the GGSS headline nor the March 2026 version is an end on the pages
   ids <- vapply(B, `[[`, "", "id")
@@ -516,7 +518,7 @@ test_that("the explorer's quantities section: the subtitle and the survey button
   expect_true(grepl('<h3 id="q-title">But what are the actual quantities?</h3>', html, fixed = TRUE))
   expect_gt(at('<section class="quantities"'), at('<div class="pseudo-eq apply-eq"'))
   expect_lt(at('<section class="quantities"'), at('<details class="fold notes" id="notes-estimates">'))
-  expect_true(grepl("All these are empirical quantities. Their values should not depend on whether one\n    supports or opposes a wealth tax. An expert should be able to appraise each value from more to less\n    credible.", html, fixed = TRUE))
+  expect_true(grepl("Most of these are empirical quantities; H and r are scenario choices. Their values should not depend on whether one\n    supports or opposes a wealth tax. An expert should be able to appraise each value from more to less\n    credible.", html, fixed = TRUE))
   expect_false(grepl('<table class="q-table">', html, fixed = TRUE))
   expect_true(grepl('<p class="q-cta">', html, fixed = TRUE))
   expect_true(grepl("Take the survey: what do you think these values are?", html, fixed = TRUE))

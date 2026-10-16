@@ -88,8 +88,12 @@ bridge_steps <- function() {
       "Extra income tax from selling assets to pay"),
     # non-citizens: the BSZ analysis taxes them as residents (data); the JR analysis leaves them
     # out as too uncertain to collect, a legal judgement (chapter Sec. 3.5). Share lost: at the
-    # main estimates both ends are guesswork (the BSZ end is avoidance times movers, BSZ PDF p.24)
-    kind = c("data vs guesswork", "data", "data", "guesswork on data", "guesswork", "guesswork",
+    # main estimates both ends are guesswork (the BSZ end is avoidance times movers, BSZ PDF p.24).
+    # Author answers 2026-10-16: the Forbes source is guesswork on data at the JR end (the 2025
+    # list grown by an assumed 7%, chapter Sec. 3.2); the real-estate deduction is guesswork at
+    # the BSZ end (BSZ's text says the Act excludes directly held real estate, yet its benchmark
+    # deducts none).
+    kind = c("data vs guesswork", "data vs guesswork on data", "guesswork vs data", "guesswork on data", "guesswork", "guesswork",
              "guesswork", "research vs guesswork", "scenario", "scenario vs derived",
              "guesswork"),
     stringsAsFactors = FALSE)
@@ -291,7 +295,7 @@ sequential_bridge <- function(sup, rauh, order, output = c("a", "b")) {
 # r_jr = 1 / E_r[1/r] = 2.73% (jr_discount_rate()), the JR end of the rate dial; with it and
 # H = Inf the common function returns this expectation exactly. At a finite common horizon
 # annuity(r_jr, H) is close to, not equal to, E_r[annuity(r, H)]: ends.csv reports the
-# difference as rauh_residual.
+# difference as jr_residual.
 expected_annuity <- function(H, r_min, r_max) {
   if (is.infinite(H)) return(log(r_max / r_min) / (r_max - r_min))
   if (H == 0) return(0)

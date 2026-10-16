@@ -96,8 +96,8 @@ def score_common(x: dict) -> dict:
 
 STEPS = [
     ("noncitizens", "8", "Non-US-citizen residents", "data vs guesswork"),
-    ("base_list", "7", "Forbes source: which list and valuation date", "data"),
-    ("real_estate", "7", "Real-estate deduction", "data"),
+    ("base_list", "7", "Forbes source: which list and valuation date", "data vs guesswork on data"),
+    ("real_estate", "7", "Real-estate deduction", "guesswork vs data"),
     ("confirmed_departures", "3", "Billionaires already departed", "guesswork on data"),
     ("avoidance", "(not a row)", "Avoidance and evasion allowance", "guesswork"),
     ("litigation_survival", "9", "Chance the tax does not survive litigation", "guesswork"),
@@ -362,8 +362,8 @@ def build_all(k):
                                "sequential_rank": SEQUENTIAL.index(sid) + 1,
                                "disputes_row": row, "title": title, "kind": kind})
             ends.append({"horizon_setting": st, "output": out,
-                         "bsz_model": v_sup[out], "rauh_model": v_rauh[out],
-                         "rauh_own": own_n[out], "rauh_residual": own_n[out] - v_rauh[out]})
+                         "bsz_model": v_sup[out], "jr_model": v_rauh[out],
+                         "jr_own": own_n[out], "jr_residual": own_n[out] - v_rauh[out]})
     bridge.sort(key=lambda r: (r["horizon_setting"], r["output"], IDS.index(r["step_id"])))
     board.sort(key=lambda r: (r["output"], settings.index(r["horizon_setting"]), r["mask"]))
     ea = [e for e in ends if e["horizon_setting"] == "own" and e["output"] == "a"][0]
@@ -375,14 +375,14 @@ def build_all(k):
             ("ggss_scoring", ea["bsz_model"], pick(so, "ggss_scoring", "printed_value")),
             ("bsz_tab5_row1", ea["bsz_model"], pick(so, "tab5_row1_wealth_tax_revenue", "printed_value")),
             ("bsz_net_constructed", eb["bsz_model"], math.nan),
-            ("rauh_nber_revenue_mc", ea["rauh_own"], math.nan),
-            ("rauh_nber_npv", eb["rauh_own"], pick(oo, "npv_mc_nber_mean", "printed_value"))]
+            ("rauh_nber_revenue_mc", ea["jr_own"], math.nan),
+            ("rauh_nber_npv", eb["jr_own"], pick(oo, "npv_mc_nber_mean", "printed_value"))]
     for eid, v, p in vals:
         endpoints.append({"endpoint_id": eid, "value": v, "printed_value": p,
                           "abs_diff_printed": abs(v - p)})
 
-    anchors = [{"anchor_id": a, "value": v, "residual_vs_model": v - ea["rauh_model"]} for a, v in [
-        ("mc_expected", ea["rauh_own"]),
+    anchors = [{"anchor_id": a, "value": v, "residual_vs_model": v - ea["jr_model"]} for a, v in [
+        ("mc_expected", ea["jr_own"]),
         ("preferred_about_30", pick(d, "nber_headline_revenue"))]]
 
     # 5-year values at the BSZ end's rate, perpetuities at the JR end's (see R/build.R)
@@ -397,7 +397,7 @@ def build_all(k):
                     ("walczak_high", pick(d, "walczak_loss_high"))]:
         loss.append({"source_id": sid, "annual_loss": al, "pv_5yr": al * A5,
                      "pv_perpetuity": al * Ainf,
-                     "net_at_nber_revenue_perpetuity": ea["rauh_own"] - al * Ainf})
+                     "net_at_nber_revenue_perpetuity": ea["jr_own"] - al * Ainf})
 
     hz = {r["step_id"]: r for r in k["hoopes"]}
     sqa = {r["step_id"]: r["sequential"] for r in bridge
@@ -410,8 +410,8 @@ def build_all(k):
             ("additional_behavioral_response",
              sqa["avoidance"] + sqa["litigation_survival"]),
             ("real_estate_exclusion", sqa["real_estate"]),
-            ("rauh_rounding", ea["rauh_residual"]),
-            ("income_tax_loss", eb["rauh_model"] - ea["rauh_model"])]
+            ("rauh_rounding", ea["jr_residual"]),
+            ("income_tax_loss", eb["jr_model"] - ea["jr_model"])]
     hoopes = [{"step_id": sid, "ours": v,
                "hoopes": num(hz[sid]["delta"]) if sid in hz else math.nan,
                "hoopes_uncertainty": num(hz[sid]["uncertainty"]) if sid in hz else math.nan}

@@ -2263,6 +2263,8 @@ details.report-fold > summary { cursor: pointer; color: #1d4e89; font-weight: 50
 details.report-fold[open] > summary { margin-bottom: 0.8rem; }
 
 p code, li code { overflow-wrap: anywhere; }
+
+.display-line { text-align: center; margin: 1em 0; }
 </style>
 <style type="text/css">
 @font-face {
@@ -2491,6 +2493,7 @@ background: transparent; border: 1px solid var(--link); border-radius: 0; cursor
 
 a.q-survey { color: var(--paper) !important; text-decoration: none !important; }
 .q-mini { display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0 16px; }
+.q-mini .q-for { align-self: center; font-size: 14px; color: var(--ink-2); }
 .q-survey.q-survey-mini { font-size: 15px; padding: 5px 14px; }
 .q-copy.q-copy-mini { font-size: 15px; padding: 5px 14px; margin-left: 0; }
 
@@ -2500,6 +2503,9 @@ letter-spacing: 0; line-height: 1.35; text-decoration: none !important; white-sp
 .ai-badge:hover, .ai-badge:focus { text-decoration: underline !important; }
 a.ai-badge-yellow, .ai-badge-yellow { background: #f5c518; color: #3b2c00 !important; }
 a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; }
+
+.ai-badge-line { margin: 0 0 12px; font-size: 15px; color: var(--ink-2); }
+.ai-badge-line .ai-badge { font-size: 0.9em; margin-left: 0.35em; }
 </style>
 </head>
 
@@ -2600,7 +2606,7 @@ skipped
 1
 </td>
 <td style="text-align:right;">
-12
+10
 </td>
 <td style="text-align:right;">
 0
@@ -2685,7 +2691,7 @@ skipped
 22
 </td>
 <td style="text-align:right;">
-701
+705
 </td>
 <td style="text-align:right;">
 0
@@ -2719,7 +2725,7 @@ skipped
 53
 </td>
 <td style="text-align:right;">
-1014
+1016
 </td>
 <td style="text-align:right;">
 0
@@ -2731,7 +2737,7 @@ skipped
 </tbody>
 </table>
 </div>
-<p>Run while this page was rendered: <strong>1014 expectations passed, 0 failed</strong>, in 53 test blocks. The files check:</p>
+<p>Run while this page was rendered: <strong>1016 expectations passed, 0 failed</strong>, in 53 test blocks. The files check:</p>
 <ul>
 <li><code>test-endpoints.R</code>: each end of the bridge against the number its authors print (BSZ Table 5 row 1, the NBER mean NPV; NBER is the National Bureau of Economic Research, which circulates working papers), plus the earlier figures the code still checks: the headline of GGSS (the Galle, Gamage, Saez and Shanske expert report of July 2026, by some of the experts who drafted the initiative, GGSS p.1), behind the BSZ analysis, and the March 2026 version of the JR analysis. The bridge itself ends at the September 2026 version.</li>
 <li><code>test-shapley.R</code>: the Shapley steps sum exactly to the gap in every setting, and match a brute-force average over orders (a Shapley value: a step’s effect averaged over every order the inputs could be switched in, so the steps add up to the gap).</li>
@@ -2775,7 +2781,7 @@ reads the two export contracts and the document inputs, and nothing else
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/R/model.R"><code>R/model.R</code></a>
 </td>
 <td style="text-align:right;">
-308
+312
 </td>
 <td style="text-align:left;">
 score_common(), the one estimating function; the dial path; exact Shapley over all orders; one sequential order; the JR Monte Carlo’s expectation
@@ -2797,7 +2803,7 @@ every number the page shows, written to export/r/*.csv
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/R/site.R"><code>R/site.R</code></a>
 </td>
 <td style="text-align:right;">
-926
+931
 </td>
 <td style="text-align:left;">
 renders the overview page (index.html), the explorer (site/explorer/index.html) and their data file from site/index.template.html and site/explorer.template.html
@@ -2852,7 +2858,7 @@ score_common() and the slider rule ported to JavaScript; the explorer’s panels
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/site/repro.qmd"><code>site/repro.qmd</code></a>
 </td>
 <td style="text-align:right;">
-943
+969
 </td>
 <td style="text-align:left;">
 the reproduction report
@@ -2863,7 +2869,7 @@ the reproduction report
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/site/slides/slides.Rmd"><code>site/slides/slides.Rmd</code></a>
 </td>
 <td style="text-align:right;">
-1049
+1078
 </td>
 <td style="text-align:left;">
 the slide deck: what is in the report and where the main differences come from (xaringan; every number read from export/r/)
@@ -2874,7 +2880,7 @@ the slide deck: what is in the report and where the main differences come from (
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/site/materials.qmd"><code>site/materials.qmd</code></a>
 </td>
 <td style="text-align:right;">
-269
+270
 </td>
 <td style="text-align:left;">
 this page
@@ -3048,13 +3054,13 @@ the common function’s value for every mix of switches (bit i of mask = dispute
 </tbody>
 </table>
 </div>
-<p>In <code>inputs.csv</code>, the <code>supporting_*</code> columns hold the BSZ analysis’s values and sources, and the <code>rauh_*</code> columns the JR analysis’s.</p>
+<p>In <code>inputs.csv</code> and <code>ends.csv</code>, the <code>bsz_*</code> columns hold the BSZ analysis’s values (and, in <code>inputs.csv</code>, sources), and the <code>jr_*</code> columns the JR analysis’s.</p>
 <p><code>loss.csv</code>’s last column, <code>net_at_nber_revenue_perpetuity</code>, nets each loss in perpetuity against the JR analysis’s expected revenue ($36.0B, in <code>ends.csv</code> and <code>anchors.csv</code>).</p>
 <p><code>comparison/export/py/</code> holds the same files from the Python twin (without <code>inputs.csv</code>). The explorer reads <code>assets/comparison-data.js</code>, written by <code>R/site.R</code> from these files. Its two slider panels read the two input vectors from the same data file and compute each panel’s estimate in the browser with <code>site/explorer/model.js</code>, which follows <code>slider_inputs()</code> in <code>R/model.R</code>: positions 1 to 3 are evenly spaced between the two values, and the horizon steps through 5, 10, 20 and 50 years and a perpetuity. The inputs the comparison transcribes itself are in <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/data/document-inputs.csv"><code>comparison/data/document-inputs.csv</code></a> (19 rows, each with an origin label, a source and a page) and <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/data/hoopes-fig2.csv"><code>comparison/data/hoopes-fig2.csv</code></a> (Hoopes’s Figure 2, read off the chart). None is edited by hand except these two transcriptions.</p>
 </section>
 <section id="sources" class="level2">
 <h2 class="anchored" data-anchor-id="sources">Sources</h2>
-<p>The comparison reads no third-party file at run time. Each analysis’s sources are listed on its own materials page (<a href="../../bsz-analysis/site/materials.html">BSZ</a>, <a href="../../rjkdc-analysis/site/materials.html">JR</a>). The comparison alone uses three documents. Two of them, Hoopes (2026) and the LAO’s ballot analysis, are recorded in this manifest with where to get them and their SHA-256:</p>
+<p>The comparison reads no third-party file at run time. Each analysis’s sources are listed on its own materials page (<a href="../../bsz-analysis/site/materials.html">BSZ</a>, <a href="../../rjkdc-analysis/site/materials.html">JR</a>). The comparison alone uses four documents. Three of them, Hoopes (2026), the LAO’s ballot analysis and the arguments for and against in the Secretary of State’s voter guide (quoted on the deck’s second slide), are recorded in this manifest with where to get them and their SHA-256:</p>
 <div class="table-scroll">
 <table class="table table-sm">
 <thead>
@@ -3111,10 +3117,27 @@ public-download 2026-09-23
 public-government-document (not committed per repo policy)
 </td>
 </tr>
+<tr>
+<td style="text-align:left;">
+<code>sos-vig-2026-prop40-arguments.pdf</code>
+</td>
+<td style="text-align:left;">
+California Secretary of State, Official Voter Information Guide, general election of November 3, 2026, Proposition 40: arguments and rebuttals (guide pp.56-57)
+</td>
+<td style="text-align:left;">
+public-download 2026-10-16
+</td>
+<td style="text-align:left;">
+<code>5110c8fa2205</code>
+</td>
+<td style="text-align:left;">
+public-government-document (not committed per repo policy)
+</td>
+</tr>
 </tbody>
 </table>
 </div>
-<p>Full rows: <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/DATA-SOURCES.csv"><code>comparison/DATA-SOURCES.csv</code></a>. Neither PDF is redistributed. The third is Walczak (California Tax Foundation, 22 April 2026), whose row is in the JR manifest (<a href="https://github.com/fhoces/opa-prop40/blob/main/rjkdc-analysis/DATA-SOURCES.csv"><code>rjkdc-analysis/DATA-SOURCES.csv</code></a>).</p>
+<p>Full rows: <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/DATA-SOURCES.csv"><code>comparison/DATA-SOURCES.csv</code></a>. None of the PDFs is redistributed. The fourth is Walczak (California Tax Foundation, 22 April 2026), whose row is in the JR manifest (<a href="https://github.com/fhoces/opa-prop40/blob/main/rjkdc-analysis/DATA-SOURCES.csv"><code>rjkdc-analysis/DATA-SOURCES.csv</code></a>).</p>
 <p>The GGSS expert report (20 July 2026), which the bridge cites for the non-citizen residents, the avoidance allowance and the litigation step, and the GGSS response to Rauh (17 March 2026), which <code>DISPUTES.md</code> cites for the March 2026 disputes, are listed in the BSZ analysis’s manifest, <a href="https://github.com/fhoces/opa-prop40/blob/main/bsz-analysis/DATA-SOURCES.csv"><code>bsz-analysis/DATA-SOURCES.csv</code></a>, with their URLs on Saez’s Berkeley page.</p>
 </section>
 <section id="what-the-checks-found" class="level2">

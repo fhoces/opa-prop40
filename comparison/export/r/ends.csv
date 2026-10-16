@@ -1,4 +1,4 @@
-"horizon_setting","output","bsz_model","rauh_model","rauh_own","rauh_residual"
+"horizon_setting","output","bsz_model","jr_model","jr_own","jr_residual"
 "own","a",103.815,36,36,-7.105427357601e-15
 "own","b",106.795964515949,-38.9802887015985,-38.9802887015985,-7.105427357601e-15
 "common_5","a",103.815,36,36,-7.105427357601e-15

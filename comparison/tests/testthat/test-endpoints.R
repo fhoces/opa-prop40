@@ -67,8 +67,8 @@ test_that("the common function at the all-JR inputs returns the JR analysis's ow
   expect_lt(abs(score_common(bi$rauh)[["a"]] - val("rauh_nber_revenue_mc")), 1e-9)
   en <- res$ends
   inf <- en[en$horizon_setting %in% c("own", "common_Inf"), ]
-  expect_lt(max(abs(inf$rauh_residual)), 1e-9)                     # in perpetuity: exact
-  expect_lt(max(abs(en$rauh_residual[en$output == "a"])), 1e-9)    # revenue: exact everywhere
+  expect_lt(max(abs(inf$jr_residual)), 1e-9)                     # in perpetuity: exact
+  expect_lt(max(abs(en$jr_residual[en$output == "a"])), 1e-9)    # revenue: exact everywhere
   expect_equal(round(val("rauh_nber_npv"), 2), -38.98)
   expect_false(any(c("jr_rate_gap") %in% names(en)))
   expect_false("rauh_common_end" %in% ep$endpoint_id)
@@ -80,9 +80,9 @@ test_that("at a finite common horizon, one rate misses f0 x C x (annuity(r_jr, H
   expect_equal(bi$rauh$alpha, 0); expect_equal(bi$rauh$own, 0)   # so f = f0 at the JR inputs
   for (H in c(5, 10, 20, 30, 50)) {
     e <- res$ends[res$ends$horizon_setting == paste0("common_", H) & res$ends$output == "b", ]
-    expect_lt(abs(e$rauh_residual - bi$rauh$f0 * bi$rauh$C * (annuity(rj, H) - expected_annuity(H, rmin, rmax))), 1e-9,
+    expect_lt(abs(e$jr_residual - bi$rauh$f0 * bi$rauh$C * (annuity(rj, H) - expected_annuity(H, rmin, rmax))), 1e-9,
               label = paste("H =", H))
-    expect_gt(e$rauh_residual, 0)
+    expect_gt(e$jr_residual, 0)
   }
 })
 

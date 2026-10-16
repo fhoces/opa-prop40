@@ -171,11 +171,11 @@ scroll(show(data.frame(
 own_a <- subset(rd("ends.csv"), horizon_setting == "own" & output == "a")
 ```
 
-In `inputs.csv`, the `supporting_*` columns hold the BSZ analysis's values and sources, and the
-`rauh_*` columns the JR analysis's.
+In `inputs.csv` and `ends.csv`, the `bsz_*` columns hold the BSZ analysis's values (and, in
+`inputs.csv`, sources), and the `jr_*` columns the JR analysis's.
 
 `loss.csv`'s last column, `net_at_nber_revenue_perpetuity`, nets each loss in perpetuity
-against the JR analysis's expected revenue (`r usd(own_a$rauh_own)`, in `ends.csv` and
+against the JR analysis's expected revenue (`r usd(own_a$jr_own)`, in `ends.csv` and
 `anchors.csv`).
 
 `comparison/export/py/` holds the same files from the Python twin (without `inputs.csv`).
@@ -194,9 +194,10 @@ edited by hand except these two transcriptions.
 
 The comparison reads no third-party file at run time. Each analysis's sources are listed on its
 own materials page ([BSZ](../../bsz-analysis/site/materials.html),
-[JR](../../rjkdc-analysis/site/materials.html)). The comparison alone uses three documents.
-Two of them, Hoopes (2026) and the LAO's ballot analysis, are recorded in this manifest with
-where to get them and their SHA-256:
+[JR](../../rjkdc-analysis/site/materials.html)). The comparison alone uses four documents.
+Three of them, Hoopes (2026), the LAO's ballot analysis and the arguments for and against in the
+Secretary of State's voter guide (quoted on the deck's second slide), are recorded in this
+manifest with where to get them and their SHA-256:
 
 ```{r}
 #| results: asis
@@ -209,7 +210,7 @@ scroll(show(data.frame(
   terms = ds$terms, check.names = FALSE)))
 ```
 
-Full rows: `r link("comparison/DATA-SOURCES.csv")`. Neither PDF is redistributed. The third is
+Full rows: `r link("comparison/DATA-SOURCES.csv")`. None of the PDFs is redistributed. The fourth is
 Walczak (California Tax Foundation, 22 April 2026), whose row is in the JR manifest
 (`r link("rjkdc-analysis/DATA-SOURCES.csv")`).
 
@@ -241,7 +242,7 @@ The full crosswalk of disputed inputs, with every page reference checked against
   down) and the ceiling for the simulation. The script has no separate q; its draw's mean is
   the same half (mismatch 5). The comparison reads that mean as the weight `q`.
 - **The printed NPV is one run, not the expectation.** The exact expectation of the NBER
-  Monte Carlo is `r usd(eb$rauh_own, 2)` against a printed
+  Monte Carlo is `r usd(eb$jr_own, 2)` against a printed
   `r usd(ep$printed_value[ep$endpoint_id == "rauh_nber_npv"])`. The bridge's JR end is that
   expectation, with the authors' random rate replaced by the one rate worth the same,
   `r rate_txt(ex$meta$value[ex$meta$key == "r_jr"])` ([the report](repro.html#the-discount-rate)). The JR pipeline reproduces
