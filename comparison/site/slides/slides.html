@@ -632,6 +632,10 @@ class: big-bullets
 /* ai-opa: larger bullets, a little apart. */
 .big-bullets ul { font-size: 125%; }
 .big-bullets li { margin-bottom: 0.5em; }
+.big-bullets ul ul, .mid-bullets ul ul { font-size: 100%; }
+/* ai-challenges: a little larger than the default, with sub-bullets. */
+.mid-bullets &gt; ul, .mid-bullets .remark-slide-content &gt; ul { font-size: 105%; }
+.mid-bullets li { margin-bottom: 0.3em; }
 /* prop40: the newspaper quote, set apart from the bullets. */
 .quote-box { margin-top: 1em; padding: 0.4em 0.9em; border-left: 4px solid #999; color: #444; font-style: italic; }
 /* On why-opa-4 the heading wraps in the left column, clear of the raised top row. */
@@ -724,6 +728,21 @@ Part of the comparison of the two analyses of California Proposition 40:
 - With the help of agentic coding, the cost of generating an OPA has dropped substantially. This project created **three OPAs in about a week** of work.
 
 .footnote[&lt;sup&gt;1&lt;/sup&gt; Hoces de la Guardia, F. (2017), &quot;How Transparency and Reproducibility Can Connect Research and Policy: A Case Study of the Minimum Wage Policy Estimates&quot;, PhD dissertation, Pardee RAND Graduate School. Hoces de la Guardia, F., Grant, S. and Miguel, E. (2021), [&quot;A framework for open policy analysis&quot;](https://doi.org/10.1093/scipol/scaa067), *Science and Public Policy*.]
+
+
+---
+name: ai-challenges
+class: mid-bullets
+
+# The challenges of AI for OPA
+
+- Agentic coding tools can substantially reduce the cost of generating fully reproducible and transparent policy analysis. But can we trust the final output?
+- Two challenges: **reliability** (did it make up a result?) and **intelligibility** (are the exposition, methods and code easy to digest for different audiences?).
+- Reliability verification is key. When an OPA is built by the same authors or organization, verification is trivial. When it is built by outside analysts (as in this case), different strategies can be taken:
+  - A thorough review of each layer, to confirm that the output is accurate.
+  - Running the paper&#39;s robustness cases through the OPA, to see if it generates the same results.
+  - Generating a set of tests where the OPA estimates under conditions that are not in the original paper, and asking the authors to run those scenarios in their model to verify that they obtain the same results.
+- Here we adopt a combination of the three strategies above, and disclose for each component of the OPA what has been AI generated, what has been reviewed and what has been verified. Whenever a component has not been fully reviewed, a badge in its title says so.
 
 ---
 name: estimates
