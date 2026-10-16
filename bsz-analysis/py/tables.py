@@ -129,7 +129,7 @@ def build_tab_a1(shortrunseries, longrunseries, vintage=None):
                 "us_gdp_2025dollars_b": agi_b, "gdp_per_family_k": 1000 * agi_b / n_fam_m}
 
     cur_label = "2025" if may else "2026"
-    n_years = 43 if may else 44
+    n_years = 43   # TabA1!B18:G18 annualizes over 43 years in every vintage (R: build_tab_a1)
     r82 = make_year_row("1982", AM_1982, wealth_1982, X_1982, agi_1982)
     rcur = make_year_row(cur_label, AM_cur, wealth_cur, X_cur, agi_cur)
     ratio, ann = _long_run_compare(r82, rcur, n_years)
@@ -138,7 +138,7 @@ def build_tab_a1(shortrunseries, longrunseries, vintage=None):
 
 
 TAB5_LONG_LABELS = [
-    "1. Benchmark: Forbes estimates + 10% avoidance",
+    "1. Benchmark: Forbes estimates as of 7/1/2026 + 10% evasion/avoidance (half due to mobility)",
     "2. Adding missing small billionaires (Pareto extrapolation)",
     "3. Aggressive assumptions for pre/post-2026 leavers",
     "4. Benchmark with both adding small billionaires and aggressive leavers",

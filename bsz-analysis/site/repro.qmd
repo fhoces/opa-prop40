@@ -913,20 +913,22 @@ tr("tab_a1_gt")
 ```{r}
 #| label: tab-a1-years
 #| code-summary: "R code for the annualized row against the workbook"
-a1_pb   <- attr(tr("tab_a1_gt"), "panel_b")
-a1_ours <- unlist(a1_pb[a1_pb$year == "Annualized growth", -1])   # this reproduction, 44 years
-a1_xl   <- unlist(read_sheet("TabA1", range = "B18:G18"))       # workbook cache, 43 years
-stopifnot(length(a1_ours) == 6, length(a1_xl) == 6)
+a1_pb    <- attr(tr("tab_a1_gt"), "panel_b")
+a1_ours  <- unlist(a1_pb[a1_pb$year == "Annualized growth", -1])   # this reproduction, 43 years
+a1_ratio <- unlist(a1_pb[grepl("^Ratio", a1_pb$year), -1])         # 2026 over 1982
+a1_44    <- a1_ratio^(1 / 44) - 1                                  # the same growth over 44 years
+a1_xl    <- unlist(read_sheet("TabA1", range = "B18:G18"))       # workbook cache, 43 years
+stopifnot(length(a1_ours) == 6, length(a1_xl) == 6, max(abs(a1_ours - a1_xl)) < 1e-6)
 a1_pct  <- function(x) paste0(formatC(100 * x, format = "f", digits = 1), "%")   # as the table prints it
-a1_diff <- a1_pct(a1_ours) != a1_pct(a1_xl)
+a1_diff <- a1_pct(a1_44) != a1_pct(a1_ours)
 and_join <- function(x) if (length(x) < 2) x else
   paste(paste(head(x, -1), collapse = ", "), tail(x, 1), sep = " and ")
 ```
 
-The paper and the workbook (`TabA1!B18:G18`) annualize this growth over 43 years. 1982 to
-2026 is 44 years, which this reproduction uses, so the row prints
-`r and_join(a1_pct(a1_ours)[a1_diff])` where the paper prints
-`r and_join(a1_pct(a1_xl)[a1_diff])`.
+The paper and the workbook (`TabA1!B18:G18`) annualize this growth over 43 years, and so does
+this reproduction, so the row matches the paper. 1982 to 2026 is 44 years, which would give
+`r and_join(a1_pct(a1_44)[a1_diff])` where the paper prints
+`r and_join(a1_pct(a1_ours)[a1_diff])`.
 
 ## Appendix Figures A2 and A3
 
@@ -1050,11 +1052,13 @@ kept the May workbook's labels (GDP for AGI, 2025 for 2026, .0002% for .001%, 20
 2026 dollars). Both were fixed in the display code on 15 October 2026. The values the tests
 check did not change.
 
-**An annualizing gap in Appendix Table A1 (open).** The workbook (`TabA1!B18:G18`) and the
-paper annualize the 1982 to 2026 growth over 43 years. This reproduction uses 44, as the
-workbook's own Table 1 does (`Tab1!C18:H18`), so `r sum(a1_diff)` cells of the row print lower
-than the paper (see [Appendix Table A1](#appendix-table-a1-us-billionaires)). The tests compare
-whole columns and do not catch it. Whether to use 43 or 44 is left to the author.
+**Appendix Table A1 counts 43 years (resolved).** The workbook (`TabA1!B18:G18`) and the paper
+annualize the 1982 to 2026 growth over 43 years, where 1982 to 2026 is 44 years, the count the
+workbook's own Table 1 uses (`Tab1!C18:H18`). This reproduction first used 44, so
+`r sum(a1_diff)` cells of the row printed lower than the paper. It now uses 43, as the paper
+does, and the report states what 44 would give (see
+[Appendix Table A1](#appendix-table-a1-us-billionaires)). A test now checks each cell of the
+row; the whole-column comparison before it had not caught the gap.
 
 **What is not reproduced.**
 

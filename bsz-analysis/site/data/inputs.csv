@@ -1,5 +1,5 @@
 "symbol","input","value","origin","basis"
-"τ","Wealth tax rate","5% one-time","scenario","The Act as written: 5%, payable 1%/yr over 5 years (GGSS p.1)."
+"τ","Wealth tax rate","5% one-time","data","The Act as written: 5%, payable 1%/yr over 5 years (GGSS p.1)."
 "W₀","Wealth of CA billionaires, 1 Jul 2026","$2,307 B","data","Forbes real-time list, 7/1/2026 (Tab5!C6; BSZ PDF p.24)."
 "n₀","Number of CA billionaires, 1 Jul 2026","250","data","Forbes real-time list, 7/1/2026 (Tab5!B6)."
 "α","Avoidance and evasion","10%","guesswork","Asserted, argued from enforcement (GGSS p.4; BSZ PDF p.23). Explorer dial."

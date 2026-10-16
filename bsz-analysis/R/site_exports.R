@@ -132,7 +132,7 @@ build_site_inputs <- function(inp) {
   lv <- inp$leavers
   tibble::tribble(
     ~symbol, ~input, ~value, ~origin, ~basis,
-    "τ", "Wealth tax rate", "5% one-time", "scenario",
+    "τ", "Wealth tax rate", "5% one-time", "data",
       "The Act as written: 5%, payable 1%/yr over 5 years (GGSS p.1).",
     "W₀", "Wealth of CA billionaires, 1 Jul 2026",
       sprintf("$%s B", format(inp$W0, big.mark = ",")), "data",

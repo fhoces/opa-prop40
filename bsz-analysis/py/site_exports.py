@@ -139,7 +139,7 @@ def _r_format_big(x):
 
 def build_site_inputs(inp):
     rows = [
-        ("τ", "Wealth tax rate", "5% one-time", "scenario",
+        ("τ", "Wealth tax rate", "5% one-time", "data",
          "The Act as written: 5%, payable 1%/yr over 5 years (GGSS p.1)."),
         ("W₀", "Wealth of CA billionaires, 1 Jul 2026", f"${_r_format_big(inp['W0'])} B", "data",
          "Forbes real-time list, 7/1/2026 (Tab5!C6; BSZ PDF p.24)."),

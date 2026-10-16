@@ -12,6 +12,81 @@ format:
     css: [repro.css, ../../assets/paper.css]
 ---
 
+```{r}
+#| label: setup
+#| echo: false
+# The two tables, and the revenue figures in the text above them, are read when the page is
+# rendered, never retyped: the explorer's values from its data file (explorer/grid.js, written by the pipeline), the printed August
+# values from data/tab5-vs-printed.csv, and the May rows from the same estimating function,
+# score_tab5_cell(), run on the May workbook.
+gjs <- grep("^window\\.__GRID__ = ", readLines("explorer/grid.js", warn = FALSE, encoding = "UTF-8"),
+            value = TRUE)
+G <- jsonlite::fromJSON(sub(";\\s*$", "", sub("^window\\.__GRID__ = ", "", gjs)), simplifyVector = FALSE)
+keys   <- unlist(G$keys)
+dials  <- setNames(G$dials, vapply(G$dials, `[[`, "", "key"))
+lev    <- lapply(dials, function(d) unlist(d$levels))
+stride <- rev(cumprod(c(1L, rev(lengths(lev))[-length(lev)])))   # first dial slowest
+setting <- function(name) setNames(unlist(G$named[[name]]), names(dials))   # 0-based level indices
+# One explorer cell: a named setting, with the dials given by value changed.
+cell <- function(..., from = setting(G$preferred)) {
+  idx <- from; ch <- list(...)
+  for (k in names(ch)) {
+    j <- which(abs(lev[[k]] - ch[[k]]) < 1e-6); stopifnot(length(j) == 1L); idx[[k]] <- j - 1L
+  }
+  setNames(unlist(G$snap[[1L + sum(idx * stride)]]), keys)
+}
+base <- cell()
+b0   <- Map(function(l, i) l[i + 1L], lev, setting(G$preferred))   # the base setting's dial values
+# round() before formatC(): R's round() gives 103.82 for 103.815, as the report prints it.
+f2   <- function(x) { s <- formatC(abs(round(x, 2)), format = "f", digits = 2)
+                      ifelse(round(x, 2) < 0, paste0("\u2212", s), s) }
+f1   <- function(x) formatC(round(x, 1), format = "f", digits = 1)
+pct  <- function(x) paste0(formatC(100 * x, format = "f", digits = 0), "%")
+sw   <- function(k) sprintf("%s (%s)", dials[[k]]$sym, dials[[k]]$label)
+tp   <- read.csv("data/tab5-vs-printed.csv")
+printed_wt <- function(r) tp$printed[tp$column == "wealth_tax_revenue" & tp$row == r]
+
+# The May workbook (15 April 2026 list), through the same estimating function.
+invisible(lapply(list.files("../R", pattern = "[.]R$", full.names = TRUE), source))
+may_rev <- withr::with_envvar(c(BSZ_VINTAGE = "may"), {
+  inp <- tab5_scoring_inputs(compute_pareto_missing(extract_pareto_missing()),
+                             extract_tab2(), extract_tab3())
+  stopifnot(inp$vintage == "may")
+  c(score_tab5_cell(inp)[["wealth_tax_revenue"]],
+    score_tab5_cell(inp, pareto = TRUE)[["wealth_tax_revenue"]],
+    score_tab5_cell(inp, leavers = TRUE)[["wealth_tax_revenue"]],
+    score_tab5_cell(inp, pareto = TRUE, leavers = TRUE)[["wealth_tax_revenue"]])
+})
+may_printed <- c(98, 121, 84, 109)   # May 2026 paper, Table 5 rows 1 to 4, PDF p.34
+
+n_added <- cell(from = setting("Missing billionaires"))[["n_billionaires"]] - base[["n_billionaires"]]
+checks <- data.frame(
+  variation = c("Main assumptions, for reference",
+                sprintf("Add the %s billionaires Forbes misses, estimated from the shape of the list",
+                        formatC(n_added, format = "f", digits = 0)),
+                "Page, Thiel, Hankey and Kalanick escape the tax",
+                "Both of the above",
+                "Wealth valued on 15 April 2026",
+                "15 April, plus the billionaires Forbes misses",
+                "15 April, plus the four leavers escape",
+                "15 April, plus both"),
+  paper   = c(sprintf("Aug, Table 5 row %d", 1:4), sprintf("May, Table 5 row %d", 1:4)),
+  printed = c(vapply(1:4, printed_wt, 0), may_printed),
+  opa     = c(vapply(names(G$named), function(n) cell(from = setting(n))[["wealth_tax_revenue"]], 0),
+              may_rev),
+  how     = c("Explorer, as it opens",
+              sprintf("Explorer: switch %s on", sw("pareto")),
+              sprintf("Explorer: switch %s on", sw("leavers")),
+              sprintf("Explorer: switches %s and %s on", dials$pareto$sym, dials$leavers$sym),
+              rep("R code, May workbook", 4)),
+  stringsAsFactors = FALSE)
+stopifnot(identical(names(G$named), c("Base", "Missing billionaires", "Leavers", "Missing + leavers")))
+checks$result <- ifelse(round(checks$opa) == checks$printed, "Match", "Differs")
+n_var   <- nrow(checks) - 1L
+n_match <- sum(checks$result[-1] == "Match")
+stopifnot(n_var == 7L)   # the word "seven" below
+```
+
 ::: {.site-nav}
 BSZ analysis of California Proposition 40:
 [Overview](index.html) &middot; Open Output: [Explorer](explorer/) &middot; Open Analysis: [Report](repro.html) and
@@ -21,18 +96,18 @@ BSZ analysis of California Proposition 40:
 Also in this project: [Comparison overview](../../index.html) &middot; [JR analysis overview](../../rjkdc-analysis/site/)
 :::
 
-All seven variations the BSZ papers print reproduce at the paper's rounding. The one assumption
+`r if (n_match == n_var) "All seven" else paste(n_match, "of the seven")` variations the BSZ papers print reproduce at the paper's rounding. The one assumption
 that moves the revenue as much as these, the date on which wealth is valued, cannot be set in
 this OPA.
 
 ## What was checked
 
-The BSZ paper prints the revenue of the one-time tax, $104 billion, under its main assumptions
-(Table 5, row 1). This OPA computes that figure as $103.8 billion. The paper also prints the
+The BSZ paper prints the revenue of the one-time tax, $`r printed_wt(1)` billion, under its main assumptions
+(Table 5, row 1). This OPA computes that figure as $`r f1(base[["wealth_tax_revenue"]])` billion. The paper also prints the
 revenue under a few other assumptions. Each check below sets the same assumptions in this OPA and
 compares the result with the printed figure.
 
-The checks use the wealth tax revenue of Table 5, not this OPA's main estimate of $106.8 billion.
+The checks use the wealth tax revenue of Table 5, not this OPA's main estimate of $`r f1(base[["main_estimate"]])` billion.
 The main estimate adds income tax effects that the paper does not print under other assumptions,
 so there is no printed figure to check it against.
 
@@ -46,16 +121,15 @@ figure.
 
 ::: {.table-scroll}
 
-| Variation | Paper | Printed | This OPA | Result | How to set it |
-|---|---|---|---|---|---|
-| Main assumptions, for reference | Aug, Table 5 row 1 | 104 | 103.82 | Match | Explorer, as it opens |
-| Add the 368 billionaires Forbes misses, estimated from the shape of the list | Aug, Table 5 row 2 | 128 | 127.85 | Match | Explorer: switch P (Count billionaires Forbes misses) on |
-| Page, Thiel, Hankey and Kalanick escape the tax | Aug, Table 5 row 3 | 89 | 88.80 | Match | Explorer: switch L (Aggressive assumption on leavers) on |
-| Both of the above | Aug, Table 5 row 4 | 115 | 114.82 | Match | Explorer: switches P and L on |
-| Wealth valued on 15 April 2026 | May, Table 5 row 1 | 98 | 98.19 | Match | R code, May workbook |
-| 15 April, plus the billionaires Forbes misses | May, Table 5 row 2 | 121 | 120.93 | Match | R code, May workbook |
-| 15 April, plus the four leavers escape | May, Table 5 row 3 | 84 | 83.94 | Match | R code, May workbook |
-| 15 April, plus both | May, Table 5 row 4 | 109 | 108.55 | Match | R code, May workbook |
+```{r}
+#| label: checks-table
+#| echo: false
+#| results: asis
+knitr::kable(data.frame(checks$variation, checks$paper, checks$printed, f2(checks$opa),
+                        checks$result, checks$how),
+             format = "pipe", align = "llrrll",
+             col.names = c("Variation", "Paper", "Printed", "This OPA", "Result", "How to set it"))
+```
 
 :::
 
@@ -108,26 +182,48 @@ same results. We will update the responses here.
 All figures are in billions of dollars. Wealth tax revenue, the extra income tax from asset sales
 (over five years) and the income tax lost per year are the three result columns of the paper's
 Table 5. The income tax lost per year is negative, as Table 5 prints it. The net total is this OPA's main estimate: the wealth tax, plus the extra income tax from
-asset sales, minus the present value of the income tax lost to leavers over five years (3% a year).
+asset sales, minus the present value of the income tax lost to leavers over `r G$facts$pv_years` years (`r paste0(100 * G$facts$pv_rate, "%")` a year).
 Each setting can be made in the [explorer](explorer/).
 
 ::: {.table-scroll}
 
-| Setting changed from the main assumptions | Wealth tax revenue | Extra income tax from asset sales | Income tax lost per year | Net total | Authors' result |
-|---|---|---|---|---|---|
-| None, the main assumptions, for reference | 103.82 | 3.68 | −0.15 | 106.80 | |
-| No avoidance or evasion (α = 0, instead of 10%) | 115.35 | 4.09 | 0.00 | 119.44 | Pending |
-| Avoidance and evasion of 5% | 109.58 | 3.89 | −0.08 | 113.12 | Pending |
-| Avoidance and evasion of 20% | 92.28 | 3.27 | −0.31 | 94.15 | Pending |
-| Avoidance and evasion of 30% | 80.75 | 2.86 | −0.46 | 81.51 | Pending |
-| None of the avoidance is leaving California (m = 0, instead of half) | 103.82 | 3.68 | 0.00 | 107.50 | Pending |
-| All of the avoidance is leaving California (m = 1) | 103.82 | 3.68 | −0.31 | 106.09 | Pending |
-| None of the tax is paid by selling assets (s = 0, instead of one third) | 103.82 | 0.00 | −0.15 | 103.11 | Pending |
-| All of the tax is paid by selling assets (s = 1) | 103.82 | 11.05 | −0.15 | 114.16 | Pending |
-| The billionaires Forbes misses are counted, with 10% avoidance among them (instead of 20%) | 131.11 | 4.65 | −0.20 | 134.86 | Pending |
-| The billionaires Forbes misses are counted, with 50% avoidance among them | 118.10 | 4.19 | −0.20 | 121.39 | Pending |
+```{r}
+#| label: settings-table
+#| echo: false
+#| results: asis
+stopifnot(abs(b0$mobility_share - 0.5) < 1e-9, abs(b0$sell_share - 1/3) < 1e-6)   # "half", "one third" below
+settings <- list(
+  list("None, the main assumptions, for reference", cell()),
+  list(sprintf("No avoidance or evasion (%s = 0, instead of %s)", dials$avoidance$sym, pct(b0$avoidance)),
+       cell(avoidance = 0)),
+  list(sprintf("Avoidance and evasion of %s", pct(0.05)), cell(avoidance = 0.05)),
+  list(sprintf("Avoidance and evasion of %s", pct(0.20)), cell(avoidance = 0.20)),
+  list(sprintf("Avoidance and evasion of %s", pct(0.30)), cell(avoidance = 0.30)),
+  list(sprintf("None of the avoidance is leaving California (%s = 0, instead of half)",
+               dials$mobility_share$sym), cell(mobility_share = 0)),
+  list(sprintf("All of the avoidance is leaving California (%s = 1)", dials$mobility_share$sym),
+       cell(mobility_share = 1)),
+  list(sprintf("None of the tax is paid by selling assets (%s = 0, instead of one third)",
+               dials$sell_share$sym), cell(sell_share = 0)),
+  list(sprintf("All of the tax is paid by selling assets (%s = 1)", dials$sell_share$sym),
+       cell(sell_share = 1)),
+  list(sprintf("The billionaires Forbes misses are counted, with %s avoidance among them (instead of %s)",
+               pct(0.10), pct(b0$avoidance_small)), cell(pareto = 1, avoidance_small = 0.10)),
+  list(sprintf("The billionaires Forbes misses are counted, with %s avoidance among them", pct(0.50)),
+       cell(pareto = 1, avoidance_small = 0.50)))
+v <- function(k) vapply(settings, function(x) x[[2]][[k]], 0)
+knitr::kable(data.frame(vapply(settings, `[[`, "", 1),
+                        f2(v("wealth_tax_revenue")), f2(v("extra_ca_inctax_sales")),
+                        f2(v("annual_ca_inctax_loss")), f2(v("main_estimate")),
+                        c("", rep("Pending", length(settings) - 1L))),
+             format = "pipe", align = "lrrrrl",
+             col.names = c("Setting changed from the main assumptions", "Wealth tax revenue",
+                           "Extra income tax from asset sales", "Income tax lost per year",
+                           "Net total", "Authors' result"))
+```
 
 :::
 
-The values were copied from the explorer's data file, `site/explorer/grid.js`, which the
-pipeline writes, on 15 October 2026.
+Both tables are built when this page is rendered, from the explorer's data file
+(`site/explorer/grid.js`, which the pipeline writes), so they show the values the explorer shows.
+The May rows run the same estimating function on the May workbook.

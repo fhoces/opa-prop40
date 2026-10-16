@@ -1,5 +1,5 @@
 "group","output","n_values","max_abs_diff","max_rel_diff","ok","problems"
-"contract","inputs.csv",28,1.13686837721616e-13,3.88578058618805e-16,TRUE,""
+"contract","inputs.csv",36,1.13686837721616e-13,3.88578058618805e-16,TRUE,""
 "contract","outputs.csv",72,2.27373675443232e-12,1.55607524514288e-15,TRUE,""
 "site","grid.csv",30720,5.0022208597511e-12,4.80313830475053e-15,TRUE,""
 "site","inputs.csv",0,0,0,TRUE,""

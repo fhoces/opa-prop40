@@ -194,10 +194,10 @@ only that comparison is reported, and none of the bundle's contents is committed
 - **A display error** in this reproduction's Tables 1 and A1: the display put Panel B's values
   under Panel A's headers and formats and kept the May workbook's labels (GDP for AGI, 2025 for
   2026); fixed in the display code on 2026-10-15.
-- **An annualizing gap in Appendix Table A1**: the workbook (`TabA1!B18:G18`) and the paper
-  annualize the 1982 to 2026 growth over 43 years, and this reproduction over 44, so three cells
-  of the row print lower than the paper. The tests compare whole columns and do not catch it.
-  Which to use is a question for the author.
+- **Appendix Table A1 counts 43 years**: the workbook (`TabA1!B18:G18`) and the paper
+  annualize the 1982 to 2026 growth over 43 years, where 1982 to 2026 is 44. This reproduction
+  first used 44, so three cells of the row printed lower than the paper. It now uses 43, as the
+  paper does, and a test checks each cell of the row. The report states what 44 would give.
 - **A malformed row in our own source manifest**: two `provider` fields contained an
   unquoted comma, which shifted every later column for any CSV reader; quoted on 2026-09-23.
 - **Not reproduced**: the paper's Figure 8 and Appendix Figure A1 (wealth relative to AGI), and the

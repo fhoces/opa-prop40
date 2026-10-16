@@ -440,20 +440,21 @@ written by `Rscript tools/site-test-results.R`, which also rewrites this block):
 
 <!-- test-counts:start -->
 ```
+ai-badges:     15
 compute:      216
 data_sheets:   45
 figures:       76
 ingest_excel:  21
 py-parity:     56
-site:          48       # the explorer runs compute_tab5.R's estimating function; grid.js is the exporter's output
+site:          84       # the explorer runs compute_tab5.R's estimating function; grid.js is the exporter's output
 snapshots:     34       # pin exact output of every exhibit + compute_* fn
 sql:           38
 sql-steps:     18
 sql-workbook:  41
-tables:       121
+tables:       127
 verify:         7
               ---
-total:        721       # August vintage, 2026-10-14, 114 test blocks across 12 files, 0 failed, 0 skipped
+total:        778       # August vintage, 2026-10-16, 117 test blocks across 13 files, 0 failed, 0 skipped
 ```
 <!-- test-counts:end -->
 

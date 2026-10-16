@@ -41,6 +41,9 @@
   .site-nav .nav-row { display: block; }
   .site-nav .nav-row + .nav-row { margin-top: 2px; }
   .byline cite { font-style: normal; }
+  /* The review badge on a line of its own, so it is not read as a label on the paper. */
+  .ai-badge-line { margin: 0 0 10px; font-size: 15px; color: var(--ink-2); }
+  .ai-badge-line .ai-badge { font-size: 0.9em; margin-left: 0.3em; }
 
   h2 {
     font-family: var(--serif); font-weight: 600; font-size: 21px;
@@ -235,10 +238,11 @@
 
 <header>
   <p class="eyebrow">Open Policy Analysis for:</p>
-  <h1>California Proposition 40, Analysis From Boll, Saez, Zucman (BSZ) <a class="ai-badge ai-badge-yellow" href="#how-ai-was-used">AI generated, partially reviewed</a></h1>
+  <h1>California Proposition 40, Analysis From Boll, Saez, Zucman (BSZ)</h1>
+  <p class="ai-badge-line">This OPA site: <a class="ai-badge ai-badge-yellow" href="#how-ai-was-used">AI generated, partially reviewed</a></p>
   <p class="byline">
-    Proposition 40, the Billionaire Tax Act, would tax California residents worth $1 billion
-    or more, once, at 5% of their net worth. <cite>Boll, Saez and Zucman</cite> (BSZ) estimate
+    Proposition 40, the Billionaire Tax Act, would tax people who lived in California on
+    1 January 2026 and are worth $1 billion or more, once, at 5% of their net worth. <cite>Boll, Saez and Zucman</cite> (BSZ) estimate
     it raises about $100 billion. This
     <a href="https://doi.org/10.1093/scipol/scaa067">Open Policy Analysis</a> (OPA) reproduces
     that estimate, adds its income tax effects to get the main estimate below, and marks which
@@ -505,9 +509,8 @@ chance the Act survives in court.</p>
         <td>Every formula cell the pipeline re-derives matches the workbook's cached value
         within the tolerances the README lists (1e-4 for Table 5; 1e-3 to 1e-2 for the formula
         sheets, where the workbook rounds to cents). Figures are checked for structure and anchor values.
-        One exception: Appendix Table A1's annualized growth row. This reproduction annualizes
-        over 44 years (1982 to 2026), the workbook and the paper over 43, so three of its cells
-        print lower than the paper (see the report)</td></tr>
+        Appendix Table A1's annualized growth row counts 43 years, as the paper and the workbook
+        do, though 1982 to 2026 is 44 years. The report states what 44 would give</td></tr>
     <tr><td>The authors' workbook</td>
         <td>Four 2025 rows of the workbook's year-by-year billionaire list (<code>data_sec_all</code>) appear
         twice, giving 244 billionaires for 2025 instead of 240; the estimate itself uses the

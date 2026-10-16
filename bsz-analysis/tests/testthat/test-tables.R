@@ -252,6 +252,14 @@ test_that("build_tab_a1 panel B reproduces TabA1 sheet 1982 vs current year", {
   expect_equal(pb$n_us_families_m,      xl$D, tolerance = 1e-3)
   expect_equal(pb$us_gdp_2025dollars_b, xl$E, tolerance = 1)
   expect_equal(pb$gdp_per_family_k,     xl$F, tolerance = 1)
+  # The annualized growth row, cell by cell: a whole-column expect_equal takes
+  # the mean relative difference over four rows and missed a 2.3% gap in this
+  # row when it was annualized over 44 years instead of the sheet's 43.
+  ann <- unlist(pb[4, setdiff(names(pb), "year")])
+  for (j in seq_along(ann)) {
+    expect_equal(unname(ann[j]), xl[[j]][4], tolerance = 1e-6,
+                 info = paste("TabA1 annualized growth, column", j))
+  }
 })
 
 test_that("build_tab_a1 renders to non-empty HTML and LaTeX", {

@@ -42,3 +42,16 @@ test_that("each object the author has not fully reviewed carries the matching ba
     "Repository" = file.path(base, "README.md"),
     "Overview page" = file.path(base, "site", "index.html")))
 })
+
+# Author answer 2026-10-16 (item 3): on the overview the badge sits on a line of its own,
+# "This OPA site: ...", not in the title after the authors' names, where it could be read
+# as a label on the BSZ paper.
+test_that("the overview's badge is on its own line, not after the authors' names", {
+  path <- testthat::test_path("..", "..", "site", "index.html")
+  x <- paste(readLines(path, warn = FALSE), collapse = "\n")
+  h1 <- regmatches(x, regexpr("(?s)<h1>.*?</h1>", x, perl = TRUE))
+  expect_length(h1, 1)
+  expect_false(grepl("ai-badge", h1, fixed = TRUE))
+  expect_true(grepl('<p class="ai-badge-line">This OPA site: <a class="ai-badge ai-badge-yellow"',
+                    x, fixed = TRUE))
+})

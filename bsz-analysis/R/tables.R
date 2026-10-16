@@ -198,7 +198,11 @@ build_tab_a1 <- function(shortrunseries, longrunseries, vintage = bsz_vintage())
     )
   }
   cur_label <- if (identical(vintage, "may")) "2025" else "2026"
-  n_years   <- if (identical(vintage, "may")) 43 else 44
+  # The workbook annualizes this row over 43 years in every vintage
+  # (TabA1!B18:G18 is "=(B16/B15)^(1/43)-1" in August), and the paper prints
+  # those values. 1982 to 2026 is 44 years, which would print lower; the report
+  # discloses it. Table 1 uses 44 for August, as its sheet does.
+  n_years   <- 43
   row_1982 <- make_year_row("1982", AM_1982, wealth_1982, X_1982, agi_1982)
   row_cur  <- make_year_row(cur_label, AM_cur, wealth_cur, X_cur, agi_cur)
   lr <- .long_run_compare(row_1982, row_cur, n_years = n_years)
@@ -290,7 +294,7 @@ build_tab5 <- function(tab5_r) {
   # against the Excel sheet by the upstream R re-derivation.
 
   long_labels <- c(
-    "1. Benchmark: Forbes estimates + 10% avoidance",
+    "1. Benchmark: Forbes estimates as of 7/1/2026 + 10% evasion/avoidance (half due to mobility)",
     "2. Adding missing small billionaires (Pareto extrapolation)",
     "3. Aggressive assumptions for pre/post-2026 leavers",
     "4. Benchmark with both adding small billionaires and aggressive leavers"
@@ -323,8 +327,7 @@ build_tab5 <- function(tab5_r) {
       "taxable_wealth × 5%. Extra CA income tax from sales reflects forced",
       "asset sales to pay the tax (33% realization × 80% LTCG-taxable × 13.3%",
       "CA rate). The income tax loss \"is annual but temporary if the wealth tax",
-      "is one-time\" (BSZ Table 5 note, PDF p.39). In row 1, half of the 10%",
-      "avoidance is billionaires who moved (\"half due to mobility\").",
+      "is one-time\" (BSZ Table 5 note, PDF p.39). Row 1's label is BSZ's; rows 2 to 4 are shortened.",
       "Source: `tab5_r`."
     )))
 
