@@ -360,8 +360,8 @@ Part of the comparison of the two analyses of California Proposition 40:
 
 - Open Policy Analysis has been around for several years (Hoces de la Guardia, 2017; Hoces de la Guardia, Grant and Miguel, 2021).<sup>1</sup>
 - Several organizations have moved to increase transparency in documentation, materials and visualizations, but none to the degree proposed in the original framework.
-- One explanation could be the cost of generating an OPA. Previous prototypes took several months of work to generate one OPA.
-- With the help of agentic coding, the cost of generating an OPA has dropped substantially. This project created three OPAs in four to six days of work.
+- One explanation could be the cost of generating an OPA. Previous prototypes took **several months of work to generate one** OPA.
+- With the help of agentic coding, the cost of generating an OPA has dropped substantially. This project created **three OPAs in about a week** of work.
 
 .footnote[<sup>1</sup> Hoces de la Guardia, F. (2017), "How Transparency and Reproducibility Can Connect Research and Policy: A Case Study of the Minimum Wage Policy Estimates", PhD dissertation, Pardee RAND Graduate School. Hoces de la Guardia, F., Grant, S. and Miguel, E. (2021), ["A framework for open policy analysis"](https://doi.org/10.1093/scipol/scaa067), *Science and Public Policy*.]
 
