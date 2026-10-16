@@ -646,6 +646,12 @@ class: big-bullets
 .cmp-arrow { font-size: 160%; color: #999; }
 /* disclosure: the overview&#39;s credit table at slide size. */
 .ai-badge.inline { font-size: 0.72em; margin-left: 0.1em; vertical-align: 0.05em; }
+/* layer-*: the appendix&#39;s layer slides, the layer figure and text left, a screenshot right
+   (figs/layers/, taken by screenshots.sh). */
+.layer-slide .pull-left { width: 31%; font-size: 80%; }
+.layer-slide .pull-right { width: 65%; }
+.layer-fig { display: block; height: 150px; margin: 0 auto 6px; }
+.layer-shot img { width: 100%; border: 1px solid #ccc; box-shadow: 0 1px 4px rgba(0,0,0,.15); }
 .ai-use-slide table.ai-use { width: 100%; font-size: 70%; border-collapse: collapse; }
 .ai-use-slide table.ai-use th, .ai-use-slide table.ai-use td { text-align: left; padding: 4px 8px; border-bottom: 1px solid #e4e4e4; }
 .ai-use-slide .table-subhead { font-size: 75%; color: #666; }
@@ -794,7 +800,7 @@ Boll, Saez and Zucman estimate the one-time tax at about $100 billion of wealth 
 
 **What reproduces.** All 28 cells of Table 5 match the workbook, and 26 round to the digit the paper prints. Every variation the paper prints reproduces (7 of 7). Ten settings the paper does not print have been sent to the authors to test. [Checks](../../../bsz-analysis/site/checks.html)
 
-[The BSZ analysis overview](../../../bsz-analysis/site/)
+[The BSZ analysis overview](../../../bsz-analysis/site/) &amp;middot; Its layers, with screenshots: [Output](#layer-bsz-output), [Analysis](#layer-bsz-analysis), [Materials](#layer-bsz-materials)
 ]
 
 .pull-right[
@@ -812,7 +818,7 @@ Jaros and Rauh find a mean net present value of &lt;span class=&quot;nb&quot;&gt
 
 **What reproduces.** The main estimate reproduces from the authors&#39; code, and ten mismatches between their text, READMEs and code are recorded. Every variation the papers print reproduces (4 of 4). Nine settings the papers do not print have been sent to the authors to test. [Checks](../../../rjkdc-analysis/site/checks.html)
 
-[The JR analysis overview](../../../rjkdc-analysis/site/)
+[The JR analysis overview](../../../rjkdc-analysis/site/) &amp;middot; Its layers, with screenshots: [Output](#layer-jr-output), [Analysis](#layer-jr-analysis), [Materials](#layer-jr-materials)
 ]
 
 .pull-right[
@@ -830,7 +836,7 @@ The comparison puts both analyses on one common output, the net fiscal effect (t
 
 **What reproduces.** Both main estimates are rebuilt on the common output from the two analyses&#39; exported files, &lt;span class=&quot;nb&quot;&gt;$106.8B&lt;/span&gt; and &lt;span class=&quot;nb&quot;&gt;−$39.0B&lt;/span&gt;. Each step of the bridge is the change from moving one explorer dial, in R and in the browser (the steps add up to the gap by construction). The R and Python versions agree.
 
-[The comparison overview](../../../index.html)
+[The comparison overview](../../../index.html) &amp;middot; Its layers, with screenshots: [Output](#layer-cmp-output), [Analysis](#layer-cmp-analysis), [Materials](#layer-cmp-materials)
 ]
 
 .pull-right[
@@ -1223,6 +1229,186 @@ Each bar moves one dial of the BSZ panel to its JR end, in the equation&#39;s or
 shows *D* and *q* on their own. It adds up the four loss-box steps, *f*, *C*, *H* and *r*, into one
 term, and the other three into another. Only dropping the BSZ 10% avoidance allowance raises the estimate,
 because the JR analysis applies none.
+]
+
+---
+name: layer-bsz-output
+class: layer-slide
+
+# The BSZ analysis OPA: Open Output
+
+.pull-left[
+&lt;img class=&quot;layer-fig&quot; src=&quot;../../../assets/opa/opa-assumptions-solo.png&quot; alt=&quot;The four OPA layers, with the Open Output layer highlighted.&quot;&gt;
+
+**Open Output**: one main estimate, with each assumption as a dial a reader can move.
+
+Here it is the BSZ analysis explorer. Its dials are the inputs of BSZ’s Table 5, such as the avoidance share and the share of it that is leaving. Each dial is tagged with the kind of claim it is, such as data or guesswork.
+
+[Open the explorer](../../../bsz-analysis/site/explorer/) &amp;middot; [Back to the BSZ analysis OPA](#opa-bsz)
+]
+
+.pull-right.layer-shot[
+[&lt;img src=&quot;figs/layers/bsz-output.png&quot; alt=&quot;Screenshot of the Open Output layer of the BSZ analysis OPA.&quot;&gt;](../../../bsz-analysis/site/explorer/)
+]
+
+---
+name: layer-bsz-analysis
+class: layer-slide
+
+# The BSZ analysis OPA: Open Analysis
+
+.pull-left[
+&lt;img class=&quot;layer-fig&quot; src=&quot;../../../assets/opa/opa-details.png&quot; alt=&quot;The four OPA layers, with the Open Analysis layer highlighted.&quot;&gt;
+
+**Open Analysis**: every step from the inputs to the main estimate, written out, with the guesswork marked.
+
+Here it is the report. It rebuilds BSZ’s tables step by step from the authors’ public workbook, with the R and Python code for each step beside it. The BSZ analysis deck is part of this layer too.
+
+[Open the report](../../../bsz-analysis/site/repro.html) &amp;middot; [Back to the BSZ analysis OPA](#opa-bsz)
+]
+
+.pull-right.layer-shot[
+[&lt;img src=&quot;figs/layers/bsz-analysis.png&quot; alt=&quot;Screenshot of the Open Analysis layer of the BSZ analysis OPA.&quot;&gt;](../../../bsz-analysis/site/repro.html)
+]
+
+---
+name: layer-bsz-materials
+class: layer-slide
+
+# The BSZ analysis OPA: Open Materials
+
+.pull-left[
+&lt;img class=&quot;layer-fig&quot; src=&quot;../../../assets/opa/opa-materials.png&quot; alt=&quot;The four OPA layers, with the Open Materials layer highlighted.&quot;&gt;
+
+**Open Materials**: the data, code and tests that rerun it.
+
+Here it is the bsz-analysis folder of the repository. The materials page is its guide: how to rebuild everything, what each script and data file does, and what the tests check.
+
+[Open the materials page](../../../bsz-analysis/site/materials.html) &amp;middot; [Back to the BSZ analysis OPA](#opa-bsz)
+]
+
+.pull-right.layer-shot[
+[&lt;img src=&quot;figs/layers/bsz-materials.png&quot; alt=&quot;Screenshot of the Open Materials layer of the BSZ analysis OPA.&quot;&gt;](../../../bsz-analysis/site/materials.html)
+]
+
+---
+name: layer-jr-output
+class: layer-slide
+
+# The JR analysis OPA: Open Output
+
+.pull-left[
+&lt;img class=&quot;layer-fig&quot; src=&quot;../../../assets/opa/opa-assumptions-solo.png&quot; alt=&quot;The four OPA layers, with the Open Output layer highlighted.&quot;&gt;
+
+**Open Output**: one main estimate, with each assumption as a dial a reader can move.
+
+Here it is the JR analysis explorer. Its dials are the inputs of the authors’ Monte Carlo, such as the range the wealth tax draw can pick, plus two dials of this OPA. Each dial is tagged with the kind of claim it is.
+
+[Open the explorer](../../../rjkdc-analysis/site/explorer/) &amp;middot; [Back to the JR analysis OPA](#opa-jr)
+]
+
+.pull-right.layer-shot[
+[&lt;img src=&quot;figs/layers/jr-output.png&quot; alt=&quot;Screenshot of the Open Output layer of the JR analysis OPA.&quot;&gt;](../../../rjkdc-analysis/site/explorer/)
+]
+
+---
+name: layer-jr-analysis
+class: layer-slide
+
+# The JR analysis OPA: Open Analysis
+
+.pull-left[
+&lt;img class=&quot;layer-fig&quot; src=&quot;../../../assets/opa/opa-details.png&quot; alt=&quot;The four OPA layers, with the Open Analysis layer highlighted.&quot;&gt;
+
+**Open Analysis**: every step from the inputs to the main estimate, written out, with the guesswork marked.
+
+Here it is the report. It reruns the authors’ code as shipped, section by section of the chapter, with the R and Python code beside each step. It records where the text, the READMEs and the code disagree.
+
+[Open the report](../../../rjkdc-analysis/site/repro.html) &amp;middot; [Back to the JR analysis OPA](#opa-jr)
+]
+
+.pull-right.layer-shot[
+[&lt;img src=&quot;figs/layers/jr-analysis.png&quot; alt=&quot;Screenshot of the Open Analysis layer of the JR analysis OPA.&quot;&gt;](../../../rjkdc-analysis/site/repro.html)
+]
+
+---
+name: layer-jr-materials
+class: layer-slide
+
+# The JR analysis OPA: Open Materials
+
+.pull-left[
+&lt;img class=&quot;layer-fig&quot; src=&quot;../../../assets/opa/opa-materials.png&quot; alt=&quot;The four OPA layers, with the Open Materials layer highlighted.&quot;&gt;
+
+**Open Materials**: the data, code and tests that rerun it.
+
+Here it is the rjkdc-analysis folder of the repository: the authors’ code, its R rewrite with a Python twin, and the tests. The materials page is its guide.
+
+[Open the materials page](../../../rjkdc-analysis/site/materials.html) &amp;middot; [Back to the JR analysis OPA](#opa-jr)
+]
+
+.pull-right.layer-shot[
+[&lt;img src=&quot;figs/layers/jr-materials.png&quot; alt=&quot;Screenshot of the Open Materials layer of the JR analysis OPA.&quot;&gt;](../../../rjkdc-analysis/site/materials.html)
+]
+
+---
+name: layer-cmp-output
+class: layer-slide
+
+# The comparison OPA: Open Output
+
+.pull-left[
+&lt;img class=&quot;layer-fig&quot; src=&quot;../../../assets/opa/opa-assumptions-solo.png&quot; alt=&quot;The four OPA layers, with the Open Output layer highlighted.&quot;&gt;
+
+**Open Output**: one main estimate, with each assumption as a dial a reader can move.
+
+Here it is the comparison explorer. Each disputed input is a dial that can take either analysis’s value, and the equation shows how the dials take one estimate to the other.
+
+[Open the explorer](../../../comparison/site/explorer/) &amp;middot; [Back to the comparison OPA](#opa-comparison)
+]
+
+.pull-right.layer-shot[
+[&lt;img src=&quot;figs/layers/cmp-output.png&quot; alt=&quot;Screenshot of the Open Output layer of the comparison OPA.&quot;&gt;](../../../comparison/site/explorer/)
+]
+
+---
+name: layer-cmp-analysis
+class: layer-slide
+
+# The comparison OPA: Open Analysis
+
+.pull-left[
+&lt;img class=&quot;layer-fig&quot; src=&quot;../../../assets/opa/opa-details.png&quot; alt=&quot;The four OPA layers, with the Open Analysis layer highlighted.&quot;&gt;
+
+**Open Analysis**: every step from the inputs to the main estimate, written out, with the guesswork marked.
+
+Here it is the report, and this deck. The report puts both analyses on one common output and walks from one main estimate to the other, one disputed input at a time.
+
+[Open the report](../../../comparison/site/repro.html) &amp;middot; [Back to the comparison OPA](#opa-comparison)
+]
+
+.pull-right.layer-shot[
+[&lt;img src=&quot;figs/layers/cmp-analysis.png&quot; alt=&quot;Screenshot of the Open Analysis layer of the comparison OPA.&quot;&gt;](../../../comparison/site/repro.html)
+]
+
+---
+name: layer-cmp-materials
+class: layer-slide
+
+# The comparison OPA: Open Materials
+
+.pull-left[
+&lt;img class=&quot;layer-fig&quot; src=&quot;../../../assets/opa/opa-materials.png&quot; alt=&quot;The four OPA layers, with the Open Materials layer highlighted.&quot;&gt;
+
+**Open Materials**: the data, code and tests that rerun it.
+
+Here it is the comparison folder of the repository: the R code, its Python twin, the tests, and DISPUTES.md, which quotes both analyses on each disputed input. The materials page is its guide.
+
+[Open the materials page](../../../comparison/site/materials.html) &amp;middot; [Back to the comparison OPA](#opa-comparison)
+]
+
+.pull-right.layer-shot[
+[&lt;img src=&quot;figs/layers/cmp-materials.png&quot; alt=&quot;Screenshot of the Open Materials layer of the comparison OPA.&quot;&gt;](../../../comparison/site/materials.html)
 ]
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
