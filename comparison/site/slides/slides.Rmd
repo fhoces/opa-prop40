@@ -1,5 +1,5 @@
 ---
-title: 'Using Transparency and AI to Understand the Two Main Analyses of California''s Wealth Tax Proposal <a class="ai-badge ai-badge-red" href="../../../index.html#how-ai-was-used">AI generated, not reviewed yet</a>'
+title: 'Using Transparency and AI to Understand the Two Main Analyses of California''s Wealth Tax Proposal'
 pagetitle: "Using Transparency and AI to Understand the Two Main Analyses of California's Wealth Tax Proposal"
 subtitle: "An Open Policy Analysis of Proposition 40"
 author: "Fernando Hoces de la Guardia"

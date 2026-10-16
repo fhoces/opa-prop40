@@ -6,7 +6,7 @@ Contributor roles follow [CRediT](https://credit.niso.org/) (ANSI/NISO Z39.104-2
 
 The objects: **Explorer** (comparison/site/explorer/, Open Output), **Report** (comparison/site/repro.qmd, Open Analysis), **Slides** (comparison/site/slides/, Open Analysis), **Repository** (the comparison/ R code and its Python twin, tests, DISPUTES.md, README, Open Materials), **Overview page** (index.html at the site root, the comparison's overview page).
 
-The author answered all 14 roles and the human-verification question separately for each object (the full questionnaire, 2026-10-15). This replaces the 2026-10-01 record, in which one set of answers was applied to every object.
+The author answered all 14 roles and the human-verification question separately for each object (the full questionnaire, 2026-10-15). This replaces the 2026-10-01 record, in which one set of answers was applied to every object. The Slides answers were given again, role by role, on 2026-10-16.
 
 The raw answers are in `credit-answers.json`, the file this page and the overview page's table are rebuilt from.
 
@@ -14,21 +14,21 @@ The raw answers are in `credit-answers.json`, the file this page and the overvie
 
 | Role | Explorer | Report | Slides | Repository | Overview page |
 |---|---|---|---|---|---|
-| Conceptualization | Human only | AI only | AI (lead) | AI only | Human (lead) |
-| Data curation | Human (lead) | AI only | AI (lead) | AI only | AI (lead) |
-| Formal analysis | Human (lead) | AI only | AI (lead) | AI only | Human (lead) |
+| Conceptualization | Human only | AI only | Human only | AI only | Human (lead) |
+| Data curation | Human (lead) | AI only | Human only | AI only | AI (lead) |
+| Formal analysis | Human (lead) | AI only | Human (lead) | AI only | Human (lead) |
 | Funding acquisition | N/A | N/A | N/A | N/A | N/A |
-| Investigation | Human (lead) | AI only | AI (lead) | AI only | Equal |
+| Investigation | Human (lead) | AI only | Human (lead) | AI only | Equal |
 | Methodology | AI (lead) | AI only | AI (lead) | AI only | AI (lead) |
 | Project administration | AI (lead) | AI only | AI (lead) | AI only | AI (lead) |
-| Resources | AI (lead) | N/A | N/A | N/A | AI (lead) |
+| Resources | AI (lead) | N/A | Human (lead) | N/A | AI (lead) |
 | Software | AI only | AI only | AI only | AI only | AI only |
-| Supervision | Human (lead) | AI only | AI only | AI only | Human (lead) |
-| Validation | Human (lead) | AI only | AI only | AI only | Equal |
+| Supervision | Human (lead) | AI only | Human only | AI only | Human (lead) |
+| Validation | Human (lead) | AI only | Human only | AI only | Equal |
 | Visualization | AI (lead) | AI only | AI only | AI only | AI (lead) |
-| Writing – original draft | AI (lead) | AI only | AI only | AI only | AI (lead) |
-| Writing – review & editing | Human (lead) | AI only | AI only | AI only | Human (lead) |
-| **Human verification** | Understood | No human review | No human review | No human review | Understood |
+| Writing – original draft | AI (lead) | AI only | Equal | AI only | AI (lead) |
+| Writing – review & editing | Human (lead) | AI only | Human (lead) | AI only | Human (lead) |
+| **Human verification** | Understood | No human review | Understood | No human review | Understood |
 
 Human only / AI only: one side did the role and the other was not involved. Human (lead) / AI (lead): that side led and the other supported. Equal: both contributed equally. N/A: no one did this for the object.
 
@@ -38,7 +38,7 @@ Human only / AI only: one side did the role and the other was not involved. Huma
 
 **Report.** Fernando Hoces de la Guardia: none. Claude Code (Opus, Sonnet): Conceptualization (only), Data curation (only), Formal analysis (only), Investigation (only), Methodology (only), Project administration (only), Software (only), Supervision (only), Validation (only), Visualization (only), Writing – original draft (only), Writing – review & editing (only). Human verification: no human review.
 
-**Slides.** Fernando Hoces de la Guardia: Conceptualization (supporting), Data curation (supporting), Formal analysis (supporting), Investigation (supporting), Methodology (supporting), Project administration (supporting). Claude Code (Opus, Sonnet): Conceptualization (lead), Data curation (lead), Formal analysis (lead), Investigation (lead), Methodology (lead), Project administration (lead), Software (only), Supervision (only), Validation (only), Visualization (only), Writing – original draft (only), Writing – review & editing (only). Human verification: no human review.
+**Slides.** Fernando Hoces de la Guardia: Conceptualization (only), Data curation (only), Formal analysis (lead), Investigation (lead), Methodology (supporting), Project administration (supporting), Resources (lead), Supervision (only), Validation (only), Writing – original draft (equal), Writing – review & editing (lead). Claude Code (Opus, Sonnet): Formal analysis (supporting), Investigation (supporting), Methodology (lead), Project administration (lead), Resources (supporting), Software (only), Visualization (only), Writing – original draft (equal), Writing – review & editing (supporting). Human verification: understood.
 
 **Repository.** Fernando Hoces de la Guardia: none. Claude Code (Opus, Sonnet): Conceptualization (only), Data curation (only), Formal analysis (only), Investigation (only), Methodology (only), Project administration (only), Software (only), Supervision (only), Validation (only), Visualization (only), Writing – original draft (only), Writing – review & editing (only). Human verification: no human review.
 

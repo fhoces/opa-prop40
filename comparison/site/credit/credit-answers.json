@@ -48,21 +48,21 @@
    "Human verification": "No human review"
   },
   "Slides": {
-   "Conceptualization": "AI lead",
-   "Data curation": "AI lead",
-   "Formal analysis": "AI lead",
+   "Conceptualization": "Human only",
+   "Data curation": "Human only",
+   "Formal analysis": "Human lead",
    "Funding acquisition": "N/A",
-   "Investigation": "AI lead",
+   "Investigation": "Human lead",
    "Methodology": "AI lead",
    "Project administration": "AI lead",
-   "Resources": "N/A",
+   "Resources": "Human lead",
    "Software": "AI only",
-   "Supervision": "AI only",
-   "Validation": "AI only",
+   "Supervision": "Human only",
+   "Validation": "Human only",
    "Visualization": "AI only",
-   "Writing – original draft": "AI only",
-   "Writing – review & editing": "AI only",
-   "Human verification": "No human review"
+   "Writing – original draft": "Equal",
+   "Writing – review & editing": "Human lead",
+   "Human verification": "Understood"
   },
   "Repository": {
    "Conceptualization": "AI only",
@@ -99,5 +99,7 @@
    "Human verification": "Understood"
   }
  },
- "notes": {}
+ "notes": {
+  "Slides": "Re-answered role by role on 2026-10-16."
+ }
 }
