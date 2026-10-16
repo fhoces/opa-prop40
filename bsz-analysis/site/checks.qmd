@@ -1,0 +1,89 @@
+---
+title: "Prop 40, BSZ analysis: checks against the paper's variations"
+subtitle: "The wealth tax revenue under every other set of assumptions the paper prints"
+date: 2026-10-15
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    toc-location: left
+    embed-resources: true
+    theme: [cosmo, ../../assets/paper.scss]
+    css: [repro.css, ../../assets/paper.css]
+---
+
+::: {.site-nav}
+BSZ analysis of California Proposition 40:
+[Overview](index.html) &middot; Open Output: [Explorer](explorer/) &middot; Open Analysis: [Report](repro.html) and
+[Slides](slides/slides.html) &middot;
+[Open Materials](https://github.com/fhoces/opa-prop40/tree/main/bsz-analysis) ([guide](materials.html))
+
+Also in this project: [Comparison overview](../../index.html) &middot; [JR analysis overview](../../rjkdc-analysis/site/)
+:::
+
+All seven variations the BSZ papers print reproduce at the paper's rounding. The one assumption
+that moves the revenue as much as these, the date on which wealth is valued, cannot be set in
+this OPA.
+
+## What was checked
+
+The BSZ paper prints the revenue of the one-time tax, $104 billion, under its main assumptions
+(Table 5, row 1). This OPA computes that figure as $103.8 billion. The paper also prints the
+revenue under a few other assumptions. Each check below sets the same assumptions in this OPA and
+compares the result with the printed figure.
+
+The checks use the wealth tax revenue of Table 5, not this OPA's main estimate of $106.8 billion.
+The main estimate adds income tax effects that the paper does not print under other assumptions,
+so there is no printed figure to check it against.
+
+The two versions of the paper (August 2026 and May 2026) print seven such variations, all in
+Table 5. The May version values wealth on 15 April 2026 instead of 1 July 2026.
+
+## Results
+
+All figures are in billions of dollars. "Match" means this OPA's value rounds to the printed
+figure.
+
+| Variation | Paper | Printed | This OPA | Result | How to set it |
+|---|---|---|---|---|---|
+| Main assumptions, for reference | Aug, Table 5 row 1 | 104 | 103.82 | Match | Explorer, as it opens |
+| Add the 368 billionaires Forbes misses, estimated from the shape of the list | Aug, Table 5 row 2 | 128 | 127.85 | Match | Explorer: switch P (Count billionaires Forbes misses) on |
+| Page, Thiel, Hankey and Kalanick escape the tax | Aug, Table 5 row 3 | 89 | 88.80 | Match | Explorer: switch L (Aggressive assumption on leavers) on |
+| Both of the above | Aug, Table 5 row 4 | 115 | 114.82 | Match | Explorer: switches P and L on |
+| Wealth valued on 15 April 2026 | May, Table 5 row 1 | 98 | 98.19 | Match | R code, May workbook |
+| 15 April, plus the billionaires Forbes misses | May, Table 5 row 2 | 121 | 120.93 | Match | R code, May workbook |
+| 15 April, plus the four leavers escape | May, Table 5 row 3 | 84 | 83.94 | Match | R code, May workbook |
+| 15 April, plus both | May, Table 5 row 4 | 109 | 108.55 | Match | R code, May workbook |
+
+## What could not be checked
+
+**The valuation date.** The authors' workbook gives the revenue for every day of 2026. It is
+$92.5 billion on 1 January (the residency date), $87.0 billion at the year's low on 30 March, and
+$110.9 billion at its high so far on 6 October. This OPA values wealth on 1 July 2026. The only
+other date it can use is 15 April, through the May workbook. It has no setting for any other
+date, so these three figures cannot be reproduced.
+
+**The explorer's four numeric dials.** The paper prints the revenue at one value of avoidance
+(α), of the share of avoidance that is leaving (m), of avoidance by the less visible billionaires
+(αₛ) and of the share of the tax paid by selling assets (s). It prints no revenue at any other
+value of these four. Moving them in the explorer has no printed figure to compare with.
+
+## Who ran these checks
+
+Claude Code agents chose the variations from the papers and ran the checks on 15 October 2026.
+The scripts were then rerun once, in a separate session, with the same results. The author has
+not yet reviewed these checks.
+
+To rerun them from the repository root:
+
+```sh
+Rscript feedback/scenario-tests-2026-10-15/bsz-sensitivity.R
+```
+
+The full record, with the source of every figure, is in
+[bsz-sensitivity.md](https://github.com/fhoces/opa-prop40/blob/main/feedback/scenario-tests-2026-10-15/bsz-sensitivity.md).
+A second record, [bsz.md](https://github.com/fhoces/opa-prop40/blob/main/feedback/scenario-tests-2026-10-15/bsz.md),
+checks ten other numbers the paper prints. One of them differs. On page 22 the paper says that if
+all billionaires left, the lost income tax would take 25 years to equal the wealth tax. That
+assumes billionaires pay 0.2% of their wealth in California income tax each year. The Table 5
+inputs imply 0.13%, which gives about 38 years.

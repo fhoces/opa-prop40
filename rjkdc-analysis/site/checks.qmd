@@ -1,0 +1,84 @@
+---
+title: "Prop 40, JR analysis: checks against the paper's variations"
+subtitle: "The net present value under every other set of assumptions the authors print"
+date: 2026-10-15
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    toc-location: left
+    embed-resources: true
+    theme: [cosmo, ../../assets/paper.scss]
+    css: [repro.css, ../../assets/paper.css]
+---
+
+::: {.site-nav}
+JR analysis of California Proposition 40:
+[Overview](index.html) &middot; Open Output: [Explorer](explorer/) &middot; Open Analysis: [Report](repro.html) and
+[Slides](slides/slides.html) &middot;
+[Open Materials](https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis) ([guide](materials.html))
+
+Also in this project: [Comparison overview](../../index.html) &middot; [BSZ analysis overview](../../bsz-analysis/site/)
+:::
+
+All four variations the JR papers print reproduce at the paper's rounding. A fifth, in the
+authors' repository, uses a lower tax rate, which cannot be set in this OPA. None of the five
+changes a single assumption, so the papers give no printed check of the explorer's one-input
+settings.
+
+## What was checked
+
+The main estimate of the JR analysis is a mean net present value of −$38.9 billion (NBER chapter,
+September 2026, p.35). This OPA computes it as −$38.98 billion exactly, and as −$38.89 billion
+with the authors' random seed. The September chapter prints no net present value under other
+assumptions. The first version (SSRN, March 2026) prints four, and the authors' public repository
+holds one more. Each check below sets the same assumptions in this OPA and compares the result
+with the printed figure.
+
+Each of the five changes two or more inputs at once from the main estimate. The first version's
+Monte Carlo changes the revenue range and the rule for the share of income tax lost. Each
+scenario of its Table 9 fixes four inputs at single values.
+
+## Results
+
+All figures are net present values in billions of dollars. Table 9 prints three values per
+scenario, one for each discount rate (1.5%, 3% and 4.5%). "Match" means this OPA's value rounds to
+the printed figure.
+
+| Variation | Source | Printed | This OPA | Result | How to set it |
+|---|---|---|---|---|---|
+| Main assumptions, for reference | NBER, p.35 | −38.9 | −38.98 (seeded run −38.89) | Match | Explorer, as it opens |
+| Revenue drawn from $35B to $67.51B, and the share lost tied to the revenue (f = 1 − revenue / 94.2) | SSRN, p.20 | −24.7 | −24.71 | Match | Explorer: Jump to "First version, March 2026" |
+| Six departures: revenue $67.51B, income tax $3.3B a year, share lost 28.3% | SSRN, Table 9 | +5.2 / +36.3 / +46.7 | +5.18 / +36.34 / +46.73 | Match | R code |
+| Central: revenue $42.0B, income tax $4.55B a year, share lost 55.4% | SSRN, Table 9 | −126.1 / −42.0 / −14.0 | −126.09 / −42.04 / −14.03 | Match | R code |
+| Literature calibrated: revenue $35.0B, income tax $5.8B a year, share lost 62.8% | SSRN, Table 9 | −208.0 / −86.5 / −46.0 | −208.00 / −86.50 / −46.00 | Match | R code |
+| Tax rate 2% instead of 5%, central inputs, 3% discount rate | Authors' repository, a plot | −67.2 | none | Cannot be set | None |
+
+## What could not be checked
+
+**The tax rate.** This OPA has no setting for a wealth tax rate other than 5%. The repository's 2%
+case is reproduced only by building its inputs by hand (−67.22).
+
+**The explorer's one-input settings.** The explorer offers "Rate 1.5%", "Rate 4.5%" and
+"Litigation weight q = 0.5", each of which changes one input from the main estimate. The authors
+print no net present value for any of them.
+
+## Who ran these checks
+
+Claude Code agents chose the variations from the papers and ran the checks on 15 October 2026.
+The scripts were then rerun once, in a separate session, with the same results. The author has
+not yet reviewed these checks.
+
+To rerun them from the repository root, with a clone of the authors' repository:
+
+```sh
+export RAUH_REPO_DIR=<path to the authors' repository>
+Rscript feedback/scenario-tests-2026-10-15/jr-sensitivity.R
+```
+
+The full record, with the source of every figure, is in
+[jr-sensitivity.md](https://github.com/fhoces/opa-prop40/blob/main/feedback/scenario-tests-2026-10-15/jr-sensitivity.md).
+A second record, [jr.md](https://github.com/fhoces/opa-prop40/blob/main/feedback/scenario-tests-2026-10-15/jr.md),
+checks ten other numbers the papers print. All reproduce except the chapter's "expanded
+departures" (Table 8, about 42% of the base), which no grouping of the authors' departure records
+gives.
