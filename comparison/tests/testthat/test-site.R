@@ -528,7 +528,7 @@ test_that("the explorer's quantities section: the subtitle and the survey button
   else expect_true(grepl('<span class="q-survey is-off" aria-disabled="true">', html, fixed = TRUE))
 })
 
-test_that("the quantities table (on the overview's differences fold): one row per group of dials, credibility from the author's file", {
+test_that("the quantities table (on the overview's differences fold): one row per group of dials, credibility column only when switched on", {
   page <- read_page(file.path(root, "index.html"))
   # the table and the line under it, nothing else of the page
   html <- regmatches(page, regexpr('<table class="q-table">.*?<p class="q-foot">.*?</p>', page))
@@ -536,7 +536,7 @@ test_that("the quantities table (on the overview's differences fold): one row pe
   head <- regmatches(html, regexpr("<thead><tr>.*?</tr></thead>", html, perl = TRUE))
   th <- regmatches(head, gregexpr("(?<=<th>)[^<]*(?=</th>)", head, perl = TRUE))[[1]]
   expect_identical(th, esc(c("Dial", "The BSZ analysis's value and why", "The JR analysis's value and why",
-                             "Which is more credible (the author of this OPA)")))
+                             if (SHOW_CREDIBILITY) "Which is more credible (the author of this OPA)")))
   # one row per group the author assesses together (author request 2026-10-15), covering every
   # dial once: W; D, a and f; q; C; H and r; the three minor inputs
   expect_identical(QUANTITY_GROUPS, list(
@@ -557,8 +557,11 @@ test_that("the quantities table (on the overview's differences fold): one row pe
   expect_true(all(cred$assessment == "Not yet assessed"))
   cell <- function(r, k) regmatches(r, gregexpr("<td[^>]*>.*?</td>", r))[[1]][k]
   txt <- function(x) gsub("&#39;", "'", gsub("&amp;", "&", gsub("<[^>]*>", "", x), fixed = TRUE), fixed = TRUE)
+  # hidden until the author's assessments are in (author request 2026-10-15): three cells a row
   for (i in seq_along(rows))
-    expect_identical(txt(cell(rows[i], 4)), cred$assessment[cred$group_id == gids[i]], label = gids[i])
+    if (SHOW_CREDIBILITY) expect_identical(txt(cell(rows[i], 4)), cred$assessment[cred$group_id == gids[i]], label = gids[i])
+    else expect_identical(length(regmatches(rows[i], gregexpr("<td[^>]*>", rows[i]))[[1]]), 3L, label = gids[i])
+  expect_identical(grepl('class="q-cred"', html, fixed = TRUE), SHOW_CREDIBILITY)
   # each analysis's cell has one line per dial of the group; every line within 25 words (plus the
   # symbol lead in a group), starts with the value its dial's end prints, and ends with its Kind
   inp <- read_csv_plain(file.path(root, "comparison", "export", "r", "inputs.csv"))
@@ -603,12 +606,14 @@ test_that("the overview's \"The differences\" fold holds the quantities table; t
   }
 })
 
-test_that("an assessment in the author's file shows in the table, and an unknown one stops the build", {
+test_that("an assessment in the author's file shows in the table when the column is on, and an unknown one stops the build", {
   f <- file.path(root, "comparison", "data", "author-credibility.csv")
   old <- readLines(f); on.exit(writeLines(old, f), add = TRUE)
   writeLines(sub("^horizon_rate,H r,Not yet assessed,,$", "horizon_rate,H r,About equally credible,test note,2026-10-15", old), f)
   s <- render_site(root)
-  expect_true(grepl('<tr data-id="horizon_rate">.*?<td data-label="Which is more credible \\(the author of this OPA\\)" class="q-cred">About equally credible. test note \\(2026-10-15\\)</td></tr>', s$html))
+  if (SHOW_CREDIBILITY)
+    expect_true(grepl('<tr data-id="horizon_rate">.*?<td data-label="Which is more credible \\(the author of this OPA\\)" class="q-cred">About equally credible. test note \\(2026-10-15\\)</td></tr>', s$html))
+  else expect_false(grepl("About equally credible. test note", s$html, fixed = TRUE))
   writeLines(sub("^horizon_rate,H r,Not yet assessed,,$", "horizon_rate,H r,Probably BSZ,,", old), f)
   expect_error(render_site(root))
 })

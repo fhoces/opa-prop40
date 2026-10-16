@@ -182,6 +182,9 @@ DIAL_WORDS <- c(base_list = "wealth", confirmed_departures = "departed", avoidan
 # take, the longest a value-and-why cell may run, and the short source a cell cites, cut from the
 # source columns of export/r/inputs.csv (the first page, section or script line they name).
 CREDIBILITY_LEVELS <- c("BSZ more credible", "JR more credible", "About equally credible", "Not yet assessed")
+# The credibility column is hidden until the author's assessments are in (author request
+# 2026-10-15); the file is still read and checked, so TRUE brings the column back.
+SHOW_CREDIBILITY <- FALSE
 # Dials the author assesses as one group (author request 2026-10-15): one row each in the
 # quantities table, in the order of each group's first dial on the page. D, a and f go together
 # because under the BSZ rule f is built from the leavers in D and the movers among the avoiders
@@ -455,8 +458,8 @@ render_site <- function(root = comparison_root(),
   # cut from the dial's source column of export/r/inputs.csv, and the tip's "Kind:" label, so a
   # cell cannot drift from the tip it repeats. If a cell runs past QUANTITY_WORDS words it drops
   # the tip's parentheses, then keeps its first sentence only. The last column is the OPA
-  # author's own judgement, read from comparison/data/author-credibility.csv; no code or agent
-  # writes an assessment.
+  # author's own judgement, read from comparison/data/author-credibility.csv (shown only when
+  # SHOW_CREDIBILITY is TRUE); no code or agent writes an assessment.
   q_ids <- c(unlist(lapply(EXPLORER_BOXES, `[[`, "ids"), use.names = FALSE), EXPLORER_MINOR)
   stopifnot(setequal(unlist(QUANTITY_GROUPS, use.names = FALSE), q_ids),
             !anyDuplicated(unlist(QUANTITY_GROUPS, use.names = FALSE)))
@@ -486,7 +489,7 @@ render_site <- function(root = comparison_root(),
     sprintf('<i>%s</i> <span class="q-word">%s</span>', DIAL_SYMBOLS[[id]], esc(DIAL_WORDS[[id]])) else
     sprintf('<span class="q-word">%s</span>', esc(unname(short_labels[id])))
   q_heads <- c("Dial", "The BSZ analysis's value and why", "The JR analysis's value and why",
-               "Which is more credible (the author of this OPA)")
+               if (SHOW_CREDIBILITY) "Which is more credible (the author of this OPA)")
   # one row per group: the dial column names every dial in it, and each analysis's cell holds one
   # line per dial, led by the dial's symbol when the group has more than one
   q_line <- function(id, side, many) paste0(
@@ -498,12 +501,13 @@ render_site <- function(root = comparison_root(),
     has <- function(x) length(x) == 1 && !is.na(x) && nzchar(as.character(x))
     verdict <- paste0(esc(cr$assessment), if (has(cr$note)) paste0(". ", esc(cr$note)) else "",
                       if (has(cr$date)) paste0(" (", esc(as.character(cr$date)), ")") else "")
-    sprintf(paste0('      <tr data-id="%s"><td data-label="%s">%s</td><td data-label="%s">%s</td>',
-                   '<td data-label="%s">%s</td><td data-label="%s" class="q-cred">%s</td></tr>'),
-            g, q_heads[1], paste(vapply(ids, q_dial, ""), collapse = "<br>"),
-            esc(q_heads[2]), paste(vapply(ids, q_line, "", "bsz", many), collapse = ""),
-            esc(q_heads[3]), paste(vapply(ids, q_line, "", "rjkdc", many), collapse = ""),
-            esc(q_heads[4]), verdict)
+    paste0(sprintf(paste0('      <tr data-id="%s"><td data-label="%s">%s</td><td data-label="%s">%s</td>',
+                          '<td data-label="%s">%s</td>'),
+                   g, q_heads[1], paste(vapply(ids, q_dial, ""), collapse = "<br>"),
+                   esc(q_heads[2]), paste(vapply(ids, q_line, "", "bsz", many), collapse = ""),
+                   esc(q_heads[3]), paste(vapply(ids, q_line, "", "rjkdc", many), collapse = "")),
+           if (SHOW_CREDIBILITY) sprintf('<td data-label="%s" class="q-cred">%s</td>', esc(q_heads[4]), verdict),
+           "</tr>")
   }, ""), collapse = "\n")
   tok$quantity_heads <- paste(sprintf("<th>%s</th>", esc(q_heads)), collapse = "")
   # The same table on the explorer and in the overview's "The differences" fold (author request
