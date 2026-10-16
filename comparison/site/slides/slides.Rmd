@@ -238,6 +238,7 @@ name: contents
 
 ---
 name: ai-opa
+class: big-bullets
 
 
 ```{css, echo=FALSE}
@@ -268,6 +269,9 @@ name: ai-opa
 .toc li { margin-bottom: 0.7em; }
 .toc-done { color: #999; }
 .toc-note { color: #999; font-size: 75%; }
+/* ai-opa: larger bullets, a little apart. */
+.big-bullets ul { font-size: 125%; }
+.big-bullets li { margin-bottom: 0.5em; }
 /* prop40: the newspaper quote, set apart from the bullets. */
 .quote-box { margin-top: 1em; padding: 0.4em 0.9em; border-left: 4px solid #999; color: #444; font-style: italic; }
 /* On why-opa-4 the heading wraps in the left column, clear of the raised top row. */
