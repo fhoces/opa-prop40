@@ -77,6 +77,24 @@ rest_n <- c("one", "two", "three", "four", "five", "six", "seven", "eight")[nrow
 and_syms <- function(x) paste0(paste(sprintf("*%s*", head(x, -1)), collapse = ", "), " and ", sprintf("*%s*", tail(x, 1)))
 eq_d_q <- and_syms(dp$symbol[et$main]); eq_loss <- and_syms(dp$symbol[et$loss])
 
+# The two figures (the original analysis, and this OPA) of an overview page's "Difference" section,
+# read from the built page so the slides always show what the site shows.
+compare_figs <- function(page) {
+  h <- paste(readLines(file.path(root, page), warn = FALSE), collapse = "\n")
+  blk <- regmatches(h, regexpr('(?s)<div class="compare">.*?</div>\\s*\n', h, perl = TRUE))
+  figs <- regmatches(blk, gregexpr('(?s)<figure>.*?</figure>', blk, perl = TRUE))[[1]]
+  stopifnot(length(figs) == 2)
+  one <- function(f) {
+    k <- sub('(?s).*<span class="kicker">([^<]*)</span>.*', "\\1", f, perl = TRUE)
+    s <- regmatches(f, regexpr('(?s)<svg.*?</svg>', f, perl = TRUE))
+    paste0('<div class="cmp-fig"><span class="cmp-kicker">', k, '</span>', gsub("\n\\s*", " ", s), '</div>')
+  }
+  cat('<div class="cmp">', one(figs[1]), '<span class="cmp-arrow">&rarr;</span>', one(figs[2]), '</div>', sep = "")
+}
+
+# The share of the base already departed at an end; used in the main body and the appendix.
+dshare <- function(x) score_common(x)[["d_conf"]]
+
 # Ties to the pipeline: a drift fails the render instead of shipping.
 stopifnot(
   isTRUE(all.equal(vs[["a"]], ea$bsz_model)), isTRUE(all.equal(vs[["b"]], eb$bsz_model)),
@@ -232,8 +250,8 @@ name: contents
 .toc[
 1. <span class="toc-done">Motivation</span>
 2. [Artificial intelligence and Open Policy Analysis](#ai-opa)
-3. A brief description of each OPA
-4. A summary of where the main differences are
+3. [A brief description of each OPA](#opa-bsz)
+4. [A summary of where the main differences are](#pseudo-eq)
 ]
 
 ---
@@ -269,6 +287,13 @@ class: big-bullets
 .toc li { margin-bottom: 0.7em; }
 .toc-done { color: #999; }
 .toc-note { color: #999; font-size: 75%; }
+/* opa-bsz, opa-jr, opa-comparison: text left, the overview's before-and-after figures right. */
+.opa-card .pull-left { font-size: 85%; }
+.cmp { display: flex; align-items: center; gap: 6px; margin-top: 30px; }
+.cmp-fig { flex: 1 1 0; text-align: center; }
+.cmp-fig svg { width: 100%; height: auto; }
+.cmp-kicker { display: block; font-size: 70%; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: #666; margin-bottom: 4px; }
+.cmp-arrow { font-size: 160%; color: #999; }
 /* disclosure: the overview's credit table at slide size. */
 .ai-use-slide table.ai-use { width: 100%; font-size: 70%; border-collapse: collapse; }
 .ai-use-slide table.ai-use th, .ai-use-slide table.ai-use td { text-align: left; padding: 4px 8px; border-bottom: 1px solid #e4e4e4; }
@@ -409,6 +434,332 @@ cat('<div class="ai-use-slide">', gsub("\n\\s*", " ", tab), gsub("\n\\s*", " ", 
 ```
 
 The columns group the 14 roles of the [CRediT contributor taxonomy](https://credit.niso.org/) (ANSI/NISO Z39.104-2022) into three: ideas and direction, doing the work, and writing. The last column, **human verification**, is our addition: how closely the author has checked each part.
+
+
+---
+name: opa-bsz
+class: opa-card
+
+# The BSZ analysis OPA
+
+.pull-left[
+Boll, Saez and Zucman estimate the one-time tax at about $100 billion of wealth tax. This OPA rebuilds their Table 5 from the authors' public workbook, in R with a Python twin and tests, and nets the income tax effects into one main estimate of `r usd(eb$bsz_model)`.
+
+**What reproduces.** All 28 cells of Table 5 match the workbook, and 26 round to the digit the paper prints. Every variation the paper prints reproduces (7 of 7). Ten settings the paper does not print have been sent to the authors to test. [Checks](../../../bsz-analysis/site/checks.html)
+
+[The BSZ analysis overview](../../../bsz-analysis/site/)
+]
+
+.pull-right[
+```{r cmp-bsz, results="asis"}
+compare_figs("bsz-analysis/site/index.html")
+```
+]
+
+---
+name: opa-jr
+class: opa-card
+
+# The JR analysis OPA
+
+.pull-left[
+Jaros and Rauh find a mean net present value of `r usd(rj_print)`: the wealth tax minus the income tax lost for ever when billionaires leave. This OPA reruns the authors' own code as shipped, in R with a Python twin and tests, and computes the exact average of their Monte Carlo, `r usd(rj_main, 2)`.
+
+**What reproduces.** The main estimate reproduces from the authors' code, and nine mismatches between their text, READMEs and code are recorded. Every variation the papers print reproduces (4 of 4). Ten settings the papers do not print have been sent to the authors to test. [Checks](../../../rjkdc-analysis/site/checks.html)
+
+[The JR analysis overview](../../../rjkdc-analysis/site/)
+]
+
+.pull-right[
+```{r cmp-jr, results="asis"}
+compare_figs("rjkdc-analysis/site/index.html")
+```
+]
+
+---
+name: opa-comparison
+class: opa-card
+
+# The comparison OPA
+
+.pull-left[
+The comparison puts both analyses on one common output, the net fiscal effect in today's dollars, and moves from one main estimate to the other one disputed input at a time. Its explorer lets a reader set each input to either analysis's value.
+
+**What reproduces.** Both main estimates are rebuilt on the common output from the two analyses' exported files, `r usd(eb$bsz_model)` and `r usd(rj_main)`. The steps of the bridge add up exactly to the gap, and the R and Python versions agree.
+
+[The comparison overview](../../../index.html)
+]
+
+.pull-right[
+```{r cmp-comparison, results="asis"}
+compare_figs("index.html")
+```
+]
+
+---
+name: pseudo-eq
+
+# What separates the two numbers
+
+```{r pseudo, results="asis"}
+# D and q of the dial path, the loss box's four steps added up, then the other three added up
+# (eq_terms() in R/site.R; the same equation as the explorer and the overview)
+et <- eq_terms(dp)
+term <- function(j) with(et$terms[j, ], sprintf('<span class="eq-step"><span class="op">%s</span><span class="term"><b>%s</b><small>%s</small></span></span>',
+                            if (change < 0) "&minus;" else "+", money(abs(change), 1), esc(label)))
+cat('<div class="pseudo-eq">',
+    sprintf('<span class="term"><b>%s</b><small>BSZ estimate</small></span>', money(eb$bsz_model, 1)),
+    paste(vapply(seq_len(nrow(et$terms)), term, ""), collapse = ""),
+    sprintf('<span class="eq-step"><span class="op">&asymp;</span><span class="term"><b>%s</b><small>JR estimate</small></span></span>', money(eb$rauh_model, 1)),
+    '</div>', sep = "")
+```
+
+.small[
+Move the BSZ panel's dials to their far ends, term by term from left to right. `r et$note` The terms add up
+exactly; "about equal" is only rounding. The JR estimate here is the exact average of the
+authors' Monte Carlo; their seeded run prints `r usd(rj_print)`.
+]
+
+The one published comparison, Hoopes (2026), draws this gap for earlier versions of the two analyses as a waterfall; this project's own waterfall is [in the appendix](#waterfall).
+
+The next three slides take the three largest steps, `r three_syms`, in path
+order. Each says what both analyses assume, why, and what kind of claim it is:
+
+.small[
+- **data**: settled by observable facts (lists, filings, tax statistics)
+- **research**: a parameter taken from published studies
+- **guesswork**: asserted without data or a study behind it, legal judgements included
+- **scenario**: a choice of which world to estimate, which neither data nor studies settle
+- **derived**: computed from the analysis's own inputs
+]
+
+---
+name: diff-departed
+
+# Difference 1: who has already left?
+
+```{r claims-fn}
+claim_table <- function(bsz, jr) {
+  cat('<table class="dt claims"><tr><th style="width:50%">The BSZ analysis</th><th>The JR analysis</th></tr>')
+  cat(sprintf("<tr><td>%s</td><td>%s</td></tr>", bsz, jr))
+  cat("</table>")
+}
+```
+
+```{r claims-dep, results="asis"}
+claim_table(
+  "<b>Nobody counts as departed.</b> The benchmark taxes everyone resident in California on 1 January 2026 (BSZ PDF p.23). Its aggressive scenario (Table 5 row 3) assumes four of them left: Page, Thiel, Hankey and Kalanick.",
+  sprintf("<b>Seven publicly reported moves</b> (Page, Brin, Thiel, Hankey, Spielberg, Kalanick and Sacks) are taken out of the base before the tax: %s of its wealth (NPV_dist_v8.R:19).", pct(dshare(rj), 1)))
+```
+
+.pull-left[
+
+**Kind of claim:** <span class="og guesswork">guesswork</span> on <span class="og data">data</span>.
+Who announced a move is observed. Whether that move ended legal residence before 1 January is a
+legal judgement.
+
+**Why it is large:** the 5% tax falls only on wealth still in the state, and the seven hold
+`r pct(dshare(rj), 1)` of it. *D* moves `r c("first", "second", "third", "fourth")[dp$step[dp$step_id == "confirmed_departures"]]` on the path, while *q* is still 1, so that share
+of the revenue is lost in full.
+
+]
+
+.pull-right[
+
+.highlight-box[
+**Dollars moved, on (b):** `r usd(ps("confirmed_departures"), 1, TRUE)`, step `r dp$step[dp$step_id == "confirmed_departures"]` of the dial path.
+]
+
+]
+
+---
+name: diff-litigation
+
+# Difference 2: will the tax survive in court?
+
+```{r claims-lit, results="asis"}
+claim_table(
+  sprintf("<b><i>q</i> = %s.</b> The Act as written, collected in full. Neither BSZ nor the expert report it builds on (GGSS: Galle, Gamage, Saez and Shanske) discounts the revenue for litigation risk (BSZ Table 5; GGSS p.4).", fmt_input("q", sup$q)),
+  sprintf("<b><i>q</i> = %s.</b> The chance the Act survives a court challenge, set at the &quot;more likely than not&quot; threshold of an accounting rule (ASC 740-10; NBER README, chapter Sec. 4.3). The Monte Carlo draws the revenue anywhere between zero (struck down) and the %s ceiling; its average is half the ceiling.", fmt_input("q", rj$q), usd(ceiling72, 0)))
+```
+
+.pull-left[
+
+**Kind of claim:** <span class="og guesswork">guesswork</span>, a legal judgement. No data or study
+gives the chance a court upholds this Act.
+
+**Why it is large:** *q* multiplies the whole revenue, so halving it halves what the other inputs
+leave.
+
+]
+
+.pull-right[
+
+.highlight-box[
+**Dollars moved, on (b):** `r usd(ps("litigation_survival"), 1, TRUE)`, step `r dp$step[dp$step_id == "litigation_survival"]` of the dial path.
+]
+
+.small[The lost income tax is not scaled by *q*: people who left do not come back if the Act is struck down.]
+
+]
+
+---
+name: diff-horizon
+
+# Difference 3: for how long is the income tax lost?
+
+```{r claims-hz, results="asis"}
+claim_table(
+  sprintf("<b>%s.</b> The losses are &quot;annual temporary&quot; and last about the five payment years (&quot;If they last say only 5 years&quot;, BSZ PDF p.27). A one-time tax should cause a temporary response (BSZ p.22).", fmt_input("H", sup$H)),
+  sprintf("<b>%s.</b> A billionaire who leaves stops paying California income tax for ever, so the lost stream is valued as a perpetuity, 1/r (chapter Sec. 5.4, eq. 18-19).", tools::toTitleCase(fmt_input("H", rj$H))))
+```
+
+```{r tab-hz, results="asis"}
+# both columns at the BSZ end's rate: on the path the horizon moves before the rate dial
+ls <- ex$loss; l_b <- ls[ls$source_id == "bsz_row1", ]; l_r <- ls[ls$source_id == "rauh_nber", ]
+a5 <- annuity(sup$r, 5); ainf <- annuity(sup$r, Inf)
+cat(sprintf('<table class="dt"><tr><th>Income tax lost, in today&#39;s dollars, at %s</th><th>5 years</th><th>For ever</th><th>Moving to for ever</th></tr>', r3))
+cat(sprintf('<tr><td>BSZ yearly loss, %s</td><td>%s</td><td>%s</td><td>%s</td></tr>', usd(l_b$annual_loss, 2), usd(l_b$annual_loss * a5), usd(l_b$annual_loss * ainf), usd(l_b$annual_loss * (a5 - ainf), 1, TRUE)))
+cat(sprintf('<tr><td>JR yearly loss, %s</td><td>%s</td><td>%s</td><td>%s</td></tr>', usd(l_r$annual_loss, 2), usd(l_r$annual_loss * a5), usd(l_r$annual_loss * ainf), usd(l_r$annual_loss * (a5 - ainf), 1, TRUE)))
+cat("</table>")
+# on the path the horizon moves after the share lost and the yearly tax but before a, so the
+# yearly loss is the JR one plus the part the BSZ avoidance allowance adds (alpha m C)
+av_loss <- sup$alpha * sup$m * rj$C
+stopifnot(abs(ps("horizon") - (l_r$annual_loss + av_loss) * (a5 - ainf)) < 1e-9, abs(l_r$pv_5yr - l_r$annual_loss * a5) < 1e-9,
+          dp$step[dp$step_id == "horizon"] < dp$step[dp$step_id == "avoidance"])
+```
+
+.pull-left[
+
+**Kind of claim:** <span class="og scenario">scenario</span>. Neither data nor studies settle how
+long a departure lasts.
+
+]
+
+.pull-right[
+
+.highlight-box[
+**Dollars moved, on (b):** `r usd(ps("horizon"), 1, TRUE)`, step `r dp$step[dp$step_id == "horizon"]` of the dial path, the largest.
+The horizon moves after the share lost and the yearly tax, but before *a*. So the yearly loss is
+the JR one plus `r usd(av_loss, 2)` from the BSZ avoidance allowance, still in place. The step is
+larger than the JR row's last column. The rate dial moves next.
+]
+
+]
+
+---
+name: smaller
+
+# The smaller steps
+
+```{r tab-rest, results="asis"}
+# the other path steps in path order; the minor switch's row joins its three inputs
+cat('<table class="dt"><tr><th>Input</th><th>BSZ value</th><th>JR value</th><th class="l">Kind of claim</th><th>Step on the path, (b)</th></tr>')
+for (i in seq_len(nrow(rest))) {
+  ids <- dial_ids(rest$step_id[i]); tx <- lapply(ids, function(x) step_texts(inp, x))
+  kind <- paste(unique(steps$kind[match(ids, steps$step_id)]), collapse = ", ")
+  name <- if (rest$step_id[i] == "minor_inputs") esc(rest$title[i]) else sprintf("<i>%s</i>, %s", rest$symbol[i], esc(rest$title[i]))
+  cat(sprintf('<tr><td>%s</td><td>%s</td><td>%s</td><td class="l">%s</td><td>%s</td></tr>',
+              name, paste(vapply(tx, `[[`, "", "bsz"), collapse = "; "), paste(vapply(tx, `[[`, "", "rjkdc"), collapse = "; "),
+              kind, money(rest$change[i], 1, TRUE)))
+}
+cat(sprintf('<tr class="tot"><td>The %s together</td><td></td><td></td><td></td><td>%s</td></tr>', rest_n, money(sum(rest$change), 1, TRUE)))
+cat("</table>")
+```
+
+.small[
+- **Share of income tax lost**: the BSZ analysis counts what the leavers paid, from tax filings.
+  The JR analysis takes a flat `r pct(rj$f0)` of all billionaires' income tax, the middle of a draw
+  between `r pct(f_lo)` and `r pct(f_hi)`. It moves little on the path because it comes before the
+  horizon, while the loss still lasts 5 years.
+- **Yearly income tax**: BSZ take the 2019 to 2025 average from tax statistics and published
+  research. JR take the middle of a range whose floor is the authors' judgement.
+- **Avoidance and evasion allowance** is the one step that raises the estimate. The JR analysis
+  applies no allowance beyond departures, so dropping the BSZ `r pct(sup$alpha, 0)` adds revenue.
+- **Discount rate**: `r r3` at the BSZ end, a scenario, since BSZ give no rate. `r r_jr` at the JR end, derived:
+  the one rate worth the same as the authors' random draw between `r r_lo` and `r r_hi`. It moves after the horizon, on a loss that lasts for ever.
+]
+
+---
+name: hoopes
+
+# The one published comparison: Hoopes (2026)
+
+.small[
+Jeffrey Hoopes, "Galle v Rauh" (SSRN 6428578), compares **earlier versions**: the February 2026
+GGSS expert report, on which the BSZ analysis builds, and the March 2026 version by Rauh, Jaros,
+Kearney, Doran and Cosso. His Figure 2 is a waterfall that prints no values, so his column is read
+off the chart. Ours follows his order and ends at the September 2026 version's exact mean.
+]
+
+```{r tab-hoopes, results="asis"}
+lab <- k$hoopes$step_label[match(hz$step_id, k$hoopes$step_id)]
+keep <- !is.na(lab) | abs(hz$ours) > 1e-9
+lab[is.na(lab)] <- paste0("(no bar: ", hz$our_steps[is.na(lab)], ")")
+hm <- function(x, first) if (is.na(x)) "none" else money(x, 1, !first)
+cat('<table class="dt"><tr><th>Hoopes Figure 2 bar</th><th>Hoopes (read off the chart)</th><th>Ours, his order</th></tr>')
+for (i in which(keep)) {
+  first <- hz$step_id[i] == "galle_estimate"
+  cat(sprintf('<tr><td>%s</td><td>%s</td><td>%s</td></tr>', esc(lab[i]), hm(hz$hoopes[i], first), hm(hz$ours[i], first)))
+}
+cat(sprintf('<tr class="tot"><td>Where the waterfall ends</td><td>%s</td><td>%s</td></tr>',
+            money(sum(hz$hoopes, na.rm = TRUE), 1), money(sum(hz$ours, na.rm = TRUE), 1)))
+cat("</table>")
+stopifnot(abs(sum(hz$ours, na.rm = TRUE) - eb$rauh_model) < 1e-9)
+```
+
+.small[
+The residency bars agree. The income tax bars differ by `r usd(abs(hz$hoopes[hz$step_id == "income_tax_loss"] - hz$ours[hz$step_id == "income_tax_loss"]))`. The departures and behaviour bars differ because
+the versions differ: September counts seven departures on a grown base and adds the litigation
+weight; March used an elasticity response and ten "expanded" departures, which September does not.
+]
+
+---
+name: next
+
+# What reproduces, and where to go next
+
+.pull-left[
+
+**What reproduces**
+
+.small[
+- At the BSZ inputs the function returns Table 5 row 1, `r usd(ea$bsz_model, 3)` (printed `r usd(bsz_print, 0)`).
+- At the JR inputs, with the rate at `r r_jr`, it returns the exact average of the authors' Monte Carlo,
+  `r usd(eb$rauh_own, 3)` (printed `r usd(rj_print)` from one seeded run).
+- The dial path's steps add up to the gap. The report's order-free check, each input's Shapley value, adds up too, and a test checks it against a brute-force average over orders.
+- A Python twin writes the same tables. The largest difference from R is `r if (py_ok) formatC(maxdiff, format = "e", digits = 1) else "not checked"`; the tests require 1e-9.
+- **Not reproduced here:** the comparison takes each analysis's exported inputs and outputs as
+  given. Each analysis's own reproduction is on its overview page.
+]
+
+]
+
+.pull-right[
+
+**Where to go next**
+
+.small[
+- [The explorer](../explorer/): move each disputed input from one analysis's value to the other's
+- [The report](../repro.html): every step in a table, with the R and Python code in folds
+- [The materials page](../materials.html) and [the repository](https://github.com/fhoces/opa-prop40/tree/main/comparison)
+- [The comparison overview](../../../index.html)
+- [The BSZ analysis](../../../bsz-analysis/site/) and [the JR analysis](../../../rjkdc-analysis/site/), each with its own deck
+]
+
+]
+
+.blue-box[
+The bridge shows where the `r usd(gap_b, 0)` gap comes from. It cannot say which value of each input is right.
+]
+
+---
+name: appendix
+class: center, middle
+
+# Appendix
+
+The method behind the comparison: the two main estimates, the common output, the one estimating function, and the bridge with its waterfall.
 
 ---
 name: estimates
@@ -656,263 +1007,8 @@ ggplot(wf) +
 ```
 
 .small[
-Each bar moves one dial of the BSZ panel to its JR end, in the equation's order. The equation on the next
-slide shows `r eq_d_q` on their own. It adds up the four loss-box steps, `r eq_loss`, into one
+Each bar moves one dial of the BSZ panel to its JR end, in the equation's order. The equation on [What separates the two numbers](#pseudo-eq)
+shows `r eq_d_q` on their own. It adds up the four loss-box steps, `r eq_loss`, into one
 term, and the other three into another. Only dropping the BSZ `r pct(sup$alpha, 0)` avoidance allowance raises the estimate,
 because the JR analysis applies none.
-]
-
----
-name: pseudo-eq
-
-# What separates the two numbers
-
-```{r pseudo, results="asis"}
-# D and q of the dial path, the loss box's four steps added up, then the other three added up
-# (eq_terms() in R/site.R; the same equation as the explorer and the overview)
-et <- eq_terms(dp)
-term <- function(j) with(et$terms[j, ], sprintf('<span class="eq-step"><span class="op">%s</span><span class="term"><b>%s</b><small>%s</small></span></span>',
-                            if (change < 0) "&minus;" else "+", money(abs(change), 1), esc(label)))
-cat('<div class="pseudo-eq">',
-    sprintf('<span class="term"><b>%s</b><small>BSZ estimate</small></span>', money(eb$bsz_model, 1)),
-    paste(vapply(seq_len(nrow(et$terms)), term, ""), collapse = ""),
-    sprintf('<span class="eq-step"><span class="op">&asymp;</span><span class="term"><b>%s</b><small>JR estimate</small></span></span>', money(eb$rauh_model, 1)),
-    '</div>', sep = "")
-```
-
-.small[
-Move the BSZ panel's dials to their far ends, term by term from left to right. `r et$note` The terms add up
-exactly; "about equal" is only rounding. The JR estimate here is the exact average of the
-authors' Monte Carlo; their seeded run prints `r usd(rj_print)`.
-]
-
-The next three slides take the three largest steps, `r three_syms`, in path
-order. Each says what both analyses assume, why, and what kind of claim it is:
-
-.small[
-- **data**: settled by observable facts (lists, filings, tax statistics)
-- **research**: a parameter taken from published studies
-- **guesswork**: asserted without data or a study behind it, legal judgements included
-- **scenario**: a choice of which world to estimate, which neither data nor studies settle
-- **derived**: computed from the analysis's own inputs
-]
-
----
-name: diff-departed
-
-# Difference 1: who has already left?
-
-```{r claims-fn}
-claim_table <- function(bsz, jr) {
-  cat('<table class="dt claims"><tr><th style="width:50%">The BSZ analysis</th><th>The JR analysis</th></tr>')
-  cat(sprintf("<tr><td>%s</td><td>%s</td></tr>", bsz, jr))
-  cat("</table>")
-}
-```
-
-```{r claims-dep, results="asis"}
-claim_table(
-  "<b>Nobody counts as departed.</b> The benchmark taxes everyone resident in California on 1 January 2026 (BSZ PDF p.23). Its aggressive scenario (Table 5 row 3) assumes four of them left: Page, Thiel, Hankey and Kalanick.",
-  sprintf("<b>Seven publicly reported moves</b> (Page, Brin, Thiel, Hankey, Spielberg, Kalanick and Sacks) are taken out of the base before the tax: %s of its wealth (NPV_dist_v8.R:19).", pct(dshare(rj), 1)))
-```
-
-.pull-left[
-
-**Kind of claim:** <span class="og guesswork">guesswork</span> on <span class="og data">data</span>.
-Who announced a move is observed. Whether that move ended legal residence before 1 January is a
-legal judgement.
-
-**Why it is large:** the 5% tax falls only on wealth still in the state, and the seven hold
-`r pct(dshare(rj), 1)` of it. *D* moves `r c("first", "second", "third", "fourth")[dp$step[dp$step_id == "confirmed_departures"]]` on the path, while *q* is still 1, so that share
-of the revenue is lost in full.
-
-]
-
-.pull-right[
-
-.highlight-box[
-**Dollars moved, on (b):** `r usd(ps("confirmed_departures"), 1, TRUE)`, step `r dp$step[dp$step_id == "confirmed_departures"]` of the dial path.
-]
-
-]
-
----
-name: diff-litigation
-
-# Difference 2: will the tax survive in court?
-
-```{r claims-lit, results="asis"}
-claim_table(
-  sprintf("<b><i>q</i> = %s.</b> The Act as written, collected in full. Neither BSZ nor the expert report it builds on (GGSS: Galle, Gamage, Saez and Shanske) discounts the revenue for litigation risk (BSZ Table 5; GGSS p.4).", fmt_input("q", sup$q)),
-  sprintf("<b><i>q</i> = %s.</b> The chance the Act survives a court challenge, set at the &quot;more likely than not&quot; threshold of an accounting rule (ASC 740-10; NBER README, chapter Sec. 4.3). The Monte Carlo draws the revenue anywhere between zero (struck down) and the %s ceiling; its average is half the ceiling.", fmt_input("q", rj$q), usd(ceiling72, 0)))
-```
-
-.pull-left[
-
-**Kind of claim:** <span class="og guesswork">guesswork</span>, a legal judgement. No data or study
-gives the chance a court upholds this Act.
-
-**Why it is large:** *q* multiplies the whole revenue, so halving it halves what the other inputs
-leave.
-
-]
-
-.pull-right[
-
-.highlight-box[
-**Dollars moved, on (b):** `r usd(ps("litigation_survival"), 1, TRUE)`, step `r dp$step[dp$step_id == "litigation_survival"]` of the dial path.
-]
-
-.small[The lost income tax is not scaled by *q*: people who left do not come back if the Act is struck down.]
-
-]
-
----
-name: diff-horizon
-
-# Difference 3: for how long is the income tax lost?
-
-```{r claims-hz, results="asis"}
-claim_table(
-  sprintf("<b>%s.</b> The losses are &quot;annual temporary&quot; and last about the five payment years (&quot;If they last say only 5 years&quot;, BSZ PDF p.27). A one-time tax should cause a temporary response (BSZ p.22).", fmt_input("H", sup$H)),
-  sprintf("<b>%s.</b> A billionaire who leaves stops paying California income tax for ever, so the lost stream is valued as a perpetuity, 1/r (chapter Sec. 5.4, eq. 18-19).", tools::toTitleCase(fmt_input("H", rj$H))))
-```
-
-```{r tab-hz, results="asis"}
-# both columns at the BSZ end's rate: on the path the horizon moves before the rate dial
-ls <- ex$loss; l_b <- ls[ls$source_id == "bsz_row1", ]; l_r <- ls[ls$source_id == "rauh_nber", ]
-a5 <- annuity(sup$r, 5); ainf <- annuity(sup$r, Inf)
-cat(sprintf('<table class="dt"><tr><th>Income tax lost, in today&#39;s dollars, at %s</th><th>5 years</th><th>For ever</th><th>Moving to for ever</th></tr>', r3))
-cat(sprintf('<tr><td>BSZ yearly loss, %s</td><td>%s</td><td>%s</td><td>%s</td></tr>', usd(l_b$annual_loss, 2), usd(l_b$annual_loss * a5), usd(l_b$annual_loss * ainf), usd(l_b$annual_loss * (a5 - ainf), 1, TRUE)))
-cat(sprintf('<tr><td>JR yearly loss, %s</td><td>%s</td><td>%s</td><td>%s</td></tr>', usd(l_r$annual_loss, 2), usd(l_r$annual_loss * a5), usd(l_r$annual_loss * ainf), usd(l_r$annual_loss * (a5 - ainf), 1, TRUE)))
-cat("</table>")
-# on the path the horizon moves after the share lost and the yearly tax but before a, so the
-# yearly loss is the JR one plus the part the BSZ avoidance allowance adds (alpha m C)
-av_loss <- sup$alpha * sup$m * rj$C
-stopifnot(abs(ps("horizon") - (l_r$annual_loss + av_loss) * (a5 - ainf)) < 1e-9, abs(l_r$pv_5yr - l_r$annual_loss * a5) < 1e-9,
-          dp$step[dp$step_id == "horizon"] < dp$step[dp$step_id == "avoidance"])
-```
-
-.pull-left[
-
-**Kind of claim:** <span class="og scenario">scenario</span>. Neither data nor studies settle how
-long a departure lasts.
-
-]
-
-.pull-right[
-
-.highlight-box[
-**Dollars moved, on (b):** `r usd(ps("horizon"), 1, TRUE)`, step `r dp$step[dp$step_id == "horizon"]` of the dial path, the largest.
-The horizon moves after the share lost and the yearly tax, but before *a*. So the yearly loss is
-the JR one plus `r usd(av_loss, 2)` from the BSZ avoidance allowance, still in place. The step is
-larger than the JR row's last column. The rate dial moves next.
-]
-
-]
-
----
-name: smaller
-
-# The smaller steps
-
-```{r tab-rest, results="asis"}
-# the other path steps in path order; the minor switch's row joins its three inputs
-cat('<table class="dt"><tr><th>Input</th><th>BSZ value</th><th>JR value</th><th class="l">Kind of claim</th><th>Step on the path, (b)</th></tr>')
-for (i in seq_len(nrow(rest))) {
-  ids <- dial_ids(rest$step_id[i]); tx <- lapply(ids, function(x) step_texts(inp, x))
-  kind <- paste(unique(steps$kind[match(ids, steps$step_id)]), collapse = ", ")
-  name <- if (rest$step_id[i] == "minor_inputs") esc(rest$title[i]) else sprintf("<i>%s</i>, %s", rest$symbol[i], esc(rest$title[i]))
-  cat(sprintf('<tr><td>%s</td><td>%s</td><td>%s</td><td class="l">%s</td><td>%s</td></tr>',
-              name, paste(vapply(tx, `[[`, "", "bsz"), collapse = "; "), paste(vapply(tx, `[[`, "", "rjkdc"), collapse = "; "),
-              kind, money(rest$change[i], 1, TRUE)))
-}
-cat(sprintf('<tr class="tot"><td>The %s together</td><td></td><td></td><td></td><td>%s</td></tr>', rest_n, money(sum(rest$change), 1, TRUE)))
-cat("</table>")
-```
-
-.small[
-- **Share of income tax lost**: the BSZ analysis counts what the leavers paid, from tax filings.
-  The JR analysis takes a flat `r pct(rj$f0)` of all billionaires' income tax, the middle of a draw
-  between `r pct(f_lo)` and `r pct(f_hi)`. It moves little on the path because it comes before the
-  horizon, while the loss still lasts 5 years.
-- **Yearly income tax**: BSZ take the 2019 to 2025 average from tax statistics and published
-  research. JR take the middle of a range whose floor is the authors' judgement.
-- **Avoidance and evasion allowance** is the one step that raises the estimate. The JR analysis
-  applies no allowance beyond departures, so dropping the BSZ `r pct(sup$alpha, 0)` adds revenue.
-- **Discount rate**: `r r3` at the BSZ end, a scenario, since BSZ give no rate. `r r_jr` at the JR end, derived:
-  the one rate worth the same as the authors' random draw between `r r_lo` and `r r_hi`. It moves after the horizon, on a loss that lasts for ever.
-]
-
----
-name: hoopes
-
-# The one published comparison: Hoopes (2026)
-
-.small[
-Jeffrey Hoopes, "Galle v Rauh" (SSRN 6428578), compares **earlier versions**: the February 2026
-GGSS expert report, on which the BSZ analysis builds, and the March 2026 version by Rauh, Jaros,
-Kearney, Doran and Cosso. His Figure 2 is a waterfall that prints no values, so his column is read
-off the chart. Ours follows his order and ends at the September 2026 version's exact mean.
-]
-
-```{r tab-hoopes, results="asis"}
-lab <- k$hoopes$step_label[match(hz$step_id, k$hoopes$step_id)]
-keep <- !is.na(lab) | abs(hz$ours) > 1e-9
-lab[is.na(lab)] <- paste0("(no bar: ", hz$our_steps[is.na(lab)], ")")
-hm <- function(x, first) if (is.na(x)) "none" else money(x, 1, !first)
-cat('<table class="dt"><tr><th>Hoopes Figure 2 bar</th><th>Hoopes (read off the chart)</th><th>Ours, his order</th></tr>')
-for (i in which(keep)) {
-  first <- hz$step_id[i] == "galle_estimate"
-  cat(sprintf('<tr><td>%s</td><td>%s</td><td>%s</td></tr>', esc(lab[i]), hm(hz$hoopes[i], first), hm(hz$ours[i], first)))
-}
-cat(sprintf('<tr class="tot"><td>Where the waterfall ends</td><td>%s</td><td>%s</td></tr>',
-            money(sum(hz$hoopes, na.rm = TRUE), 1), money(sum(hz$ours, na.rm = TRUE), 1)))
-cat("</table>")
-stopifnot(abs(sum(hz$ours, na.rm = TRUE) - eb$rauh_model) < 1e-9)
-```
-
-.small[
-The residency bars agree. The income tax bars differ by `r usd(abs(hz$hoopes[hz$step_id == "income_tax_loss"] - hz$ours[hz$step_id == "income_tax_loss"]))`. The departures and behaviour bars differ because
-the versions differ: September counts seven departures on a grown base and adds the litigation
-weight; March used an elasticity response and ten "expanded" departures, which September does not.
-]
-
----
-name: next
-
-# What reproduces, and where to go next
-
-.pull-left[
-
-**What reproduces**
-
-.small[
-- At the BSZ inputs the function returns Table 5 row 1, `r usd(ea$bsz_model, 3)` (printed `r usd(bsz_print, 0)`).
-- At the JR inputs, with the rate at `r r_jr`, it returns the exact average of the authors' Monte Carlo,
-  `r usd(eb$rauh_own, 3)` (printed `r usd(rj_print)` from one seeded run).
-- The dial path's steps add up to the gap. The report's order-free check, each input's Shapley value, adds up too, and a test checks it against a brute-force average over orders.
-- A Python twin writes the same tables. The largest difference from R is `r if (py_ok) formatC(maxdiff, format = "e", digits = 1) else "not checked"`; the tests require 1e-9.
-- **Not reproduced here:** the comparison takes each analysis's exported inputs and outputs as
-  given. Each analysis's own reproduction is on its overview page.
-]
-
-]
-
-.pull-right[
-
-**Where to go next**
-
-.small[
-- [The explorer](../explorer/): move each disputed input from one analysis's value to the other's
-- [The report](../repro.html): every step in a table, with the R and Python code in folds
-- [The materials page](../materials.html) and [the repository](https://github.com/fhoces/opa-prop40/tree/main/comparison)
-- [The comparison overview](../../../index.html)
-- [The BSZ analysis](../../../bsz-analysis/site/) and [the JR analysis](../../../rjkdc-analysis/site/), each with its own deck
-]
-
-]
-
-.blue-box[
-The bridge shows where the `r usd(gap_b, 0)` gap comes from. It cannot say which value of each input is right.
 ]
