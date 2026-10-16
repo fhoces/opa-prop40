@@ -108,6 +108,26 @@ checks_settings <- function(page) {
 }
 bsz_settings <- checks_settings("bsz-analysis/site/checks.html")
 jr_settings <- checks_settings("rjkdc-analysis/site/checks.html")
+# The checks pages' results tables: the variations a paper prints (the "for reference" row left
+# out), how many match, and how many cannot be set in this OPA.
+checks_results <- function(page) {
+  h <- paste(readLines(file.path(root, page), warn = FALSE), collapse = "\n")
+  sec <- regmatches(h, regexpr('(?s)<section id="results".*?</section>', h, perl = TRUE))
+  tb <- regmatches(sec, regexpr("(?s)<tbody>.*?</tbody>", sec, perl = TRUE))
+  stopifnot(length(tb) == 1)
+  rows <- regmatches(tb, gregexpr("(?s)<tr.*?</tr>", tb, perl = TRUE))[[1]]
+  rows <- rows[!grepl("for reference", rows, fixed = TRUE)]
+  cannot <- sum(grepl("Cannot be set", rows, fixed = TRUE))
+  list(n = length(rows) - cannot, match = sum(grepl(">Match<", rows, fixed = TRUE)), cannot = cannot)
+}
+bsz_checks <- checks_results("bsz-analysis/site/checks.html")
+jr_checks <- checks_results("rjkdc-analysis/site/checks.html")
+# The code review record of each chain (review/<chain>.json): layers reviewed and lightly reviewed.
+review_counts <- function(chain) {
+  st <- vapply(jsonlite::fromJSON(file.path(root, "review", paste0(chain, ".json")),
+                                  simplifyVector = FALSE)$layers, function(L) L$state, "")
+  list(n = length(st), done = sum(st == "understood"), partly = sum(st == "partly"))
+}
 cap1 <- function(x) paste0(toupper(substring(x, 1, 1)), substring(x, 2))
 
 # The share of the base already departed at an end; used in the main body and the appendix.
@@ -318,6 +338,10 @@ class: big-bullets
 .cmp-arrow { font-size: 160%; color: #999; }
 /* disclosure: the overview's credit table at slide size. */
 .ai-badge.inline { font-size: 0.72em; margin-left: 0.1em; vertical-align: 0.05em; }
+/* verification: the strategies by OPA. */
+.verif { width: 100%; font-size: 80%; margin-top: 10px; }
+table.dt.verif th { vertical-align: bottom; text-align: left; }
+table.dt.verif td { vertical-align: top; text-align: left; padding: 8px 10px; }
 /* layer-*: the appendix's layer slides, the layer figure and text left, a screenshot right
    (figs/layers/, taken by screenshots.sh). */
 .layer-slide .pull-left { width: 31%; font-size: 80%; }
@@ -471,6 +495,30 @@ An example from the [BSZ analysis OPA](../../../bsz-analysis/site/). The columns
 
 
 ---
+name: verification
+
+# Verification: where each OPA stands
+
+```{r verification-table, results="asis"}
+stopifnot(bsz_checks$match == bsz_checks$n, jr_checks$match == jr_checks$n)
+rv <- function(chain) with(review_counts(chain), sprintf("%d of %d layers reviewed, %d lightly", done, n, partly))
+cat('<table class="dt verif"><tr><th></th><th>1. Review of each layer<br><small>the code review</small></th>',
+    '<th>2. The variations the papers print<br><small>rerun in this OPA</small></th>',
+    '<th>3. Settings the papers do not print<br><small>sent to the authors to run</small></th></tr>')
+cat(sprintf('<tr><td><b>The BSZ analysis</b></td><td>%s</td><td>%d of %d match</td><td>%d settings</td></tr>',
+            rv("bsz"), bsz_checks$match, bsz_checks$n, bsz_settings))
+cat(sprintf('<tr><td><b>The JR analysis</b></td><td>%s</td><td>%d of %d match; %d more cannot be set</td><td>%d settings</td></tr>',
+            rv("rjkdc"), jr_checks$match, jr_checks$n, jr_checks$cannot, jr_settings))
+cat(sprintf('<tr><td><b>The comparison</b></td><td>%s</td><td>none printed; the one published comparison is redone (<a href="#hoopes">slide</a>)</td><td>none: it is built from the two analyses</td></tr>',
+            rv("comparison")))
+cat("</table>")
+```
+
+.small[
+The three columns are the three strategies of [the earlier slide](#ai-challenges). The first comes from the [code review page](https://claude.ai/artifact/6VZEezoAsCNACjmgPLEvah): the author marks each layer of the code behind a main estimate as reviewed, lightly reviewed or not reviewed. The other two come from each analysis's checks page ([BSZ](../../../bsz-analysis/site/checks.html), [JR](../../../rjkdc-analysis/site/checks.html)). "Match" means this OPA's value rounds to the printed figure.
+]
+
+---
 name: opa-bsz
 class: opa-card
 
@@ -479,7 +527,7 @@ class: opa-card
 .pull-left[
 Boll, Saez and Zucman estimate the one-time tax at about $100 billion of wealth tax. This OPA rebuilds their Table 5 from the authors' public workbook, in R with a Python twin and tests, and nets the income tax effects into one main estimate of `r usd(eb$bsz_model)`.
 
-**What reproduces.** All 28 cells of Table 5 match the workbook, and 26 round to the digit the paper prints. Every variation the paper prints reproduces (7 of 7). `r cap1(n_words(bsz_settings))` settings the paper does not print have been sent to the authors to test. [Checks](../../../bsz-analysis/site/checks.html)
+**What reproduces.** All 28 cells of Table 5 match the workbook, and 26 round to the digit the paper prints. Every variation the paper prints reproduces (`r bsz_checks$match` of `r bsz_checks$n`). `r cap1(n_words(bsz_settings))` settings the paper does not print have been sent to the authors to test. [Checks](../../../bsz-analysis/site/checks.html)
 
 [The BSZ analysis overview](../../../bsz-analysis/site/) &middot; Its layers, with screenshots: [Output](#layer-bsz-output), [Analysis](#layer-bsz-analysis), [Materials](#layer-bsz-materials), [Code review](#layer-bsz-review)
 ]
@@ -499,7 +547,7 @@ class: opa-card
 .pull-left[
 Jaros and Rauh find a mean net present value of `r usd(rj_print)`: the wealth tax minus the income tax lost for ever when billionaires leave. This OPA reruns the authors' own code as shipped, in R with a Python twin and tests, and computes the exact average of their Monte Carlo, `r usd(rj_main, 2)`.
 
-**What reproduces.** The main estimate reproduces from the authors' code, and `r n_words(jr_mismatches)` mismatches between their text, READMEs and code are recorded. Every variation the papers print reproduces (4 of 4). `r cap1(n_words(jr_settings))` settings the papers do not print have been sent to the authors to test. [Checks](../../../rjkdc-analysis/site/checks.html)
+**What reproduces.** The main estimate reproduces from the authors' code, and `r n_words(jr_mismatches)` mismatches between their text, READMEs and code are recorded. Every variation the papers print reproduces (`r jr_checks$match` of `r jr_checks$n`). `r cap1(n_words(jr_settings))` settings the papers do not print have been sent to the authors to test. [Checks](../../../rjkdc-analysis/site/checks.html)
 
 [The JR analysis overview](../../../rjkdc-analysis/site/) &middot; Its layers, with screenshots: [Output](#layer-jr-output), [Analysis](#layer-jr-analysis), [Materials](#layer-jr-materials), [Code review](#layer-jr-review)
 ]
