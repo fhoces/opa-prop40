@@ -126,7 +126,7 @@ name: prop40
 # California's Proposition 40
 
 On the ballot on 3 November 2026: a one-time tax of 5% on the net worth of Californians worth
-$1 billion or more, paid over five years, with the revenue mainly for health care.
+$1 billion or more, payable over five years, with the revenue mainly for health care.
 
 - **For:** federal cuts have taken health coverage from over a million Californians. A one-time
   tax on about 200 billionaires would raise "about $100 billion" to keep hospitals and emergency
@@ -135,7 +135,11 @@ $1 billion or more, paid over five years, with the revenue mainly for health car
   the state, costing "$25 billion in lost revenue". It taxes retirement accounts for the first time
   and lets the Legislature amend the measure "without voter approval".
 
-.quote-box[[New York Times quote to come: the exact sentence calling the measure a close second most important issue in the election, with its date and link]]
+.quote-box[
+"Control of Congress is the biggest issue at stake in November’s elections. A close second might be the fight over a ballot initiative in California, Proposition 40, that seeks to impose a wealth tax on the state’s roughly 250 billionaires."
+
+.quote-src[*The New York Times Magazine*, [14 October 2026](https://www.nytimes.com/2026/10/14/magazine/california-billionaires-tax.html)]
+]
 
 .footnote[Arguments from the official voter guide: California Secretary of State, *Official Voter Information Guide*, general election of 3 November 2026, Proposition 40, arguments in favor and against.]
 
@@ -317,6 +321,8 @@ class: big-bullets
 .mid-bullets li { margin-bottom: 0.3em; }
 /* prop40: the newspaper quote, set apart from the bullets. */
 .quote-box { margin-top: 1em; padding: 0.4em 0.9em; border-left: 4px solid #999; color: #444; font-style: italic; }
+.quote-box p { margin: 0.2em 0; }
+.quote-src { font-style: normal; font-size: 85%; }
 /* On why-opa-4 the heading wraps in the left column, clear of the raised top row. */
 .head-beside h1 { width: 36%; }
 .head-beside .beside, .head-beside .footnote.beside { width: 35%; }
