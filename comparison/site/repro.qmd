@@ -1,5 +1,6 @@
 ---
-title: "Prop 40, the comparison: the reproduction"
+title: 'Prop 40, the comparison: the reproduction <a class="ai-badge ai-badge-red" href="../../index.html#how-ai-was-used">AI generated, not reviewed yet</a>'
+pagetitle: "Prop 40, the comparison: the reproduction"
 subtitle: "The BSZ analysis and the JR analysis put on one common output, and the gap between them explained one disputed input at a time"
 date: today
 format:

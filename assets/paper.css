@@ -256,3 +256,14 @@ body.pg-explorer th, body.pg-explorer td { font-family: var(--serif); }
 .q-copy { font-family: var(--serif); font-size: 13px; margin-left: 6px; padding: 1px 8px; color: var(--link);
   background: transparent; border: 1px solid var(--link); border-radius: 0; cursor: pointer; white-space: nowrap; }
 .q-copy.is-done { color: var(--ink); border-color: var(--ink); }
+
+/* Review badge next to the title of an object the author has not fully reviewed (author request
+   2026-10-15). Yellow: lightly reviewed. Red: not reviewed. The level comes from the analysis's
+   site/credit/credit-answers.json; a test in each suite checks the badges against it. Each links
+   to that OPA's credit section (#how-ai-was-used on its overview). */
+.ai-badge { display: inline-block; vertical-align: middle; margin-left: 0.5em; padding: 0.2em 0.75em;
+  border-radius: 999px; font-family: var(--serif); font-size: 0.42em; font-weight: 600;
+  letter-spacing: 0; line-height: 1.35; text-decoration: none !important; white-space: nowrap; }
+.ai-badge:hover, .ai-badge:focus { text-decoration: underline !important; }
+a.ai-badge-yellow, .ai-badge-yellow { background: #f5c518; color: #3b2c00 !important; }
+a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; }

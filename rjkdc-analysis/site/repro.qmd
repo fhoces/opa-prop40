@@ -1,5 +1,6 @@
 ---
-title: "Prop 40, JR analysis: the reproduction"
+title: 'Prop 40, JR analysis: the reproduction <a class="ai-badge ai-badge-red" href="index.html#how-ai-was-used">AI generated, not reviewed yet</a>'
+pagetitle: "Prop 40, JR analysis: the reproduction"
 subtitle: "Jaros and Rauh (NBER, September 2026; first version by Rauh, Jaros, Kearney, Doran and Cosso, March 2026), reproduced step by step from the authors' own public code and data"
 date: today
 format:

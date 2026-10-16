@@ -1,4 +1,4 @@
-# JR analysis of California Proposition 40: Open Materials
+# JR analysis of California Proposition 40: Open Materials [![AI generated, not reviewed yet](https://img.shields.io/badge/AI_generated-not_reviewed_yet-red)](https://fhoces.github.io/opa-prop40/rjkdc-analysis/site/#how-ai-was-used)
 
 This folder is the JR analysis of [opa-prop40](https://fhoces.github.io/opa-prop40/rjkdc-analysis/site/), an Open Policy Analysis of California's
 2026 Proposition 40 (the Billionaire Tax Act). The [comparison overview](https://fhoces.github.io/opa-prop40/)

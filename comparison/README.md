@@ -1,4 +1,4 @@
-# The comparison of California Proposition 40: Open Materials
+# The comparison of California Proposition 40: Open Materials [![AI generated, not reviewed yet](https://img.shields.io/badge/AI_generated-not_reviewed_yet-red)](https://fhoces.github.io/opa-prop40/#how-ai-was-used)
 
 This folder is the comparison layer of [opa-prop40](https://fhoces.github.io/opa-prop40/), an
 [Open Policy Analysis](https://doi.org/10.1093/scipol/scaa067) of California's 2026 Proposition 40 (the Billionaire

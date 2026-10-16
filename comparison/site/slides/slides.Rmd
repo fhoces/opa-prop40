@@ -1,5 +1,6 @@
 ---
-title: "Prop 40, the comparison: why the two estimates differ"
+title: 'Prop 40, the comparison: why the two estimates differ <a class="ai-badge ai-badge-red" href="../../../index.html#how-ai-was-used">AI generated, not reviewed yet</a>'
+pagetitle: "Prop 40, the comparison: why the two estimates differ"
 subtitle: "Teaching deck: the BSZ analysis (Boll, Saez and Zucman, August 2026) and the JR analysis (Jaros and Rauh, NBER, September 2026) on one common output"
 output:
   xaringan::moon_reader:

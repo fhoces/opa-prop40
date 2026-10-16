@@ -1,5 +1,6 @@
 ---
-title: "Prop 40, BSZ analysis: the reproduction"
+title: 'Prop 40, BSZ analysis: the reproduction <a class="ai-badge ai-badge-yellow" href="index.html#how-ai-was-used">AI generated, not fully reviewed yet</a>'
+pagetitle: "Prop 40, BSZ analysis: the reproduction"
 subtitle: "Boll, Saez and Zucman (BSZ, 2026) and the Galle, Gamage, Saez and Shanske (GGSS) expert report, reproduced step by step from the authors' August 2026 workbook"
 date: today
 format:

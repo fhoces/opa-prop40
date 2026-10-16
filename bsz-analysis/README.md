@@ -1,4 +1,4 @@
-# BSZ analysis of California Proposition 40: Open Materials
+# BSZ analysis of California Proposition 40: Open Materials [![AI generated, not fully reviewed yet](https://img.shields.io/badge/AI_generated-not_fully_reviewed_yet-yellow)](https://fhoces.github.io/opa-prop40/bsz-analysis/site/#how-ai-was-used)
 
 This folder is the BSZ analysis of [opa-prop40](https://fhoces.github.io/opa-prop40/bsz-analysis/site/), an Open Policy Analysis of California's
 2026 Proposition 40 (the Billionaire Tax Act). The [comparison overview](https://fhoces.github.io/opa-prop40/)
