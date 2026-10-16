@@ -386,6 +386,11 @@ text-decoration: none; max-width: 30em; }
 background: transparent; border: 1px solid var(--link); border-radius: 0; cursor: pointer; white-space: nowrap; }
 .q-copy.is-done { color: var(--ink); border-color: var(--ink); }
 
+a.q-survey { color: var(--paper) !important; text-decoration: none !important; }
+.q-mini { display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0 16px; }
+.q-survey.q-survey-mini { font-size: 15px; padding: 5px 14px; }
+.q-copy.q-copy-mini { font-size: 15px; padding: 5px 14px; margin-left: 0; }
+
 .ai-badge { display: inline-block; vertical-align: middle; margin-left: 0.5em; padding: 0.2em 0.75em;
 border-radius: 999px; font-family: var(--serif); font-size: 0.42em; font-weight: 600;
 letter-spacing: 0; line-height: 1.35; text-decoration: none !important; white-space: nowrap; }
@@ -453,6 +458,32 @@ class: center, middle, inverse, title-slide
 
 
 
+
+name: why-opa
+class: middle
+
+# Why do we need Open Policy Analysis?
+
+.center[&lt;img src=&quot;../../../assets/figures/evidence-to-policy.svg&quot; style=&quot;width:78%;&quot; alt=&quot;Truth feeds research, research feeds one policy analysis, and the same analysis leads one policy maker to support a policy and another to oppose it.&quot;&gt;]
+
+Between the research and the decision sits a **policy analysis**: it turns evidence into the
+gains and losses of one policy. Two policy makers can read the same analysis and still disagree,
+because they weigh those gains and losses differently.
+
+---
+name: why-opa-2
+class: middle
+
+# Why do we need Open Policy Analysis?
+
+.center[&lt;img src=&quot;../../../assets/figures/evidence-to-policy-competing-from-analysis.svg&quot; style=&quot;width:52%;&quot; alt=&quot;Two competing policy analyses of the same policy: one shows only gains and leads Policy Maker 1 to support it; the other shows only losses and leads Policy Maker 2 to oppose it.&quot;&gt;]
+
+Often there are **competing analyses**, and each policy maker cites the one that fits. Proposition
+40 has two: the BSZ analysis, at &lt;span class=&quot;nb&quot;&gt;$106.8B&lt;/span&gt; on this deck&#39;s common definition, and the JR
+analysis, at &lt;span class=&quot;nb&quot;&gt;−$39.0B&lt;/span&gt;. A reader sees two numbers and cannot tell which assumptions produce
+the gap. An Open Policy Analysis makes each one checkable, from the output to the code.
+
+---
 
 name: opa-frame
 class: center, middle, opa-slide
