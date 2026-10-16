@@ -652,6 +652,8 @@ class: big-bullets
 .cmp-arrow { font-size: 160%; color: #999; }
 /* disclosure: the overview&#39;s credit table at slide size. */
 .ai-badge.inline { font-size: 0.72em; margin-left: 0.1em; vertical-align: 0.05em; }
+/* pseudo-eq: the four terms, one slide each. */
+.eq-list { margin: -0.6em 0 0.2em 1.2em; line-height: 1.3; }
 /* verification: the strategies by OPA. */
 .verif { width: 100%; font-size: 80%; margin-top: 10px; }
 table.dt.verif th { vertical-align: bottom; text-align: left; }
@@ -916,11 +918,17 @@ exactly. The JR estimate here is the exact average of the
 authors&#39; Monte Carlo; their seeded run prints &lt;span class=&quot;nb&quot;&gt;−$38.9B&lt;/span&gt;.
 ]
 
-The next slides take the four terms one at a time, (i) to (iv). Each says what both analyses
-assume, why, and what kind of claim it is:
+Next, we analyze each component, one at a time:
+
+.eq-list[
+(i) [Who has already left?](#diff-departed)&lt;br&gt;
+(ii) [Will the tax survive in court?](#diff-litigation)&lt;br&gt;
+(iii) [For how long is the income tax lost?](#diff-horizon), then [*f*, *C* and *r*](#diff-loss-rest)&lt;br&gt;
+(iv) [The other three steps](#smaller)
+]
 
 .small[
-**data**: settled by observable facts (lists, filings, tax statistics). **research**: a parameter
+Each slide labels the kind of claim. **data**: settled by observable facts (lists, filings, tax statistics). **research**: a parameter
 taken from published studies. **guesswork**: asserted without data or a study behind it, legal
 judgements included. **scenario**: a choice of which world to estimate, which neither data nor
 studies settle. **derived**: computed from the analysis&#39;s own inputs.
