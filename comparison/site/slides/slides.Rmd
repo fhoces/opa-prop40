@@ -269,6 +269,20 @@ class: big-bullets
 .toc li { margin-bottom: 0.7em; }
 .toc-done { color: #999; }
 .toc-note { color: #999; font-size: 75%; }
+/* disclosure: the overview's credit table at slide size. */
+.ai-use-slide table.ai-use { width: 100%; font-size: 70%; border-collapse: collapse; }
+.ai-use-slide table.ai-use th, .ai-use-slide table.ai-use td { text-align: left; padding: 4px 8px; border-bottom: 1px solid #e4e4e4; }
+.ai-use-slide .table-subhead { font-size: 75%; color: #666; }
+.ai-use-slide .sq { display: inline-block; width: 13px; height: 13px; margin-right: 3px; border-radius: 2px; vertical-align: -1px; }
+.ai-use-slide .sq.h { background: var(--credit-h); }
+.ai-use-slide .sq.ai { background: var(--credit-ai); }
+.ai-use-slide .sq.eq { background: linear-gradient(135deg, var(--credit-h) 50%, var(--credit-ai) 50%); }
+.ai-use-slide .sqs { display: block; white-space: nowrap; }
+.ai-use-slide .meter { display: inline-block; margin-right: 6px; white-space: nowrap; }
+.ai-use-slide .pip { display: inline-block; width: 10px; height: 10px; margin-right: 2px; border-radius: 50%; border: 1.5px solid #666; vertical-align: 0; }
+.ai-use-slide .pip.on { background: #111; border-color: #111; }
+.ai-use-slide .ai-key { font-size: 60%; color: #444; margin: 8px 0 0; line-height: 1.7; }
+.ai-use-slide .ai-key span { margin-right: 14px; white-space: nowrap; }
 /* ai-opa: larger bullets, a little apart. */
 .big-bullets ul { font-size: 125%; }
 .big-bullets li { margin-bottom: 0.5em; }
@@ -376,6 +390,25 @@ class: mid-bullets
   - Running the paper's robustness cases through the OPA, to see if it generates the same results.
   - Generating a set of tests where the OPA estimates under conditions that are not in the original paper, and asking the authors to run those scenarios in their model to verify that they obtain the same results.
 - Here we adopt a combination of the three strategies above, and disclose for each component of the OPA what has been AI generated, what has been reviewed and what has been verified. Whenever a component has not been fully reviewed, a badge in its title says so.
+
+
+---
+name: disclosure
+
+# Disclosure and verification
+
+```{r ai-use-table, results="asis"}
+# The comparison overview's own credit table and its key, read from the built page so the slide
+# always matches it (index.html is generated from comparison/site/index.template.html).
+ov <- paste(readLines(file.path(root, "index.html"), warn = FALSE), collapse = "\n")
+tab <- regmatches(ov, regexpr('(?s)<table class="ai-use">.*?</table>', ov, perl = TRUE))
+key <- regmatches(ov, regexpr('(?s)<div class="ai-key">.*?</div>\\s*</div>', ov, perl = TRUE))
+stopifnot(length(tab) == 1, length(key) == 1)
+tab <- sub('<span class="table-subhead">this page</span>', '<span class="table-subhead">the overview</span>', tab, fixed = TRUE)
+cat('<div class="ai-use-slide">', gsub("\n\\s*", " ", tab), gsub("\n\\s*", " ", key), "</div>")
+```
+
+The columns group the 14 roles of the [CRediT contributor taxonomy](https://credit.niso.org/) (ANSI/NISO Z39.104-2022) into three: ideas and direction, doing the work, and writing. The last column, **human verification**, is our addition: how closely the author has checked each part.
 
 ---
 name: estimates
