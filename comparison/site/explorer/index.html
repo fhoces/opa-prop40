@@ -244,6 +244,7 @@
   .ap-btn[aria-pressed="true"] { color: var(--ink); border-color: var(--ink); font-weight: 600; }
   @media (hover: hover) { .ap-btn:hover { text-decoration: underline; } }
   .ap-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
+  .ap-btn:disabled { color: var(--ink-3); border-color: var(--ink-3); cursor: not-allowed; text-decoration: none; }
   .eq-note { font-size: 12.5px; color: var(--ink-2); margin: 10px 0 0; line-height: 1.45; max-width: 62em; }
   .eq-note a { color: var(--link); }
   @media (max-width: 980px) {
@@ -562,7 +563,7 @@
 
   <section class="eq-box apply-box" id="apply" aria-labelledby="apply-title">
     <h2 id="apply-title">What separates the two numbers</h2>
-    <p class="ap-lead">Apply to the BSZ panel: each button moves its term's dials to the JR values, or back.</p>
+    <p class="ap-lead">Apply to the BSZ panel, from left to right: each button moves its term's dials to the JR values and unlocks the next one, so each press changes the estimate by its amount in the equation. Moved first, <i>q</i> would take <span style="white-space:nowrap">−$53.75B</span> instead of <span style="white-space:nowrap">−$39.44B</span>, because it would also halve the tax on the billionaires who already left.</p>
 <div class="pseudo-eq apply-eq" role="group" aria-label="The equation above in words: each button moves those dials of the BSZ panel to the JR values, or back">
   <span class="term"><b class="ap-label">BSZ estimate</b><button type="button" class="ap-btn" data-act="reset" data-dials="confirmed_departures litigation_survival income_loss_share income_level horizon discount_rate base_list avoidance noncitizens real_estate asset_sales">Reset</button></span>
   <span class="eq-step"><span class="op">&minus;</span><span class="term"><b class="ap-label">Billionaires already departed<br>(D)</b><button type="button" class="ap-btn" data-act="term" data-dials="confirmed_departures" data-steps="1" aria-pressed="false">Apply</button></span></span>
@@ -930,15 +931,22 @@
   function dialsOf(btn) { return btn.dataset.dials.split(" "); }
   function bszDial(id) { return $("bsz-" + id); }
   function atJR(ids) { return ids.every(function (id) { var d = bszDial(id); return +d.value === +d.max; }); }
+  // The terms go left to right (author decision 2026-10-16): a term can be applied once every
+  // term to its left is, and undone once every term to its right is not, so a press always
+  // changes the estimate by its amount in the equation. Dials moved by hand can leave other
+  // states; Reset and Apply all always work.
+  var TERMS = AP.filter(function (b) { return b.dataset.act === "term"; });
   function syncApply() {
     if (!AP) return;
-    AP.forEach(function (b) {
-      if (b.dataset.act !== "term") return;
-      var on = atJR(dialsOf(b));
-      b.setAttribute("aria-pressed", on ? "true" : "false");
-      b.textContent = on ? "Applied" : "Apply";
+    var on = TERMS.map(function (b) { return atJR(dialsOf(b)); });
+    TERMS.forEach(function (b, i) {
+      b.setAttribute("aria-pressed", on[i] ? "true" : "false");
+      b.textContent = on[i] ? "Applied" : "Apply";
+      var ok = on[i] ? on.slice(i + 1).every(function (x) { return !x; }) : on.slice(0, i).every(Boolean);
+      b.disabled = !ok;
+      b.title = ok ? "" : (on[i] ? "Undo the terms to its right first" : "Apply the terms to its left first");
       var t = EQ && EQ.querySelector('.term[data-steps="' + b.dataset.steps + '"]');
-      if (t) t.classList.toggle("is-applied", on);
+      if (t) t.classList.toggle("is-applied", on[i]);
     });
   }
   AP.forEach(function (b) {

@@ -765,6 +765,20 @@ render_site <- function(root = comparison_root(),
                vapply(seq_len(nrow(et$terms)), function(j) ap_btn("term", td[[j]], "Apply",
                       sprintf(' data-steps="%s" aria-pressed="false"', et$terms$steps[j])), ""),
                ap_btn("all", all_dials, "Apply all"))
+  # The Apply buttons work left to right (author decision 2026-10-16), so each press changes the
+  # estimate by its amount in the equation. The lead says so, with what q would take if moved
+  # first: it would also halve the tax on the billionaires who already left.
+  q_id <- "litigation_survival"
+  q_path <- dp$change[dp$step_id == q_id]
+  q_first <- local({ s <- bi0$sup; s$q <- bi0$rauh$q; score_common(s)[["b"]] - score_common(bi0$sup)[["b"]] })
+  stopifnot(length(q_path) == 1, q_first < q_path)
+  tok$apply_lead <- sprintf(paste(
+    "Apply to the BSZ panel, from left to right: each button moves its term's dials to the JR values",
+    "and unlocks the next one, so each press changes the estimate by its amount in the equation.",
+    "Moved first, <i>q</i> would take %s instead of %s, because it would also halve the tax on the",
+    "billionaires who already left."),
+    sprintf('<span style="white-space:nowrap">%s</span>', money(c(q_first, q_path), 2))[1],
+    sprintf('<span style="white-space:nowrap">%s</span>', money(c(q_first, q_path), 2))[2])
   tok$apply_eq <- eq_html(
     "pseudo-eq apply-eq",
     ' role="group" aria-label="The equation above in words: each button moves those dials of the BSZ panel to the JR values, or back"',
