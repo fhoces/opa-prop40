@@ -121,10 +121,10 @@ def main():
     epy = ends_csv("comparison/export/py/ends.csv")
     # the 'nber' bar is the JR end of the common function, the authors' own mean again now that the
     # discount rate is a dial (r: BSZ 3%, JR 2.73%, the one rate worth the same as their draw)
-    assert abs(eb["bsz_model"] - bsz_end) < 1e-9 and abs(eb["rauh_model"] - nber_end) < 1e-9
-    assert abs(epy["bsz_model"] - bsz_end) < 1e-9 and abs(epy["rauh_model"] - nber_end) < 1e-9
+    assert abs(eb["bsz_model"] - bsz_end) < 1e-9 and abs(eb["jr_model"] - nber_end) < 1e-9
+    assert abs(epy["bsz_model"] - bsz_end) < 1e-9 and abs(epy["jr_model"] - nber_end) < 1e-9
     assert abs(H["bsz"] - bsz_end) < 1e-12 and abs(H["rjkdc_end_b"] - nber_end) < 1e-12
-    assert abs(eb["rauh_model"] - eb["rauh_own"]) < 1e-9     # the common function returns the JR end exactly
+    assert abs(eb["jr_model"] - eb["jr_own"]) < 1e-9     # the common function returns the JR end exactly
     bb = [x for x in read_csv("comparison/export/r/bridge.csv")
           if x["horizon_setting"] == "own" and x["output"] == "b"]
     n_steps = len(bb)
@@ -135,7 +135,7 @@ def main():
     pos = [x for x in bb if float(x["shapley"]) > 0]
     pos_txt = ", ".join(f'{x["step_id"]} +{float(x["shapley"]):.3f}' for x in pos)
     meta = {x["key"]: float(x["value"]) for x in read_csv("comparison/export/r/meta.csv")}
-    inp = {x["input"]: (float(x["supporting_value"]), float(x["rauh_value"]))
+    inp = {x["input"]: (float(x["bsz_value"]), float(x["jr_value"]))
            for x in read_csv("comparison/export/r/inputs.csv")}
     sv = {k: v[0] for k, v in inp.items()}
     rv = {k: v[1] for k, v in inp.items()}
@@ -161,7 +161,7 @@ def main():
     wt_bsz = tau * W0 * (1 - alpha_s)
     assert abs(wt_bsz - ea["bsz_model"]) < 1e-9
     assert abs(rv["W_core"] - W0_r * (1 + grow)) < 1e-9 and abs(meta["R0_rauh"] - R0_r) < 1e-9
-    assert abs(R0_r * meta["S_rauh"] - ceiling) < 1e-9 and abs(ea["rauh_own"] - q_r * ceiling) < 1e-9
+    assert abs(R0_r * meta["S_rauh"] - ceiling) < 1e-9 and abs(ea["jr_own"] - q_r * ceiling) < 1e-9
     assert abs(rv["f0"] - (fmin + fmax) / 2) < 1e-12 and abs(rv["C"] - (cmin + cmax) / 2) < 1e-12
     rne = function_span("comparison/R/model.R", "rauh_nber_expectation <- function")
     rne_py = find_lines("comparison/py/bridge.py", "def rauh_nber_expectation(", "expected_annuity(H, r_min, r_max)}")
@@ -248,7 +248,7 @@ def main():
             what=("build_series() turns the exported tables into the bars of every view, in display "
                   "order. The BSZ end comes first (the 'bsz' bar, ends$bsz_model). Then come the "
                   "steps, dropping any that is zero both ways. The JR end comes last (the 'nber' bar, "
-                  "ends$rauh_model, which equals the authors' own mean ends$rauh_own: the discount rate is a "
+                  "ends$jr_model, which equals the authors' own mean ends$jr_own: the discount rate is a "
                   "dial, 3% at the BSZ end and 2.73% at the JR end, the one rate worth the same as their draw). "
                   "render_site() fills the two pages' tokens, including the two "
                   "main estimates: hl_bsz is ends$bsz_model on (b), and hl_rjkdc is the JR contract's "
@@ -256,10 +256,10 @@ def main():
                   "series$own$b and the sliders to JSON. write_site() writes index.html, the explorer "
                   "and the data file."),
             inputs="ex: the exported tables read back from comparison/export/r/ (ends, bridge, endpoints, inputs, meta, ...)",
-            inputs_from=[dict(layer="comparison-4", what="ends (one row per horizon setting and output: bsz_model, rauh_model, rauh_own, rauh_residual), bridge (the step values), dial_path (the explorer's walk) and endpoints (contract_value of rauh_nber_npv)")],
+            inputs_from=[dict(layer="comparison-4", what="ends (one row per horizon setting and output: bsz_model, jr_model, jr_own, jr_residual), bridge (the step values), dial_path (the explorer's walk) and endpoints (contract_value of rauh_nber_npv)")],
             other_inputs="the page templates comparison/site/index.template.html and explorer.template.html (prose and {{tokens}}); bridge_inputs() for the sliders object",
-            outputs=(f"the 'bsz' bar = ends$bsz_model = {eb['bsz_model']:.6f}; the 'nber' bar = ends$rauh_own = "
-                     f"{eb['rauh_own']:.6f}; tokens hl_bsz = {m(H['bsz'])}, hl_rjkdc = {m(rj_main)}, gap_b = {m(gap)}"),
+            outputs=(f"the 'bsz' bar = ends$bsz_model = {eb['bsz_model']:.6f}; the 'nber' bar = ends$jr_own = "
+                     f"{eb['jr_own']:.6f}; tokens hl_bsz = {m(H['bsz'])}, hl_rjkdc = {m(rj_main)}, gap_b = {m(gap)}"),
             method_ref="Plumbing. The Python twin has no site writer; its export/py/ends.csv carries the same two ends (test-parity.R).",
             method_status="plumbing",
             r=loc("comparison/R/site.R", "build_series()", function_span("comparison/R/site.R", "build_series <- function(ex) {")),
@@ -275,8 +275,8 @@ def main():
                   "all-JR inputs (v_rauh). It also computes the authors' own Monte Carlo mean at the "
                   "JR horizon (own_n, from rauh_nber_expectation()). For outputs (a) and (b) it then "
                   "runs the two decompositions of layer 5 and stores every coalition's value (the "
-                  "switchboard). Each ends row records bsz_model, rauh_model, rauh_own (the authors' own "
-                  "mean) and rauh_residual = rauh_own - rauh_model, zero at the JR horizon because the "
+                  "switchboard). Each ends row records bsz_model, jr_model, jr_own (the authors' own "
+                  "mean) and jr_residual = jr_own - jr_model, zero at the JR horizon because the "
                   "discount rate is itself a bridge step (r: 3% against 2.73%, the one rate worth the "
                   "same as the authors' random draw; author decision 2026-10-15)."),
             inputs="bi: the two input vectors; nber_args: the JR Monte Carlo bounds (wt_min 0, wt_max, f, C and r ranges)",
@@ -284,14 +284,14 @@ def main():
                          dict(layer="comparison-6", what="score_common() at the two input vectors (v_sup, v_rauh) and rauh_nber_expectation() (own_n)"),
                          dict(layer="comparison-7", what="bi: sup and rauh, the two input vectors")],
             other_inputs="the horizon settings HORIZONS = 5, 10, 20, 30, 50 years and a perpetuity",
-            outputs=(f"ends, own horizon, output (b): bsz_model {eb['bsz_model']:.3f}, rauh_model "
-                     f"{eb['rauh_model']:.3f}, rauh_own {eb['rauh_own']:.3f}, rauh_residual "
-                     f"{eb['rauh_residual']:.3f}; gap = {eb['bsz_model']:.3f} - ({eb['rauh_model']:.3f}) = {gap:.3f}; "
+            outputs=(f"ends, own horizon, output (b): bsz_model {eb['bsz_model']:.3f}, jr_model "
+                     f"{eb['jr_model']:.3f}, jr_own {eb['jr_own']:.3f}, jr_residual "
+                     f"{eb['jr_residual']:.3f}; gap = {eb['bsz_model']:.3f} - ({eb['jr_model']:.3f}) = {gap:.3f}; "
                      f"the {n_steps} Shapley steps sum to {steps_sum:.3f}"),
             method_ref=("This OPA's reconciliation (PLAN.md, the common output and decision 9; DISPUTES.md "
                         "for each input). Checks: test-shapley.R that the Shapley and the one-order steps "
-                        "sum to rauh_model - bsz_model in every setting and output; test-endpoints.R that "
-                        "rauh_model equals rauh_own and pins each end against the printed number; "
+                        "sum to jr_model - bsz_model in every setting and output; test-endpoints.R that "
+                        "jr_model equals jr_own and pins each end against the printed number; "
                         "test-site.R that the steps on (b) add up to the gap between the two ends."),
             method_status="opa_definition",
             r=loc("comparison/R/build.R", "build_all(): the ends and the bridge, for every horizon setting",
@@ -348,8 +348,8 @@ def main():
                   f"subtracts PV = {meta['PV_bsz_own']:.3f}, five years of lost income tax, giving "
                   f"{bsz_end:.3f}, the BSZ end. At the all-JR inputs R0 = {meta['R0_rauh']:.3f} and "
                   f"S = {meta['S_rauh']:.4f}, so R0 x S = {ceiling:g}, the authors' ceiling. Then WT = "
-                  f"{q_r:g} x {ceiling:g} = {ea['rauh_own']:g}, f = f0 = {meta['f_rauh']:g} and C = "
-                  f"{meta['C_rauh']:g}, so (b) = {ea['rauh_own']:g} - {meta['f_rauh']:g} x "
+                  f"{q_r:g} x {ceiling:g} = {ea['jr_own']:g}, f = f0 = {meta['f_rauh']:g} and C = "
+                  f"{meta['C_rauh']:g}, so (b) = {ea['jr_own']:g} - {meta['f_rauh']:g} x "
                   f"{meta['C_rauh']:g} x {meta['A_inf']:.3f} = {nber_end:.3f}, the JR end. "
                   f"rauh_nber_expectation() (model.R lines {rne[0]}-{rne[1]}, bridge.py lines "
                   f"{rne_py[0]}-{rne_py[1]}) computes the same mean straight from the Monte Carlo's "
@@ -365,8 +365,8 @@ def main():
             other_inputs=(f"the Monte Carlo bounds wt_min = 0 (a literal in build.R), wt_max = {ceiling:g} "
                           "(contract row nber_ceiling_hardcoded), and the f, C and r ranges (contract rows "
                           "nber_mc_f_*, rauh_mc_c_*, rauh_mc_r_*)"),
-            outputs=(f"score_common(sup)['b'] = {bsz_end:.6f}; score_common(rauh)['b'] = {eb['rauh_model']:.6f}; "
-                     f"rauh_nber_expectation(...)['b'] = {eb['rauh_own']:.6f} (the authors' own mean, equal to "
+            outputs=(f"score_common(sup)['b'] = {bsz_end:.6f}; score_common(rauh)['b'] = {eb['jr_model']:.6f}; "
+                     f"rauh_nber_expectation(...)['b'] = {eb['jr_own']:.6f} (the authors' own mean, equal to "
                      f"the JR end with r at 2.73%); gap {gap:.3f}"),
             method_ref=("BSZ PDF p.24 (90% x 5% x $2,307B) and Table 5 row 1, p.39; Jaros and Rauh NBER "
                         "c15504, the Monte Carlo in the authors' public repository (NPV_dist_v8.R). "
@@ -446,7 +446,7 @@ def main():
     HANDOFF_TOKENS = {
         (1, "comparison-2"): dict(tokens=["D", "__BRIDGE__", "headline", "sliders"], source_tokens=["__BRIDGE__", "headline", "sliders"]),
         (2, "comparison-3"): dict(tokens=["__BRIDGE__"], source_tokens=["build_series", "headline", "add"]),
-        (3, "comparison-4"): dict(tokens=["ex", "en", "e", "bsz_model", "rauh_own"], source_tokens=["ends", "bsz_model", "rauh_own"]),
+        (3, "comparison-4"): dict(tokens=["ex", "en", "e", "bsz_model", "jr_own"], source_tokens=["ends", "bsz_model", "jr_own"]),
         (4, "comparison-5"): dict(tokens=["shapley_bridge", "sequential_bridge", "sh", "sq"], source_tokens=["shapley_bridge", "sequential_bridge", "phi", "out"]),
         (4, "comparison-6"): dict(tokens=["score_common", "v_sup", "v_rauh", "own_n"], source_tokens=["score_common", "rauh_nber_expectation", "WT", "e_wt"]),
         (4, "comparison-7"): dict(tokens=["sup", "rauh", "bi"], source_tokens=["bridge_inputs", "sup", "rauh"]),
@@ -464,7 +464,7 @@ def main():
     V = dict(bsz=f"{H['bsz']:.3f}", rj=f"{rj_main:.3f}", bend=f"{bsz_end:.3f}", nend=f"{nber_end:.3f}",
              gap=f"{gap:.3f}", ngap=f"{-gap:.3f}", wt=f"{wt_bsz:.3f}", X=f"{meta['X_bsz']:.3f}",
              PV=f"{meta['PV_bsz_own']:.3f}", R0r=f"{meta['R0_rauh']:.3f}", Sr=f"{meta['S_rauh']:.4f}",
-             ceil=f"{ceiling:g}", wtr=f"{ea['rauh_own']:g}", fr=f"{meta['f_rauh']:g}",
+             ceil=f"{ceiling:g}", wtr=f"{ea['jr_own']:g}", fr=f"{meta['f_rauh']:g}",
              Cr=f"{meta['C_rauh']:g}", nst=str(n_steps), nco=f"{2 ** n_steps:,}",
              minor=", ".join(f'"{x}"' for x in SL["minor"]), nbars=str(len(B)))
 
@@ -514,20 +514,20 @@ regmatches(s$explorer, gregexpr('id="hl-(bsz|rjkdc)">[^<]+', s$explorer))[[1]]""
 import csv
 ends = [r for r in csv.DictReader(open("comparison/export/py/ends.csv"))
         if r["horizon_setting"] == "own" and r["output"] == "b"][0]
-float(ends["bsz_model"]), float(ends["rauh_own"])      # @bend@, @nend@
-float(ends["bsz_model"]) - float(ends["rauh_own"])     # @gap@"""),
+float(ends["bsz_model"]), float(ends["jr_own"])      # @bend@, @nend@
+float(ends["bsz_model"]) - float(ends["jr_own"])     # @gap@"""),
         4: dict(r="""# Layer 4: everything the pages show, rebuilt from the contracts.
 res <- build_all(k)
 eb <- res$ends[res$ends$horizon_setting == "own" & res$ends$output == "b", ]
-eb                                                                     # rauh_residual 0
-eb$bsz_model - eb$rauh_model                                           # @gap@
+eb                                                                     # jr_residual 0
+eb$bsz_model - eb$jr_model                                           # @gap@
 b <- res$bridge[res$bridge$horizon_setting == "own" & res$bridge$output == "b", ]
 sum(b$shapley)                                                         # @ngap@: the steps alone""",
                 py="""# Layer 4: everything the pages show, rebuilt from the contracts.
 res = b.build_all(k)
 eb = [e for e in res["ends"] if e["horizon_setting"] == "own" and e["output"] == "b"][0]
-eb                                                                     # rauh_residual 0
-eb["bsz_model"] - eb["rauh_model"]                                     # @gap@
+eb                                                                     # jr_residual 0
+eb["bsz_model"] - eb["jr_model"]                                     # @gap@
 steps = [r for r in res["bridge"] if r["horizon_setting"] == "own" and r["output"] == "b"]
 sum(r["shapley"] for r in steps)                                       # @ngap@: the steps alone"""),
         5: dict(r="""# Layer 5: the @nst@ steps of output (b), two ways.
@@ -647,9 +647,9 @@ print("ready: BSZ base", sup["W_core"] + sup["W_noncit"], "; JR base", rauh["W_c
         "commit": LINK_REF,
         "seeded": today,
         "verified_by": (f"Rscript, layer 6 at {TRACED_AT}: score_common(bridge_inputs(read_contracts())$sup)[['b']] "
-                        f"= {bsz_end:.3f}, the same at $rauh = {eb['rauh_model']:.3f}, and "
+                        f"= {bsz_end:.3f}, the same at $rauh = {eb['jr_model']:.3f}, and "
                         f"rauh_nber_expectation(0, {ceiling:g}, {fmin:g}, {fmax:g}, {cmin:g}, {cmax:g}, {rmin:g}, {rmax:g})[['b']] "
-                        f"= {nber_end:.3f}; the same from export/r/ends.csv (bsz_model, rauh_own on (b)), from "
+                        f"= {nber_end:.3f}; the same from export/r/ends.csv (bsz_model, jr_own on (b)), from "
                         "export/py/ends.csv, and from the headline and the end bars in assets/comparison-data.js. "
                         f"The JR main estimate as shown, {m(rj_main, 3)}, is the JR contract row "
                         "npv_mc_nber_mean (the authors' seeded run), traced by the JR chain"),
