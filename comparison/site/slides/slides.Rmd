@@ -166,25 +166,25 @@ name: prop40
 On the ballot on 3 November 2026: a one-time tax of 5% on the net worth of Californians worth
 $1 billion or more, payable over five years, with the revenue mainly for health care.
 
-.args[
-.arg.arg-yes[
-.arg-text[**For:** federal cuts have taken health coverage from over a million Californians. A one-time
-  tax on about 200 billionaires would raise "about $100 billion" to keep hospitals and emergency
-  rooms open, and make billionaires "pay their fair share".]
-<img src="figs/prop40/yes-panel.png" alt="The Yes on 40 campaign page, small, with the line it circles zoomed in: research estimates Prop 40 could raise about $100 billion.">
-]
-.arg.arg-no[
-.arg-text[**Against:** a "poorly designed tax scheme" that drives companies and wealthy residents out of
-  the state, costing "$25 billion in lost revenue". It taxes retirement accounts for the first time
-  and lets the Legislature amend the measure "without voter approval".]
-<img src="figs/prop40/no-panel.png" alt="The No on 40 campaign page, small, with the sentence it circles zoomed in: a poorly designed tax scheme that will cost the state budget billions of dollars.">
-]
-]
-
 .quote-box[
 "Control of Congress is the biggest issue at stake in November’s elections. A close second might be the fight over a ballot initiative in California, Proposition 40, that seeks to impose a wealth tax on the state’s roughly 250 billionaires."
 
 .quote-src[*The New York Times Magazine*, [14 October 2026](https://www.nytimes.com/2026/10/14/magazine/california-billionaires-tax.html)]
+]
+
+.args[
+.arg.arg-yes[
+.arg-text[**For:** federal cuts have taken health coverage from over a million Californians. A one-time
+  tax on about 200 billionaires would keep hospitals and emergency rooms open. One of the reasons
+  given: it would raise "about $100 billion" (the BSZ estimate).]
+<img src="figs/prop40/yes-panel.png" alt="The Yes on 40 campaign page, small, with the line it circles zoomed in: research estimates Prop 40 could raise about $100 billion.">
+]
+.arg.arg-no[
+.arg-text[**Against:** a "poorly designed tax scheme" that taxes retirement accounts for the first time.
+  One of the reasons given: it drives wealthy residents out, costing "$25 billion in lost revenue"
+  (a Stanford study, the JR analysis's March 2026 version).]
+<img src="figs/prop40/no-panel.png" alt="The No on 40 campaign page, small, with the sentence it circles zoomed in: a poorly designed tax scheme that will cost the state budget billions of dollars.">
+]
 ]
 
 .footnote[Arguments from the official voter guide: California Secretary of State, *Official Voter Information Guide*, general election of 3 November 2026, Proposition 40, [argument in favor (p.56) and argument against (p.57)](https://voterguide.sos.ca.gov/propositions/40/arguments-rebuttals.htm). Screenshots: the Yes on 40 and No on 40 campaign websites, 16 October 2026.]
