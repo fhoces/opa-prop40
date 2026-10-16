@@ -795,6 +795,48 @@ larger than the JR row's last column. The rate dial moves next.
 ]
 
 ---
+name: diff-loss-rest
+class: tight-table
+
+# Difference 3, continued: *f*, *C* and *r*
+
+```{r tab-loss-rest, results="asis"}
+# The loss box's dials other than the horizon (eq_terms(): Lost income tax (H, f, C, r)), in path
+# order. With the horizon step they add up to the equation's loss term.
+lr <- dp[setdiff(et$loss, which(dp$step_id == "horizon")), ]
+stopifnot(abs(sum(lr$change) + ps("horizon") - et$terms$change[et$terms$label == sprintf("Lost income tax (%s)", paste(c("H", setdiff(dp$symbol[et$loss], "H")), collapse = ", "))]) < 1e-9)
+# The text below says the share lost is among the three largest steps averaged over every order.
+stopifnot("income_loss_share" %in% bb$step_id[order(-abs(bb$shapley))][1:3])
+cat('<table class="dt"><tr><th>Input</th><th>BSZ value</th><th>JR value</th><th class="l">Kind of claim</th><th>Step on the path, (b)</th></tr>')
+for (i in seq_len(nrow(lr))) {
+  ids <- dial_ids(lr$step_id[i]); tx <- lapply(ids, function(x) step_texts(inp, x))
+  kind <- paste(unique(steps$kind[match(ids, steps$step_id)]), collapse = ", ")
+  cat(sprintf('<tr><td><i>%s</i>, %s</td><td>%s</td><td>%s</td><td class="l">%s</td><td>%s</td></tr>',
+              lr$symbol[i], esc(lr$title[i]), paste(vapply(tx, `[[`, "", "bsz"), collapse = "; "),
+              paste(vapply(tx, `[[`, "", "rjkdc"), collapse = "; "), kind, money(lr$change[i], 1, TRUE)))
+}
+cat(sprintf('<tr class="tot"><td>These three together</td><td></td><td></td><td></td><td>%s</td></tr>', money(sum(lr$change), 1, TRUE)))
+cat(sprintf('<tr class="tot"><td>With the horizon: the equation&#39;s lost income tax</td><td></td><td></td><td></td><td>%s</td></tr>', money(sum(lr$change) + ps("horizon"), 1, TRUE)))
+cat("</table>")
+```
+
+.small[
+- **Share of income tax lost**: at its benchmark the BSZ analysis counts the avoiders who move
+  (`r pct(sup$m, 0)` of its `r pct(sup$alpha, 0)` allowance), each taking a proportional share of
+  the income tax (BSZ PDF p.24), plus named leavers' tax from filings. The JR analysis takes a
+  flat `r pct(rj$f0)` of all billionaires' income tax, the middle of a `r pct(f_lo)` to
+  `r pct(f_hi)` draw set around the `r pct(vr[["d_conf"]], 1)` of wealth that left, to cover
+  unreported moves (chapter PDF pp.31, 33). The step is small here because it comes before the
+  horizon, while the loss lasts `r fmt_input("H", sup$H)`. Averaged over every order it is among
+  the three largest.
+- **Yearly income tax**: BSZ take the 2019 to 2025 average from tax statistics and research. JR
+  take the middle of a range whose floor is the authors' judgement.
+- **Discount rate**: `r r3` at the BSZ end, a scenario (BSZ give no rate). `r r_jr` at the JR end,
+  derived: worth the same as the authors' draw of r &minus; g, the real rate net of the loss's
+  growth, from `r r_lo` to `r r_hi`. It moves after the horizon, on a loss that lasts for ever.
+]
+
+---
 name: smaller
 class: tight-table
 
