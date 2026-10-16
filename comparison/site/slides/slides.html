@@ -800,7 +800,7 @@ Boll, Saez and Zucman estimate the one-time tax at about $100 billion of wealth 
 
 **What reproduces.** All 28 cells of Table 5 match the workbook, and 26 round to the digit the paper prints. Every variation the paper prints reproduces (7 of 7). Ten settings the paper does not print have been sent to the authors to test. [Checks](../../../bsz-analysis/site/checks.html)
 
-[The BSZ analysis overview](../../../bsz-analysis/site/) &amp;middot; Its layers, with screenshots: [Output](#layer-bsz-output), [Analysis](#layer-bsz-analysis), [Materials](#layer-bsz-materials)
+[The BSZ analysis overview](../../../bsz-analysis/site/) &amp;middot; Its layers, with screenshots: [Output](#layer-bsz-output), [Analysis](#layer-bsz-analysis), [Materials](#layer-bsz-materials), [Code review](#layer-bsz-review)
 ]
 
 .pull-right[
@@ -818,7 +818,7 @@ Jaros and Rauh find a mean net present value of &lt;span class=&quot;nb&quot;&gt
 
 **What reproduces.** The main estimate reproduces from the authors&#39; code, and ten mismatches between their text, READMEs and code are recorded. Every variation the papers print reproduces (4 of 4). Nine settings the papers do not print have been sent to the authors to test. [Checks](../../../rjkdc-analysis/site/checks.html)
 
-[The JR analysis overview](../../../rjkdc-analysis/site/) &amp;middot; Its layers, with screenshots: [Output](#layer-jr-output), [Analysis](#layer-jr-analysis), [Materials](#layer-jr-materials)
+[The JR analysis overview](../../../rjkdc-analysis/site/) &amp;middot; Its layers, with screenshots: [Output](#layer-jr-output), [Analysis](#layer-jr-analysis), [Materials](#layer-jr-materials), [Code review](#layer-jr-review)
 ]
 
 .pull-right[
@@ -836,7 +836,7 @@ The comparison puts both analyses on one common output, the net fiscal effect (t
 
 **What reproduces.** Both main estimates are rebuilt on the common output from the two analyses&#39; exported files, &lt;span class=&quot;nb&quot;&gt;$106.8B&lt;/span&gt; and &lt;span class=&quot;nb&quot;&gt;−$39.0B&lt;/span&gt;. Each step of the bridge is the change from moving one explorer dial, in R and in the browser (the steps add up to the gap by construction). The R and Python versions agree.
 
-[The comparison overview](../../../index.html) &amp;middot; Its layers, with screenshots: [Output](#layer-cmp-output), [Analysis](#layer-cmp-analysis), [Materials](#layer-cmp-materials)
+[The comparison overview](../../../index.html) &amp;middot; Its layers, with screenshots: [Output](#layer-cmp-output), [Analysis](#layer-cmp-analysis), [Materials](#layer-cmp-materials), [Code review](#layer-cmp-review)
 ]
 
 .pull-right[
@@ -997,10 +997,10 @@ class: tight-table
 ---
 name: hoopes
 
-# The one published comparison: Hoopes (2026)
+# The one published comparison
 
 .small[
-Jeffrey Hoopes, &quot;Galle v Rauh&quot; (SSRN 6428578), compares **earlier versions**: the February 2026
+Jeffrey L. Hoopes (2026), [&quot;Galle v Rauh: Comparing Two Revenue Estimates for California Billionaire Taxation&quot;](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6428578), SSRN Working Paper 6428578, compares **earlier versions**: the February 2026
 GGSS expert report, on which the BSZ analysis builds, and the March 2026 version by Rauh, Jaros,
 Kearney, Doran and Cosso. His Figure 2 is a waterfall that prints no values, so his column is read
 off the chart. Ours follows his order and ends at the September 2026 version&#39;s exact mean.
@@ -1275,20 +1275,40 @@ Here it is the report. It rebuilds BSZ’s tables step by step from the authors�
 name: layer-bsz-materials
 class: layer-slide
 
-# The BSZ analysis OPA: Open Materials
+# The BSZ analysis OPA: its README
 
 .pull-left[
 &lt;img class=&quot;layer-fig&quot; src=&quot;../../../assets/opa/opa-materials.png&quot; alt=&quot;The four OPA layers, with the Open Materials layer highlighted.&quot;&gt;
 
 **Open Materials**: the data, code and tests that rerun it.
 
-Here it is the bsz-analysis folder of the repository. The materials page is its guide: how to rebuild everything, what each script and data file does, and what the tests check.
+Here it is the bsz-analysis folder of the public repository. Its README says what the folder holds and how to rerun it, and its first link is the code review on the next slide.
 
-[Open the materials page](../../../bsz-analysis/site/materials.html) &amp;middot; [Back to the BSZ analysis OPA](#opa-bsz)
+[Open the README](https://github.com/fhoces/opa-prop40/blob/main/bsz-analysis/README.md) &amp;middot; [Back to the BSZ analysis OPA](#opa-bsz)
 ]
 
 .pull-right.layer-shot[
-[&lt;img src=&quot;figs/layers/bsz-materials.png&quot; alt=&quot;Screenshot of the Open Materials layer of the BSZ analysis OPA.&quot;&gt;](../../../bsz-analysis/site/materials.html)
+[&lt;img src=&quot;figs/layers/bsz-readme.png&quot; alt=&quot;Screenshot of the README of the bsz-analysis folder on GitHub.&quot;&gt;](https://github.com/fhoces/opa-prop40/blob/main/bsz-analysis/README.md)
+]
+
+---
+name: layer-bsz-review
+class: layer-slide
+
+# The BSZ analysis OPA: its code review
+
+.pull-left[
+&lt;img class=&quot;layer-fig&quot; src=&quot;../../../assets/opa/opa-materials.png&quot; alt=&quot;The four OPA layers, with the Open Materials layer highlighted.&quot;&gt;
+
+**Open Materials**: a code review page to appraise the code. It walks the code behind the main estimate one layer at a time, from the number on the page down to the raw data.
+
+Each layer shows its R or Python code, what goes in and out, whether the method matches the source, and how far it has been reviewed. Work in progress.
+
+[Open the code review](https://claude.ai/artifact/6VZEezoAsCNACjmgPLEvah) &amp;middot; [Back to the BSZ analysis OPA](#opa-bsz)
+]
+
+.pull-right.layer-shot[
+[&lt;img src=&quot;figs/layers/bsz-review.png&quot; alt=&quot;Screenshot of the code review page, showing the BSZ chain.&quot;&gt;](https://claude.ai/artifact/6VZEezoAsCNACjmgPLEvah)
 ]
 
 ---
@@ -1335,20 +1355,40 @@ Here it is the report. It reruns the authors’ code as shipped, section by sect
 name: layer-jr-materials
 class: layer-slide
 
-# The JR analysis OPA: Open Materials
+# The JR analysis OPA: its README
 
 .pull-left[
 &lt;img class=&quot;layer-fig&quot; src=&quot;../../../assets/opa/opa-materials.png&quot; alt=&quot;The four OPA layers, with the Open Materials layer highlighted.&quot;&gt;
 
 **Open Materials**: the data, code and tests that rerun it.
 
-Here it is the rjkdc-analysis folder of the repository: the authors’ code, its R rewrite with a Python twin, and the tests. The materials page is its guide.
+Here it is the rjkdc-analysis folder of the public repository. Its README says what the folder holds and how to rerun it, and its first link is the code review on the next slide.
 
-[Open the materials page](../../../rjkdc-analysis/site/materials.html) &amp;middot; [Back to the JR analysis OPA](#opa-jr)
+[Open the README](https://github.com/fhoces/opa-prop40/blob/main/rjkdc-analysis/README.md) &amp;middot; [Back to the JR analysis OPA](#opa-jr)
 ]
 
 .pull-right.layer-shot[
-[&lt;img src=&quot;figs/layers/jr-materials.png&quot; alt=&quot;Screenshot of the Open Materials layer of the JR analysis OPA.&quot;&gt;](../../../rjkdc-analysis/site/materials.html)
+[&lt;img src=&quot;figs/layers/jr-readme.png&quot; alt=&quot;Screenshot of the README of the rjkdc-analysis folder on GitHub.&quot;&gt;](https://github.com/fhoces/opa-prop40/blob/main/rjkdc-analysis/README.md)
+]
+
+---
+name: layer-jr-review
+class: layer-slide
+
+# The JR analysis OPA: its code review
+
+.pull-left[
+&lt;img class=&quot;layer-fig&quot; src=&quot;../../../assets/opa/opa-materials.png&quot; alt=&quot;The four OPA layers, with the Open Materials layer highlighted.&quot;&gt;
+
+**Open Materials**: a code review page to appraise the code. It walks the code behind the main estimate one layer at a time, from the number on the page down to the raw data.
+
+Each layer shows its R or Python code, what goes in and out, whether the method matches the source, and how far it has been reviewed. Work in progress.
+
+[Open the code review](https://claude.ai/artifact/6VZEezoAsCNACjmgPLEvah) &amp;middot; [Back to the JR analysis OPA](#opa-jr)
+]
+
+.pull-right.layer-shot[
+[&lt;img src=&quot;figs/layers/jr-review.png&quot; alt=&quot;Screenshot of the code review page, showing the JR chain.&quot;&gt;](https://claude.ai/artifact/6VZEezoAsCNACjmgPLEvah)
 ]
 
 ---
@@ -1395,20 +1435,40 @@ Here it is the report, and this deck. The report puts both analyses on one commo
 name: layer-cmp-materials
 class: layer-slide
 
-# The comparison OPA: Open Materials
+# The comparison OPA: its README
 
 .pull-left[
 &lt;img class=&quot;layer-fig&quot; src=&quot;../../../assets/opa/opa-materials.png&quot; alt=&quot;The four OPA layers, with the Open Materials layer highlighted.&quot;&gt;
 
 **Open Materials**: the data, code and tests that rerun it.
 
-Here it is the comparison folder of the repository: the R code, its Python twin, the tests, and DISPUTES.md, which quotes both analyses on each disputed input. The materials page is its guide.
+Here it is the comparison folder of the public repository. Its README says what the folder holds and how to rerun it, and its first link is the code review on the next slide.
 
-[Open the materials page](../../../comparison/site/materials.html) &amp;middot; [Back to the comparison OPA](#opa-comparison)
+[Open the README](https://github.com/fhoces/opa-prop40/blob/main/comparison/README.md) &amp;middot; [Back to the comparison OPA](#opa-comparison)
 ]
 
 .pull-right.layer-shot[
-[&lt;img src=&quot;figs/layers/cmp-materials.png&quot; alt=&quot;Screenshot of the Open Materials layer of the comparison OPA.&quot;&gt;](../../../comparison/site/materials.html)
+[&lt;img src=&quot;figs/layers/cmp-readme.png&quot; alt=&quot;Screenshot of the README of the comparison folder on GitHub.&quot;&gt;](https://github.com/fhoces/opa-prop40/blob/main/comparison/README.md)
+]
+
+---
+name: layer-cmp-review
+class: layer-slide
+
+# The comparison OPA: its code review
+
+.pull-left[
+&lt;img class=&quot;layer-fig&quot; src=&quot;../../../assets/opa/opa-materials.png&quot; alt=&quot;The four OPA layers, with the Open Materials layer highlighted.&quot;&gt;
+
+**Open Materials**: a code review page to appraise the code. It walks the code behind the main estimate one layer at a time, from the number on the page down to the raw data.
+
+Each layer shows its R or Python code, what goes in and out, whether the method matches the source, and how far it has been reviewed. Work in progress.
+
+[Open the code review](https://claude.ai/artifact/6VZEezoAsCNACjmgPLEvah) &amp;middot; [Back to the comparison OPA](#opa-comparison)
+]
+
+.pull-right.layer-shot[
+[&lt;img src=&quot;figs/layers/cmp-review.png&quot; alt=&quot;Screenshot of the code review page, showing the comparison chain.&quot;&gt;](https://claude.ai/artifact/6VZEezoAsCNACjmgPLEvah)
 ]
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
