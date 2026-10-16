@@ -87,3 +87,35 @@ checks ten other numbers the paper prints. One of them differs. On page 22 the p
 all billionaires left, the lost income tax would take 25 years to equal the wealth tax. That
 assumes billionaires pay 0.2% of their wealth in California income tax each year. The Table 5
 inputs imply 0.13%, which gives about 38 years.
+
+## Settings the paper does not print
+
+This OPA lets a reader change assumptions the paper holds fixed. The table below lists ten such
+changes, each made one at a time from the main assumptions, with the result this OPA gives. The
+paper prints no figure for any of them, so they are untested against the authors' own work.
+
+We have sent this table to the original authors, requesting them to test whether they obtain the
+same results. We will update the responses here.
+
+All figures are in billions of dollars. Wealth tax revenue, the extra income tax from asset sales
+(over five years) and the income tax lost per year are the three result columns of the paper's
+Table 5. The net total is this OPA's main estimate: the wealth tax, plus the extra income tax from
+asset sales, minus the income tax lost to leavers over five years in today's dollars (3% a year).
+Each setting can be made in the [explorer](explorer/).
+
+| Setting changed from the main assumptions | Wealth tax revenue | Extra income tax from asset sales | Income tax lost per year | Net total | Authors' result |
+|---|---|---|---|---|---|
+| None, the main assumptions, for reference | 103.81 | 3.68 | −0.15 | 106.80 | |
+| No avoidance or evasion (α = 0, instead of 10%) | 115.35 | 4.09 | 0.00 | 119.44 | Pending |
+| Avoidance and evasion of 5% | 109.58 | 3.89 | −0.08 | 113.12 | Pending |
+| Avoidance and evasion of 20% | 92.28 | 3.27 | −0.31 | 94.15 | Pending |
+| Avoidance and evasion of 30% | 80.75 | 2.86 | −0.46 | 81.51 | Pending |
+| None of the avoidance is leaving California (m = 0, instead of half) | 103.81 | 3.68 | 0.00 | 107.50 | Pending |
+| All of the avoidance is leaving California (m = 1) | 103.81 | 3.68 | −0.31 | 106.09 | Pending |
+| None of the tax is paid by selling assets (s = 0, instead of one third) | 103.81 | 0.00 | −0.15 | 103.11 | Pending |
+| All of the tax is paid by selling assets (s = 1) | 103.81 | 11.05 | −0.15 | 114.16 | Pending |
+| The billionaires Forbes misses are counted, with 10% avoidance among them (instead of 20%) | 131.11 | 4.65 | −0.20 | 134.86 | Pending |
+| The billionaires Forbes misses are counted, with 50% avoidance among them | 118.10 | 4.19 | −0.20 | 121.39 | Pending |
+
+The values are read from the explorer's own data file, `site/explorer/grid.js`, which the
+pipeline writes.

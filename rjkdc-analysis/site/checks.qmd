@@ -82,3 +82,35 @@ A second record, [jr.md](https://github.com/fhoces/opa-prop40/blob/main/feedback
 checks ten other numbers the papers print. All reproduce except the chapter's "expanded
 departures" (Table 8, about 42% of the base), which no grouping of the authors' departure records
 gives.
+
+## Settings the papers do not print
+
+This OPA lets a reader change assumptions the papers hold fixed. The table below lists ten such
+changes, each made one at a time from the September chapter's main assumptions, with the result
+this OPA gives. The papers print no figure for any of them, so they are untested against the
+authors' own work.
+
+We have sent this table to the original authors, requesting them to test whether they obtain the
+same results. We will update the responses here.
+
+The mean net present value is in billions of dollars. This OPA computes the exact average of the
+authors' formula over the same random draws, not a new seeded run. A seeded run of the authors'
+script differs from it by sampling error only (at the main setting, −38.89 against −38.98). Each setting can be made
+in the [explorer](explorer/).
+
+| Setting changed from the main assumptions | Mean net present value | Share of runs below zero | Authors' result |
+|---|---|---|---|
+| None, the main assumptions, for reference | −38.98 | 85.3% | |
+| Discount rate fixed at 1.5% (instead of drawn from 1.5% to 4.5%) | −100.50 | 100.0% | Pending |
+| Discount rate fixed at 4.5% | −9.50 | 63.2% | Pending |
+| Revenue multiplied by a chance of surviving in court of 0.75 | −47.98 | 94.6% | Pending |
+| Revenue multiplied by a chance of surviving in court of 0.50 | −56.98 | 99.5% | Pending |
+| Yearly income tax fixed at $3.3B (instead of drawn from $3.3B to $5.8B) | −18.38 | 71.1% | Pending |
+| Yearly income tax fixed at $5.8B | −59.58 | 94.7% | Pending |
+| Lost income tax grows 0.5% a year (instead of not growing) | −58.62 | 90.9% | Pending |
+| Lost income tax grows 1% a year | −96.81 | 95.1% | Pending |
+| Lowest revenue the draw can pick of $35B (instead of $0) | −21.48 | 71.8% | Pending |
+| Share of the income tax base that leaves fixed at 0.283 (instead of drawn from 0.30 to 0.60) | −11.21 | 64.0% | Pending |
+
+The values are read from the explorer's own data file, `site/explorer/grid.js`, which the
+pipeline writes.

@@ -2506,6 +2506,7 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
   <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results">Results</a></li>
   <li><a href="#what-could-not-be-checked" id="toc-what-could-not-be-checked" class="nav-link" data-scroll-target="#what-could-not-be-checked">What could not be checked</a></li>
   <li><a href="#who-ran-these-checks" id="toc-who-ran-these-checks" class="nav-link" data-scroll-target="#who-ran-these-checks">Who ran these checks</a></li>
+  <li><a href="#settings-the-papers-do-not-print" id="toc-settings-the-papers-do-not-print" class="nav-link" data-scroll-target="#settings-the-papers-do-not-print">Settings the papers do not print</a></li>
   </ul>
 </nav>
 </div>
@@ -2635,6 +2636,97 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">RAUH_REPO_DIR</span><span class="op">=&lt;</span>path to the authors<span class="st">&#39; repository&gt;</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="st">Rscript feedback/scenario-tests-2026-10-15/jr-sensitivity.R</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The full record, with the source of every figure, is in <a href="https://github.com/fhoces/opa-prop40/blob/main/feedback/scenario-tests-2026-10-15/jr-sensitivity.md">jr-sensitivity.md</a>. A second record, <a href="https://github.com/fhoces/opa-prop40/blob/main/feedback/scenario-tests-2026-10-15/jr.md">jr.md</a>, checks ten other numbers the papers print. All reproduce except the chapter’s “expanded departures” (Table 8, about 42% of the base), which no grouping of the authors’ departure records gives.</p>
+</section>
+<section id="settings-the-papers-do-not-print" class="level2">
+<h2 class="anchored" data-anchor-id="settings-the-papers-do-not-print">Settings the papers do not print</h2>
+<p>This OPA lets a reader change assumptions the papers hold fixed. The table below lists ten such changes, each made one at a time from the September chapter’s main assumptions, with the result this OPA gives. The papers print no figure for any of them, so they are untested against the authors’ own work.</p>
+<p>We have sent this table to the original authors, requesting them to test whether they obtain the same results. We will update the responses here.</p>
+<p>The mean net present value is in billions of dollars. This OPA computes the exact average of the authors’ formula over the same random draws, not a new seeded run. A seeded run of the authors’ script differs from it by sampling error only (at the main setting, −38.89 against −38.98). Each setting can be made in the <a href="explorer/">explorer</a>.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Setting changed from the main assumptions</th>
+<th>Mean net present value</th>
+<th>Share of runs below zero</th>
+<th>Authors’ result</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>None, the main assumptions, for reference</td>
+<td>−38.98</td>
+<td>85.3%</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Discount rate fixed at 1.5% (instead of drawn from 1.5% to 4.5%)</td>
+<td>−100.50</td>
+<td>100.0%</td>
+<td>Pending</td>
+</tr>
+<tr class="odd">
+<td>Discount rate fixed at 4.5%</td>
+<td>−9.50</td>
+<td>63.2%</td>
+<td>Pending</td>
+</tr>
+<tr class="even">
+<td>Revenue multiplied by a chance of surviving in court of 0.75</td>
+<td>−47.98</td>
+<td>94.6%</td>
+<td>Pending</td>
+</tr>
+<tr class="odd">
+<td>Revenue multiplied by a chance of surviving in court of 0.50</td>
+<td>−56.98</td>
+<td>99.5%</td>
+<td>Pending</td>
+</tr>
+<tr class="even">
+<td>Yearly income tax fixed at $3.3B (instead of drawn from $3.3B to $5.8B)</td>
+<td>−18.38</td>
+<td>71.1%</td>
+<td>Pending</td>
+</tr>
+<tr class="odd">
+<td>Yearly income tax fixed at $5.8B</td>
+<td>−59.58</td>
+<td>94.7%</td>
+<td>Pending</td>
+</tr>
+<tr class="even">
+<td>Lost income tax grows 0.5% a year (instead of not growing)</td>
+<td>−58.62</td>
+<td>90.9%</td>
+<td>Pending</td>
+</tr>
+<tr class="odd">
+<td>Lost income tax grows 1% a year</td>
+<td>−96.81</td>
+<td>95.1%</td>
+<td>Pending</td>
+</tr>
+<tr class="even">
+<td>Lowest revenue the draw can pick of $35B (instead of $0)</td>
+<td>−21.48</td>
+<td>71.8%</td>
+<td>Pending</td>
+</tr>
+<tr class="odd">
+<td>Share of the income tax base that leaves fixed at 0.283 (instead of drawn from 0.30 to 0.60)</td>
+<td>−11.21</td>
+<td>64.0%</td>
+<td>Pending</td>
+</tr>
+</tbody>
+</table>
+<p>The values are read from the explorer’s own data file, <code>site/explorer/grid.js</code>, which the pipeline writes.</p>
 </section>
 
 </main>
