@@ -545,6 +545,15 @@ render_site <- function(root = comparison_root(),
     '    credible.</p>\n', survey_button)
   # the overview's differences fold: the same button under its table (author request 2026-10-15)
   tok$quantity_survey_root <- survey_button
+  # Two smaller buttons at the top of the overview's differences fold, above the table (author
+  # request 2026-10-15): take the survey (a random version, as above) and share it (copies the
+  # share page's address). Nothing when the survey has no links yet.
+  tok$quantity_survey_mini <- if (nrow(sv)) paste0(
+    '<p class="q-mini">',
+    sprintf('<a class="q-survey q-survey-mini" href="%s" data-links="%s" target="_blank" rel="noopener">Take the survey</a>',
+            esc(sv$url[1]), esc(paste(sv$url, collapse = " "))),
+    sprintf('<button type="button" class="q-copy q-copy-mini" data-url="%s">Share the survey: copy link</button>', SURVEY_SHARE_URL),
+    '</p>') else ""
   # Which analysis's value sits at the left end of dial `id` in `panel`: the smaller one (ties
   # and the minor switch, whose two ends are not numbers, keep the BSZ value at the left). The
   # share-lost dial compares its two rules' f at the panel's starting positions; a dial that

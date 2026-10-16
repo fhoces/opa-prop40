@@ -511,9 +511,8 @@ versions than this site. So the two do not line up step for step.</p>
   <summary><h2>The differences <a class="fold-link" href="#differences" aria-label="Link to this section">#</a></h2> <span class="teaser">every input the two estimates differ on, with both values</span></summary>
   <div class="fold-body">
 <p>One row per group of inputs the two estimates differ on, as in the
-<a href="comparison/site/explorer/#quantities">explorer</a>. The project's crosswalk,
-<a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/DISPUTES.md">DISPUTES.md</a>,
-quotes both analyses on each point.</p>
+<a href="comparison/site/explorer/#quantities">explorer</a>.</p>
+{{quantity_survey_mini}}
 {{quantity_table_root}}
 {{quantity_survey_root}}
 <p class="small">"Guesswork on data" is a judgement applied to observed facts. "Derived" is a value computed from the analysis's own inputs:
@@ -601,16 +600,18 @@ the JR discount rate is the one rate worth the same as the authors' random draw 
   Array.prototype.slice.call(document.querySelectorAll("button.q-copy")).forEach(function (b) {
     b.addEventListener("click", function () {
       var url = b.getAttribute("data-url");
+      var label = b.textContent;
       var done = function () { b.textContent = "Link copied"; b.classList.add("is-done");
-        setTimeout(function () { b.textContent = "Copy link"; b.classList.remove("is-done"); }, 2500); };
+        setTimeout(function () { b.textContent = label; b.classList.remove("is-done"); }, 2500); };
       if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, function () { window.prompt("Copy this link:", url); });
       else window.prompt("Copy this link:", url);
     });
   });
-  var sv = document.querySelector("a.q-survey[data-links]");
-  if (sv) sv.addEventListener("click", function () {
-    var links = sv.getAttribute("data-links").split(" ");
-    sv.href = links[Math.floor(Math.random() * links.length)];
+  Array.prototype.slice.call(document.querySelectorAll("a.q-survey[data-links]")).forEach(function (sv) {
+    sv.addEventListener("click", function () {
+      var links = sv.getAttribute("data-links").split(" ");
+      sv.href = links[Math.floor(Math.random() * links.length)];
+    });
   });
 })();
 </script>

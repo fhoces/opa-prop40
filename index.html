@@ -524,9 +524,8 @@ versions than this site. So the two do not line up step for step.</p>
   <summary><h2>The differences <a class="fold-link" href="#differences" aria-label="Link to this section">#</a></h2> <span class="teaser">every input the two estimates differ on, with both values</span></summary>
   <div class="fold-body">
 <p>One row per group of inputs the two estimates differ on, as in the
-<a href="comparison/site/explorer/#quantities">explorer</a>. The project's crosswalk,
-<a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/DISPUTES.md">DISPUTES.md</a>,
-quotes both analyses on each point.</p>
+<a href="comparison/site/explorer/#quantities">explorer</a>.</p>
+<p class="q-mini"><a class="q-survey q-survey-mini" href="https://docs.google.com/forms/d/e/1FAIpQLSc2Jcz7e269a5QNjTOBnD7L1ijqgvM3VOg5ISB1z3-X61u9nQ/viewform" data-links="https://docs.google.com/forms/d/e/1FAIpQLSc2Jcz7e269a5QNjTOBnD7L1ijqgvM3VOg5ISB1z3-X61u9nQ/viewform https://docs.google.com/forms/d/e/1FAIpQLSfV2d4FBLeJx0dm2BpL3PO_EoKV8xppiKGxh-Ag8n61-MwAWA/viewform" target="_blank" rel="noopener">Take the survey</a><button type="button" class="q-copy q-copy-mini" data-url="https://fhoces.github.io/opa-prop40/comparison/site/survey/">Share the survey: copy link</button></p>
     <p class="q-sub">All these are empirical quantities. Their values should not depend on whether one
     supports or opposes a wealth tax. An expert should be able to appraise each value from more to less
     credible.</p>
@@ -629,16 +628,18 @@ the JR discount rate is the one rate worth the same as the authors' random draw 
   Array.prototype.slice.call(document.querySelectorAll("button.q-copy")).forEach(function (b) {
     b.addEventListener("click", function () {
       var url = b.getAttribute("data-url");
+      var label = b.textContent;
       var done = function () { b.textContent = "Link copied"; b.classList.add("is-done");
-        setTimeout(function () { b.textContent = "Copy link"; b.classList.remove("is-done"); }, 2500); };
+        setTimeout(function () { b.textContent = label; b.classList.remove("is-done"); }, 2500); };
       if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, function () { window.prompt("Copy this link:", url); });
       else window.prompt("Copy this link:", url);
     });
   });
-  var sv = document.querySelector("a.q-survey[data-links]");
-  if (sv) sv.addEventListener("click", function () {
-    var links = sv.getAttribute("data-links").split(" ");
-    sv.href = links[Math.floor(Math.random() * links.length)];
+  Array.prototype.slice.call(document.querySelectorAll("a.q-survey[data-links]")).forEach(function (sv) {
+    sv.addEventListener("click", function () {
+      var links = sv.getAttribute("data-links").split(" ");
+      sv.href = links[Math.floor(Math.random() * links.length)];
+    });
   });
 })();
 </script>

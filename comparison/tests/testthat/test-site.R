@@ -617,3 +617,20 @@ test_that("an assessment in the author's file shows in the table when the column
   writeLines(sub("^horizon_rate,H r,Not yet assessed,,$", "horizon_rate,H r,Probably BSZ,,", old), f)
   expect_error(render_site(root))
 })
+
+test_that("the overview's differences fold opens with two smaller survey buttons: take it and share it", {
+  ov <- read_page(file.path(root, "index.html"))
+  fold <- regmatches(ov, regexpr('<details class="fold" id="differences">.*?</details>', ov))
+  sv <- read_csv_plain(file.path(root, "comparison", "data", "survey-links.csv"))
+  urls <- sv$url[!is.na(sv$url) & nzchar(sv$url)]
+  if (length(urls)) {
+    mini <- regmatches(fold, regexpr('<p class="q-mini">.*?</p>', fold))
+    expect_length(mini, 1)
+    expect_true(grepl(sprintf('data-links="%s"', paste(urls, collapse = " ")), mini, fixed = TRUE))
+    expect_true(grepl(">Take the survey</a>", mini, fixed = TRUE))
+    expect_true(grepl(sprintf('data-url="%s">Share the survey: copy link</button>', SURVEY_SHARE_URL), mini, fixed = TRUE))
+    # above the table, below the fold's first paragraph
+    expect_lt(regexpr('<p class="q-mini">', fold), regexpr('<table class="q-table">', fold))
+  } else expect_false(grepl('class="q-mini"', fold, fixed = TRUE))
+  expect_false(grepl("crosswalk", fold, fixed = TRUE))
+})

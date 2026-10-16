@@ -256,6 +256,11 @@ body.pg-explorer th, body.pg-explorer td { font-family: var(--serif); }
 .q-copy { font-family: var(--serif); font-size: 13px; margin-left: 6px; padding: 1px 8px; color: var(--link);
   background: transparent; border: 1px solid var(--link); border-radius: 0; cursor: pointer; white-space: nowrap; }
 .q-copy.is-done { color: var(--ink); border-color: var(--ink); }
+/* The two smaller survey buttons at the top of the overview's differences fold. */
+a.q-survey { color: var(--paper) !important; text-decoration: none !important; }
+.q-mini { display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0 16px; }
+.q-survey.q-survey-mini { font-size: 15px; padding: 5px 14px; }
+.q-copy.q-copy-mini { font-size: 15px; padding: 5px 14px; margin-left: 0; }
 
 /* Review badge next to the title of an object the author has not fully reviewed (author request
    2026-10-15). Yellow: lightly reviewed. Red: not reviewed. The level comes from the analysis's
