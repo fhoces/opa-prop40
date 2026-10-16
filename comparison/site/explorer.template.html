@@ -35,6 +35,9 @@
   .headline { display: flex; flex-direction: column; gap: 2px; flex: 0 1 460px; min-width: 0; }
   .hl-pair { display: flex; flex-wrap: wrap; gap: 12px 28px; }
   .hl { display: flex; flex-direction: column; gap: 2px; flex: 1 1 190px; min-width: 0; }
+  /* Each main estimate links to its analysis's overview (author request 2026-10-15). */
+  a.hl { color: inherit; text-decoration: none; }
+  a.hl:hover .value, a.hl:focus .value { text-decoration: underline; text-underline-offset: 4px; }
   .headline .name { font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
     color: var(--ink-3); font-weight: 500; }
   .headline .value { font-family: var(--serif); font-size: 40px; font-weight: 600;
@@ -302,16 +305,16 @@
     <div class="headline">
       <img class="header-layer" src="../../../assets/opa/opa-assumptions-solo.png" alt="" aria-hidden="true">
       <div class="hl-pair">
-        <div class="hl">
+        <a class="hl" href="../../../bsz-analysis/site/" title="Open the BSZ analysis overview">
           <span class="name">BSZ main estimate<sup>1</sup></span>
           <span class="value" id="hl-bsz">{{hl_bsz}}</span>
           <span class="def">Over 5 years: the wealth tax, net of the income tax it adds and loses.</span>
-        </div>
-        <div class="hl">
+        </a>
+        <a class="hl" href="../../../rjkdc-analysis/site/" title="Open the JR analysis overview">
           <span class="name">JR main estimate<sup>1</sup></span>
           <span class="value" id="hl-rjkdc">{{hl_rjkdc}}</span>
           <span class="def">Net present value: the wealth tax minus the income tax lost for ever, in today's dollars, averaged over the authors' model runs</span>
-        </div>
+        </a>
       </div>
       <p class="def">Today's dollars (present value): what money received or lost in future years is worth now.</p>
     </div>
