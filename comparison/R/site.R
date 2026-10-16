@@ -71,7 +71,8 @@ step_texts <- function(inp, id) {
                 rjkdc = sprintf("the JR seven: %s on the BSZ list, %s on the JR list",
                                 money(b$jr_value, 0), money(j$jr_value, 0)),
                 bsz_source = b$bsz_source, rjkdc_source = paste(b$jr_source, j$jr_source, sep = "; "),
-                bsz_short = "None named", rjkdc_short = "JR seven"))
+                # the dial end names the count with a noun, not the coinage (review 005, U-12)
+                bsz_short = "None named", rjkdc_short = "7 moves"))
   }
   if (id == "base_list") ii <- ii[ii$input == "W_core", ]
   out <- list(bsz = fmt_input(ii$input, ii$bsz_value), rjkdc = fmt_input(ii$input, ii$jr_value),
@@ -175,7 +176,8 @@ EXPLORER_BOXES <- list(
               eq = "Income tax lost = f &times; C &times; A(H, r)",
               gloss = "A(H, r): what $1 a year for H years is worth today at rate r.",
               lead = "f is the share of billionaires' income tax lost, C that tax per year, H the years it is counted, and r the rate that discounts it.",
-              more = "f, C and A(H, r) multiply, so one dial's effect depends on the others. f also moves with D and a."))
+              # why the f end labels differ between the panels (consistency review 004 C-09, review 005 U-05)
+              more = "f, C and A(H, r) multiply, so one dial's effect depends on the others. f also moves with D and a, so its end labels differ between the panels."))
 # Each dial shows only its symbol; the name and the explanation are in its hover box.
 DIAL_SYMBOLS <- c(base_list = "W", confirmed_departures = "D", avoidance = "a",
                   litigation_survival = "q", income_loss_share = "f", income_level = "C",
@@ -464,7 +466,7 @@ render_site <- function(root = comparison_root(),
       bsz = "BSZ: a small allowance, argued from enforcement rather than estimated. Half of it is moving away, which also costs income tax (f).",
       # the chapter puts unreported departures in the 0 floor of its revenue draw (fn.32, PDF
       # p.34) and in its draw of f (PDF p.33)
-      rjkdc = "JR: none on top of the departures it counts. Its 0 revenue floor and its share-lost range also allow for unreported moves."),
+      rjkdc = "JR: none on top of the departures it counts. Its revenue draw (down to 0) and its share-lost range allow for unreported moves."),
     litigation_survival = c(
       bsz = "BSZ: collected in full; its expert report argues the Act was designed to stay clear of constitutional issues.",
       rjkdc = "JR: half the revenue, the 'more likely than not' line an accounting rule (ASC 740-10) uses to judge whether a tax stands."),
@@ -480,8 +482,15 @@ render_site <- function(root = comparison_root(),
       bsz = "BSZ: from tax data, since top wealth holders earn about half of what top earners do.",
       rjkdc = sprintf("JR: the middle of $%s billion to $%s billion, both estimated from tax data. The floor's pool of 500 filers is the authors' judgement.",
                       c_bounds[1], c_bounds[2])),
+    # the BSZ end carries the worked 5-year value of A(H, r) (confusion log 2026-10-15, review 005
+    # U-14): meta.csv's A_5, checked here against annuity() at the BSZ rate and horizon
     horizon = c(
-      bsz = "BSZ: about the payment period, treating the responses as temporary.",
+      bsz = local({
+        h_bsz <- inp$bsz_value[inp$step_id == "horizon" & inp$input == "H"]
+        stopifnot(length(h_bsz) == 1, abs(mv("A_5") - annuity(mv("r_bsz"), h_bsz)) < 1e-9)
+        sprintf("BSZ: about the payment period, treating the responses as temporary. $1 a year for %s is worth $%s at %s.",
+                fmt_input("H", h_bsz), formatC(mv("A_5"), format = "f", digits = 1), tok$r_bsz)
+      }),
       rjkdc = "JR: for ever, since leavers are assumed not to return once the Act permanently lifts the intangible property tax cap."),
     # the JR draw is r - g, the real rate net of the lost tax's growth (chapter eqs. 14 and 18);
     # one rate matches the draw's average only for a perpetuity (model.R, jr_residual)
@@ -531,12 +540,13 @@ render_site <- function(root = comparison_root(),
     hit <- quantity_source(unlist(regmatches(src, regexpr(QUANTITY_SOURCE_PATTERN, src))))
     tip <- sub("^[^:]{1,14}: ", "", end_tips[[id]][[side]])
     tip <- paste0(toupper(substr(tip, 1, 1)), substring(tip, 2))
-    first <- sub("^(.*?[.])( [A-Z].*)?$", "\\1", tip, perl = TRUE)
+    # a sentence can open with a dollar amount ("$1 a year for 5 years...", the H dial's BSZ end)
+    first <- sub("^(.*?[.])( [A-Z$].*)?$", "\\1", tip, perl = TRUE)
     val <- dial_texts(inp, id, bi0)[[side]]
     # the source goes in parentheses at the end of the tip's first sentence, unless the tip
     # already cites a page
     make <- function(t) paste0(val, ". ",
-      if (length(hit) && !grepl("p[.][0-9]", t)) sub("[.](?= [A-Z]|$)", paste0(" (", hit[1], ")."), t, perl = TRUE) else t,
+      if (length(hit) && !grepl("p[.][0-9]", t)) sub("[.](?= [A-Z$]|$)", paste0(" (", hit[1], ")."), t, perl = TRUE) else t,
       end_kind(id, side))
     bare <- function(t) gsub(" \\([^()]*\\)", "", t)
     words <- function(x) length(strsplit(x, " ")[[1]])
@@ -639,23 +649,30 @@ render_site <- function(root = comparison_root(),
     val <- sprintf('<span class="sl-end-v">%s</span><span class="sl-end-tag">%s</span>', txt, end_tag[[side]])
     if (is.null(tp) || is.na(tp))
       return(sprintf('<span class="sl-end sl-%s" data-side="%s">%s</span>', at, side, val))
-    sprintf(paste0('<span class="sl-end sl-%1$s has-tip" data-side="%4$s" tabindex="0" aria-describedby="%2$s-%3$s-%4$s-tip">',
+    # an end is not a tab stop (author answer 2026-10-16, review 005 U-18): the slider is the
+    # dial's one stop, and its aria-describedby (slider_row) names both end tips
+    sprintf(paste0('<span class="sl-end sl-%1$s has-tip" data-side="%4$s">',
                    '%5$s<span class="end-tip" role="tooltip" id="%2$s-%3$s-%4$s-tip">%6$s</span></span>'),
             at, panel, id, side, val, esc(tp))
   }
+  has_end_tip <- function(id, side) { tp <- end_tips[[id]][side]; !is.null(tp) && !is.na(tp) }
   slider_row <- function(panel, id, name, title, tip, bsz_txt, rj_txt, max, sym = FALSE) {
     lo <- dial_lo_side(panel, id); hi <- setdiff(c("bsz", "rjkdc"), lo)
     txt <- c(bsz = bsz_txt, rjkdc = rj_txt)
     # the panel's own value (position 0) is the larger one: the slider runs right to left
     rtl <- lo != panel
     ticks <- paste(sprintf('<i style="--t:%s"></i>', format((0:max) / max)), collapse = "")
+    # the slider's description: its symbol tip, then each end's tip (review 005, U-18)
+    desc <- paste(c(sprintf("%s-%s-tip", panel, id),
+                    sprintf("%s-%s-%s-tip", panel, id, c("bsz", "rjkdc")[c(has_end_tip(id, "bsz"), has_end_tip(id, "rjkdc"))])),
+                  collapse = " ")
     sprintf(paste0(
       '        <li class="sl%13$s" data-id="%2$s">\n',
       '          <label for="%1$s-%2$s"><b>%3$s</b> <span class="sl-title">%4$s</span></label>\n',
       '          <span class="sl-tip" role="tooltip" id="%1$s-%2$s-tip">%5$s</span>\n',
       '          <div class="sl-row">%6$s<span class="sl-track',
       '%9$s"><span class="sl-ticks" aria-hidden="true">%10$s</span><span class="sl-other" aria-hidden="true"></span>',
-      '<input type="range" class="sl-in" id="%1$s-%2$s" min="0" max="%8$d" step="1" value="0" data-panel="%1$s" data-id="%2$s" aria-describedby="%1$s-%2$s-tip"%11$s>',
+      '<input type="range" class="sl-in" id="%1$s-%2$s" min="0" max="%8$d" step="1" value="0" data-panel="%1$s" data-id="%2$s" aria-describedby="%14$s"%11$s>',
       '<output class="sl-cur" for="%1$s-%2$s">%12$s</output></span>%7$s</div>\n',
       '          <span class="sl-note"></span>\n',
       '        </li>'),
@@ -666,7 +683,7 @@ render_site <- function(root = comparison_root(),
       if (sym) paste0('<span class="sr">', esc(title), '</span>') else esc(title), gsub("\n", "<br>", esc(tip), fixed = TRUE),
       end_span(panel, id, lo, txt[[lo]], "lo"), end_span(panel, id, hi, txt[[hi]], "hi"), as.integer(max),
       if (rtl) " is-rtl" else "", ticks, if (rtl) ' dir="rtl"' else "",
-      txt[[panel]], if (sym) " has-sym" else "")
+      txt[[panel]], if (sym) " has-sym" else "", desc)
   }
   step_row <- function(panel, id) {
     i <- match(id, steps$step_id); tx <- dial_texts(inp, id, bi0)
@@ -754,8 +771,11 @@ render_site <- function(root = comparison_root(),
       sprintf('  <span class="eq-step"><span class="op">%s</span><span class="term"%s>%s</span></span>',
               eq_ops[j], term_attrs[j], inner[j]), ""), collapse = "\n"), "\n",
     '</div>')
+  # the spoken label lowercases its first letter only, so the dial letters stay as the dials
+  # print them, "(D)", "(H, f, C, r)" (review 005, U-15)
   say <- function(j) sprintf("%s %s for %s", if (et$terms$change[j] < 0) "minus" else "plus",
-                             money(abs(et$terms$change[j]), 2), tolower(et$terms$label[j]))
+                             money(abs(et$terms$change[j]), 2),
+                             sub("^([A-Z])", "\\L\\1", et$terms$label[j], perl = TRUE))
   eq_amounts <- c(money(eb$bsz_model, 2), money(abs(et$terms$change), 2), money(eb$jr_model, 2))
   pseudo_eq <- function(page) eq_html(
     "pseudo-eq",
@@ -829,11 +849,14 @@ render_site <- function(root = comparison_root(),
     esc(et$loss_order), " ", walk,
     sprintf("The <a href=\"%s\">report</a> gives all %s steps.", href, et$n_words),
     order_note(of_href))
-  tok$pseudo_eq_note_x <- paste0("Each amount is what its dials change when moved from left to right, ",
-                                 "as the Walk the path button does.",
+  # "moved to the JR values", not "from left to right": four of the BSZ panel's dials start at
+  # their right end, so the path moves them left (review 005, U-01)
+  tok$pseudo_eq_note_x <- paste0("Each amount is what its dials change when they are moved to the JR values, ",
+                                 "term by term from left to right, as the Walk the path button does.",
                                  '<sup><a class="fn-link" href="#fn-eq">2</a></sup>')
   tok$eq_fn_x <- paste(eq_note("../repro.html#the-bridge", "BSZ panel",
-                               "The Walk the path button in each panel does it for you. ",
+                               paste("The Walk the path button in each panel does it for you.",
+                                     "The JR panel's button walks it backwards, from the last term to the first. "),
                                "../repro.html#order-free-check"), apply_q_first)
   # the overview names no dial letters (author request 2026-10-15), so its note says the same in
   # words; its old "Each term is what its group changes" is now the first sentence of order_note()

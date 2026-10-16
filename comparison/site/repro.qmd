@@ -247,7 +247,7 @@ away. The one rate worth the same is r = 1 / E[1/r] = 0.03 / ln(3) =
 from the authors' draw). It matches the draw exactly only for a loss that lasts for ever. With
 it the common function returns the authors' exact mean.
 
-**Conventions.** All amounts are billions of dollars. Present values are as of the date the
+[]{#conventions}**Conventions.** All amounts are billions of dollars. Present values are as of the date the
 wealth tax is assessed, and the first year of lost income tax is counted one year later. The
 wealth tax is counted at its face value when assessed (the BSZ analysis values the base on 1
 July 2026; the JR analysis's September version grows the base it used in March, the 2025

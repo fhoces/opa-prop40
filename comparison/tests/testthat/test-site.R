@@ -34,14 +34,16 @@ test_that("the Apply block, after the two panels, is the top equation's grid wit
   eq <- regmatches(html, regexpr('<div class="pseudo-eq".*?</div>', html))
   ap <- regmatches(html, regexpr('<div class="pseudo-eq apply-eq".*?</div>', html))
   expect_length(ap, 1)
-  # after both panels (the JR panel's last line), before the notes fold; no longer in the BSZ panel
+  # after both panels (the JR panel's slider list; the panel notes under the dials went in
+  # review 005, U-09), before the notes fold; no longer in the BSZ panel
   at <- function(x) regexpr(x, html, fixed = TRUE)[[1]]
-  expect_gt(at('<div class="pseudo-eq apply-eq"'), at("<p class=\"panel-note\">Starts at the JR analysis's main estimate"))
+  expect_gt(at('<div class="pseudo-eq apply-eq"'), at('aria-label="The JR panel\'s sliders"'))
   expect_lt(at('<div class="pseudo-eq apply-eq"'), at('<details class="fold notes" id="notes-estimates">'))
   expect_identical(lengths(regmatches(html, gregexpr('class="pseudo-eq apply-eq"', html, fixed = TRUE))), 1L)
+  expect_false(grepl('class="panel-note"', html, fixed = TRUE))
   # its one-line lead names the panel the buttons act on, once
   expect_identical(lengths(regmatches(html, gregexpr("Apply to the BSZ panel", html, fixed = TRUE))), 1L)
-  expect_gt(at("Apply to the BSZ panel"), at("<p class=\"panel-note\">Starts at the JR analysis's main estimate"))
+  expect_gt(at("Apply to the BSZ panel"), at('aria-label="The JR panel\'s sliders"'))
   # the top equation's markup: six terms, the same signs, each label in the amounts' bold face
   # (its bracketed symbols on their own line), then the term's button directly under it; no amounts
   top <- regmatches(eq, gregexpr("(?<=<small>)[^<]*(?=</small>)", eq, perl = TRUE))[[1]]
@@ -278,7 +280,9 @@ test_that("the slider panels: the dials in their two boxes in the bridge's order
       expect_true(grepl(sprintf('<span class="sl-tip" role="tooltip" id="%s-%s-tip">(?:[^<]|<br>){30,}</span>', panel, id), ex_html, perl = TRUE), label = paste(panel, id, "tip"))
       for (side in c("bsz", "rjkdc"))
         expect_true(grepl(sprintf('<span class="end-tip" role="tooltip" id="%s-%s-%s-tip">[^<]{15,}</span>', panel, id, side), ex_html), label = paste(panel, id, side, "end tip"))
-      expect_true(grepl(sprintf('data-id="%s" aria-describedby="%s-%s-tip"', id, panel, id), ex_html, fixed = TRUE), label = paste(panel, id, "describedby"))
+      # the slider is the dial's one tab stop; its description names the symbol tip and both end
+      # tips, and the ends are not focusable (author answer 2026-10-16, review 005 U-18)
+      expect_true(grepl(sprintf('data-id="%s" aria-describedby="%s-%s-tip %s-%s-bsz-tip %s-%s-rjkdc-tip"', id, panel, id, panel, id, panel, id), ex_html, fixed = TRUE), label = paste(panel, id, "describedby"))
     }
   }
   # Every dial has its smaller value at the left end and its larger at the right, in both
@@ -289,6 +293,7 @@ test_that("the slider panels: the dials in their two boxes in the bridge's order
   # ends are not numbers and keep the BSZ values at the left.
   expect_false(grepl("sl-head", ex_html, fixed = TRUE))
   expect_false(grepl("<span>BSZ value</span>", ex_html, fixed = TRUE))
+  expect_false(grepl('class="sl-end sl-(lo|hi) has-tip"[^>]*tabindex', ex_html))
   rows <- regmatches(ex_html, gregexpr('(?s)<li class="sl(?: has-sym)?" data-id="[a-z_]+">.*?</li>', ex_html, perl = TRUE))[[1]]
   expect_length(rows, 2L * (length(shown) + 1L + length(EXPLORER_MINOR)))
   num <- function(z) if (identical(z, "Inf")) Inf else z
@@ -316,7 +321,7 @@ test_that("the slider panels: the dials in their two boxes in the bridge's order
       v <- vapply(side, function(sd) num(D$sliders$values[[sd]][[nm]]), 0)
       expect_lte(v[[1]], v[[2]], label = lab)
     }
-    rtl <- grepl(sprintf('data-panel="%s" data-id="%s" aria-describedby="%s-%s-tip" dir="rtl"', panel, id, panel, id), li, fixed = TRUE)
+    rtl <- grepl(sprintf('data-panel="%s" data-id="%s" aria-describedby="%s-%s-tip %s-%s-bsz-tip %s-%s-rjkdc-tip" dir="rtl"', panel, id, panel, id, panel, id, panel, id), li, fixed = TRUE)
     expect_identical(rtl, side[2] == panel, label = paste(lab, "direction"))
     if (rtl) rtl_ids[[panel]] <- c(rtl_ids[[panel]], id)
   }
@@ -410,10 +415,16 @@ test_that("the rate dial: r after H in the loss box, ends 3% and 2.73%, its tips
                       ex_html, fixed = TRUE), label = paste(panel, "revenue heading"))
   }
   expect_false(grepl("ah-tip", ex_html, fixed = TRUE))
-  # the H dial's tips name no rate
+  # the H dial's tips name no rate, except the BSZ end's worked value of A(H, r) at the BSZ rate
+  # (review 005, U-14): "$1 a year for 5 years is worth $4.6 at 3%", with A_5 from meta.csv
   h <- regmatches(ex_html, gregexpr('<li class="sl has-sym" data-id="horizon">.*?</li>', ex_html))[[1]]
   expect_length(h, 2L)
-  for (x in h) expect_false(grepl("%", x, fixed = TRUE))
+  worked <- sprintf("$1 a year for 5 years is worth $%s at %s.", formatC(mv("A_5"), format = "f", digits = 1), rate_txt(mv("r_bsz")))
+  expect_equal(mv("A_5"), annuity(mv("r_bsz"), 5), tolerance = 1e-12)
+  for (x in h) {
+    expect_true(grepl(worked, x, fixed = TRUE))
+    expect_false(grepl("%", gsub(worked, "", x, fixed = TRUE), fixed = TRUE))
+  }
 })
 
 test_that("model.js returns the R values on every slider mix of the sample, to 1e-9", {

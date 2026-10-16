@@ -35,9 +35,11 @@
   .headline { display: flex; flex-direction: column; gap: 2px; flex: 0 1 460px; min-width: 0; }
   .hl-pair { display: flex; flex-wrap: wrap; gap: 12px 28px; }
   .hl { display: flex; flex-direction: column; gap: 2px; flex: 1 1 190px; min-width: 0; }
-  /* Each main estimate links to its analysis's overview (author request 2026-10-15). */
-  a.hl { color: inherit; text-decoration: none; }
-  a.hl:hover .value, a.hl:focus .value { text-decoration: underline; text-underline-offset: 4px; }
+  /* Each main estimate links to its analysis's overview (author request 2026-10-15). The link is
+     the value itself, as on the overview: the footnote mark beside the name is a link of its own,
+     and a link cannot hold another (review 005, U-10). */
+  a.value { color: inherit; text-decoration: none; }
+  a.value:hover, a.value:focus { text-decoration: underline; text-underline-offset: 4px; }
   .headline .name { font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
     color: var(--ink-3); font-weight: 500; }
   .headline .value { font-family: var(--serif); font-size: 40px; font-weight: 600;
@@ -64,6 +66,10 @@
   h2 { font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 0.09em;
        text-transform: uppercase; color: var(--ink-3); margin: 0 0 14px; }
   h3 { font-family: var(--serif); font-weight: 600; font-size: 17px; margin: 26px 0 8px; }
+  /* "But what are the actual quantities?" is a kicker like the h2s, not a larger heading
+     (review 005, U-23); body.pg-explorer outranks paper.css's body.pg h3. */
+  body.pg-explorer .quantities h3 { font-family: var(--serif); font-size: 14.5px; font-weight: 400;
+    font-variant-caps: all-small-caps; letter-spacing: 0.08em; color: var(--ink-3); margin: 0 0 14px; }
 
 
   p.fn { font-size: 13.5px; color: var(--ink-2); line-height: 1.45; margin: 4px 0 0; }
@@ -165,7 +171,6 @@
   .sl > label.tip-on + .sl-tip, .sl-end.tip-on .end-tip, .info.tip-on .info-tip { pointer-events: auto; }
   .sl-tip b { font-weight: 600; }
   .sl.is-inert .sl-cur { color: var(--ink-3); font-weight: 400; }
-  .panel-note { font-size: 12px; color: var(--ink-2); margin: 8px 0 0; line-height: 1.45; }
   .mid { margin: 0; position: sticky; top: 16px; text-align: center; }
   svg.bars2 { width: 100%; max-width: 240px; height: auto; display: block; margin: 0 auto; }
   svg.bars2 text { font-family: var(--sans); font-size: 12px; fill: var(--ink-2); }
@@ -245,6 +250,17 @@
   @media (hover: hover) { .ap-btn:hover { text-decoration: underline; } }
   .ap-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
   .ap-btn:disabled { color: var(--ink-3); border-color: var(--ink-3); cursor: not-allowed; text-decoration: none; }
+  /* The six buttons share one baseline: each term stretches to its row's height and its button
+     sits at the bottom, under labels of one to four lines (review 005, U-07). */
+  .pseudo-eq.apply-eq, .apply-eq .eq-step { align-items: stretch; }
+  .apply-eq .eq-step .op { align-self: flex-start; }
+  .apply-eq .term .ap-btn { margin-top: auto; }
+  .apply-eq .term b.ap-label { margin-bottom: 6px; }
+  /* The BSZ panel's estimate under the buttons, so a press shows its effect where the press is
+     (review 005, U-02); drawBars() keeps it in step with the panel. */
+  .ap-now { margin: 12px 0 0; font-size: 13px; color: var(--ink-2); text-align: center; }
+  .ap-now b { font-family: var(--serif); font-size: 17px; font-weight: 600; margin-left: 2px;
+    font-variant-numeric: tabular-nums; white-space: nowrap; }
   .eq-note { font-size: 12.5px; color: var(--ink-2); margin: 10px 0 0; line-height: 1.45; max-width: 62em; }
   .eq-note a { color: var(--link); }
   @media (max-width: 980px) {
@@ -264,12 +280,22 @@
     .sticky-result b { font-family: var(--serif); font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
     .sticky-result .sr-bsz { color: var(--bsz); }
     .sticky-result .sr-rjkdc { color: var(--jr); }
+    /* Touch targets at least 24 px tall: the Apply buttons, the "more" links, the footnote
+       marks and "Copy link" (review 005, U-03); body.pg-explorer outranks paper.css's .q-copy.
+       A footnote link lands below the sticky bar (U-04). */
+    body.pg-explorer .ap-btn { font-size: 13.5px; padding: 5px 10px; }
+    body.pg-explorer a.info, body.pg-explorer a.fn-link { padding-block: 7px; }
+    body.pg-explorer .q-copy { padding: 5px 10px; }
+    .fold.notes p[id] { scroll-margin-top: 44px; }
   }
   @media (max-width: 420px) {
     .panel { padding: 10px 10px 12px; }
     .sl-row { grid-template-columns: 66px minmax(0, 1fr) 66px; gap: 4px; }
     .sl-end { font-size: 10.5px; }
   }
+  /* Printing: no fixed bar on every sheet; the script opens the folds on beforeprint
+     (review 005, U-20). */
+  @media print { .sticky-result { display: none; } }
 </style>
 <link rel="stylesheet" href="../../../assets/paper.css">
 </head>
@@ -306,16 +332,16 @@
     <div class="headline">
       <img class="header-layer" src="../../../assets/opa/opa-assumptions-solo.png" alt="" aria-hidden="true">
       <div class="hl-pair">
-        <a class="hl" href="../../../bsz-analysis/site/" title="Open the BSZ analysis overview">
-          <span class="name">BSZ main estimate<sup>1</sup></span>
-          <span class="value" id="hl-bsz">{{hl_bsz}}</span>
+        <div class="hl">
+          <span class="name">BSZ main estimate<sup><a class="fn-link" href="#fn-1">1</a></sup></span>
+          <a class="value" href="../../../bsz-analysis/site/" title="Open the BSZ analysis overview" id="hl-bsz">{{hl_bsz}}</a>
           <span class="def">Over 5 years: the wealth tax, net of the income tax it adds and loses.</span>
-        </a>
-        <a class="hl" href="../../../rjkdc-analysis/site/" title="Open the JR analysis overview">
-          <span class="name">JR main estimate<sup>1</sup></span>
-          <span class="value" id="hl-rjkdc">{{hl_rjkdc}}</span>
-          <span class="def">Net present value: the wealth tax minus the income tax lost for ever, in today's dollars. This is the exact average of the authors' model. They print <span style="white-space:nowrap">{{nber_printed}}</span>, the average of one simulation of 100,000 random draws.</span>
-        </a>
+        </div>
+        <div class="hl">
+          <span class="name">JR main estimate<sup><a class="fn-link" href="#fn-1">1</a></sup></span>
+          <a class="value" href="../../../rjkdc-analysis/site/" title="Open the JR analysis overview" id="hl-rjkdc">{{hl_rjkdc}}</a>
+          <span class="def">Net present value: the wealth tax minus the income tax lost for ever, in today's dollars.</span>
+        </div>
       </div>
     </div>
   </header>
@@ -327,24 +353,24 @@
   </section>
 
   <section class="board" id="panels" aria-labelledby="board-title">
-    <h2 id="board-title">Why are the results different?</h2>
+    <h2 id="board-title">The inputs</h2>
     <p class="board-lead">Each slider moves one disputed input between the two analyses' values.
     Every dial has its smaller value at the left end and its larger value at the right end, and
     each end names whose value it is. The BSZ panel starts at the BSZ values, the JR panel at the
-    JR values, so a dial can start at either end. Tap or hover over a symbol or an end for what it means.</p>
+    JR values, so a dial can start at either end. Tap or hover over a symbol or an end for what it
+    means and the <a class="fn-link" href="#kinds">kind</a> of each value.</p>
 
     <div class="panels">
       <div class="panel bsz" id="panel-bsz" role="group" aria-labelledby="pbsz-h">
         <div class="panel-head">
           <h3 id="pbsz-h"><span class="ph-name">BSZ:</span> <span id="ph-bsz-main">{{hl_bsz}}</span></h3>
           <div class="ph-btns"><button type="button" class="reset walk" data-panel="bsz">Walk the path</button><button type="button" class="reset" data-panel="bsz">Reset</button></div>
-          <p class="ph-src">The BSZ analysis's main estimate<sup>1</sup> (Boll, Saez and Zucman, August 2026)</p>
+          <p class="ph-src">The BSZ analysis's main estimate<sup><a class="fn-link" href="#fn-1">1</a></sup> (Boll, Saez and Zucman, August 2026)</p>
           <p class="ph-now">With these sliders <b id="now-bsz" aria-live="polite">{{bsz_end_b}}</b></p>
         </div>
         <ul class="sl-list" aria-label="The BSZ panel's sliders">
 {{sliders_bsz}}
         </ul>
-        <p class="panel-note">Starts at the BSZ analysis's net total, {{bsz_end_b}}.</p>
       </div>
 
       <figure class="mid" id="mid">
@@ -360,22 +386,22 @@
         <div class="panel-head">
           <h3 id="prj-h"><span class="ph-name">JR:</span> <span id="ph-rjkdc-main">{{hl_rjkdc}}</span></h3>
           <div class="ph-btns"><button type="button" class="reset walk" data-panel="rjkdc">Walk the path</button><button type="button" class="reset" data-panel="rjkdc">Reset</button></div>
-          <p class="ph-src">The JR analysis's main estimate<sup>1</sup>, the exact average of the authors' model (Jaros and Rauh, NBER, September 2026)</p>
+          <p class="ph-src">The JR analysis's main estimate<sup><a class="fn-link" href="#fn-1">1</a></sup>, the exact average of the authors' model (Jaros and Rauh, NBER, September 2026)</p>
           <p class="ph-now">With these sliders <b id="now-rjkdc" aria-live="polite">{{jr_end_b}}</b></p>
         </div>
         <ul class="sl-list" aria-label="The JR panel's sliders">
 {{sliders_rjkdc}}
         </ul>
-        <p class="panel-note">Starts at the JR analysis's main estimate, {{jr_end_b}}.</p>
       </div>
     </div>
 
   </section>
 
   <section class="eq-box apply-box" id="apply" aria-labelledby="apply-title">
-    <h2 id="apply-title">What separates the two numbers</h2>
+    <h2 id="apply-title">What separates the two numbers, step by step</h2>
     <p class="ap-lead">{{apply_lead}}</p>
 {{apply_eq}}
+    <p class="ap-now">The BSZ panel with these dials: <b id="now-apply">{{bsz_end_b}}</b></p>
   </section>
 
   <section class="quantities" id="quantities" aria-labelledby="q-title">
@@ -389,7 +415,7 @@
   <details class="fold notes" id="notes-estimates">
     <summary>Notes on the two estimates and the conventions</summary>
     <div class="note">
-    <p class="fn"><sup>1</sup> {{fn1_lead}} Each is defined its own way. The BSZ
+    <p class="fn" id="fn-1"><sup>1</sup> {{fn1_lead}} Each is defined its own way. The BSZ
     number is a net total over 5 years: the wealth tax (Table 5 row 1), plus extra income
     tax from assets sold to pay it, minus the income tax lost to billionaires who leave, for 5
     years at {{r_bsz}}. BSZ's own headline is the wealth tax alone; the net total is this OPA's choice,
@@ -409,24 +435,14 @@
     ceiling.</p>
     <p class="fn">Conventions. All amounts are billions of dollars. Present values are as of the
     date the wealth tax is assessed, and the first year of lost income tax is counted one year
-    later. The wealth tax is counted at face value when assessed and undiscounted, as both
-    analyses do (the BSZ analysis values the base on 1 July 2026; the JR analysis grows its 2025
-    Forbes base by {{nber_growth}} to 31 December 2026). The Act lets a taxpayer pay at once or in
-    five yearly installments, each later one with a deferral charge of 7.5% a year on the unpaid
-    balance (&sect;50301(c)), and an Optional Deferral Account (&sect;50304) can delay the tax on
-    illiquid assets. Neither analysis counts either provision, and this OPA does not estimate
-    them. The lost income tax is a flat yearly amount, discounted
-    at the rate dial's value. The JR analysis's rate is a real rate net of the growth of the lost
-    tax, r − g (chapter eqs. 14 and 18; one sentence writes r alone, the JR analysis's
-    <a href="../../../rjkdc-analysis/site/materials.html#mismatches">mismatch 3</a>), so a flat
-    loss at that rate is the chapter's growing loss. The BSZ end's {{r_bsz}} is the middle of the
-    same draw.</p>
+    later. The <a href="../repro.html#conventions">report's conventions</a> cover the face-value
+    wealth tax, the Act's installments and deferral account, and the JR analysis's r − g rate.</p>
     </div>
   </details>
 
 
   <details class="fold notes">
-    <summary>Notes and data</summary>
+    <summary>Where the numbers come from: code, data and kinds</summary>
     <div class="note">
       <p><strong>Where the numbers come from.</strong> Every number on this page is computed by
       <code>comparison/R/</code> from the two analyses' export contracts
@@ -449,7 +465,7 @@
       <a href="../../../assets/comparison-data.js">comparison-data.js</a> (what this page reads).
       A test fails if <code>comparison-data.js</code> or this page differs from the generator's
       output.</p>
-      <p><strong>Kinds.</strong> Each end's tip ends with the kind of that analysis's value:
+      <p id="kinds"><strong>Kinds.</strong> Each end's tip ends with the kind of that analysis's value:
       <b>data</b> (settled by observable facts), <b>research</b> (a published estimate),
       <b>guesswork</b> (asserted without data or a study behind it), <b>guesswork on data</b> (a
       judgement applied to observed facts), <b>scenario</b> (a choice of which world is
@@ -588,6 +604,10 @@
       var txt = valueText(panel, id, p, r.x);
       var out = inp.parentNode.querySelector(".sl-cur");
       out.textContent = txt;
+      // the thumb's value shows at a middle stop only: at an end it would repeat the end label
+      // (review 005, U-06); the minor switch keeps "mixed", which no end label carries;
+      // aria-valuetext below keeps the value for a screen reader
+      out.hidden = (p === 0 || p === max) && txt !== "mixed";
       if (id === "income_loss_share") {
         var fe = fEnds(panel), row = inp.closest(".sl-row");
         row.querySelector('.sl-end[data-side="bsz"] .sl-end-v').textContent = pct(fe.bsz);
@@ -658,12 +678,34 @@
     });
     $("sticky-bsz").textContent = money1(vb);
     $("sticky-rjkdc").textContent = money1(vr);
+    $("now-apply").textContent = money1(vb);   // the line under the Apply buttons (review 005, U-02)
     $("bars-title").textContent = "The BSZ panel's estimate is " + money1(vb) +
       " and the JR panel's is " + money1(vr) + " (net fiscal effect).";
     svg.setAttribute("data-bsz", vb.toFixed(9));
     svg.setAttribute("data-rjkdc", vr.toFixed(9));
   }
-  function renderPanels() { PANELS.forEach(updatePanel); drawBars(); syncApply(); }
+  function renderPanels() { PANELS.forEach(updatePanel); drawBars(); syncApply(); writeHash(); }
+  // ---- the URL carries the dials (review 005, U-19): "#bsz=<digits>&rjkdc=<digits>", one digit
+  // per slider in page order (every max is below 10), written after each render with
+  // replaceState (no history entry) and read before the first. The dials at their start write no
+  // hash, so a footnote's anchor (#fn-eq) is left alone; Reset clears a state hash.
+  var HASH = /^#bsz=(\d+)&rjkdc=(\d+)$/;
+  function readHash() {
+    var m = HASH.exec(location.hash);
+    if (!m) return;
+    PANELS.forEach(function (p, i) {
+      if (m[i + 1].length !== SL[p].length) return;
+      SL[p].forEach(function (inp, j) { var v = +m[i + 1].charAt(j); if (v <= +inp.max) inp.value = v; });
+    });
+  }
+  function writeHash() {
+    if (!history.replaceState) return;
+    var home = PANELS.every(function (p) { return SL[p].every(function (inp) { return +inp.value === 0; }); });
+    if (home && !HASH.test(location.hash)) return;
+    var h = home ? "" : "#" + PANELS.map(function (p) {
+      return p + "=" + SL[p].map(function (inp) { return inp.value; }).join(""); }).join("&");
+    history.replaceState(null, "", location.pathname + location.search + h);
+  }
   function minorSwitch(panel) { return SL[panel].filter(function (i) { return i.dataset.id === "minor_inputs"; })[0]; }
   function minorDials(panel) { return SL[panel].filter(function (i) { return MINOR.indexOf(i.dataset.id) >= 0; }); }
   PANELS.forEach(function (p) {
@@ -706,7 +748,8 @@
     SL[panel].forEach(function (inp) { inp.value = moved.indexOf(inp.dataset.id) >= 0 ? inp.max : "0"; });
     renderPanels();
     WALK[panel] = k;
-    walkButton(panel).textContent = k === NP ? "Start over" : "Walk the path";
+    // the button counts the steps while a walk is on (review 005, U-17); endWalk() restores the label
+    walkButton(panel).textContent = k === NP ? "Start over" : "Next step (" + k + " of " + NP + ")";
     clearMarks();
     if (!EQ) return;
     EQ.dataset.walk = panel;
@@ -774,7 +817,12 @@
       renderPanels();
     });
   });
+  readHash();
   renderPanels();
+  // Printing opens both folds, so the notes print (review 005, U-20).
+  window.addEventListener("beforeprint", function () {
+    Array.prototype.slice.call(document.querySelectorAll("details.fold")).forEach(function (d) { d.open = true; });
+  });
 
   // The survey button: each click opens one of the two survey versions at random, so about half
   // the readers see each (the versions swap Value A and Value B).
