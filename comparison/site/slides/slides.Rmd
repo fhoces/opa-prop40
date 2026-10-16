@@ -658,8 +658,6 @@ exactly. The JR estimate here is the exact average of the
 authors' Monte Carlo; their seeded run prints `r usd(rj_print)`.
 ]
 
-The one published comparison, Hoopes (2026), draws this gap for earlier versions of the two analyses as a waterfall; this project's own waterfall is [in the appendix](#waterfall).
-
 The next three slides take the three largest steps on this path, `r three_syms`, in path
 order. The sizes depend on the order, because the inputs multiply each other. Averaged over
 every order (the report's order-free check), the three largest are `r sh_three`. Each of the next three slides says what both analyses
@@ -672,6 +670,8 @@ judgements included. **scenario**: a choice of which world to estimate, which ne
 studies settle. **derived**: computed from the analysis's own inputs.
 ]
 
+
+.footnote[The one published comparison, [Hoopes (2026)](#hoopes), draws this gap for earlier versions of the two analyses as a waterfall; this project's own waterfall is [in the appendix](#waterfall).]
 ---
 name: diff-departed
 
