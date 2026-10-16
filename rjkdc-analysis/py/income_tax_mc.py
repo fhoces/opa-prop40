@@ -1,4 +1,4 @@
-"""Python twin of R/income_tax_mc.R (Table 8, p.17).
+"""Python twin of R/income_tax_mc.R (first version Table 8, p.17; chapter Table 9, PDF p.30).
 
 numpy cannot reproduce R's Mersenne-Twister sample() draw stream, so this is
 an INDEPENDENT Monte Carlo of the same algorithm (draw 212 of the top K

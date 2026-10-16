@@ -418,7 +418,8 @@ author has not yet reviewed these checks.</p>
     <figcaption><strong>Three layers, all published, not lined up.</strong> In the version
       reproduced, the text, the READMEs and the code disagree in four places. The headline comes
       from one seeded run, and its revenue draws average 36, above the 30 the text calls
-      collectible.</figcaption>
+      collectible. The chapter uses 36 as its central revenue in the break-even analysis (p.33)
+      and treats both 72 and 30 as upper bounds that assume no undocumented departures (p.24).</figcaption>
   </figure>
   <figure>
     <span class="kicker">This OPA</span>
@@ -446,9 +447,11 @@ author has not yet reviewed these checks.</p>
   <summary><h2>What the model says <a class="fold-link" href="#what-the-model-says" aria-label="Link to this section">#</a></h2></summary>
   <div class="fold-body">
 <p>The Act collects a wealth tax once; billionaires who leave stop paying California income
-   tax for ever. The authors value that lost stream as a perpetuity (the same amount every year
-   for ever, worth 1/r times the yearly amount today at discount rate r) and subtract it: NPV = revenue
-   &minus; (share of the income tax base that leaves) &times; (annual income tax) / (discount rate).
+   tax for ever. The authors value that lost stream as a growing perpetuity: a loss that grows
+   each year is worth 1/(r &minus; g) times this year's amount today, where r &minus; g, the real
+   discount rate net of the growth of the lost tax, is drawn between 1.5% and 4.5% and anchored on
+   the S&amp;P 500 dividend yield (PDF pp.31-32). They subtract it: NPV = revenue &minus; (share of
+   the income tax base that leaves) &times; (annual income tax) / (r &minus; g).
    They report the average NPV over 100,000 random draws of those inputs: the main estimate,
    <strong>&minus;$38.9 billion</strong> (Jaros and Rauh, NBER, September 2026).<sup>1</sup>
    Amounts are billions of dollars.</p>
@@ -470,12 +473,14 @@ author has not yet reviewed these checks.</p>
 
 <p style="margin-top:14px;">Printed values are from NBER PDF pp.1, 23 and 35. The numbers show three
    things. First, the result is driven by the loss term: roughly 75 of present value lost against
-   36 collected. At the draws' 1.5% to 4.5% rates, a dollar a year for ever is
+   36 collected. At the draws' 1.5% to 4.5% values of r &minus; g, a dollar a year for ever, growing, is
    worth 22 to 67 dollars today.</p>
 <p style="margin-top:14px;">Second, the paper says the tax would collect about $30 billion (p.23). The
    simulation behind the headline draws revenue anywhere from 0 to 72, the most left after the
    seven publicly reported moves. That draw averages 36 (0.5 &times; 72, p.33), above the 30 the
-   paper calls collectible.</p>
+   paper calls collectible. The chapter uses 36 as its central revenue in the break-even analysis
+   (p.33) and treats both 72 and 30 as upper bounds that assume no undocumented departures
+   (p.24).</p>
 <p style="margin-top:14px;">Third, of the seven inputs that move the answer, six are guesswork. The
    <a href="explorer/">explorer</a> shows how far each one moves it. Whether the income tax loss
    really lasts for ever is the main point the <a href="../../bsz-analysis/site/">BSZ analysis</a>
@@ -511,6 +516,11 @@ author has not yet reviewed these checks.</p>
     <tr><td>Net present value under other assumptions (first version, p.20 and Table 9)</td>
         <td>All 4 printed variations match; the September chapter prints none. A 2% tax rate case in
             the authors' repository cannot be set here. <a href="checks.html">The checks</a></td></tr>
+    <tr><td>Other numbers the papers print</td>
+        <td>Of ten, seven match and two are close (mismatches 4, 6 and 9, and a semi-elasticity of
+            5.73 against 5.72 from the chapter's own inputs). The chapter's &quot;expanded
+            departures&quot; (Table 8, about 42% of the base) matches no grouping of the authors'
+            departure records. <a href="checks.html">The checks</a></td></tr>
   </tbody>
 </table>
 </div>
@@ -525,7 +535,7 @@ authors' text, their READMEs and their code. Four concern the September chapter.
 concern only the March first version.<sup>3</sup> We reproduce the code as shipped and record each
 one:</p>
 <ol start="3" style="margin:0 0 14px; padding-left:22px; color:var(--ink-2); font-size:15px;">
-  <li>The code and eq. 18 call the 1.5% to 4.5% draw (r &minus; g): r is the real discount rate and g the growth rate of the lost income tax. The sentence after eq. 19 divides by r alone (p.35), so one interval stands for two concepts.</li>
+  <li>The chapter's draw is r &minus; g, the real discount rate net of the growth of the lost income tax: eq. 18, the code and the NBER README all say so. One sentence after eq. 19 writes C/r instead (p.35).</li>
   <li>The revenue ceiling is 72 in the script, 72.06 in the README and in the paper's eq. 4 (p.22), and 72.05 in the person-level data.</li>
   <li>The paper sets the litigation weight q, the chance the Act survives in court, at 0.50. The code never multiplies by q. Its revenue draw from 0 to 72 has the same mean, 0.5 &times; 72, but a different spread.</li>
   <li>The baseline revenue sums to 94.30 in the authors' workbook, and the grown person-level data give the same; the text prints 94.20 (p.19).</li>

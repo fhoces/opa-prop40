@@ -313,7 +313,7 @@
         <a class="hl" href="../../../rjkdc-analysis/site/" title="Open the JR analysis overview">
           <span class="name">JR main estimate<sup>1</sup></span>
           <span class="value" id="hl-rjkdc">{{hl_rjkdc}}</span>
-          <span class="def">Net present value: the wealth tax minus the income tax lost for ever, in today's dollars, averaged over the authors' model runs</span>
+          <span class="def">Net present value: the wealth tax minus the income tax lost for ever, in today's dollars. This is the exact average of the authors' model, which they print as {{nber_printed}} from one run.</span>
         </a>
       </div>
     </div>
@@ -359,7 +359,7 @@
         <div class="panel-head">
           <h3 id="prj-h"><span class="ph-name">JR:</span> <span id="ph-rjkdc-main">{{hl_rjkdc}}</span></h3>
           <div class="ph-btns"><button type="button" class="reset walk" data-panel="rjkdc">Walk the path</button><button type="button" class="reset" data-panel="rjkdc">Reset</button></div>
-          <p class="ph-src">The JR analysis's main estimate<sup>1</sup> (Jaros and Rauh, NBER, September 2026)</p>
+          <p class="ph-src">The JR analysis's main estimate<sup>1</sup>, the exact average of the authors' model (Jaros and Rauh, NBER, September 2026)</p>
           <p class="ph-now">With these sliders <b id="now-rjkdc" aria-live="polite">{{jr_end_b}}</b></p>
         </div>
         <ul class="sl-list" aria-label="The JR panel's sliders">
@@ -385,7 +385,7 @@
   <details class="fold notes" id="notes-estimates">
     <summary>Notes on the two estimates and the conventions</summary>
     <div class="note">
-    <p class="fn"><sup>1</sup> Each analysis's own main estimate, defined its own way. The BSZ
+    <p class="fn"><sup>1</sup> The main estimate on each analysis's overview page, each defined its own way. The BSZ
     analysis's is a net total over 5 years: the wealth tax (Table 5 row 1), plus extra income
     tax from assets sold to pay it, minus the income tax lost to billionaires who leave, for 5
     years at {{r_bsz}}. BSZ's own headline is the wealth tax alone; the net total is this OPA's choice,
@@ -397,12 +397,15 @@
     two ends. The BSZ end is <b>{{bsz_end_b}}</b> and the JR end <b>{{jr_end_b}}</b>, a gap of <b>{{gap_b}}</b>.
     The discount rate is a dial: {{r_bsz}} at the BSZ end, the rate the BSZ overview uses, and
     {{r_jr}} at the JR end, the one rate worth the same as the authors' random draw of it.</p>
-    <p class="fn">Conventions. All amounts are nominal billions of dollars. The wealth tax is
-    counted at face value when assessed and undiscounted, as both analyses do (the BSZ analysis
-    values the base on 1 July 2026; the JR analysis grows its 2025 Forbes base by {{nber_growth}}
-    to 31 December 2026). Present values are at the assessment date, at the rate dial's value.
-    The JR code labels its rate r − g and the text r (the JR
-    analysis's <a href="../../../rjkdc-analysis/site/materials.html#mismatches">mismatch 3</a>).</p>
+    <p class="fn">Conventions. All amounts are billions of dollars at the assessment date. The
+    wealth tax is counted at face value when assessed and undiscounted, as both analyses do (the
+    BSZ analysis values the base on 1 July 2026; the JR analysis grows its 2025 Forbes base by
+    {{nber_growth}} to 31 December 2026). The lost income tax is a flat yearly amount, discounted
+    at the rate dial's value. The JR analysis's rate is a real rate net of the growth of the lost
+    tax, r − g (chapter eqs. 14 and 18; one sentence writes r alone, the JR analysis's
+    <a href="../../../rjkdc-analysis/site/materials.html#mismatches">mismatch 3</a>), so a flat
+    loss at that rate is the chapter's growing loss. The BSZ end's {{r_bsz}} is the middle of the
+    same draw.</p>
     </div>
   </details>
 

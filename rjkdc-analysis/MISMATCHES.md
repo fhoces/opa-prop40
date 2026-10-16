@@ -31,17 +31,18 @@ That version's prose is internally inconsistent (Sec 5.2 derives a growing-perpe
 Sec 5.5 silently drops the growth term); the code matches the *later* (Sec 5.5) plain-`r` reading.
 `R/npv_mc.R:compute_npv_mc_ssrn()` reproduces the code (plain `r`).
 
-## 3. One 1.5% to 4.5% interval for two discount concepts, `(r-g)` and plain `r`
+## 3. The sentence after eq. 19 writes C/r where the draw is (r - g)
 
 **Code**, `NBER_2026_litigation_weighted/NPV_data/NPV_dist_v8.R:22,28`: draws
-`rg_discount <- runif(n_sims, 0.015, 0.045)`, i.e. explicitly labelled `(r-g)`.
-**Paper**, PDF p.35, eq. 18 draws `(r - g) ~ U[0.015, 0.045]`; the sentence after eq. 19 computes
-`NPV = WT - f * C / r`, with the plain rate.
-**NBER README** assumptions table lists the same `[1.5%, 4.5%]` range for `(r - g)` under the
-litigation-weighted approach, and the *identical* range for plain `r` under the first version's
-approach (see mismatch #2). The same interval stands for two different discount concepts (one nets
-out growth, one doesn't); neither the README nor the text says why the same calibration should
-apply to both.
+`rg_discount <- runif(n_sims, 0.015, 0.045)`, labelled `(r-g)`.
+**Paper**, PDF p.35, eq. 18 draws `(r - g) ~ U[0.015, 0.045]`, after eqs. 13-14 (PDF p.31) derive
+the growing perpetuity f·C/(r − g) and PDF p.32 calibrates (r − g) ≈ 0.015 from the dividend
+yield; the sentence after eq. 19 then computes `NPV = WT - f * C / r`.
+**NBER README** (`NBER_2026_litigation_weighted/README.md` at `25e84dd`): the row "Simulation
+draws (100,000)" gives (r − g) ~ U[1.5%, 4.5%] for both versions, and the row "NPV formula" gives
+NPV = WT − f·C / (r − g) for both. The repository's root README writes r ~ U[1.5%, 4.5%] for the
+first version's `NPV_dist.R`, whose code divides by plain r (mismatch #2). For the September
+chapter the code, eq. 18 and the NBER README agree on (r − g); only the one sentence writes r.
 
 ## 4. NBER ceiling: hard-coded 72 vs. 72.05/72.06 derivable from `final.csv`
 
@@ -71,12 +72,10 @@ in the file.
 
 The only place a 0.5 could be hiding is that `E[U(0, 72)] = 36 = 0.5 * 72`, i.e. drawing `WT`
 uniformly from 0 to the ceiling has the *same expected value* as multiplying the ceiling by 0.5.
-But that is not what the README describes ("applied to the recognized base," i.e. a discrete
-survive/strike-down weighting of a fixed recognized amount), and a uniform draw over the full
-range is a materially different distributional assumption from a Bernoulli(q) weight on a point
-estimate (the uniform draw also puts positive probability on values between 0 and 72 that a
-true two-state litigation model would not produce). We reproduce the code as shipped
-(`wt ~ U[0, 72]`) and flag that it does not implement the README's own stated mechanism.
+The README states q = 0.50 for the point estimate (0.50 × 59.15 = 29.6, eqs. 6-8) and a uniform
+draw from 0 (struck down) to 72 for the simulation; the draw and q applied to the 72 ceiling
+(the chapter's central estimate, PDF p.33) share a mean, 36, but not a distribution. The code has no
+separate q. We reproduce the code as shipped (wt ~ U[0, 72]).
 
 ## 6. Baseline revenue: the workbook's precise 94.30 vs. the printed 94.20
 

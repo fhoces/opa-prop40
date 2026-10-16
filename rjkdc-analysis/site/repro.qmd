@@ -68,6 +68,7 @@ num <- function(x, d = 1) {
   ifelse(x < 0, paste0("−", s), s)
 }
 pct <- function(x, d = 1) paste0(num(x, d), "%")
+usdb <- function(x, d = 1) paste0(ifelse(x < 0, "−", ""), "\\$", num(abs(x), d), "B")   # −$38.9B
 out <- function(id, col = "value") outputs[[col]][outputs$output_id == id]
 inp <- function(id) inputs$value[inputs$input_id == id]
 h <- function(v, q, col = "reproduced") hl[[col]][hl$version == v & hl$quantity == q]
@@ -82,10 +83,10 @@ scroll <- function(x) cat("\n\n```{=html}\n<div class=\"table-scroll\">\n",
 ![](assets/opa/opa-details.png){.opa-figure}
 
 Jaros and Rauh estimate that Proposition 40 leaves California poorer: a mean net present value
-of `r num(h("nber","mc_mean_npv","printed"))` \$B (PDF p.1). The tax is collected once, but
+of `r usdb(h("nber","mc_mean_npv","printed"))` (PDF p.1). The tax is collected once, but
 billionaires who leave stop paying income tax for ever. At the authors' discount rates that lost
-stream is worth about `r num(h("nber","pv_lost"), 0)` \$B today, against
-`r num(h("nber","mc_expected_revenue"), 0)` \$B collected. This report rebuilds that number step
+stream is worth about \$`r num(h("nber","pv_lost"), 0)`B today, against
+\$`r num(h("nber","mc_expected_revenue"), 0)`B collected. This report rebuilds that number step
 by step. The chapter sets its revenue of about \$30B against the \$104B benchmark of the
 [BSZ analysis](../../bsz-analysis/site/) (PDF p.3).
 
@@ -105,13 +106,13 @@ circulates working papers), the litigation-weighted revision of the first versio
 Kearney, Doran and Cosso (SSRN 6340778, March 2026; SSRN is a preprint site). Its headline:
 revenue of about \$30B (\$`r h("nber","revenue_range_low","printed")`B to
 \$`r h("nber","revenue_range_high","printed")`B) and a mean NPV of
-`r num(h("nber","mc_mean_npv","printed"))` \$B, with `r h("nber","mc_pct_negative","printed")`%
+`r usdb(h("nber","mc_mean_npv","printed"))`, with `r h("nber","mc_pct_negative","printed")`%
 of simulated outcomes negative (the Figure 3 note, PDF p.35; the text on p.1 says 85%). That mean
 NPV is **the main estimate**, derived step by
 step in [the next section](#the-main-estimate).^[The authors released a first version in March
 2026: Rauh, Jaros, Kearney, Doran and Cosso, Hoover Institution, SSRN 6340778. It printed revenue
 of about \$`r h("ssrn","revenue_headline","printed")`B and a mean NPV of
-`r num(h("ssrn","mc_mean_npv","printed"))` \$B, with `r h("ssrn","mc_pct_negative","printed")`%
+`r usdb(h("ssrn","mc_mean_npv","printed"))`, with `r h("ssrn","mc_pct_negative","printed")`%
 of outcomes negative (its PDF p.1). The pipeline reproduces it too; the
 [appendix](#appendix-first-version) at the end of this report sets out what it printed and
 which checks concern it.]
@@ -138,18 +139,18 @@ We follow that order.
 | $WT$ | one-time wealth tax revenue actually collected | \$B |
 | $C$ | annual California income tax paid by the billionaires | \$B per year |
 | $f$ | share of that income tax base that leaves the state | share |
-| $r$ | real discount rate (the Monte Carlo's draw) | per year |
-| $g$ | real growth of the lost income tax stream | per year |
+| $r - g$ | real discount rate net of the growth of the lost income tax (the Monte Carlo's draw) | per year |
+| $g$ | growth of the lost income tax stream; the explorer's further growth on top of the draw is this OPA's illustration | per year |
 | $\varepsilon$ | migration semi-elasticity: % of the base lost per percentage point of tax | |
 | $q$ | probability the Act survives constitutional challenge | probability |
-| NPV | $WT - f \cdot C/r$ (or $/(r-g)$), the net fiscal effect today | \$B |
+| NPV | $WT - f \cdot C/(r-g)$, the net fiscal effect today | \$B |
 
 ## The main estimate, step by step {#the-main-estimate}
 
 The main estimate is the paper's mean net present value, printed as
-**`r num(h("nber","mc_mean_npv","printed"))` \$B** (PDF p.1 and p.35). The authors get it from a
+**`r usdb(h("nber","mc_mean_npv","printed"))`** (PDF p.1 and p.35). The authors get it from a
 Monte Carlo: they draw four inputs at random 100,000 times, compute
-$NPV = WT - f \cdot C / r$ for each draw, and average. Because the four draws are independent,
+$NPV = WT - f \cdot C / (r - g)$ for each draw, and average. Because the four draws are independent,
 the average has an exact value too, and we build it one input at a time. Every number below is
 read from the pipeline (`R/npv_mc.R`, `R/nber_final.R`); the draw ranges are the defaults of
 `compute_npv_mc_nber()`, which copies the authors' script `NPV_dist_v8.R`.
@@ -178,13 +179,14 @@ The script draws $C \sim U[`r nb$c_min`, `r nb$c_max`]$ (\$B a year), the two en
 tax Monte Carlo in [Section 5.1](#section-5.1-the-income-tax-the-billionaires-pay). Its mean is
 $E[C]$ = `r num((nb$c_min + nb$c_max) / 2, 2)`.
 
-### Step 4: the discount rate, $r$ {#step-r}
+### Step 4: the discount rate net of growth, $r - g$ {#step-r}
 
-The script draws $r \sim U[`r nb$rg_min`, `r nb$rg_max`]$, a rate between
-`r pct(100 * nb$rg_min)` and `r pct(100 * nb$rg_max)` a year. A stream of
-\$1 a year for ever is worth $1/r$ today, so what enters is the mean of $1/r$, not $1/E[r]$:
-$$E\!\left[\tfrac1r\right] = \frac{\ln(`r nb$rg_max` / `r nb$rg_min`)}{`r nb$rg_max` - `r nb$rg_min`} = `r num(npv_e_inv_rate(nb$rg_min, nb$rg_max), 2)`.$$
-In words: at these rates, \$1 lost every year for ever is worth about
+The script draws $r - g \sim U[`r nb$rg_min`, `r nb$rg_max`]$, the real discount rate net of the
+growth of the lost tax, between `r pct(100 * nb$rg_min)` and `r pct(100 * nb$rg_max)` a year. A
+stream of \$1 a year, growing at $g$ for ever, is worth $1/(r-g)$ today, so what enters is the
+mean of $1/(r-g)$, not $1/E[r-g]$:
+$$E\!\left[\tfrac{1}{r-g}\right] = \frac{\ln(`r nb$rg_max` / `r nb$rg_min`)}{`r nb$rg_max` - `r nb$rg_min`} = `r num(npv_e_inv_rate(nb$rg_min, nb$rg_max), 2)`.$$
+In words: at these rates, \$1 lost this year, and growing every year for ever, is worth about
 \$`r num(npv_e_inv_rate(nb$rg_min, nb$rg_max), 0)` today. The range is **guesswork**. Its
 `r pct(100 * nb$rg_min)` anchor is a published market yield, but the width of the band, to
 `r pct(100 * nb$rg_max)`, is the authors' judgement, and the width is what moves the
@@ -196,23 +198,24 @@ width of the band moves the result.]
 ### Step 5: the present value of the income tax lost
 
 The three loss inputs are independent, so the mean of their product is the product of their means:
-$$E\!\left[\frac{f\,C}{r}\right] = `r num((nb$f_min + nb$f_max) / 2, 2)` \times `r num((nb$c_min + nb$c_max) / 2, 2)` \times `r num(npv_e_inv_rate(nb$rg_min, nb$rg_max), 2)` = `r num(h("nber","pv_lost"), 2)`.$$
+$$E\!\left[\frac{f\,C}{r-g}\right] = `r num((nb$f_min + nb$f_max) / 2, 2)` \times `r num((nb$c_min + nb$c_max) / 2, 2)` \times `r num(npv_e_inv_rate(nb$rg_min, nb$rg_max), 2)` = `r num(h("nber","pv_lost"), 2)`.$$
 
 ### Step 6: the net present value {#step-npv}
 
 The revenue of Step 1 minus the loss of Step 5:
-$$E[NPV] = E[WT] - E\!\left[\frac{f\,C}{r}\right]$$
+$$E[NPV] = E[WT] - E\!\left[\frac{f\,C}{r-g}\right]$$
 $$= `r num(h("nber","mc_expected_revenue"), 2)` - `r num(h("nber","pv_lost"), 2)` = `r num(tr("npv_mc_nber_analytic_mean"), 2)`.$$
 
 The authors do not print this exact expectation. They print the average of one seeded run of
 100,000 draws. A seeded run starts the random draws from a fixed number (2026), so it gives the
 same draws every time. Our R port replays it draw for draw:
-**`r num(mcn$summary$mean, 3)` \$B**, printed as `r num(h("nber","mc_mean_npv","printed"))`. The
+**`r usdb(mcn$summary$mean, 3)`**, printed as `r num(h("nber","mc_mean_npv","printed"))`. The
 gap, `r num(abs(mcn$summary$mean - tr("npv_mc_nber_analytic_mean")), 2)`, is less than one Monte
 Carlo standard error (`r num(mcn$summary$sd / sqrt(mcn$summary$n), 2)`). The overview and the explorer show the printed
 `r num(h("nber","mc_mean_npv","printed"))`; the explorer's grid holds the exact value for every other
-setting. The [explorer](explorer/) moves each of the four draws, and two readings the code does
-not implement (a litigation multiplier and growth of the lost income).
+setting. The [explorer](explorer/) moves each of the four draws, and two settings the authors' code
+does not have: a litigation multiplier on top of the draw, and growth of the lost income on top of
+the drawn $r - g$ (this OPA's illustration).
 
 ```{r}
 #| label: main-estimate-code
@@ -445,22 +448,24 @@ $$PV = \frac{C}{r}, \qquad NPV = WT - f \cdot \frac{C}{r}$$
 
 $$\text{or, with growth:}\qquad PV = \frac{C}{r - g}, \qquad NPV = WT - f \cdot \frac{C}{r - g}$$
 
-At $r$ = 1.5% a perpetuity is worth 1/0.015, about 67 years of payments; at 4.5%,
+At a rate of 1.5% a perpetuity is worth 1/0.015, about 67 years of payments; at 4.5%,
 about 22. The paper's text then argues the lost stream grows with the billionaires' wealth, making
 it a growing perpetuity, $C/(r-g)$ (PDF p.31). It calibrates $r - g$ at about 1.5% from the
 S&P 500's dividend yield, and presents scenarios at 1.5%, 3.0% and 4.5% (PDF p.32).
 
 Three things are worth knowing before reading the rest:
 
-- **Which rate is drawn.** The Monte Carlo's eq. 18 and the code (`NPV_dist_v8.R`) call the 1.5% to
-  4.5% draw $(r-g)$. The sentence after eq. 19 then computes $C/r$ (PDF p.35)
-  ([mismatch 3](materials.html#mismatches)). Numerically nothing changes, because the same
-  interval is used whatever it is called. Conceptually, the interval is asked to stand for two
-  different things. The explorer's growth dial shows what the ambiguity is worth.
+- **Which rate is drawn.** The chapter's eq. 18 and its code (`NPV_dist_v8.R`) draw the 1.5% to
+  4.5% rate as $r - g$, the discount rate net of growth, and the NBER README describes the draw
+  the same way. One sentence after eq. 19 writes $C/r$ (PDF p.35)
+  ([mismatch 3](materials.html#mismatches)). The first version's code divides by plain $r$
+  ([mismatch 2](materials.html#mismatches)). The explorer's dial for further growth on top of the
+  drawn $r - g$ is this OPA's illustration, not part of the authors' model.
 - **The loss is not scaled by $q$.** People who left do not come back if the Act is struck down,
   so the income tax loss stays even when the wealth tax collects nothing (PDF p.33).
 - **The horizon.** Treating the loss as permanent is itself one of the disputed choices: the
-  [BSZ analysis](../../bsz-analysis/site/) estimates the loss as lasting about the five payment years
+  [BSZ analysis](../../bsz-analysis/site/) argues the loss should be temporary and gives five
+  years, the payment period, as an example (BSZ PDF p.27)
   ([disputes row 2](https://github.com/fhoces/opa-prop40/blob/main/comparison/DISPUTES.md)).
 
 ## Section 5.3: the break-even departure share (Table 10, eq. 15)
@@ -528,7 +533,7 @@ scroll(kable(data.frame(
 Our R port replays the authors' script exactly (same seed, same draw order) and agrees with an
 unmodified run of `NPV_dist_v8.R` to machine precision (`tests/testthat/test-npv-mc.R`). The
 printed summary reproduces to within Monte Carlo error, with no systematic gap. Its exact
-expectation is `r num(tr("npv_mc_nber_analytic_mean"), 2)` \$B, which rounds to
+expectation is `r usdb(tr("npv_mc_nber_analytic_mean"), 2)`, which rounds to
 `r num(tr("npv_mc_nber_analytic_mean"), 1)` rather than the printed
 `r num(h("nber","mc_mean_npv","printed"))`: the printed value is the seeded run's, not the
 expectation. The explorer shows the exact expectations and says so.
@@ -751,7 +756,7 @@ scroll(kable(tab10, align = "lrrr", caption = "First version, Table 10 (its PDF 
 `r m9` of the `r 2 * nrow(t9p)` Table 9 cells and `r m10` of the `r nrow(t10)` Table 10 cells
 match the printed digit. The central scenario's \$`r inp("wt_central_scenario")`B is a typed
 literal with no derivation (mismatch 8). The headline is not a cell of Table 9: the central cell
-at 1.5% is `r num(t9$npv[t9$scenario=="central" & t9$r==0.015])` \$B.
+at 1.5% is `r usdb(t9$npv[t9$scenario=="central" & t9$r==0.015])`.
 
 **Monte Carlo (its Sec 5.5).** It draws $WT \sim U[`r ss$wt_min`, `r ss$wt_max`]$,
 $C \sim U[3.3, 5.8]$ and $r \sim U[0.015, 0.045]$, with $f = 1 - WT/94.2$. The paper prints the
@@ -783,7 +788,7 @@ share negative match the printed values. The mean (`r num(mcs$summary$mean, 2)` 
 
 $$E[NPV] = E[WT] - \left(1 - \frac{E[WT]}{94.20}\right) E[C]\, E\!\left[\tfrac{1}{r}\right]$$
 
-It equals **`r num(tr("npv_mc_ssrn_analytic_mean"), 3)` \$B**, which rounds to the printed
+It equals **`r usdb(tr("npv_mc_ssrn_analytic_mean"), 3)`**, which rounds to the printed
 `r num(h("ssrn","mc_mean_npv","printed"))`. So the printed mean is the model's exact expectation,
 while the shipped seed gives `r num(mcs$summary$mean, 2)`. The printed SD stays unexplained.
 

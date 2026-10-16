@@ -2483,6 +2483,11 @@ text-decoration: none; max-width: 30em; }
 background: transparent; border: 1px solid var(--link); border-radius: 0; cursor: pointer; white-space: nowrap; }
 .q-copy.is-done { color: var(--ink); border-color: var(--ink); }
 
+a.q-survey { color: var(--paper) !important; text-decoration: none !important; }
+.q-mini { display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0 16px; }
+.q-survey.q-survey-mini { font-size: 15px; padding: 5px 14px; }
+.q-copy.q-copy-mini { font-size: 15px; padding: 5px 14px; margin-left: 0; }
+
 .ai-badge { display: inline-block; vertical-align: middle; margin-left: 0.5em; padding: 0.2em 0.75em;
 border-radius: 999px; font-family: var(--serif); font-size: 0.42em; font-weight: 600;
 letter-spacing: 0; line-height: 1.35; text-decoration: none !important; white-space: nowrap; }
@@ -2766,7 +2771,7 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><a href="https://github.com/fhoces/opa-prop40/blob/main/bsz-analysis/R/tables.R"><code>R/tables.R</code></a></td>
-<td style="text-align: right;">652</td>
+<td style="text-align: right;">710</td>
 <td style="text-align: left;">the six gt tables</td>
 </tr>
 <tr class="even">
@@ -2958,7 +2963,7 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 <li><strong>A data-entry error in the workbook</strong>: rows 1338 to 1341 of <code>data_sec_all</code> repeated at rows 1342 to 1345 (244 billionaires counted instead of 240); handled in <a href="https://github.com/fhoces/opa-prop40/blob/main/bsz-analysis/R/compute_data_sec_agg.R"><code>R/compute_data_sec_agg.R</code></a>.</li>
 <li><strong>Two implicit readings</strong> in Table 5 (the literal 5% income tax loss share; row 4 omitting row 2’s phase-in deduction), kept at the workbook’s behaviour and disclosed on the <a href="explorer/">explorer</a>.</li>
 <li><strong>Two printed cells</strong> of Table 5 (the income tax loss in rows 2 and 3) that the paper rounds differently from its own workbook.</li>
-<li><strong>Display labels</strong> in this reproduction’s Tables 1 and A1 that do not match their values (GDP for AGI, 2025 for 2026).</li>
+<li><strong>A display error</strong> in this reproduction’s Tables 1 and A1: the display put Panel B’s values under Panel A’s headers and formats and kept the May workbook’s labels (GDP for AGI, 2025 for 2026); fixed in the display code on 2026-10-15.</li>
 <li><strong>A malformed row in our own source manifest</strong>: two <code>provider</code> fields contained an unquoted comma, which shifted every later column for any CSV reader; quoted on 2026-09-23.</li>
 <li><strong>Not reproduced</strong>: the paper’s Figure 8 and Appendix Figure A1 (wealth relative to AGI), and the raw data behind the workbook, which the pipeline takes as given.</li>
 </ul>

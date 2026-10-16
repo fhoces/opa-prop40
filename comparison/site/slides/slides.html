@@ -812,9 +812,9 @@ class: opa-card
 # The comparison OPA
 
 .pull-left[
-The comparison puts both analyses on one common output, the net fiscal effect in today&#39;s dollars, and moves from one main estimate to the other one disputed input at a time. Its explorer lets a reader set each input to either analysis&#39;s value.
+The comparison puts both analyses on one common output, the net fiscal effect (the wealth tax, plus income tax from asset sales, minus the present value of income tax lost), and moves from one main estimate to the other one disputed input at a time. Its explorer lets a reader set each input to either analysis&#39;s value.
 
-**What reproduces.** Both main estimates are rebuilt on the common output from the two analyses&#39; exported files, &lt;span class=&quot;nb&quot;&gt;$106.8B&lt;/span&gt; and &lt;span class=&quot;nb&quot;&gt;−$39.0B&lt;/span&gt;. The steps of the bridge add up exactly to the gap, and the R and Python versions agree.
+**What reproduces.** Both main estimates are rebuilt on the common output from the two analyses&#39; exported files, &lt;span class=&quot;nb&quot;&gt;$106.8B&lt;/span&gt; and &lt;span class=&quot;nb&quot;&gt;−$39.0B&lt;/span&gt;. Each step of the bridge is the change from moving one explorer dial, in R and in the browser (the steps add up to the gap by construction). The R and Python versions agree.
 
 [The comparison overview](../../../index.html)
 ]
@@ -828,25 +828,33 @@ name: pseudo-eq
 
 # What separates the two numbers
 
-&lt;div class=&quot;pseudo-eq&quot;&gt;&lt;span class=&quot;term&quot;&gt;&lt;b&gt;$106.8B&lt;/b&gt;&lt;small&gt;BSZ estimate&lt;/small&gt;&lt;/span&gt;&lt;span class=&quot;eq-step&quot;&gt;&lt;span class=&quot;op&quot;&gt;&amp;minus;&lt;/span&gt;&lt;span class=&quot;term&quot;&gt;&lt;b&gt;$29.9B&lt;/b&gt;&lt;small&gt;Billionaires already departed (D)&lt;/small&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;eq-step&quot;&gt;&lt;span class=&quot;op&quot;&gt;&amp;minus;&lt;/span&gt;&lt;span class=&quot;term&quot;&gt;&lt;b&gt;$39.4B&lt;/b&gt;&lt;small&gt;Chance the tax does not survive litigation (q)&lt;/small&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;eq-step&quot;&gt;&lt;span class=&quot;op&quot;&gt;&amp;minus;&lt;/span&gt;&lt;span class=&quot;term&quot;&gt;&lt;b&gt;$81.3B&lt;/b&gt;&lt;small&gt;Lost income tax (H, f, C, r)&lt;/small&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;eq-step&quot;&gt;&lt;span class=&quot;op&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;term&quot;&gt;&lt;b&gt;$4.9B&lt;/b&gt;&lt;small&gt;The other three steps together (W, a, three minor inputs)&lt;/small&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;eq-step&quot;&gt;&lt;span class=&quot;op&quot;&gt;&amp;asymp;&lt;/span&gt;&lt;span class=&quot;term&quot;&gt;&lt;b&gt;−$39.0B&lt;/b&gt;&lt;small&gt;JR estimate&lt;/small&gt;&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;
+.small[
+Both estimates are on one measure, output (b), the net fiscal effect. It is the wealth tax, plus
+income tax from assets sold to pay it, minus income tax lost to people who leave. The equation
+moves the explorer&#39;s BSZ panel dials one at a time to the JR values, in the order shown (the dial
+path). Each amount is what its dials change.
+]
+
+&lt;div class=&quot;pseudo-eq&quot;&gt;&lt;span class=&quot;term&quot;&gt;&lt;b&gt;$106.8B&lt;/b&gt;&lt;small&gt;BSZ estimate&lt;/small&gt;&lt;/span&gt;&lt;span class=&quot;eq-step&quot;&gt;&lt;span class=&quot;op&quot;&gt;&amp;minus;&lt;/span&gt;&lt;span class=&quot;term&quot;&gt;&lt;b&gt;$29.9B&lt;/b&gt;&lt;small&gt;Billionaires already departed (D)&lt;/small&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;eq-step&quot;&gt;&lt;span class=&quot;op&quot;&gt;&amp;minus;&lt;/span&gt;&lt;span class=&quot;term&quot;&gt;&lt;b&gt;$39.4B&lt;/b&gt;&lt;small&gt;Chance the tax does not survive litigation (q)&lt;/small&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;eq-step&quot;&gt;&lt;span class=&quot;op&quot;&gt;&amp;minus;&lt;/span&gt;&lt;span class=&quot;term&quot;&gt;&lt;b&gt;$81.3B&lt;/b&gt;&lt;small&gt;Lost income tax (H, f, C, r)&lt;/small&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;eq-step&quot;&gt;&lt;span class=&quot;op&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;term&quot;&gt;&lt;b&gt;$4.9B&lt;/b&gt;&lt;small&gt;The other three steps together (W, a, the minor switch)&lt;/small&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;eq-step&quot;&gt;&lt;span class=&quot;op&quot;&gt;&amp;asymp;&lt;/span&gt;&lt;span class=&quot;term&quot;&gt;&lt;b&gt;−$39.0B&lt;/b&gt;&lt;small&gt;JR estimate&lt;/small&gt;&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;
 
 .small[
-Move the BSZ panel&#39;s dials to their far ends, term by term from left to right. The D and q terms are those two steps of that walk. Lost income tax is the four loss-box dials of the walk added up (f, C, H and r). The last term is the other three steps added up (W, a and three minor inputs). The terms add up
+The D and q terms are those two steps of that walk. Lost income tax is the four loss-box dials of the walk added up (H, f, C and r). The last term is the other three steps added up (W, a and the minor switch). The terms add up
 exactly; &quot;about equal&quot; is only rounding. The JR estimate here is the exact average of the
 authors&#39; Monte Carlo; their seeded run prints &lt;span class=&quot;nb&quot;&gt;−$38.9B&lt;/span&gt;.
 ]
 
 The one published comparison, Hoopes (2026), draws this gap for earlier versions of the two analyses as a waterfall; this project&#39;s own waterfall is [in the appendix](#waterfall).
 
-The next three slides take the three largest steps, *D*, *q* and *H*, in path
-order. Each says what both analyses assume, why, and what kind of claim it is:
+The next three slides take the three largest steps on this path, *D*, *q* and *H*, in path
+order. The sizes depend on the order. Averaged over every order (the report&#39;s order-free check),
+the three largest are *q* (chance it survives court), *f* (share lost) and *H* (years counted). Each of the next three slides says what both analyses
+assume, why, and what kind of claim it is:
 
 .small[
-- **data**: settled by observable facts (lists, filings, tax statistics)
-- **research**: a parameter taken from published studies
-- **guesswork**: asserted without data or a study behind it, legal judgements included
-- **scenario**: a choice of which world to estimate, which neither data nor studies settle
-- **derived**: computed from the analysis&#39;s own inputs
+**data**: settled by observable facts (lists, filings, tax statistics). **research**: a parameter
+taken from published studies. **guesswork**: asserted without data or a study behind it, legal
+judgements included. **scenario**: a choice of which world to estimate, which neither data nor
+studies settle. **derived**: computed from the analysis&#39;s own inputs.
 ]
 
 ---
@@ -856,7 +864,7 @@ name: diff-departed
 
 
 
-&lt;table class=&quot;dt claims&quot;&gt;&lt;tr&gt;&lt;th style=&quot;width:50%&quot;&gt;The BSZ analysis&lt;/th&gt;&lt;th&gt;The JR analysis&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Nobody counts as departed.&lt;/b&gt; The benchmark taxes everyone resident in California on 1 January 2026 (BSZ PDF p.23). Its aggressive scenario (Table 5 row 3) assumes four of them left: Page, Thiel, Hankey and Kalanick.&lt;/td&gt;&lt;td&gt;&lt;b&gt;Seven publicly reported moves&lt;/b&gt; (Page, Brin, Thiel, Hankey, Spielberg, Kalanick and Sacks) are taken out of the base before the tax: 28.6% of its wealth (NPV_dist_v8.R:19).&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;table class=&quot;dt claims&quot;&gt;&lt;tr&gt;&lt;th style=&quot;width:50%&quot;&gt;The BSZ analysis&lt;/th&gt;&lt;th&gt;The JR analysis&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;No named departure is removed.&lt;/b&gt; The benchmark taxes everyone resident in California on 1 January 2026. Press reports do not establish that any named mover changed residence in time (BSZ PDF p.23 fn.30). Its 10% avoidance already counts 5% of billionaires who left in time (BSZ PDF p.24). Its aggressive scenario (Table 5 row 3) assumes four named billionaires left: Page, Thiel, Hankey and Kalanick.&lt;/td&gt;&lt;td&gt;&lt;b&gt;Seven publicly reported moves&lt;/b&gt; (Page, Brin, Thiel, Hankey, Spielberg, Kalanick and Sacks) are taken out of the base before the tax: 28.6% of its wealth (NPV_dist_v8.R:19).&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 
 .pull-left[
 
@@ -883,7 +891,7 @@ name: diff-litigation
 
 # Difference 2: will the tax survive in court?
 
-&lt;table class=&quot;dt claims&quot;&gt;&lt;tr&gt;&lt;th style=&quot;width:50%&quot;&gt;The BSZ analysis&lt;/th&gt;&lt;th&gt;The JR analysis&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;&lt;i&gt;q&lt;/i&gt; = 100%.&lt;/b&gt; The Act as written, collected in full. Neither BSZ nor the expert report it builds on (GGSS: Galle, Gamage, Saez and Shanske) discounts the revenue for litigation risk (BSZ Table 5; GGSS p.4).&lt;/td&gt;&lt;td&gt;&lt;b&gt;&lt;i&gt;q&lt;/i&gt; = 50%.&lt;/b&gt; The chance the Act survives a court challenge, set at the &amp;quot;more likely than not&amp;quot; threshold of an accounting rule (ASC 740-10; NBER README, chapter Sec. 4.3). The Monte Carlo draws the revenue anywhere between zero (struck down) and the &lt;span class=&quot;nb&quot;&gt;$72B&lt;/span&gt; ceiling; its average is half the ceiling.&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;table class=&quot;dt claims&quot;&gt;&lt;tr&gt;&lt;th style=&quot;width:50%&quot;&gt;The BSZ analysis&lt;/th&gt;&lt;th&gt;The JR analysis&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;&lt;i&gt;q&lt;/i&gt; = 100%.&lt;/b&gt; The Act as written, collected in full. Neither BSZ nor the expert report it builds on (GGSS: Galle, Gamage, Saez and Shanske) discounts the revenue for litigation risk (BSZ Table 5; GGSS p.4). The expert report argues the Act was designed to stay clear of constitutional issues (GGSS p.11).&lt;/td&gt;&lt;td&gt;&lt;b&gt;&lt;i&gt;q&lt;/i&gt; = 50%.&lt;/b&gt; The chance the Act survives a court challenge, set at the &amp;quot;more likely than not&amp;quot; threshold of an accounting rule (ASC 740-10; NBER README; chapter Secs. 4.2 and 4.4, PDF pp.19-23, eqs. 3 and 6). The Monte Carlo draws the revenue anywhere between zero (struck down) and the &lt;span class=&quot;nb&quot;&gt;$72B&lt;/span&gt; ceiling; its average is half the ceiling.&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 
 .pull-left[
 
@@ -907,10 +915,18 @@ leave.
 
 ---
 name: diff-horizon
+class: wide-right
 
 # Difference 3: for how long is the income tax lost?
 
-&lt;table class=&quot;dt claims&quot;&gt;&lt;tr&gt;&lt;th style=&quot;width:50%&quot;&gt;The BSZ analysis&lt;/th&gt;&lt;th&gt;The JR analysis&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;5 years.&lt;/b&gt; The losses are &amp;quot;annual temporary&amp;quot; and last about the five payment years (&amp;quot;If they last say only 5 years&amp;quot;, BSZ PDF p.27). A one-time tax should cause a temporary response (BSZ p.22).&lt;/td&gt;&lt;td&gt;&lt;b&gt;Perpetuity.&lt;/b&gt; A billionaire who leaves stops paying California income tax for ever, so the lost stream is valued as a perpetuity, 1/r (chapter Sec. 5.4, eq. 18-19).&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;style type=&quot;text/css&quot;&gt;
+/* diff-horizon: both claim cells run five lines, so the dollars box takes the wider column
+   (fewer lines) and the slide fits. */
+.wide-right .pull-left { width: 36%; }
+.wide-right .pull-right { width: 60%; }
+&lt;/style&gt;
+
+&lt;table class=&quot;dt claims&quot;&gt;&lt;tr&gt;&lt;th style=&quot;width:50%&quot;&gt;The BSZ analysis&lt;/th&gt;&lt;th&gt;The JR analysis&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;5 years.&lt;/b&gt; BSZ argue the losses should be temporary, since a one-time tax should cause a temporary response (BSZ PDF p.22), and give five years, the payment period, as an example (&amp;quot;If they last say only 5 years&amp;quot;, PDF p.27). Table 5 takes no stand on how long they last. The five years are this OPA&#39;s reading of that example.&lt;/td&gt;&lt;td&gt;&lt;b&gt;Perpetuity.&lt;/b&gt; Departed billionaires are assumed not to return, because the Act permanently removes the constitutional cap on intangible property taxes and lets the Legislature amend it by a two-thirds vote (chapter PDF p.32, Sec. 6). The lost stream is valued as a growing perpetuity, 1/(r &amp;minus; g) (chapter Sec. 5.2, eqs. 13-14, PDF pp.30-31).&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 
 &lt;table class=&quot;dt&quot;&gt;&lt;tr&gt;&lt;th&gt;Income tax lost, in today&amp;#39;s dollars, at 3%&lt;/th&gt;&lt;th&gt;5 years&lt;/th&gt;&lt;th&gt;For ever&lt;/th&gt;&lt;th&gt;Moving to for ever&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;BSZ yearly loss, &lt;span class=&quot;nb&quot;&gt;$0.15B&lt;/span&gt;&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;nb&quot;&gt;$0.7B&lt;/span&gt;&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;nb&quot;&gt;$5.1B&lt;/span&gt;&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;nb&quot;&gt;−$4.4B&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;JR yearly loss, &lt;span class=&quot;nb&quot;&gt;$2.05B&lt;/span&gt;&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;nb&quot;&gt;$9.4B&lt;/span&gt;&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;nb&quot;&gt;$68.3B&lt;/span&gt;&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;nb&quot;&gt;−$58.9B&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 
@@ -937,19 +953,22 @@ name: smaller
 
 # The smaller steps
 
-&lt;table class=&quot;dt&quot;&gt;&lt;tr&gt;&lt;th&gt;Input&lt;/th&gt;&lt;th&gt;BSZ value&lt;/th&gt;&lt;th&gt;JR value&lt;/th&gt;&lt;th class=&quot;l&quot;&gt;Kind of claim&lt;/th&gt;&lt;th&gt;Step on the path, (b)&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;i&gt;f&lt;/i&gt;, Share of billionaire income tax lost&lt;/td&gt;&lt;td&gt;what leavers paid&lt;/td&gt;&lt;td&gt;45% of all&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;data vs guesswork&lt;/td&gt;&lt;td&gt;−$5.0B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;i&gt;C&lt;/i&gt;, Billionaires&#39; annual CA income tax&lt;/td&gt;&lt;td&gt;$3.06B/yr&lt;/td&gt;&lt;td&gt;$4.55B/yr&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;research vs guesswork&lt;/td&gt;&lt;td&gt;−$3.4B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;i&gt;r&lt;/i&gt;, Discount rate for the lost income tax&lt;/td&gt;&lt;td&gt;3%&lt;/td&gt;&lt;td&gt;2.73%&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;scenario vs derived&lt;/td&gt;&lt;td&gt;−$7.5B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;i&gt;W&lt;/i&gt;, Forbes source: which list and valuation date&lt;/td&gt;&lt;td&gt;Forbes 2026, $2,157B&lt;/td&gt;&lt;td&gt;Forbes 2025 grown 7%, $2,027.4B&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;data&lt;/td&gt;&lt;td&gt;−$2.2B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;i&gt;a&lt;/i&gt;, Avoidance and evasion allowance&lt;/td&gt;&lt;td&gt;10.0%&lt;/td&gt;&lt;td&gt;0.0%&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;guesswork&lt;/td&gt;&lt;td&gt;+$12.5B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Three minor inputs&lt;/td&gt;&lt;td&gt;$150B; 0.0%; 1/3&lt;/td&gt;&lt;td&gt;$0B; 0.5%; 0%&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;data, guesswork&lt;/td&gt;&lt;td&gt;−$5.4B&lt;/td&gt;&lt;/tr&gt;&lt;tr class=&quot;tot&quot;&gt;&lt;td&gt;The six together&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;−$11.0B&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;table class=&quot;dt&quot;&gt;&lt;tr&gt;&lt;th&gt;Input&lt;/th&gt;&lt;th&gt;BSZ value&lt;/th&gt;&lt;th&gt;JR value&lt;/th&gt;&lt;th class=&quot;l&quot;&gt;Kind of claim&lt;/th&gt;&lt;th&gt;Step on the path, (b)&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;i&gt;f&lt;/i&gt;, Share of billionaire income tax lost&lt;/td&gt;&lt;td&gt;what leavers paid&lt;/td&gt;&lt;td&gt;45% of all&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;guesswork&lt;/td&gt;&lt;td&gt;−$5.0B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;i&gt;C&lt;/i&gt;, Billionaires&#39; annual CA income tax&lt;/td&gt;&lt;td&gt;$3.06B/yr&lt;/td&gt;&lt;td&gt;$4.55B/yr&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;research vs guesswork&lt;/td&gt;&lt;td&gt;−$3.4B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;i&gt;r&lt;/i&gt;, Discount rate for the lost income tax&lt;/td&gt;&lt;td&gt;3%&lt;/td&gt;&lt;td&gt;2.73%&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;scenario vs derived&lt;/td&gt;&lt;td&gt;−$7.5B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;i&gt;W&lt;/i&gt;, Forbes source: which list and valuation date&lt;/td&gt;&lt;td&gt;Forbes 2026, $2,157B&lt;/td&gt;&lt;td&gt;Forbes 2025 grown 7%, $2,027.4B&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;data&lt;/td&gt;&lt;td&gt;−$2.2B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;i&gt;a&lt;/i&gt;, Avoidance and evasion allowance&lt;/td&gt;&lt;td&gt;10.0%&lt;/td&gt;&lt;td&gt;0.0%&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;guesswork&lt;/td&gt;&lt;td&gt;+$12.5B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Three minor inputs&lt;/td&gt;&lt;td&gt;$150B; 0.0%; 1/3&lt;/td&gt;&lt;td&gt;$0B; 0.5%; 0%&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;data vs guesswork, data, guesswork&lt;/td&gt;&lt;td&gt;−$5.4B&lt;/td&gt;&lt;/tr&gt;&lt;tr class=&quot;tot&quot;&gt;&lt;td&gt;The six together&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;−$11.0B&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 
 .small[
-- **Share of income tax lost**: the BSZ analysis counts what the leavers paid, from tax filings.
-  The JR analysis takes a flat 45% of all billionaires&#39; income tax, the middle of a draw
-  between 30% and 60%. It moves little on the path because it comes before the
-  horizon, while the loss still lasts 5 years.
-- **Yearly income tax**: BSZ take the 2019 to 2025 average from tax statistics and published
-  research. JR take the middle of a range whose floor is the authors&#39; judgement.
-- **Avoidance and evasion allowance** is the one step that raises the estimate. The JR analysis
-  applies no allowance beyond departures, so dropping the BSZ 10% adds revenue.
-- **Discount rate**: 3% at the BSZ end, a scenario, since BSZ give no rate. 2.73% at the JR end, derived:
-  the one rate worth the same as the authors&#39; random draw between 1.5% and 4.5%. It moves after the horizon, on a loss that lasts for ever.
+- **Share of income tax lost**: the BSZ analysis counts what the leavers paid. At its benchmark
+  these are the avoiders who move (50% of its 10% allowance),
+  assumed to take a proportional share of the income tax (BSZ PDF p.24); named leavers&#39; tax comes
+  from filings. The JR analysis takes a flat 45% of all billionaires&#39; income tax, the
+  middle of a 30% to 60% draw. The step is small because it comes before the
+  horizon, while the loss lasts 5 years.
+- **Yearly income tax**: BSZ take the 2019 to 2025 average from tax statistics and research. JR
+  take the middle of a range whose floor is the authors&#39; judgement.
+- **Avoidance and evasion allowance** is the one step that raises the estimate: the JR analysis
+  applies no allowance beyond departures.
+- **Discount rate**: 3% at the BSZ end, a scenario (BSZ give no rate). 2.73% at the JR end,
+  derived: worth the same as the authors&#39; draw of r &amp;minus; g, the real rate net of the loss&#39;s
+  growth, from 1.5% to 4.5%. It moves after the horizon, on a loss that lasts for ever.
 ]
 
 ---
@@ -985,7 +1004,7 @@ name: next
 - At the BSZ inputs the function returns Table 5 row 1, &lt;span class=&quot;nb&quot;&gt;$103.815B&lt;/span&gt; (printed &lt;span class=&quot;nb&quot;&gt;$104B&lt;/span&gt;).
 - At the JR inputs, with the rate at 2.73%, it returns the exact average of the authors&#39; Monte Carlo,
   &lt;span class=&quot;nb&quot;&gt;−$38.980B&lt;/span&gt; (printed &lt;span class=&quot;nb&quot;&gt;−$38.9B&lt;/span&gt; from one seeded run).
-- The dial path&#39;s steps add up to the gap. The report&#39;s order-free check, each input&#39;s Shapley value, adds up too, and a test checks it against a brute-force average over orders.
+- Each step on the dial path is the change from moving one dial, in R and in the browser. The steps add up to the gap by construction. The report&#39;s order-free check, each input&#39;s Shapley value (its step averaged over every order the inputs could be switched in), adds up too, and a test checks it against a brute-force average over orders.
 - A Python twin writes the same tables. The largest difference from R is 5.0e-13; the tests require 1e-9.
 - **Not reproduced here:** the comparison takes each analysis&#39;s exported inputs and outputs as
   given. Each analysis&#39;s own reproduction is on its overview page.
@@ -1049,9 +1068,10 @@ and averages the results).&lt;sup&gt;2&lt;/sup&gt;
 ]
 
 .blue-box[
-**Net present value**: all gains minus all losses, with each future dollar converted to its
-value today (discounted). One analysis says the state
-gains about &lt;span class=&quot;nb&quot;&gt;$107B&lt;/span&gt;. The other says it loses about &lt;span class=&quot;nb&quot;&gt;$39B&lt;/span&gt;.
+**Net present value**: all gains minus all losses, each future dollar of lost income tax
+converted to its value today. Both analyses count the wealth tax at face value. On the common
+definition, the BSZ analysis&#39;s inputs give a gain of about &lt;span class=&quot;nb&quot;&gt;$107B&lt;/span&gt; and the JR
+analysis&#39;s a loss of about &lt;span class=&quot;nb&quot;&gt;$39B&lt;/span&gt;.
 ]
 
 .footnote[&lt;sup&gt;1&lt;/sup&gt; BSZ&#39;s own headline is the wealth tax alone. The net total is this OPA&#39;s choice, so both main estimates answer the same question. The BSZ overview discounts at 3%, and so does this deck&#39;s BSZ end ([the common output](#common-output)): both give &lt;span class=&quot;nb&quot;&gt;$106.8B&lt;/span&gt;. &lt;sup&gt;2&lt;/sup&gt; The paper prints &lt;span class=&quot;nb&quot;&gt;−$38.9B&lt;/span&gt;, the average of one seeded run of 100,000 draws. The exact average of the same formula is &lt;span class=&quot;nb&quot;&gt;−$38.98B&lt;/span&gt;, used throughout this deck.]
@@ -1074,9 +1094,11 @@ common outputs and estimates both analyses on each:
 &lt;table class=&quot;dt&quot;&gt;&lt;tr&gt;&lt;th&gt;Analysis&lt;/th&gt;&lt;th&gt;(a) gross revenue&lt;/th&gt;&lt;th&gt;(b) net fiscal effect&lt;/th&gt;&lt;th&gt;What the authors print&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;BSZ analysis&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;nb&quot;&gt;$103.8B&lt;/span&gt;&lt;/td&gt;&lt;td&gt;&lt;b&gt;&lt;span class=&quot;nb&quot;&gt;$106.8B&lt;/span&gt;&lt;/b&gt;&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;nb&quot;&gt;$104B&lt;/span&gt; revenue (Table 5 row 1); no net figure&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;JR analysis&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;nb&quot;&gt;$36.0B&lt;/span&gt;&lt;/td&gt;&lt;td&gt;&lt;b&gt;&lt;span class=&quot;nb&quot;&gt;−$39.0B&lt;/span&gt;&lt;/b&gt;&lt;/td&gt;&lt;td&gt;mean NPV &lt;span class=&quot;nb&quot;&gt;−$38.9B&lt;/span&gt; from one seeded run; revenue &quot;approximately &lt;span class=&quot;nb&quot;&gt;$30B&lt;/span&gt;&quot;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 
 .small[
-The horizon H is itself disputed: 5 years for the BSZ analysis, for ever for the JR analysis.
+The horizon H is itself disputed: 5 years for the BSZ analysis (this OPA&#39;s reading of BSZ&#39;s
+example, PDF p.27), for ever for the JR analysis.
 So is the discount rate r. The BSZ analysis gives none, and this OPA uses 3%, the rate of
-the BSZ overview. The JR analysis draws it at random between 1.5% and 4.5%, which is
+the BSZ overview. The JR analysis draws r &amp;minus; g, the real rate net of the loss&#39;s growth, at
+random between 1.5% and 4.5%, which is
 worth the same as one rate of 2.73% ([term 2](#term-loss)). Output (b) is the one both main
 estimates answer, so the rest of the deck uses it. For the JR analysis, both outputs are the
 exact average of the authors&#39; Monte Carlo.
@@ -1119,7 +1141,7 @@ name: term-loss
   30% and 60%.
 - **Value today of 1 dollar a year**: at 3%, a dollar a year for 5 years is worth 4.58 dollars
   today. A **perpetuity**, a dollar every year for ever, is worth 1/r at the rate r. The JR analysis
-  draws r between 1.5% and 4.5%, so its perpetuity is worth 36.62 dollars on average,
+  draws r &amp;minus; g between 1.5% and 4.5%, so its perpetuity is worth 36.62 dollars on average,
   the same as one rate of 2.73%.
 ]
 

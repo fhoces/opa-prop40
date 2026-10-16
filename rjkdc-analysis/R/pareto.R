@@ -1,4 +1,4 @@
-# Sec 5.1.1: Pareto tail fit to the FTB's cumulative AGI-bracket filer counts,
+# Sec 5.1.1 (first version) / 5.1 (chapter): Pareto tail fit to the FTB's cumulative AGI-bracket filer counts,
 # and the rank-implied income tax schedule used as the input to the income-tax
 # Monte Carlo (R/income_tax_mc.R). Ported from
 # RAUH/NPV_data/monte_carlo_sim.R:33-71 (paper Sec 5.1, p.15-16, Table 8/Fig 1

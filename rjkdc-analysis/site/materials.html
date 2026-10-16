@@ -2485,6 +2485,11 @@ text-decoration: none; max-width: 30em; }
 background: transparent; border: 1px solid var(--link); border-radius: 0; cursor: pointer; white-space: nowrap; }
 .q-copy.is-done { color: var(--ink); border-color: var(--ink); }
 
+a.q-survey { color: var(--paper) !important; text-decoration: none !important; }
+.q-mini { display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0 16px; }
+.q-survey.q-survey-mini { font-size: 15px; padding: 5px 14px; }
+.q-copy.q-copy-mini { font-size: 15px; padding: 5px 14px; margin-left: 0; }
+
 .ai-badge { display: inline-block; vertical-align: middle; margin-left: 0.5em; padding: 0.2em 0.75em;
 border-radius: 999px; font-family: var(--serif); font-size: 0.42em; font-weight: 600;
 letter-spacing: 0; line-height: 1.35; text-decoration: none !important; white-space: nowrap; }
@@ -2695,7 +2700,7 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><a href="https://github.com/fhoces/opa-prop40/blob/main/rjkdc-analysis/R/npv_mc.R"><code>R/npv_mc.R</code></a></td>
-<td style="text-align: left;">Sec 5.5 NPV Monte Carlo, both versions.</td>
+<td style="text-align: left;">NPV Monte Carlo, both versions: Sec 5.5 (first version) / Sec 5.4 (chapter).</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><a href="https://github.com/fhoces/opa-prop40/blob/main/rjkdc-analysis/R/npv_tables.R"><code>R/npv_tables.R</code></a></td>
@@ -2703,7 +2708,7 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><a href="https://github.com/fhoces/opa-prop40/blob/main/rjkdc-analysis/R/pareto.R"><code>R/pareto.R</code></a></td>
-<td style="text-align: left;">Sec 5.1.1: Pareto tail fit to the FTB&#39;s cumulative AGI-bracket filer counts, and the rank-implied income tax schedule used as the input to the income-tax Monte Carlo (R/income_tax_mc.R).</td>
+<td style="text-align: left;">Sec 5.1.1 (first version) / 5.1 (chapter): Pareto tail fit to the FTB&#39;s cumulative AGI-bracket filer counts, and the rank-implied income tax schedule used as the input to the income-tax Monte Carlo (R/income_tax_mc.R).</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><a href="https://github.com/fhoces/opa-prop40/blob/main/rjkdc-analysis/R/rauh_repo.R"><code>R/rauh_repo.R</code></a></td>
@@ -2719,7 +2724,7 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><a href="https://github.com/fhoces/opa-prop40/blob/main/rjkdc-analysis/py/income_tax_mc.py"><code>py/income_tax_mc.py</code></a></td>
-<td style="text-align: left;">Python twin of R/income_tax_mc.R (Table 8, p.17).</td>
+<td style="text-align: left;">Python twin of R/income_tax_mc.R (first version Table 8, p.17; chapter Table 9, PDF p.30).</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><a href="https://github.com/fhoces/opa-prop40/blob/main/rjkdc-analysis/py/nber_final.py"><code>py/nber_final.py</code></a></td>
@@ -2989,7 +2994,7 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 <td style="text-align: left;"><a href="https://www.caltax.org/foundation/reports/Revenue-Implications-of-Billionaire-Tax-Act.pdf">link</a></td>
 <td style="text-align: left;"><code>06fd06567974866e…</code></td>
 <td style="text-align: left;">do-not-redistribute</td>
-<td style="text-align: left;">same-side work entering as credited alternative dials (ongoing income tax losses incl. spillovers); not the JR headline</td>
+<td style="text-align: left;">reference only: a third party&#39;s estimate (ongoing income tax losses incl. spillovers), transcribed in comparison/data/document-inputs.csv; no dial</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">original-materials/additional-documentation/hoover-california-decides-prop40-2026-08.pdf</td>
@@ -2999,7 +3004,7 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 <td style="text-align: left;"><a href="https://hoover-s3-website.s3.us-west-2.amazonaws.com/s3fs-public/2026-08/California%20Decides_Proposition%2040_final.pdf">link</a></td>
 <td style="text-align: left;"><code>1281bed69488de02…</code></td>
 <td style="text-align: left;">do-not-redistribute</td>
-<td style="text-align: left;">evidence that the JR anchor (Rauh et al., Mar 17) was not revised through Aug 2026</td>
+<td style="text-align: left;">context: repeats the March 2026 numbers; the comparison uses the September 2026 chapter</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">original-materials/author-shared/2026-09-23_wealth_tax-repo/</td>
@@ -3041,9 +3046,9 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 <p><strong>First-version paper</strong>, p.18, eq. 20: <code>NPV = WT - f * C / (r - g)</code> (eq. 18 on the same page is the plain-<code>r</code> form, <code>NPV = WT - f * C / r</code>), introduced with an explicit growth-rate adjustment (Gordon Growth Model discussion, p.18-19). <strong>First-version paper</strong>, p.20, eq. 24 and surrounding prose: switches notation to plain <code>r ~ U[0.015, 0.045]</code> and states “NPV = WT - f * C / r” for the Sec 5.5 Monte Carlo. <strong>Code</strong>, <code>NPV_data/NPV_dist.R:60</code>: <code>pv_lost &lt;- annual_loss / r_discount</code> (plain <code>r</code>, no growth term).</p>
 <p>That version’s prose is internally inconsistent (Sec 5.2 derives a growing-perpetuity formula, Sec 5.5 silently drops the growth term); the code matches the <em>later</em> (Sec 5.5) plain-<code>r</code> reading. <code>R/npv_mc.R:compute_npv_mc_ssrn()</code> reproduces the code (plain <code>r</code>).</p>
 </section>
-<section id="one-1.5-to-4.5-interval-for-two-discount-concepts-r-g-and-plain-r" class="level3">
-<h3 class="anchored" data-anchor-id="one-1.5-to-4.5-interval-for-two-discount-concepts-r-g-and-plain-r">3. One 1.5% to 4.5% interval for two discount concepts, <code>(r-g)</code> and plain <code>r</code></h3>
-<p><strong>Code</strong>, <code>NBER_2026_litigation_weighted/NPV_data/NPV_dist_v8.R:22,28</code>: draws <code>rg_discount &lt;- runif(n_sims, 0.015, 0.045)</code>, i.e. explicitly labelled <code>(r-g)</code>. <strong>Paper</strong>, PDF p.35, eq. 18 draws <code>(r - g) ~ U[0.015, 0.045]</code>; the sentence after eq. 19 computes <code>NPV = WT - f * C / r</code>, with the plain rate. <strong>NBER README</strong> assumptions table lists the same <code>[1.5%, 4.5%]</code> range for <code>(r - g)</code> under the litigation-weighted approach, and the <em>identical</em> range for plain <code>r</code> under the first version’s approach (see mismatch #2). The same interval stands for two different discount concepts (one nets out growth, one doesn’t); neither the README nor the text says why the same calibration should apply to both.</p>
+<section id="the-sentence-after-eq.-19-writes-cr-where-the-draw-is-r---g" class="level3">
+<h3 class="anchored" data-anchor-id="the-sentence-after-eq.-19-writes-cr-where-the-draw-is-r---g">3. The sentence after eq. 19 writes C/r where the draw is (r - g)</h3>
+<p><strong>Code</strong>, <code>NBER_2026_litigation_weighted/NPV_data/NPV_dist_v8.R:22,28</code>: draws <code>rg_discount &lt;- runif(n_sims, 0.015, 0.045)</code>, labelled <code>(r-g)</code>. <strong>Paper</strong>, PDF p.35, eq. 18 draws <code>(r - g) ~ U[0.015, 0.045]</code>, after eqs. 13-14 (PDF p.31) derive the growing perpetuity f·C/(r − g) and PDF p.32 calibrates (r − g) ≈ 0.015 from the dividend yield; the sentence after eq. 19 then computes <code>NPV = WT - f * C / r</code>. <strong>NBER README</strong> (<code>NBER_2026_litigation_weighted/README.md</code> at <code>25e84dd</code>): the row “Simulation draws (100,000)” gives (r − g) ~ U[1.5%, 4.5%] for both versions, and the row “NPV formula” gives NPV = WT − f·C / (r − g) for both. The repository’s root README writes r ~ U[1.5%, 4.5%] for the first version’s <code>NPV_dist.R</code>, whose code divides by plain r (mismatch #2). For the September chapter the code, eq. 18 and the NBER README agree on (r − g); only the one sentence writes r.</p>
 </section>
 <section id="nber-ceiling-hard-coded-72-vs.-72.0572.06-derivable-from-final.csv" class="level3">
 <h3 class="anchored" data-anchor-id="nber-ceiling-hard-coded-72-vs.-72.0572.06-derivable-from-final.csv">4. NBER ceiling: hard-coded 72 vs. 72.05/72.06 derivable from <code>final.csv</code></h3>
@@ -3053,7 +3058,7 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 <section id="q-0.50-litigation-survival-weight-has-no-explicit-multiplier-in-the-code" class="level3">
 <h3 class="anchored" data-anchor-id="q-0.50-litigation-survival-weight-has-no-explicit-multiplier-in-the-code">5. <code>q = 0.50</code> litigation-survival weight has no explicit multiplier in the code</h3>
 <p><strong>NBER README</strong> assumptions table: “Litigation risk: Probability the Act survives constitutional challenge, q = 0.50 (ASC 740-10 ‘more likely than not’), applied to the recognized base” - listed as a defining feature of the litigation-weighted approach. <strong>Code</strong>, <code>NPV_dist_v8.R:19</code>: <code>wt_min &lt;- 0; wt_max &lt;- 72</code>. No <code>q</code> variable and no <code>* 0.5</code> anywhere in the file.</p>
-<p>The only place a 0.5 could be hiding is that <code>E[U(0, 72)] = 36 = 0.5 * 72</code>, i.e. drawing <code>WT</code> uniformly from 0 to the ceiling has the <em>same expected value</em> as multiplying the ceiling by 0.5. But that is not what the README describes (“applied to the recognized base,” i.e. a discrete survive/strike-down weighting of a fixed recognized amount), and a uniform draw over the full range is a materially different distributional assumption from a Bernoulli(q) weight on a point estimate (the uniform draw also puts positive probability on values between 0 and 72 that a true two-state litigation model would not produce). We reproduce the code as shipped (<code>wt ~ U[0, 72]</code>) and flag that it does not implement the README’s own stated mechanism.</p>
+<p>The only place a 0.5 could be hiding is that <code>E[U(0, 72)] = 36 = 0.5 * 72</code>, i.e. drawing <code>WT</code> uniformly from 0 to the ceiling has the <em>same expected value</em> as multiplying the ceiling by 0.5. The README states q = 0.50 for the point estimate (0.50 × 59.15 = 29.6, eqs. 6-8) and a uniform draw from 0 (struck down) to 72 for the simulation; the draw and q applied to the 72 ceiling (the chapter’s central estimate, PDF p.33) share a mean, 36, but not a distribution. The code has no separate q. We reproduce the code as shipped (wt ~ U[0, 72]).</p>
 </section>
 <section id="baseline-revenue-the-workbooks-precise-94.30-vs.-the-printed-94.20" class="level3">
 <h3 class="anchored" data-anchor-id="baseline-revenue-the-workbooks-precise-94.30-vs.-the-printed-94.20">6. Baseline revenue: the workbook’s precise 94.30 vs. the printed 94.20</h3>

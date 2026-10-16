@@ -190,9 +190,10 @@
       <img class="header-layer" src="../assets/opa/opa-assumptions-solo.png" alt="" aria-hidden="true">
       <span class="name" id="cell-name"></span>
       <span class="value" id="cell-value"></span>
-      <span class="def">NPV = WT &minus; f&middot;C / r. The wealth tax collected once (WT), minus the
-        income tax lost for ever when billionaires leave, which is the share that leaves (f) times the
-        yearly tax (C), divided by the discount rate (r). Averaged over 100,000 random draws.</span>
+      <span class="def">NPV = WT &minus; f&middot;C / (r &minus; g). The wealth tax collected once (WT),
+        minus the income tax lost for ever when billionaires leave: the share that leaves (f) times the
+        yearly tax (C), divided by the discount rate net of the tax's growth (r &minus; g). Averaged
+        over 100,000 random draws.</span>
       <span class="sub" id="cell-sub"></span>
     </div>
   </header>
@@ -202,7 +203,8 @@
       <h2>The inputs</h2>
       <div class="rack" id="rack"></div>
       <!-- One button per setting in ORDER (named in R/site.R::site_named()), then the
-           grid's highest and lowest mean NPV; the key explains the paper's scenarios. -->
+           grid's highest and lowest mean NPV (leaving out the cells that pair q below 1 with
+           the 0 floor); the key explains the paper's scenarios and the two extremes. -->
       <p class="presets-h">Jump to a setting</p>
       <div class="presets" id="presets"></div>
       <dl class="scen-key" id="scen-key"></dl>
@@ -213,9 +215,11 @@
         the main setting that is <span id="gap-text"></span> The printed figure comes from one
         seeded run, and the gap is sampling error (<a href="../repro.html#step-npv">report, Step 6</a>).
         The input labels follow the report's
-        <a href="../repro.html#every-input-by-origin">input table</a>. The litigation and growth dials
-        read the paper's text, which its code does not implement
-        (<a href="../materials.html#mismatches">mismatches 3 and 5</a>).</p>
+        <a href="../repro.html#every-input-by-origin">input table</a>. The litigation dial reads the
+        README's q, which the code does not apply separately
+        (<a href="../materials.html#mismatches">mismatch 5</a>). The growth dial is this OPA's
+        illustration of growth beyond the authors' r &minus; g
+        (<a href="../materials.html#mismatches">mismatch 3</a>).</p>
         <!-- Lesson O3: when the tool departs from the source analysis's own
              convention, say how and give the size of the gap, here. -->
       </details>
@@ -271,10 +275,11 @@
   var SCEN = { rate15: "Rate 1.5% scenario (PDF p.32)", rate45: "Rate 4.5% scenario (PDF p.32)",
                q50: "Litigation weight q = 0.5 (PDF p.33)" };
   var KEY = {
-    rate15: "the main setting with the discount rate fixed at 1.5%, the S&P 500 dividend yield. " +
+    rate15: "the main setting with r − g, the discount rate net of growth, fixed at 1.5%, the " +
+      "S&P 500 dividend yield, the authors' measure of r − g. " +
       "The paper presents it as a scenario, with 3.0% and 4.5% (PDF p.32).",
-    rate45: "the main setting with the discount rate fixed at 4.5%, the highest of the paper's " +
-      "three scenario rates (PDF p.32).",
+    rate45: "the main setting with r − g, the discount rate net of growth, fixed at 4.5%, the " +
+      "highest of the paper's three scenario rates (PDF p.32).",
     q50: "the main setting with the wealth tax multiplied by a 0.50 chance that the Act survives " +
       "in court, as the paper's text states (PDF p.33). The revenue floor rises to 35, so the 0 " +
       "floor does not count the litigation risk a second time."
@@ -373,7 +378,8 @@
   document.addEventListener("click", function () { closeTips(null); });
 
   // ---- preset buttons: the settings in ORDER, then the grid's highest and lowest
-  // mean NPV; a key line for each paper scenario, linked to the report -----
+  // mean NPV (leaving out the cells that count litigation twice); a key line for each
+  // paper scenario, linked to the report, and one for the two extremes -----
   var presets = document.getElementById("presets");
   ORDER.forEach(function (name) {
     var b = document.createElement("button");
@@ -389,12 +395,22 @@
     for (var k = SIZES.length - 1; k >= 0; k--) { l[k] = i % SIZES[k]; i = Math.floor(i / SIZES[k]); }
     return l;
   }
-  var iMax = 0, iMin = 0;
+  // The extremes leave out the cells that pair q below 1 with the 0 revenue floor: the q dial's
+  // own tip says that pairing counts the litigation risk twice. The dials are found by key.
+  var DQ = -1, DLO = -1;
+  G.dials.forEach(function (d, di) { if (d.key === "q") DQ = di; if (d.key === "wt_lo") DLO = di; });
+  function counted(i) {
+    if (DQ < 0 || DLO < 0) return true;
+    var l = levelsOf(i);
+    return !(l[DLO] === 0 && l[DQ] > 0);
+  }
+  var iMax = -1, iMin = -1;
   G.snap.forEach(function (s, i) {
-    if (s[0] > G.snap[iMax][0]) iMax = i;
-    if (s[0] < G.snap[iMin][0]) iMin = i;
+    if (!counted(i)) return;
+    if (iMax < 0 || s[0] > G.snap[iMax][0]) iMax = i;
+    if (iMin < 0 || s[0] < G.snap[iMin][0]) iMin = i;
   });
-  [["Highest NPV", iMax], ["Lowest NPV", iMin]].forEach(function (e) {
+  [["Highest in the grid", iMax], ["Lowest in the grid", iMin]].forEach(function (e) {
     var b = document.createElement("button");
     b.type = "button"; b.className = "ext";
     b.textContent = e[0] + " (" + usd(G.snap[e[1]][0]) + "B)";
@@ -411,6 +427,11 @@
     dd.appendChild(a);
     keyEl.appendChild(dt); keyEl.appendChild(dd);
   });
+  var dtx = document.createElement("dt"); dtx.textContent = "Highest and Lowest in the grid: ";
+  var ddx = document.createElement("dd");
+  ddx.textContent = "the grid's extremes, leaving out settings the q dial says count litigation " +
+    "risk twice. They can combine this OPA's illustrative levels and are not JR results.";
+  keyEl.appendChild(dtx); keyEl.appendChild(ddx);
 
   // ---- table header + body, one column per named scenario plus "this
   // setting", one row per outcome --------------------------------------

@@ -103,7 +103,7 @@ passed, `r sum(res$failed)` failed**, in `r nrow(res)` test blocks. The files ch
   circulates working papers), plus the earlier figures the code still checks: the
   headline of GGSS (the Galle, Gamage, Saez and Shanske expert report of July 2026, written in
   support of the measure), behind the BSZ analysis, and the March 2026 version of the JR
-  analysis, where the bridge's disputed-input steps end.
+  analysis. The bridge itself ends at the September 2026 version.
 - `test-shapley.R`: the Shapley steps sum exactly to the gap in every setting, and match a
   brute-force average over orders (a Shapley value: a step's effect averaged over every order
   the inputs could be switched in, so the steps add up to the gap).
@@ -127,7 +127,7 @@ every push that touches `comparison/` or either analysis's export contract
 #| results: asis
 role <- c(
   "R/contract.R" = "reads the two export contracts and the document inputs, and nothing else",
-  "R/model.R" = "score_common(), the one estimating function; exact Shapley over all orders; one sequential order; Rauh's Monte Carlo expectations",
+  "R/model.R" = "score_common(), the one estimating function; the dial path; exact Shapley over all orders; one sequential order; the JR Monte Carlo's expectation",
   "R/build.R" = "every number the page shows, written to export/r/*.csv",
   "R/site.R" = "renders the overview page (index.html), the explorer (site/explorer/index.html) and their data file from site/index.template.html and site/explorer.template.html",
   "py/bridge.py" = "the Python twin of contract.R, model.R and build.R; writes export/py/*.csv",
@@ -205,9 +205,9 @@ scroll(show(data.frame(
 
 Full rows: `r link("comparison/DATA-SOURCES.csv")`. Neither PDF is redistributed.
 
-The GGSS expert report (20 July 2026) and the GGSS response to Rauh (17 March 2026), which the
-bridge cites for the non-citizen residents and for the BSZ value "none applied" of the step
-"One-time tax estimated as a permanent 5 pp rate", are listed in the BSZ analysis's manifest,
+The GGSS expert report (20 July 2026), which the bridge cites for the non-citizen residents,
+the avoidance allowance and the litigation step, and the GGSS response to Rauh (17 March 2026),
+which `DISPUTES.md` cites for the March 2026 disputes, are listed in the BSZ analysis's manifest,
 `r link("bsz-analysis/DATA-SOURCES.csv")`, with their URLs on Saez's Berkeley page.
 
 ## What the checks found
@@ -229,8 +229,9 @@ The full crosswalk of disputed inputs, with every page reference checked against
   mismatch 4). The comparison uses the script's 72, so the common function returns the
   authors' own expected revenue exactly and the bridge has no model-difference step.
 - **The litigation weight has no multiplier in the code.** The README applies q = 0.50 to the
-  recognized base; the script instead draws revenue uniformly between 0 and the ceiling, whose
-  mean is the same half (mismatch 5). The comparison reads that mean as the weight `q`.
+  recognized base for the point estimate and lists a uniform draw of revenue between 0 (struck
+  down) and the ceiling for the simulation. The script has no separate q; its draw's mean is
+  the same half (mismatch 5). The comparison reads that mean as the weight `q`.
 - **The printed NPV is one run, not the expectation.** The exact expectation of the NBER
   Monte Carlo is `r usd(eb$rauh_own, 2)` against a printed
   `r usd(ep$printed_value[ep$endpoint_id == "rauh_nber_npv"])`. The bridge's JR end is that
@@ -239,7 +240,7 @@ The full crosswalk of disputed inputs, with every page reference checked against
   the seeded run as `r usd(ep$contract_value[ep$endpoint_id == "rauh_nber_npv"], 3)`. The
   comparison's pages use the exact expectation as the JR main estimate.
 - **Both analyses' discount factors are right.** One reading magnifies the loss by a factor
-  67 (1/1.5%), BSZ say 33 (1/3%). The first is the rate the JR text anchors its range on, the second the mean
+  67 (1/1.5%), BSZ say 33 (1/3%). The first is the rate the JR text anchors its range of r &minus; g on, the second the mean
   rate of its Monte Carlo (`DISPUTES.md`, row 2). Averaged over the draw the perpetuity factor is
   ln(3)/0.03 = `r formatC(ex$meta$value[ex$meta$key == "A_inf_jr_draw"], format = "f", digits = 1)`, the value of one rate of `r rate_txt(ex$meta$value[ex$meta$key == "r_jr"])`, the JR end of the comparison's rate dial (row 10).
 - **Two March disputes are closed in the BSZ analysis by August**: Larry Ellison's exclusion

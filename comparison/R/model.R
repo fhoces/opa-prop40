@@ -86,8 +86,11 @@ bridge_steps <- function() {
       "How long the income tax loss lasts",
       "Discount rate for the lost income tax",
       "Extra income tax from selling assets to pay"),
-    kind = c("data", "data", "data", "guesswork on data", "guesswork", "guesswork",
-             "data vs guesswork", "research vs guesswork", "scenario", "scenario vs derived",
+    # non-citizens: the BSZ analysis taxes them as residents (data); the JR analysis leaves them
+    # out as too uncertain to collect, a legal judgement (chapter Sec. 3.5). Share lost: at the
+    # main estimates both ends are guesswork (the BSZ end is avoidance times movers, BSZ PDF p.24)
+    kind = c("data vs guesswork", "data", "data", "guesswork on data", "guesswork", "guesswork",
+             "guesswork", "research vs guesswork", "scenario", "scenario vs derived",
              "guesswork"),
     stringsAsFactors = FALSE)
 }
@@ -280,7 +283,8 @@ sequential_bridge <- function(sup, rauh, order, output = c("a", "b")) {
 # The JR analysis's own expectation (Jaros and Rauh, NBER, September 2026, NPV_dist_v8.R):
 # WT ~ U[0, 72], f ~ U[0.30, 0.60] independent of WT, C ~ U[3.3, 5.8], r ~ U[1.5%, 4.5%],
 # all independent, so E[NPV] = E[WT] - E[f] E[C] E_r[annuity(r, H)]. At H = Inf this is
-# -38.980, which rounds to the printed -38.9 (one seeded run of the same draws, p.1 and p.35).
+# -38.980; the printed -38.9 is one seeded run of the same draws, which differs by sampling error
+# (p.1 and p.35).
 #
 # The JR rate. Averaging the perpetuity over the draw gives E_r[1/r] = ln(3)/0.03 = 36.6, more
 # than 1/0.03 = 33.3 at the middle rate, because 1/r is convex. The one rate worth the same is

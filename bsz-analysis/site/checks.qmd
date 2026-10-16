@@ -44,6 +44,8 @@ Table 5. The May version values wealth on 15 April 2026 instead of 1 July 2026.
 All figures are in billions of dollars. "Match" means this OPA's value rounds to the printed
 figure.
 
+::: {.table-scroll}
+
 | Variation | Paper | Printed | This OPA | Result | How to set it |
 |---|---|---|---|---|---|
 | Main assumptions, for reference | Aug, Table 5 row 1 | 104 | 103.82 | Match | Explorer, as it opens |
@@ -55,11 +57,15 @@ figure.
 | 15 April, plus the four leavers escape | May, Table 5 row 3 | 84 | 83.94 | Match | R code, May workbook |
 | 15 April, plus both | May, Table 5 row 4 | 109 | 108.55 | Match | R code, May workbook |
 
+:::
+
 ## What could not be checked
 
 **The valuation date.** The authors' workbook gives the revenue for every day of 2026. It is
 $92.5 billion on 1 January (the residency date), $87.0 billion at the year's low on 30 March, and
-$110.9 billion at its high so far on 6 October. This OPA values wealth on 1 July 2026. The only
+$110.9 billion at its high so far on 6 October. This OPA values wealth on 1 July 2026. The
+measure values wealth on 31 December 2026 (BSZ PDF p.23); the BSZ analysis uses the 1 July list,
+and this OPA follows it. The only
 other date it can use is 15 April, through the May workbook. It has no setting for any other
 date, so these three figures cannot be reproduced.
 
@@ -83,10 +89,12 @@ Rscript feedback/scenario-tests-2026-10-15/bsz-sensitivity.R
 The full record, with the source of every figure, is in
 [bsz-sensitivity.md](https://github.com/fhoces/opa-prop40/blob/main/feedback/scenario-tests-2026-10-15/bsz-sensitivity.md).
 A second record, [bsz.md](https://github.com/fhoces/opa-prop40/blob/main/feedback/scenario-tests-2026-10-15/bsz.md),
-checks ten other numbers the paper prints. One of them differs. On page 22 the paper says that if
-all billionaires left, the lost income tax would take 25 years to equal the wealth tax. That
-assumes billionaires pay 0.2% of their wealth in California income tax each year. The Table 5
-inputs imply 0.13%, which gives about 38 years.
+checks ten other numbers the paper prints. Six match and one is close. Three differ: a Table 5
+loss cell (the paper's rounding), the revenue-maximising rate (the paper's first-order formula),
+and the break-even on page 22. There the paper says that if all billionaires left, the lost
+income tax would take 25 years to equal the wealth tax, using its 2023-2025 ratio of income tax
+to wealth, 0.2% (abstract, Table 2). Table 5's inputs, the 2019-2025 average tax against
+1 July 2026 wealth, give 0.13% and about 38 years.
 
 ## Settings the paper does not print
 
@@ -99,23 +107,27 @@ same results. We will update the responses here.
 
 All figures are in billions of dollars. Wealth tax revenue, the extra income tax from asset sales
 (over five years) and the income tax lost per year are the three result columns of the paper's
-Table 5. The net total is this OPA's main estimate: the wealth tax, plus the extra income tax from
-asset sales, minus the income tax lost to leavers over five years in today's dollars (3% a year).
+Table 5. The income tax lost per year is negative, as Table 5 prints it. The net total is this OPA's main estimate: the wealth tax, plus the extra income tax from
+asset sales, minus the present value of the income tax lost to leavers over five years (3% a year).
 Each setting can be made in the [explorer](explorer/).
+
+::: {.table-scroll}
 
 | Setting changed from the main assumptions | Wealth tax revenue | Extra income tax from asset sales | Income tax lost per year | Net total | Authors' result |
 |---|---|---|---|---|---|
-| None, the main assumptions, for reference | 103.81 | 3.68 | −0.15 | 106.80 | |
+| None, the main assumptions, for reference | 103.82 | 3.68 | −0.15 | 106.80 | |
 | No avoidance or evasion (α = 0, instead of 10%) | 115.35 | 4.09 | 0.00 | 119.44 | Pending |
 | Avoidance and evasion of 5% | 109.58 | 3.89 | −0.08 | 113.12 | Pending |
 | Avoidance and evasion of 20% | 92.28 | 3.27 | −0.31 | 94.15 | Pending |
 | Avoidance and evasion of 30% | 80.75 | 2.86 | −0.46 | 81.51 | Pending |
-| None of the avoidance is leaving California (m = 0, instead of half) | 103.81 | 3.68 | 0.00 | 107.50 | Pending |
-| All of the avoidance is leaving California (m = 1) | 103.81 | 3.68 | −0.31 | 106.09 | Pending |
-| None of the tax is paid by selling assets (s = 0, instead of one third) | 103.81 | 0.00 | −0.15 | 103.11 | Pending |
-| All of the tax is paid by selling assets (s = 1) | 103.81 | 11.05 | −0.15 | 114.16 | Pending |
+| None of the avoidance is leaving California (m = 0, instead of half) | 103.82 | 3.68 | 0.00 | 107.50 | Pending |
+| All of the avoidance is leaving California (m = 1) | 103.82 | 3.68 | −0.31 | 106.09 | Pending |
+| None of the tax is paid by selling assets (s = 0, instead of one third) | 103.82 | 0.00 | −0.15 | 103.11 | Pending |
+| All of the tax is paid by selling assets (s = 1) | 103.82 | 11.05 | −0.15 | 114.16 | Pending |
 | The billionaires Forbes misses are counted, with 10% avoidance among them (instead of 20%) | 131.11 | 4.65 | −0.20 | 134.86 | Pending |
 | The billionaires Forbes misses are counted, with 50% avoidance among them | 118.10 | 4.19 | −0.20 | 121.39 | Pending |
 
-The values are read from the explorer's own data file, `site/explorer/grid.js`, which the
-pipeline writes.
+:::
+
+The values were copied from the explorer's data file, `site/explorer/grid.js`, which the
+pipeline writes, on 15 October 2026.

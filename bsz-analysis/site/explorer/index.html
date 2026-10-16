@@ -212,8 +212,9 @@
       <span class="name" id="cell-name"></span>
       <span class="value" id="cell-value"></span>
       <span class="def">Defined as the wealth tax, plus the extra income tax from assets sold to pay it,
-        minus the income tax lost to billionaires who leave, counted over 5 years in today's dollars
-        (present value at 3% a year). <a class="more" href="../repro.html#the-main-estimate">more</a></span>
+        minus the income tax lost to billionaires who leave, counted over 5 years
+        (present value at 3% a year). The wealth tax is counted at face value.
+        <a class="more" href="../repro.html#the-main-estimate">more</a></span>
     </div>
   </header>
 
@@ -258,7 +259,8 @@
     <summary>Notes and data</summary>
     <div class="note">
       <p><strong>Horizon.</strong> The income tax lost to leavers recurs every year they stay away.
-      BSZ argue about 5 years (PDF p.27). The main estimate counts 5 years at 3% a year, the middle of
+      BSZ argue the losses should be temporary and give 5 years, the payment period, as an example
+      (PDF p.27); Table 5 takes no stand on how long they last. The main estimate counts 5 years at 3% a year, the middle of
       the <a href="../../../rjkdc-analysis/site/">JR analysis</a>'s 1.5% to 4.5% range (BSZ give no
       rate). The JR analysis counts it forever: see the <a href="../../../index.html">comparison overview</a>.</p>
       <p><strong>Two departures from the workbook.</strong> (1) Its income tax loss is a literal 5%
@@ -514,7 +516,7 @@
             : i === iMin ? "The lowest total across all settings" : null;
     document.getElementById("cell-name").textContent =
       name === PREF ? "Main estimate\u00B9, base scenario"
-      : name ? name + " scenario (Table 5)"
+      : name ? name + " scenario (Table 5), net total\u00B9"
       : ext ? ext : "This setting (not published by the authors)";
     document.getElementById("cell-value").textContent = fmtOut("$B", snap[K.main_estimate]);
     document.getElementById("sticky-value").textContent = fmtOut("$B", snap[K.main_estimate]);

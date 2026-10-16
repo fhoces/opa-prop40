@@ -67,11 +67,11 @@ step_texts <- function(inp, id) {
   }
   if (id == "confirmed_departures") {
     b <- ii[ii$input == "dep_b", ]; j <- ii[ii$input == "dep_j", ]
-    return(list(bsz = "none",
+    return(list(bsz = "no named leaver",
                 rjkdc = sprintf("the JR seven: %s on the BSZ list, %s on the JR list",
                                 money(b$rauh_value, 0), money(j$rauh_value, 0)),
                 bsz_source = b$supporting_source, rjkdc_source = paste(b$rauh_source, j$rauh_source, sep = "; "),
-                bsz_short = "None", rjkdc_short = "JR seven"))
+                bsz_short = "None named", rjkdc_short = "JR seven"))
   }
   if (id == "base_list") ii <- ii[ii$input == "W_core", ]
   out <- list(bsz = fmt_input(ii$input, ii$supporting_value), rjkdc = fmt_input(ii$input, ii$rauh_value),
@@ -116,10 +116,11 @@ eq_terms <- function(dp) {
   loss <- which(dp$step_id %in% EXPLORER_BOXES$loss$ids)
   rest <- setdiff(seq_len(nrow(dp)), c(main, loss))
   stopifnot(!anyNA(main), length(loss) == length(EXPLORER_BOXES$loss$ids))
-  name <- function(i) if (dp$step_id[i] == "minor_inputs") tolower(dp$title[i]) else dp$symbol[i]
+  # the minor switch is one dial for three inputs, so the last term names it as one step
+  name <- function(i) if (dp$step_id[i] == "minor_inputs") "the minor switch" else dp$symbol[i]
   and_list <- function(x) if (length(x) < 2) x else paste0(paste(head(x, -1), collapse = ", "), " and ", tail(x, 1))
   # the loss term names H first, the step its label grew from, then the box's other dials in
-  # dial order (author wording: "Lost income tax (H, f, C, r)")
+  # dial order (author wording: "Lost income tax (H, f, C, r)"); the note lists them in the same order
   loss_syms <- dp$symbol[loss]; loss_syms <- c("H", setdiff(loss_syms, "H"))
   rest_names <- vapply(rest, name, "")
   terms <- data.frame(
@@ -133,7 +134,7 @@ eq_terms <- function(dp) {
     "The %s terms are those %s steps of that walk.",
     "Lost income tax is the %s loss-box dials of the walk added up (%s).",
     "The last term is the other %s steps added up (%s)."),
-    and_list(dp$symbol[main]), words[length(main)], words[length(loss)], and_list(dp$symbol[loss]),
+    and_list(dp$symbol[main]), words[length(main)], words[length(loss)], and_list(loss_syms),
     words[length(rest)], and_list(rest_names))
   list(main = main, loss = loss, rest = rest, terms = terms, note = note, n_words = words[nrow(dp)])
 }
@@ -299,7 +300,7 @@ hoopes_differences <- function(ex, k) {
     sprintf("<b>Income tax.</b> His single bar, %s, ends at %s, close to the March 2026 version's %s. Ours is %s, the September 2026 version's present value of lost income tax against %s of revenue, and we split it into five labelled steps (the share lost, the income tax level, the horizon, the discount rate, asset-sale tax), which interact with the base steps.",
             hfmt(hs_("income_tax_loss"), NA), money(hz_end, 1), money(opp("npv_mc_ssrn_mean"), 1), money(ho("income_tax_loss"), 2, TRUE),
             money(ea$rauh_own, 2)),
-    "<b>Order and labels.</b> His is one sequential order, with no provenance labels. Ours moves the explorer's dials in the order of the equation at the top (D, q, the loss box's dials, then the rest), with each step labelled data, research, guesswork or scenario. The Shapley average (a step's effect averaged over every order the inputs could be switched in) checks it without choosing an order, and the column here reads our steps in his order.",
+    "<b>Order and labels.</b> His is one sequential order, with no provenance labels. Ours moves the explorer's dials in the order of the equation at the top (D, q, the loss box's dials, then the rest), with each step labelled data, research, guesswork, scenario or derived (\"A vs B\" reads the BSZ value's kind against the JR value's). The Shapley average (a step's effect averaged over every order the inputs could be switched in) checks it without choosing an order, and the column here reads our steps in his order.",
     "<b>Steps he does not have.</b> The non-US-citizen residents, the BSZ analysis's avoidance allowance being dropped, the asset-sale income tax, and the litigation weight of the September 2026 version (which postdates his note)."
   )
 }
@@ -330,7 +331,8 @@ render_site <- function(root = comparison_root(),
   # the comparison's pages print the JR estimate as the exact expectation of the authors' model
   # (author decision 2026-10-15); footnote 1 gives the paper's seeded-run figure
   tok$nber_npv <- money(eb$rauh_own, 1)
-  tok$nber_npv_abs <- money(-eb$rauh_own, 1)
+  # the overview's first paragraph rounds it to whole billions and names the chapter's own figure
+  tok$nber_npv_round <- money(-eb$rauh_own, 0)
   # The discount rate at each end (the rate dial, author decision 2026-10-15), from the exports:
   # 3% at the BSZ end, 1 / E[1/r] over the JR draw at the JR end.
   tok$r_bsz <- rate_txt(mv("r_bsz")); tok$r_jr <- rate_txt(mv("r_jr"))
@@ -347,6 +349,7 @@ render_site <- function(root = comparison_root(),
   # assets/comparison-data.js.
   rj_main <- eb$rauh_own
   rj_printed <- ep$printed_value[ep$endpoint_id == "rauh_nber_npv"]
+  tok$nber_printed <- money(rj_printed, 1)
   tok$hl_bsz <- money(eb$bsz_model, 1)
   tok$hl_rjkdc <- money(rj_main, 1)
   tok$jr_end_b <- money(eb$rauh_model, 1)
@@ -390,54 +393,63 @@ render_site <- function(root = comparison_root(),
   # one-sentence definition, and each end says what that analysis assumes and its one reason.
   slider_tips <- c(
     base_list = "The billionaires' wealth the tax applies to, from one of two Forbes lists.",
-    confirmed_departures = "Wealth that left before the 1 January 2026 residency date. Middle stop: the BSZ aggressive case's four leavers.",
+    confirmed_departures = "Wealth that left before the 1 January 2026 residency date. Middle stop: BSZ Table 5 row 3, where Page, Thiel, Hankey and Kalanick left in time.",
     avoidance = "The share of the tax lost to avoidance and evasion other than leaving.",
     litigation_survival = "The chance that the tax survives a court challenge, applied to the revenue.",
-    income_loss_share = "The share of billionaires' income tax California loses to people leaving. Under the BSZ rule it depends on the number of leavers.",
+    income_loss_share = "The share of billionaires' income tax California loses to people leaving. Both ends include the movers in a, and the BSZ end also the leavers in D.",
     income_level = "Billionaires' yearly California income tax revenue, the amount at risk each year.",
     horizon = sprintf("How many years the lost income tax is counted. Middle stops: %s years.",
                       paste(hz_fin[-1], collapse = ", ") |> sub(pattern = ", ([^,]*)$", replacement = " and \\1")),
-    discount_rate = "The discount rate that turns a yearly loss into today's dollars.",
+    discount_rate = "The discount rate that turns a yearly loss into today's dollars. Its weight within the JR draw: the JR explorer's Rate 1.5% and 4.5% settings.",
     minor_inputs = "One switch for three inputs that each move the estimate by less than $7 billion. Open the fold below to set them one by one.",
     noncitizens = "Wealth of California billionaires who are not US citizens.",
     real_estate = "The share of the base deducted for directly held homes.",
     asset_sales = "The share of the tax paid by selling assets, whose gains raise extra income tax.")
   # What each dial end means, shown while the pointer is over that end (or on a tap).
   end_tips <- list(
+    # the W dial's BSZ end is the US citizens' wealth only (W_core); the non-citizens are their own dial
     base_list = c(
-      bsz = sprintf("BSZ: the Forbes list on 1 July 2026, %s California billionaires worth %s. The %s of non-US citizens is a separate dial.",
-                    n_sup, money(bi0$sup$W_core + bi0$sup$W_noncit, 0), money(bi0$sup$W_noncit, 0)),
-      rjkdc = sprintf("JR: the 2025 list, 212 billionaires, grown 7%% to the 31 December 2026 valuation date: %s.", money(bi0$rauh$W_core, 0))),
+      bsz = sprintf("BSZ: the Forbes list on 1 July 2026, %s California billionaires, of whom the US citizens hold %s. The %s of non-US citizens is a separate dial.",
+                    n_sup, money(bi0$sup$W_core, 0), money(bi0$sup$W_noncit, 0)),
+      rjkdc = sprintf("JR: the 2025 list, %s billionaires, grown %s to the 31 December 2026 valuation date: %s.",
+                      n_rauh, tok$nber_growth, money(bi0$rauh$W_core, 0))),
+    # BSZ remove no named leaver (BSZ PDF p.23 fn.30), but half of their 10% avoidance is
+    # billionaires who left before 1 January (BSZ PDF p.24): alpha times m. Tips name no source
+    # (author tip rules 2026-10-15); the quantities table adds it from export/r/inputs.csv.
     confirmed_departures = c(
-      bsz = "BSZ: nobody, since announcing a move is not a legal change of residence.",
+      bsz = "BSZ: no named leaver removed, as press reports show no timely change of residence. Half of a is people who left in time.",
       rjkdc = "JR: seven publicly reported moves, by Page, Thiel, Hankey, Kalanick, Brin, Spielberg and Sacks."),
     avoidance = c(
       bsz = "BSZ: a small allowance, argued from enforcement rather than estimated. Half of it is moving away, which also costs income tax (f).",
       rjkdc = "JR: none on top of the departures it counts."),
     litigation_survival = c(
-      bsz = "BSZ: the Act is taken as written and collected in full.",
+      bsz = "BSZ: collected in full; its expert report argues the Act was designed to stay clear of constitutional issues.",
       rjkdc = "JR: the revenue weighted by 50%, the accounting threshold for a tax more likely than not to stand."),
+    # the BSZ end at the BSZ values is alpha times m, the movers among the avoiders, who take a
+    # proportional share of the income tax with them (BSZ PDF p.24); both ends are guesswork
     income_loss_share = c(
-      bsz = "The BSZ rule: only the leavers' own income tax is lost, the people in D and the half of avoiders who move.",
-      rjkdc = sprintf("The JR rule: %s of all billionaires' income tax, whoever leaves (the middle of a 30%% to 60%% guess), plus movers from a.",
+      bsz = "The BSZ rule: only the leavers' own income tax is lost, with the movers from a assumed to pay a proportional share. Leavers in D add theirs, from tax filings.",
+      rjkdc = sprintf("The JR rule: %s of all billionaires' income tax, whoever leaves, the middle of a 30%% to 60%% guess. The movers from a are this OPA's addition.",
                       pct(bi0$rauh$f0))),
     income_level = c(
       bsz = "BSZ: from tax data, since top wealth holders earn about half of what top earners do.",
       rjkdc = "JR: the middle of a $3.3 billion to $5.8 billion range from two model bounds."),
     horizon = c(
       bsz = "BSZ: about the payment period, treating the responses as temporary.",
-      rjkdc = "JR: for ever, so the loss never ends."),
+      rjkdc = "JR: for ever, since leavers are assumed not to return once the Act permanently lifts the intangible property tax cap."),
+    # the JR draw is r - g, the real rate net of the lost tax's growth (chapter eqs. 14 and 18);
+    # one rate matches the draw's average only for a perpetuity (model.R, rauh_residual)
     discount_rate = c(
       bsz = sprintf("%s: the rate this OPA applies to the BSZ analysis's 5-year loss, the middle of the JR range. BSZ give no rate.",
                     tok$r_bsz),
-      rjkdc = sprintf("%s: the one rate worth the same as the JR analysis's random draw between %s and %s ($1 a year for ever is worth $%s).",
+      rjkdc = sprintf("%s: worth the same as the JR draw of r − g from %s to %s, for a loss lasting for ever ($1 a year for ever is worth $%s).",
                       tok$r_jr, r_min, r_max, formatC(mv("A_inf_jr_draw"), format = "f", digits = 1))),
     minor_inputs = c(
       bsz = "BSZ: non-citizens taxed, no real-estate deduction, the extra tax from asset sales counted.",
       rjkdc = "JR: non-citizens left out, homes deducted, no extra tax from asset sales."),
     noncitizens = c(
       bsz = "BSZ: taxed like any other California resident.",
-      rjkdc = "JR: left out with its 28 international billionaires."),
+      rjkdc = "JR: left out. The 28 are residents, but the chapter deems them too uncertain to collect from (treaties, apportionment)."),
     real_estate = c(
       bsz = "BSZ: no deduction.",
       rjkdc = "JR: nets out directly held real estate, about 0.5% of the base."),
@@ -611,7 +623,9 @@ render_site <- function(root = comparison_root(),
   }
   step_row <- function(panel, id) {
     i <- match(id, steps$step_id); tx <- dial_texts(inp, id, bi0)
-    slider_row(panel, id, unname(DIAL_SYMBOLS[id]), unname(short_labels[id]),
+    # the hidden title a screen reader announces is the dial's name, not a step name ("No
+    # avoidance" is the JR end of the a dial)
+    slider_row(panel, id, unname(DIAL_SYMBOLS[id]), DIAL_NAMES[[id]],
                paste0(DIAL_SYMBOLS[[id]], ", ", DIAL_NAMES[[id]], ". ", slider_tips[[id]]),
                tx$bsz, tx$rjkdc, slider_max(id), sym = TRUE)
   }
@@ -725,19 +739,32 @@ render_site <- function(root = comparison_root(),
     sprintf('<b class="ap-label">%s</b>%s', sub(" (", "<br>(", esc(eq_labels), fixed = TRUE), ap_btns),
     rep("", length(eq_labels)))
   tok$pseudo_eq <- pseudo_eq("root")
+  # Both notes end by saying the terms depend on the path's order and are not totals, and give
+  # the two analyses' own present values of lost income tax for scale (the equation's loss term
+  # is a change along the path, not either of these). The order-free check is the report's
+  # bridge section; the link names no method (test-site.R bans the method's name on both pages).
+  order_note <- function(href) sprintf(paste(
+    " Each amount is what its group changes when the dials move in this order. It is not a total,",
+    "and its size depends on the order. The report's <a href=\"%s\">order-free check</a> gives each",
+    "input's size in any order. For scale, the lost income tax itself is worth %s today in the JR",
+    "analysis and %s in the BSZ analysis."),
+    href, money(score_common(bi0$rauh)[["PV"]], 1), money(score_common(bi0$sup)[["PV"]], 1))
   # The explorer's note names the dial letters and the Walk the path button.
   eq_note <- function(href, panel, walk) paste0(
     "Move the ", panel, "'s dials to their far ends, term by term from left to right. ", esc(et$note), " ",
     walk,
-    sprintf("The <a href=\"%s\">report</a> gives all %s steps.", href, et$n_words))
+    sprintf("The <a href=\"%s\">report</a> gives all %s steps.", href, et$n_words),
+    order_note(href))
   tok$pseudo_eq_note_x <- eq_note("../repro.html#the-bridge", "BSZ panel",
                                   "The Walk the path button in each panel does it for you. ")
-  # the overview names no dial letters (author request 2026-10-15), so its note says the same in words
+  # the overview names no dial letters (author request 2026-10-15), so its note says the same in
+  # words; its old "Each term is what its group changes" is now the first sentence of order_note()
   tok$pseudo_eq_note_root <- paste0(
     "Move the <a href=\"comparison/site/explorer/\">explorer</a>'s BSZ panel to the JR values one group at a time, ",
     "from left to right: the departed wealth, the chance the tax survives in court, the four inputs of the ",
-    "lost income tax, then the other three. Each term is what its group changes. ",
-    sprintf("The <a href=\"%s\">report</a> gives all %s steps.", "comparison/site/repro.html#the-bridge", et$n_words))
+    "lost income tax, then the other three. ",
+    sprintf("The <a href=\"%s\">report</a> gives all %s steps.", "comparison/site/repro.html#the-bridge", et$n_words),
+    order_note("comparison/site/repro.html#the-bridge"))
 
   # ---- anchors (output (a) candidates; default decided in PLAN.md) ----
   an <- ex$anchors
@@ -769,7 +796,9 @@ render_site <- function(root = comparison_root(),
             n_sup, money(inp$supporting_value[inp$input == "W_core"] + inp$supporting_value[inp$input == "W_noncit"], 0)),
     '    <tr><td>Boll, Saez, Zucman, NBER WP 35218</td><td>Aug 2026 revision</td><td>same 1 Jul 2026 base; Table 5 adds missing billionaires and leaver scenarios</td></tr>',
     sprintf('    <tr><td>Jaros and Rauh, NBER c15504</td><td>Sep 2026</td><td>Rauh\'s base grown %s to 31 Dec 2026, seven departures, litigation weight</td></tr>', pct(pick(k$rjkdc$inputs, "nber_growth_rate"))),
-    '    <tr><td>LAO ballot analysis</td><td>for the 3 Nov 2026 ballot</td><td>no point estimate</td></tr>'), collapse = "\n")
+    # the LAO's three bounds (LAO pp.2-3); the income tax one is read from document-inputs.csv
+    sprintf('    <tr><td>LAO ballot analysis</td><td>for the 3 Nov 2026 ballot</td><td>no point estimate. It puts the wealth tax at tens of billions of dollars over several years, the ongoing income tax loss at under $%s billion a year, and administration costs at tens of millions a year (pp.2-3)</td></tr>',
+            dv("lao_loss_upper"))), collapse = "\n")
 
   # ---- differences table: the two values only; the report's table gives their sources ----
   tx <- lapply(steps$step_id, function(id) step_texts(inp, id))

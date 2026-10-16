@@ -172,26 +172,26 @@ class: center, middle, inverse
 # What is being estimated
 
 **Proposition 40** taxes, once, 5% of the net worth of billionaires who lived in California on
-1 January 2026 (payable over five years). The [BSZ report](../../../bsz-analysis/site/) estimates it at about $100 billion.
+1 January 2026 (payable over five years). The [BSZ analysis](../../../bsz-analysis/site/) estimates it at about $100 billion.
 
 The JR analysis asks a different question: **is the state better off, counting what it loses?**
 
-$$NPV = WT - f \cdot \frac{C}{r}$$
+$$NPV = WT - f \cdot \frac{C}{r - g}$$
 
 .pull-left[
 
 - $WT$: wealth tax collected, **once**
 - $C$: income tax the billionaires pay, **per year**
 - $f$: share of that income tax that leaves the state
-- $r$: discount rate; $C/r$ is a stream of $C$ **for ever**, valued today
+- $r - g$: discount rate net of the growth of the lost tax; $C/(r-g)$ is a growing stream of $C$ **for ever**, valued today
 
 ]
 
 .pull-right[
 
 .highlight-box[
-The whole argument is a race between a one-time sum and a perpetuity. At $r$ = 1.5%, losing
-one dollar a year for ever costs as much as losing `r num(1/0.015, 0)` dollars today.
+The whole argument is a race between a one-time sum and a perpetuity. At $r - g$ = 1.5%, losing
+one dollar a year for ever, growing at $g$, costs as much as losing `r num(1/0.015, 0)` dollars today.
 ]
 
 ]
@@ -297,7 +297,7 @@ among the top $K$ filers (Table 9).
 
 .pull-right[
 
-```{r table8, fig.width=5.6, fig.height=3.6}
+```{r table8, fig.width=5.6, fig.height=2.9}
 ggplot(t8, aes(K, mean_fy25)) +
   geom_ribbon(aes(ymin = p05_fy25, ymax = p95_fy25), fill = "#1f6b3b", alpha = 0.18) +
   geom_line(colour = "#1f6b3b", linewidth = 1) + geom_point(colour = "#1f6b3b") +
@@ -329,14 +329,14 @@ ggplot(data.frame(r, m = 1 / r), aes(100 * r, m)) + geom_line(linewidth = 1, col
   annotate("point", x = c(1.5, 3, 4.5), y = 1 / c(0.015, 0.03, 0.045), size = 3) +
   annotate("text", x = c(1.5, 3, 4.5), y = 1 / c(0.015, 0.03, 0.045) + 9,
            label = sprintf("%.0f", 1 / c(0.015, 0.03, 0.045)), size = 5) +
-  labs(x = "rate, %", y = "$ today per $1 a year for ever")
+  labs(x = "discount rate net of growth, r − g, %", y = "$ today per $1 a year for ever")
 ```
 
 .small[
-The paper's text says the lost stream grows, so the rate should be $r - g$, and anchors it at 1.5%
-(the S&P 500 dividend yield). The Monte Carlo draws that rate from 1.5% to 4.5%, calls it $r - g$, and
-then writes $C/r$. Same numbers, two meanings ([mismatch 3](../materials.html#mismatches)).
-Whether the loss lasts **for ever** or about five years is the main objection of the [BSZ report](../../../bsz-analysis/site/) (Boll, Saez
+The paper values a growing loss, so the rate is $r - g$, anchored at 1.5% (the S&P 500 dividend
+yield). The Monte Carlo draws $r - g$ from 1.5% to 4.5%; one sentence after it writes $C/r$
+([mismatch 3](../materials.html#mismatches)).
+Whether the loss lasts **for ever** or only a few years (five is BSZ's example) is the main objection of the [BSZ analysis](../../../bsz-analysis/site/) (Boll, Saez
 and Zucman).
 ]
 

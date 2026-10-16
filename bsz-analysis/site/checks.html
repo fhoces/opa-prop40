@@ -2483,6 +2483,11 @@ text-decoration: none; max-width: 30em; }
 background: transparent; border: 1px solid var(--link); border-radius: 0; cursor: pointer; white-space: nowrap; }
 .q-copy.is-done { color: var(--ink); border-color: var(--ink); }
 
+a.q-survey { color: var(--paper) !important; text-decoration: none !important; }
+.q-mini { display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0 16px; }
+.q-survey.q-survey-mini { font-size: 15px; padding: 5px 14px; }
+.q-copy.q-copy-mini { font-size: 15px; padding: 5px 14px; margin-left: 0; }
+
 .ai-badge { display: inline-block; vertical-align: middle; margin-left: 0.5em; padding: 0.2em 0.75em;
 border-radius: 999px; font-family: var(--serif); font-size: 0.42em; font-weight: 600;
 letter-spacing: 0; line-height: 1.35; text-decoration: none !important; white-space: nowrap; }
@@ -2552,6 +2557,7 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 <section id="results" class="level2">
 <h2 class="anchored" data-anchor-id="results">Results</h2>
 <p>All figures are in billions of dollars. “Match” means this OPA’s value rounds to the printed figure.</p>
+<div class="table-scroll">
 <table class="caption-top table">
 <colgroup>
 <col style="width: 16%">
@@ -2638,10 +2644,11 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 </tr>
 </tbody>
 </table>
+</div>
 </section>
 <section id="what-could-not-be-checked" class="level2">
 <h2 class="anchored" data-anchor-id="what-could-not-be-checked">What could not be checked</h2>
-<p><strong>The valuation date.</strong> The authors’ workbook gives the revenue for every day of 2026. It is $92.5 billion on 1 January (the residency date), $87.0 billion at the year’s low on 30 March, and $110.9 billion at its high so far on 6 October. This OPA values wealth on 1 July 2026. The only other date it can use is 15 April, through the May workbook. It has no setting for any other date, so these three figures cannot be reproduced.</p>
+<p><strong>The valuation date.</strong> The authors’ workbook gives the revenue for every day of 2026. It is $92.5 billion on 1 January (the residency date), $87.0 billion at the year’s low on 30 March, and $110.9 billion at its high so far on 6 October. This OPA values wealth on 1 July 2026. The measure values wealth on 31 December 2026 (BSZ PDF p.23); the BSZ analysis uses the 1 July list, and this OPA follows it. The only other date it can use is 15 April, through the May workbook. It has no setting for any other date, so these three figures cannot be reproduced.</p>
 <p><strong>The explorer’s four numeric dials.</strong> The paper prints the revenue at one value of avoidance (α), of the share of avoidance that is leaving (m), of avoidance by the less visible billionaires (αₛ) and of the share of the tax paid by selling assets (s). It prints no revenue at any other value of these four. Moving them in the explorer has no printed figure to compare with.</p>
 </section>
 <section id="who-ran-these-checks" class="level2">
@@ -2649,13 +2656,14 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 <p>Claude Code agents chose the variations from the papers and ran the checks on 15 October 2026. The scripts were then rerun once, in a separate session, with the same results. The author has not yet reviewed these checks.</p>
 <p>To rerun them from the repository root:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> feedback/scenario-tests-2026-10-15/bsz-sensitivity.R</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The full record, with the source of every figure, is in <a href="https://github.com/fhoces/opa-prop40/blob/main/feedback/scenario-tests-2026-10-15/bsz-sensitivity.md">bsz-sensitivity.md</a>. A second record, <a href="https://github.com/fhoces/opa-prop40/blob/main/feedback/scenario-tests-2026-10-15/bsz.md">bsz.md</a>, checks ten other numbers the paper prints. One of them differs. On page 22 the paper says that if all billionaires left, the lost income tax would take 25 years to equal the wealth tax. That assumes billionaires pay 0.2% of their wealth in California income tax each year. The Table 5 inputs imply 0.13%, which gives about 38 years.</p>
+<p>The full record, with the source of every figure, is in <a href="https://github.com/fhoces/opa-prop40/blob/main/feedback/scenario-tests-2026-10-15/bsz-sensitivity.md">bsz-sensitivity.md</a>. A second record, <a href="https://github.com/fhoces/opa-prop40/blob/main/feedback/scenario-tests-2026-10-15/bsz.md">bsz.md</a>, checks ten other numbers the paper prints. Six match and one is close. Three differ: a Table 5 loss cell (the paper’s rounding), the revenue-maximising rate (the paper’s first-order formula), and the break-even on page 22. There the paper says that if all billionaires left, the lost income tax would take 25 years to equal the wealth tax, using its 2023-2025 ratio of income tax to wealth, 0.2% (abstract, Table 2). Table 5’s inputs, the 2019-2025 average tax against 1 July 2026 wealth, give 0.13% and about 38 years.</p>
 </section>
 <section id="settings-the-paper-does-not-print" class="level2">
 <h2 class="anchored" data-anchor-id="settings-the-paper-does-not-print">Settings the paper does not print</h2>
 <p>This OPA lets a reader change assumptions the paper holds fixed. The table below lists ten such changes, each made one at a time from the main assumptions, with the result this OPA gives. The paper prints no figure for any of them, so they are untested against the authors’ own work.</p>
 <p>We have sent this table to the original authors, requesting them to test whether they obtain the same results. We will update the responses here.</p>
-<p>All figures are in billions of dollars. Wealth tax revenue, the extra income tax from asset sales (over five years) and the income tax lost per year are the three result columns of the paper’s Table 5. The net total is this OPA’s main estimate: the wealth tax, plus the extra income tax from asset sales, minus the income tax lost to leavers over five years in today’s dollars (3% a year). Each setting can be made in the <a href="explorer/">explorer</a>.</p>
+<p>All figures are in billions of dollars. Wealth tax revenue, the extra income tax from asset sales (over five years) and the income tax lost per year are the three result columns of the paper’s Table 5. The income tax lost per year is negative, as Table 5 prints it. The net total is this OPA’s main estimate: the wealth tax, plus the extra income tax from asset sales, minus the present value of the income tax lost to leavers over five years (3% a year). Each setting can be made in the <a href="explorer/">explorer</a>.</p>
+<div class="table-scroll">
 <table class="caption-top table">
 <colgroup>
 <col style="width: 16%">
@@ -2678,7 +2686,7 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 <tbody>
 <tr class="odd">
 <td>None, the main assumptions, for reference</td>
-<td>103.81</td>
+<td>103.82</td>
 <td>3.68</td>
 <td>−0.15</td>
 <td>106.80</td>
@@ -2718,7 +2726,7 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 </tr>
 <tr class="even">
 <td>None of the avoidance is leaving California (m = 0, instead of half)</td>
-<td>103.81</td>
+<td>103.82</td>
 <td>3.68</td>
 <td>0.00</td>
 <td>107.50</td>
@@ -2726,7 +2734,7 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 </tr>
 <tr class="odd">
 <td>All of the avoidance is leaving California (m = 1)</td>
-<td>103.81</td>
+<td>103.82</td>
 <td>3.68</td>
 <td>−0.31</td>
 <td>106.09</td>
@@ -2734,7 +2742,7 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 </tr>
 <tr class="even">
 <td>None of the tax is paid by selling assets (s = 0, instead of one third)</td>
-<td>103.81</td>
+<td>103.82</td>
 <td>0.00</td>
 <td>−0.15</td>
 <td>103.11</td>
@@ -2742,7 +2750,7 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 </tr>
 <tr class="odd">
 <td>All of the tax is paid by selling assets (s = 1)</td>
-<td>103.81</td>
+<td>103.82</td>
 <td>11.05</td>
 <td>−0.15</td>
 <td>114.16</td>
@@ -2766,7 +2774,8 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 </tr>
 </tbody>
 </table>
-<p>The values are read from the explorer’s own data file, <code>site/explorer/grid.js</code>, which the pipeline writes.</p>
+</div>
+<p>The values were copied from the explorer’s data file, <code>site/explorer/grid.js</code>, which the pipeline writes, on 15 October 2026.</p>
 </section>
 
 </main>

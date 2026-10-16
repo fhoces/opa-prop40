@@ -58,7 +58,7 @@ ba <- br[br$horizon_setting == "own" & br$output == "a", ]
 gap_b <- eb$bsz_model - eb$rauh_model
 steps <- bridge_steps()
 # The discount rate at each end (the rate dial, author decision 2026-10-15): 3% at the BSZ end,
-# at the JR end the one rate worth the same as the authors' draw between r_lo and r_hi.
+# at the JR end the one rate worth the same as the authors' draw of r - g between r_lo and r_hi.
 r3 <- rate_txt(mv("r_bsz")); r_jr <- rate_txt(mv("r_jr"))
 r_lo <- pct(mv("r_min_jr"), 1); r_hi <- pct(mv("r_max_jr"), 1)
 # The dial path (R/model.R dial_path()): the explorer's dials moved in the equation's order (D, q,
@@ -483,9 +483,9 @@ class: opa-card
 # The comparison OPA
 
 .pull-left[
-The comparison puts both analyses on one common output, the net fiscal effect in today's dollars, and moves from one main estimate to the other one disputed input at a time. Its explorer lets a reader set each input to either analysis's value.
+The comparison puts both analyses on one common output, the net fiscal effect (the wealth tax, plus income tax from asset sales, minus the present value of income tax lost), and moves from one main estimate to the other one disputed input at a time. Its explorer lets a reader set each input to either analysis's value.
 
-**What reproduces.** Both main estimates are rebuilt on the common output from the two analyses' exported files, `r usd(eb$bsz_model)` and `r usd(rj_main)`. The steps of the bridge add up exactly to the gap, and the R and Python versions agree.
+**What reproduces.** Both main estimates are rebuilt on the common output from the two analyses' exported files, `r usd(eb$bsz_model)` and `r usd(rj_main)`. Each step of the bridge is the change from moving one explorer dial, in R and in the browser (the steps add up to the gap by construction). The R and Python versions agree.
 
 [The comparison overview](../../../index.html)
 ]
@@ -501,10 +501,26 @@ name: pseudo-eq
 
 # What separates the two numbers
 
+.small[
+Both estimates are on one measure, output (b), the net fiscal effect. It is the wealth tax, plus
+income tax from assets sold to pay it, minus income tax lost to people who leave. The equation
+moves the explorer's BSZ panel dials one at a time to the JR values, in the order shown (the dial
+path). Each amount is what its dials change.
+]
+
 ```{r pseudo, results="asis"}
 # D and q of the dial path, the loss box's four steps added up, then the other three added up
 # (eq_terms() in R/site.R; the same equation as the explorer and the overview)
 et <- eq_terms(dp)
+# The order-free ranking: the report's order-free check (Shapley values, export/r/bridge.csv,
+# own horizon, output (b)), the three inputs with the largest average step, largest first. A dial
+# is named by its symbol and its name (DIAL_SYMBOLS, DIAL_NAMES in R/site.R); a minor input,
+# which has no dial of its own, by its title.
+sh_ids <- bb$step_id[order(-abs(bb$shapley))][1:3]
+sh_name <- function(id) if (id %in% names(DIAL_SYMBOLS)) sprintf("*%s* (%s)", DIAL_SYMBOLS[[id]], DIAL_NAMES[[id]]) else
+  tolower(steps$title[steps$step_id == id])
+sh_three <- vapply(sh_ids, sh_name, "")
+sh_three <- paste0(paste(head(sh_three, -1), collapse = ", "), " and ", tail(sh_three, 1))
 term <- function(j) with(et$terms[j, ], sprintf('<span class="eq-step"><span class="op">%s</span><span class="term"><b>%s</b><small>%s</small></span></span>',
                             if (change < 0) "&minus;" else "+", money(abs(change), 1), esc(label)))
 cat('<div class="pseudo-eq">',
@@ -515,22 +531,23 @@ cat('<div class="pseudo-eq">',
 ```
 
 .small[
-Move the BSZ panel's dials to their far ends, term by term from left to right. `r et$note` The terms add up
+`r et$note` The terms add up
 exactly; "about equal" is only rounding. The JR estimate here is the exact average of the
 authors' Monte Carlo; their seeded run prints `r usd(rj_print)`.
 ]
 
 The one published comparison, Hoopes (2026), draws this gap for earlier versions of the two analyses as a waterfall; this project's own waterfall is [in the appendix](#waterfall).
 
-The next three slides take the three largest steps, `r three_syms`, in path
-order. Each says what both analyses assume, why, and what kind of claim it is:
+The next three slides take the three largest steps on this path, `r three_syms`, in path
+order. The sizes depend on the order. Averaged over every order (the report's order-free check),
+the three largest are `r sh_three`. Each of the next three slides says what both analyses
+assume, why, and what kind of claim it is:
 
 .small[
-- **data**: settled by observable facts (lists, filings, tax statistics)
-- **research**: a parameter taken from published studies
-- **guesswork**: asserted without data or a study behind it, legal judgements included
-- **scenario**: a choice of which world to estimate, which neither data nor studies settle
-- **derived**: computed from the analysis's own inputs
+**data**: settled by observable facts (lists, filings, tax statistics). **research**: a parameter
+taken from published studies. **guesswork**: asserted without data or a study behind it, legal
+judgements included. **scenario**: a choice of which world to estimate, which neither data nor
+studies settle. **derived**: computed from the analysis's own inputs.
 ]
 
 ---
@@ -548,7 +565,7 @@ claim_table <- function(bsz, jr) {
 
 ```{r claims-dep, results="asis"}
 claim_table(
-  "<b>Nobody counts as departed.</b> The benchmark taxes everyone resident in California on 1 January 2026 (BSZ PDF p.23). Its aggressive scenario (Table 5 row 3) assumes four of them left: Page, Thiel, Hankey and Kalanick.",
+  sprintf("<b>No named departure is removed.</b> The benchmark taxes everyone resident in California on 1 January 2026. Press reports do not establish that any named mover changed residence in time (BSZ PDF p.23 fn.30). Its %s avoidance already counts %s of billionaires who left in time (BSZ PDF p.24). Its aggressive scenario (Table 5 row 3) assumes four named billionaires left: Page, Thiel, Hankey and Kalanick.", pct(sup$alpha, 0), pct(sup$alpha * sup$m, 0)),
   sprintf("<b>Seven publicly reported moves</b> (Page, Brin, Thiel, Hankey, Spielberg, Kalanick and Sacks) are taken out of the base before the tax: %s of its wealth (NPV_dist_v8.R:19).", pct(dshare(rj), 1)))
 ```
 
@@ -579,8 +596,8 @@ name: diff-litigation
 
 ```{r claims-lit, results="asis"}
 claim_table(
-  sprintf("<b><i>q</i> = %s.</b> The Act as written, collected in full. Neither BSZ nor the expert report it builds on (GGSS: Galle, Gamage, Saez and Shanske) discounts the revenue for litigation risk (BSZ Table 5; GGSS p.4).", fmt_input("q", sup$q)),
-  sprintf("<b><i>q</i> = %s.</b> The chance the Act survives a court challenge, set at the &quot;more likely than not&quot; threshold of an accounting rule (ASC 740-10; NBER README, chapter Sec. 4.3). The Monte Carlo draws the revenue anywhere between zero (struck down) and the %s ceiling; its average is half the ceiling.", fmt_input("q", rj$q), usd(ceiling72, 0)))
+  sprintf("<b><i>q</i> = %s.</b> The Act as written, collected in full. Neither BSZ nor the expert report it builds on (GGSS: Galle, Gamage, Saez and Shanske) discounts the revenue for litigation risk (BSZ Table 5; GGSS p.4). The expert report argues the Act was designed to stay clear of constitutional issues (GGSS p.11).", fmt_input("q", sup$q)),
+  sprintf("<b><i>q</i> = %s.</b> The chance the Act survives a court challenge, set at the &quot;more likely than not&quot; threshold of an accounting rule (ASC 740-10; NBER README; chapter Secs. 4.2 and 4.4, PDF pp.19-23, eqs. 3 and 6). The Monte Carlo draws the revenue anywhere between zero (struck down) and the %s ceiling; its average is half the ceiling.", fmt_input("q", rj$q), usd(ceiling72, 0)))
 ```
 
 .pull-left[
@@ -605,13 +622,21 @@ leave.
 
 ---
 name: diff-horizon
+class: wide-right
 
 # Difference 3: for how long is the income tax lost?
 
+```{css, echo=FALSE}
+/* diff-horizon: both claim cells run five lines, so the dollars box takes the wider column
+   (fewer lines) and the slide fits. */
+.wide-right .pull-left { width: 36%; }
+.wide-right .pull-right { width: 60%; }
+```
+
 ```{r claims-hz, results="asis"}
 claim_table(
-  sprintf("<b>%s.</b> The losses are &quot;annual temporary&quot; and last about the five payment years (&quot;If they last say only 5 years&quot;, BSZ PDF p.27). A one-time tax should cause a temporary response (BSZ p.22).", fmt_input("H", sup$H)),
-  sprintf("<b>%s.</b> A billionaire who leaves stops paying California income tax for ever, so the lost stream is valued as a perpetuity, 1/r (chapter Sec. 5.4, eq. 18-19).", tools::toTitleCase(fmt_input("H", rj$H))))
+  sprintf("<b>%s.</b> BSZ argue the losses should be temporary, since a one-time tax should cause a temporary response (BSZ PDF p.22), and give five years, the payment period, as an example (&quot;If they last say only 5 years&quot;, PDF p.27). Table 5 takes no stand on how long they last. The five years are this OPA's reading of that example.", fmt_input("H", sup$H)),
+  sprintf("<b>%s.</b> Departed billionaires are assumed not to return, because the Act permanently removes the constitutional cap on intangible property taxes and lets the Legislature amend it by a two-thirds vote (chapter PDF p.32, Sec. 6). The lost stream is valued as a growing perpetuity, 1/(r &minus; g) (chapter Sec. 5.2, eqs. 13-14, PDF pp.30-31).", tools::toTitleCase(fmt_input("H", rj$H))))
 ```
 
 ```{r tab-hz, results="asis"}
@@ -668,16 +693,19 @@ cat("</table>")
 ```
 
 .small[
-- **Share of income tax lost**: the BSZ analysis counts what the leavers paid, from tax filings.
-  The JR analysis takes a flat `r pct(rj$f0)` of all billionaires' income tax, the middle of a draw
-  between `r pct(f_lo)` and `r pct(f_hi)`. It moves little on the path because it comes before the
-  horizon, while the loss still lasts 5 years.
-- **Yearly income tax**: BSZ take the 2019 to 2025 average from tax statistics and published
-  research. JR take the middle of a range whose floor is the authors' judgement.
-- **Avoidance and evasion allowance** is the one step that raises the estimate. The JR analysis
-  applies no allowance beyond departures, so dropping the BSZ `r pct(sup$alpha, 0)` adds revenue.
-- **Discount rate**: `r r3` at the BSZ end, a scenario, since BSZ give no rate. `r r_jr` at the JR end, derived:
-  the one rate worth the same as the authors' random draw between `r r_lo` and `r r_hi`. It moves after the horizon, on a loss that lasts for ever.
+- **Share of income tax lost**: the BSZ analysis counts what the leavers paid. At its benchmark
+  these are the avoiders who move (`r pct(sup$m, 0)` of its `r pct(sup$alpha, 0)` allowance),
+  assumed to take a proportional share of the income tax (BSZ PDF p.24); named leavers' tax comes
+  from filings. The JR analysis takes a flat `r pct(rj$f0)` of all billionaires' income tax, the
+  middle of a `r pct(f_lo)` to `r pct(f_hi)` draw. The step is small because it comes before the
+  horizon, while the loss lasts `r fmt_input("H", sup$H)`.
+- **Yearly income tax**: BSZ take the 2019 to 2025 average from tax statistics and research. JR
+  take the middle of a range whose floor is the authors' judgement.
+- **Avoidance and evasion allowance** is the one step that raises the estimate: the JR analysis
+  applies no allowance beyond departures.
+- **Discount rate**: `r r3` at the BSZ end, a scenario (BSZ give no rate). `r r_jr` at the JR end,
+  derived: worth the same as the authors' draw of r &minus; g, the real rate net of the loss's
+  growth, from `r r_lo` to `r r_hi`. It moves after the horizon, on a loss that lasts for ever.
 ]
 
 ---
@@ -727,7 +755,7 @@ name: next
 - At the BSZ inputs the function returns Table 5 row 1, `r usd(ea$bsz_model, 3)` (printed `r usd(bsz_print, 0)`).
 - At the JR inputs, with the rate at `r r_jr`, it returns the exact average of the authors' Monte Carlo,
   `r usd(eb$rauh_own, 3)` (printed `r usd(rj_print)` from one seeded run).
-- The dial path's steps add up to the gap. The report's order-free check, each input's Shapley value, adds up too, and a test checks it against a brute-force average over orders.
+- Each step on the dial path is the change from moving one dial, in R and in the browser. The steps add up to the gap by construction. The report's order-free check, each input's Shapley value (its step averaged over every order the inputs could be switched in), adds up too, and a test checks it against a brute-force average over orders.
 - A Python twin writes the same tables. The largest difference from R is `r if (py_ok) formatC(maxdiff, format = "e", digits = 1) else "not checked"`; the tests require 1e-9.
 - **Not reproduced here:** the comparison takes each analysis's exported inputs and outputs as
   given. Each analysis's own reproduction is on its overview page.
@@ -791,9 +819,10 @@ and averages the results).<sup>2</sup>
 ]
 
 .blue-box[
-**Net present value**: all gains minus all losses, with each future dollar converted to its
-value today (discounted). One analysis says the state
-gains about `r usd(eb$bsz_model, 0)`. The other says it loses about `r usd(-rj_main, 0)`.
+**Net present value**: all gains minus all losses, each future dollar of lost income tax
+converted to its value today. Both analyses count the wealth tax at face value. On the common
+definition, the BSZ analysis's inputs give a gain of about `r usd(eb$bsz_model, 0)` and the JR
+analysis's a loss of about `r usd(-rj_main, 0)`.
 ]
 
 .footnote[<sup>1</sup> BSZ's own headline is the wealth tax alone. The net total is this OPA's choice, so both main estimates answer the same question. The BSZ overview discounts at `r r3`, and so does this deck's BSZ end ([the common output](#common-output)): both give `r usd(eb$bsz_model)`. <sup>2</sup> The paper prints `r usd(rj_print)`, the average of one seeded run of 100,000 draws. The exact average of the same formula is `r usd(rj_main, 2)`, used throughout this deck.]
@@ -823,9 +852,11 @@ cat("</table>")
 ```
 
 .small[
-The horizon H is itself disputed: 5 years for the BSZ analysis, for ever for the JR analysis.
+The horizon H is itself disputed: 5 years for the BSZ analysis (this OPA's reading of BSZ's
+example, PDF p.27), for ever for the JR analysis.
 So is the discount rate r. The BSZ analysis gives none, and this OPA uses `r r3`, the rate of
-the BSZ overview. The JR analysis draws it at random between `r r_lo` and `r r_hi`, which is
+the BSZ overview. The JR analysis draws r &minus; g, the real rate net of the loss's growth, at
+random between `r r_lo` and `r r_hi`, which is
 worth the same as one rate of `r r_jr` ([term 2](#term-loss)). Output (b) is the one both main
 estimates answer, so the rest of the deck uses it. For the JR analysis, both outputs are the
 exact average of the authors' Monte Carlo.
@@ -898,7 +929,7 @@ cat("</table>")
   `r pct(f_lo, 0)` and `r pct(f_hi, 0)`.
 - **Value today of 1 dollar a year**: at `r r3`, a dollar a year for 5 years is worth `r num(mv("A_5"))` dollars
   today. A **perpetuity**, a dollar every year for ever, is worth 1/r at the rate r. The JR analysis
-  draws r between `r r_lo` and `r r_hi`, so its perpetuity is worth `r num(mv("A_inf_jr_draw"))` dollars on average,
+  draws r &minus; g between `r r_lo` and `r r_hi`, so its perpetuity is worth `r num(mv("A_inf_jr_draw"))` dollars on average,
   the same as one rate of `r r_jr`.
 ]
 

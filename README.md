@@ -47,7 +47,7 @@ opa-prop40/
 ├── assets/                the root page's data file and OPA images
 ├── bsz-analysis/          BSZ reproduction (R, {targets}, Python and SQL twins) + its OPA site in site/
 ├── rjkdc-analysis/        JR reproduction (R, {targets}, Python twin) + its OPA site in site/
-├── comparison/            common output definition, Shapley bridge, R and Python twins, its OPA site in site/
+├── comparison/            common output definition, the dial-path bridge with a Shapley check, R and Python twins, its OPA site in site/
 ├── review/                code-review ledgers: the chain behind each main estimate, layer by layer
 ├── PLAN.md                plan, pre-specified output, decisions
 └── AUDIT.md               OPA Guidelines audit baseline
@@ -65,7 +65,7 @@ transcribed in `comparison/data/document-inputs.csv`.
 |---|---|---|---|
 | `bsz-analysis/` | BSZ reproduced cell by cell; OPA site (explorer, report, slides, materials) | [materials page](https://fhoces.github.io/opa-prop40/bsz-analysis/site/materials.html#tests), which reads the test output | `bsz-ci.yml`, green |
 | `rjkdc-analysis/` | JR reproduced from the authors' code, R and Python; 9 documented mismatches (`MISMATCHES.md`); OPA site | [materials page](https://fhoces.github.io/opa-prop40/rjkdc-analysis/site/materials.html#tests), which reads the test output | `rjkdc-ci.yml`, green |
-| `comparison/` | Comparison overview at the site root, explorer with two slider panels, report and materials page; 8 disputed inputs (`DISPUTES.md`) | [materials page](https://fhoces.github.io/opa-prop40/comparison/site/materials.html#tests), which reads the test output | `comparison-ci.yml`, green |
+| `comparison/` | Comparison overview at the site root, explorer with two slider panels, report and materials page; 10 disputed inputs (`DISPUTES.md`), 8 explorer dials and a switch for 3 minor inputs | [materials page](https://fhoces.github.io/opa-prop40/comparison/site/materials.html#tests), which reads the test output | `comparison-ci.yml`, green |
 
 CI is continuous integration: an automatic rebuild and test run on every change, in
 `.github/workflows/`. Each materials page prints the count of test expectations from the last

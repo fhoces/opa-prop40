@@ -204,21 +204,34 @@ build_tab_a1 <- function(shortrunseries, longrunseries, vintage = bsz_vintage())
   lr <- .long_run_compare(row_1982, row_cur, n_years = n_years)
   panel_b <- dplyr::bind_rows(row_1982, row_cur, lr$ratio, lr$annualized)
 
+  # ---- Render with gt (display only) ---------------------------------------
+  # Nothing below changes a value: the panel_a / panel_b attributes are what the
+  # tests and snapshots read. A gt has one header row, so the column headers
+  # name Panel A's columns and Panel B's row-group label lists its own; each
+  # panel's rows get their own formats, as the paper prints TabA1 (PDF p.49).
+  may         <- identical(vintage, "may")
+  denom_lbl   <- if (may) "GDP" else "AGI"   # May's sheet is GDP; August's is AGI
+  ratio_label <- paste0("Ratio ", cur_label, " to 1982")
+  sec_a <- "A. Recent nominal wealth growth of US billionaires"
   panel_a_render <- tibble::tibble(
-    section = "A. Recent nominal wealth growth of US billionaires",
-    year    = panel_a_full$year,
+    section = sec_a,
+    year    = ifelse(panel_a_full$year == "2026", "2026 (July 1st)", panel_a_full$year),
     col1    = panel_a_full$n_us_billionaires,
     col2    = panel_a_full$wealth_b,
     col3    = panel_a_full$annual_growth,
-    col4    = NA_real_,
-    col5    = if (!identical(vintage, "may")) panel_a_full$us_agi_b else NA_real_,
-    col6    = if (!identical(vintage, "may")) panel_a_full$wealth_per_agi else NA_real_
+    col4    = if (!may) panel_a_full$us_agi_b else NA_real_,
+    col5    = if (!may) panel_a_full$wealth_per_agi else NA_real_,
+    col6    = NA_real_
   )
-  pctile_label <- if (identical(vintage, "may")) "top .0002%" else "top .001%"
+  pctile_label <- if (may) "top .0002%" else "top .001%"
+  sec_b <- paste0("B. Long-term real wealth growth: ", pctile_label,
+                  " wealthiest US families (", cur_label, " $). Columns: # families in the ",
+                  pctile_label, ", their wealth ($B), wealth per family ($B), ",
+                  "# US families (millions), US ", denom_lbl, " ($B), US ", denom_lbl,
+                  " per family ($)")
   panel_b_render <- tibble::tibble(
-    section = paste0("B. Long-term real wealth growth: ", pctile_label,
-                      " wealthiest US families (", cur_label, " $)"),
-    year    = panel_b$year,
+    section = sec_b,
+    year    = ifelse(grepl("^Ratio ", panel_b$year), ratio_label, panel_b$year),
     col1    = panel_b$families_top0002_k,
     col2    = panel_b$wealth_top0002_b,
     col3    = panel_b$wealth_per_family_b,
@@ -227,26 +240,43 @@ build_tab_a1 <- function(shortrunseries, longrunseries, vintage = bsz_vintage())
     col6    = panel_b$gdp_per_family_k
   )
   combined <- dplyr::bind_rows(panel_a_render, panel_b_render)
+  in_a   <- combined$section == sec_a
+  r_a    <- which(in_a & !grepl("^Growth", combined$year))   # Panel A's year rows
+  r_agr  <- which(in_a &  grepl("^Growth", combined$year))   # its 2023-2025 growth row
+  r_blev <- which(!in_a & combined$year %in% c("1982", cur_label))
+  r_brat <- which(!in_a & combined$year == ratio_label)
+  r_bann <- which(!in_a & combined$year == "Annualized growth")
 
   tab <- gt::gt(combined, groupname_col = "section") |>
     gt::tab_header(title = "Appendix Table A1. Wealth Growth of US Billionaires") |>
     gt::cols_label(
       year = "Year",
-      col1 = "# / families",
+      col1 = "#",
       col2 = "Wealth",
-      col3 = "Growth / per family",
-      col4 = "# US families (M)",
-      col5 = "US GDP",
-      col6 = "GDP / family ($)"
+      col3 = "Growth",
+      col4 = if (may) "" else "US AGI",
+      col5 = if (may) "" else "Wealth / US AGI",
+      col6 = ""
     ) |>
-    gt::fmt_number(columns = c(col1, col2, col4, col5, col6),
-                   decimals = 0, use_seps = TRUE) |>
-    gt::fmt_percent(columns = col3, decimals = 1) |>
+    # Panel A: counts and $B as whole numbers, rates as percentages; the growth
+    # row is a percentage in each column it fills.
+    gt::fmt_number(columns = c(col1, col2, col4), rows = r_a, decimals = 0, use_seps = TRUE) |>
+    gt::fmt_percent(columns = c(col3, col5), rows = r_a, decimals = 1) |>
+    gt::fmt_percent(columns = c(col2, col4), rows = r_agr, decimals = 1) |>
+    # Panel B: families, wealth ($B), wealth per family ($B), families (millions),
+    # income ($B), income per family ($); then the ratio and annualized rows.
+    gt::fmt_number(columns = c(col1, col5, col6), rows = r_blev, decimals = 0, use_seps = TRUE) |>
+    gt::fmt_number(columns = c(col2, col4), rows = r_blev, decimals = 1, use_seps = TRUE) |>
+    gt::fmt_number(columns = col3, rows = r_blev, decimals = 2) |>
+    gt::fmt_number(columns = c(col1, col2, col3, col4, col5), rows = r_brat, decimals = 1) |>
+    gt::fmt_number(columns = col6, rows = r_brat, decimals = 2) |>
+    gt::fmt_percent(columns = c(col1, col2, col3, col4, col5, col6), rows = r_bann, decimals = 1) |>
     gt::sub_missing(missing_text = "–") |>
-    gt::tab_source_note(source_note = gt::md(paste(
-      "**Notes:** Repeats Tab 1 for US billionaires instead of CA. Panel A:",
-      "nominal wealth of all US citizen billionaires (Forbes). Panel B: 1982",
-      "vs 2025 real wealth of top .0002% US families, in 2025 dollars."
+    gt::tab_source_note(source_note = gt::md(paste0(
+      "**Notes:** Repeats Tab 1 for US billionaires instead of CA. Panel A: ",
+      "nominal wealth of all US citizen billionaires (Forbes). Panel B: 1982 ",
+      "vs ", cur_label, " real wealth of the ", pctile_label, " US families, in ",
+      cur_label, " dollars."
     )))
 
   attr(tab, "panel_a") <- panel_a_full
@@ -595,10 +625,17 @@ build_tab1 <- function(data_sec_agg_r, shortrunseries_r, longrunseries,
   lr <- .long_run_compare(row_1982, row_cur, n_years = n_years)
   panel_b <- dplyr::bind_rows(row_1982, row_cur, lr$ratio, lr$annualized)
 
-  # ---- Render with gt -------------------------------------------------------
+  # ---- Render with gt (display only) ---------------------------------------
   # Two stacked panels rendered as one gt; row groups give the panel headers.
+  # Nothing below changes a value: the panel_a / panel_b attributes are what the
+  # tests and snapshots read. A gt has one header row, so the column headers
+  # name Panel A's columns and Panel B's row-group label lists its own; each
+  # panel's rows get their own formats, as the paper prints Table 1 (PDF p.35).
+  denom_lbl   <- if (identical(vintage, "may")) "GDP" else "AGI"   # the column holds AGI from August on
+  ratio_label <- paste0("Ratio ", cur_label, " to 1982")
+  sec_a <- "A. Recent nominal wealth growth of CA billionaires"
   panel_a_render <- tibble::tibble(
-    section = "A. Recent nominal wealth growth of CA billionaires",
+    section = sec_a,
     year    = panel_a_full$year,
     col1    = panel_a_full$n_billionaires,
     col2    = panel_a_full$wealth_b,
@@ -609,10 +646,14 @@ build_tab1 <- function(data_sec_agg_r, shortrunseries_r, longrunseries,
     col7    = panel_a_full$wealth_per_gdp
   )
   pctile_label <- if (identical(vintage, "may")) "top .0002%" else "top .001%"
+  sec_b <- paste0("B. Long-term real wealth growth: ", pctile_label,
+                  " wealthiest CA families (", cur_label, " $). Columns: # families in the ",
+                  pctile_label, ", their wealth ($B), wealth per family ($B), ",
+                  "# CA families (millions), CA ", denom_lbl, " ($B), CA ", denom_lbl,
+                  " per family ($)")
   panel_b_render <- tibble::tibble(
-    section = paste0("B. Long-term real wealth growth: ", pctile_label,
-                      " wealthiest CA families (", cur_label, " $)"),
-    year    = panel_b$year,
+    section = sec_b,
+    year    = ifelse(grepl("^Ratio ", panel_b$year), ratio_label, panel_b$year),
     col1    = panel_b$families_top0002_k,
     col2    = panel_b$wealth_top0002_b,
     col3    = panel_b$wealth_per_family_b,
@@ -622,6 +663,13 @@ build_tab1 <- function(data_sec_agg_r, shortrunseries_r, longrunseries,
     col7    = NA_real_
   )
   combined <- dplyr::bind_rows(panel_a_render, panel_b_render)
+  in_a   <- combined$section == sec_a
+  r_a    <- which(in_a & !grepl("^Growth", combined$year))   # Panel A's year rows
+  r_agr  <- which(in_a &  grepl("^Growth", combined$year))   # its 2023-2025 growth row
+  r_blev <- which(!in_a & combined$year %in% c("1982", cur_label))
+  r_brat <- which(!in_a & combined$year == ratio_label)
+  r_bann <- which(!in_a & combined$year == "Annualized growth")
+  a_years <- if (identical(vintage, "may")) "2022 to 2025" else "2022 to 1 July 2026"
 
   tab <- gt::gt(combined, groupname_col = "section") |>
     gt::tab_header(title = "Table 1. Wealth Growth of California Billionaires") |>
@@ -632,17 +680,27 @@ build_tab1 <- function(data_sec_agg_r, shortrunseries_r, longrunseries,
       col3 = "Growth",
       col4 = "% public",
       col5 = "Top 4 wealth",
-      col6 = "CA GDP",
-      col7 = "Wealth / GDP"
+      col6 = paste("CA", denom_lbl),
+      col7 = paste("Wealth / CA", denom_lbl)
     ) |>
-    gt::fmt_number(columns = c(col1, col2, col5, col6),
-                   decimals = 0, use_seps = TRUE) |>
-    gt::fmt_percent(columns = c(col3, col4, col7), decimals = 1) |>
+    # Panel A: counts and $B as whole numbers, rates as percentages; the growth
+    # row is a percentage in each column it fills.
+    gt::fmt_number(columns = c(col1, col2, col5, col6), rows = r_a, decimals = 0, use_seps = TRUE) |>
+    gt::fmt_percent(columns = c(col3, col4, col7), rows = r_a, decimals = 1) |>
+    gt::fmt_percent(columns = c(col2, col5, col6), rows = r_agr, decimals = 1) |>
+    # Panel B: families, wealth ($B), wealth per family ($B), families (millions),
+    # income ($B), income per family ($); then the ratio and annualized rows.
+    gt::fmt_number(columns = c(col1, col5, col6), rows = r_blev, decimals = 0, use_seps = TRUE) |>
+    gt::fmt_number(columns = c(col2, col4), rows = r_blev, decimals = 1, use_seps = TRUE) |>
+    gt::fmt_number(columns = col3, rows = r_blev, decimals = 2) |>
+    gt::fmt_number(columns = c(col1, col2, col3, col4, col5), rows = r_brat, decimals = 1) |>
+    gt::fmt_number(columns = col6, rows = r_brat, decimals = 2) |>
+    gt::fmt_percent(columns = c(col1, col2, col3, col4, col5, col6), rows = r_bann, decimals = 1) |>
     gt::sub_missing(missing_text = "–") |>
-    gt::tab_source_note(source_note = gt::md(paste(
-      "**Notes:** Panel A illustrates the wealth growth of CA billionaires in 2022-2025.",
-      "Panel B compares the top .0002% wealthiest CA families' wealth in 1982 vs 2025,",
-      "all in 2025 dollars. Source: Forbes RTB snapshots + SEC EDGAR."
+    gt::tab_source_note(source_note = gt::md(paste0(
+      "**Notes:** Panel A illustrates the wealth growth of CA billionaires from ", a_years, ". ",
+      "Panel B compares the ", pctile_label, " wealthiest CA families' wealth in 1982 vs ",
+      cur_label, ", all in ", cur_label, " dollars. Source: Forbes RTB snapshots + SEC EDGAR."
     )))
 
   # Attach a tidy version for downstream use / tests.

@@ -9,9 +9,9 @@ puts the [BSZ analysis](https://fhoces.github.io/opa-prop40/bsz-analysis/site/) 
 common output, the net fiscal effect, and explains the gap between their numbers one disputed input at a time. The aim is a transparent account of why the two
 estimates differ, which anyone can check.
 
-### [Review the code behind the two main estimates, $106.8 billion and -$38.9 billion](https://claude.ai/artifact/6VZEezoAsCNACjmgPLEvah)
+### [Review the code behind the two main estimates, $106.8 billion and -$39.0 billion](https://claude.ai/artifact/6VZEezoAsCNACjmgPLEvah)
 
-($106.8 billion is this OPA's net total for the BSZ analysis, whose own headline is the wealth tax alone; -$38.9 billion is the JR analysis's own headline.)
+($106.8 billion is this OPA's net total for the BSZ analysis, whose own headline is the wealth tax alone. -$39.0 billion is the exact average of the JR analysis's model; Jaros and Rauh print -$38.9 billion from one seeded run of it.)
 
 A layer-by-layer walk from the two numbers on the explorer down to the two analyses' export
 contracts. Each layer is marked reviewed, lightly reviewed or not reviewed. Work in progress; the
@@ -53,8 +53,8 @@ input-by-input bridge. The disputed inputs on the JR end are those of its latest
 September 2026. The discount rate of the lost income tax is one of the bridge's inputs
 (author decision 2026-10-15): 3% at the BSZ end (the row `common_discount_rate` of
 `data/document-inputs.csv`; the BSZ analysis gives no rate) and 2.73% at the JR end, the one
-rate worth the same as the authors' draw between 1.5% and 4.5% (1 / E[1/r] = 0.03 / ln(3),
-computed from the JR contract). So the common function returns that version's exact Monte
+rate worth the same as the authors' draw of r - g, the real discount rate net of the loss's
+growth, between 1.5% and 4.5% (1 / E[1/r] = 0.03 / ln(3), computed from the JR contract). So the common function returns that version's exact Monte
 Carlo mean on both outputs. It renders the site-root
 page, `../index.html`, and the explorer, `site/explorer/index.html`.
 
@@ -63,8 +63,9 @@ page, `../index.html`, and the explorer, `site/explorer/index.html`.
 - `../bsz-analysis/export/r/{inputs,outputs}.csv` and
   `../rjkdc-analysis/export/r/{inputs,outputs}.csv`: each analysis's export contract.
 - `data/document-inputs.csv`: values neither contract carries, transcribed from the PDFs with
-  their page (Rauh's Monte Carlo ranges, the NBER departure range, GGSS's non-citizen wealth,
-  BSZ's 5-year horizon, Walczak, LAO, Hoopes's text figures).
+  their page (the two analyses' horizons, the published revenue headlines, GGSS's non-citizen
+  wealth, the 3% rate at the BSZ end, Walczak and the LAO for reference, Hoopes's text figures).
+  The JR Monte Carlo ranges are read from the JR export contract, not from this file.
 - `data/hoopes-fig2.csv`: Hoopes (2026) Figure 2, read off the chart by
   `tools/digitize_hoopes_fig2.py` (the note prints no values).
 
@@ -78,7 +79,7 @@ assets sold to pay - present value of income tax lost to departures, over a hori
 | File | What |
 |---|---|
 | `R/contract.R` | read the contracts and document inputs |
-| `R/model.R` | `score_common()`, the one estimating function; exact Shapley over all orders; one sequential order; Rauh's analytic Monte Carlo expectations |
+| `R/model.R` | `score_common()`, the one estimating function; the dial path; exact Shapley over all orders; one sequential order; the JR analysis's analytic Monte Carlo expectation |
 | `R/build.R` | every number the page shows, written to `export/r/*.csv` |
 | `R/site.R` | renders `../index.html` and `../assets/comparison-data.js` from `site/index.template.html` |
 | `site/repro.qmd`, `site/materials.qmd` | the reproduction report and the materials page (`quarto render` in `site/`) |
@@ -88,8 +89,9 @@ assets sold to pay - present value of income tax lost to departures, over a hori
 ## Tests
 
 `Rscript comparison/tests/testthat.R`: endpoints against the printed numbers (GGSS $100B and
-$104B, BSZ Table 5 row 1, Rauh -24.7 and NBER -38.9), Shapley steps summing exactly to the
-gap in every setting, Shapley against a brute-force average over orders, R vs Python parity to
+$104B, BSZ Table 5 row 1, Rauh -24.7 and NBER -38.9), the dial path's steps each equal to the
+change from moving one explorer dial in R and in `model.js`, Shapley steps summing exactly to
+the gap in every setting, Shapley against a brute-force average over orders, R vs Python parity to
 1e-9, provenance of every transcribed input, and the page being exactly the generator's output
 with every internal link resolving.
 
@@ -101,6 +103,6 @@ with every internal link resolving.
   of the bridge is checked against). Until 2026-10-14 the bridge ended at the March 2026
   version (51.26, -24.7) and reached September in one extra step; it now uses September's
   values directly.
-- The Monte Carlo ranges (WT floor 35, C in [3.3, 5.8], r in [1.5%, 4.5%], NBER f in
-  [0.30, 0.60]) are read from the JR contract (`rauh_mc_*`, `nber_mc_*` rows). The r range
+- The Monte Carlo ranges (WT floor 35, C in [3.3, 5.8], r - g in [1.5%, 4.5%], NBER f in
+  [0.30, 0.60]) are read from the JR contract (`rauh_mc_*`, `nber_mc_*` rows). The rate range
   gives the JR end of the rate dial, 1 / E[1/r]; `score_common()` takes one rate per end.

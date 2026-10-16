@@ -84,7 +84,7 @@ site_named_rows <- function() {
 # The main estimate: the one-time wealth tax, plus the one-time extra income tax from
 # selling assets, minus the present value of the yearly income tax lost to leavers over
 # BSZ's horizon of about 5 years (PDF p.27), discounted at 3% a year (the middle of the
-# 1.5%-4.5% range the JR report uses; BSZ give no rate). Same definition as the deck.
+# 1.5% to 4.5% range the JR analysis draws; BSZ give no rate). Same definition as the deck.
 site_pv_rate  <- 0.03
 site_pv_years <- 5
 site_pv_factor <- function(r = site_pv_rate, H = site_pv_years) (1 - (1 + r)^(-H)) / r
@@ -145,7 +145,7 @@ build_site_inputs <- function(inp) {
       "Asserted (BSZ PDF p.25). Explorer dial.",
     "s", "Share of the tax paid by selling assets", "1/3", "guesswork",
       "Asserted (BSZ PDF p.24). Explorer dial.",
-    "L", "Who left before 1 Jan 2026 (Table 5 rows 3 and 4)", "no one (row 1)", "guesswork",
+    "L", "Who left before 1 Jan 2026 (Table 5 rows 3 and 4)", "no named leaver (row 1); the 5% who move are part of α", "guesswork",
       "A legal judgment on residency; rows 3-4 assume Page, Thiel, Hankey, Kalanick (BSZ PDF p.26). Explorer dial.",
     "g", "Capital-gain share of a sale", "80%", "research",
       "BSZ's own estimate that CA billionaire wealth is 80% unrealized gains (PDF p.24).",

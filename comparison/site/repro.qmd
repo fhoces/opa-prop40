@@ -51,6 +51,12 @@ steps <- bridge_steps()
 mv <- function(key) ex$meta$value[ex$meta$key == key]
 r3 <- rate_txt(mv("r_bsz")); r_jr <- rate_txt(mv("r_jr"))
 r_lo <- pct(mv("r_min_jr"), 1); r_hi <- pct(mv("r_max_jr"), 1)
+# The three largest steps averaged over every order (the Shapley check), on output (b) at each
+# analysis's own horizon, named for the introduction: the path's ranking depends on its order.
+b_own_b <- br[br$horizon_setting == "own" & br$output == "b", ]
+shap3_ids <- b_own_b$step_id[order(-abs(b_own_b$shapley))][1:3]
+shap3 <- paste0("the ", unname(DIAL_NAMES[shap3_ids]), " (", unname(DIAL_SYMBOLS[shap3_ids]), ")")
+shap3 <- paste0(paste(shap3[1:2], collapse = ", "), " and ", shap3[3])
 # A(H, r): what 1 a year for H years is worth today at the rate r
 # Money in running text: a dollar sign in markdown starts a formula, so escape it.
 usd <- function(x, d = 1, signed = FALSE) gsub("$", "\\$", money(x, d, signed), fixed = TRUE)
@@ -112,10 +118,12 @@ worth. The [BSZ analysis](../../bsz-analysis/site/) estimates about
 `r usd(epv("bsz_tab5_row1", "printed_value"), 0)` of wealth tax. The
 [JR analysis](../../rjkdc-analysis/site/) finds the state
 **`r usd(-epv("rauh_nber_npv", "printed_value"))`** poorer in today's dollars, because
-billionaires who leave stop paying California income tax for ever. Three inputs separate the
-two most: how long the lost income tax is counted, the chance the tax survives a court
-challenge, and the wealth of billionaires who have already left. This report puts both on one
-output and walks from one to the other.
+billionaires who leave stop paying California income tax for ever. On the explorer's path,
+three inputs separate the two most: how long the lost income tax is counted, the chance the
+tax survives a court challenge, and the wealth of billionaires who have already left. The sizes
+depend on the order the dials move in. Averaged over every order (the order-free check at the
+end of [The bridge](#the-bridge)), the three largest are `r shap3`. This report puts both on
+one output and walks from one to the other.
 
 <details class="report-fold"><summary>Versions and citations</summary>
 
@@ -148,15 +156,17 @@ This report is part of the comparison's [Open Policy Analysis](https://doi.org/1
   estimate, from one analysis's value to the other's. The browser computes each panel's
   estimate with `explorer/model.js`, a copy of `score_common()` that a test checks against the
   R values. The explorer's equation shows two of the bridge's nine steps in this report on their own
-  (D and q). It adds up the four steps of the loss box (f, C, H and r) into one term, and the
+  (D and q). It adds up the four steps of the loss box (H, f, C and r) into one term, and the
   other three steps into another.
 - **Open Analysis**: this document
 - **Open Materials**: [the repository folder](https://github.com/fhoces/opa-prop40/tree/main/comparison), every script, test and data file (guide: [the materials page](materials.html))
 :::
 
-**The two main estimates** are each analysis's own: the BSZ analysis's net total over 5
-years, **`r usd(eb$bsz_model)`**, and the JR analysis's mean net present value in
-perpetuity, **`r usd(eb$rauh_own)`** (NBER, September 2026). On
+**The two main estimates** are the ones each analysis's overview page shows: the BSZ
+analysis's net total over 5 years, **`r usd(eb$bsz_model)`** (this OPA's construction from
+Table 5 row 1), and the JR analysis's mean net present value in perpetuity,
+**`r usd(epv("rauh_nber_npv", "printed_value"))`** as printed (NBER, September 2026) and
+**`r usd(eb$rauh_own)`** as computed exactly here. On
 the common output (b), the net fiscal effect, they are the bridge's two ends. The BSZ end is
 the same `r usd(eb$bsz_model)`. The JR number is the exact expectation of the authors' Monte
 Carlo, the average computed by formula: `r usd(eb$rauh_own, 2)`, the JR end. Jaros and Rauh
@@ -187,7 +197,7 @@ check on the bridge, is defined at the end of [The bridge](#the-bridge).
 
 # The common output, and what each analysis reports {#the-common-output}
 
-The BSZ report says how much the one-time tax collects. The JR report says what the state
+The BSZ analysis says how much the one-time tax collects. The JR analysis says what the state
 gains or loses in present value once income tax lost to billionaires who leave is subtracted.
 Before any step of a bridge means anything, both are put on the same two outputs. Output (b)
 comes first, because it is the question both main estimates answer:
@@ -197,32 +207,41 @@ comes first, because it is the question both main estimates answer:
   horizon of H years.
 - **(a) gross revenue**: the one-time wealth tax collected, the secondary output.
 
-The horizon H is itself disputed. The BSZ report counts the losses for about the
-`r fmt_input("H", inp$supporting_value[inp$input == "H"])` of payments (BSZ PDF p.27). The
-JR report counts them forever.
+The horizon H is itself disputed. The BSZ analysis argues that the losses should be temporary
+and gives five years, the payment period, as an example ("If they last say only 5 years", BSZ
+PDF p.27); its Table 5 itself takes no stand on how long they last. The
+`r fmt_input("H", inp$supporting_value[inp$input == "H"])` at the BSZ end are this OPA's
+reading of that example. The JR analysis counts the losses forever, because it assumes
+departed billionaires do not return once the Act permanently lifts the cap on intangible
+property taxes (chapter PDF p.32).
 
 []{#the-discount-rate}The discount rate r is an input of the bridge too, with its own dial
 (author decision, 15 October 2026). The BSZ analysis gives no rate. This OPA discounts its
 5-year loss at `r r3`, the rate of the BSZ analysis overview and the middle of the JR range
-(a scenario). The JR analysis draws the rate at random, uniformly between `r r_lo` and
-`r r_hi`, and averages the results. That draw is worth the same as one rate, `r r_jr`, which
-is the JR value of the dial. The derivation is short. A perpetuity of 1 a year is worth 1/r at
-the rate r. Averaged over the draw it is worth E[1/r] = ln(`r r_hi` / `r r_lo`) / (`r r_hi`
+(a scenario). The JR analysis values a growing loss: its rate is r &minus; g, the real
+discount rate net of the growth of the lost income tax (chapter eqs. 13-14, PDF p.31). It
+draws r &minus; g at random, uniformly between `r r_lo` and `r r_hi` (eq. 18, PDF p.35), and
+averages the results. That draw is worth the same as one rate, `r r_jr`, which is the JR value
+of the dial. The derivation is short. A perpetuity of 1 a year is worth 1/r at the rate r.
+Averaged over the draw it is worth E[1/r] = ln(`r r_hi` / `r r_lo`) / (`r r_hi`
 &minus; `r r_lo`) = ln(3)/0.03 = `r formatC(mv("A_inf_jr_draw"), format = "f", digits = 1)`.
 That is more than the `r formatC(1 / mv("r_bsz"), format = "f", digits = 1)` it is worth at the
 middle rate, `r r3`, because 1/r curves upward, so low rates add more than high rates take
 away. The one rate worth the same is r = 1 / E[1/r] = 0.03 / ln(3) =
 `r formatC(100 * mv("r_jr"), format = "f", digits = 4)`%, shown as `r r_jr` (a value derived
-from the authors' draw). With it the common function returns the authors' exact mean.
+from the authors' draw). It matches the draw exactly only for a loss that lasts for ever. With
+it the common function returns the authors' exact mean.
 
-**Conventions.** All amounts are nominal billions of dollars. The wealth tax is counted at its
-face value when assessed (the BSZ analysis values the base on 1 July 2026; the JR
-analysis's September version grows the base it used in March, the 2025 Forbes list, by
+**Conventions.** All amounts are billions of dollars at the assessment date. The wealth tax is
+counted at its face value when assessed (the BSZ analysis values the base on 1 July 2026; the
+JR analysis's September version grows the base it used in March, the 2025 Forbes list, by
 `r pct(pick(k$rjkdc$inputs, "nber_growth_rate"))` to 31 December 2026), undiscounted although
 the Act collects it in five yearly installments; both analyses do this, so the comparison
-follows them. Present values are at the assessment date. The JR code labels the rate it
-draws (r &minus; g), the rate less the growth of the lost income tax, while its text uses both
-(r &minus; g) and the plain rate r (the JR analysis's mismatch 3).
+follows them. The lost income tax is a flat yearly amount, discounted at the rate dial's value.
+The JR analysis's rate is a real rate net of the growth of the lost tax, r &minus; g (chapter
+eqs. 14 and 18), so a flat loss at that rate is the chapter's growing loss. Its code, eq. 18
+and its NBER README all draw r &minus; g; one sentence after eq. 19 writes r alone (the JR
+analysis's mismatch 3). The BSZ end's `r r3` is the middle of the same draw.
 
 ```{r}
 #| results: asis
@@ -346,9 +365,10 @@ scroll(show(data.frame(
   check.names = FALSE)))
 ```
 
-Every difference is a rounding of the printed number. The NBER mean NPV is the expectation
-of the Monte Carlo (`r usd(eb$rauh_own, 2)`), while the authors print one run of it
-(`r usd(epv("rauh_nber_npv", "printed_value"))`).
+The BSZ differences are rounding of the printed number. The JR difference is the sampling
+error of the authors' one seeded run: the exact mean of the Monte Carlo, `r usd(eb$rauh_own, 2)`,
+rounds to `r usd(eb$rauh_own)`, while their run of it prints
+`r usd(epv("rauh_nber_npv", "printed_value"))`.
 
 </details>
 
@@ -405,7 +425,8 @@ Rauh's NBER version the revenue is drawn uniformly between zero and
 `r usd(pick(oi, "nber_ceiling_hardcoded"), 0)`, the share of the income tax base that leaves
 between `r pick(oi, "nber_mc_f_min")` and `r pick(oi, "nber_mc_f_max")`, the annual income tax
 between `r usd(pick(oi, "rauh_mc_c_min"))` and `r usd(pick(oi, "rauh_mc_c_max"))`, and the
-discount rate between `r r_lo` and `r r_hi`, all independently. The mean net present value is
+discount rate net of the loss's growth, r &minus; g, between `r r_lo` and `r r_hi`, all
+independently. The mean net present value is
 therefore `r usd(nber[["a"]], 1)` &minus; `r f_mid` &times; `r usd(c_mid, 3)` &times;
 `r formatC(a_inf, format = "f", digits = 3)` (the average of 1/r, or 1/r at `r r_jr`) =
 **`r usd(nber[["b"]], 3)`**, the JR end on (b). The authors print `r usd(epv("rauh_nber_npv", "printed_value"))`
@@ -450,7 +471,7 @@ The bridge follows the explorer's dials. Start from the BSZ panel, where every d
 BSZ value, and move each dial to its far end (the JR value), in the order of the explorer's
 equation. That order is D, then q, then the four loss-box dials (f, C, H and r), then W, a and
 the minor switch. Each step is what one dial changes. The nine steps take the BSZ end, `r usd(dp$from[1])`, to the JR end,
-`r usd(dp$to[nrow(dp)])`, exactly. Three of them make most of the `r usd(gap_b)` gap: how long
+`r usd(dp$to[nrow(dp)])`, exactly. On this path, three of them make most of the `r usd(gap_b)` gap: how long
 the lost income tax is counted (`r usd(dp$change[dp$step_id == "horizon"], 1, TRUE)`), the
 chance the tax does not survive litigation
 (`r usd(dp$change[dp$step_id == "litigation_survival"], 1, TRUE)`) and the billionaires already
@@ -505,7 +526,7 @@ raises the number. The JR analysis applies no avoidance allowance beyond migrati
 the BSZ analysis's `r pct(sup$alpha)` adds
 `r usd(dp$change[dp$step_id == "avoidance"], 1, TRUE)`. The rate step,
 `r usd(dp$change[dp$step_id == "discount_rate"], 1, TRUE)`, is what the authors' random draw
-of the rate adds to a loss that lasts for ever: at `r r_jr` a perpetuity is worth
+of the rate (r &minus; g) adds to a loss that lasts for ever: at `r r_jr` a perpetuity is worth
 `r formatC(mv("A_inf"), format = "f", digits = 1)` a year's loss, against
 `r formatC(1 / mv("r_bsz"), format = "f", digits = 1)` at `r r3`.
 
@@ -731,8 +752,11 @@ cat("\n")
 
 The OPA framework sorts every input by where it comes from: **data** (settled by observable
 facts), **research** (a published estimate), **guesswork** (asserted without data or a study
-behind it) and **scenario** (a choice of which world is estimated). Each bridge step carries
-one of these kinds (the tables above). The values the comparison transcribes from the PDFs
+behind it, legal judgements included) and **scenario** (a choice of which world is
+estimated). This OPA adds **derived** (computed from the analysis's own inputs) and
+**guesswork on data** (a judgement applied to observed facts). Each bridge step carries one of
+these kinds (the tables above); a kind written "A vs B" is A for the BSZ value and B for the JR
+value. The values the comparison transcribes from the PDFs
 itself, because neither contract carries them, are in `comparison/data/document-inputs.csv`.
 
 <details class="report-fold"><summary>The transcribed inputs</summary>
@@ -746,8 +770,11 @@ twin_fold("reading the inputs", c("read_contracts", "pick"))
 ```{r}
 #| results: asis
 dd <- k$docs[order(k$docs$label, k$docs$side), ]
+# reader-facing names for the side keys (the analysis is called JR in prose; rjkdc is the key)
+side_label <- c(bsz = "BSZ", rjkdc = "JR", neutral = "Neutral")
 scroll(show(data.frame(
-  Origin = dd$label, Analysis = toupper(dd$side), Input = esc(dd$description),
+  Origin = dd$label, Analysis = ifelse(dd$side %in% names(side_label), side_label[dd$side], dd$side),
+  Input = esc(dd$description),
   Value = paste(format(dd$value, drop0trailing = TRUE), dd$unit), Source = esc(dd$source),
   check.names = FALSE)))
 cnt <- table(k$docs$label)

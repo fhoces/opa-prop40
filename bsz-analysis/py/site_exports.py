@@ -152,7 +152,7 @@ def build_site_inputs(inp):
          "Asserted (BSZ PDF p.25). Explorer dial."),
         ("s", "Share of the tax paid by selling assets", "1/3", "guesswork",
          "Asserted (BSZ PDF p.24). Explorer dial."),
-        ("L", "Who left before 1 Jan 2026 (Table 5 rows 3 and 4)", "no one (row 1)", "guesswork",
+        ("L", "Who left before 1 Jan 2026 (Table 5 rows 3 and 4)", "no named leaver (row 1); the 5% who move are part of α", "guesswork",
          "A legal judgment on residency; rows 3-4 assume Page, Thiel, Hankey, Kalanick (BSZ PDF p.26). Explorer dial."),
         ("g", "Capital-gain share of a sale", "80%", "research",
          "BSZ's own estimate that CA billionaire wealth is 80% unrealized gains (PDF p.24)."),

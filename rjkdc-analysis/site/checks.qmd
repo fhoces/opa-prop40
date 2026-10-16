@@ -23,7 +23,7 @@ Also in this project: [Comparison overview](../../index.html) &middot; [BSZ anal
 
 All four variations the JR papers print reproduce at the paper's rounding. A fifth, in the
 authors' repository, uses a lower tax rate, which cannot be set in this OPA. None of the five
-changes a single assumption, so the papers give no printed check of the explorer's one-input
+changes a single assumption, so the papers give no printed check of the explorer's named
 settings.
 
 ## What was checked
@@ -42,26 +42,31 @@ scenario of its Table 9 fixes four inputs at single values.
 ## Results
 
 All figures are net present values in billions of dollars. Table 9 prints three values per
-scenario, one for each discount rate (1.5%, 3% and 4.5%). "Match" means this OPA's value rounds to
+scenario, one for each value of r − g (1.5%, 3% and 4.5%). "Match" means this OPA's value rounds to
 the printed figure.
+
+::: {.table-scroll}
 
 | Variation | Source | Printed | This OPA | Result | How to set it |
 |---|---|---|---|---|---|
 | Main assumptions, for reference | NBER, p.35 | −38.9 | −38.98 (seeded run −38.89) | Match | Explorer, as it opens |
-| Revenue drawn from $35B to $67.51B, and the share lost tied to the revenue (f = 1 − revenue / 94.2) | SSRN, p.20 | −24.7 | −24.71 | Match | Explorer: Jump to "First version, March 2026" |
+| Revenue drawn from $35B to $67.51B, and the share lost tied to the revenue (f = 1 − revenue / 94.2) | SSRN, p.20 | −24.7 | −24.71 | Match | Explorer: from the main setting, set the lowest revenue to 35, the highest to 67.51 and the share lost to "1 - WT/94.2" |
 | Six departures: revenue $67.51B, income tax $3.3B a year, share lost 28.3% | SSRN, Table 9 | +5.2 / +36.3 / +46.7 | +5.18 / +36.34 / +46.73 | Match | R code |
 | Central: revenue $42.0B, income tax $4.55B a year, share lost 55.4% | SSRN, Table 9 | −126.1 / −42.0 / −14.0 | −126.09 / −42.04 / −14.03 | Match | R code |
 | Literature calibrated: revenue $35.0B, income tax $5.8B a year, share lost 62.8% | SSRN, Table 9 | −208.0 / −86.5 / −46.0 | −208.00 / −86.50 / −46.00 | Match | R code |
-| Tax rate 2% instead of 5%, central inputs, 3% discount rate | Authors' repository, a plot | −67.2 | none | Cannot be set | None |
+| Tax rate 2% instead of 5%, central inputs, r − g of 3% | Authors' repository, a plot | −67.2 | none | Cannot be set | None |
+
+:::
 
 ## What could not be checked
 
 **The tax rate.** This OPA has no setting for a wealth tax rate other than 5%. The repository's 2%
 case is reproduced only by building its inputs by hand (−67.22).
 
-**The explorer's one-input settings.** The explorer offers "Rate 1.5%", "Rate 4.5%" and
-"Litigation weight q = 0.5", each of which changes one input from the main estimate. The authors
-print no net present value for any of them.
+**The explorer's named settings.** The explorer offers "Rate 1.5%" and "Rate 4.5%", each of
+which changes one input from the main estimate, and "Litigation weight q = 0.5", which changes two
+(q, and the revenue floor raised to 35 so the risk is not counted twice). The authors print no net
+present value for any of them.
 
 ## Who ran these checks
 
@@ -79,9 +84,10 @@ Rscript feedback/scenario-tests-2026-10-15/jr-sensitivity.R
 The full record, with the source of every figure, is in
 [jr-sensitivity.md](https://github.com/fhoces/opa-prop40/blob/main/feedback/scenario-tests-2026-10-15/jr-sensitivity.md).
 A second record, [jr.md](https://github.com/fhoces/opa-prop40/blob/main/feedback/scenario-tests-2026-10-15/jr.md),
-checks ten other numbers the papers print. All reproduce except the chapter's "expanded
-departures" (Table 8, about 42% of the base), which no grouping of the authors' departure records
-gives.
+checks ten other numbers the papers print. Seven match and two are close (mismatches 4, 6 and 9,
+and a semi-elasticity of 5.73 against 5.72 from the chapter's own inputs). The chapter's "expanded
+departures" (Table 8, about 42% of the base) matches no grouping of the authors' departure
+records.
 
 ## Settings the papers do not print
 
@@ -98,19 +104,30 @@ authors' formula over the same random draws, not a new seeded run. A seeded run 
 script differs from it by sampling error only (at the main setting, −38.89 against −38.98). Each setting can be made
 in the [explorer](explorer/).
 
+::: {.table-scroll}
+
 | Setting changed from the main assumptions | Mean net present value | Share of runs below zero | Authors' result |
 |---|---|---|---|
 | None, the main assumptions, for reference | −38.98 | 85.3% | |
-| Discount rate fixed at 1.5% (instead of drawn from 1.5% to 4.5%) | −100.50 | 100.0% | Pending |
-| Discount rate fixed at 4.5% | −9.50 | 63.2% | Pending |
+| r − g, the discount rate net of growth, fixed at 1.5% (instead of drawn from 1.5% to 4.5%) | −100.50 | 100.0% | Pending |
+| r − g, the discount rate net of growth, fixed at 4.5% | −9.50 | 63.2% | Pending |
 | Revenue multiplied by a chance of surviving in court of 0.75 | −47.98 | 94.6% | Pending |
 | Revenue multiplied by a chance of surviving in court of 0.50 | −56.98 | 99.5% | Pending |
 | Yearly income tax fixed at $3.3B (instead of drawn from $3.3B to $5.8B) | −18.38 | 71.1% | Pending |
 | Yearly income tax fixed at $5.8B | −59.58 | 94.7% | Pending |
-| Lost income tax grows 0.5% a year (instead of not growing) | −58.62 | 90.9% | Pending |
-| Lost income tax grows 1% a year | −96.81 | 95.1% | Pending |
+| Lost income tax grows a further 0.5% a year on top of the authors' r − g (this OPA's illustration) | −58.62 | 90.9% | Pending |
+| Lost income tax grows a further 1% a year on top of the authors' r − g (this OPA's illustration) | −96.81 | 95.1% | Pending |
 | Lowest revenue the draw can pick of $35B (instead of $0) | −21.48 | 71.8% | Pending |
 | Share of the income tax base that leaves fixed at 0.283 (instead of drawn from 0.30 to 0.60) | −11.21 | 64.0% | Pending |
 
-The values are read from the explorer's own data file, `site/explorer/grid.js`, which the
-pipeline writes.
+:::
+
+The two litigation rows keep the draw's 0 floor, which already halves the revenue (0.5 × 72), so
+they count the risk of the Act being struck down twice. The explorer's "Litigation weight q = 0.5"
+raises the floor to 35 instead.
+
+The share of runs below zero is exact (85.3%). The authors' seeded run gives 85.17%, printed
+85.2%.
+
+The values were copied from the explorer's data file, `site/explorer/grid.js`, which the pipeline
+writes, on 15 October 2026.

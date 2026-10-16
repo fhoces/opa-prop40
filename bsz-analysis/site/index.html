@@ -249,8 +249,9 @@
   <span class="name">Main estimate<sup>1</sup>, base scenario (the authors' main case, row 1 of their Table 5)</span>
   <span class="value" id="hl-main">$106.8B</span>
   <span class="def">Defined as the wealth tax, plus the extra income tax from assets sold to pay it,
-    minus the income tax lost to billionaires who leave, counted over 5 years in today's dollars
-    (present value at 3% a year). <a href="repro.html#the-main-estimate">More in the report</a>.</span>
+    minus the income tax lost to billionaires who leave, counted over 5 years
+    (present value at 3% a year). The wealth tax is counted at face value.
+    <a href="repro.html#the-main-estimate">More in the report</a>.</span>
   <p class="fn"><sup>1</sup> BSZ's headline is the wealth tax alone: $104 billion in their Table 5,
     <span id="hl-wt">$103.8 billion</span> here. This OPA adds the income tax effects to compare
     with the <a href="../../rjkdc-analysis/site/">JR analysis</a>.
@@ -347,7 +348,8 @@ models) across many sessions, not an AI working alone. The table records who led
 each public object of the BSZ analysis, using the CRediT
 contributor roles. The author gave these answers in a questionnaire on 2026-10-01; they were not
 inferred from commit history. The author answered the roles once and applied the same answers
-to every object on all three pages, and answered the verification question object by object.
+to every object of the BSZ analysis, and answered the verification question object by object.
+The JR analysis and the comparison were answered object by object on 2026-10-15.
 The table groups the 14 roles into three: <em>ideas and direction</em> (conceptualization,
 methodology, supervision, project administration), <em>doing the work</em> (data curation,
 formal analysis, investigation, software, validation, visualization) and <em>writing</em>
@@ -457,17 +459,20 @@ The other rows are the authors' own sensitivity checks.</p>
   <thead><tr><th>Scenario (Table 5 row)</th><th>Wealth tax, one time</th><th>Extra income tax from sales</th><th>Income tax lost, per year</th><th>Total (main estimate)<sup>2</sup></th></tr></thead>
   <tbody>
     <tr class="pref"><td><strong>Base (1)</strong></td><td>$103.8B</td><td>$3.7B</td><td>$0.15B</td><td><strong>$106.8B</strong></td></tr>
-    <tr><td>Missing billionaires (2)</td><td>$127.9B</td><td>$4.5B</td><td>$0.20B</td><td>$131.5B</td></tr>
-    <tr><td>Leavers (3)</td><td>$88.8B</td><td>$3.1B</td><td>$0.52B</td><td>$89.6B</td></tr>
+    <tr><td>Missing billionaires (2)</td><td>$127.9B</td><td>$4.5B</td><td>$0.20B<sup>&dagger;</sup></td><td>$131.5B</td></tr>
+    <tr><td>Leavers (3)</td><td>$88.8B</td><td>$3.1B</td><td>$0.52B<sup>&dagger;</sup></td><td>$89.6B</td></tr>
     <tr><td>Missing + leavers (4)</td><td>$114.8B</td><td>$4.1B</td><td>$0.56B</td><td>$116.3B</td></tr>
   </tbody>
 </table>
 </div>
 <p class="fn" style="font-size:12.5px; color:var(--ink-3); margin-top:8px;"><sup>2</sup> Total = wealth tax +
-extra income tax &minus; income tax lost (present value, 5 years at 3%).</p>
+extra income tax &minus; income tax lost (present value, 5 years at 3%).<br>
+&dagger; The paper prints a digit lower; see <a href="#what-reproduces">What reproduces</a>.</p>
 
 <p style="margin-top:14px;">The yearly income tax loss has no end date in Table 5. The authors
-argue it should last about as long as the five payment years; the <a href="../../rjkdc-analysis/site/">JR analysis</a> (Jaros and Rauh; first version Rauh, Jaros, Kearney, Doran and Cosso) counts it forever; BSZ call treating the responses as permanent "the main flaw in the scoring analysis of Rauh et al." (PDF p.22, fn.29). The revenue itself moves with only
+argue the losses should be temporary and give five years, the payment period, as an example
+("If they last say only 5 years", PDF p.27). The main estimate's five years are this OPA's
+reading of that example. The <a href="../../rjkdc-analysis/site/">JR analysis</a> (Jaros and Rauh; first version Rauh, Jaros, Kearney, Doran and Cosso) counts it forever; BSZ call treating the responses as permanent "the main flaw in the scoring analysis of Rauh et al." (PDF p.22, fn.29). The revenue itself moves with only
 two guesses: the avoidance rate, and whether anyone left California before 1 January 2026.
 See <a href="repro.html#every-input-by-origin">every input, by origin</a>.</p>
 <p style="margin-top:14px;"><strong>What this OPA does not estimate.</strong> Both analyses take the
@@ -493,11 +498,18 @@ income tax from asset sales, the JR analysis the chance the Act survives in cour
         within the tolerances the README lists (1e-4 for Table 5; 1e-3 to 1e-2 for the formula
         sheets, where the workbook rounds to cents). Figures are checked for structure and anchor values</td></tr>
     <tr><td>The authors' workbook</td>
-        <td>Four rows of the billionaire list appear twice, giving 244 billionaires instead of
-        240. The pipeline drops the repeat. No published number changes</td></tr>
+        <td>Four 2025 rows of the workbook's year-by-year billionaire list (<code>data_sec_all</code>) appear
+        twice, giving 244 billionaires for 2025 instead of 240; the estimate itself uses the
+        1 July 2026 Forbes list of 250. The pipeline drops the repeat. No published number changes</td></tr>
     <tr><td>The revenue under the paper's other assumptions (Table 5, August and May versions)</td>
         <td>All 7 printed variations match. The revenue on other valuation dates, in the authors'
         workbook, cannot be set here. <a href="checks.html">The checks</a></td></tr>
+    <tr><td>Other numbers the paper prints</td>
+        <td>Of ten, six match and one is close. Three differ: a Table 5 loss cell (the paper's
+        rounding, above), the revenue-maximising rate (the paper's first-order formula), and the
+        25-year break-even on PDF p.22, which uses the paper's 2023-2025 ratio of income tax to
+        wealth, 0.2%, where Table 5's inputs give 0.13% and about 38 years.
+        <a href="checks.html">The checks</a></td></tr>
     <tr><td>Not reproduced</td>
         <td>The paper's Figure 8 and Appendix Figure A1 (wealth relative to AGI); the raw data behind the workbook
         (Forbes, tax statistics, SEC filings), which is taken as given</td></tr>

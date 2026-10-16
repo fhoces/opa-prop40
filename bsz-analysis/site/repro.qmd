@@ -255,11 +255,10 @@ tr("tab1_gt")
 ```
 :::
 
-The values in this table match the workbook cell for cell, but some of the pipeline's
-display labels are wrong: the denominator column is headed
-"CA GDP" though it now holds AGI, Panel B's ratio row says "2025" though the endpoint is
-2026, and the note still says ".0002%" and "2025 dollars". Appendix Table A1 has the same
-label drift. Listed under [What reproduces](#what-reproduces).
+The values in this table match the workbook cell for cell. The table has one header row, so
+the headers name Panel A's columns and Panel B lists its own columns in its heading.
+Appendix Table A1 is laid out the same way. Until 15 October 2026 the display showed Panel B
+under Panel A's headers and formats (see [What reproduces](#what-reproduces)).
 
 > Figure 1 plots the trajectory of California's billionaires' total wealth (in nominal
 > current dollars) at the end of years 2019 to 2025 and for July 1st, 2026. (BSZ PDF p.5)
@@ -524,8 +523,8 @@ move the revenue (see [Every input, by origin](#every-input-by-origin)).
 ### Step 3: wealth tax revenue
 
 $$T = \tau\,W^{\text{tax}} = 0.05 \times `r bn(t5$taxable_wealth[1])` = `r bn(t5$wealth_tax_revenue[1])`.$$
-That is BSZ's headline: `r usd(t5$wealth_tax_revenue[1])`, collected once (in five
-annual installments). Before avoidance, 5% of the base would be
+That is Table 5's row 1, printed as `r usd(wt_printed, 0)` and reproduced here as
+`r usd(t5$wealth_tax_revenue[1])`, collected once (in five annual installments). Before avoidance, 5% of the base would be
 `r usd(0.05 * inp$W0)`; avoidance costs `r usd(0.05 * inp$W0 - t5$wealth_tax_revenue[1])`.
 
 ### Step 4: extra state income tax from selling assets {#step-4-extra-state-income-tax-from-selling-assets}
@@ -584,16 +583,18 @@ every \$1,000 of wealth, and the authors assume the movers pay at that same rate
 | All California billionaires | `r bn(inp$W0, 0)` | `r bn(inp$C, 3)` |
 | The movers ($\alpha m$ = 5% of the wealth) | `r bn(0.05 * inp$W0, 2)` | `r bn(0.05 * inp$C, 3)` |
 
-This is a *yearly* loss, and Table 5 does not say for how many years. The paper argues that,
-for a genuinely one-time tax, departures should be temporary, "say only 5 years" (PDF p.27).
+This is a *yearly* loss. The paper argues that, for a genuinely one-time tax, the losses
+should be temporary, and gives five years, the payment period, as an example ("If they last
+say only 5 years", PDF p.27). Table 5 itself takes no stand on how long they last.
 The [JR analysis](../../rjkdc-analysis/site/) (Jaros and Rauh; first version Rauh, Jaros, Kearney, Doran and Cosso) counts the loss
-forever. That difference in horizon is the largest single
-dispute between the two analyses (`comparison/DISPUTES.md`, row 2).
+forever. That difference in horizon is one of the largest disputes between the two analyses
+(`comparison/DISPUTES.md`, row 2). The [comparison's report](../../comparison/site/repro.html#the-bridge)
+gives each dispute's size in dollars.
 
 ### The main estimate {#the-main-estimate}
 
-The main estimate adds the three pieces. It counts the yearly loss for BSZ's 5 years, discounted at
-3% a year, the middle of the 1.5% to 4.5% range the [JR analysis](../../rjkdc-analysis/site/) uses
+The main estimate adds the three pieces. It counts the yearly loss for 5 years (BSZ's example; this OPA's reading of it), discounted at
+3% a year, the middle of the 1.5% to 4.5% range from which the [JR analysis](../../rjkdc-analysis/site/) draws its rate
 (BSZ give no rate):
 $$\begin{aligned}
 M &= T + E + L \times \frac{1 - 1.03^{-5}}{0.03} \\
@@ -863,7 +864,7 @@ T(\tau) &= \tau\, Z(\tau).
 \end{aligned}$$
 Revenue peaks where the next point of tax loses as much base as it gains in rate, at
 $\tau = 1/e$. With $e$ = 10 (Brülhart et al. 2022, the calibration the [JR analysis](../../rjkdc-analysis/site/)
-also starts from, 10.32; it prefers 12 to 13, `comparison/DISPUTES.md`, row 4) that is
+uses as a check, 10.32; its first version preferred 12 to 13, `comparison/DISPUTES.md`, row 4) that is
 `r pct(laf$tax_rate[which.max(laf$actual_tax_revenue)], 0)`. The long-run curve also erodes
 wealth itself: $d$ = 15 years of paying the tax shrinks fortunes by $(1-\tau)^d$, and revenue
 then peaks at `r pct(laf$tax_rate[which.max(laf$long_run_tax_revenue)])`, close to the paper's
@@ -971,8 +972,8 @@ stopifnot(sum(ins$origin == "guesswork") == n_guess_dials)
 guesswork, and they are exactly the explorer's `r n_guess_dials` guesswork dials. Only
 `r length(guess_moving_rev)` of them move the revenue number when varied on their own
 (`r tolower(paste(guess_moving_rev, collapse = "; "))`); the others move only the smaller
-income tax columns, or matter only in the scenario rows. So BSZ's headline
-`r usd(t5$wealth_tax_revenue[1])` is Forbes' list, times 5%, times one minus a single guessed
+income tax columns, or matter only in the scenario rows. So Table 5's row 1
+(`r usd(t5$wealth_tax_revenue[1])` here, printed as `r usd(wt_printed, 0)`) is Forbes' list, times 5%, times one minus a single guessed
 avoidance rate; the only other guess that moves it is who has already left. The disputes with the [JR analysis](../../rjkdc-analysis/site/) are mostly about inputs this
 table labels guesswork or scenario: who has left (disputes row 3), how long losses last, and whether a
 one-time tax triggers permanent departures.
@@ -1017,10 +1018,12 @@ disclosed on the explorer:
   explorer moves those inputs.
 - Row 4 omits row 2's phase-in deduction (`Tab5!F9`), worth `r usd(inp$row4_phasein_gap)`.
 
-**Display labels that do not match the data (ours).** Tables 1 and A1 hold the right values
-under some wrong labels in this reproduction (GDP for AGI, 2025 for 2026, .0002% for .001%,
-2025 dollars for 2026 dollars), and a few summary cells render as rounded zeros. The numbers are tested; the labels are not.
-Fixing them changes the pinned table snapshots, so it is left for a separate change.
+**A display error in Tables 1 and A1 (ours).** This reproduction's display code put Panel B's
+values under Panel A's column headers and formats, so several cells showed numbers the paper
+does not print (a count of families as a percentage, growth rates rounded to whole numbers). It also
+kept the May workbook's labels (GDP for AGI, 2025 for 2026, .0002% for .001%, 2025 dollars for
+2026 dollars). Both were fixed in the display code on 15 October 2026. The values the tests
+check did not change.
 
 **What is not reproduced.**
 

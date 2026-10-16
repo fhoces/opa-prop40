@@ -3,5 +3,5 @@
 "bsz_row3","BSZ Table 5 row 3 (aggressive leavers)","bsz",0.515403091792489,"BSZ PDF p.39",2.36039524378435,18.8742723420255,17.1257276579745
 "lao_upper","LAO ballot analysis (upper bound, 'less than $1 billion')","neutral",1,"LAO p.2",4.57970718719454,36.6204096222703,-0.62040962227033
 "rauh_nber","JR, Jaros and Rauh NBER: E[f] x E[C]","rjkdc",2.0475,"NBER p.35",9.37695046578081,74.9802887015985,-38.9802887015985
-"walczak_low","Walczak / CalTax, low (incl. spillovers)","walczak (credited dial)",3.53,"Walczak p.1",16.1663663707967,129.270045966614,-93.2700459666142
-"walczak_high","Walczak / CalTax, high (incl. spillovers)","walczak (credited dial)",4.49,"Walczak p.1",20.5628852705035,164.425639203994,-128.425639203994
+"walczak_low","Walczak / CalTax, low (incl. spillovers)","walczak (third party)",3.53,"Walczak p.1",16.1663663707967,129.270045966614,-93.2700459666142
+"walczak_high","Walczak / CalTax, high (incl. spillovers)","walczak (third party)",4.49,"Walczak p.1",20.5628852705035,164.425639203994,-128.425639203994

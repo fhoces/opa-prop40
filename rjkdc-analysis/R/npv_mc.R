@@ -1,4 +1,4 @@
-# Sec 5.5 NPV Monte Carlo, both versions. Ported from
+# NPV Monte Carlo, both versions: Sec 5.5 (first version) / Sec 5.4 (chapter). Ported from
 # RAUH/NPV_data/NPV_dist.R (SSRN) and
 # RAUH/NBER_2026_litigation_weighted/NPV_data/NPV_dist_v8.R (NBER).
 #

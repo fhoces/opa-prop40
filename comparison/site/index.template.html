@@ -302,8 +302,9 @@
     <a href="bsz-analysis/site/">BSZ analysis</a> (Boll, Saez and Zucman, NBER, August 2026)
     finds that it raises money for the state. The
     <a href="rjkdc-analysis/site/">JR analysis</a> (Jaros and Rauh, NBER, September 2026) finds
-    that it leaves the state {{nber_npv_abs}} poorer, because billionaires who leave stop paying
-    California income tax for ever. This page puts both on one definition and shows which
+    that it leaves the state about {{nber_npv_round}} poorer (the chapter prints a mean of
+    {{nber_printed}}), because billionaires who leave stop paying California income tax for ever.
+    This page puts both on one definition and shows which
     assumptions make the difference. It follows the
     <a href="https://doi.org/10.1093/scipol/scaa067">Open Policy Analysis</a> (OPA) framework.
   </p>
@@ -319,10 +320,10 @@
     <div class="hl">
       <span class="name">JR main estimate<sup><a href="#fn1" id="fnref1-jr">1</a></sup></span>
       <a class="value" href="rjkdc-analysis/site/" title="Open the JR analysis overview" id="hl-rjkdc">{{hl_rjkdc}}</a>
-      <span class="def">Net present value: the wealth tax minus the income tax lost for ever, in today's dollars, averaged over the authors' model runs (Jaros and Rauh, September 2026)</span>
+      <span class="def">Net present value: the wealth tax minus the income tax lost for ever, in today's dollars. It is the exact average of the authors' model. Jaros and Rauh (September 2026) print {{nber_printed}} from one run.</span>
     </div>
   </div>
-  <p class="def" style="margin:6px 0 0">Today's dollars (present value): what money received or lost in future years is worth now.</p>
+  <p class="def" style="margin:6px 0 0">Today's dollars (present value): what income tax lost in future years is worth now. Both analyses count the wealth tax at face value, although it is paid over five years.</p>
 </div>
 
 <section class="eq-box" id="what-separates" aria-labelledby="eq-title">
@@ -486,7 +487,8 @@ original authors have not reviewed it.</p>
       step, here and in the <a href="comparison/site/explorer/">explorer</a>, are computed by the R code in the
       <a href="https://github.com/fhoces/opa-prop40/tree/main/comparison">repository</a>, with a
       Python twin. The <a href="comparison/site/repro.html">report</a> derives each step, and the
-      test suite checks that the steps add up to the gap.</figcaption>
+      test suite checks that each step is the change from moving one dial, in R and in the browser
+      (the steps add up to the gap by construction).</figcaption>
   </figure>
 </div>
 
@@ -524,7 +526,7 @@ the JR discount rate is the one rate worth the same as the authors' random draw 
 </details>
 
 <section class="footnotes" aria-label="Footnotes">
-  <p class="fn" id="fn1"><sup>1</sup> Each analysis's own main estimate. The BSZ number is this
+  <p class="fn" id="fn1"><sup>1</sup> The main estimate on each analysis's overview page. The BSZ number is this
     OPA's net total over 5 years at 3%: the {{bsz_row1}} wealth tax (Table 5 row 1), plus income
     tax from asset sales, minus income tax lost to leavers. BSZ's own headline is the wealth tax
     alone. The JR number is the authors' mean net present value in perpetuity. {{jr_fn_root}} The

@@ -2622,6 +2622,11 @@ text-decoration: none; max-width: 30em; }
 background: transparent; border: 1px solid var(--link); border-radius: 0; cursor: pointer; white-space: nowrap; }
 .q-copy.is-done { color: var(--ink); border-color: var(--ink); }
 
+a.q-survey { color: var(--paper) !important; text-decoration: none !important; }
+.q-mini { display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0 16px; }
+.q-survey.q-survey-mini { font-size: 15px; padding: 5px 14px; }
+.q-copy.q-copy-mini { font-size: 15px; padding: 5px 14px; margin-left: 0; }
+
 .ai-badge { display: inline-block; vertical-align: middle; margin-left: 0.5em; padding: 0.2em 0.75em;
 border-radius: 999px; font-family: var(--serif); font-size: 0.42em; font-weight: 600;
 letter-spacing: 0; line-height: 1.35; text-decoration: none !important; white-space: nowrap; }
@@ -3086,63 +3091,91 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 <span id="cb3-130"><a href="#cb3-130" aria-hidden="true" tabindex="-1"></a>  lr <span class="ot">&lt;-</span> <span class="fu">.long_run_compare</span>(row_1982, row_cur, <span class="at">n_years =</span> n_years)</span>
 <span id="cb3-131"><a href="#cb3-131" aria-hidden="true" tabindex="-1"></a>  panel_b <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">bind_rows</span>(row_1982, row_cur, lr<span class="sc">$</span>ratio, lr<span class="sc">$</span>annualized)</span>
 <span id="cb3-132"><a href="#cb3-132" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-133"><a href="#cb3-133" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ---- Render with gt -------------------------------------------------------</span></span>
+<span id="cb3-133"><a href="#cb3-133" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ---- Render with gt (display only) ---------------------------------------</span></span>
 <span id="cb3-134"><a href="#cb3-134" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Two stacked panels rendered as one gt; row groups give the panel headers.</span></span>
-<span id="cb3-135"><a href="#cb3-135" aria-hidden="true" tabindex="-1"></a>  panel_a_render <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
-<span id="cb3-136"><a href="#cb3-136" aria-hidden="true" tabindex="-1"></a>    <span class="at">section =</span> <span class="st">&quot;A. Recent nominal wealth growth of CA billionaires&quot;</span>,</span>
-<span id="cb3-137"><a href="#cb3-137" aria-hidden="true" tabindex="-1"></a>    <span class="at">year    =</span> panel_a_full<span class="sc">$</span>year,</span>
-<span id="cb3-138"><a href="#cb3-138" aria-hidden="true" tabindex="-1"></a>    <span class="at">col1    =</span> panel_a_full<span class="sc">$</span>n_billionaires,</span>
-<span id="cb3-139"><a href="#cb3-139" aria-hidden="true" tabindex="-1"></a>    <span class="at">col2    =</span> panel_a_full<span class="sc">$</span>wealth_b,</span>
-<span id="cb3-140"><a href="#cb3-140" aria-hidden="true" tabindex="-1"></a>    <span class="at">col3    =</span> panel_a_full<span class="sc">$</span>annual_growth,</span>
-<span id="cb3-141"><a href="#cb3-141" aria-hidden="true" tabindex="-1"></a>    <span class="at">col4    =</span> panel_a_full<span class="sc">$</span>fraction_public,</span>
-<span id="cb3-142"><a href="#cb3-142" aria-hidden="true" tabindex="-1"></a>    <span class="at">col5    =</span> panel_a_full<span class="sc">$</span>top4_wealth_b,</span>
-<span id="cb3-143"><a href="#cb3-143" aria-hidden="true" tabindex="-1"></a>    <span class="at">col6    =</span> panel_a_full<span class="sc">$</span>ca_gdp_b,</span>
-<span id="cb3-144"><a href="#cb3-144" aria-hidden="true" tabindex="-1"></a>    <span class="at">col7    =</span> panel_a_full<span class="sc">$</span>wealth_per_gdp</span>
-<span id="cb3-145"><a href="#cb3-145" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb3-146"><a href="#cb3-146" aria-hidden="true" tabindex="-1"></a>  pctile_label <span class="ot">&lt;-</span> <span class="cf">if</span> (<span class="fu">identical</span>(vintage, <span class="st">&quot;may&quot;</span>)) <span class="st">&quot;top .0002%&quot;</span> <span class="cf">else</span> <span class="st">&quot;top .001%&quot;</span></span>
-<span id="cb3-147"><a href="#cb3-147" aria-hidden="true" tabindex="-1"></a>  panel_b_render <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
-<span id="cb3-148"><a href="#cb3-148" aria-hidden="true" tabindex="-1"></a>    <span class="at">section =</span> <span class="fu">paste0</span>(<span class="st">&quot;B. Long-term real wealth growth: &quot;</span>, pctile_label,</span>
-<span id="cb3-149"><a href="#cb3-149" aria-hidden="true" tabindex="-1"></a>                      <span class="st">&quot; wealthiest CA families (&quot;</span>, cur_label, <span class="st">&quot; $)&quot;</span>),</span>
-<span id="cb3-150"><a href="#cb3-150" aria-hidden="true" tabindex="-1"></a>    <span class="at">year    =</span> panel_b<span class="sc">$</span>year,</span>
-<span id="cb3-151"><a href="#cb3-151" aria-hidden="true" tabindex="-1"></a>    <span class="at">col1    =</span> panel_b<span class="sc">$</span>families_top0002_k,</span>
-<span id="cb3-152"><a href="#cb3-152" aria-hidden="true" tabindex="-1"></a>    <span class="at">col2    =</span> panel_b<span class="sc">$</span>wealth_top0002_b,</span>
-<span id="cb3-153"><a href="#cb3-153" aria-hidden="true" tabindex="-1"></a>    <span class="at">col3    =</span> panel_b<span class="sc">$</span>wealth_per_family_b,</span>
-<span id="cb3-154"><a href="#cb3-154" aria-hidden="true" tabindex="-1"></a>    <span class="at">col4    =</span> panel_b<span class="sc">$</span>n_ca_families_m,</span>
-<span id="cb3-155"><a href="#cb3-155" aria-hidden="true" tabindex="-1"></a>    <span class="at">col5    =</span> panel_b<span class="sc">$</span>ca_gdp_2025dollars_b,</span>
-<span id="cb3-156"><a href="#cb3-156" aria-hidden="true" tabindex="-1"></a>    <span class="at">col6    =</span> panel_b<span class="sc">$</span>gdp_per_family_k,</span>
-<span id="cb3-157"><a href="#cb3-157" aria-hidden="true" tabindex="-1"></a>    <span class="at">col7    =</span> <span class="cn">NA_real_</span></span>
-<span id="cb3-158"><a href="#cb3-158" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb3-159"><a href="#cb3-159" aria-hidden="true" tabindex="-1"></a>  combined <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">bind_rows</span>(panel_a_render, panel_b_render)</span>
-<span id="cb3-160"><a href="#cb3-160" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-161"><a href="#cb3-161" aria-hidden="true" tabindex="-1"></a>  tab <span class="ot">&lt;-</span> gt<span class="sc">::</span><span class="fu">gt</span>(combined, <span class="at">groupname_col =</span> <span class="st">&quot;section&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb3-162"><a href="#cb3-162" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">tab_header</span>(<span class="at">title =</span> <span class="st">&quot;Table 1. Wealth Growth of California Billionaires&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb3-163"><a href="#cb3-163" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">cols_label</span>(</span>
-<span id="cb3-164"><a href="#cb3-164" aria-hidden="true" tabindex="-1"></a>      <span class="at">year =</span> <span class="st">&quot;Year&quot;</span>,</span>
-<span id="cb3-165"><a href="#cb3-165" aria-hidden="true" tabindex="-1"></a>      <span class="at">col1 =</span> <span class="st">&quot;#&quot;</span>,</span>
-<span id="cb3-166"><a href="#cb3-166" aria-hidden="true" tabindex="-1"></a>      <span class="at">col2 =</span> <span class="st">&quot;Wealth&quot;</span>,</span>
-<span id="cb3-167"><a href="#cb3-167" aria-hidden="true" tabindex="-1"></a>      <span class="at">col3 =</span> <span class="st">&quot;Growth&quot;</span>,</span>
-<span id="cb3-168"><a href="#cb3-168" aria-hidden="true" tabindex="-1"></a>      <span class="at">col4 =</span> <span class="st">&quot;% public&quot;</span>,</span>
-<span id="cb3-169"><a href="#cb3-169" aria-hidden="true" tabindex="-1"></a>      <span class="at">col5 =</span> <span class="st">&quot;Top 4 wealth&quot;</span>,</span>
-<span id="cb3-170"><a href="#cb3-170" aria-hidden="true" tabindex="-1"></a>      <span class="at">col6 =</span> <span class="st">&quot;CA GDP&quot;</span>,</span>
-<span id="cb3-171"><a href="#cb3-171" aria-hidden="true" tabindex="-1"></a>      <span class="at">col7 =</span> <span class="st">&quot;Wealth / GDP&quot;</span></span>
-<span id="cb3-172"><a href="#cb3-172" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
-<span id="cb3-173"><a href="#cb3-173" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">fmt_number</span>(<span class="at">columns =</span> <span class="fu">c</span>(col1, col2, col5, col6),</span>
-<span id="cb3-174"><a href="#cb3-174" aria-hidden="true" tabindex="-1"></a>                   <span class="at">decimals =</span> <span class="dv">0</span>, <span class="at">use_seps =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb3-175"><a href="#cb3-175" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">fmt_percent</span>(<span class="at">columns =</span> <span class="fu">c</span>(col3, col4, col7), <span class="at">decimals =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
-<span id="cb3-176"><a href="#cb3-176" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">sub_missing</span>(<span class="at">missing_text =</span> <span class="st">&quot;–&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb3-177"><a href="#cb3-177" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">tab_source_note</span>(<span class="at">source_note =</span> gt<span class="sc">::</span><span class="fu">md</span>(<span class="fu">paste</span>(</span>
-<span id="cb3-178"><a href="#cb3-178" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;**Notes:** Panel A illustrates the wealth growth of CA billionaires in 2022-2025.&quot;</span>,</span>
-<span id="cb3-179"><a href="#cb3-179" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Panel B compares the top .0002% wealthiest CA families&#39; wealth in 1982 vs 2025,&quot;</span>,</span>
-<span id="cb3-180"><a href="#cb3-180" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;all in 2025 dollars. Source: Forbes RTB snapshots + SEC EDGAR.&quot;</span></span>
-<span id="cb3-181"><a href="#cb3-181" aria-hidden="true" tabindex="-1"></a>    )))</span>
-<span id="cb3-182"><a href="#cb3-182" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-183"><a href="#cb3-183" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Attach a tidy version for downstream use / tests.</span></span>
-<span id="cb3-184"><a href="#cb3-184" aria-hidden="true" tabindex="-1"></a>  <span class="fu">attr</span>(tab, <span class="st">&quot;panel_a&quot;</span>) <span class="ot">&lt;-</span> panel_a_full</span>
-<span id="cb3-185"><a href="#cb3-185" aria-hidden="true" tabindex="-1"></a>  <span class="fu">attr</span>(tab, <span class="st">&quot;panel_b&quot;</span>) <span class="ot">&lt;-</span> panel_b</span>
-<span id="cb3-186"><a href="#cb3-186" aria-hidden="true" tabindex="-1"></a>  tab</span>
-<span id="cb3-187"><a href="#cb3-187" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb3-188"><a href="#cb3-188" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-189"><a href="#cb3-189" aria-hidden="true" tabindex="-1"></a><span class="co"># Read-only display. Edit R/tables.R:475-652.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-135"><a href="#cb3-135" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Nothing below changes a value: the panel_a / panel_b attributes are what the</span></span>
+<span id="cb3-136"><a href="#cb3-136" aria-hidden="true" tabindex="-1"></a>  <span class="co"># tests and snapshots read. A gt has one header row, so the column headers</span></span>
+<span id="cb3-137"><a href="#cb3-137" aria-hidden="true" tabindex="-1"></a>  <span class="co"># name Panel A&#39;s columns and Panel B&#39;s row-group label lists its own; each</span></span>
+<span id="cb3-138"><a href="#cb3-138" aria-hidden="true" tabindex="-1"></a>  <span class="co"># panel&#39;s rows get their own formats, as the paper prints Table 1 (PDF p.35).</span></span>
+<span id="cb3-139"><a href="#cb3-139" aria-hidden="true" tabindex="-1"></a>  denom_lbl   <span class="ot">&lt;-</span> <span class="cf">if</span> (<span class="fu">identical</span>(vintage, <span class="st">&quot;may&quot;</span>)) <span class="st">&quot;GDP&quot;</span> <span class="cf">else</span> <span class="st">&quot;AGI&quot;</span>   <span class="co"># the column holds AGI from August on</span></span>
+<span id="cb3-140"><a href="#cb3-140" aria-hidden="true" tabindex="-1"></a>  ratio_label <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;Ratio &quot;</span>, cur_label, <span class="st">&quot; to 1982&quot;</span>)</span>
+<span id="cb3-141"><a href="#cb3-141" aria-hidden="true" tabindex="-1"></a>  sec_a <span class="ot">&lt;-</span> <span class="st">&quot;A. Recent nominal wealth growth of CA billionaires&quot;</span></span>
+<span id="cb3-142"><a href="#cb3-142" aria-hidden="true" tabindex="-1"></a>  panel_a_render <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
+<span id="cb3-143"><a href="#cb3-143" aria-hidden="true" tabindex="-1"></a>    <span class="at">section =</span> sec_a,</span>
+<span id="cb3-144"><a href="#cb3-144" aria-hidden="true" tabindex="-1"></a>    <span class="at">year    =</span> panel_a_full<span class="sc">$</span>year,</span>
+<span id="cb3-145"><a href="#cb3-145" aria-hidden="true" tabindex="-1"></a>    <span class="at">col1    =</span> panel_a_full<span class="sc">$</span>n_billionaires,</span>
+<span id="cb3-146"><a href="#cb3-146" aria-hidden="true" tabindex="-1"></a>    <span class="at">col2    =</span> panel_a_full<span class="sc">$</span>wealth_b,</span>
+<span id="cb3-147"><a href="#cb3-147" aria-hidden="true" tabindex="-1"></a>    <span class="at">col3    =</span> panel_a_full<span class="sc">$</span>annual_growth,</span>
+<span id="cb3-148"><a href="#cb3-148" aria-hidden="true" tabindex="-1"></a>    <span class="at">col4    =</span> panel_a_full<span class="sc">$</span>fraction_public,</span>
+<span id="cb3-149"><a href="#cb3-149" aria-hidden="true" tabindex="-1"></a>    <span class="at">col5    =</span> panel_a_full<span class="sc">$</span>top4_wealth_b,</span>
+<span id="cb3-150"><a href="#cb3-150" aria-hidden="true" tabindex="-1"></a>    <span class="at">col6    =</span> panel_a_full<span class="sc">$</span>ca_gdp_b,</span>
+<span id="cb3-151"><a href="#cb3-151" aria-hidden="true" tabindex="-1"></a>    <span class="at">col7    =</span> panel_a_full<span class="sc">$</span>wealth_per_gdp</span>
+<span id="cb3-152"><a href="#cb3-152" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb3-153"><a href="#cb3-153" aria-hidden="true" tabindex="-1"></a>  pctile_label <span class="ot">&lt;-</span> <span class="cf">if</span> (<span class="fu">identical</span>(vintage, <span class="st">&quot;may&quot;</span>)) <span class="st">&quot;top .0002%&quot;</span> <span class="cf">else</span> <span class="st">&quot;top .001%&quot;</span></span>
+<span id="cb3-154"><a href="#cb3-154" aria-hidden="true" tabindex="-1"></a>  sec_b <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;B. Long-term real wealth growth: &quot;</span>, pctile_label,</span>
+<span id="cb3-155"><a href="#cb3-155" aria-hidden="true" tabindex="-1"></a>                  <span class="st">&quot; wealthiest CA families (&quot;</span>, cur_label, <span class="st">&quot; $). Columns: # families in the &quot;</span>,</span>
+<span id="cb3-156"><a href="#cb3-156" aria-hidden="true" tabindex="-1"></a>                  pctile_label, <span class="st">&quot;, their wealth ($B), wealth per family ($B), &quot;</span>,</span>
+<span id="cb3-157"><a href="#cb3-157" aria-hidden="true" tabindex="-1"></a>                  <span class="st">&quot;# CA families (millions), CA &quot;</span>, denom_lbl, <span class="st">&quot; ($B), CA &quot;</span>, denom_lbl,</span>
+<span id="cb3-158"><a href="#cb3-158" aria-hidden="true" tabindex="-1"></a>                  <span class="st">&quot; per family ($)&quot;</span>)</span>
+<span id="cb3-159"><a href="#cb3-159" aria-hidden="true" tabindex="-1"></a>  panel_b_render <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
+<span id="cb3-160"><a href="#cb3-160" aria-hidden="true" tabindex="-1"></a>    <span class="at">section =</span> sec_b,</span>
+<span id="cb3-161"><a href="#cb3-161" aria-hidden="true" tabindex="-1"></a>    <span class="at">year    =</span> <span class="fu">ifelse</span>(<span class="fu">grepl</span>(<span class="st">&quot;^Ratio &quot;</span>, panel_b<span class="sc">$</span>year), ratio_label, panel_b<span class="sc">$</span>year),</span>
+<span id="cb3-162"><a href="#cb3-162" aria-hidden="true" tabindex="-1"></a>    <span class="at">col1    =</span> panel_b<span class="sc">$</span>families_top0002_k,</span>
+<span id="cb3-163"><a href="#cb3-163" aria-hidden="true" tabindex="-1"></a>    <span class="at">col2    =</span> panel_b<span class="sc">$</span>wealth_top0002_b,</span>
+<span id="cb3-164"><a href="#cb3-164" aria-hidden="true" tabindex="-1"></a>    <span class="at">col3    =</span> panel_b<span class="sc">$</span>wealth_per_family_b,</span>
+<span id="cb3-165"><a href="#cb3-165" aria-hidden="true" tabindex="-1"></a>    <span class="at">col4    =</span> panel_b<span class="sc">$</span>n_ca_families_m,</span>
+<span id="cb3-166"><a href="#cb3-166" aria-hidden="true" tabindex="-1"></a>    <span class="at">col5    =</span> panel_b<span class="sc">$</span>ca_gdp_2025dollars_b,</span>
+<span id="cb3-167"><a href="#cb3-167" aria-hidden="true" tabindex="-1"></a>    <span class="at">col6    =</span> panel_b<span class="sc">$</span>gdp_per_family_k,</span>
+<span id="cb3-168"><a href="#cb3-168" aria-hidden="true" tabindex="-1"></a>    <span class="at">col7    =</span> <span class="cn">NA_real_</span></span>
+<span id="cb3-169"><a href="#cb3-169" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb3-170"><a href="#cb3-170" aria-hidden="true" tabindex="-1"></a>  combined <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">bind_rows</span>(panel_a_render, panel_b_render)</span>
+<span id="cb3-171"><a href="#cb3-171" aria-hidden="true" tabindex="-1"></a>  in_a   <span class="ot">&lt;-</span> combined<span class="sc">$</span>section <span class="sc">==</span> sec_a</span>
+<span id="cb3-172"><a href="#cb3-172" aria-hidden="true" tabindex="-1"></a>  r_a    <span class="ot">&lt;-</span> <span class="fu">which</span>(in_a <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">grepl</span>(<span class="st">&quot;^Growth&quot;</span>, combined<span class="sc">$</span>year))   <span class="co"># Panel A&#39;s year rows</span></span>
+<span id="cb3-173"><a href="#cb3-173" aria-hidden="true" tabindex="-1"></a>  r_agr  <span class="ot">&lt;-</span> <span class="fu">which</span>(in_a <span class="sc">&amp;</span>  <span class="fu">grepl</span>(<span class="st">&quot;^Growth&quot;</span>, combined<span class="sc">$</span>year))   <span class="co"># its 2023-2025 growth row</span></span>
+<span id="cb3-174"><a href="#cb3-174" aria-hidden="true" tabindex="-1"></a>  r_blev <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="sc">!</span>in_a <span class="sc">&amp;</span> combined<span class="sc">$</span>year <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;1982&quot;</span>, cur_label))</span>
+<span id="cb3-175"><a href="#cb3-175" aria-hidden="true" tabindex="-1"></a>  r_brat <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="sc">!</span>in_a <span class="sc">&amp;</span> combined<span class="sc">$</span>year <span class="sc">==</span> ratio_label)</span>
+<span id="cb3-176"><a href="#cb3-176" aria-hidden="true" tabindex="-1"></a>  r_bann <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="sc">!</span>in_a <span class="sc">&amp;</span> combined<span class="sc">$</span>year <span class="sc">==</span> <span class="st">&quot;Annualized growth&quot;</span>)</span>
+<span id="cb3-177"><a href="#cb3-177" aria-hidden="true" tabindex="-1"></a>  a_years <span class="ot">&lt;-</span> <span class="cf">if</span> (<span class="fu">identical</span>(vintage, <span class="st">&quot;may&quot;</span>)) <span class="st">&quot;2022 to 2025&quot;</span> <span class="cf">else</span> <span class="st">&quot;2022 to 1 July 2026&quot;</span></span>
+<span id="cb3-178"><a href="#cb3-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-179"><a href="#cb3-179" aria-hidden="true" tabindex="-1"></a>  tab <span class="ot">&lt;-</span> gt<span class="sc">::</span><span class="fu">gt</span>(combined, <span class="at">groupname_col =</span> <span class="st">&quot;section&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-180"><a href="#cb3-180" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">tab_header</span>(<span class="at">title =</span> <span class="st">&quot;Table 1. Wealth Growth of California Billionaires&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-181"><a href="#cb3-181" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">cols_label</span>(</span>
+<span id="cb3-182"><a href="#cb3-182" aria-hidden="true" tabindex="-1"></a>      <span class="at">year =</span> <span class="st">&quot;Year&quot;</span>,</span>
+<span id="cb3-183"><a href="#cb3-183" aria-hidden="true" tabindex="-1"></a>      <span class="at">col1 =</span> <span class="st">&quot;#&quot;</span>,</span>
+<span id="cb3-184"><a href="#cb3-184" aria-hidden="true" tabindex="-1"></a>      <span class="at">col2 =</span> <span class="st">&quot;Wealth&quot;</span>,</span>
+<span id="cb3-185"><a href="#cb3-185" aria-hidden="true" tabindex="-1"></a>      <span class="at">col3 =</span> <span class="st">&quot;Growth&quot;</span>,</span>
+<span id="cb3-186"><a href="#cb3-186" aria-hidden="true" tabindex="-1"></a>      <span class="at">col4 =</span> <span class="st">&quot;% public&quot;</span>,</span>
+<span id="cb3-187"><a href="#cb3-187" aria-hidden="true" tabindex="-1"></a>      <span class="at">col5 =</span> <span class="st">&quot;Top 4 wealth&quot;</span>,</span>
+<span id="cb3-188"><a href="#cb3-188" aria-hidden="true" tabindex="-1"></a>      <span class="at">col6 =</span> <span class="fu">paste</span>(<span class="st">&quot;CA&quot;</span>, denom_lbl),</span>
+<span id="cb3-189"><a href="#cb3-189" aria-hidden="true" tabindex="-1"></a>      <span class="at">col7 =</span> <span class="fu">paste</span>(<span class="st">&quot;Wealth / CA&quot;</span>, denom_lbl)</span>
+<span id="cb3-190"><a href="#cb3-190" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb3-191"><a href="#cb3-191" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Panel A: counts and $B as whole numbers, rates as percentages; the growth</span></span>
+<span id="cb3-192"><a href="#cb3-192" aria-hidden="true" tabindex="-1"></a>    <span class="co"># row is a percentage in each column it fills.</span></span>
+<span id="cb3-193"><a href="#cb3-193" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">fmt_number</span>(<span class="at">columns =</span> <span class="fu">c</span>(col1, col2, col5, col6), <span class="at">rows =</span> r_a, <span class="at">decimals =</span> <span class="dv">0</span>, <span class="at">use_seps =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-194"><a href="#cb3-194" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">fmt_percent</span>(<span class="at">columns =</span> <span class="fu">c</span>(col3, col4, col7), <span class="at">rows =</span> r_a, <span class="at">decimals =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-195"><a href="#cb3-195" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">fmt_percent</span>(<span class="at">columns =</span> <span class="fu">c</span>(col2, col5, col6), <span class="at">rows =</span> r_agr, <span class="at">decimals =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-196"><a href="#cb3-196" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Panel B: families, wealth ($B), wealth per family ($B), families (millions),</span></span>
+<span id="cb3-197"><a href="#cb3-197" aria-hidden="true" tabindex="-1"></a>    <span class="co"># income ($B), income per family ($); then the ratio and annualized rows.</span></span>
+<span id="cb3-198"><a href="#cb3-198" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">fmt_number</span>(<span class="at">columns =</span> <span class="fu">c</span>(col1, col5, col6), <span class="at">rows =</span> r_blev, <span class="at">decimals =</span> <span class="dv">0</span>, <span class="at">use_seps =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-199"><a href="#cb3-199" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">fmt_number</span>(<span class="at">columns =</span> <span class="fu">c</span>(col2, col4), <span class="at">rows =</span> r_blev, <span class="at">decimals =</span> <span class="dv">1</span>, <span class="at">use_seps =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-200"><a href="#cb3-200" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">fmt_number</span>(<span class="at">columns =</span> col3, <span class="at">rows =</span> r_blev, <span class="at">decimals =</span> <span class="dv">2</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-201"><a href="#cb3-201" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">fmt_number</span>(<span class="at">columns =</span> <span class="fu">c</span>(col1, col2, col3, col4, col5), <span class="at">rows =</span> r_brat, <span class="at">decimals =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-202"><a href="#cb3-202" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">fmt_number</span>(<span class="at">columns =</span> col6, <span class="at">rows =</span> r_brat, <span class="at">decimals =</span> <span class="dv">2</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-203"><a href="#cb3-203" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">fmt_percent</span>(<span class="at">columns =</span> <span class="fu">c</span>(col1, col2, col3, col4, col5, col6), <span class="at">rows =</span> r_bann, <span class="at">decimals =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-204"><a href="#cb3-204" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">sub_missing</span>(<span class="at">missing_text =</span> <span class="st">&quot;–&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-205"><a href="#cb3-205" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">tab_source_note</span>(<span class="at">source_note =</span> gt<span class="sc">::</span><span class="fu">md</span>(<span class="fu">paste0</span>(</span>
+<span id="cb3-206"><a href="#cb3-206" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;**Notes:** Panel A illustrates the wealth growth of CA billionaires from &quot;</span>, a_years, <span class="st">&quot;. &quot;</span>,</span>
+<span id="cb3-207"><a href="#cb3-207" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Panel B compares the &quot;</span>, pctile_label, <span class="st">&quot; wealthiest CA families&#39; wealth in 1982 vs &quot;</span>,</span>
+<span id="cb3-208"><a href="#cb3-208" aria-hidden="true" tabindex="-1"></a>      cur_label, <span class="st">&quot;, all in &quot;</span>, cur_label, <span class="st">&quot; dollars. Source: Forbes RTB snapshots + SEC EDGAR.&quot;</span></span>
+<span id="cb3-209"><a href="#cb3-209" aria-hidden="true" tabindex="-1"></a>    )))</span>
+<span id="cb3-210"><a href="#cb3-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-211"><a href="#cb3-211" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Attach a tidy version for downstream use / tests.</span></span>
+<span id="cb3-212"><a href="#cb3-212" aria-hidden="true" tabindex="-1"></a>  <span class="fu">attr</span>(tab, <span class="st">&quot;panel_a&quot;</span>) <span class="ot">&lt;-</span> panel_a_full</span>
+<span id="cb3-213"><a href="#cb3-213" aria-hidden="true" tabindex="-1"></a>  <span class="fu">attr</span>(tab, <span class="st">&quot;panel_b&quot;</span>) <span class="ot">&lt;-</span> panel_b</span>
+<span id="cb3-214"><a href="#cb3-214" aria-hidden="true" tabindex="-1"></a>  tab</span>
+<span id="cb3-215"><a href="#cb3-215" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-216"><a href="#cb3-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-217"><a href="#cb3-217" aria-hidden="true" tabindex="-1"></a><span class="co"># Read-only display. Edit R/tables.R:505-710.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="lang-py">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The Python twin (bsz-analysis/py/); py/run_export.py runs it.</span></span>
@@ -3238,20 +3271,20 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 </details>
 <div class="cell">
 <div class="cell-output-display">
-<div id="xmybvohryz" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#xmybvohryz table {
+<div id="evbvbkhdxa" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#evbvbkhdxa table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#xmybvohryz thead, #xmybvohryz tbody, #xmybvohryz tfoot, #xmybvohryz tr, #xmybvohryz td, #xmybvohryz th {
+#evbvbkhdxa thead, #evbvbkhdxa tbody, #evbvbkhdxa tfoot, #evbvbkhdxa tr, #evbvbkhdxa td, #evbvbkhdxa th {
 border-style: none;
 }
-#xmybvohryz p {
+#evbvbkhdxa p {
 margin: 0;
 padding: 0;
 }
-#xmybvohryz .gt_table {
+#evbvbkhdxa .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -3276,11 +3309,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#xmybvohryz .gt_caption {
+#evbvbkhdxa .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#xmybvohryz .gt_title {
+#evbvbkhdxa .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -3291,7 +3324,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#xmybvohryz .gt_subtitle {
+#evbvbkhdxa .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -3302,7 +3335,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#xmybvohryz .gt_heading {
+#evbvbkhdxa .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -3313,12 +3346,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#xmybvohryz .gt_bottom_border {
+#evbvbkhdxa .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#xmybvohryz .gt_col_headings {
+#evbvbkhdxa .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -3332,7 +3365,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#xmybvohryz .gt_col_heading {
+#evbvbkhdxa .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -3351,7 +3384,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#xmybvohryz .gt_column_spanner_outer {
+#evbvbkhdxa .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -3362,13 +3395,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#xmybvohryz .gt_column_spanner_outer:first-child {
+#evbvbkhdxa .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#xmybvohryz .gt_column_spanner_outer:last-child {
+#evbvbkhdxa .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#xmybvohryz .gt_column_spanner {
+#evbvbkhdxa .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -3379,10 +3412,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#xmybvohryz .gt_spanner_row {
+#evbvbkhdxa .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#xmybvohryz .gt_group_heading {
+#evbvbkhdxa .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3407,7 +3440,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#xmybvohryz .gt_empty_group_heading {
+#evbvbkhdxa .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -3421,13 +3454,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#xmybvohryz .gt_from_md > :first-child {
+#evbvbkhdxa .gt_from_md > :first-child {
 margin-top: 0;
 }
-#xmybvohryz .gt_from_md > :last-child {
+#evbvbkhdxa .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#xmybvohryz .gt_row {
+#evbvbkhdxa .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3445,7 +3478,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#xmybvohryz .gt_stub {
+#evbvbkhdxa .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -3457,7 +3490,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#xmybvohryz .gt_stub_row_group {
+#evbvbkhdxa .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -3470,13 +3503,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#xmybvohryz .gt_row_group_first td {
+#evbvbkhdxa .gt_row_group_first td {
 border-top-width: 2px;
 }
-#xmybvohryz .gt_row_group_first th {
+#evbvbkhdxa .gt_row_group_first th {
 border-top-width: 2px;
 }
-#xmybvohryz .gt_summary_row {
+#evbvbkhdxa .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -3485,14 +3518,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#xmybvohryz .gt_first_summary_row {
+#evbvbkhdxa .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#xmybvohryz .gt_first_summary_row.thick {
+#evbvbkhdxa .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#xmybvohryz .gt_last_summary_row {
+#evbvbkhdxa .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3501,7 +3534,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#xmybvohryz .gt_grand_summary_row {
+#evbvbkhdxa .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -3510,7 +3543,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#xmybvohryz .gt_first_grand_summary_row {
+#evbvbkhdxa .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3519,7 +3552,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#xmybvohryz .gt_last_grand_summary_row_top {
+#evbvbkhdxa .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3528,10 +3561,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#xmybvohryz .gt_striped {
+#evbvbkhdxa .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#xmybvohryz .gt_table_body {
+#evbvbkhdxa .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -3539,7 +3572,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#xmybvohryz .gt_footnotes {
+#evbvbkhdxa .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -3552,7 +3585,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#xmybvohryz .gt_footnote {
+#evbvbkhdxa .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -3560,7 +3593,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#xmybvohryz .gt_sourcenotes {
+#evbvbkhdxa .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -3573,57 +3606,57 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#xmybvohryz .gt_sourcenote {
+#evbvbkhdxa .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#xmybvohryz .gt_left {
+#evbvbkhdxa .gt_left {
 text-align: left;
 }
-#xmybvohryz .gt_center {
+#evbvbkhdxa .gt_center {
 text-align: center;
 }
-#xmybvohryz .gt_right {
+#evbvbkhdxa .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#xmybvohryz .gt_font_normal {
+#evbvbkhdxa .gt_font_normal {
 font-weight: normal;
 }
-#xmybvohryz .gt_font_bold {
+#evbvbkhdxa .gt_font_bold {
 font-weight: bold;
 }
-#xmybvohryz .gt_font_italic {
+#evbvbkhdxa .gt_font_italic {
 font-style: italic;
 }
-#xmybvohryz .gt_super {
+#evbvbkhdxa .gt_super {
 font-size: 65%;
 }
-#xmybvohryz .gt_footnote_marks {
+#evbvbkhdxa .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#xmybvohryz .gt_asterisk {
+#evbvbkhdxa .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#xmybvohryz .gt_indent_1 {
+#evbvbkhdxa .gt_indent_1 {
 text-indent: 5px;
 }
-#xmybvohryz .gt_indent_2 {
+#evbvbkhdxa .gt_indent_2 {
 text-indent: 10px;
 }
-#xmybvohryz .gt_indent_3 {
+#evbvbkhdxa .gt_indent_3 {
 text-indent: 15px;
 }
-#xmybvohryz .gt_indent_4 {
+#evbvbkhdxa .gt_indent_4 {
 text-indent: 20px;
 }
-#xmybvohryz .gt_indent_5 {
+#evbvbkhdxa .gt_indent_5 {
 text-indent: 25px;
 }
 </style>
@@ -3640,8 +3673,8 @@ text-indent: 25px;
 <th id="Growth" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Growth</th>
 <th id="% public" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">% public</th>
 <th id="Top 4 wealth" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Top 4 wealth</th>
-<th id="CA GDP" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">CA GDP</th>
-<th id="Wealth / GDP" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Wealth / GDP</th>
+<th id="CA AGI" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">CA AGI</th>
+<th id="Wealth / CA AGI" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Wealth / CA AGI</th>
 </tr>
 </thead>
 <tbody class="gt_table_body">
@@ -3701,59 +3734,59 @@ text-indent: 25px;
 <tr class="odd">
 <td class="gt_row gt_left" headers="A. Recent nominal wealth growth of CA billionaires  year">Growth during 2023-2025</td>
 <td class="gt_row gt_right" headers="A. Recent nominal wealth growth of CA billionaires  col1">–</td>
-<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of CA billionaires  col2">1</td>
+<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of CA billionaires  col2">143.9%</td>
 <td class="gt_row gt_right" headers="A. Recent nominal wealth growth of CA billionaires  col3">–</td>
 <td class="gt_row gt_right" headers="A. Recent nominal wealth growth of CA billionaires  col4">–</td>
-<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of CA billionaires  col5">3</td>
-<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of CA billionaires  col6">0</td>
+<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of CA billionaires  col5">321.9%</td>
+<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of CA billionaires  col6">17.5%</td>
 <td class="gt_row gt_right" headers="A. Recent nominal wealth growth of CA billionaires  col7">–</td>
 </tr>
 <tr class="gt_group_heading_row even">
-<th colspan="8" id="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $)" class="gt_group_heading" data-quarto-table-cell-role="th" scope="colgroup">B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $)</th>
+<th colspan="8" id="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # CA families (millions), CA AGI ($B), CA AGI per family ($)" class="gt_group_heading" data-quarto-table-cell-role="th" scope="colgroup">B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # CA families (millions), CA AGI ($B), CA AGI per family ($)</th>
 </tr>
 <tr class="gt_row_group_first odd">
-<td class="gt_row gt_left" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $)  year">1982</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $)  col1">118</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $)  col2">49</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $)  col3">41.3%</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $)  col4">1,184.1%</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $)  col5">614</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $)  col6">51,900</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $)  col7">–</td>
+<td class="gt_row gt_left" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # CA families (millions), CA AGI ($B), CA AGI per family ($)  year">1982</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # CA families (millions), CA AGI ($B), CA AGI per family ($)  col1">118</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # CA families (millions), CA AGI ($B), CA AGI per family ($)  col2">48.9</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # CA families (millions), CA AGI ($B), CA AGI per family ($)  col3">0.41</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # CA families (millions), CA AGI ($B), CA AGI per family ($)  col4">11.8</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # CA families (millions), CA AGI ($B), CA AGI per family ($)  col5">614</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # CA families (millions), CA AGI ($B), CA AGI per family ($)  col6">51,900</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # CA families (millions), CA AGI ($B), CA AGI per family ($)  col7">–</td>
 </tr>
 <tr class="even">
-<td class="gt_row gt_left" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $)  year">2026</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $)  col1">225</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $)  col2">2,291</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $)  col3">1,019.1%</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $)  col4">2,254.1%</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $)  col5">2,299</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $)  col6">102,000</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $)  col7">–</td>
+<td class="gt_row gt_left" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # CA families (millions), CA AGI ($B), CA AGI per family ($)  year">2026</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # CA families (millions), CA AGI ($B), CA AGI per family ($)  col1">225</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # CA families (millions), CA AGI ($B), CA AGI per family ($)  col2">2,290.6</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # CA families (millions), CA AGI ($B), CA AGI per family ($)  col3">10.19</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # CA families (millions), CA AGI ($B), CA AGI per family ($)  col4">22.5</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # CA families (millions), CA AGI ($B), CA AGI per family ($)  col5">2,299</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # CA families (millions), CA AGI ($B), CA AGI per family ($)  col6">102,000</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # CA families (millions), CA AGI ($B), CA AGI per family ($)  col7">–</td>
 </tr>
 <tr class="odd">
-<td class="gt_row gt_left" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $)  year">Ratio 2025 to 1982</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $)  col1">2</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $)  col2">47</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $)  col3">2,469.0%</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $)  col4">190.4%</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $)  col5">4</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $)  col6">2</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $)  col7">–</td>
+<td class="gt_row gt_left" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # CA families (millions), CA AGI ($B), CA AGI per family ($)  year">Ratio 2026 to 1982</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # CA families (millions), CA AGI ($B), CA AGI per family ($)  col1">1.9</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # CA families (millions), CA AGI ($B), CA AGI per family ($)  col2">46.9</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # CA families (millions), CA AGI ($B), CA AGI per family ($)  col3">24.7</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # CA families (millions), CA AGI ($B), CA AGI per family ($)  col4">1.9</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # CA families (millions), CA AGI ($B), CA AGI per family ($)  col5">3.7</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # CA families (millions), CA AGI ($B), CA AGI per family ($)  col6">1.97</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # CA families (millions), CA AGI ($B), CA AGI per family ($)  col7">–</td>
 </tr>
 <tr class="even">
-<td class="gt_row gt_left" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $)  year">Annualized growth</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $)  col1">0</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $)  col2">0</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $)  col3">7.6%</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $)  col4">1.5%</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $)  col5">0</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $)  col6">0</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $)  col7">–</td>
+<td class="gt_row gt_left" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # CA families (millions), CA AGI ($B), CA AGI per family ($)  year">Annualized growth</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # CA families (millions), CA AGI ($B), CA AGI per family ($)  col1">1.5%</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # CA families (millions), CA AGI ($B), CA AGI per family ($)  col2">9.1%</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # CA families (millions), CA AGI ($B), CA AGI per family ($)  col3">7.6%</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # CA families (millions), CA AGI ($B), CA AGI per family ($)  col4">1.5%</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # CA families (millions), CA AGI ($B), CA AGI per family ($)  col5">3.0%</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # CA families (millions), CA AGI ($B), CA AGI per family ($)  col6">1.5%</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest CA families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # CA families (millions), CA AGI ($B), CA AGI per family ($)  col7">–</td>
 </tr>
 </tbody><tfoot class="gt_sourcenotes">
 <tr class="odd">
-<td colspan="8" class="gt_sourcenote"><strong>Notes:</strong> Panel A illustrates the wealth growth of CA billionaires in 2022-2025. Panel B compares the top .0002% wealthiest CA families’ wealth in 1982 vs 2025, all in 2025 dollars. Source: Forbes RTB snapshots + SEC EDGAR.</td>
+<td colspan="8" class="gt_sourcenote"><strong>Notes:</strong> Panel A illustrates the wealth growth of CA billionaires from 2022 to 1 July 2026. Panel B compares the top .001% wealthiest CA families’ wealth in 1982 vs 2026, all in 2026 dollars. Source: Forbes RTB snapshots + SEC EDGAR.</td>
 </tr>
 </tfoot>
 
@@ -3763,7 +3796,7 @@ text-indent: 25px;
 </div>
 </div>
 </div>
-<p>The values in this table match the workbook cell for cell, but some of the pipeline’s display labels are wrong: the denominator column is headed “CA GDP” though it now holds AGI, Panel B’s ratio row says “2025” though the endpoint is 2026, and the note still says “.0002%” and “2025 dollars”. Appendix Table A1 has the same label drift. Listed under <a href="#what-reproduces">What reproduces</a>.</p>
+<p>The values in this table match the workbook cell for cell. The table has one header row, so the headers name Panel A’s columns and Panel B lists its own columns in its heading. Appendix Table A1 is laid out the same way. Until 15 October 2026 the display showed Panel B under Panel A’s headers and formats (see <a href="#what-reproduces">What reproduces</a>).</p>
 <blockquote class="blockquote">
 <p>Figure 1 plots the trajectory of California’s billionaires’ total wealth (in nominal current dollars) at the end of years 2019 to 2025 and for July 1st, 2026. (BSZ PDF p.5)</p>
 </blockquote>
@@ -4272,20 +4305,20 @@ text-indent: 25px;
 </details>
 <div class="cell">
 <div class="cell-output-display">
-<div id="nrddvruxho" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#nrddvruxho table {
+<div id="htsusjnbdw" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#htsusjnbdw table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#nrddvruxho thead, #nrddvruxho tbody, #nrddvruxho tfoot, #nrddvruxho tr, #nrddvruxho td, #nrddvruxho th {
+#htsusjnbdw thead, #htsusjnbdw tbody, #htsusjnbdw tfoot, #htsusjnbdw tr, #htsusjnbdw td, #htsusjnbdw th {
 border-style: none;
 }
-#nrddvruxho p {
+#htsusjnbdw p {
 margin: 0;
 padding: 0;
 }
-#nrddvruxho .gt_table {
+#htsusjnbdw .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -4310,11 +4343,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#nrddvruxho .gt_caption {
+#htsusjnbdw .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#nrddvruxho .gt_title {
+#htsusjnbdw .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -4325,7 +4358,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#nrddvruxho .gt_subtitle {
+#htsusjnbdw .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -4336,7 +4369,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#nrddvruxho .gt_heading {
+#htsusjnbdw .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -4347,12 +4380,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#nrddvruxho .gt_bottom_border {
+#htsusjnbdw .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#nrddvruxho .gt_col_headings {
+#htsusjnbdw .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -4366,7 +4399,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#nrddvruxho .gt_col_heading {
+#htsusjnbdw .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -4385,7 +4418,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#nrddvruxho .gt_column_spanner_outer {
+#htsusjnbdw .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -4396,13 +4429,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#nrddvruxho .gt_column_spanner_outer:first-child {
+#htsusjnbdw .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#nrddvruxho .gt_column_spanner_outer:last-child {
+#htsusjnbdw .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#nrddvruxho .gt_column_spanner {
+#htsusjnbdw .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -4413,10 +4446,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#nrddvruxho .gt_spanner_row {
+#htsusjnbdw .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#nrddvruxho .gt_group_heading {
+#htsusjnbdw .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -4441,7 +4474,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#nrddvruxho .gt_empty_group_heading {
+#htsusjnbdw .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -4455,13 +4488,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#nrddvruxho .gt_from_md > :first-child {
+#htsusjnbdw .gt_from_md > :first-child {
 margin-top: 0;
 }
-#nrddvruxho .gt_from_md > :last-child {
+#htsusjnbdw .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#nrddvruxho .gt_row {
+#htsusjnbdw .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -4479,7 +4512,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#nrddvruxho .gt_stub {
+#htsusjnbdw .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -4491,7 +4524,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#nrddvruxho .gt_stub_row_group {
+#htsusjnbdw .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -4504,13 +4537,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#nrddvruxho .gt_row_group_first td {
+#htsusjnbdw .gt_row_group_first td {
 border-top-width: 2px;
 }
-#nrddvruxho .gt_row_group_first th {
+#htsusjnbdw .gt_row_group_first th {
 border-top-width: 2px;
 }
-#nrddvruxho .gt_summary_row {
+#htsusjnbdw .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -4519,14 +4552,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#nrddvruxho .gt_first_summary_row {
+#htsusjnbdw .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#nrddvruxho .gt_first_summary_row.thick {
+#htsusjnbdw .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#nrddvruxho .gt_last_summary_row {
+#htsusjnbdw .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -4535,7 +4568,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#nrddvruxho .gt_grand_summary_row {
+#htsusjnbdw .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -4544,7 +4577,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#nrddvruxho .gt_first_grand_summary_row {
+#htsusjnbdw .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -4553,7 +4586,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#nrddvruxho .gt_last_grand_summary_row_top {
+#htsusjnbdw .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -4562,10 +4595,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#nrddvruxho .gt_striped {
+#htsusjnbdw .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#nrddvruxho .gt_table_body {
+#htsusjnbdw .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -4573,7 +4606,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#nrddvruxho .gt_footnotes {
+#htsusjnbdw .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -4586,7 +4619,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#nrddvruxho .gt_footnote {
+#htsusjnbdw .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -4594,7 +4627,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#nrddvruxho .gt_sourcenotes {
+#htsusjnbdw .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -4607,57 +4640,57 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#nrddvruxho .gt_sourcenote {
+#htsusjnbdw .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#nrddvruxho .gt_left {
+#htsusjnbdw .gt_left {
 text-align: left;
 }
-#nrddvruxho .gt_center {
+#htsusjnbdw .gt_center {
 text-align: center;
 }
-#nrddvruxho .gt_right {
+#htsusjnbdw .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#nrddvruxho .gt_font_normal {
+#htsusjnbdw .gt_font_normal {
 font-weight: normal;
 }
-#nrddvruxho .gt_font_bold {
+#htsusjnbdw .gt_font_bold {
 font-weight: bold;
 }
-#nrddvruxho .gt_font_italic {
+#htsusjnbdw .gt_font_italic {
 font-style: italic;
 }
-#nrddvruxho .gt_super {
+#htsusjnbdw .gt_super {
 font-size: 65%;
 }
-#nrddvruxho .gt_footnote_marks {
+#htsusjnbdw .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#nrddvruxho .gt_asterisk {
+#htsusjnbdw .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#nrddvruxho .gt_indent_1 {
+#htsusjnbdw .gt_indent_1 {
 text-indent: 5px;
 }
-#nrddvruxho .gt_indent_2 {
+#htsusjnbdw .gt_indent_2 {
 text-indent: 10px;
 }
-#nrddvruxho .gt_indent_3 {
+#htsusjnbdw .gt_indent_3 {
 text-indent: 15px;
 }
-#nrddvruxho .gt_indent_4 {
+#htsusjnbdw .gt_indent_4 {
 text-indent: 20px;
 }
-#nrddvruxho .gt_indent_5 {
+#htsusjnbdw .gt_indent_5 {
 text-indent: 25px;
 }
 </style>
@@ -4970,7 +5003,7 @@ text-indent: 25px;
 <span id="cb15-91"><a href="#cb15-91" aria-hidden="true" tabindex="-1"></a>  tab</span>
 <span id="cb15-92"><a href="#cb15-92" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb15-93"><a href="#cb15-93" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-94"><a href="#cb15-94" aria-hidden="true" tabindex="-1"></a><span class="co"># Read-only display. Edit R/tables.R:388-473.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb15-94"><a href="#cb15-94" aria-hidden="true" tabindex="-1"></a><span class="co"># Read-only display. Edit R/tables.R:418-503.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="lang-py">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The Python twin (bsz-analysis/py/); py/run_export.py runs it.</span></span>
@@ -5016,20 +5049,20 @@ text-indent: 25px;
 </details>
 <div class="cell">
 <div class="cell-output-display">
-<div id="yvobxjnbwy" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#yvobxjnbwy table {
+<div id="qezwbauikj" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#qezwbauikj table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#yvobxjnbwy thead, #yvobxjnbwy tbody, #yvobxjnbwy tfoot, #yvobxjnbwy tr, #yvobxjnbwy td, #yvobxjnbwy th {
+#qezwbauikj thead, #qezwbauikj tbody, #qezwbauikj tfoot, #qezwbauikj tr, #qezwbauikj td, #qezwbauikj th {
 border-style: none;
 }
-#yvobxjnbwy p {
+#qezwbauikj p {
 margin: 0;
 padding: 0;
 }
-#yvobxjnbwy .gt_table {
+#qezwbauikj .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -5054,11 +5087,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#yvobxjnbwy .gt_caption {
+#qezwbauikj .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#yvobxjnbwy .gt_title {
+#qezwbauikj .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -5069,7 +5102,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#yvobxjnbwy .gt_subtitle {
+#qezwbauikj .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -5080,7 +5113,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#yvobxjnbwy .gt_heading {
+#qezwbauikj .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -5091,12 +5124,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#yvobxjnbwy .gt_bottom_border {
+#qezwbauikj .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#yvobxjnbwy .gt_col_headings {
+#qezwbauikj .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -5110,7 +5143,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#yvobxjnbwy .gt_col_heading {
+#qezwbauikj .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -5129,7 +5162,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#yvobxjnbwy .gt_column_spanner_outer {
+#qezwbauikj .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -5140,13 +5173,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#yvobxjnbwy .gt_column_spanner_outer:first-child {
+#qezwbauikj .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#yvobxjnbwy .gt_column_spanner_outer:last-child {
+#qezwbauikj .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#yvobxjnbwy .gt_column_spanner {
+#qezwbauikj .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -5157,10 +5190,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#yvobxjnbwy .gt_spanner_row {
+#qezwbauikj .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#yvobxjnbwy .gt_group_heading {
+#qezwbauikj .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -5185,7 +5218,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#yvobxjnbwy .gt_empty_group_heading {
+#qezwbauikj .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -5199,13 +5232,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#yvobxjnbwy .gt_from_md > :first-child {
+#qezwbauikj .gt_from_md > :first-child {
 margin-top: 0;
 }
-#yvobxjnbwy .gt_from_md > :last-child {
+#qezwbauikj .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#yvobxjnbwy .gt_row {
+#qezwbauikj .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -5223,7 +5256,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#yvobxjnbwy .gt_stub {
+#qezwbauikj .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -5235,7 +5268,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#yvobxjnbwy .gt_stub_row_group {
+#qezwbauikj .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -5248,13 +5281,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#yvobxjnbwy .gt_row_group_first td {
+#qezwbauikj .gt_row_group_first td {
 border-top-width: 2px;
 }
-#yvobxjnbwy .gt_row_group_first th {
+#qezwbauikj .gt_row_group_first th {
 border-top-width: 2px;
 }
-#yvobxjnbwy .gt_summary_row {
+#qezwbauikj .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -5263,14 +5296,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#yvobxjnbwy .gt_first_summary_row {
+#qezwbauikj .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#yvobxjnbwy .gt_first_summary_row.thick {
+#qezwbauikj .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#yvobxjnbwy .gt_last_summary_row {
+#qezwbauikj .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -5279,7 +5312,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#yvobxjnbwy .gt_grand_summary_row {
+#qezwbauikj .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -5288,7 +5321,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#yvobxjnbwy .gt_first_grand_summary_row {
+#qezwbauikj .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -5297,7 +5330,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#yvobxjnbwy .gt_last_grand_summary_row_top {
+#qezwbauikj .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -5306,10 +5339,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#yvobxjnbwy .gt_striped {
+#qezwbauikj .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#yvobxjnbwy .gt_table_body {
+#qezwbauikj .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -5317,7 +5350,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#yvobxjnbwy .gt_footnotes {
+#qezwbauikj .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -5330,7 +5363,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#yvobxjnbwy .gt_footnote {
+#qezwbauikj .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -5338,7 +5371,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#yvobxjnbwy .gt_sourcenotes {
+#qezwbauikj .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -5351,57 +5384,57 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#yvobxjnbwy .gt_sourcenote {
+#qezwbauikj .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#yvobxjnbwy .gt_left {
+#qezwbauikj .gt_left {
 text-align: left;
 }
-#yvobxjnbwy .gt_center {
+#qezwbauikj .gt_center {
 text-align: center;
 }
-#yvobxjnbwy .gt_right {
+#qezwbauikj .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#yvobxjnbwy .gt_font_normal {
+#qezwbauikj .gt_font_normal {
 font-weight: normal;
 }
-#yvobxjnbwy .gt_font_bold {
+#qezwbauikj .gt_font_bold {
 font-weight: bold;
 }
-#yvobxjnbwy .gt_font_italic {
+#qezwbauikj .gt_font_italic {
 font-style: italic;
 }
-#yvobxjnbwy .gt_super {
+#qezwbauikj .gt_super {
 font-size: 65%;
 }
-#yvobxjnbwy .gt_footnote_marks {
+#qezwbauikj .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#yvobxjnbwy .gt_asterisk {
+#qezwbauikj .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#yvobxjnbwy .gt_indent_1 {
+#qezwbauikj .gt_indent_1 {
 text-indent: 5px;
 }
-#yvobxjnbwy .gt_indent_2 {
+#qezwbauikj .gt_indent_2 {
 text-indent: 10px;
 }
-#yvobxjnbwy .gt_indent_3 {
+#qezwbauikj .gt_indent_3 {
 text-indent: 15px;
 }
-#yvobxjnbwy .gt_indent_4 {
+#qezwbauikj .gt_indent_4 {
 text-indent: 20px;
 }
-#yvobxjnbwy .gt_indent_5 {
+#qezwbauikj .gt_indent_5 {
 text-indent: 25px;
 }
 </style>
@@ -5719,7 +5752,7 @@ text-indent: 25px;
 <span id="cb19-92"><a href="#cb19-92" aria-hidden="true" tabindex="-1"></a>  tab</span>
 <span id="cb19-93"><a href="#cb19-93" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb19-94"><a href="#cb19-94" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-95"><a href="#cb19-95" aria-hidden="true" tabindex="-1"></a><span class="co"># Read-only display. Edit R/tables.R:300-386.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb19-95"><a href="#cb19-95" aria-hidden="true" tabindex="-1"></a><span class="co"># Read-only display. Edit R/tables.R:330-416.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="lang-py">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The Python twin (bsz-analysis/py/); py/run_export.py runs it.</span></span>
@@ -5787,20 +5820,20 @@ text-indent: 25px;
 </details>
 <div class="cell">
 <div class="cell-output-display">
-<div id="grwqfwxbxf" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#grwqfwxbxf table {
+<div id="dwbjqzfnaf" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#dwbjqzfnaf table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#grwqfwxbxf thead, #grwqfwxbxf tbody, #grwqfwxbxf tfoot, #grwqfwxbxf tr, #grwqfwxbxf td, #grwqfwxbxf th {
+#dwbjqzfnaf thead, #dwbjqzfnaf tbody, #dwbjqzfnaf tfoot, #dwbjqzfnaf tr, #dwbjqzfnaf td, #dwbjqzfnaf th {
 border-style: none;
 }
-#grwqfwxbxf p {
+#dwbjqzfnaf p {
 margin: 0;
 padding: 0;
 }
-#grwqfwxbxf .gt_table {
+#dwbjqzfnaf .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -5825,11 +5858,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#grwqfwxbxf .gt_caption {
+#dwbjqzfnaf .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#grwqfwxbxf .gt_title {
+#dwbjqzfnaf .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -5840,7 +5873,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#grwqfwxbxf .gt_subtitle {
+#dwbjqzfnaf .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -5851,7 +5884,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#grwqfwxbxf .gt_heading {
+#dwbjqzfnaf .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -5862,12 +5895,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#grwqfwxbxf .gt_bottom_border {
+#dwbjqzfnaf .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#grwqfwxbxf .gt_col_headings {
+#dwbjqzfnaf .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -5881,7 +5914,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#grwqfwxbxf .gt_col_heading {
+#dwbjqzfnaf .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -5900,7 +5933,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#grwqfwxbxf .gt_column_spanner_outer {
+#dwbjqzfnaf .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -5911,13 +5944,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#grwqfwxbxf .gt_column_spanner_outer:first-child {
+#dwbjqzfnaf .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#grwqfwxbxf .gt_column_spanner_outer:last-child {
+#dwbjqzfnaf .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#grwqfwxbxf .gt_column_spanner {
+#dwbjqzfnaf .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -5928,10 +5961,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#grwqfwxbxf .gt_spanner_row {
+#dwbjqzfnaf .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#grwqfwxbxf .gt_group_heading {
+#dwbjqzfnaf .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -5956,7 +5989,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#grwqfwxbxf .gt_empty_group_heading {
+#dwbjqzfnaf .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -5970,13 +6003,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#grwqfwxbxf .gt_from_md > :first-child {
+#dwbjqzfnaf .gt_from_md > :first-child {
 margin-top: 0;
 }
-#grwqfwxbxf .gt_from_md > :last-child {
+#dwbjqzfnaf .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#grwqfwxbxf .gt_row {
+#dwbjqzfnaf .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -5994,7 +6027,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#grwqfwxbxf .gt_stub {
+#dwbjqzfnaf .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -6006,7 +6039,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#grwqfwxbxf .gt_stub_row_group {
+#dwbjqzfnaf .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -6019,13 +6052,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#grwqfwxbxf .gt_row_group_first td {
+#dwbjqzfnaf .gt_row_group_first td {
 border-top-width: 2px;
 }
-#grwqfwxbxf .gt_row_group_first th {
+#dwbjqzfnaf .gt_row_group_first th {
 border-top-width: 2px;
 }
-#grwqfwxbxf .gt_summary_row {
+#dwbjqzfnaf .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -6034,14 +6067,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#grwqfwxbxf .gt_first_summary_row {
+#dwbjqzfnaf .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#grwqfwxbxf .gt_first_summary_row.thick {
+#dwbjqzfnaf .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#grwqfwxbxf .gt_last_summary_row {
+#dwbjqzfnaf .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -6050,7 +6083,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#grwqfwxbxf .gt_grand_summary_row {
+#dwbjqzfnaf .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -6059,7 +6092,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#grwqfwxbxf .gt_first_grand_summary_row {
+#dwbjqzfnaf .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -6068,7 +6101,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#grwqfwxbxf .gt_last_grand_summary_row_top {
+#dwbjqzfnaf .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -6077,10 +6110,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#grwqfwxbxf .gt_striped {
+#dwbjqzfnaf .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#grwqfwxbxf .gt_table_body {
+#dwbjqzfnaf .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -6088,7 +6121,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#grwqfwxbxf .gt_footnotes {
+#dwbjqzfnaf .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -6101,7 +6134,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#grwqfwxbxf .gt_footnote {
+#dwbjqzfnaf .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -6109,7 +6142,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#grwqfwxbxf .gt_sourcenotes {
+#dwbjqzfnaf .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -6122,57 +6155,57 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#grwqfwxbxf .gt_sourcenote {
+#dwbjqzfnaf .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#grwqfwxbxf .gt_left {
+#dwbjqzfnaf .gt_left {
 text-align: left;
 }
-#grwqfwxbxf .gt_center {
+#dwbjqzfnaf .gt_center {
 text-align: center;
 }
-#grwqfwxbxf .gt_right {
+#dwbjqzfnaf .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#grwqfwxbxf .gt_font_normal {
+#dwbjqzfnaf .gt_font_normal {
 font-weight: normal;
 }
-#grwqfwxbxf .gt_font_bold {
+#dwbjqzfnaf .gt_font_bold {
 font-weight: bold;
 }
-#grwqfwxbxf .gt_font_italic {
+#dwbjqzfnaf .gt_font_italic {
 font-style: italic;
 }
-#grwqfwxbxf .gt_super {
+#dwbjqzfnaf .gt_super {
 font-size: 65%;
 }
-#grwqfwxbxf .gt_footnote_marks {
+#dwbjqzfnaf .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#grwqfwxbxf .gt_asterisk {
+#dwbjqzfnaf .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#grwqfwxbxf .gt_indent_1 {
+#dwbjqzfnaf .gt_indent_1 {
 text-indent: 5px;
 }
-#grwqfwxbxf .gt_indent_2 {
+#dwbjqzfnaf .gt_indent_2 {
 text-indent: 10px;
 }
-#grwqfwxbxf .gt_indent_3 {
+#dwbjqzfnaf .gt_indent_3 {
 text-indent: 15px;
 }
-#grwqfwxbxf .gt_indent_4 {
+#dwbjqzfnaf .gt_indent_4 {
 text-indent: 20px;
 }
-#grwqfwxbxf .gt_indent_5 {
+#dwbjqzfnaf .gt_indent_5 {
 text-indent: 25px;
 }
 </style>
@@ -6633,7 +6666,7 @@ W^{\text{tax}} &amp;= (1 - \alpha)\,W_0 \\
 </section>
 <section id="step-3-wealth-tax-revenue" class="level3">
 <h3 class="anchored" data-anchor-id="step-3-wealth-tax-revenue">Step 3: wealth tax revenue</h3>
-<p><span class="math display">\[T = \tau\,W^{\text{tax}} = 0.05 \times 2,076.3 = 103.8.\]</span> That is BSZ’s headline: $103.8 billion, collected once (in five annual installments). Before avoidance, 5% of the base would be $115.4 billion; avoidance costs $11.5 billion.</p>
+<p><span class="math display">\[T = \tau\,W^{\text{tax}} = 0.05 \times 2,076.3 = 103.8.\]</span> That is Table 5’s row 1, printed as $104 billion and reproduced here as $103.8 billion, collected once (in five annual installments). Before avoidance, 5% of the base would be $115.4 billion; avoidance costs $11.5 billion.</p>
 </section>
 <section id="step-4-extra-state-income-tax-from-selling-assets" class="level3">
 <h3 class="anchored" data-anchor-id="step-4-extra-state-income-tax-from-selling-assets">Step 4: extra state income tax from selling assets</h3>
@@ -6680,11 +6713,11 @@ L &amp;= -\alpha\,m\,C \\
 </tr>
 </tbody>
 </table>
-<p>This is a <em>yearly</em> loss, and Table 5 does not say for how many years. The paper argues that, for a genuinely one-time tax, departures should be temporary, “say only 5 years” (PDF p.27). The <a href="../../rjkdc-analysis/site/">JR analysis</a> (Jaros and Rauh; first version Rauh, Jaros, Kearney, Doran and Cosso) counts the loss forever. That difference in horizon is the largest single dispute between the two analyses (<code>comparison/DISPUTES.md</code>, row 2).</p>
+<p>This is a <em>yearly</em> loss. The paper argues that, for a genuinely one-time tax, the losses should be temporary, and gives five years, the payment period, as an example (“If they last say only 5 years”, PDF p.27). Table 5 itself takes no stand on how long they last. The <a href="../../rjkdc-analysis/site/">JR analysis</a> (Jaros and Rauh; first version Rauh, Jaros, Kearney, Doran and Cosso) counts the loss forever. That difference in horizon is one of the largest disputes between the two analyses (<code>comparison/DISPUTES.md</code>, row 2). The <a href="../../comparison/site/repro.html#the-bridge">comparison’s report</a> gives each dispute’s size in dollars.</p>
 </section>
 <section id="the-main-estimate" class="level3">
 <h3 class="anchored" data-anchor-id="the-main-estimate">The main estimate</h3>
-<p>The main estimate adds the three pieces. It counts the yearly loss for BSZ’s 5 years, discounted at 3% a year, the middle of the 1.5% to 4.5% range the <a href="../../rjkdc-analysis/site/">JR analysis</a> uses (BSZ give no rate): <span class="math display">\[\begin{aligned}
+<p>The main estimate adds the three pieces. It counts the yearly loss for 5 years (BSZ’s example; this OPA’s reading of it), discounted at 3% a year, the middle of the 1.5% to 4.5% range from which the <a href="../../rjkdc-analysis/site/">JR analysis</a> draws its rate (BSZ give no rate): <span class="math display">\[\begin{aligned}
 M &amp;= T + E + L \times \frac{1 - 1.03^{-5}}{0.03} \\
   &amp;= 103.82 + 3.68 - 0.153 \times 4.58 \\
   &amp;= 106.80.
@@ -6972,7 +7005,7 @@ T_2 &amp;= \tau\left[(1-\alpha)W_0 + (1-\alpha_s)\,\Delta W\right] \\
 <span id="cb31-47"><a href="#cb31-47" aria-hidden="true" tabindex="-1"></a>  tab</span>
 <span id="cb31-48"><a href="#cb31-48" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb31-49"><a href="#cb31-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-50"><a href="#cb31-50" aria-hidden="true" tabindex="-1"></a><span class="co"># Read-only display. Edit R/tables.R:257-298.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb31-50"><a href="#cb31-50" aria-hidden="true" tabindex="-1"></a><span class="co"># Read-only display. Edit R/tables.R:287-328.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="lang-py">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The Python twin (bsz-analysis/py/); py/run_export.py runs it.</span></span>
@@ -6988,20 +7021,20 @@ T_2 &amp;= \tau\left[(1-\alpha)W_0 + (1-\alpha_s)\,\Delta W\right] \\
 </details>
 <div class="cell">
 <div class="cell-output-display">
-<div id="oeaxnnegvi" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#oeaxnnegvi table {
+<div id="jdpxnjnmqs" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#jdpxnjnmqs table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#oeaxnnegvi thead, #oeaxnnegvi tbody, #oeaxnnegvi tfoot, #oeaxnnegvi tr, #oeaxnnegvi td, #oeaxnnegvi th {
+#jdpxnjnmqs thead, #jdpxnjnmqs tbody, #jdpxnjnmqs tfoot, #jdpxnjnmqs tr, #jdpxnjnmqs td, #jdpxnjnmqs th {
 border-style: none;
 }
-#oeaxnnegvi p {
+#jdpxnjnmqs p {
 margin: 0;
 padding: 0;
 }
-#oeaxnnegvi .gt_table {
+#jdpxnjnmqs .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -7026,11 +7059,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#oeaxnnegvi .gt_caption {
+#jdpxnjnmqs .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#oeaxnnegvi .gt_title {
+#jdpxnjnmqs .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -7041,7 +7074,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#oeaxnnegvi .gt_subtitle {
+#jdpxnjnmqs .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -7052,7 +7085,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#oeaxnnegvi .gt_heading {
+#jdpxnjnmqs .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -7063,12 +7096,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#oeaxnnegvi .gt_bottom_border {
+#jdpxnjnmqs .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#oeaxnnegvi .gt_col_headings {
+#jdpxnjnmqs .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -7082,7 +7115,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#oeaxnnegvi .gt_col_heading {
+#jdpxnjnmqs .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -7101,7 +7134,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#oeaxnnegvi .gt_column_spanner_outer {
+#jdpxnjnmqs .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -7112,13 +7145,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#oeaxnnegvi .gt_column_spanner_outer:first-child {
+#jdpxnjnmqs .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#oeaxnnegvi .gt_column_spanner_outer:last-child {
+#jdpxnjnmqs .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#oeaxnnegvi .gt_column_spanner {
+#jdpxnjnmqs .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -7129,10 +7162,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#oeaxnnegvi .gt_spanner_row {
+#jdpxnjnmqs .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#oeaxnnegvi .gt_group_heading {
+#jdpxnjnmqs .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -7157,7 +7190,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#oeaxnnegvi .gt_empty_group_heading {
+#jdpxnjnmqs .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -7171,13 +7204,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#oeaxnnegvi .gt_from_md > :first-child {
+#jdpxnjnmqs .gt_from_md > :first-child {
 margin-top: 0;
 }
-#oeaxnnegvi .gt_from_md > :last-child {
+#jdpxnjnmqs .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#oeaxnnegvi .gt_row {
+#jdpxnjnmqs .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -7195,7 +7228,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#oeaxnnegvi .gt_stub {
+#jdpxnjnmqs .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -7207,7 +7240,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#oeaxnnegvi .gt_stub_row_group {
+#jdpxnjnmqs .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -7220,13 +7253,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#oeaxnnegvi .gt_row_group_first td {
+#jdpxnjnmqs .gt_row_group_first td {
 border-top-width: 2px;
 }
-#oeaxnnegvi .gt_row_group_first th {
+#jdpxnjnmqs .gt_row_group_first th {
 border-top-width: 2px;
 }
-#oeaxnnegvi .gt_summary_row {
+#jdpxnjnmqs .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -7235,14 +7268,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#oeaxnnegvi .gt_first_summary_row {
+#jdpxnjnmqs .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#oeaxnnegvi .gt_first_summary_row.thick {
+#jdpxnjnmqs .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#oeaxnnegvi .gt_last_summary_row {
+#jdpxnjnmqs .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -7251,7 +7284,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#oeaxnnegvi .gt_grand_summary_row {
+#jdpxnjnmqs .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -7260,7 +7293,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#oeaxnnegvi .gt_first_grand_summary_row {
+#jdpxnjnmqs .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -7269,7 +7302,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#oeaxnnegvi .gt_last_grand_summary_row_top {
+#jdpxnjnmqs .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -7278,10 +7311,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#oeaxnnegvi .gt_striped {
+#jdpxnjnmqs .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#oeaxnnegvi .gt_table_body {
+#jdpxnjnmqs .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -7289,7 +7322,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#oeaxnnegvi .gt_footnotes {
+#jdpxnjnmqs .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -7302,7 +7335,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#oeaxnnegvi .gt_footnote {
+#jdpxnjnmqs .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -7310,7 +7343,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#oeaxnnegvi .gt_sourcenotes {
+#jdpxnjnmqs .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -7323,57 +7356,57 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#oeaxnnegvi .gt_sourcenote {
+#jdpxnjnmqs .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#oeaxnnegvi .gt_left {
+#jdpxnjnmqs .gt_left {
 text-align: left;
 }
-#oeaxnnegvi .gt_center {
+#jdpxnjnmqs .gt_center {
 text-align: center;
 }
-#oeaxnnegvi .gt_right {
+#jdpxnjnmqs .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#oeaxnnegvi .gt_font_normal {
+#jdpxnjnmqs .gt_font_normal {
 font-weight: normal;
 }
-#oeaxnnegvi .gt_font_bold {
+#jdpxnjnmqs .gt_font_bold {
 font-weight: bold;
 }
-#oeaxnnegvi .gt_font_italic {
+#jdpxnjnmqs .gt_font_italic {
 font-style: italic;
 }
-#oeaxnnegvi .gt_super {
+#jdpxnjnmqs .gt_super {
 font-size: 65%;
 }
-#oeaxnnegvi .gt_footnote_marks {
+#jdpxnjnmqs .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#oeaxnnegvi .gt_asterisk {
+#jdpxnjnmqs .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#oeaxnnegvi .gt_indent_1 {
+#jdpxnjnmqs .gt_indent_1 {
 text-indent: 5px;
 }
-#oeaxnnegvi .gt_indent_2 {
+#jdpxnjnmqs .gt_indent_2 {
 text-indent: 10px;
 }
-#oeaxnnegvi .gt_indent_3 {
+#jdpxnjnmqs .gt_indent_3 {
 text-indent: 15px;
 }
-#oeaxnnegvi .gt_indent_4 {
+#jdpxnjnmqs .gt_indent_4 {
 text-indent: 20px;
 }
-#oeaxnnegvi .gt_indent_5 {
+#jdpxnjnmqs .gt_indent_5 {
 text-indent: 25px;
 }
 </style>
@@ -7647,7 +7680,7 @@ text-indent: 25px;
 <p><strong>What is computed.</strong> A semi-elasticity <span class="math inline">\(e\)</span> says each extra percentage point of tax shrinks the base by about <span class="math inline">\(e\)</span> percent through people moving away. With a base of <span class="math inline">\(Z_0\)</span> = $2,000 billion at today’s tax (the workbook’s rounded input) and <span class="math inline">\(\tau_0\)</span> = 0.2% of wealth, the income tax billionaires already pay, <span class="math display">\[\begin{aligned}
 Z(\tau) &amp;= Z_0 \exp\{-e(\tau - \tau_0)\}, \\
 T(\tau) &amp;= \tau\, Z(\tau).
-\end{aligned}\]</span> Revenue peaks where the next point of tax loses as much base as it gains in rate, at <span class="math inline">\(\tau = 1/e\)</span>. With <span class="math inline">\(e\)</span> = 10 (Brülhart et al. 2022, the calibration the <a href="../../rjkdc-analysis/site/">JR analysis</a> also starts from, 10.32; it prefers 12 to 13, <code>comparison/DISPUTES.md</code>, row 4) that is 10%. The long-run curve also erodes wealth itself: <span class="math inline">\(d\)</span> = 15 years of paying the tax shrinks fortunes by <span class="math inline">\((1-\tau)^d\)</span>, and revenue then peaks at 3.9%, close to the paper’s <span class="math inline">\(1/(1+d+e) = 3.8\%\)</span>.</p>
+\end{aligned}\]</span> Revenue peaks where the next point of tax loses as much base as it gains in rate, at <span class="math inline">\(\tau = 1/e\)</span>. With <span class="math inline">\(e\)</span> = 10 (Brülhart et al. 2022, the calibration the <a href="../../rjkdc-analysis/site/">JR analysis</a> uses as a check, 10.32; its first version preferred 12 to 13, <code>comparison/DISPUTES.md</code>, row 4) that is 10%. The long-run curve also erodes wealth itself: <span class="math inline">\(d\)</span> = 15 years of paying the tax shrinks fortunes by <span class="math inline">\((1-\tau)^d\)</span>, and revenue then peaks at 3.9%, close to the paper’s <span class="math inline">\(1/(1+d+e) = 3.8\%\)</span>.</p>
 <details class="twin code-fold">
 <summary>
 <a href="#" class="lang on" data-lang="r">R</a> or <a href="#" class="lang" data-lang="py">Python</a> code for Figure 9
@@ -7858,57 +7891,87 @@ T(\tau) &amp;= \tau\, Z(\tau).
 <span id="cb40-107"><a href="#cb40-107" aria-hidden="true" tabindex="-1"></a>  lr <span class="ot">&lt;-</span> <span class="fu">.long_run_compare</span>(row_1982, row_cur, <span class="at">n_years =</span> n_years)</span>
 <span id="cb40-108"><a href="#cb40-108" aria-hidden="true" tabindex="-1"></a>  panel_b <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">bind_rows</span>(row_1982, row_cur, lr<span class="sc">$</span>ratio, lr<span class="sc">$</span>annualized)</span>
 <span id="cb40-109"><a href="#cb40-109" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-110"><a href="#cb40-110" aria-hidden="true" tabindex="-1"></a>  panel_a_render <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
-<span id="cb40-111"><a href="#cb40-111" aria-hidden="true" tabindex="-1"></a>    <span class="at">section =</span> <span class="st">&quot;A. Recent nominal wealth growth of US billionaires&quot;</span>,</span>
-<span id="cb40-112"><a href="#cb40-112" aria-hidden="true" tabindex="-1"></a>    <span class="at">year    =</span> panel_a_full<span class="sc">$</span>year,</span>
-<span id="cb40-113"><a href="#cb40-113" aria-hidden="true" tabindex="-1"></a>    <span class="at">col1    =</span> panel_a_full<span class="sc">$</span>n_us_billionaires,</span>
-<span id="cb40-114"><a href="#cb40-114" aria-hidden="true" tabindex="-1"></a>    <span class="at">col2    =</span> panel_a_full<span class="sc">$</span>wealth_b,</span>
-<span id="cb40-115"><a href="#cb40-115" aria-hidden="true" tabindex="-1"></a>    <span class="at">col3    =</span> panel_a_full<span class="sc">$</span>annual_growth,</span>
-<span id="cb40-116"><a href="#cb40-116" aria-hidden="true" tabindex="-1"></a>    <span class="at">col4    =</span> <span class="cn">NA_real_</span>,</span>
-<span id="cb40-117"><a href="#cb40-117" aria-hidden="true" tabindex="-1"></a>    <span class="at">col5    =</span> <span class="cf">if</span> (<span class="sc">!</span><span class="fu">identical</span>(vintage, <span class="st">&quot;may&quot;</span>)) panel_a_full<span class="sc">$</span>us_agi_b <span class="cf">else</span> <span class="cn">NA_real_</span>,</span>
-<span id="cb40-118"><a href="#cb40-118" aria-hidden="true" tabindex="-1"></a>    <span class="at">col6    =</span> <span class="cf">if</span> (<span class="sc">!</span><span class="fu">identical</span>(vintage, <span class="st">&quot;may&quot;</span>)) panel_a_full<span class="sc">$</span>wealth_per_agi <span class="cf">else</span> <span class="cn">NA_real_</span></span>
-<span id="cb40-119"><a href="#cb40-119" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb40-120"><a href="#cb40-120" aria-hidden="true" tabindex="-1"></a>  pctile_label <span class="ot">&lt;-</span> <span class="cf">if</span> (<span class="fu">identical</span>(vintage, <span class="st">&quot;may&quot;</span>)) <span class="st">&quot;top .0002%&quot;</span> <span class="cf">else</span> <span class="st">&quot;top .001%&quot;</span></span>
-<span id="cb40-121"><a href="#cb40-121" aria-hidden="true" tabindex="-1"></a>  panel_b_render <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
-<span id="cb40-122"><a href="#cb40-122" aria-hidden="true" tabindex="-1"></a>    <span class="at">section =</span> <span class="fu">paste0</span>(<span class="st">&quot;B. Long-term real wealth growth: &quot;</span>, pctile_label,</span>
-<span id="cb40-123"><a href="#cb40-123" aria-hidden="true" tabindex="-1"></a>                      <span class="st">&quot; wealthiest US families (&quot;</span>, cur_label, <span class="st">&quot; $)&quot;</span>),</span>
-<span id="cb40-124"><a href="#cb40-124" aria-hidden="true" tabindex="-1"></a>    <span class="at">year    =</span> panel_b<span class="sc">$</span>year,</span>
-<span id="cb40-125"><a href="#cb40-125" aria-hidden="true" tabindex="-1"></a>    <span class="at">col1    =</span> panel_b<span class="sc">$</span>families_top0002_k,</span>
-<span id="cb40-126"><a href="#cb40-126" aria-hidden="true" tabindex="-1"></a>    <span class="at">col2    =</span> panel_b<span class="sc">$</span>wealth_top0002_b,</span>
-<span id="cb40-127"><a href="#cb40-127" aria-hidden="true" tabindex="-1"></a>    <span class="at">col3    =</span> panel_b<span class="sc">$</span>wealth_per_family_b,</span>
-<span id="cb40-128"><a href="#cb40-128" aria-hidden="true" tabindex="-1"></a>    <span class="at">col4    =</span> panel_b<span class="sc">$</span>n_us_families_m,</span>
-<span id="cb40-129"><a href="#cb40-129" aria-hidden="true" tabindex="-1"></a>    <span class="at">col5    =</span> panel_b<span class="sc">$</span>us_gdp_2025dollars_b,</span>
-<span id="cb40-130"><a href="#cb40-130" aria-hidden="true" tabindex="-1"></a>    <span class="at">col6    =</span> panel_b<span class="sc">$</span>gdp_per_family_k</span>
-<span id="cb40-131"><a href="#cb40-131" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb40-132"><a href="#cb40-132" aria-hidden="true" tabindex="-1"></a>  combined <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">bind_rows</span>(panel_a_render, panel_b_render)</span>
-<span id="cb40-133"><a href="#cb40-133" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-134"><a href="#cb40-134" aria-hidden="true" tabindex="-1"></a>  tab <span class="ot">&lt;-</span> gt<span class="sc">::</span><span class="fu">gt</span>(combined, <span class="at">groupname_col =</span> <span class="st">&quot;section&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb40-135"><a href="#cb40-135" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">tab_header</span>(<span class="at">title =</span> <span class="st">&quot;Appendix Table A1. Wealth Growth of US Billionaires&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb40-136"><a href="#cb40-136" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">cols_label</span>(</span>
-<span id="cb40-137"><a href="#cb40-137" aria-hidden="true" tabindex="-1"></a>      <span class="at">year =</span> <span class="st">&quot;Year&quot;</span>,</span>
-<span id="cb40-138"><a href="#cb40-138" aria-hidden="true" tabindex="-1"></a>      <span class="at">col1 =</span> <span class="st">&quot;# / families&quot;</span>,</span>
-<span id="cb40-139"><a href="#cb40-139" aria-hidden="true" tabindex="-1"></a>      <span class="at">col2 =</span> <span class="st">&quot;Wealth&quot;</span>,</span>
-<span id="cb40-140"><a href="#cb40-140" aria-hidden="true" tabindex="-1"></a>      <span class="at">col3 =</span> <span class="st">&quot;Growth / per family&quot;</span>,</span>
-<span id="cb40-141"><a href="#cb40-141" aria-hidden="true" tabindex="-1"></a>      <span class="at">col4 =</span> <span class="st">&quot;# US families (M)&quot;</span>,</span>
-<span id="cb40-142"><a href="#cb40-142" aria-hidden="true" tabindex="-1"></a>      <span class="at">col5 =</span> <span class="st">&quot;US GDP&quot;</span>,</span>
-<span id="cb40-143"><a href="#cb40-143" aria-hidden="true" tabindex="-1"></a>      <span class="at">col6 =</span> <span class="st">&quot;GDP / family ($)&quot;</span></span>
-<span id="cb40-144"><a href="#cb40-144" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
-<span id="cb40-145"><a href="#cb40-145" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">fmt_number</span>(<span class="at">columns =</span> <span class="fu">c</span>(col1, col2, col4, col5, col6),</span>
-<span id="cb40-146"><a href="#cb40-146" aria-hidden="true" tabindex="-1"></a>                   <span class="at">decimals =</span> <span class="dv">0</span>, <span class="at">use_seps =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb40-147"><a href="#cb40-147" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">fmt_percent</span>(<span class="at">columns =</span> col3, <span class="at">decimals =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
-<span id="cb40-148"><a href="#cb40-148" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">sub_missing</span>(<span class="at">missing_text =</span> <span class="st">&quot;–&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb40-149"><a href="#cb40-149" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">tab_source_note</span>(<span class="at">source_note =</span> gt<span class="sc">::</span><span class="fu">md</span>(<span class="fu">paste</span>(</span>
-<span id="cb40-150"><a href="#cb40-150" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;**Notes:** Repeats Tab 1 for US billionaires instead of CA. Panel A:&quot;</span>,</span>
-<span id="cb40-151"><a href="#cb40-151" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;nominal wealth of all US citizen billionaires (Forbes). Panel B: 1982&quot;</span>,</span>
-<span id="cb40-152"><a href="#cb40-152" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;vs 2025 real wealth of top .0002% US families, in 2025 dollars.&quot;</span></span>
-<span id="cb40-153"><a href="#cb40-153" aria-hidden="true" tabindex="-1"></a>    )))</span>
-<span id="cb40-154"><a href="#cb40-154" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-155"><a href="#cb40-155" aria-hidden="true" tabindex="-1"></a>  <span class="fu">attr</span>(tab, <span class="st">&quot;panel_a&quot;</span>) <span class="ot">&lt;-</span> panel_a_full</span>
-<span id="cb40-156"><a href="#cb40-156" aria-hidden="true" tabindex="-1"></a>  <span class="fu">attr</span>(tab, <span class="st">&quot;panel_b&quot;</span>) <span class="ot">&lt;-</span> panel_b</span>
-<span id="cb40-157"><a href="#cb40-157" aria-hidden="true" tabindex="-1"></a>  tab</span>
-<span id="cb40-158"><a href="#cb40-158" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb40-159"><a href="#cb40-159" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-160"><a href="#cb40-160" aria-hidden="true" tabindex="-1"></a><span class="co"># Read-only display. Edit R/tables.R:105-255.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb40-110"><a href="#cb40-110" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ---- Render with gt (display only) ---------------------------------------</span></span>
+<span id="cb40-111"><a href="#cb40-111" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Nothing below changes a value: the panel_a / panel_b attributes are what the</span></span>
+<span id="cb40-112"><a href="#cb40-112" aria-hidden="true" tabindex="-1"></a>  <span class="co"># tests and snapshots read. A gt has one header row, so the column headers</span></span>
+<span id="cb40-113"><a href="#cb40-113" aria-hidden="true" tabindex="-1"></a>  <span class="co"># name Panel A&#39;s columns and Panel B&#39;s row-group label lists its own; each</span></span>
+<span id="cb40-114"><a href="#cb40-114" aria-hidden="true" tabindex="-1"></a>  <span class="co"># panel&#39;s rows get their own formats, as the paper prints TabA1 (PDF p.49).</span></span>
+<span id="cb40-115"><a href="#cb40-115" aria-hidden="true" tabindex="-1"></a>  may         <span class="ot">&lt;-</span> <span class="fu">identical</span>(vintage, <span class="st">&quot;may&quot;</span>)</span>
+<span id="cb40-116"><a href="#cb40-116" aria-hidden="true" tabindex="-1"></a>  denom_lbl   <span class="ot">&lt;-</span> <span class="cf">if</span> (may) <span class="st">&quot;GDP&quot;</span> <span class="cf">else</span> <span class="st">&quot;AGI&quot;</span>   <span class="co"># May&#39;s sheet is GDP; August&#39;s is AGI</span></span>
+<span id="cb40-117"><a href="#cb40-117" aria-hidden="true" tabindex="-1"></a>  ratio_label <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;Ratio &quot;</span>, cur_label, <span class="st">&quot; to 1982&quot;</span>)</span>
+<span id="cb40-118"><a href="#cb40-118" aria-hidden="true" tabindex="-1"></a>  sec_a <span class="ot">&lt;-</span> <span class="st">&quot;A. Recent nominal wealth growth of US billionaires&quot;</span></span>
+<span id="cb40-119"><a href="#cb40-119" aria-hidden="true" tabindex="-1"></a>  panel_a_render <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
+<span id="cb40-120"><a href="#cb40-120" aria-hidden="true" tabindex="-1"></a>    <span class="at">section =</span> sec_a,</span>
+<span id="cb40-121"><a href="#cb40-121" aria-hidden="true" tabindex="-1"></a>    <span class="at">year    =</span> <span class="fu">ifelse</span>(panel_a_full<span class="sc">$</span>year <span class="sc">==</span> <span class="st">&quot;2026&quot;</span>, <span class="st">&quot;2026 (July 1st)&quot;</span>, panel_a_full<span class="sc">$</span>year),</span>
+<span id="cb40-122"><a href="#cb40-122" aria-hidden="true" tabindex="-1"></a>    <span class="at">col1    =</span> panel_a_full<span class="sc">$</span>n_us_billionaires,</span>
+<span id="cb40-123"><a href="#cb40-123" aria-hidden="true" tabindex="-1"></a>    <span class="at">col2    =</span> panel_a_full<span class="sc">$</span>wealth_b,</span>
+<span id="cb40-124"><a href="#cb40-124" aria-hidden="true" tabindex="-1"></a>    <span class="at">col3    =</span> panel_a_full<span class="sc">$</span>annual_growth,</span>
+<span id="cb40-125"><a href="#cb40-125" aria-hidden="true" tabindex="-1"></a>    <span class="at">col4    =</span> <span class="cf">if</span> (<span class="sc">!</span>may) panel_a_full<span class="sc">$</span>us_agi_b <span class="cf">else</span> <span class="cn">NA_real_</span>,</span>
+<span id="cb40-126"><a href="#cb40-126" aria-hidden="true" tabindex="-1"></a>    <span class="at">col5    =</span> <span class="cf">if</span> (<span class="sc">!</span>may) panel_a_full<span class="sc">$</span>wealth_per_agi <span class="cf">else</span> <span class="cn">NA_real_</span>,</span>
+<span id="cb40-127"><a href="#cb40-127" aria-hidden="true" tabindex="-1"></a>    <span class="at">col6    =</span> <span class="cn">NA_real_</span></span>
+<span id="cb40-128"><a href="#cb40-128" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb40-129"><a href="#cb40-129" aria-hidden="true" tabindex="-1"></a>  pctile_label <span class="ot">&lt;-</span> <span class="cf">if</span> (may) <span class="st">&quot;top .0002%&quot;</span> <span class="cf">else</span> <span class="st">&quot;top .001%&quot;</span></span>
+<span id="cb40-130"><a href="#cb40-130" aria-hidden="true" tabindex="-1"></a>  sec_b <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;B. Long-term real wealth growth: &quot;</span>, pctile_label,</span>
+<span id="cb40-131"><a href="#cb40-131" aria-hidden="true" tabindex="-1"></a>                  <span class="st">&quot; wealthiest US families (&quot;</span>, cur_label, <span class="st">&quot; $). Columns: # families in the &quot;</span>,</span>
+<span id="cb40-132"><a href="#cb40-132" aria-hidden="true" tabindex="-1"></a>                  pctile_label, <span class="st">&quot;, their wealth ($B), wealth per family ($B), &quot;</span>,</span>
+<span id="cb40-133"><a href="#cb40-133" aria-hidden="true" tabindex="-1"></a>                  <span class="st">&quot;# US families (millions), US &quot;</span>, denom_lbl, <span class="st">&quot; ($B), US &quot;</span>, denom_lbl,</span>
+<span id="cb40-134"><a href="#cb40-134" aria-hidden="true" tabindex="-1"></a>                  <span class="st">&quot; per family ($)&quot;</span>)</span>
+<span id="cb40-135"><a href="#cb40-135" aria-hidden="true" tabindex="-1"></a>  panel_b_render <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
+<span id="cb40-136"><a href="#cb40-136" aria-hidden="true" tabindex="-1"></a>    <span class="at">section =</span> sec_b,</span>
+<span id="cb40-137"><a href="#cb40-137" aria-hidden="true" tabindex="-1"></a>    <span class="at">year    =</span> <span class="fu">ifelse</span>(<span class="fu">grepl</span>(<span class="st">&quot;^Ratio &quot;</span>, panel_b<span class="sc">$</span>year), ratio_label, panel_b<span class="sc">$</span>year),</span>
+<span id="cb40-138"><a href="#cb40-138" aria-hidden="true" tabindex="-1"></a>    <span class="at">col1    =</span> panel_b<span class="sc">$</span>families_top0002_k,</span>
+<span id="cb40-139"><a href="#cb40-139" aria-hidden="true" tabindex="-1"></a>    <span class="at">col2    =</span> panel_b<span class="sc">$</span>wealth_top0002_b,</span>
+<span id="cb40-140"><a href="#cb40-140" aria-hidden="true" tabindex="-1"></a>    <span class="at">col3    =</span> panel_b<span class="sc">$</span>wealth_per_family_b,</span>
+<span id="cb40-141"><a href="#cb40-141" aria-hidden="true" tabindex="-1"></a>    <span class="at">col4    =</span> panel_b<span class="sc">$</span>n_us_families_m,</span>
+<span id="cb40-142"><a href="#cb40-142" aria-hidden="true" tabindex="-1"></a>    <span class="at">col5    =</span> panel_b<span class="sc">$</span>us_gdp_2025dollars_b,</span>
+<span id="cb40-143"><a href="#cb40-143" aria-hidden="true" tabindex="-1"></a>    <span class="at">col6    =</span> panel_b<span class="sc">$</span>gdp_per_family_k</span>
+<span id="cb40-144"><a href="#cb40-144" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb40-145"><a href="#cb40-145" aria-hidden="true" tabindex="-1"></a>  combined <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">bind_rows</span>(panel_a_render, panel_b_render)</span>
+<span id="cb40-146"><a href="#cb40-146" aria-hidden="true" tabindex="-1"></a>  in_a   <span class="ot">&lt;-</span> combined<span class="sc">$</span>section <span class="sc">==</span> sec_a</span>
+<span id="cb40-147"><a href="#cb40-147" aria-hidden="true" tabindex="-1"></a>  r_a    <span class="ot">&lt;-</span> <span class="fu">which</span>(in_a <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">grepl</span>(<span class="st">&quot;^Growth&quot;</span>, combined<span class="sc">$</span>year))   <span class="co"># Panel A&#39;s year rows</span></span>
+<span id="cb40-148"><a href="#cb40-148" aria-hidden="true" tabindex="-1"></a>  r_agr  <span class="ot">&lt;-</span> <span class="fu">which</span>(in_a <span class="sc">&amp;</span>  <span class="fu">grepl</span>(<span class="st">&quot;^Growth&quot;</span>, combined<span class="sc">$</span>year))   <span class="co"># its 2023-2025 growth row</span></span>
+<span id="cb40-149"><a href="#cb40-149" aria-hidden="true" tabindex="-1"></a>  r_blev <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="sc">!</span>in_a <span class="sc">&amp;</span> combined<span class="sc">$</span>year <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;1982&quot;</span>, cur_label))</span>
+<span id="cb40-150"><a href="#cb40-150" aria-hidden="true" tabindex="-1"></a>  r_brat <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="sc">!</span>in_a <span class="sc">&amp;</span> combined<span class="sc">$</span>year <span class="sc">==</span> ratio_label)</span>
+<span id="cb40-151"><a href="#cb40-151" aria-hidden="true" tabindex="-1"></a>  r_bann <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="sc">!</span>in_a <span class="sc">&amp;</span> combined<span class="sc">$</span>year <span class="sc">==</span> <span class="st">&quot;Annualized growth&quot;</span>)</span>
+<span id="cb40-152"><a href="#cb40-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-153"><a href="#cb40-153" aria-hidden="true" tabindex="-1"></a>  tab <span class="ot">&lt;-</span> gt<span class="sc">::</span><span class="fu">gt</span>(combined, <span class="at">groupname_col =</span> <span class="st">&quot;section&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb40-154"><a href="#cb40-154" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">tab_header</span>(<span class="at">title =</span> <span class="st">&quot;Appendix Table A1. Wealth Growth of US Billionaires&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb40-155"><a href="#cb40-155" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">cols_label</span>(</span>
+<span id="cb40-156"><a href="#cb40-156" aria-hidden="true" tabindex="-1"></a>      <span class="at">year =</span> <span class="st">&quot;Year&quot;</span>,</span>
+<span id="cb40-157"><a href="#cb40-157" aria-hidden="true" tabindex="-1"></a>      <span class="at">col1 =</span> <span class="st">&quot;#&quot;</span>,</span>
+<span id="cb40-158"><a href="#cb40-158" aria-hidden="true" tabindex="-1"></a>      <span class="at">col2 =</span> <span class="st">&quot;Wealth&quot;</span>,</span>
+<span id="cb40-159"><a href="#cb40-159" aria-hidden="true" tabindex="-1"></a>      <span class="at">col3 =</span> <span class="st">&quot;Growth&quot;</span>,</span>
+<span id="cb40-160"><a href="#cb40-160" aria-hidden="true" tabindex="-1"></a>      <span class="at">col4 =</span> <span class="cf">if</span> (may) <span class="st">&quot;&quot;</span> <span class="cf">else</span> <span class="st">&quot;US AGI&quot;</span>,</span>
+<span id="cb40-161"><a href="#cb40-161" aria-hidden="true" tabindex="-1"></a>      <span class="at">col5 =</span> <span class="cf">if</span> (may) <span class="st">&quot;&quot;</span> <span class="cf">else</span> <span class="st">&quot;Wealth / US AGI&quot;</span>,</span>
+<span id="cb40-162"><a href="#cb40-162" aria-hidden="true" tabindex="-1"></a>      <span class="at">col6 =</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb40-163"><a href="#cb40-163" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb40-164"><a href="#cb40-164" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Panel A: counts and $B as whole numbers, rates as percentages; the growth</span></span>
+<span id="cb40-165"><a href="#cb40-165" aria-hidden="true" tabindex="-1"></a>    <span class="co"># row is a percentage in each column it fills.</span></span>
+<span id="cb40-166"><a href="#cb40-166" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">fmt_number</span>(<span class="at">columns =</span> <span class="fu">c</span>(col1, col2, col4), <span class="at">rows =</span> r_a, <span class="at">decimals =</span> <span class="dv">0</span>, <span class="at">use_seps =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb40-167"><a href="#cb40-167" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">fmt_percent</span>(<span class="at">columns =</span> <span class="fu">c</span>(col3, col5), <span class="at">rows =</span> r_a, <span class="at">decimals =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb40-168"><a href="#cb40-168" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">fmt_percent</span>(<span class="at">columns =</span> <span class="fu">c</span>(col2, col4), <span class="at">rows =</span> r_agr, <span class="at">decimals =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb40-169"><a href="#cb40-169" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Panel B: families, wealth ($B), wealth per family ($B), families (millions),</span></span>
+<span id="cb40-170"><a href="#cb40-170" aria-hidden="true" tabindex="-1"></a>    <span class="co"># income ($B), income per family ($); then the ratio and annualized rows.</span></span>
+<span id="cb40-171"><a href="#cb40-171" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">fmt_number</span>(<span class="at">columns =</span> <span class="fu">c</span>(col1, col5, col6), <span class="at">rows =</span> r_blev, <span class="at">decimals =</span> <span class="dv">0</span>, <span class="at">use_seps =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb40-172"><a href="#cb40-172" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">fmt_number</span>(<span class="at">columns =</span> <span class="fu">c</span>(col2, col4), <span class="at">rows =</span> r_blev, <span class="at">decimals =</span> <span class="dv">1</span>, <span class="at">use_seps =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb40-173"><a href="#cb40-173" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">fmt_number</span>(<span class="at">columns =</span> col3, <span class="at">rows =</span> r_blev, <span class="at">decimals =</span> <span class="dv">2</span>) <span class="sc">|&gt;</span></span>
+<span id="cb40-174"><a href="#cb40-174" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">fmt_number</span>(<span class="at">columns =</span> <span class="fu">c</span>(col1, col2, col3, col4, col5), <span class="at">rows =</span> r_brat, <span class="at">decimals =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb40-175"><a href="#cb40-175" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">fmt_number</span>(<span class="at">columns =</span> col6, <span class="at">rows =</span> r_brat, <span class="at">decimals =</span> <span class="dv">2</span>) <span class="sc">|&gt;</span></span>
+<span id="cb40-176"><a href="#cb40-176" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">fmt_percent</span>(<span class="at">columns =</span> <span class="fu">c</span>(col1, col2, col3, col4, col5, col6), <span class="at">rows =</span> r_bann, <span class="at">decimals =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb40-177"><a href="#cb40-177" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">sub_missing</span>(<span class="at">missing_text =</span> <span class="st">&quot;–&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb40-178"><a href="#cb40-178" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">tab_source_note</span>(<span class="at">source_note =</span> gt<span class="sc">::</span><span class="fu">md</span>(<span class="fu">paste0</span>(</span>
+<span id="cb40-179"><a href="#cb40-179" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;**Notes:** Repeats Tab 1 for US billionaires instead of CA. Panel A: &quot;</span>,</span>
+<span id="cb40-180"><a href="#cb40-180" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;nominal wealth of all US citizen billionaires (Forbes). Panel B: 1982 &quot;</span>,</span>
+<span id="cb40-181"><a href="#cb40-181" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;vs &quot;</span>, cur_label, <span class="st">&quot; real wealth of the &quot;</span>, pctile_label, <span class="st">&quot; US families, in &quot;</span>,</span>
+<span id="cb40-182"><a href="#cb40-182" aria-hidden="true" tabindex="-1"></a>      cur_label, <span class="st">&quot; dollars.&quot;</span></span>
+<span id="cb40-183"><a href="#cb40-183" aria-hidden="true" tabindex="-1"></a>    )))</span>
+<span id="cb40-184"><a href="#cb40-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-185"><a href="#cb40-185" aria-hidden="true" tabindex="-1"></a>  <span class="fu">attr</span>(tab, <span class="st">&quot;panel_a&quot;</span>) <span class="ot">&lt;-</span> panel_a_full</span>
+<span id="cb40-186"><a href="#cb40-186" aria-hidden="true" tabindex="-1"></a>  <span class="fu">attr</span>(tab, <span class="st">&quot;panel_b&quot;</span>) <span class="ot">&lt;-</span> panel_b</span>
+<span id="cb40-187"><a href="#cb40-187" aria-hidden="true" tabindex="-1"></a>  tab</span>
+<span id="cb40-188"><a href="#cb40-188" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb40-189"><a href="#cb40-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-190"><a href="#cb40-190" aria-hidden="true" tabindex="-1"></a><span class="co"># Read-only display. Edit R/tables.R:105-285.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="lang-py">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The Python twin (bsz-analysis/py/); py/run_export.py runs it.</span></span>
@@ -7987,20 +8050,20 @@ T(\tau) &amp;= \tau\, Z(\tau).
 </details>
 <div class="cell">
 <div class="cell-output-display">
-<div id="ywdixjcnsr" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#ywdixjcnsr table {
+<div id="gxcqwtidhp" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#gxcqwtidhp table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#ywdixjcnsr thead, #ywdixjcnsr tbody, #ywdixjcnsr tfoot, #ywdixjcnsr tr, #ywdixjcnsr td, #ywdixjcnsr th {
+#gxcqwtidhp thead, #gxcqwtidhp tbody, #gxcqwtidhp tfoot, #gxcqwtidhp tr, #gxcqwtidhp td, #gxcqwtidhp th {
 border-style: none;
 }
-#ywdixjcnsr p {
+#gxcqwtidhp p {
 margin: 0;
 padding: 0;
 }
-#ywdixjcnsr .gt_table {
+#gxcqwtidhp .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -8025,11 +8088,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#ywdixjcnsr .gt_caption {
+#gxcqwtidhp .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#ywdixjcnsr .gt_title {
+#gxcqwtidhp .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -8040,7 +8103,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#ywdixjcnsr .gt_subtitle {
+#gxcqwtidhp .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -8051,7 +8114,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#ywdixjcnsr .gt_heading {
+#gxcqwtidhp .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -8062,12 +8125,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#ywdixjcnsr .gt_bottom_border {
+#gxcqwtidhp .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#ywdixjcnsr .gt_col_headings {
+#gxcqwtidhp .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -8081,7 +8144,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#ywdixjcnsr .gt_col_heading {
+#gxcqwtidhp .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -8100,7 +8163,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#ywdixjcnsr .gt_column_spanner_outer {
+#gxcqwtidhp .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -8111,13 +8174,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#ywdixjcnsr .gt_column_spanner_outer:first-child {
+#gxcqwtidhp .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#ywdixjcnsr .gt_column_spanner_outer:last-child {
+#gxcqwtidhp .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#ywdixjcnsr .gt_column_spanner {
+#gxcqwtidhp .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -8128,10 +8191,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#ywdixjcnsr .gt_spanner_row {
+#gxcqwtidhp .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#ywdixjcnsr .gt_group_heading {
+#gxcqwtidhp .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -8156,7 +8219,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#ywdixjcnsr .gt_empty_group_heading {
+#gxcqwtidhp .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -8170,13 +8233,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#ywdixjcnsr .gt_from_md > :first-child {
+#gxcqwtidhp .gt_from_md > :first-child {
 margin-top: 0;
 }
-#ywdixjcnsr .gt_from_md > :last-child {
+#gxcqwtidhp .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#ywdixjcnsr .gt_row {
+#gxcqwtidhp .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -8194,7 +8257,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#ywdixjcnsr .gt_stub {
+#gxcqwtidhp .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -8206,7 +8269,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#ywdixjcnsr .gt_stub_row_group {
+#gxcqwtidhp .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -8219,13 +8282,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#ywdixjcnsr .gt_row_group_first td {
+#gxcqwtidhp .gt_row_group_first td {
 border-top-width: 2px;
 }
-#ywdixjcnsr .gt_row_group_first th {
+#gxcqwtidhp .gt_row_group_first th {
 border-top-width: 2px;
 }
-#ywdixjcnsr .gt_summary_row {
+#gxcqwtidhp .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -8234,14 +8297,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#ywdixjcnsr .gt_first_summary_row {
+#gxcqwtidhp .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#ywdixjcnsr .gt_first_summary_row.thick {
+#gxcqwtidhp .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#ywdixjcnsr .gt_last_summary_row {
+#gxcqwtidhp .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -8250,7 +8313,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#ywdixjcnsr .gt_grand_summary_row {
+#gxcqwtidhp .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -8259,7 +8322,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#ywdixjcnsr .gt_first_grand_summary_row {
+#gxcqwtidhp .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -8268,7 +8331,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#ywdixjcnsr .gt_last_grand_summary_row_top {
+#gxcqwtidhp .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -8277,10 +8340,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#ywdixjcnsr .gt_striped {
+#gxcqwtidhp .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#ywdixjcnsr .gt_table_body {
+#gxcqwtidhp .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -8288,7 +8351,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#ywdixjcnsr .gt_footnotes {
+#gxcqwtidhp .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -8301,7 +8364,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#ywdixjcnsr .gt_footnote {
+#gxcqwtidhp .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -8309,7 +8372,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#ywdixjcnsr .gt_sourcenotes {
+#gxcqwtidhp .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -8322,57 +8385,57 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#ywdixjcnsr .gt_sourcenote {
+#gxcqwtidhp .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#ywdixjcnsr .gt_left {
+#gxcqwtidhp .gt_left {
 text-align: left;
 }
-#ywdixjcnsr .gt_center {
+#gxcqwtidhp .gt_center {
 text-align: center;
 }
-#ywdixjcnsr .gt_right {
+#gxcqwtidhp .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#ywdixjcnsr .gt_font_normal {
+#gxcqwtidhp .gt_font_normal {
 font-weight: normal;
 }
-#ywdixjcnsr .gt_font_bold {
+#gxcqwtidhp .gt_font_bold {
 font-weight: bold;
 }
-#ywdixjcnsr .gt_font_italic {
+#gxcqwtidhp .gt_font_italic {
 font-style: italic;
 }
-#ywdixjcnsr .gt_super {
+#gxcqwtidhp .gt_super {
 font-size: 65%;
 }
-#ywdixjcnsr .gt_footnote_marks {
+#gxcqwtidhp .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#ywdixjcnsr .gt_asterisk {
+#gxcqwtidhp .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#ywdixjcnsr .gt_indent_1 {
+#gxcqwtidhp .gt_indent_1 {
 text-indent: 5px;
 }
-#ywdixjcnsr .gt_indent_2 {
+#gxcqwtidhp .gt_indent_2 {
 text-indent: 10px;
 }
-#ywdixjcnsr .gt_indent_3 {
+#gxcqwtidhp .gt_indent_3 {
 text-indent: 15px;
 }
-#ywdixjcnsr .gt_indent_4 {
+#gxcqwtidhp .gt_indent_4 {
 text-indent: 20px;
 }
-#ywdixjcnsr .gt_indent_5 {
+#gxcqwtidhp .gt_indent_5 {
 text-indent: 25px;
 }
 </style>
@@ -8384,12 +8447,12 @@ text-indent: 25px;
 </tr>
 <tr class="gt_col_headings even">
 <th id="Year" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Year</th>
-<th id="# / families" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col"># / families</th>
+<th id="#" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">#</th>
 <th id="Wealth" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Wealth</th>
-<th id="Growth / per family" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Growth / per family</th>
-<th id="# US families (M)" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col"># US families (M)</th>
-<th id="US GDP" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">US GDP</th>
-<th id="GDP / family ($)" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">GDP / family ($)</th>
+<th id="Growth" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Growth</th>
+<th id="US AGI" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">US AGI</th>
+<th id="Wealth / US AGI" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Wealth / US AGI</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col"></th>
 </tr>
 </thead>
 <tbody class="gt_table_body">
@@ -8401,97 +8464,97 @@ text-indent: 25px;
 <td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col1">717</td>
 <td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col2">4,358</td>
 <td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col3">–</td>
-<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col4">–</td>
-<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col5">14,752</td>
-<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col6">0</td>
+<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col4">14,752</td>
+<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col5">29.5%</td>
+<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col6">–</td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_left" headers="A. Recent nominal wealth growth of US billionaires  year">2023</td>
 <td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col1">746</td>
 <td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col2">5,247</td>
 <td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col3">20.4%</td>
-<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col4">–</td>
-<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col5">15,128</td>
-<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col6">0</td>
+<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col4">15,128</td>
+<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col5">34.7%</td>
+<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col6">–</td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_left" headers="A. Recent nominal wealth growth of US billionaires  year">2024</td>
 <td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col1">813</td>
 <td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col2">6,723</td>
 <td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col3">28.1%</td>
-<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col4">–</td>
-<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col5">16,457</td>
-<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col6">0</td>
+<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col4">16,457</td>
+<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col5">40.9%</td>
+<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col6">–</td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_left" headers="A. Recent nominal wealth growth of US billionaires  year">2025</td>
 <td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col1">938</td>
 <td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col2">8,189</td>
 <td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col3">21.8%</td>
-<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col4">–</td>
-<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col5">17,280</td>
-<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col6">0</td>
+<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col4">17,280</td>
+<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col5">47.4%</td>
+<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col6">–</td>
 </tr>
 <tr class="even">
-<td class="gt_row gt_left" headers="A. Recent nominal wealth growth of US billionaires  year">2026</td>
+<td class="gt_row gt_left" headers="A. Recent nominal wealth growth of US billionaires  year">2026 (July 1st)</td>
 <td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col1">982</td>
 <td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col2">8,826</td>
 <td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col3">15.6%</td>
-<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col4">–</td>
-<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col5">18,144</td>
-<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col6">0</td>
+<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col4">18,144</td>
+<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col5">48.6%</td>
+<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col6">–</td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_left" headers="A. Recent nominal wealth growth of US billionaires  year">Growth during 3 years (2023-2025)</td>
 <td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col1">–</td>
-<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col2">1</td>
+<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col2">87.9%</td>
 <td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col3">–</td>
-<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col4">–</td>
-<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col5">0</td>
+<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col4">17.1%</td>
+<td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col5">–</td>
 <td class="gt_row gt_right" headers="A. Recent nominal wealth growth of US billionaires  col6">–</td>
 </tr>
 <tr class="gt_group_heading_row even">
-<th colspan="7" id="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $)" class="gt_group_heading" data-quarto-table-cell-role="th" scope="colgroup">B. Long-term real wealth growth: top .001% wealthiest US families (2026 $)</th>
+<th colspan="7" id="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # US families (millions), US AGI ($B), US AGI per family ($)" class="gt_group_heading" data-quarto-table-cell-role="th" scope="colgroup">B. Long-term real wealth growth: top .001% wealthiest US families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # US families (millions), US AGI ($B), US AGI per family ($)</th>
 </tr>
 <tr class="gt_row_group_first odd">
-<td class="gt_row gt_left" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $)  year">1982</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $)  col1">1,105</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $)  col2">459</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $)  col3">41.5%</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $)  col4">111</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $)  col5">6,127</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $)  col6">55,437</td>
+<td class="gt_row gt_left" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # US families (millions), US AGI ($B), US AGI per family ($)  year">1982</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # US families (millions), US AGI ($B), US AGI per family ($)  col1">1,105</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # US families (millions), US AGI ($B), US AGI per family ($)  col2">458.9</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # US families (millions), US AGI ($B), US AGI per family ($)  col3">0.42</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # US families (millions), US AGI ($B), US AGI per family ($)  col4">110.5</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # US families (millions), US AGI ($B), US AGI per family ($)  col5">6,127</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # US families (millions), US AGI ($B), US AGI per family ($)  col6">55,437</td>
 </tr>
 <tr class="even">
-<td class="gt_row gt_left" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $)  year">2026</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $)  col1">1,950</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $)  col2">10,570</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $)  col3">542.0%</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $)  col4">195</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $)  col5">18,144</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $)  col6">93,050</td>
+<td class="gt_row gt_left" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # US families (millions), US AGI ($B), US AGI per family ($)  year">2026</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # US families (millions), US AGI ($B), US AGI per family ($)  col1">1,950</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # US families (millions), US AGI ($B), US AGI per family ($)  col2">10,569.6</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # US families (millions), US AGI ($B), US AGI per family ($)  col3">5.42</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # US families (millions), US AGI ($B), US AGI per family ($)  col4">195.0</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # US families (millions), US AGI ($B), US AGI per family ($)  col5">18,144</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # US families (millions), US AGI ($B), US AGI per family ($)  col6">93,050</td>
 </tr>
 <tr class="odd">
-<td class="gt_row gt_left" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $)  year">Ratio 2025 to 1982</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $)  col1">2</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $)  col2">23</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $)  col3">1,305.4%</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $)  col4">2</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $)  col5">3</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $)  col6">2</td>
+<td class="gt_row gt_left" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # US families (millions), US AGI ($B), US AGI per family ($)  year">Ratio 2026 to 1982</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # US families (millions), US AGI ($B), US AGI per family ($)  col1">1.8</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # US families (millions), US AGI ($B), US AGI per family ($)  col2">23.0</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # US families (millions), US AGI ($B), US AGI per family ($)  col3">13.1</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # US families (millions), US AGI ($B), US AGI per family ($)  col4">1.8</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # US families (millions), US AGI ($B), US AGI per family ($)  col5">3.0</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # US families (millions), US AGI ($B), US AGI per family ($)  col6">1.68</td>
 </tr>
 <tr class="even">
-<td class="gt_row gt_left" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $)  year">Annualized growth</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $)  col1">0</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $)  col2">0</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $)  col3">6.0%</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $)  col4">0</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $)  col5">0</td>
-<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $)  col6">0</td>
+<td class="gt_row gt_left" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # US families (millions), US AGI ($B), US AGI per family ($)  year">Annualized growth</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # US families (millions), US AGI ($B), US AGI per family ($)  col1">1.3%</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # US families (millions), US AGI ($B), US AGI per family ($)  col2">7.4%</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # US families (millions), US AGI ($B), US AGI per family ($)  col3">6.0%</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # US families (millions), US AGI ($B), US AGI per family ($)  col4">1.3%</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # US families (millions), US AGI ($B), US AGI per family ($)  col5">2.5%</td>
+<td class="gt_row gt_right" headers="B. Long-term real wealth growth: top .001% wealthiest US families (2026 $). Columns: # families in the top .001%, their wealth ($B), wealth per family ($B), # US families (millions), US AGI ($B), US AGI per family ($)  col6">1.2%</td>
 </tr>
 </tbody><tfoot class="gt_sourcenotes">
 <tr class="odd">
-<td colspan="7" class="gt_sourcenote"><strong>Notes:</strong> Repeats Tab 1 for US billionaires instead of CA. Panel A: nominal wealth of all US citizen billionaires (Forbes). Panel B: 1982 vs 2025 real wealth of top .0002% US families, in 2025 dollars.</td>
+<td colspan="7" class="gt_sourcenote"><strong>Notes:</strong> Repeats Tab 1 for US billionaires instead of CA. Panel A: nominal wealth of all US citizen billionaires (Forbes). Panel B: 1982 vs 2026 real wealth of the top .001% US families, in 2026 dollars.</td>
 </tr>
 </tfoot>
 
@@ -8764,7 +8827,7 @@ text-indent: 25px;
 <tr class="even">
 <td style="text-align: left;">L</td>
 <td style="text-align: left;">Who left before 1 Jan 2026 (Table 5 rows 3 and 4)</td>
-<td style="text-align: left;">no one (row 1)</td>
+<td style="text-align: left;">no named leaver (row 1); the 5% who move are part of α</td>
 <td style="text-align: left;">guesswork</td>
 <td style="text-align: left;">A legal judgment on residency; rows 3-4 assume Page, Thiel, Hankey, Kalanick (BSZ PDF p.26). Explorer dial.</td>
 </tr>
@@ -8896,7 +8959,7 @@ text-indent: 25px;
 <span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(ins<span class="sc">$</span>origin <span class="sc">==</span> <span class="st">&quot;guesswork&quot;</span>) <span class="sc">==</span> n_guess_dials)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<p><strong>The headline.</strong> Of the 18 inputs, 5 are guesswork, and they are exactly the explorer’s 5 guesswork dials. Only 2 of them move the revenue number when varied on their own (avoidance and evasion; aggressive assumption on leavers); the others move only the smaller income tax columns, or matter only in the scenario rows. So BSZ’s headline $103.8 billion is Forbes’ list, times 5%, times one minus a single guessed avoidance rate; the only other guess that moves it is who has already left. The disputes with the <a href="../../rjkdc-analysis/site/">JR analysis</a> are mostly about inputs this table labels guesswork or scenario: who has left (disputes row 3), how long losses last, and whether a one-time tax triggers permanent departures.</p>
+<p><strong>The headline.</strong> Of the 18 inputs, 5 are guesswork, and they are exactly the explorer’s 5 guesswork dials. Only 2 of them move the revenue number when varied on their own (avoidance and evasion; aggressive assumption on leavers); the others move only the smaller income tax columns, or matter only in the scenario rows. So Table 5’s row 1 ($103.8 billion here, printed as $104 billion) is Forbes’ list, times 5%, times one minus a single guessed avoidance rate; the only other guess that moves it is who has already left. The disputes with the <a href="../../rjkdc-analysis/site/">JR analysis</a> are mostly about inputs this table labels guesswork or scenario: who has left (disputes row 3), how long losses last, and whether a one-time tax triggers permanent departures.</p>
 </section>
 <section id="what-reproduces" class="level1">
 <h1>What reproduces</h1>
@@ -9012,7 +9075,7 @@ text-indent: 25px;
 <li><code>Tab5!H6</code> types the income tax loss share as a literal 0.05. We read it as avoidance times the leaving share (0.10 × 0.5), as the row label says. It matters only when the explorer moves those inputs.</li>
 <li>Row 4 omits row 2’s phase-in deduction (<code>Tab5!F9</code>), worth $2.0 billion.</li>
 </ul>
-<p><strong>Display labels that do not match the data (ours).</strong> Tables 1 and A1 hold the right values under some wrong labels in this reproduction (GDP for AGI, 2025 for 2026, .0002% for .001%, 2025 dollars for 2026 dollars), and a few summary cells render as rounded zeros. The numbers are tested; the labels are not. Fixing them changes the pinned table snapshots, so it is left for a separate change.</p>
+<p><strong>A display error in Tables 1 and A1 (ours).</strong> This reproduction’s display code put Panel B’s values under Panel A’s column headers and formats, so several cells showed numbers the paper does not print (a count of families as a percentage, growth rates rounded to whole numbers). It also kept the May workbook’s labels (GDP for AGI, 2025 for 2026, .0002% for .001%, 2025 dollars for 2026 dollars). Both were fixed in the display code on 15 October 2026. The values the tests check did not change.</p>
 <p><strong>What is not reproduced.</strong></p>
 <ul>
 <li>The paper’s Figure 8 (venture capital deals) and Appendix Figure A1 (wealth relative to AGI) have no builder yet.</li>

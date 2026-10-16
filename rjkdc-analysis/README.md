@@ -90,8 +90,9 @@ in CI) without touching any other file.
 
 ## Tests (`tests/testthat/`)
 
-159 expectations in 29 test blocks, 0 failed (2026-09-23, with `RAUH_REPO_DIR` set). Count them
-through `Rscript tests/testthat.R`, which sources `R/` first; calling `testthat::test_dir()`
+The [materials page](https://fhoces.github.io/opa-prop40/rjkdc-analysis/site/materials.html#tests)
+prints the current count of tests and expectations, read from the last recorded run, so the
+count is not repeated here. Run them through `Rscript tests/testthat.R`, which sources `R/` first; calling `testthat::test_dir()`
 directly skips that setup and reports spurious errors. `.github/workflows/rjkdc-ci.yml`
 clones the authors' repo at the pinned SHA, rebuilds R and Python, and runs the suite on every
 push touching `rjkdc-analysis/`.

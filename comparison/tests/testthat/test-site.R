@@ -135,7 +135,7 @@ test_that("both pages carry the pseudo-equation: D and q, the loss box added up,
       sprintf('<span class="term" data-steps="%s"><b>%s</b><small>Lost income tax%s</small></span>',
               paste(loss, collapse = " "), money(abs(sum(dp$change[loss])), 1), lt("H, f, C, r")),
       sprintf('<span class="term" data-steps="%s"><b>%s</b><small>The other three steps together%s</small></span>',
-              paste(rest, collapse = " "), money(abs(sum(dp$change[rest])), 1), lt("W, a, three minor inputs")))
+              paste(rest, collapse = " "), money(abs(sum(dp$change[rest])), 1), lt("W, a, the minor switch")))
     if (!identical(p, explorer)) expect_false(grepl("\\([A-Za-z, ]+\\)</small>", eq), label = "no letters on the overview")
     at <- vapply(pins, function(x) regexpr(x, eq, fixed = TRUE)[[1]], 0)
     expect_true(all(at > 0), label = paste(p, "terms"))
@@ -161,8 +161,8 @@ test_that("both pages carry the pseudo-equation: D and q, the loss box added up,
   ex_html <- read_page(explorer)
   expect_true(grepl(paste("Move the BSZ panel's dials to their far ends, term by term from left to right.",
                           "The D and q terms are those two steps of that walk.",
-                          "Lost income tax is the four loss-box dials of the walk added up (f, C, H and r).",
-                          "The last term is the other three steps added up (W, a and three minor inputs)."),
+                          "Lost income tax is the four loss-box dials of the walk added up (H, f, C and r).",
+                          "The last term is the other three steps added up (W, a and the minor switch)."),
                     ex_html, fixed = TRUE))
   for (panel in c("bsz", "rjkdc"))
     expect_true(grepl(sprintf('<button type="button" class="reset walk" data-panel="%s">Walk the path</button>', panel), ex_html, fixed = TRUE), label = panel)
