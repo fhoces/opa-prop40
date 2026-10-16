@@ -179,8 +179,8 @@ $1 billion or more, payable over five years, with the revenue mainly for health 
 <img src="figs/prop40/yes-panel.png" alt="The Yes on 40 campaign page, small, with the line it circles zoomed in: research estimates Prop 40 could raise about $100 billion.">
 ]
 .arg.arg-no[
-.arg-text[**Against:** a "poorly designed tax scheme". Among the reasons: "$25 billion in lost
-  revenue" (the JR analysis, March 2026 version).]
+.arg-text[**Against:** a "poorly designed tax scheme". Among the reasons: $25/`r round(abs(rj_main))` billion in
+  lost revenue (the JR analysis, March/September versions).]
 <img src="figs/prop40/no-panel.png" alt="The No on 40 campaign page, small, with the sentence it circles zoomed in: a poorly designed tax scheme that will cost the state budget billions of dollars.">
 ]
 ]
@@ -387,7 +387,7 @@ table.dt.verif td { vertical-align: top; text-align: left; padding: 8px 10px; }
 .arg img { display: block; width: 100%; }
 .arg-text { position: absolute; top: 0; left: 0; }
 .arg-yes .arg-text { width: 66%; }
-.arg-no .arg-text { width: 54%; }
+.arg-no .arg-text { width: 57%; }
 /* On why-opa-4 the heading wraps in the left column, clear of the raised top row. */
 .head-beside h1 { width: 36%; }
 .head-beside .beside, .head-beside .footnote.beside { width: 35%; }
@@ -665,10 +665,10 @@ authors' Monte Carlo; their seeded run prints `r usd(rj_print)`.
 Next, we analyze each component, one at a time:
 
 .eq-list[
-(i) [Who has already left?](#diff-departed)<br>
-(ii) [Will the tax survive in court?](#diff-litigation)<br>
-(iii) [For how long is the income tax lost?](#diff-horizon), then [*f*, *C* and *r*](#diff-loss-rest)<br>
-(iv) [The other three steps](#smaller)
+(i) Who has already left?<br>
+(ii) Will the tax survive in court?<br>
+(iii) For how long is the income tax lost? Then *f*, *C* and *r*<br>
+(iv) The other three steps
 ]
 
 .small[
