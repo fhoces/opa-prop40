@@ -8,8 +8,10 @@ Author's requests, in order:
 3. A way for the Google Form to tell whether a response came from the new panel (the reader has
    not seen the analysis) or from the other links (the reader has).
 
-Items 2 and 3 share one mechanism, a prefilled "Reference code" answer on the forms. Nothing here
-is implemented yet. One Fable agent does Phase B; the orchestrator does Phases A and C in the
+Items 2 and 3 share one mechanism: a separate set of forms per entry point, so the form a response
+lands in says where it came from (author's choice, 2026-10-16, over a visible prefilled "Reference
+code" question, because Google Forms has no hidden fields and respondents would see the code).
+Nothing here is implemented yet. One Fable agent does Phase B; the orchestrator does Phases A and C in the
 author's browser because they touch the live forms.
 
 ## What exists
@@ -29,15 +31,38 @@ author's browser because they touch the live forms.
 
 ## Phase A: the forms (orchestrator, in the author's browser, after the author's go-ahead)
 
-A1. In the Apps Script project, add to both live forms a short-answer item titled
-    "Reference code (leave as is)", not required, placed just before the email question
-    (`form.moveItem(item, indexOfEmailItem)`). Done once per form with a one-shot function ending in
-    `_` like the other builders, through the Chrome extension on script.google.com.
-A2. Get each form's prefill entry id for that item:
-    `form.createResponse().withItemResponse(item.createResponse("x")).toPrefilledUrl()` and read
-    `entry.<digits>` from the URL (Apps Script's `Item.getId()` is not the entry id).
-A3. Record the ids in `comparison/data/survey-links.csv` as a new column `entry` (one per version).
-    The responses sheet gains the column by itself; the Key tab is untouched.
+The forms, by entry group. Each group keeps the two versions (Value A and B swapped), so a group is
+two forms:
+
+| Group | Who lands there | Forms |
+|---|---|---|
+| `landing` | arm 1, the panel's button: answers before seeing the results | 2 new |
+| `explorer-1` | arm 1, the explorer's lower button (panel seen and skipped) | 2 new |
+| `explorer-2` | arm 2, the explorer's lower button (no panel) | 2 new |
+| `other` | the overview's button, the share page, every link already sent | the 2 live forms, unchanged |
+
+Eight forms in all; the live two keep their links, so nothing already sent breaks. The A/B test
+compares arm 1 (`landing` plus `explorer-1`) with arm 2 (`explorer-2`); `landing` alone is the
+before-the-results group of item 3. Group names never appear to respondents (titles, descriptions
+and questions stay identical to the live forms).
+
+A1. In the Apps Script project, a one-shot function ending in `_` copies each live form three times
+    (`DriveApp.getFileById(id).makeCopy(name)`; Drive names "live: Prop 40 survey (version v,
+    <group>)"), sets each copy's destination to the existing responses sheet
+    (`form.setDestination(FormApp.DestinationType.SPREADSHEET, sheetId)`, which adds one tab per
+    form) and renames the six new tabs "Version v, <group>". The copies keep their version's A/B
+    assignment, so the Key tab needs one note: a group's version-v tab uses version v's key. Run
+    through the Chrome extension on script.google.com; the author sees the function before it runs.
+A2. Check each copy's response settings match its source (accepting responses, no sign-in
+    required, the opt-in page for the three smaller inputs and its branching, the email question's
+    text). Copies of newer Forms may start unpublished; publish them (`form.setPublished(true)`)
+    only with the author's go-ahead, since that makes them answerable by anyone with the link, as
+    the live two are. I'm not sure whether `makeCopy` keeps the published state; A2 checks it.
+A3. Record the respondent links in `comparison/data/survey-links.csv`, which becomes
+    `group,version,url` (eight rows; the live two are `other`).
+A4'. Upkeep: every later edit to the survey's questions is made on all eight forms. The existing
+    builder functions (`splitSmallerInputs` and the relabel ones) get a loop over the eight ids;
+    the memory note `survey.md` records the new ids and this rule.
 A4. Optional, only if the author wants rates and not just counts (see "Reading the result"): in the
     same project, `doGet(e)` appends `[new Date(), e.parameter.arm, e.parameter.src]` to a new
     "Impressions" tab of the responses sheet; deploy as a web app (execute as the author, access:
@@ -47,29 +72,22 @@ A4. Optional, only if the author wants rates and not just counts (see "Reading t
 ## Phase B: the pages (one Fable agent, xhigh)
 
 Files: `comparison/site/explorer.template.html`, `comparison/R/site.R`,
-`comparison/site/index.template.html`, `comparison/data/survey-links.csv` (read only; the `entry`
-column may be empty until Phase A, and everything must degrade to today's behaviour when it is),
+`comparison/site/index.template.html`, `comparison/data/survey-links.csv` (read only; until Phase A it holds only the two live
+forms, and everything must degrade to today's behaviour when it does),
 `comparison/tests/testthat/test-site.R`. Rebuild with `Rscript comparison/run.R`.
 
-B1. The reference code on every survey link (item 3). `site.R` builds each form link as
-    `<url>?usp=pp_url&entry.<entry>=` when the row has an `entry`, else `<url>`; the page script
-    appends the code at click time (`href = base + encodeURIComponent(code)`). The code says where
-    the click came from, and the arm when the page has one:
-
-    | Link | Code |
-    |---|---|
-    | the landing panel's button | `A-landing` |
-    | the explorer's survey button, lower on the page | `A-explorer` or `B-explorer` |
-    | the overview's button | `overview` |
-    | the share page (emails, copied links) | `share` |
-
-    The share page gets its code baked in by `survey_share_page()`. The overview's button has no
-    arm. A link whose row has no `entry` carries no code and opens the form as today.
+B1. The form group on every survey link (item 3). `site.R` reads `survey-links.csv` by group and
+    writes each button's two links into its `data-links`: the panel's button gets the `landing`
+    pair, the explorer's lower button gets both `explorer-1` and `explorer-2` pairs (as
+    `data-links-1` and `data-links-2`) and the script picks by the reader's arm, the overview's
+    button and the share page keep the `other` pair. Each click still picks one version at random.
+    Until Phase A adds the new rows, every button falls back to the `other` pair, which is today's
+    behaviour.
 
 B2. The arm (item 2). On the explorer's first visit the script draws `Math.random() < 0.5` and
-    stores `A` or `B` under one localStorage key (for example `p40.arm`), inside try/catch; with
+    stores `1` or `2` under one localStorage key (for example `p40.arm`), inside try/catch; with
     storage blocked, the draw is made per visit and nothing is stored. A returning visitor keeps the
-    arm. Only arm A shows the panel. A query parameter `?arm=A|B` overrides the draw for testing
+    arm. Only arm 1 shows the panel. A query parameter `?arm=1|2` overrides the draw for testing
     and screenshots and is not stored.
 
 B3. The landing panel (item 1). In the template, before `</body>`: a `div#landing` with
@@ -83,57 +101,62 @@ B3. The landing panel (item 1). In the template, before `</body>`: a `div#landin
     > about five minutes, and your answers are compared with the two analyses' values.
     > [Take the survey first]  [Skip to the results]
 
-    "Take the survey first" opens a random version in a new tab with code `A-landing` and dismisses
+    "Take the survey first" opens a random version of the `landing` forms in a new tab and dismisses
     the panel; "Skip to the results" and the Escape key dismiss it. Dismissal is stored
     (`p40.landing = seen`) so the panel appears once per browser; with storage blocked it appears
-    on each visit of arm A. CSS: `body.has-landing > :not(#landing) { filter: blur(6px); }` on the
+    on each visit of arm 1. CSS: `body.has-landing > :not(#landing) { filter: blur(6px); }` on the
     page's top-level blocks (header, main, footer) and `body.has-landing { overflow: hidden; }`;
     the panel is a centred box, max width 30 em, 16 px side gutter at phone width, the page's
     existing palette and fonts (frozen), focus moved to the first button on open and returned to
     the document on close; the buttons at least 24 px tall at 390 px. The panel is in the HTML from
-    the start but hidden; the script shows it only for arm A on a first visit, so arm B and
-    returning visitors never see a flash. `prefers-reduced-motion` gets no transition.
+    the start but hidden; the script shows it only for arm 1 on a first visit, so arm 2 and
+    returning visitors never see a flash. `prefers-reduced-motion` gets no transition. The headline numbers stay as they are behind the blur, not hidden
+    (author, 2026-10-16).
 
 B4. The impressions ping (only if A4 was chosen). Once per arm assignment (that is, once per
-    browser, on the visit that draws the arm), `navigator.sendBeacon(url + "?arm=A&src=explorer")`
+    browser, on the visit that draws the arm), `navigator.sendBeacon(url + "?arm=1")`
     with a `fetch(..., {mode: "no-cors", keepalive: true})` fallback. Nothing identifying is sent.
     One sentence in the explorer's notes fold, in the footnotes' style: "This page records, without
     any identifying data, whether the survey invitation was shown."
 
 B5. Tests and checks. `test-site.R`: the panel's heading and the two button labels are pinned; the
-    survey links carry `entry.` only when the CSV has the column; the share page's code; the
-    overview's `overview` code. Playwright (reuse the reviewer's `ux-audit.cjs` approach): with
-    `?arm=A` the panel shows, the page behind is blurred and not scrollable, Escape dismisses, the
-    survey button's `href` ends in `A-landing`; with `?arm=B` no panel and the lower button's href
-    ends in `B-explorer`; after a dismissal and reload with the stored arm A, no panel; screenshots
+    each button carries its group's links when the CSV has them and the `other` pair when it does
+    not; the share page and the overview keep the `other` pair. Playwright (reuse the reviewer's `ux-audit.cjs` approach): with
+    `?arm=1` the panel shows, the page behind is blurred and not scrollable, Escape dismisses, the
+    panel's button opens a `landing` form; with `?arm=2` no panel and the lower button opens an
+    `explorer-2` form; after a dismissal and reload with the stored arm 1, no panel; screenshots
     at 390 and 1280 of the open panel. `check_links.py` clean. No em-dashes. The U-19 hash state
     (run 005) and the panel must not interfere: the hash is read and written as before.
 
 ## Phase C: close the loop (orchestrator)
 
-C1. After Phase A fills the `entry` column, rebuild (`Rscript comparison/run.R`), run the comparison
-    suite, submit one test response through each entry point in the author's browser and check the
-    codes in the sheet, then delete those test rows (as the earlier TEST rows were) with the
+C1. After Phase A adds the six forms to the CSV, rebuild (`Rscript comparison/run.R`), run the comparison
+    suite, submit one test response through each entry point in the author's browser and check each
+    lands in its own tab, then delete those test rows (as the earlier TEST rows were) with the
     author's go-ahead.
 C2. Commit by path, push. Record in `feedback/DECISIONS.md`: the landing panel is a one-off block
     of text on the explorer, allowed by the author's request of 2026-10-16.
 
 ## Reading the result
 
-With a 50/50 draw, responses coded `A-landing` plus `A-explorer` against `B-explorer` compare the
-arms by count; A4's impressions turn counts into rates (responses per visitor who drew that arm).
-`overview` and `share` responses are readers who were sent the survey or found it after the
-analysis; `A-landing` are the readers who answered before seeing it. A small script that reads the
+With a 50/50 draw, responses in the `landing` and `explorer-1` tabs against the `explorer-2` tabs
+compare the arms by count; A4's impressions turn counts into rates (responses per visitor who drew that arm).
+The `other` tabs (the live forms) hold readers who were sent the survey or found it after the
+analysis; the `landing` tabs hold the readers who answered before seeing it. Compare whole arms,
+not `landing` against the rest: readers who choose to answer first may differ from those who
+do not, and only the coin flip makes the arms comparable. A small script that reads the
 responses sheet export and tabulates by code is a later item, not part of this plan.
 
 ## Order and cost
 
-B can start now and does not need A: with the `entry` column empty, the links behave as today. A
+B can start now and does not need A: with only the live forms in the CSV, the links behave as
+today. A
 needs the author's go-ahead (it edits the live forms) and about twenty minutes in the browser. C
 needs both. One Fable agent at xhigh for B, roughly the size of run 005's implementation.
 
 ## Author decisions needed before Phase A
 
-1. Go-ahead to add the "Reference code (leave as is)" question to both live forms.
+1. Decided 2026-10-16: separate forms per entry group, not a visible code question. Still needed:
+   the go-ahead to create the six copies and publish them (A1, A2).
 2. Whether to add the impressions counter (A4 and B4).
 3. The panel text above, or your own wording.
