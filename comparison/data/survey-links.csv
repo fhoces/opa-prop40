@@ -1,3 +1,8 @@
-version,url
-1,https://docs.google.com/forms/d/e/1FAIpQLSc2Jcz7e269a5QNjTOBnD7L1ijqgvM3VOg5ISB1z3-X61u9nQ/viewform
-2,https://docs.google.com/forms/d/e/1FAIpQLSfV2d4FBLeJx0dm2BpL3PO_EoKV8xppiKGxh-Ag8n61-MwAWA/viewform
+# Placeholders until the six forms exist: every control row holds the current version 1 form, every treatment row the current version 2 form. Replace each url with the respondent link of the form "exp: Prop 40 survey (<entry>, <arm>)" that comparison/survey/gas_build.py builds, then rebuild (Rscript comparison/run.R).
+entry,arm,url
+landing,control,https://docs.google.com/forms/d/e/1FAIpQLSc2Jcz7e269a5QNjTOBnD7L1ijqgvM3VOg5ISB1z3-X61u9nQ/viewform
+landing,treatment,https://docs.google.com/forms/d/e/1FAIpQLSfV2d4FBLeJx0dm2BpL3PO_EoKV8xppiKGxh-Ag8n61-MwAWA/viewform
+explorer,control,https://docs.google.com/forms/d/e/1FAIpQLSc2Jcz7e269a5QNjTOBnD7L1ijqgvM3VOg5ISB1z3-X61u9nQ/viewform
+explorer,treatment,https://docs.google.com/forms/d/e/1FAIpQLSfV2d4FBLeJx0dm2BpL3PO_EoKV8xppiKGxh-Ag8n61-MwAWA/viewform
+share,control,https://docs.google.com/forms/d/e/1FAIpQLSc2Jcz7e269a5QNjTOBnD7L1ijqgvM3VOg5ISB1z3-X61u9nQ/viewform
+share,treatment,https://docs.google.com/forms/d/e/1FAIpQLSfV2d4FBLeJx0dm2BpL3PO_EoKV8xppiKGxh-Ag8n61-MwAWA/viewform

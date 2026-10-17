@@ -1,0 +1,313 @@
+---
+title: "Second simulated pilot of the Prop 40 survey experiment"
+subtitle: "One hundred language-model respondents on the revised forms, analysed as the pre-analysis plan says, in Python with an R twin"
+date: 2026-10-17
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-fold: true
+    code-summary: "code"
+    embed-resources: true
+    fig-align: center
+    tbl-cap-location: top
+    theme: cosmo
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+```{r setup}
+#| echo: false
+suppressPackageStartupMessages({ library(jsonlite); library(ggplot2) })
+root <- normalizePath(file.path(dirname(knitr::current_input(dir = TRUE)), "..", ".."))
+run  <- file.path(root, "feedback", "009-2026-10-17-rct-pilot-2")
+prev <- file.path(root, "feedback", "008-2026-10-17-rct-pilot")
+py_out <- file.path(run, "analysis")
+d <- read.csv(file.path(run, "pilot", "responses.csv"), stringsAsFactors = FALSE)
+d1 <- read.csv(file.path(prev, "pilot", "responses.csv"), stringsAsFactors = FALSE)
+Q <- c("share_lost", "horizon", "income_level", "court", "moved_out")
+OPT <- c("avoidance", "wealth_list", "noncitizens", "real_estate", "asset_sales")
+B_DRAWS <- 2000L
+fmt <- function(x, d = 2) formatC(x, format = "f", digits = d)
+```
+
+## What this is
+
+This report analyses a second simulated pilot of the survey experiment registered in
+`comparison/survey/PRE-ANALYSIS-PLAN.md`. One hundred language-model agents (Claude Haiku), each
+given a persona, an entry path and an arm, took the revised survey as plain text
+(`00-materials/`). The personas differ from the first pilot's hundred (seed offset 100). No
+interviews were run this time. The respondents are simulated, so the numbers say how the texts
+read to these agents, not how people will answer. Nothing here is data for the registered study.
+
+The analysis follows the plan: the lean index, H1 by OLS with entry-point fixed effects and HC2
+standard errors, the secondary outcomes, the five questions adjusted with the Romano-Wolf
+step-down, the three heterogeneity dimensions, and the balance and attrition checks. Every table
+is computed twice: by `comparison/survey/pilot_analysis.py` (Python) and again here in R. The
+last section compares the two.
+
+## The sample
+
+```{r counts}
+#| tbl-cap: "Responses by entry point and arm. The p-value is the exact binomial test of an even split within the entry point."
+cnt <- do.call(rbind, lapply(split(d, d$entry), function(s) {
+  nt <- sum(s$arm == "treatment")
+  data.frame(entry = s$entry[1], n = nrow(s), treatment = nt, control = nrow(s) - nt,
+             p_binomial = binom.test(nt, nrow(s), 0.5)$p.value)
+}))
+rownames(cnt) <- NULL
+knitr::kable(cnt, digits = 3)
+```
+
+```{r balance}
+#| tbl-cap: "Balance of the two pre-treatment answers across arms (chi-squared)."
+bal <- do.call(rbind, lapply(c("q1_expert", "q2_prior"), function(q) {
+  tt <- suppressWarnings(chisq.test(table(d[[q]], d$arm), correct = FALSE))
+  data.frame(question = q, chi2 = unname(tt$statistic), df = unname(tt$parameter), p = tt$p.value)
+}))
+knitr::kable(bal, digits = 3)
+```
+
+## The estimator, in R
+
+The Python module's functions have these R twins: HC2 standard errors from the hat values, the
+Romano-Wolf step-down with a pairs bootstrap within entry-point strata (Romano and Wolf 2005; the
+algorithm of Clarke, Romano and Wolf 2020), and the design with the treatment indicator and the
+entry-point fixed effects.
+
+```{r estimator}
+code_y <- function(x) c(BSZ = 1, JR = -1, equal = 0, unsure = 0, skipped = 0)[x]
+d$T <- as.integer(d$arm == "treatment")
+for (q in c(Q, OPT)) d[[paste0("y_", q)]] <- unname(code_y(d[[q]]))
+d$lean <- rowMeans(d[paste0("y_", Q)])
+d$abs_lean <- abs(d$lean)
+d$unsure <- rowMeans(d[Q] == "unsure")
+d$equal <- rowMeans(d[Q] == "equal")
+
+design <- function(f, extra = NULL) {
+  X <- cbind(const = 1, T = f$T, E_explorer = as.numeric(f$entry == "explorer"), E_share = as.numeric(f$entry == "share"))
+  if (!is.null(extra)) X <- cbind(X, extra)
+  X
+}
+ols_hc2 <- function(y, X) {
+  if (qr(X)$rank < ncol(X)) stop("rank deficient design")
+  XtX_inv <- solve(crossprod(X))
+  b <- drop(XtX_inv %*% crossprod(X, y))
+  e <- drop(y - X %*% b)
+  h <- rowSums((X %*% XtX_inv) * X)
+  if (any(h >= 1 - 1e-10)) stop("an observation with leverage 1")
+  meat <- crossprod(X * (e^2 / (1 - h)), X)
+  V <- XtX_inv %*% meat %*% XtX_inv
+  list(b = setNames(b, colnames(X)), se = setNames(sqrt(diag(V)), colnames(X)))
+}
+t_p <- function(b, se, n, k) { t <- unname(b / se); c(t = t, p = 2 * pt(abs(t), df = n - k, lower.tail = FALSE)) }
+
+# Romano-Wolf for one coefficient across a family of outcomes, or across designs (extra_fns)
+romano_wolf <- function(f, ys, coef, B, seed, extra_fns = NULL) {
+  set.seed(seed)
+  m <- length(ys)
+  strata <- split(seq_len(nrow(f)), f$entry)
+  fit <- function(j, idx, fb) {
+    X <- design(fb, if (is.null(extra_fns)) NULL else extra_fns[[j]](fb))
+    ols_hc2(ys[[j]][idx], X)
+  }
+  obs <- lapply(seq_len(m), function(j) fit(j, seq_len(nrow(f)), f))
+  t_obs <- sapply(obs, function(o) o$b[coef] / o$se[coef])
+  b_obs <- sapply(obs, function(o) o$b[coef])
+  tb <- matrix(NA_real_, B, m)
+  r <- 1
+  while (r <= B) {
+    idx <- unlist(lapply(strata, function(s) sample(s, length(s), replace = TRUE)), use.names = FALSE)
+    fb <- f[idx, ]
+    row <- tryCatch(sapply(seq_len(m), function(j) { o <- fit(j, idx, fb); (o$b[coef] - b_obs[j]) / o$se[coef] }),
+                    error = function(e) NULL)
+    if (is.null(row)) next          # a degenerate resample: draw again
+    tb[r, ] <- row; r <- r + 1
+  }
+  ord <- order(-abs(t_obs))
+  p_adj <- numeric(m); prev <- 0
+  for (step in seq_along(ord)) {
+    rest <- ord[step:m]
+    mx <- apply(abs(tb[, rest, drop = FALSE]), 1, max)
+    p <- (1 + sum(mx >= abs(t_obs[ord[step]]))) / (B + 1)
+    prev <- max(p, prev); p_adj[ord[step]] <- prev
+  }
+  list(t = t_obs, p = p_adj)
+}
+n <- nrow(d); X <- design(d)
+```
+
+## H1 and the secondary outcomes
+
+```{r h1}
+#| tbl-cap: "The coefficient on treatment, with entry-point fixed effects and HC2 standard errors. H1 is the lean index; S1 the share of Unsure answers; S2 the share of About equally credible; S4 the mean distance from neutral."
+outs <- list(H1_lean = d$lean, S1_unsure = d$unsure, S2_equal = d$equal, S4_abs_lean = d$abs_lean)
+h1 <- do.call(rbind, lapply(names(outs), function(nm) {
+  y <- outs[[nm]]; o <- ols_hc2(y, X); tp <- t_p(o$b["T"], o$se["T"], n, ncol(X))
+  data.frame(outcome = nm, mean_control = mean(y[d$T == 0]), mean_treatment = mean(y[d$T == 1]),
+             coef_T = unname(o$b["T"]), se_hc2 = unname(o$se["T"]), t = unname(tp["t"]), p = unname(tp["p"]), n = n)
+}))
+knitr::kable(h1, digits = 3)
+```
+
+```{r lean-fig}
+#| fig-cap: "The lean index by arm: +1 is the BSZ value on all five questions, -1 the JR value on all five."
+#| fig-width: 7
+#| fig-height: 3.2
+ggplot(d, aes(x = lean, fill = arm)) +
+  geom_histogram(binwidth = 0.2, boundary = -1.1, position = "dodge", colour = "white") +
+  scale_fill_manual(values = c(control = "#9e9e9e", treatment = "#5b3f9a")) +
+  labs(x = "Lean index", y = "Respondents", fill = NULL) + theme_minimal(base_size = 12)
+```
+
+## The five questions (S3), Romano-Wolf over the five
+
+```{r s3}
+#| tbl-cap: "Each question's answer coded +1 (BSZ value), -1 (JR value), 0 (neutral): the treatment coefficient, its unadjusted p-value, and the Romano-Wolf adjusted p-value over the family of five."
+ys <- lapply(Q, function(q) d[[paste0("y_", q)]])
+rw <- romano_wolf(d, ys, "T", B_DRAWS, 20261017)
+s3 <- do.call(rbind, lapply(seq_along(Q), function(j) {
+  q <- Q[j]; o <- ols_hc2(ys[[j]], X); tp <- t_p(o$b["T"], o$se["T"], n, ncol(X))
+  data.frame(question = q,
+             bsz_share_control = mean(d[[q]][d$T == 0] == "BSZ"), bsz_share_treatment = mean(d[[q]][d$T == 1] == "BSZ"),
+             jr_share_control = mean(d[[q]][d$T == 0] == "JR"), jr_share_treatment = mean(d[[q]][d$T == 1] == "JR"),
+             coef_T = unname(o$b["T"]), se_hc2 = unname(o$se["T"]), t = unname(tp["t"]), p = unname(tp["p"]),
+             p_romano_wolf = rw$p[j])
+}))
+knitr::kable(s3, digits = 3)
+```
+
+```{r answers-fig}
+#| fig-cap: "Answers to the five required questions by arm."
+#| fig-width: 8
+#| fig-height: 3.6
+long <- do.call(rbind, lapply(Q, function(q) data.frame(question = q, arm = d$arm, answer = d[[q]])))
+long$answer <- factor(long$answer, levels = c("BSZ", "equal", "unsure", "JR"))
+long$question <- factor(long$question, levels = Q)
+ggplot(long, aes(x = arm, fill = answer)) + geom_bar(position = "fill") + facet_wrap(~question, nrow = 1) +
+  scale_fill_manual(values = c(BSZ = "#5b3f9a", equal = "#c8c2d8", unsure = "#e0ddd6", JR = "#1f7a4d")) +
+  scale_y_continuous(labels = scales::percent) + labs(x = NULL, y = "Share of respondents", fill = NULL) +
+  theme_minimal(base_size = 11) + theme(axis.text.x = element_text(angle = 30, hjust = 1))
+```
+
+## Heterogeneity (H2 to H4), Romano-Wolf over the three
+
+```{r het}
+#| tbl-cap: "The interaction of treatment with each dimension, in the H1 equation with the subgroup indicator added (for the entry point the indicator is already a fixed effect). Secondary; with 100 responses none of these is powered."
+dims <- list(H2_entry_explorer = function(f) as.numeric(f$entry == "explorer"),
+             H3_no_prior = function(f) as.numeric(f$q2_prior == "No"),
+             H4_expert = function(f) as.numeric(f$q1_expert %in% c("Yes", "Somewhat")))
+extra_of <- function(h, g) function(f) {
+  if (startsWith(h, "H2")) cbind(TxG = f$T * g(f)) else cbind(G = g(f), TxG = f$T * g(f))
+}
+extra_fns <- lapply(names(dims), function(h) extra_of(h, dims[[h]]))
+rwh <- romano_wolf(d, rep(list(d$lean), 3), "TxG", B_DRAWS, 20261018, extra_fns)
+het <- do.call(rbind, lapply(seq_along(dims), function(j) {
+  h <- names(dims)[j]; Xh <- design(d, extra_fns[[j]](d)); o <- ols_hc2(d$lean, Xh)
+  tp <- t_p(o$b["TxG"], o$se["TxG"], n, ncol(Xh))
+  data.frame(dimension = h, share_G1 = mean(dims[[h]](d)), coef_TxG = unname(o$b["TxG"]), se_hc2 = unname(o$se["TxG"]),
+             t = unname(tp["t"]), p = unname(tp["p"]), effect_G0 = unname(o$b["T"]), effect_G1 = unname(o$b["T"] + o$b["TxG"]),
+             p_romano_wolf = rwh$p[j])
+}))
+knitr::kable(het, digits = 3)
+```
+
+## Descriptives: opt-in, email, support, time, the optional questions
+
+```{r descr}
+#| tbl-cap: "By arm: the opt-in to the five smaller inputs, email left, support for Proposition 40, median minutes, and respondents who quit early."
+descr <- do.call(rbind, lapply(c("control", "treatment"), function(a) {
+  s <- d[d$arm == a, ]
+  data.frame(arm = a, n = nrow(s), optin = mean(startsWith(as.character(s$optin), "Yes")),
+             leaves_email = mean(tolower(as.character(s$leaves_email)) == "true"),
+             support_yes = mean(s$support == 1), support_no = mean(s$support == 2),
+             minutes_median = median(s$minutes), quit_early = sum(tolower(as.character(s$quit_early)) == "true"))
+}))
+knitr::kable(descr, digits = 2)
+```
+
+```{r optional}
+#| tbl-cap: "The five optional questions, among the respondents who opted in."
+opt <- do.call(rbind, lapply(OPT, function(q) {
+  s <- d[d[[q]] != "skipped", ]
+  data.frame(question = q, answered = nrow(s), BSZ = sum(s[[q]] == "BSZ"), JR = sum(s[[q]] == "JR"),
+             equal = sum(s[[q]] == "equal"), unsure = sum(s[[q]] == "unsure"))
+}))
+knitr::kable(opt)
+```
+
+## Against the first pilot
+
+The first pilot (`feedback/008-2026-10-17-rct-pilot/`) ran on the texts before today's revisions,
+with a different hundred personas. The table puts the two side by side, question by question,
+pooling the arms: the share choosing the BSZ value, the JR value, and a neutral answer.
+
+```{r versus}
+#| tbl-cap: "Answer shares by question, first pilot (old wording) against second pilot (revised wording), both arms pooled."
+sh <- function(f, q) c(BSZ = mean(f[[q]] == "BSZ"), JR = mean(f[[q]] == "JR"), neutral = mean(f[[q]] %in% c("equal", "unsure")))
+vs <- do.call(rbind, lapply(Q, function(q) {
+  a <- sh(d1, q); b <- sh(d, q)
+  data.frame(question = q, BSZ_pilot1 = a["BSZ"], BSZ_pilot2 = b["BSZ"], JR_pilot1 = a["JR"], JR_pilot2 = b["JR"],
+             neutral_pilot1 = a["neutral"], neutral_pilot2 = b["neutral"])
+}))
+rownames(vs) <- NULL
+knitr::kable(vs, digits = 2)
+```
+
+## The Python twin, and the comparison
+
+The same tables are produced by `comparison/survey/pilot_analysis.py`. The chunk below runs it and
+reads its output; the one after compares. Coefficients, standard errors and the unadjusted p-values
+must agree to rounding. The Romano-Wolf p-values rest on different bootstrap streams in the two
+languages, so they agree only up to Monte Carlo error (with `r B_DRAWS` draws, about 0.02 near 0.5).
+
+```{r run-python}
+#| code-summary: "run the Python analysis"
+py <- file.path(root, "comparison", "survey", "pilot_analysis.py")
+out <- system2("python3", c(shQuote(py), shQuote(file.path(run, "pilot", "responses.csv")), shQuote(py_out), B_DRAWS, 20261017),
+               stdout = TRUE, stderr = TRUE)
+cat(tail(out, 3), sep = "\n")
+```
+
+<details><summary>the Python module (shown; run above)</summary>
+
+```{r python-source}
+#| echo: false
+#| results: asis
+cat("```python\n", paste(readLines(py), collapse = "\n"), "\n```\n", sep = "")
+```
+
+</details>
+
+```{r compare}
+#| tbl-cap: "Largest absolute difference between the Python and the R tables, column by column."
+cmp <- function(name, r_tab, cols, by) {
+  p <- read.csv(file.path(py_out, paste0(name, ".csv")), stringsAsFactors = FALSE)
+  p <- p[match(r_tab[[by]], p[[by]]), ]
+  data.frame(table = name, column = cols, max_abs_diff = sapply(cols, function(k) max(abs(p[[k]] - r_tab[[k]]))))
+}
+comp <- rbind(
+  cmp("h1", h1, c("coef_T", "se_hc2", "p"), "outcome"),
+  cmp("s3", s3, c("coef_T", "se_hc2", "p", "p_romano_wolf"), "question"),
+  cmp("heterogeneity", het, c("coef_TxG", "se_hc2", "p", "p_romano_wolf"), "dimension"),
+  cmp("counts", cnt, c("n", "treatment", "p_binomial"), "entry"),
+  cmp("balance", bal, c("chi2", "p"), "question"))
+rownames(comp) <- NULL
+exact <- comp[comp$column != "p_romano_wolf", ]
+bad <- is.na(exact$max_abs_diff) | exact$max_abs_diff >= 1e-8
+if (any(bad)) print(exact[bad, ])
+stopifnot(!any(bad))
+knitr::kable(comp, digits = 10)
+```
+
+The non-bootstrap columns agree to `r format(max(exact$max_abs_diff), digits = 2)`. The
+Romano-Wolf columns differ by at most `r fmt(max(comp$max_abs_diff[comp$column == "p_romano_wolf"]), 3)`,
+which is bootstrap noise.
+
+## Materials and reproduction
+
+- Survey texts and entry texts: `00-materials/` (generated by `comparison/survey/pilot_text.py` from the same items and rewrites as the forms). Three strings changed after the respondents answered, when the wording review found that the court discount applies to the wealth tax collected, not to the whole estimate: the court question's title read "Discounting the estimate for the chance that courts strike the tax down" (now "the revenue"), its JR value read "the estimate is multiplied by" (now "the wealth tax collected is multiplied by"), and the treatment page's parts 2 and 3 were titled "The chance the tax survives a court challenge" with "BSZ: 100%. JR: 50%." and "Billionaires counted as having already left" (now "Discounting the revenue for court risk" with "no discount" against "a 50% discount", and "Billionaires who moved out in time"). The files in `00-materials/` carry the current text.
+- Responses: `pilot/responses.csv`, `pilot/responses.json`, `pilot/personas.csv` (from `comparison/survey/pilot_harvest.py` with seed offset 100).
+- This report: `quarto render feedback/009-2026-10-17-rct-pilot-2/report.qmd`. It runs the Python module itself.

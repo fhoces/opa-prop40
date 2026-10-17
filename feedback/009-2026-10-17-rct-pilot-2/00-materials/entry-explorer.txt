@@ -1,0 +1,308 @@
+HOW YOU ARRIVED AT THE SURVEY (entry path: the explorer page's survey button)
+
+You opened the project's comparison explorer page and read it (the page's text follows). Near the bottom, under the heading "But what are the actual quantities?", you clicked the button "Take the survey: which values are more credible?". The survey opened in a new tab.
+
+---- THE EXPLORER PAGE, AS TEXT (interactive dials and tips rendered as text) ----
+TITLE: Prop 40, the comparison: Explorer
+
+Prop 40 comparison: Overview · Open Output (here) · Open Analysis: Report and Slides · Open Materials
+Also in this project: BSZ analysis explorer · JR analysis explorer
+
+Why do the two analyses of Proposition 40 disagree?
+
+The BSZ analysis (Boll, Saez and Zucman, August 2026) finds that the billionaire tax raises money for California. The JR analysis (Jaros and Rauh, NBER, September 2026) finds that it loses money. This page puts both on one measure, the net fiscal effect: the wealth tax collected, plus extra income tax from asset sales, minus the income tax lost to people who leave.
+
+BSZ main estimate1
+$106.8B
+Over 5 years: the wealth tax, net of the income tax it adds and loses.
+JR main estimate1
+−$39.0B
+Net present value: the wealth tax minus the income tax lost for ever, in today's dollars.
+What separates the two numbers
+$106.8B
+BSZ estimate
+−
+$29.89B
+Billionaires already departed (D)
+−
+$39.44B
+Chance the tax does not survive litigation (q)
+−
+$81.34B
+Lost income tax (H, f, C, r)
++
+$4.89B
+The other three steps together (W, a, the minor switch)
+=
+−$39.0B
+JR estimate
+
+Each amount is what its dials change when they are moved to the JR values, term by term from left to right, as the Walk the path button does.2
+
+The inputs
+
+Each slider moves one disputed input between the two analyses' values. Every dial has its smaller value at the left end and its larger value at the right end, and each end names whose value it is. The BSZ panel starts at the BSZ values, the JR panel at the JR values, so a dial can start at either end. Tap or hover over a symbol or an end for what it means and the kind of each value.
+
+BSZ: $106.8B
+Walk the path
+Reset
+
+The BSZ analysis's main estimate1 (Boll, Saez and Zucman, August 2026)
+
+With these sliders $106.8B
+
+Wealth tax collected
+
+The tax takes 5% of the wealth. W is the wealth on the list, D the part already gone, a the share lost to avoidance, q the chance the tax survives in court. more
+
+wealth
+W
+wealth on the list
+Forbes 2025
+JR
+Forbes 2026
+BSZ
+departed
+D
+wealth already gone
+None named
+BSZ
+7 moves
+JR
+avoidance
+a
+avoidance share
+0.0%
+JR
+10.0%
+BSZ
+litigation
+q
+chance it survives court
+50%
+JR
+100%
+BSZ
+
+Income tax lost
+
+f is the share of billionaires' income tax lost, C that tax per year, H the years it is counted, and r the rate that discounts it. more
+
+share lost
+f
+share lost
+5%
+BSZ
+50%
+JR
+yearly income tax
+C
+yearly income tax
+$3.06B/yr
+BSZ
+$4.55B/yr
+JR
+years
+H
+years counted
+5 years
+BSZ
+perpetuity
+JR
+rate
+r
+discount rate
+2.73%
+JR
+3%
+BSZ
+Three minor inputs Non-citizens, real-estate deduction, asset-sale tax
+BSZ values
+BSZ
+JR values
+JR
+Show the three inputs one by one
+Non-citizens Non-US-citizen residents
+$0B
+JR
+$150B
+BSZ
+Real estate Real-estate deduction
+0.0%
+BSZ
+0.5%
+JR
+Asset sales Extra income tax from selling assets to pay
+0%
+JR
+1/3
+BSZ
+−$40
+$0
+$40
+$80
+$120
+BSZ panel
+$106.8B
+JR panel
+−$39.0B
+Net fiscal effect, $ billions: wealth tax collected minus income tax lost, plus asset-sale tax (one of the three minor inputs). Move every slider in a panel to its far end and the two bars meet.
+JR: −$39.0B
+Walk the path
+Reset
+
+The JR analysis's main estimate1, the exact average of the authors' model (Jaros and Rauh, NBER, September 2026)
+
+With these sliders −$39.0B
+
+Wealth tax collected
+
+The tax takes 5% of the wealth. W is the wealth on the list, D the part already gone, a the share lost to avoidance, q the chance the tax survives in court. more
+
+wealth
+W
+wealth on the list
+Forbes 2025
+JR
+Forbes 2026
+BSZ
+departed
+D
+wealth already gone
+None named
+BSZ
+7 moves
+JR
+avoidance
+a
+avoidance share
+0.0%
+JR
+10.0%
+BSZ
+litigation
+q
+chance it survives court
+50%
+JR
+100%
+BSZ
+
+Income tax lost
+
+f is the share of billionaires' income tax lost, C that tax per year, H the years it is counted, and r the rate that discounts it. more
+
+share lost
+f
+share lost
+6%
+BSZ
+45%
+JR
+yearly income tax
+C
+yearly income tax
+$3.06B/yr
+BSZ
+$4.55B/yr
+JR
+years
+H
+years counted
+5 years
+BSZ
+perpetuity
+JR
+rate
+r
+discount rate
+2.73%
+JR
+3%
+BSZ
+Three minor inputs Non-citizens, real-estate deduction, asset-sale tax
+BSZ values
+BSZ
+JR values
+JR
+Show the three inputs one by one
+Non-citizens Non-US-citizen residents
+$0B
+JR
+$150B
+BSZ
+Real estate Real-estate deduction
+0.0%
+BSZ
+0.5%
+JR
+Asset sales Extra income tax from selling assets to pay
+0%
+JR
+1/3
+BSZ
+What separates the two numbers, step by step
+
+Apply to the BSZ panel, from left to right.2
+
+BSZ estimate
+Reset
+−
+Billionaires already departed
+(D)
+Apply
+−
+Chance the tax does not survive litigation
+(q)
+Apply
+−
+Lost income tax
+(H, f, C, r)
+Apply
++
+The other three steps together
+(W, a, the minor switch)
+Apply
+=
+JR estimate
+Apply all
+
+The BSZ panel with these dials: $106.8B
+
+But what are the actual quantities?
+
+Each dial's two ends above give both analyses' values. The overview's table of differences sets them side by side with their sources.
+
+Most of these are empirical quantities; H and r are scenario choices. Their values should not depend on whether one supports or opposes a wealth tax. An expert should be able to appraise each value from more to less credible.
+
+Take the survey: which values are more credible?
+
+The survey is primarily for economists and policy analysts. Share this survey with people you think have expertise in this area, to learn what they think these values are. Copy link
+
+Notes on the two estimates and the conventions
+
+1 The BSZ number is this OPA's net total over 5 years at 3% (BSZ's own headline is the wealth tax alone), and the JR number is the authors' mean net present value in perpetuity. The paper prints −$38.9B, the average of one seeded run of 100,000 draws. The exact average of the same formula is −$38.98B, used throughout this page (more in the report: The two main estimates).
+
+2 The equation adds up only when the terms are switched one after another, in this order, from left to right. In another order the same dials split the gap differently among the terms: moved first, q would take −$53.75B instead of −$39.44B, because it would also halve the tax on the billionaires who already left. The Apply buttons work from left to right, each unlocking the next, so each press changes the estimate by its amount in the equation (more in the report: The explorer's equation).
+
+The net fiscal effect puts both on one definition, and the panels start at its two ends. The BSZ end is $106.8B and the JR end −$39.0B, a gap of $145.8B. The discount rate is a dial: 3% at the BSZ end, the rate the BSZ overview uses, and 2.73% at the JR end, the one rate worth the same as the authors' random draw of it (more in the report: The discount rate).
+
+The litigation dial, q, is at 50% at the JR end. The JR explorer's litigation dial reads 1 at the main estimate, because there the revenue draw from 0 to the ceiling already halves the mean revenue. This explorer applies the same half as q = 50% of the ceiling (more in the report: The litigation dial).
+
+Conventions. All amounts are billions of dollars. Present values are as of the date the wealth tax is assessed, and the first year of lost income tax is counted one year later (more in the report: Conventions).
+
+Where the numbers come from: code, data and kinds
+
+Where the numbers come from. Every number on this page is computed by comparison/R/ from the two analyses' export contracts (bsz-analysis/export/r/, rjkdc-analysis/export/r/: the files each pipeline writes for others to read) and the transcriptions in comparison/data/. The estimating function is score_common() in comparison/R/model.R, with a Python twin (R and Python agree to 1e-9 on every exported number; see comparison/tests). The browser runs model.js, a copy of it, and a test runs that copy with node over 600 slider mixes against the R values, to 1e-9. The report derives each number step by step and shows the bridge from the BSZ end to the JR end; the materials page lists the code, tests and files.
+
+Data. ends.csv (the two ends, at each horizon setting), slider_sample.csv (300 slider mixes per panel with their values, the sample the tests run model.js on), inputs.csv (every disputed input and its sources), DISPUTES.md (the crosswalk of the disagreements, one row each, with what each analysis says and where), dial_path.csv (the terms of the equation at the top, dial by dial), comparison-data.js (what this page reads). A test fails if comparison-data.js or this page differs from the generator's output.
+
+Kinds. Each end's tip ends with the kind of that analysis's value: data (settled by observable facts), research (a published estimate), guesswork (asserted without data or a study behind it), guesswork on data (a judgement applied to observed facts), scenario (a choice of which world is estimated) and derived (computed from the analysis's own inputs).
+
+The function. The report states the estimating function line by line. The BSZ panel's sliders move only the BSZ bar and the JR panel's sliders only the JR bar.
+
+Part of opa-prop40, an Open Policy Analysis of the two analyses of California Proposition 40 (the Billionaire Tax Act). Comparison overview · BSZ analysis overview · JR analysis overview.
+
+OPA done by Fernando Hoces de la Guardia, using agentic coding tools
+
+---- END OF THE EXPLORER PAGE ----

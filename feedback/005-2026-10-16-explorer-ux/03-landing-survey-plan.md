@@ -1,5 +1,19 @@
 # Plan: the survey landing panel, its A/B test, and source tracking (items 1 to 3, 2026-10-16)
 
+**Superseded in part on 2026-10-17 by `comparison/survey/PRE-ANALYSIS-PLAN.md`.** The panel is
+shown to every visitor of the explorer, once per browser. It is not randomized. There are six forms:
+three entry points (`landing`, `explorer`, `share`), each with a control and a treatment form, all
+with one choice order. The draw is control against treatment, at the click on a survey link. So
+the A/B arm of B2, the groups `explorer-1`, `explorer-2` and `other`, the eight forms of Phase A and
+"Reading the result" no longer apply. B1's link plumbing (read as `entry,arm,url`), B3's panel,
+with the text below, and B5's tests still stand.
+
+**Implemented on 2026-10-17.** B1 reads `comparison/data/survey-links.csv` as `entry,arm,url`,
+six rows that hold placeholders until the six forms exist. B3 is in place with the text below.
+B5's tests are in `comparison/tests/testthat/test-site.R`, and its browser checks were run once
+by hand. The draw count of the pre-analysis plan's section 8 replaces B4. Its receiver is
+`comparison/survey/draws.gs`, and its address goes in `comparison/data/survey-config.csv`.
+
 Author's requests, in order:
 
 1. A landing panel on the comparison explorer that invites readers to take the survey before they
@@ -97,9 +111,17 @@ B3. The landing panel (item 1). In the template, before `</body>`: a `div#landin
 
     > **Before you look at the results**
     > Two analyses of Proposition 40 reach very different numbers. Before you see why, we invite you
-    > to record what you think the values of a few key inputs behind the difference are. It takes
-    > about five minutes, and your answers are compared with the two analyses' values.
+    > to judge which of two proposed values for each key input is more credible. It takes 5 to 10
+    > minutes. You can also take it later from the button on this page.
     > [Take the survey first]  [Skip to the results]
+
+    (Revised 2026-10-17, review 008 F9 and the pilot. The old text asked readers to "record what you
+    think the values ... are" and said their answers "are compared with the two analyses' values".
+    About 20 of 33 simulated respondents who came by the panel read that as a quiz with right
+    answers, and some expected to type numbers and to see a score. The survey asks which of two
+    values is more credible. The line "The survey is primarily for economists and policy analysts"
+    was dropped on 2026-10-17: the plan's population is everyone who responds, with expertise as a
+    subgroup.)
 
     "Take the survey first" opens a random version of the `landing` forms in a new tab and dismisses
     the panel; "Skip to the results" and the Escape key dismiss it. Dismissal is stored

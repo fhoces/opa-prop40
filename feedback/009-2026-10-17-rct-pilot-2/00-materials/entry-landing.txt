@@ -1,0 +1,13 @@
+HOW YOU ARRIVED AT THE SURVEY (entry path: the landing panel)
+
+You opened the project's comparison explorer page, "Prop 40, the comparison: Explorer". Before you could read it, the page was blurred and a panel appeared in the middle of the screen. Through the blur you could make out only the page's two headline numbers: "BSZ main estimate $106.8B" and "JR main estimate −$39.0B".
+
+The panel said:
+
+Before you look at the results
+
+Two analyses of Proposition 40 reach very different numbers. Before you see why, we invite you to judge which of two proposed values for each key input is more credible. It takes 5 to 10 minutes. You can also take it later from the button on this page.
+
+[Take the survey first]  [Skip to the results]
+
+You clicked "Take the survey first". The survey opened in a new tab. You have not read the explorer page.

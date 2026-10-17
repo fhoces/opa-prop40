@@ -1,0 +1,17 @@
+\begin{tabularx}{\textwidth}{l X c rr rr}
+\toprule
+ & & & \multicolumn{2}{c}{$d^{*} = 0.5$} & \multicolumn{2}{c}{$d^{*} = 0.3$} \\
+\cmidrule(lr){4-5} \cmidrule(lr){6-7}
+Tier & Analysis & Tests $m$ & $N^{*}$ & Bound & $N^{*}$ & Bound \\
+\midrule
+0 & H1: lean index, full sample & 1 & 126 &  & 349 &  \\
+1 & Each of the five questions & 5 & 150 & 187 & 410 & 520 \\
+2a & Effect inside each cell, one dimension at a time (3 combinations, 2 cells each) & 6 & 320 & 388 & 890 & 1,077 \\
+2b & Difference between the two halves, one dimension at a time (H2 to H4) & 3 & 660 & 671 & 1,862$^{\dagger}$ & 1,862 \\
+3a & Effect inside each cell, two dimensions at a time (3 combinations, 4 cells each) & 12 & 690 & 880 & 1,960 & 2,443 \\
+3b & 2-way difference of effects, two dimensions at a time & 3 & 2,681$^{\dagger}$ & 2,681 & 7,445$^{\dagger}$ & 7,445 \\
+4a & Effect inside each cell, three dimensions at a time (1 combination, 8 cells each) & 8 & 1,290 & 1,637 & 3,670 & 4,547 \\
+4b & 3-way difference of effects, three dimensions at a time (one test) & 1 & 8,038 &  & 22,326 &  \\
+5 & Each question inside each half, one dimension at a time & 30 & 390 & 509 & 1,060 & 1,413 \\
+\bottomrule
+\end{tabularx}

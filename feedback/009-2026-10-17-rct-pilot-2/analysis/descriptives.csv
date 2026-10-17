@@ -1,0 +1,3 @@
+arm,n,optin,leaves_email,support_yes,support_no,minutes_median,quit_early
+control,50,0.26,0.02,0.2,0.3,4.5,0
+treatment,50,0.34,0.02,0.24,0.34,6.0,0

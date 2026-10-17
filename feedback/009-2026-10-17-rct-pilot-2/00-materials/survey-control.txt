@@ -1,0 +1,133 @@
+TITLE: What are the actual quantities? Proposition 40, input by input
+
+Proposition 40 would tax Californians worth $1 billion or more once, at 5% of their net worth. Estimates of what it is worth to the state depend on a handful of inputs. Each question shows one input and two values that have been proposed for it. Tell us which value you find more credible. Your answers will help us get closer to agreeing on common facts to inform important policy discussions.
+
+Most of these are empirical quantities, and none should depend on whether one supports or opposes a wealth tax.
+
+It takes 5 to 10 minutes. Answers are anonymous unless you leave an email near the end.
+
+=== Page 1 ===
+
+Q1. Do you consider yourself an expert in tax or fiscal policy? (required)
+   (1) Yes
+   (2) Somewhat
+   (3) No
+
+Q2. Before opening this survey, had you looked at news sources, web pages or academic studies comparing estimates of Proposition 40, the Billionaire Wealth Tax Proposal in California? (required)
+   (1) Yes
+   (2) No
+   (3) Not sure
+
+=== Page 2: The inputs ===
+For each input, pick the value you find more credible.
+
+--- 1. The income tax lost when billionaires leave ---
+
+Q3. The share of billionaires' income tax lost when people leave: which is more credible? (required)
+   (1) A. 45% of all the income tax that billionaires pay: more than the 29% of their wealth reported to have left, because income tax need not leave in step with wealth and some moves go unreported.
+   (2) B. 5% of all the income tax that billionaires pay: the same as the 5% of their wealth assumed to leave, because the largest of the billionaires reported to have left pay little income tax for their wealth.
+   (3) About equally credible
+   (4) Unsure
+
+Q4. Why? (optional)
+   [free text]
+
+Q5. How long the lost income tax is counted: which is more credible? (required)
+   (1) A. For ever: billionaires who leave are assumed not to return.
+   (2) B. 5 years, about the payment period, treating the departures as temporary.
+   (3) About equally credible
+   (4) Unsure
+
+Q6. Why? (optional)
+   [free text]
+
+Q7. Billionaires' yearly California income tax: which is more credible? (required)
+   (1) A. $4.55 billion a year: from California tax data, taking the billionaires to be among the state's 212 to 500 highest earners.
+   (2) B. $3.06 billion a year: from California tax data, taking the billionaires to have about half the income of the state's highest earners, as a study of top wealth holders finds.
+   (3) About equally credible
+   (4) Unsure
+
+Q8. Why? (optional)
+   [free text]
+
+--- 2. Discounting the revenue for court risk ---
+
+Q9. Discounting the revenue for the chance that courts strike the tax down: which is more credible? (required)
+   (1) A. No discount: the tax is assessed at face value, as written.
+   (2) B. A discount: the wealth tax collected is multiplied by the chance the tax survives in court, put at 50%.
+   (3) About equally credible
+   (4) Unsure
+
+Q10. Why? (optional)
+   [free text]
+
+--- 3. Billionaires who moved out in time ---
+
+Q11. Billionaires who moved out of California before the 1 January 2026 residency date: which is more credible? (required)
+   (1) A. About 29% of the wealth: seven billionaires (Page, Thiel, Hankey, Kalanick, Brin, Spielberg and Sacks) are counted as having moved in time, on public reports of their moves.
+   (2) B. 5% of the wealth: an allowance for billionaires who moved in time, with no one counted by name without evidence of a change of legal residence before the date.
+   (3) About equally credible
+   (4) Unsure
+
+Q12. Why? (optional)
+   [free text]
+
+Q13. The next 5 questions in total explain up to 3% of the difference between the two analyses. Answering them makes the survey on average 60% longer. Answering them is optional. (required)
+   (1) Yes, show me the five
+   (2) No, skip them
+
+=== Page 3: Five smaller inputs (optional) ===
+Each of these moves the estimate only a little. Answer any you like, or none.
+
+Q14. Wealth that escapes the tax through avoidance and evasion, beyond moving away: which is more credible? (optional)
+   (1) A. 5%: a small allowance argued from enforcement.
+   (2) B. None.
+   (3) About equally credible
+   (4) Unsure
+
+Q15. The billionaires' wealth the tax applies to: which is more credible? (optional)
+   (1) A. The Forbes list of 1 July 2026: 250 California billionaires worth $2,307 billion, or $2,157 billion without the non-US citizens asked about next.
+   (2) B. The Forbes list of 2025: 212 California billionaires, grown 7% to the 31 December 2026 valuation date: $2,027 billion.
+   (3) About equally credible
+   (4) Unsure
+
+Q16. Non-US-citizen residents: which is more credible? (optional)
+   (1) A. Taxed: the $150 billion of wealth of California billionaires who are not US citizens is in the base.
+   (2) B. Not taxed: the wealth of California billionaires who are not US citizens is left out of the base.
+   (3) About equally credible
+   (4) Unsure
+
+Q17. Real-estate deduction: which is more credible? (optional)
+   (1) A. No deduction: directly held real estate stays in the base.
+   (2) B. A deduction: directly held real estate, about 0.5% of the base, is taken out of it.
+   (3) About equally credible
+   (4) Unsure
+
+Q18. Extra income tax from assets sold to pay the tax: which is more credible? (optional)
+   (1) A. Counted: one third of the tax is paid by selling assets, and the gains on them are taxed.
+   (2) B. Not counted: no extra income tax from selling assets is included.
+   (3) About equally credible
+   (4) Unsure
+
+Q19. Why? (optional)
+   [free text]
+
+=== Page 4: Anything else (optional) ===
+
+Q20. Is there an input missing from this list that you think matters? (optional)
+   [free text]
+
+Q21. Your email (optional)
+   If you leave one, your answers are also reported in a separate analysis of the respondents who gave an email.
+   [free text]
+
+Q22. Do you support Proposition 40? (optional)
+   (1) Yes, I support it
+   (2) No, I oppose it
+   (3) Undecided
+   (4) I prefer not to say
+
+=== After submitting ===
+Thank you for taking the time to answer. All these answers will help us get closer to agreeing on common facts to inform important policy discussions.
+
+To see how the two estimates compare, input by input, open the comparison explorer: fhoces.github.io/opa-prop40/comparison/site/explorer

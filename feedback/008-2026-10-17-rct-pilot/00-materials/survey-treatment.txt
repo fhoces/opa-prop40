@@ -1,0 +1,159 @@
+TITLE: What are the actual quantities? Proposition 40, input by input
+
+Proposition 40 would tax Californians worth $1 billion or more once, at 5% of their net worth. Estimates of what it is worth to the state depend on a handful of inputs. Each question shows one input, two values that have been proposed for it, and the reason given for each. Tell us which value you find more credible.
+
+These are empirical quantities: their values should not depend on whether one supports or opposes a wealth tax.
+
+It takes about 5 minutes. Answers are anonymous unless you leave an email near the end.
+
+=== Page 1 ===
+
+Q1. Do you consider yourself an expert in tax or fiscal policy? (required)
+   (1) Yes
+   (2) Somewhat
+   (3) No
+
+Q2. Before opening this survey, had you looked at news sources, web pages or academic studies comparing estimates of Proposition 40, the Billionaire Wealth Tax Proposal in California? (required)
+   (1) Yes
+   (2) No
+   (3) Not sure
+
+=== Page 2: How the two estimates differ ===
+Two academic studies estimate what Proposition 40 is worth to California:
+• Boll, Saez and Zucman (BSZ, August 2026): +$106.8 billion.
+• Jaros and Rauh (JR, NBER, September 2026): −$39.0 billion.
+
+The gap is $145.8 billion. Both are on one measure: the wealth tax collected, plus the extra income tax from assets sold to pay it, minus the income tax lost when people leave.
+
+Two parts explain 83% of the gap: the income tax lost when billionaires leave, and the chance the tax survives in court. Below, how much of the gap each part explains, and the values each study uses.
+
+1. The income tax lost when billionaires leave: the share lost, how long it is counted, and billionaires' yearly income tax, together
+████████████████████ $81.3 billion, 56% of the gap
+BSZ: only the leavers' own income tax is lost; counted for 5 years; $3.06 billion a year.
+JR: 45% of all billionaires' income tax is lost; counted for ever; $4.55 billion a year.
+
+2. The chance the tax survives a court challenge
+██████████ $39.4 billion, 27% of the gap
+BSZ: 100%.
+JR: 50%.
+
+3. Billionaires counted as having already left
+███████ $29.9 billion, 21% of the gap
+BSZ: no named billionaire (its allowance for 5% of the wealth moving away in time is in part 4).
+JR: seven publicly reported moves.
+
+4. Other inputs together: the wealth on the list, avoidance, and three smaller inputs
+░ +$4.9 billion, offsetting 3% of the gap
+
+The four amounts are the four terms of the equation on the project's comparison page, with the inputs moved one after another from the BSZ values to the JR values. The income tax lost is a product of the share lost, how long it is counted and the yearly amount, so it is shown as one amount: splitting it among those three would depend on the order in which they are changed. The other amounts also change somewhat with the order.
+
+The questions that follow ask which study's value of each input you find more credible.
+
+=== Page 3: The inputs ===
+For each input, pick the value you find more credible.
+
+--- 1. The income tax lost when billionaires leave ---
+
+Q3. The share of billionaires' income tax lost when people leave: which is more credible? (required)
+   (1) JR: 45% of all billionaires' income tax, whoever leaves.
+   (2) BSZ: 5%, only the income tax of those who leave.
+   (3) About equally credible
+   (4) Unsure
+
+Q4. Why? (optional)
+   [free text]
+
+Q5. How long the lost income tax is counted: which is more credible? (required)
+   (1) JR: For ever: billionaires who leave are assumed not to return.
+   (2) BSZ: 5 years, about the payment period, treating the responses as temporary.
+   (3) About equally credible
+   (4) Unsure
+
+Q6. Why? (optional)
+   [free text]
+
+Q7. Billionaires' yearly California income tax: which is more credible? (required)
+   (1) JR: $4.55 billion a year: the middle of a range from California tax data. The top, $5.8 billion, assumes the billionaires are the state's 212 highest earners. The bottom, $3.3 billion, assumes they are spread among the top 500 tax filers.
+   (2) BSZ: $3.06 billion a year: the income tax paid by California's highest earners, halved, because research finds the wealthiest people have about half the income of the highest earners.
+   (3) About equally credible
+   (4) Unsure
+
+Q8. Why? (optional)
+   [free text]
+
+--- 2. The chance the tax survives in court ---
+
+Q9. The chance the tax survives a court challenge: which is more credible? (required)
+   (1) BSZ: 100%: the tax is collected in full, as written.
+   (2) JR: 50%: a guesstimated likelihood that the tax will not survive court litigation; it is as likely to fail as to stand.
+   (3) About equally credible
+   (4) Unsure
+
+Q10. Why? (optional)
+   [free text]
+
+--- 3. Billionaires who moved out in time ---
+
+Q11. Billionaires who moved out of California before the 1 January 2026 residency date: which is more credible? (required)
+   (1) JR: About 29% of the wealth: seven billionaires with publicly reported moves (Page, Thiel, Hankey, Kalanick, Brin, Spielberg and Sacks) are counted as having moved in time.
+   (2) BSZ: 5% of the wealth: an allowance for billionaires who managed to move in time. No named billionaire is counted, because press reports do not by themselves establish a change of legal residence. Counting four of them (Page, Thiel, Hankey and Kalanick) is treated as an aggressive scenario.
+   (3) About equally credible
+   (4) Unsure
+
+Q12. Why? (optional)
+   [free text]
+
+Q13. The last five inputs have only a small, second-order effect on the estimate. Would you like to assess them anyway? (required)
+   (1) Yes, show me the five
+   (2) No, skip them
+
+=== Page 4: Five smaller inputs (optional) ===
+Each of these moves the estimate only a little. Answer any you like, or none.
+
+Q14. Wealth that escapes the tax through avoidance and evasion, beyond moving away: which is more credible? (optional)
+   (1) BSZ: 5%: a small allowance argued from enforcement.
+   (2) JR: None.
+   (3) About equally credible
+   (4) Unsure
+
+Q15. The billionaires' wealth the tax applies to: which is more credible? (optional)
+   (1) BSZ: The Forbes list of 1 July 2026: 250 California billionaires worth $2,307 billion.
+   (2) JR: The Forbes list of 2025: 212 California billionaires, grown 7% to the 31 December 2026 valuation date: $2,027 billion.
+   (3) About equally credible
+   (4) Unsure
+
+Q16. Non-US-citizen residents: which is more credible? (optional)
+   (1) BSZ: Taxed: the $150 billion of wealth of California billionaires who are not US citizens is in the base.
+   (2) JR: Left out of the base.
+   (3) About equally credible
+   (4) Unsure
+
+Q17. Real-estate deduction: which is more credible? (optional)
+   (1) BSZ: None: directly held homes stay in the base.
+   (2) JR: Directly held real estate is deducted, about 0.5% of the base.
+   (3) About equally credible
+   (4) Unsure
+
+Q18. Extra income tax from assets sold to pay the tax: which is more credible? (optional)
+   (1) BSZ: One third of the tax is paid by selling assets, and those gains are taxed.
+   (2) JR: Not counted.
+   (3) About equally credible
+   (4) Unsure
+
+Q19. Why? (optional)
+   [free text]
+
+=== Page 5: Anything else (optional) ===
+
+Q20. Is there an input missing from this list that you think matters? (optional)
+   [free text]
+
+Q21. Verify your identity with your email. (optional)
+   Optional. Answers that include an email will be presented in a separate analysis.
+   [free text]
+
+Q22. Do you support Proposition 40? (optional)
+   (1) Yes, I support it
+   (2) No, I oppose it
+   (3) Undecided
+   (4) I prefer not to say
