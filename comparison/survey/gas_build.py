@@ -192,16 +192,21 @@ function buildOne_(spec) {{
 function buildExperiment() {{ FORMS.forEach(buildOne_); }}
 
 // Renames the prior-exposure question in the forms built before the author's wording change
-// of 2026-10-17 ("comparing estimates" became "discussing estimates"). Run once after building.
+// of 2026-10-17 ("comparing estimates" became "discussing estimates"), and logs every copy of
+// each form with whether it is finished and its links, in the format fill_links.py reads.
 function fixPrior() {{
   FORMS.forEach(function (spec) {{
-    var files = DriveApp.getFilesByName(spec.name);
+    var files = DriveApp.getFilesByName(spec.name), n = 0;
     while (files.hasNext()) {{
       var f = FormApp.openById(files.next().getId());
+      n++;
       var it = find_(f, PRIOR_OLD);
-      if (it) {{ it.setTitle(PRIOR); Logger.log("renamed in " + spec.name); }}
-      else Logger.log("already current: " + spec.name);
+      if (it) it.setTitle(PRIOR);
+      Logger.log(spec.name + "\\n  edit: " + f.getEditUrl() + "\\n  respond: " + f.getPublishedUrl() +
+                 "\\n  finished: " + complete_(f, spec) + "; items: " + f.getItems().length +
+                 "; prior question: " + (it ? "renamed" : (find_(f, PRIOR) ? "current" : "MISSING")));
     }}
+    if (n !== 1) Logger.log("WARNING: " + n + " copies named " + spec.name);
   }});
 }}
 """)
