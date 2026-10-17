@@ -51,8 +51,8 @@ The four terms, as generated at commit e345b64 (gap $145.8 billion):
 | Term on the page | Amount | Share of the gap |
 |---|---|---|
 | The income tax lost when billionaires leave: the share lost, how long it is counted, and billionaires' yearly income tax, together | -$81.3 billion | 56% |
-| The chance the tax survives a court challenge | -$39.4 billion | 27% |
-| Billionaires counted as having already left | -$29.9 billion | 21% |
+| Discounting the revenue for court risk | -$39.4 billion | 27% |
+| Billionaires who moved out in time | -$29.9 billion | 21% |
 | Other inputs together: the wealth on the list, avoidance, and three smaller inputs | +$4.9 billion | offsets 3% |
 
 The shares add to 101% because of rounding. Each amount is the sum of the explorer's walk steps

@@ -1,0 +1,82 @@
+# AEA RCT Registry: draft fields (not submitted)
+
+Drafted 2026-10-17 from `comparison/survey/PRE-ANALYSIS-PLAN.md` for the author to review. Every field
+below is a proposal; the registry's own labels may differ slightly. Nothing here has been submitted.
+
+**Title.** Does seeing the comparison change how respondents judge disputed inputs? A survey
+experiment on two estimates of California's Proposition 40
+
+**Country.** United States
+
+**Status.** In development (the forms are built and closed; collection starts at launch)
+
+**Keywords.** Public finance; tax policy; wealth tax; open policy analysis; expert elicitation;
+survey experiment
+
+**JEL codes.** H24 (personal income and wealth taxes), H71 (state and local taxation), C93 (field
+experiments), D83 (information and knowledge)
+
+**Abstract.** Two academic analyses of California's Proposition 40, a one-time 5% tax on
+billionaires' net worth, reach opposite conclusions: one finds that it raises money for the state,
+the other that it loses money. An Open Policy Analysis of both puts them on one measure and shows
+which inputs explain the gap. A short survey asks respondents which of two proposed values of each
+disputed input they find more credible. This experiment randomizes, at the click on a survey link,
+whether the respondent first sees a page that explains how the two estimates differ and labels each
+value with its study. The main outcome is a lean index over the five required questions. The study
+tests whether seeing the comparison changes the answers.
+
+**Trial start date.** The launch date (to be set on launch day).
+
+**Trial end date.** 4 November 2026 (the close of collection).
+
+**Intervention start date / end date.** Launch date / 4 November 2026.
+
+**Primary outcomes (end points).** The lean index: for each respondent, the mean over the five
+required input questions of +1 (the BSZ value chosen), -1 (the JR value chosen) and 0 (About
+equally credible or Unsure).
+
+**Primary outcomes explanation.** The five required questions are the share of billionaires'
+income tax lost when people leave, how long the lost income tax is counted, billionaires' yearly
+California income tax, discounting the revenue for the chance that courts strike the tax down, and
+billionaires who moved out of California before the residency date. The index runs from -1 to +1.
+
+**Secondary outcomes.** S1 the share of Unsure answers; S2 the share of About equally credible
+answers; S3 each of the five questions separately; S4 the mean absolute lean index (distance from
+neutral).
+
+**Experimental design (public).** Respondents reach the survey through one of three entry points:
+a panel on the comparison explorer, a button on the explorer or the project's overview, and a
+shared link. Each entry point has a control form and a treatment form; the arm is drawn with
+probability one half at the click. The treatment form adds one page after the two opening
+questions, explaining how the two estimates differ and which inputs explain the gap, and labels
+each value with its study. The control form is identical without that page and with the values
+labelled A and B. Analysis: OLS of the lean index on the treatment indicator with entry-point fixed
+effects and HC2 standard errors, two-sided test at 5%. Heterogeneity by entry point, prior exposure
+and expertise is secondary, adjusted with the Romano-Wolf step-down, and run only above
+pre-registered sample-size thresholds.
+
+**Experimental design details (hidden until the trial ends).** The full plan and its power
+appendix are attached.
+
+**Randomization method.** Randomization done by a computer: `Math.random() < 0.5` in the
+respondent's browser at the click on a survey link, separately for each entry point.
+
+**Randomization unit.** The individual respondent.
+
+**Was the treatment clustered?** No.
+
+**Planned number of clusters.** Not applicable (unclustered). Observations: 50 to 200 expected.
+
+**Sample size by arm.** About half in each arm; not controlled.
+
+**Minimum detectable effect size.** With 349 responses, 80% power against 0.3 standard deviations
+of the lean index (two-sided, 5%); with 126, against 0.5 standard deviations. The power appendix
+gives the thresholds for every secondary analysis.
+
+**IRB.** TO DECIDE BY THE AUTHOR: name of the review board, approval or exemption date and number,
+or a statement that no review was obtained.
+
+**Analysis plan documents to upload.** `comparison/survey/plan/plan.pdf` (the pre-analysis plan)
+and `comparison/survey/power/power.pdf` (the appendix on power).
+
+**Other.** Launch commit f9137bd in https://github.com/fhoces/opa-prop40 (pushed on launch day).
