@@ -612,10 +612,9 @@ appendix's Table 3 and Figure 1 give these, with the responses H1 needs at each 
   Paste each form's respondent link into \texttt{comparison/data/survey-links.csv}, in the row of its
   entry point and arm (\texttt{python3\ comparison/survey/fill\_links.py\ LOG.txt} does it from the
   execution log). Delete the comment line about placeholders.
-  2b. By hand, in each of the six forms, before they open: on the closing page ``Anything else
-  (optional)'', add a description with the link text ``comparison explorer'' pointing to
-  https://fhoces.github.io/opa-prop40/comparison/site/explorer/, and remove the bare address
-  from the confirmation message (Settings, Presentation). Forms allows link text only there.
+  2b. The thank-you screen after Submit carries the two short links (tinyurl.com/prop40-explorer and
+  tinyurl.com/prop40-opa); \texttt{fixEnding()} sets it in forms built before 2026-10-17 afternoon. No link
+  sits before Submit: a control respondent could open it, go Back and change answers.
 \item
   Deploy \texttt{comparison/survey/draws.gs} as a web app (execute as me, anyone can access), as its
   header says. Paste its URL into \texttt{comparison/data/survey-config.csv} as \texttt{draws\_url}.

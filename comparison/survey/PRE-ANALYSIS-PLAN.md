@@ -424,10 +424,9 @@ appendix's Table 3 and Figure 1 give these, with the responses H1 needs at each 
 2. Paste each form's respondent link into `comparison/data/survey-links.csv`, in the row of its
    entry point and arm (`python3 comparison/survey/fill_links.py LOG.txt` does it from the
    execution log). Delete the comment line about placeholders.
-2b. By hand, in each of the six forms, before they open: on the closing page "Anything else
-   (optional)", add a description with the link text "comparison explorer" pointing to
-   https://fhoces.github.io/opa-prop40/comparison/site/explorer/, and remove the bare address
-   from the confirmation message (Settings, Presentation). Forms allows link text only there.
+2b. The thank-you screen after Submit carries the two short links (tinyurl.com/prop40-explorer and
+   tinyurl.com/prop40-opa); `fixEnding()` sets it in forms built before 2026-10-17 afternoon. No link
+   sits before Submit: a control respondent could open it, go Back and change answers.
 3. Deploy `comparison/survey/draws.gs` as a web app (execute as me, anyone can access), as its
    header says. Paste its URL into `comparison/data/survey-config.csv` as `draws_url`.
 4. Rebuild with `Rscript comparison/run.R`, then run `Rscript comparison/tests/testthat.R`.

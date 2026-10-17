@@ -191,6 +191,22 @@ function buildOne_(spec) {{
 
 function buildExperiment() {{ FORMS.forEach(buildOne_); }}
 
+// Sets the thank-you screen (THANKS, with the two short links) in the six forms and empties the
+// closing page's description, where an earlier hand edit had put a link before Submit (a control
+// respondent could open it, go Back and change answers). Logs each form. Run once (2026-10-17).
+function fixEnding() {{
+  FORMS.forEach(function (spec) {{
+    var files = DriveApp.getFilesByName(spec.name);
+    while (files.hasNext()) {{
+      var f = FormApp.openById(files.next().getId());
+      f.setConfirmationMessage(THANKS);
+      var pb = find_(f, CLOSE.new);
+      if (pb) pb.setHelpText("");
+      Logger.log(spec.name + ": confirmation set; closing page description " + (pb ? "emptied" : "NOT FOUND"));
+    }}
+  }});
+}}
+
 // Renames the prior-exposure question in the forms built before the author's wording change
 // of 2026-10-17 ("comparing estimates" became "discussing estimates"), and logs every copy of
 // each form with whether it is finished and its links, in the format fill_links.py reads.

@@ -448,10 +448,14 @@ def regroup(items):
 
 # Shown after the form is submitted (the author, 2026-10-17).
 EXPLORER_URL = "https://fhoces.github.io/opa-prop40/comparison/site/explorer/"
-EXPLORER_SHORT = EXPLORER_URL.replace("https://", "").rstrip("/")   # Forms shows a bare address as a link; no anchor text
+OVERVIEW_URL = "https://fhoces.github.io/opa-prop40/"
+# Short links (TinyURL, made 2026-10-17, redirect to the two addresses above). The confirmation screen is
+# plain text, so the links are addresses that Forms makes clickable; they sit after Submit, where a
+# control respondent can no longer go back and change answers (author's choice, 2026-10-17).
+SHORT = {"explorer": "tinyurl.com/prop40-explorer", "overview": "tinyurl.com/prop40-opa"}
 THANKS = ("Thank you for taking the time to answer. All these answers will help us get closer to agreeing on "
-          "common facts to inform important policy discussions.\n\nTo see how the two estimates compare, input by "
-          "input, open the comparison explorer: " + EXPLORER_SHORT)
+          "common facts to inform important policy discussions.\n\nSee how the two estimates compare: "
+          + SHORT["explorer"] + "\nAbout the project: " + SHORT["overview"])
 
 
 def build(items, treated):
@@ -496,8 +500,10 @@ def build(items, treated):
                     out.append(f"<div class='card'>{html.escape(e['help'])}</div>")
             else:
                 out.append(q_html(e, labelled=treated))
-    out.append(f"<div class='card head2'><h2>After submitting</h2></div><div class='card'>"
-               f"{html.escape(THANKS).replace(EXPLORER_SHORT, f'<a href={EXPLORER_URL}>{EXPLORER_SHORT}</a>')}</div>")
+    thanks = html.escape(THANKS)
+    for short in SHORT.values():
+        thanks = thanks.replace(short, f"<a href='https://{short}'>{short}</a>")
+    out.append(f"<div class='card head2'><h2>After submitting</h2></div><div class='card desc'>{thanks}</div>")
     arm = "Treatment" if treated else "Control"
     banner = (f"<div class='mock'><b>Mock preview: {arm.lower()} form.</b> Not a live form. Green cards are new or "
               "moved questions (pre-analysis plan, section 4.4)."

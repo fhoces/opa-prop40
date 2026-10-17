@@ -130,4 +130,5 @@ Q22. Do you support Proposition 40? (optional)
 === After submitting ===
 Thank you for taking the time to answer. All these answers will help us get closer to agreeing on common facts to inform important policy discussions.
 
-To see how the two estimates compare, input by input, open the comparison explorer: fhoces.github.io/opa-prop40/comparison/site/explorer
+See how the two estimates compare: tinyurl.com/prop40-explorer
+About the project: tinyurl.com/prop40-opa
