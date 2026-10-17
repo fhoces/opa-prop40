@@ -1,5 +1,9 @@
 # AEA RCT Registry: draft fields (not submitted)
 
+Entered on 2026-10-17 as the private draft of trial 19997 (socialscienceregistry.org/trials/19997/edit),
+with the dates 2026-10-19 (start) and 2026-12-31 (end), IRB "No", both PDFs attached to the analysis plan
+(private), and a repository note under Docs & Materials (private). Not submitted.
+
 Drafted 2026-10-17 from `comparison/survey/PRE-ANALYSIS-PLAN.md` for the author to review. Every field
 below is a proposal; the registry's own labels may differ slightly. Nothing here has been submitted.
 
@@ -25,11 +29,11 @@ whether the respondent first sees a page that explains how the two estimates dif
 value with its study. The main outcome is a lean index over the five required questions. The study
 tests whether seeing the comparison changes the answers.
 
-**Trial start date.** The launch date (to be set on launch day).
+**Trial start date.** 2026-10-19 (the launch date).
 
-**Trial end date.** 4 November 2026 (the close of collection).
+**Trial end date.** 2026-12-31 (analysis done). Collection closes 4 November 2026.
 
-**Intervention start date / end date.** Launch date / 4 November 2026.
+**Intervention start date / end date.** 2026-10-19 / 2026-11-04.
 
 **Primary outcomes (end points).** The lean index: for each respondent, the mean over the five
 required input questions of +1 (the BSZ value chosen), -1 (the JR value chosen) and 0 (About
@@ -73,8 +77,7 @@ respondent's browser at the click on a survey link, separately for each entry po
 of the lean index (two-sided, 5%); with 126, against 0.5 standard deviations. The power appendix
 gives the thresholds for every secondary analysis.
 
-**IRB.** TO DECIDE BY THE AUTHOR: name of the review board, approval or exemption date and number,
-or a statement that no review was obtained.
+**IRB.** No IRB approval was obtained (the author's answer).
 
 **Analysis plan documents to upload.** `comparison/survey/plan/plan.pdf` (the pre-analysis plan)
 and `comparison/survey/power/power.pdf` (the appendix on power).
