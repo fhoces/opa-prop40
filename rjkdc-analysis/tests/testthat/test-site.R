@@ -134,11 +134,41 @@ test_that("every number typed into the landing page matches its source", {
   flat <- gsub("\\s+", " ", html)
   expect_true(grepl(sprintf("of the %s inputs of the authors' simulation, %s are guesswork",
                             words[length(own)], words[n_guess]), flat, fixed = TRUE))
-  # ten mismatches listed, as in MISMATCHES.md (the tenth added 2026-10-16, author answer 17)
-  n_mm <- sum(grepl("^## [0-9]+\\.", readLines(project_path("MISMATCHES.md"))))
+  # ten reproduction notes listed, as in MISMATCHES.md (the tenth added 2026-10-16, author
+  # answer 17), with their kinds counted from each note's "**Kind:**" line (reclassified
+  # 2026-10-16, feedback/006)
+  mm <- readLines(project_path("MISMATCHES.md"))
+  n_mm <- sum(grepl("^## [0-9]+\\.", mm))
   expect_equal(n_mm, 10)
   expect_equal(lengths(regmatches(html, gregexpr("<li( value=\"[0-9]+\")?>", html))), n_mm)
-  expect_true(grepl(sprintf("<strong>%s mismatches</strong>", words[n_mm]), flat, fixed = TRUE))
+  expect_true(grepl(sprintf("<strong>%s notes</strong>", words[n_mm]), flat, fixed = TRUE))
+  kind <- sub("^[*][*]Kind:[*][*] ([^.]+)[.].*", "\\1", grep("^[*][*]Kind:[*][*] ", mm, value = TRUE))
+  expect_length(kind, n_mm)
+  k <- function(x) sum(kind == x)
+  expect_true(grepl(sprintf("%s are rounded or typed inputs, %s is seed variation and %s are documentation notes",
+                            tools::toTitleCase(words[k("rounded or typed input")]), words[k("seed variation")],
+                            words[k("documentation")]), flat, fixed = TRUE))
+  # the file's own list of notes by kind agrees with the "**Kind:**" lines
+  note_no <- as.integer(sub("^## ([0-9]+)[.].*", "\\1", grep("^## [0-9]+\\.", mm, value = TRUE)))
+  listed <- function(label) {
+    line <- grep(sprintf("^- [*][*]%s[*][*] [(]notes? ", label), mm, value = TRUE)
+    as.integer(regmatches(line, gregexpr("[0-9]+", sub("[)].*", "", line)))[[1]])
+  }
+  expect_setequal(listed("Rounded or typed inputs"), note_no[kind == "rounded or typed input"])
+  expect_setequal(listed("Seed variation"), note_no[kind == "seed variation"])
+  expect_setequal(listed("Documentation"), note_no[kind == "documentation"])
+})
+
+test_that("the landing page's expanded-departures semi-elasticity is the authors' final.csv sum", {
+  skip_if_no_rauh()
+  html <- paste(readLines(site_path("index.html"), warn = FALSE), collapse = "\n")
+  fin <- extract_nber_final()
+  dom <- fin[fin$panel == "domestic", ]
+  exp_set <- dom$bucket %in% c("removed_departed", "zuckerberg") |
+    dom$name %in% c("Jan Koum", "Reed Hastings", "Andy Fang")
+  eps <- 100 * sum(dom$face_tax_5pct[exp_set]) / sum(dom$face_tax_5pct) / 5
+  expect_true(grepl(sprintf("semi-elasticity of %.2f from the authors' records", eps),
+                    gsub("\\s+", " ", html), fixed = TRUE))
 })
 
 test_that("every explorer dial carries an OPA origin label", {

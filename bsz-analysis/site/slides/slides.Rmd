@@ -37,6 +37,9 @@ gjs <- grep("^window\\.__GRID__ = ", readLines("../explorer/grid.js", warn = FAL
 facts <- jsonlite::fromJSON(sub(";\\s*$", "", sub("^window\\.__GRID__ = ", "", gjs)))$facts   # pv_rate, pv_years
 lv  <- read.csv("../data/leavers.csv", stringsAsFactors = FALSE)
 tst <- read.csv("../data/test-results.csv", stringsAsFactors = FALSE)
+# The reproduction notes, one "1. **Kind.**" item each in the materials page's "What the checks found".
+n_notes <- sum(grepl("^[0-9]+[.] [*][*](Rounding|Small numerical difference|Documentation)[.][*][*]",
+                     readLines("../materials.qmd", warn = FALSE, encoding = "UTF-8")))
 W0 <- t5$wealth[1]; n0 <- t5$n_billionaires[1]
 C  <- -t5$annual_ca_inctax_loss[1] / 0.05
 a  <- t5$avoidance_rate[1]; m <- 0.5   # alpha and the movers' share of it (inputs.csv)
@@ -176,7 +179,7 @@ BSZ analysis of California Proposition 40:
 <tr><td style="padding:6px;"><b><a href="#part-policy">1. What is being estimated</a></b></td><td style="padding:6px;">The tax, and the two documents that make BSZ's case</td></tr>
 <tr><td style="padding:6px;"><b><a href="#part-steps">2. Five steps to $`r round(t5$wealth_tax_revenue[1])` billion</a></b></td><td style="padding:6px;">The base scenario, built one line at a time</td></tr>
 <tr><td style="padding:6px;"><b><a href="#part-rows">3. Alternative scenarios</a></b></td><td style="padding:6px;">Three more scenarios, the bottom line, and how far each guess moves it</td></tr>
-<tr><td style="padding:6px;"><b><a href="#part-repro">4. What reproduces</a></b></td><td style="padding:6px;">Tests, mismatches found, and what is not checked</td></tr>
+<tr><td style="padding:6px;"><b><a href="#part-repro">4. What reproduces</a></b></td><td style="padding:6px;">Tests, the notes kept, and what is not checked</td></tr>
 <tr><td style="padding:6px;"><b><a href="#backup">Backup</a></b></td><td style="padding:6px;">How the Pareto extrapolation finds the missing billionaires</td></tr>
 </table>
 
@@ -559,7 +562,7 @@ class: center, middle, inverse
 ---
 name: repro-checks
 
-# Checked, found, and not checked
+# Checked, reproduced, and not checked
 
 .pull-left[
 **Checked.** `r sum(tst$passed)` test expectations pass, `r sum(tst$failed)` fail
@@ -567,10 +570,12 @@ name: repro-checks
 pipeline re-derives against the workbook's own cached value, check the Python twin and
 the SQL queries against R, and pin the explorer to Table 5.
 
-**Found.**
-- a block of 4 rows pasted twice in the workbook's year-by-year billionaire list (244 counted for 2025, 240 real; the estimate uses the 1 July 2026 list)
+**Reproduces.** The code reproduces the paper's published results. `r c("One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten")[n_notes]` notes are
+kept for transparency ([materials page](../materials.html#what-the-checks-found)); none is a
+failure to reproduce. Three of them:
+- 4 rows appear twice in the workbook's year-by-year billionaire list (244 for 2025; the workbook's own total and the paper use 240)
 - the missing + leavers scenario skips a deduction the missing billionaires scenario applies
-- two printed Table 5 cells round differently from the workbook
+- two printed Table 5 cells are the workbook's value cut, not rounded, at the last digit
 ]
 
 .pull-right[

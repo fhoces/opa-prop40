@@ -143,3 +143,37 @@ npv_mc_analytic_mean <- function(wt_min, wt_max, c_min, c_max,
   }
   npv_expectation(wt_min, wt_max, c_min, c_max, rate_min, rate_max, f_spec)[["mean_npv"]]
 }
+
+# The model's exact standard deviation (q = 1, g = 0, as both scripts ship), for the same
+# settings as npv_mc_analytic_mean(). NPV = WT - f*C*X with X = 1/rate; C and X are independent
+# of WT and f, so E[NPV^2] = E[WT^2] - 2 E[WT f] E[C] E[X] + E[f^2] E[C^2] E[X^2], with
+# E[X^2] = (1/a - 1/b)/(b - a) for rate ~ U[a, b]. Used for MISMATCHES.md note 9: the first
+# version's printed sd (38.4) is this value at the printed digit.
+npv_mc_analytic_sd <- function(wt_min, wt_max, c_min, c_max,
+                               rate_min, rate_max,
+                               f_mode = c("ssrn", "nber"),
+                               baseline_revenue = NULL,
+                               f_min = NULL, f_max = NULL) {
+  f_mode <- match.arg(f_mode)
+  m1 <- function(lo, hi) (lo + hi) / 2
+  m2 <- function(lo, hi) (lo^2 + lo * hi + hi^2) / 3
+  e_wt <- m1(wt_min, wt_max); e_wt2 <- m2(wt_min, wt_max)
+  e_x <- log(rate_max / rate_min) / (rate_max - rate_min)
+  e_x2 <- (1 / rate_min - 1 / rate_max) / (rate_max - rate_min)
+  if (f_mode == "ssrn") {
+    stopifnot(!is.null(baseline_revenue))
+    b <- baseline_revenue
+    e_f <- 1 - e_wt / b
+    e_wtf <- e_wt - e_wt2 / b
+    e_f2 <- 1 - 2 * e_wt / b + e_wt2 / b^2
+  } else {
+    stopifnot(!is.null(f_min), !is.null(f_max))
+    e_f <- m1(f_min, f_max)
+    e_wtf <- e_wt * e_f
+    e_f2 <- m2(f_min, f_max)
+  }
+  e_c <- m1(c_min, c_max); e_c2 <- m2(c_min, c_max)
+  mean_npv <- e_wt - e_f * e_c * e_x
+  e_npv2 <- e_wt2 - 2 * e_wtf * e_c * e_x + e_f2 * e_c2 * e_x2
+  sqrt(e_npv2 - mean_npv^2)
+}

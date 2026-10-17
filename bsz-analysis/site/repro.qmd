@@ -165,9 +165,11 @@ This report is part of an Open Policy Analysis of the BSZ analysis:
 income tax from asset sales, minus `r usd(-t5$annual_ca_inctax_loss[1] * pvf, 2)` of income tax lost to
 leavers (`r usd(-t5$annual_ca_inctax_loss[1], 2)` a year, over 5 years at 3%): **`r usd(main1)`**. The
 arithmetic is in [The main estimate](#the-main-estimate). [Section IV.A](#table-5) builds
-Table 5 step by step. Sections II and III reproduce the paper's other tables first. All
-`r nrow(t5pr)` cells of Table 5 match the workbook, and `r sum(t5pr$matches_printed)` match the
-digit the paper prints.
+Table 5 step by step. Sections II and III reproduce the paper's other tables first. The code
+reproduces the paper's published results. All `r nrow(t5pr)` cells of Table 5 match the workbook,
+and `r sum(t5pr$matches_printed)` round to the digit the paper prints. The paper prints the other
+`r nrow(t5pr) - sum(t5pr$matches_printed)` cut rather than rounded (see
+[Reproduction notes](#mismatches-found-and-how-each-was-resolved)).
 
 **Not the authors' choice.** BSZ's own headline is the wealth tax alone: about \$100 billion in the
 abstract and in GGSS, `r usd(wt_printed, 0)` in Table 5 (p.39), reproduced here as
@@ -240,9 +242,9 @@ reported on tax returns.
 
 The 2025 count is `r agg$n[agg$year == 2025]` billionaires holding
 `r usd(agg$forbes_worth[agg$year == 2025], 0)`, which is the paper's own figure
-("240 billionaires with total wealth of \$2055 billion", Appendix A). Getting there needed
-one correction to the workbook, described under [What reproduces](#what-reproduces): four
-rows of the raw list were pasted twice.
+("240 billionaires with total wealth of \$2055 billion", Appendix A). Four rows of the
+workbook's raw list appear twice; the workbook's own aggregate and the paper count them once,
+and so does the pipeline (note 2 under [Reproduction notes](#mismatches-found-and-how-each-was-resolved)).
 
 ::: {.table-scroll}
 ```{r}
@@ -772,8 +774,10 @@ Matching the *printed* table is a stricter test, because the paper rounds. Of th
 to. The other `r nrow(miss)` are both in the income tax loss column:
 `r paste(miss_txt, collapse = " and ")`. The workbook's own cached values agree with ours, and
 the paper's text quotes the printed figures (\$0.19 billion on PDF p.25, \$0.51 billion on
-p.26), so the paper rounds these two cells differently from its own workbook. Both are a
-cent of a billion; neither changes an argument.
+p.26). Each printed figure is the workbook's value cut at the second decimal rather than
+rounded, less than a cent of a billion a year (note 1 under
+[Reproduction notes](#mismatches-found-and-how-each-was-resolved)). No other printed number is
+built on them.
 
 ### What the tax collects, and what it costs
 
@@ -874,8 +878,9 @@ $\tau = 1/e$. With $e$ = 10 (Brülhart et al. 2022, the calibration the [JR anal
 uses as a check, 10.32; its first version preferred 12 to 13, `comparison/DISPUTES.md`, row 4) that is
 `r pct(laf$tax_rate[which.max(laf$actual_tax_revenue)], 0)`. The long-run curve also erodes
 wealth itself: $d$ = 15 years of paying the tax shrinks fortunes by $(1-\tau)^d$, and revenue
-then peaks at `r pct(laf$tax_rate[which.max(laf$long_run_tax_revenue)])`, close to the paper's
-$1/(1+d+e) = 3.8\%$.
+then peaks at `r pct(laf$tax_rate[which.max(laf$long_run_tax_revenue)])`. The paper prints the
+first-order formula $1/(1+d+e) = 1/26 = 3.8\%$, the optimum once $(1-\tau)^d$ is replaced by $e^{-d\tau}$
+(note 7 under [Reproduction notes](#mismatches-found-and-how-each-was-resolved)).
 
 ```{r}
 #| echo: false
@@ -1023,42 +1028,67 @@ tests compare R against the workbook's cached cells, formula by formula, at a st
 (`snapshots`). One checks the explorer against the reproduction (`site`). Figures are checked
 for structure and a few anchor values, not pixel by pixel.
 
-## Mismatches found, and how each was resolved
+## Reproduction notes {#mismatches-found-and-how-each-was-resolved}
 
-Checking the paper and its workbook found the following.
+```{r}
+#| label: notes-kinds
+#| code-summary: "R code for the count of notes by kind (read from the materials page)"
+mq <- readLines("materials.qmd", warn = FALSE, encoding = "UTF-8")
+note_kind <- sub("^[0-9]+[.] [*][*]([^.]+)[.][*][*].*", "\\1",
+                 grep("^[0-9]+[.] [*][*](Rounding|Small numerical difference|Documentation)[.][*][*]", mq, value = TRUE))
+words <- c("one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten")
+nk <- function(k) words[sum(note_kind == k)]
+```
 
-**A data-entry error in the workbook.** In the `data_sec_all` sheet, rows 1338 to 1341
-(four 2025 entries: Sijbrandij, Rihanna, Preston-Werner, Stephens) appear a second time at
-rows 1342 to 1345. Counting both copies gives 244 billionaires; dropping the repeat gives
-240, which matches the workbook's own aggregate sheet and the paper's text. The pipeline
-drops rows that repeat year, person and wealth exactly (`R/compute_data_sec_agg.R`).
+The code reproduces the paper's published results from the authors' workbook. Checking the
+paper against the workbook left `r words[length(note_kind)]` notes, kept for transparency. Each
+records a place where the paper's text, its tables and the workbook describe a step differently.
+None is a failure to reproduce a printed result. By kind: `r nk("Rounding")` rounding,
+`r nk("Small numerical difference")` small numerical differences from first-order formulas and
+`r nk("Documentation")` documentation notes. They are numbered as on the
+[materials page](materials.html#what-the-checks-found), which gives each in full.
 
-**Two printed cells that differ from the workbook.** Table 5's income tax loss in rows 2
-and 3 is printed as \$0.19 and \$0.51 billion; the workbook, and this reproduction, give
-values that round to \$0.20 and \$0.52 (see [Table 5, reproduced](#table-5-reproduced)).
+1. **Rounding.** Table 5's income tax loss in rows 2 and 3 is printed as \$0.19 and \$0.51
+   billion. The workbook, and this reproduction, give values that round to \$0.20 and \$0.52.
+   The paper cuts these two at the second decimal instead of rounding them (see
+   [Table 5, reproduced](#table-5-reproduced)).
+2. **Documentation.** In the `data_sec_all` sheet, rows 1338 to 1341 (four 2025 entries:
+   Sijbrandij, Rihanna, Preston-Werner, Stephens) appear a second time at rows 1342 to 1345.
+   Counting both copies gives 244 billionaires; dropping the repeat gives 240, which matches the
+   workbook's own aggregate sheet and the paper's text. The pipeline drops rows that repeat
+   year, person and wealth exactly (`R/compute_data_sec_agg.R`).
+3. **Documentation.** `Tab5!H6` types the income tax loss share as a literal 0.05. We read it
+   as avoidance times the leaving share (0.10 × 0.5), as the row label says. It matters only
+   when the explorer moves those inputs.
+4. **Documentation.** Row 4 omits row 2's phase-in deduction (`Tab5!F9`), worth
+   `r usd(inp$row4_phasein_gap)`. The printed row 4 follows the workbook, and so does this
+   reproduction.
+5. **Documentation.** The workbook (`TabA1!B18:G18`) and the paper annualize Appendix Table
+   A1's 1982 to 2026 growth over 43 years, where the workbook's own Table 1 uses 44
+   (`Tab1!C18:H18`). This reproduction uses 43, as the paper does, and the report states what
+   44 would give (see [Appendix Table A1](#appendix-table-a1-us-billionaires)).
+6. **Documentation.** The text's 25-year break-even (PDF p.22) uses its own ratio of income tax
+   to wealth, about 0.2% a year, and reproduces from it. Table 5's inputs give
+   `r pct(inp$C / inp$W0, 2)` and about `r round(0.05 / (inp$C / inp$W0))` years.
+7. **Small numerical difference.** The revenue-maximising rate with de-concentration is printed
+   as the first-order 1/26 = 3.8%; the workbook's curve peaks at
+   `r pct(laf$tax_rate[which.max(laf$long_run_tax_revenue)])` (see the
+   [Laffer curve](#b.-a-permanent-annual-wealth-tax-the-laffer-curve)).
+8. **Small numerical difference.** The text's 88% of mechanical revenue kept by a 1% permanent
+   tax adds up first-order effects (100% − 10% − 2%); the workbook's curve gives
+   `r pct((laf$actual_tax_revenue[which.min(abs(laf$tax_rate - 0.012))] - 0.002 * 2000) / (0.01 * 2000))`.
 
-**Readings the workbook leaves implicit.** Both are kept at the workbook's behaviour and
-disclosed on the explorer:
+**Errors in this OPA, found and fixed.**
 
-- `Tab5!H6` types the income tax loss share as a literal 0.05. We read it as avoidance
-  times the leaving share (0.10 × 0.5), as the row label says. It matters only when the
-  explorer moves those inputs.
-- Row 4 omits row 2's phase-in deduction (`Tab5!F9`), worth `r usd(inp$row4_phasein_gap)`.
-
-**A display error in Tables 1 and A1 (ours).** This reproduction's display code put Panel B's
-values under Panel A's column headers and formats, so several cells showed numbers the paper
-does not print (a count of families as a percentage, growth rates rounded to whole numbers). It also
-kept the May workbook's labels (GDP for AGI, 2025 for 2026, .0002% for .001%, 2025 dollars for
-2026 dollars). Both were fixed in the display code on 15 October 2026. The values the tests
-check did not change.
-
-**Appendix Table A1 counts 43 years (resolved).** The workbook (`TabA1!B18:G18`) and the paper
-annualize the 1982 to 2026 growth over 43 years, where 1982 to 2026 is 44 years, the count the
-workbook's own Table 1 uses (`Tab1!C18:H18`). This reproduction first used 44, so
-`r sum(a1_diff)` cells of the row printed lower than the paper. It now uses 43, as the paper
-does, and the report states what 44 would give (see
-[Appendix Table A1](#appendix-table-a1-us-billionaires)). A test now checks each cell of the
-row; the whole-column comparison before it had not caught the gap.
+- A display error in Tables 1 and A1. This reproduction's display code put Panel B's values
+  under Panel A's column headers and formats, so several cells showed numbers the paper does not
+  print (a count of families as a percentage, growth rates rounded to whole numbers). It also
+  kept the May workbook's labels (GDP for AGI, 2025 for 2026, .0002% for .001%, 2025 dollars for
+  2026 dollars). Both were fixed in the display code on 15 October 2026. The values the tests
+  check did not change.
+- Appendix Table A1 at first used 44 years, so `r sum(a1_diff)` cells of the annualized row
+  printed lower than the paper. It now uses 43, as the paper does (note 5). A test now checks
+  each cell of the row; the whole-column comparison before it had not caught the gap.
 
 **What is not reproduced.**
 

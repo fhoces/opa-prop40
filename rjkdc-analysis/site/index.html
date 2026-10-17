@@ -326,7 +326,7 @@
         <span class="kicker">Open Materials</span>
         <h3>Materials for computational reproduction &rarr;</h3>
         <p>The R pipeline and its Python twin, the tests, every exported CSV, the source files'
-        hashes, and the ten mismatches between the authors' text, READMEs and code.</p>
+        hashes, and ten notes on where the authors' text, READMEs and code describe a step differently.</p>
       </div>
       <div class="card-icon-box" aria-hidden="true">
         <img src="assets/opa/opa-materials.png" alt="">
@@ -410,16 +410,18 @@ author has not yet reviewed these checks.</p>
    <strong>details</strong> (its equations and their sources). The authors' public repository,
    <a href="https://github.com/bjaros20/wealth_tax">github.com/bjaros20/wealth_tax</a> (MIT
    licence), gives the <strong>materials</strong>: workbooks, R scripts and person-level data.
-   What a reader cannot easily see is where the three disagree. The text, the READMEs and the code
-   differ in ten places across the two versions, five of them in the September version (see the
-   <a href="materials.html#mismatches">materials page</a>).</p>
+   What a reader cannot easily see is how the three line up. The code reproduces the published
+   results of both versions. In ten places the text, the READMEs and the code describe the same
+   step in different words or numbers, five of them in the September version. None changes a
+   printed result (see the <a href="materials.html#mismatches">materials page</a>).</p>
 
 <div class="compare">
   <figure>
     <span class="kicker">The original analysis</span>
     <svg viewBox="0 0 300 290" role="img" aria-label="The original analysis: output, details and materials layers, all solid, apart from each other and not lined up" xmlns="http://www.w3.org/2000/svg"><polygon points="0,216 92,262 92,288 0,242" fill="#002547"/><polygon points="92,262 184,216 184,242 92,288" fill="#003262"/><polygon points="92,170 184,216 92,262 0,216" fill="#0b4a7c"/><text transform="matrix(0.894 -0.447 0 1 138.0 257.7)" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-weight="600" font-size="10" letter-spacing="1.5" fill="#fff">MATERIALS</text><polygon points="116,138 208,184 208,210 116,164" fill="#1581ab"/><polygon points="208,184 300,138 300,164 208,210" fill="#1582b8"/><polygon points="208,92 300,138 208,184 116,138" fill="#1484c5"/><text transform="matrix(0.894 -0.447 0 1 254.0 179.7)" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-weight="600" font-size="11" letter-spacing="1.5" fill="#fff">DETAILS</text><polygon points="0,52 92,98 92,124 0,78" fill="#da9516"/><polygon points="92,98 184,52 184,78 92,124" fill="#eca516"/><polygon points="92,6 184,52 92,98 0,52" fill="#fcb415"/><text transform="matrix(0.894 -0.447 0 1 138.0 93.7)" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-weight="600" font-size="11" letter-spacing="1.5" fill="#fff">OUTPUT</text></svg>
     <figcaption><strong>Three layers, all published, not lined up.</strong> In the version
-      reproduced, the text, the READMEs and the code disagree in five places. The headline comes
+      reproduced, the code gives the printed results, but the text, the README and the code
+      describe a step differently in five places. The headline comes
       from one seeded run, and its revenue draws average 36, above the 30 the text calls
       collectible. The chapter uses 36 as its central revenue in the break-even analysis (p.33)
       and treats both 72 and 30 as upper bounds that assume no undocumented departures (p.24).</figcaption>
@@ -439,7 +441,7 @@ author has not yet reviewed these checks.</p>
 
 <p style="margin-top:14px;">So the difference is not in what is claimed but in what can be
    checked. This OPA rebuilds the analysis in R, with a Python twin and a test suite. It runs the
-   authors' code as shipped and records each mismatch rather than fixing it. Beside the printed
+   authors' code as shipped and records each of those notes rather than fixing it. Beside the printed
    <span style="white-space:nowrap">&minus;$38.9 billion</span> from one seeded run, it computes the exact expectation of the same draws,
    <span style="white-space:nowrap">&minus;$38.98 billion</span>, a number that does not depend on the seed. It labels each input as data
    or guesswork. Where this site and the chapter disagree, both numbers are shown, and the chapter
@@ -515,10 +517,12 @@ author has not yet reviewed these checks.</p>
   <thead><tr><th>Published result</th><th>Result</th></tr></thead>
   <tbody>
     <tr><td>Baseline revenue, Sec 4.1 (pp.18-19)</td>
-        <td>94.30 from the authors' workbook; the paper prints 94.20 (mismatch 6)</td></tr>
+        <td>Reproduces. The paper prints 94.20, a value typed into the authors' workbook, and every
+            later number built on it reproduces; the workbook's own sum is 94.30, 0.1% higher (note 6)</td></tr>
     <tr><td>Revenue ceiling, Secs 4.1 and 4.3 (pp.19-21)</td>
         <td>100.91 at the valuation date (printed 100.9); 72.05 after the seven publicly
-            reported moves, printed 72.06 (mismatch 4)</td></tr>
+            reported moves, printed 72.06, the difference of the two figures rounded first. The
+            script and the chapter's later pages use 72 (note 4)</td></tr>
     <tr><td>Collectible revenue, Sec 4.4 (pp.22-23)</td>
         <td>29.57 (printed 29.6), range 28.40 to 35.59</td></tr>
     <tr><td>Pareto fit and Table 9, income tax (pp.26-30)</td>
@@ -531,29 +535,33 @@ author has not yet reviewed these checks.</p>
         <td>All 4 printed variations match; the September chapter prints none. A 2% tax rate case in
             the authors' repository cannot be set here. <a href="checks.html">The checks</a></td></tr>
     <tr><td>Other numbers the papers print</td>
-        <td>Of ten, seven match and two are close (mismatches 4, 6 and 9, and a semi-elasticity of
-            5.73 against 5.72 from the chapter's own inputs). The chapter's &quot;expanded
-            departures&quot; (Table 8, about 42% of the base) matches no grouping of the authors'
-            departure records. <a href="checks.html">The checks</a></td></tr>
+        <td>Of ten, nine reproduce: seven at the printed digit, and two once the paper's rounding
+            (the semi-elasticity of 5.73 uses the round 72) and seed are allowed for. One does not
+            quite: Table 8's &quot;expanded departures&quot; (about 42% of the base) gives a
+            semi-elasticity of 8.35 from the authors' records against the printed 8.41. It is not an
+            input to any estimate. <a href="checks.html">The checks</a></td></tr>
   </tbody>
 </table>
 </div>
 
-<p style="margin-top:14px;"><strong>"Match"</strong> means the reproduced value rounds to the printed
-digit for deterministic figures, and lies within four Monte Carlo standard errors for simulated ones.
+<p style="margin-top:14px;"><strong>"Match"</strong> and <strong>"reproduces"</strong> mean the reproduced
+value rounds to the printed digit, or differs only because the paper rounded or typed an
+intermediate figure (0.1% or less), for deterministic figures; and lies within four Monte Carlo
+standard errors for simulated ones, since two runs with different seeds never agree exactly.
 The test suite holds each of these comparisons, the SD included. The
 <a href="materials.html">materials page</a> gives its current count.<sup>2</sup></p>
 
-<p style="margin-top:14px;">Along the way this OPA found <strong>ten mismatches</strong> between the
-authors' text, their READMEs and their code. Five concern the September chapter. The other five
-concern only the March first version.<sup>3</sup> This OPA reproduces the code as shipped and records
-each one:</p>
+<p style="margin-top:14px;">Along the way this OPA kept <strong>ten notes</strong> on where the
+authors' text, their READMEs and their code describe the same step differently. None is a failure
+to reproduce a printed result. Three are rounded or typed inputs, one is seed variation and six are
+documentation notes. Five concern the September chapter. The other five concern only the March
+first version.<sup>3</sup> This OPA reproduces the code as shipped and records each one:</p>
 <ol start="3" style="margin:0 0 14px; padding-left:22px; color:var(--ink-2); font-size:15px;">
-  <li>The chapter's draw is r &minus; g, the real discount rate net of the growth of the lost income tax: eq. 18, the code and the NBER README all say so. One sentence after eq. 19 writes C/r instead (p.35).</li>
-  <li>The revenue ceiling is 72 in the script, 72.06 in the README and in the paper's eq. 4 (p.22), and 72.05 in the person-level data.</li>
-  <li>The paper sets the litigation weight q, the chance the Act survives in court, at 0.50. The code never multiplies by q. Its revenue draw from 0 to 72 has the same mean, 0.5 &times; 72, but a different spread.</li>
-  <li>The baseline revenue sums to 94.30 in the authors' workbook, and the grown person-level data give the same; the text prints 94.20 (p.19).</li>
-  <li value="10">The text prints one formula, the top 212's share of bracket tax, as 39.0% (p.27) and as 38.8% (p.28). The code gives 38.85%, and 34.75% before it rescales the schedule.</li>
+  <li>Documentation. The chapter's draw is r &minus; g, the real discount rate net of the growth of the lost income tax: eq. 18, the code and the NBER README all say so. One sentence after eq. 19 writes C/r instead (p.35).</li>
+  <li>Rounding. The revenue ceiling is 72 in the script and on the chapter's later pages (pp.24, 33), 72.06 in the README and in eq. 4 (p.22), and 72.05 in the person-level data: one value at three roundings.</li>
+  <li>Documentation. The paper sets the litigation weight q, the chance the Act survives in court, at 0.50. The code never multiplies by q. Its revenue draw from 0 to 72 has the same mean, 0.5 &times; 72, but a different spread.</li>
+  <li>Typed input. The baseline revenue sums to 94.30 in the authors' workbook, and the grown person-level data give the same. The text prints 94.20 (p.19), a value typed into the workbook, and every later number built on it reproduces.</li>
+  <li value="10">Documentation. The text prints one formula, the top 212's share of bracket tax, as 39.0% (p.27) and as 38.8% (p.28). The code gives 38.85%, and 34.75% before it rescales the schedule.</li>
 </ol>
 <p>Full text, with file and line references: <a href="materials.html#mismatches">materials page</a>.</p>
 
@@ -561,16 +569,17 @@ each one:</p>
    pipeline also reproduces the authors' first version (Rauh, Jaros, Kearney, Doran and Cosso,
    Hoover Institution, SSRN 6340778, March 2026). Its revenue chain, 94.30 / 67.51 / 55.10 / 45.59
    from the authors' workbook, and all 18 and all 9 cells of its NPV and break-even tables match
-   the printed digits. Its Monte Carlo's median and share negative match; the mean and SD do not
-   quite (mismatch 9), and its printed mean equals the exact expectation, not the shipped seed's run.</p>
+   the printed digits. Its Monte Carlo summary reproduces within Monte Carlo error. The printed
+   mean and SD equal the model's exact mean and SD at the printed digit; the shipped seed's run
+   differs slightly, which is seed variation (note 9).</p>
 <div class="fn" style="font-size:12.5px; color:var(--ink-3); margin-top:8px;"><sup>3</sup> The five
    that concern only the first version:
 <ul style="list-style:none; margin:4px 0 0; padding-left:0;">
-  <li>1. Eq. 22 prints the revenue ceiling as 67.1; the code and the text use 67.51.</li>
-  <li>2. The text derives a growing perpetuity, C/(r &minus; g) (p.18); the Monte Carlo divides by the plain rate.</li>
-  <li>7. Two memo cells in the workbook read from the wrong sheet (no headline number affected).</li>
-  <li>8. Table 9's central revenue, 42.0, is a typed literal with no derivation.</li>
-  <li>9. The Monte Carlo's printed mean and SD do not come out of the shipped seeded script.</li>
+  <li>1. Documentation. Eq. 22 prints the revenue ceiling as 67.1; the code and the text use 67.51.</li>
+  <li>2. Documentation. The text derives a growing perpetuity, C/(r &minus; g) (p.18); the Monte Carlo divides by the plain rate.</li>
+  <li>7. Documentation. Two memo cells in the workbook read from the wrong sheet (no headline number affected).</li>
+  <li>8. Typed input. Table 9's central revenue, 42.0, is a typed literal with no derivation; the table reproduces with it.</li>
+  <li>9. Seed variation. The Monte Carlo's printed summary comes from another run of the same code; it is within Monte Carlo error of the shipped seed's run.</li>
 </ul></div>
   </div>
 </details>

@@ -1,5 +1,13 @@
 # August re-verification
 
+What this record is about (added 2026-10-16). The failures and "mismatches" counted below are
+this reproduction's own tests failing when the authors updated their workbook: row positions and
+constants that this OPA's code had fixed at the earlier layout. All were fixed (section 0). None
+is a failure of the paper's results to reproduce. The one finding about the authors' materials
+(RC10, four rows of `data_sec_all` that appear twice) is note 2 of the reproduction notes on the
+materials page (`site/materials.qmd`, "What the checks found"), where the paper's results are
+summarised.
+
 Report only. No computation code, test literal, or snapshot was changed to produce this
 report; `git status --short` before writing it showed no modifications under `R/`, `tests/`,
 or `_targets.R`. Generated 2026-09-23 by running the pipeline and test suite against the

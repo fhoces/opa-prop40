@@ -57,3 +57,19 @@ test_that("analytic mean cross-check agrees with the Monte Carlo mean (both vers
   expect_equal(analytic_ssrn, ssrn$summary$mean, tolerance = mc_tol(ssrn$summary$sd, ssrn$summary$n) / abs(analytic_ssrn))
   expect_equal(analytic_nber, nber$summary$mean, tolerance = mc_tol(nber$summary$sd, nber$summary$n) / abs(analytic_nber))
 })
+
+test_that("the exact SD rounds to the printed SD, and each seeded run lies within Monte Carlo error of it (MISMATCHES.md note 9)", {
+  ssrn <- compute_npv_mc_ssrn()
+  nber <- compute_npv_mc_nber()
+  sd_ssrn <- npv_mc_analytic_sd(35, 67.51, 3.3, 5.8, 0.015, 0.045,
+                                f_mode = "ssrn", baseline_revenue = 94.2)
+  sd_nber <- npv_mc_analytic_sd(0, 72, 3.3, 5.8, 0.015, 0.045,
+                                f_mode = "nber", f_min = 0.30, f_max = 0.60)
+  expect_equal(round(sd_ssrn, 1), 38.4)   # first version, p.20
+  expect_equal(round(sd_nber, 1), 37.6)   # NBER, PDF p.35
+  # the seeded SDs (38.60 and 37.62) within four standard errors of an SD, 4 x sd / sqrt(2n)
+  expect_equal(ssrn$summary$sd, sd_ssrn, tolerance = 4 * sd_ssrn / sqrt(2 * ssrn$summary$n), scale = 1)
+  expect_equal(nber$summary$sd, sd_nber, tolerance = 4 * sd_nber / sqrt(2 * nber$summary$n), scale = 1)
+  # the first version's printed SD against its seeded run, as the NBER SD is tested above
+  expect_equal(ssrn$summary$sd, 38.4, tolerance = 4 * ssrn$summary$sd / sqrt(2 * ssrn$summary$n), scale = 1)
+})

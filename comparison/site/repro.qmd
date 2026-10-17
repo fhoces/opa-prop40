@@ -260,7 +260,7 @@ estimate them. The lost income tax is a flat yearly amount, discounted at the ra
 The JR analysis's rate is a real rate net of the growth of the lost tax, r &minus; g (chapter
 eqs. 14 and 18), so a flat loss at that rate is the chapter's growing loss. Its code, eq. 18
 and its NBER README all draw r &minus; g; one sentence after eq. 19 writes r alone (the JR
-analysis's mismatch 3). The BSZ end's `r r3` is the middle of the same draw.
+analysis's note 3). The BSZ end's `r r3` is the middle of the same draw.
 
 ```{r}
 #| results: asis
@@ -883,7 +883,7 @@ maxdiff <- if (py_ok) max(vapply(c("ends", "bridge", "endpoints", "dial_path"), 
   exactly (`r usd(ea$bsz_model, 3)`), and its net on (b) (`r usd(eb$bsz_model, 3)`). At the
   inputs of the JR analysis's September 2026 version it returns that version's exact expected
   revenue on (a), `r usd(ea$jr_own, 3)`. It uses the script's ceiling literal, 72, rather
-  than the 72.05 the person-level file sums to (the JR analysis's mismatch 4), so that the two
+  than the 72.05 the person-level file sums to (the JR analysis's note 4), so that the two
   agree exactly. On (b), with the rate at `r r_jr` (1 / E[1/r] over the authors' draw), it
   returns the authors' exact Monte Carlo mean, `r usd(eb$jr_own, 3)`, to 1e-9, against the
   printed `r usd(epv("rauh_nber_npv", "printed_value"))` from one seeded run.

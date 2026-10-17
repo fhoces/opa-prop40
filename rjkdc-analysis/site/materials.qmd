@@ -1,6 +1,6 @@
 ---
 title: "Prop 40, JR analysis: the materials"
-subtitle: "Every script, test, data file and source behind the explorer, the report and the slides, and what did not match"
+subtitle: "Every script, test, data file and source behind the explorer, the report and the slides, and the notes kept along the way"
 date: today
 format:
   html:
@@ -105,8 +105,9 @@ They come in four kinds:
 1. **Against the paper's printed number**: Table 9 at the printed rounding; the simulated figures
    within four Monte Carlo standard errors (plus the printed rounding for the share negative; for
    the SD, four standard errors of an SD); the
-   baseline revenue and the ceiling, where the print differs from the authors' workbook and
-   person-level file (mismatches 6 and 4), against those files.
+   baseline revenue and the ceiling, where the paper prints a typed or rounded value and the
+   authors' workbook and person-level file give a figure 0.1% or less away (notes 6 and 4),
+   against those files.
 2. **Against the authors' own scripts**, run unmodified from a scratch copy (plot and CSV paths
    redirected, no logic changed; `tests/testthat/helper-author-scripts.R`).
 3. **Parity between the R and Python exports** (`test-parity.R`): deterministic steps to 1e-6,
@@ -188,12 +189,11 @@ scroll(kable(ds[, c("file", "provider", "obtained_via", "date_obtained", "url_or
 
 ## What the checks found {#mismatches}
 
-`r c("One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve")[sum(grepl("^## [0-9]+[.]", readLines(file.path(root, "MISMATCHES.md"))))]` mismatches between the authors' text, their READMEs and their code. The pipeline reproduces the
-code as shipped and records each one here.
-
 ```{r}
 #| results: asis
 mm <- readLines(file.path(root, "MISMATCHES.md"))
+mm_kind <- sub("^[*][*]Kind:[*][*] ([^.]+)[.].*", "\\1", grep("^[*][*]Kind:[*][*] ", mm, value = TRUE))
+stopifnot(length(mm_kind) == sum(grepl("^## [0-9]+[.]", mm)))   # one kind per note
 mm <- mm[-seq_len(which(grepl("^# ", mm))[1])]      # drop the file's own title
 mm <- sub("^## ", "### ", mm)
 cat(mm, sep = "\n")

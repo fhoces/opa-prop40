@@ -45,6 +45,10 @@ own_dials <- Filter(function(d) !d$key %in% c("q", "g"), dials)
 stopifnot(length(dials) - length(own_dials) == 2)
 mm_lines <- sub("^## ", "", grep("^## [0-9]+\\.", readLines("../../MISMATCHES.md"), value = TRUE))
 mm_first <- grepl("^[0-9]+\\. First version: ", mm_lines)
+# each note's kind, from the "**Kind:**" line under its heading
+mm_kind <- sub("^[*][*]Kind:[*][*] ([^.]+)[.].*", "\\1",
+               grep("^[*][*]Kind:[*][*] ", readLines("../../MISMATCHES.md"), value = TRUE))
+stopifnot(length(mm_kind) == length(mm_lines))
 # The break-even table at the paper's central revenue (q x 72) and midpoint income tax
 n10 <- compute_npv_table10(scenarios = list(central = list(label = "Central", WT = 0.5 * nb$wt_max, C = 4.55)))
 eps7 <- 100 * (1 - nc$ceiling_recomputed / nc$domestic_total_grown) / (100 * inp("tax_rate"))
@@ -156,7 +160,7 @@ JR analysis of California Proposition 40:
 <tr><td style="padding:6px;"><b>3. The income tax</b></td><td style="padding:6px;">How much billionaires pay each year, and why it is a range (Sec 5.1)</td><td style="text-align:center;"><a href="#part-income">go</a></td></tr>
 <tr><td style="padding:6px;"><b>4. For ever</b></td><td style="padding:6px;">The perpetuity and the break-even share (Secs 5.2 and 5.3)</td><td style="text-align:center;"><a href="#part-forever">go</a></td></tr>
 <tr><td style="padding:6px;"><b>5. The headline</b></td><td style="padding:6px;">The Monte Carlo, and its exact expectation (Sec 5.4)</td><td style="text-align:center;"><a href="#part-mc">go</a></td></tr>
-<tr><td style="padding:6px;"><b>6. What to argue about</b></td><td style="padding:6px;">Inputs by origin, and the mismatches</td><td style="text-align:center;"><a href="#part-argue">go</a></td></tr>
+<tr><td style="padding:6px;"><b>6. What to argue about</b></td><td style="padding:6px;">Inputs by origin, and the reproduction notes</td><td style="text-align:center;"><a href="#part-argue">go</a></td></tr>
 </table>
 
 .blue-box[
@@ -262,7 +266,7 @@ $$\varepsilon = \frac{\%\Delta\,\text{base}}{\Delta\,\text{rate (points)}}$$
 .pull-left[
 
 - **Observed, 7 departures:** the grown base falls `r num(100*(1 - nc$ceiling_recomputed/nc$domestic_total_grown), 1)`%,
-  so $\varepsilon$ = `r num(eps7, 2)` (printed 5.73, PDF p.22), a floor
+  so $\varepsilon$ = `r num(eps7, 2)` (printed 5.73, PDF p.22, from the ceiling rounded to 72), a floor
 - **Swiss literature** (Brülhart et al. 2022): 0.24 × 43 = `r inp("brulhart_semi_elasticity")`;
   in log form, `r num(100*lit_loss, 1)`% of the base leaves (PDF p.24)
 
@@ -340,7 +344,7 @@ ggplot(data.frame(r, m = 1 / r), aes(100 * r, m)) + geom_line(linewidth = 1, col
 .small[
 The paper values a growing loss, so the rate is $r - g$, anchored at 1.5% (the S&P 500 dividend
 yield). The Monte Carlo draws $r - g$ from 1.5% to 4.5%; one sentence after it writes $C/r$
-([mismatch 3](../materials.html#mismatches)).
+([note 3](../materials.html#mismatches)).
 The authors count the loss **for ever** because the Act permanently lifts the cap on taxing
 intangible property (PDF p.32). The [BSZ analysis](../../../bsz-analysis/site/) (Boll, Saez and
 Zucman) objects that it lasts only a few years (five is its example).
@@ -390,7 +394,7 @@ Draw 100,000 times, independently:
 .small[
 Revenue is drawn **from zero**: mean `r num(h("nber","mc_expected_revenue"), 0)` = 0.5 × 72. The code never
 multiplies by $q$; this zero is its only trace of $q$, and the chapter also grounds it in unreported
-departures (fn.32; [mismatch 5](../materials.html#mismatches)). A uniform draw
+departures (fn.32; [note 5](../materials.html#mismatches)). A uniform draw
 from 0 has the same **mean** as a coin flip on 72, not the same distribution. Lost income tax is
 **not** scaled by $q$: leavers do not come back if the Act is struck down.
 ]
@@ -442,17 +446,22 @@ The data (Forbes, FTB, the Pareto fit) set the scale; the sign is decided by the
 ---
 name: mismatches
 
-# Mismatches between text, README and code
+# Reproduction notes: text, README and code
 
 .small[
+The code reproduces the chapter's published results. These notes record where the text, the
+README and the code describe a step differently:
+
 ```{r mm, results="asis"}
-cat(paste0(sub("^([0-9]+)[.] ", "- **Mismatch \\1.** ", mm_lines[!mm_first]), collapse = "\n"))
+cat(paste0("- **Note ", sub("[.].*", "", mm_lines[!mm_first]), "** (", mm_kind[!mm_first], "). ",
+           sub("^[0-9]+[.] ", "", mm_lines[!mm_first]), collapse = "\n"))
 ```
 ]
 
 .blue-box[
-We reproduce the code as shipped and record each discrepancy rather than fix it. Full text on the
+None is a failure to reproduce a printed result. We reproduce the code as shipped and record each
+note rather than fix it. Full text on the
 [materials page](../materials.html#mismatches); every one is pinned by a test.<sup>1</sup>
 ]
 
-.footnote[<sup>1</sup> `r c("One","Two","Three","Four","Five","Six","Seven","Eight","Nine")[sum(mm_first)]` more concern only the authors' first version (March 2026): mismatches `r paste(sub("[.].*", "", mm_lines[mm_first]), collapse = ", ")`.]
+.footnote[<sup>1</sup> `r c("One","Two","Three","Four","Five","Six","Seven","Eight","Nine")[sum(mm_first)]` more concern only the authors' first version (March 2026): notes `r paste(sub("[.].*", "", mm_lines[mm_first]), collapse = ", ")`.]

@@ -81,6 +81,55 @@ test_that("exactly two Table 5 cells miss the digit the paper prints", {
   expect_equal(nrow(p), 28L)
   expect_equal(paste(miss$column, miss$row),
                c("annual_ca_inctax_loss 2", "annual_ca_inctax_loss 3"))
+  # Each is the workbook's value cut at the second decimal, not rounded: one unit lower in the
+  # last printed digit (reproduction note 1, reclassified 2026-10-16, feedback/007).
+  expect_equal(unname(trunc(miss$reproduced * 100) / 100), unname(miss$printed))
+  expect_true(all(abs(miss$reproduced - miss$printed) < 0.01))
+})
+
+# The reproduction notes: one "n. **Kind.**" item each in the materials page's "What the checks
+# found" (reclassified 2026-10-16, feedback/007). The overview's count and kind counts, and the
+# materials page's own list of notes by kind, must agree with those items.
+test_that("the reproduction notes are counted by kind the same way on every page", {
+  mq <- readLines(file.path(SITE, "materials.qmd"), encoding = "UTF-8")
+  item <- grep("^[0-9]+[.] [*][*](Rounding|Small numerical difference|Documentation)[.][*][*]", mq, value = TRUE)
+  kind <- sub("^[0-9]+[.] [*][*]([^.]+)[.][*][*].*", "\\1", item)
+  no   <- as.integer(sub("^([0-9]+)[.].*", "\\1", item))
+  expect_equal(no, seq_along(no))
+  expect_equal(length(no), 8L)
+  words <- c("one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten")
+  k <- function(x) sum(kind == x)
+  listed <- function(label) {
+    line <- grep(sprintf("^- [*][*]%s[*][*] [(]notes? ", label), mq, value = TRUE)
+    expect_length(line, 1L)
+    as.integer(regmatches(line, gregexpr("[0-9]+", sub("[)].*", "", line)))[[1]])
+  }
+  expect_setequal(listed("Rounding"), no[kind == "Rounding"])
+  expect_setequal(listed("Small numerical difference"), no[kind == "Small numerical difference"])
+  expect_setequal(listed("Documentation"), no[kind == "Documentation"])
+  expect_true(any(grepl(sprintf("The %s notes below are kept for transparency", words[length(no)]), mq, fixed = TRUE)))
+  html <- gsub("\\s+", " ", paste(readLines(file.path(SITE, "index.html"), encoding = "UTF-8"), collapse = " "))
+  expect_true(grepl(sprintf("<strong>%s notes</strong>", words[length(no)]), html, fixed = TRUE))
+  expect_true(grepl(sprintf("%s is rounding, %s are small numerical differences and %s are documentation notes",
+                            tools::toTitleCase(words[k("Rounding")]), words[k("Small numerical difference")],
+                            words[k("Documentation")]), html, fixed = TRUE))
+})
+
+# The figures the overview types for notes 6 to 8, recomputed from the workbook.
+test_that("the overview's break-even and Laffer figures match the workbook", {
+  skip_if_not(identical(bsz_vintage(), "august"), "the site is published for the August vintage")
+  html <- gsub("\\s+", " ", paste(readLines(file.path(SITE, "index.html"), encoding = "UTF-8"), collapse = " "))
+  inp <- site_inp()$inp
+  ratio <- inp$C / inp$W0
+  laf <- compute_fig8_laffer()
+  peak <- optimize(function(t) t * exp(-10 * t) * (1 - t)^15, c(0, 0.2), maximum = TRUE)$maximum
+  kept <- (laf$actual_tax_revenue[which.min(abs(laf$tax_rate - 0.012))] - 0.002 * 2000) / (0.01 * 2000)
+  p <- function(x, d) paste0(formatC(100 * x, format = "f", digits = d), "%")
+  for (e in c(sprintf("give %s and about %d years", p(ratio, 2), round(0.05 / ratio)),
+              sprintf("curve peaks at %s", p(peak, 1)),
+              sprintf("the curve gives %s", p(kept, 1)))) {
+    expect_true(grepl(e, html, fixed = TRUE), info = e)
+  }
 })
 
 test_that("every number typed into the landing page matches the pipeline", {

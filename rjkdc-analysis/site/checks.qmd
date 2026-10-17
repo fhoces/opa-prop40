@@ -160,10 +160,30 @@ Rscript feedback/scenario-tests-2026-10-15/jr-sensitivity.R
 The full record, with the source of every figure, is in
 [jr-sensitivity.md](https://github.com/fhoces/opa-prop40/blob/main/feedback/scenario-tests-2026-10-15/jr-sensitivity.md).
 A second record, [jr.md](https://github.com/fhoces/opa-prop40/blob/main/feedback/scenario-tests-2026-10-15/jr.md),
-checks ten other numbers the papers print. Seven match and two are close (mismatches 4, 6 and 9,
-and a semi-elasticity of 5.73 against 5.72 from the chapter's own inputs). The chapter's "expanded
-departures" (Table 8, about 42% of the base) matches no grouping of the authors' departure
-records.
+checks ten other combinations the papers print. Nine reproduce. Seven round to the printed digit.
+The other two reproduce once the paper's own rounding and seed are allowed for: the September
+ceiling and semi-elasticity (the chapter rounds the ceiling to 72 before computing 5.73; note 4) and
+the first version's Monte Carlo (within Monte Carlo error; note 9).
+
+```{r}
+#| label: expanded-departures
+#| code-summary: "R code for Table 8's expanded departures, summed from the authors' final.csv"
+fin <- extract_nber_final()
+dom <- fin[fin$panel == "domestic", ]
+# the seven publicly reported moves, Zuckerberg (after the snapshot) and the three reported
+# leavers the chapter moves out of the base on PDF p.23
+exp_set <- dom$bucket %in% c("removed_departed", "zuckerberg") |
+  dom$name %in% c("Jan Koum", "Reed Hastings", "Andy Fang")
+stopifnot(sum(exp_set) == 11)
+exp_share <- 100 * sum(dom$face_tax_5pct[exp_set]) / sum(dom$face_tax_5pct)
+```
+
+The tenth, the chapter's "expanded departures" (Table 8, about 42% of the base, semi-elasticity
+8.41), is the one of the ten that does not reproduce exactly. The set the chapter describes,
+the seven moves plus the post-snapshot and reported departures, gives `r num(exp_share, 1)`% of the
+base in the authors' person-level file. That rounds to the printed 42%, but its semi-elasticity is
+`r num(exp_share / 5, 2)`, not 8.41. The shared materials do not say which set gives 8.41. The
+figure compares the departures with the literature; it is not an input to any estimate.
 
 ## Settings the papers do not print
 

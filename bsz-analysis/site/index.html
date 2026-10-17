@@ -439,7 +439,8 @@ not yet reviewed these checks.</p>
 </div>
 
 <p style="margin-top:14px;">This OPA rebuilds Table 5 and most of the paper's tables and figures in R,
-   with a Python twin and a test suite. It sorts every input by origin: data, research or
+   with a Python twin and a test suite. The code reproduces the paper's published results from
+   the authors' public workbook (see <a href="#what-reproduces">What reproduces</a>). It sorts every input by origin: data, research or
    guesswork. Its main estimate nets the income tax effects into one total, which is this OPA's
    choice, not the authors' (footnote 1). The explorer adds settings the authors did not publish.
    Where this site and the paper disagree, both numbers are shown, and the paper is the
@@ -495,32 +496,39 @@ chance the Act survives in court.</p>
 <details class="fold" id="what-reproduces">
   <summary><h2>What reproduces <a class="fold-link" href="#what-reproduces" aria-label="Link to this section">#</a></h2></summary>
   <div class="fold-body">
+<p>The code reproduces the paper's published results from the authors' public workbook. The
+notes after the table record where the paper rounds or derives a figure differently from the
+workbook. None is a failure to reproduce a printed result.</p>
 <div class="table-scroll">
 <table>
   <thead><tr><th>Published object</th><th>Result</th></tr></thead>
   <tbody>
     <tr><td>Table 5, estimating the one-time tax (PDF p.39)</td>
-        <td>All 28 cells match the workbook's cached values. 26 round to the digit the paper
+        <td>Reproduces. All 28 cells match the workbook's cached values. 26 round to the digit the paper
         prints; the other 2, the income tax loss in rows 2 and 3, are printed as $0.19B and
-        $0.51B where the workbook gives $0.20B and $0.52B</td></tr>
+        $0.51B where the workbook gives $0.20B and $0.52B. The paper cuts these two at the second
+        decimal instead of rounding them (note 1)</td></tr>
     <tr><td>Tables 1 to 4 and A1, Figures 1 to 7, 9 and A2 to A4</td>
-        <td>Every formula cell the pipeline re-derives matches the workbook's cached value
+        <td>Reproduce. Every formula cell the pipeline re-derives matches the workbook's cached value
         within the tolerances the README lists (1e-4 for Table 5; 1e-3 to 1e-2 for the formula
         sheets, where the workbook rounds to cents). Figures are checked for structure and anchor values.
         Appendix Table A1's annualized growth row counts 43 years, as the paper and the workbook
-        do, though 1982 to 2026 is 44 years. The report states what 44 would give</td></tr>
+        do, though 1982 to 2026 is 44 years. The report states what 44 would give (note 5)</td></tr>
     <tr><td>The authors' workbook</td>
-        <td>Four 2025 rows of the workbook's year-by-year billionaire list (<code>data_sec_all</code>) appear
-        twice, giving 244 billionaires for 2025 instead of 240; the estimate itself uses the
-        1 July 2026 Forbes list of 250. The pipeline drops the repeat. No published number changes</td></tr>
+        <td>Reproduces the paper's count of 240 billionaires for 2025. Four 2025 rows of the workbook's
+        year-by-year billionaire list (<code>data_sec_all</code>) appear twice, which would give 244;
+        the workbook's own aggregate and the paper count them once, and so does the pipeline. The
+        estimate itself uses the 1 July 2026 Forbes list of 250. No published number changes (note 2)</td></tr>
     <tr><td>The revenue under the paper's other assumptions (Table 5, August and May versions)</td>
         <td>All 7 printed variations match. The revenue on other valuation dates, in the authors'
         workbook, cannot be set here. <a href="checks.html">The checks</a></td></tr>
     <tr><td>Other numbers the paper prints</td>
-        <td>Of ten, six match and one is close. Three differ: a Table 5 loss cell (the paper's
-        rounding, above), the revenue-maximising rate (the paper's first-order formula), and the
-        25-year break-even on PDF p.22, which uses the paper's 2023-2025 ratio of income tax to
-        wealth, 0.2%, where Table 5's inputs give 0.13% and about 38 years.
+        <td>All ten reproduce from the inputs the paper states. Six round to the printed digit, and
+        one is the Table 5 loss cell above. Two come from first-order formulas in the text: the
+        revenue-maximising rate of 3.8%, where the workbook's own curve peaks at 3.9% (note 7), and
+        the 88% of revenue a 1% permanent tax keeps, where the curve gives 88.6% (note 8). The 25-year
+        break-even on PDF p.22 uses the text's ratio of income tax to wealth, 0.2%; Table 5's inputs
+        give 0.13% and about 38 years (note 6).
         <a href="checks.html">The checks</a></td></tr>
     <tr><td>Not reproduced</td>
         <td>The paper's Figure 8 and Appendix Figure A1 (wealth relative to AGI); the raw data behind the workbook
@@ -529,8 +537,17 @@ chance the Act survives in court.</p>
 </table>
 </div>
 
-<p style="margin-top:14px;">Every finding is in the <a href="repro.html#mismatches-found-and-how-each-was-resolved">report</a>.
-Test counts, scripts and the source manifest are on the <a href="materials.html">materials page</a>.</p>
+<p style="margin-top:14px;">"Match" and "reproduces" mean the reproduced value rounds to the printed
+digit, or the paper prints the same value cut rather than rounded. A figure the text derives
+reproduces when the inputs the text states give it.</p>
+
+<p style="margin-top:14px;">Along the way this OPA kept <strong>eight notes</strong> on where the
+paper's text, its tables and the workbook describe the same step differently. None is a failure
+to reproduce a printed result. One is rounding, two are small numerical differences and five are
+documentation notes. The full text is on the <a href="materials.html#what-the-checks-found">materials
+page</a>, with test counts, scripts and the source manifest; the
+<a href="repro.html#mismatches-found-and-how-each-was-resolved">report</a> gives each with its
+computation.</p>
   </div>
 </details>
 

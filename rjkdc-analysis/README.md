@@ -70,7 +70,8 @@ p.20, `R/npv_mc.R`), each with a Python twin. The report's appendix presents it;
 
 The Monte Carlo draws revenue from 0 to the 72 ceiling, an income tax range from Table 9, a rate
 range and an independent departure fraction `f`, on a 7%-grown, 240-row person-level `final.csv`
-base. `MISMATCHES.md` records where the code departs from the text and the README.
+base. `MISMATCHES.md` keeps the reproduction notes: where the text, the README and the code
+describe a step differently.
 
 ## How to run
 
@@ -140,7 +141,7 @@ draw ranges (`rauh_mc_*`, `nber_mc_*`), taken from the simulation functions' own
 `../comparison/` reads from here.
 
 [^scenario]: The one `scenario` row, the first version's Table 9 central revenue, is explained in
-`MISMATCHES.md` #8.
+`MISMATCHES.md`, note 8.
 
 ## The OPA site (`site/`)
 
@@ -149,15 +150,24 @@ written by the `site_grid_js` target), `site/repro.qmd` (the reproduction report
 `site/slides/`, and `site/materials.qmd`. Render the two Quarto pages from `rjkdc-analysis/`
 with `quarto render site/repro.qmd && quarto render site/materials.qmd`.
 
-## What reproduces, what doesn't
+## What reproduces
 
-Every headline number in the table above reproduces from the authors' own code to within the
-tolerances documented in `tests/testthat/`. `MISMATCHES.md` lists ten discrepancies found along
-the way, between the paper's prose and its own code and between the paper and the NBER README.
-Five concern the chapter (one of them, #10, is in the first version too).[^mm] We do not fix any of these; the pipeline reproduces the code as shipped and records where it
-disagrees with the surrounding text.
+The code reproduces the published results of both versions: every headline number in the table
+above, within the tolerances documented in `tests/testthat/`. A deterministic figure reproduces
+when it rounds to the printed digit, or differs only because the paper rounded or typed an
+intermediate figure (0.1% or less). A simulated figure reproduces when it lies within four Monte
+Carlo standard errors of the printed value.
 
-[^mm]: The other five concern only the first version. One of them (mismatch #9) is a case where
-its *printed* Monte Carlo summary doesn't exactly reproduce even from the authors' own unmodified
-script. The gap is within Monte Carlo error, and the printed mean equals the model's exact
-(closed-form) expectation, -$24.707B, while the shipped seed-2026 run gives -$24.77B.
+`MISMATCHES.md` keeps ten notes, for transparency, on where the text, the READMEs and the code
+describe the same step differently. None is a failure to reproduce a printed result. Each states
+its kind: three rounded or typed inputs (notes 4, 6 and 8), one seed variation (note 9) and six
+documentation notes (1, 2, 3, 5, 7 and 10). Five concern the chapter (one of them, note 10, is in
+the first version too).[^mm] We do not fix any of these; the pipeline reproduces the code as
+shipped and records the note. The file keeps its name from before the notes were reclassified on
+2026-10-16, after one of the JR authors pointed out that the earlier list counted rounding and seed
+differences as mismatches.
+
+[^mm]: The other five concern only the first version. One of them (note 9) is seed variation: the
+*printed* Monte Carlo summary is not the one the shipped seed gives, but it is within Monte Carlo
+error of it, and the printed mean and SD equal the model's exact (closed-form) values at the printed
+digit (-$24.707B and $38.423B), while the shipped seed-2026 run gives -$24.77B and $38.60B.

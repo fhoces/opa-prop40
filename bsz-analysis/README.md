@@ -446,7 +446,7 @@ data_sheets:   45
 figures:       76
 ingest_excel:  21
 py-parity:     56
-site:          84       # the explorer runs compute_tab5.R's estimating function; grid.js is the exporter's output
+site:         100       # the explorer runs compute_tab5.R's estimating function; grid.js is the exporter's output
 snapshots:     34       # pin exact output of every exhibit + compute_* fn
 sql:           38
 sql-steps:     18
@@ -454,7 +454,7 @@ sql-workbook:  41
 tables:       127
 verify:         7
               ---
-total:        778       # August vintage, 2026-10-16, 117 test blocks across 13 files, 0 failed, 0 skipped
+total:        794       # August vintage, 2026-10-16, 119 test blocks across 13 files, 0 failed, 0 skipped
 ```
 <!-- test-counts:end -->
 
@@ -482,10 +482,14 @@ added since this README.
 - It reproduces the paper's six tables and the twelve figures of the May paper (August
   adds a new Figure 8 and Appendix Figure A1, not built), formatted for
   HTML / LaTeX / PNG / PDF.
-- Known issues, disclosed rather than fixed: the workbook repeats rows 1338 to 1341 of
-  `data_sec_all` at rows 1342 to 1345 (handled in `R/compute_data_sec_agg.R`; not yet reported
-  to the authors), and Tables 1 and A1 still carry May wording in their labels over August
-  values. See `VERIFY-AUGUST.md` and `site/materials.qmd`.
+- The code reproduces the paper's published results. Eight notes are kept for transparency,
+  each with its kind (one rounding, two small numerical differences, five documentation), on the
+  [materials page](https://fhoces.github.io/opa-prop40/bsz-analysis/site/materials.html#what-the-checks-found).
+  None is a failure to reproduce a printed result. One is that the workbook repeats rows 1338 to
+  1341 of `data_sec_all` at rows 1342 to 1345; the workbook's own aggregate and the paper count
+  them once, and so does `R/compute_data_sec_agg.R` (not yet reported to the authors). The
+  labels of Tables 1 and A1, which kept the May wording, were fixed on 2026-10-15. See
+  `VERIFY-AUGUST.md` and `site/materials.qmd`.
 - It does **not yet** independently re-fetch raw data from SEC EDGAR, BEA,
   FTB, DINA, IRS SOI, or Forbes, except for a one-entity-year SEC proof of
   concept (Huang 2025, sale matched exactly). Until that work is complete,

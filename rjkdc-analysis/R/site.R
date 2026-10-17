@@ -79,7 +79,7 @@ site_dials <- function(revenue_chain) {
                     sprintf("%.2f", ss$wt_max), sprintf("%g", nb$wt_max))),
     list(key = "q", sym = "q", label = "Extra litigation weight on the revenue",
          origin = "guesswork",
-         desc = sprintf("Multiplies the revenue again, on top of the draw's 0 floor, which already halves its mean (%g = 0.5 × %g). The chapter sets q = 0.50 (PDF pp.19-20). The script has no separate multiplier (mismatch 5).",
+         desc = sprintf("Multiplies the revenue again, on top of the draw's 0 floor, which already halves its mean (%g = 0.5 × %g). The chapter sets q = 0.50 (PDF pp.19-20). The script has no separate multiplier (note 5).",
                         0.5 * nb$wt_max, nb$wt_max),
          tips = c(sprintf("The script. Its 0 revenue floor already halves the mean revenue (%g = 0.5 × %g).",
                           0.5 * nb$wt_max, nb$wt_max),

@@ -232,15 +232,15 @@ oo <- k$rjkdc$outputs
 The full crosswalk of disputed inputs, with every page reference checked against the PDFs, is
 `r link("comparison/DISPUTES.md")`. The checks behind the bridge found:
 
-- **The September 2026 ceiling has three values.** The script draws revenue up to the literal
-  72; the README prints 72.06; the person-level file sums to
+- **The September 2026 ceiling is one value at three roundings.** The script draws revenue up
+  to the literal 72; the README prints 72.06; the person-level file sums to
   `r formatC(pick(oo, "nber_ceiling", "value"), format = "f", digits = 2)` (the JR analysis's
-  mismatch 4). The comparison uses the script's 72, so the common function returns the
+  note 4). The comparison uses the script's 72, so the common function returns the
   authors' own expected revenue exactly and the bridge has no model-difference step.
 - **The litigation weight has no multiplier in the code.** The README applies q = 0.50 to the
   recognized base for the point estimate and lists a uniform draw of revenue between 0 (struck
   down) and the ceiling for the simulation. The script has no separate q; its draw's mean is
-  the same half (mismatch 5). The comparison reads that mean as the weight `q`.
+  the same half (the JR analysis's note 5). The comparison reads that mean as the weight `q`.
 - **The printed NPV is one run, not the expectation.** The exact expectation of the NBER
   Monte Carlo is `r usd(eb$jr_own, 2)` against a printed
   `r usd(ep$printed_value[ep$endpoint_id == "rauh_nber_npv"])`. The bridge's JR end is that

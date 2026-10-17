@@ -56,3 +56,29 @@ def npv_mc_analytic_mean(wt_min, wt_max, c_min, c_max, rate_min, rate_max,
     else:
         e_f = (f_min + f_max) / 2
     return e_wt - e_f * e_c * e_inv_rate
+
+
+def npv_mc_analytic_sd(wt_min, wt_max, c_min, c_max, rate_min, rate_max,
+                       f_mode="ssrn", baseline_revenue=None, f_min=None, f_max=None):
+    """The model's exact standard deviation (twin of R's npv_mc_analytic_sd())."""
+    def m1(lo, hi):
+        return (lo + hi) / 2
+
+    def m2(lo, hi):
+        return (lo ** 2 + lo * hi + hi ** 2) / 3
+    e_wt, e_wt2 = m1(wt_min, wt_max), m2(wt_min, wt_max)
+    e_x = math.log(rate_max / rate_min) / (rate_max - rate_min)
+    e_x2 = (1 / rate_min - 1 / rate_max) / (rate_max - rate_min)
+    if f_mode == "ssrn":
+        b = baseline_revenue
+        e_f = 1 - e_wt / b
+        e_wtf = e_wt - e_wt2 / b
+        e_f2 = 1 - 2 * e_wt / b + e_wt2 / b ** 2
+    else:
+        e_f = m1(f_min, f_max)
+        e_wtf = e_wt * e_f
+        e_f2 = m2(f_min, f_max)
+    e_c, e_c2 = m1(c_min, c_max), m2(c_min, c_max)
+    mean_npv = e_wt - e_f * e_c * e_x
+    e_npv2 = e_wt2 - 2 * e_wtf * e_c * e_x + e_f2 * e_c2 * e_x2
+    return math.sqrt(e_npv2 - mean_npv ** 2)

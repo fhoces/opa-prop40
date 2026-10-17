@@ -59,6 +59,18 @@ may_rev <- withr::with_envvar(c(BSZ_VINTAGE = "may"), {
 })
 may_printed <- c(98, 121, 84, 109)   # May 2026 paper, Table 5 rows 1 to 4, PDF p.34
 
+# The other numbers the paper prints (feedback/scenario-tests-2026-10-15/bsz.md), for the
+# paragraph under "Who ran these checks": the ratio and break-even Table 5's inputs imply, and
+# the exact values of the workbook's Figure 9 curve.
+aug_inp <- tab5_scoring_inputs(compute_pareto_missing(extract_pareto_missing()),
+                               extract_tab2(), extract_tab3())
+oth_ratio <- aug_inp$C / aug_inp$W0                     # income tax per dollar of wealth
+oth_years <- 0.05 / oth_ratio                            # years for the loss to equal the tax
+oth_laf   <- compute_fig8_laffer()
+oth_peak  <- optimize(function(t) t * exp(-10 * t) * (1 - t)^15, c(0, 0.2), maximum = TRUE)$maximum
+oth_kept  <- (oth_laf$actual_tax_revenue[which.min(abs(oth_laf$tax_rate - 0.012))] - 0.002 * 2000) / (0.01 * 2000)
+p1 <- function(x, d = 1) paste0(formatC(100 * x, format = "f", digits = d), "%")
+
 n_added <- cell(from = setting("Missing billionaires"))[["n_billionaires"]] - base[["n_billionaires"]]
 checks <- data.frame(
   variation = c("Main assumptions, for reference",
@@ -163,12 +175,18 @@ Rscript feedback/scenario-tests-2026-10-15/bsz-sensitivity.R
 The full record, with the source of every figure, is in
 [bsz-sensitivity.md](https://github.com/fhoces/opa-prop40/blob/main/feedback/scenario-tests-2026-10-15/bsz-sensitivity.md).
 A second record, [bsz.md](https://github.com/fhoces/opa-prop40/blob/main/feedback/scenario-tests-2026-10-15/bsz.md),
-checks ten other numbers the paper prints. Six match and one is close. Three differ: a Table 5
-loss cell (the paper's rounding), the revenue-maximising rate (the paper's first-order formula),
-and the break-even on page 22. There the paper says that if all billionaires left, the lost
-income tax would take 25 years to equal the wealth tax, using its 2023-2025 ratio of income tax
-to wealth, 0.2% (abstract, Table 2). Table 5's inputs, the 2019-2025 average tax against
-1 July 2026 wealth, give 0.13% and about 38 years.
+checks ten other numbers the paper prints. All ten reproduce from the inputs the paper states.
+Six round to the printed digit. One is a Table 5 loss cell that the paper prints cut rather
+than rounded. Two come from first-order formulas in the text. The revenue-maximising rate with
+de-concentration is printed as 1/26 = 3.8%, and the workbook's own curve peaks at
+`r p1(oth_peak)`. A 1% permanent tax is said to keep 88% of its revenue, and the curve gives
+`r p1(oth_kept)`. The last is the break-even on page 22. There the paper says that if all
+billionaires left, the lost income tax would take 25 years to equal the wealth tax. That figure
+uses the text's ratio of income tax to wealth, 0.2% (abstract, Table 2), and reproduces from it.
+Table 5's inputs, the 2019-2025 average tax against 1 July 2026 wealth, give
+`r p1(oth_ratio, 2)` and about `r round(oth_years)` years. The
+[materials page](materials.html#what-the-checks-found) keeps each as a note, with its kind
+(notes 1, 6, 7 and 8). None is a failure to reproduce a printed result.
 
 ## Settings the paper does not print
 

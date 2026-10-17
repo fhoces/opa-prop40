@@ -37,7 +37,7 @@ Review the files in the working tree, not the live site.
 5. The three materials pages: `*/site/materials.html` rendered, `*/site/materials.qmd` source.
 6. The READMEs: `README.md`, `bsz-analysis/README.md`, `rjkdc-analysis/README.md`, `comparison/README.md`.
 7. The records: `comparison/DISPUTES.md` (the eight disputed inputs), `rjkdc-analysis/MISMATCHES.md`
-   (where the reproduction and the authors' numbers differ), `bsz-analysis/VERIFY-AUGUST.md`,
+   (the reproduction notes: where the authors' text, READMEs and code describe a step differently), `bsz-analysis/VERIFY-AUGUST.md` (the BSZ analysis's reproduction notes are in `bsz-analysis/site/materials.qmd`, "What the checks found"),
    `AUDIT.md`, `PLAN.md` (the pre-specified output and every decision), `review/README.md`
    (the code review ledgers), `*/site/credit/CREDIT.md` (the CRediT and AI-use answers),
    `docs/initiative/README.md` (the ballot measure).

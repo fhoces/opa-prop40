@@ -183,25 +183,117 @@ only that comparison is reported, and none of the bundle's contents is committed
 
 ## What the checks found
 
-- **A data-entry error in the workbook**: rows 1338 to 1341 of `data_sec_all` repeated at
-  rows 1342 to 1345 (244 billionaires counted instead of 240); handled in
-  `r link("R/compute_data_sec_agg.R")`.
-- **Two implicit readings** in Table 5 (the literal 5% income tax loss share; row 4 omitting
-  row 2's phase-in deduction), kept at the workbook's behaviour and disclosed on the
-  [explorer](explorer/).
-- **Two printed cells** of Table 5 (the income tax loss in rows 2 and 3) that the paper rounds
-  differently from its own workbook.
+```{r}
+#| label: notes-numbers
+# The figures in the notes below, computed from the workbook when the page is rendered.
+invisible(lapply(list.files(file.path(SA, "R"), pattern = "[.]R$", full.names = TRUE), source))
+n_inp <- tab5_scoring_inputs(compute_pareto_missing(extract_pareto_missing()),
+                             extract_tab2(), extract_tab3())
+n_t5  <- compute_tab5(compute_pareto_missing(extract_pareto_missing()), extract_tab2(), extract_tab3())
+n_pr  <- compare_tab5_printed(n_t5)
+n_miss <- n_pr[!n_pr$matches_printed, ]
+stopifnot(nrow(n_miss) == 2, all(abs(trunc(n_miss$reproduced * 100) / 100 - n_miss$printed) < 1e-9))
+n_may2 <- withr::with_envvar(c(BSZ_VINTAGE = "may"), {
+  mi <- tab5_scoring_inputs(compute_pareto_missing(extract_pareto_missing()), extract_tab2(), extract_tab3())
+  score_tab5_cell(mi, pareto = TRUE)[["annual_ca_inctax_loss"]]
+})
+n_ratio <- n_inp$C / n_inp$W0                   # Table 5's income tax per dollar of wealth
+n_years <- 0.05 / n_ratio                        # years for the lost income tax to equal the tax
+n_laf   <- compute_fig8_laffer()
+n_peak  <- optimize(function(t) t * exp(-10 * t) * (1 - t)^15, c(0, 0.2), maximum = TRUE)$maximum
+n_kept  <- (n_laf$actual_tax_revenue[which.min(abs(n_laf$tax_rate - 0.012))] - 0.002 * 2000) / (0.01 * 2000)
+n_d15   <- 1 - 0.99^15
+b3 <- function(x) sprintf("\\$%.3fB", abs(x))
+p1 <- function(x, d = 1) paste0(formatC(100 * x, format = "f", digits = d), "%")
+```
+
+The code reproduces the paper's published results from the authors' public workbook: Table 5,
+the other tables and figures it builds, every variation of Table 5 the paper prints, and the
+other numbers checked on the [checks page](checks.html). A figure counts as reproduced when it
+rounds to the printed digit, or when the paper prints the same value cut rather than rounded.
+A figure the text derives counts as reproduced when the inputs the text states give it.
+
+The eight notes below are kept for transparency. Each records a place where the paper's text,
+its tables and the workbook describe a step differently. None is a failure to reproduce a
+printed result. They are of three kinds, and each note states its kind:
+
+- **Rounding** (note 1): the paper prints a value at a different rounding from its workbook.
+- **Small numerical difference** (notes 7 and 8): the text uses a first-order formula, and the
+  workbook's exact curve gives a slightly different figure. Each note gives the size.
+- **Documentation** (notes 2, 3, 4, 5 and 6): the text, a table label and the workbook describe
+  one calculation differently, or use different inputs for it. Each printed result reproduces
+  from the inputs stated beside it.
+
+An earlier version of these pages called the first note a pair of cells that "differ from the
+workbook", the repeated rows "a data-entry error", and notes 6 to 8 numbers that "differ" or are
+"close". They were reclassified on 2026-10-16 under the standard first applied to the
+[JR analysis](../../rjkdc-analysis/site/materials.html#mismatches);
+`feedback/007-2026-10-16-bsz-reproduction-standard/REPORT.md` gives each item's old and new label.
+
+### Notes on the authors' materials
+
+1. **Rounding.** Table 5 prints the income tax loss of rows 2 and 3 as
+   \$`r sprintf("%.2f", -n_miss$printed[1])`B and \$`r sprintf("%.2f", -n_miss$printed[2])`B a year. The
+   workbook, and this code, give `r b3(n_miss$reproduced[1])` and `r b3(n_miss$reproduced[2])`,
+   which round to \$`r sprintf("%.2f", -round(n_miss$reproduced[1], 2))`B and
+   \$`r sprintf("%.2f", -round(n_miss$reproduced[2], 2))`B. Both printed figures are the workbook's value
+   cut at the second decimal rather than rounded, one unit lower in the last digit
+   (`r b3(n_miss$reproduced[1] - n_miss$printed[1])` and `r b3(n_miss$reproduced[2] - n_miss$printed[2])` a
+   year). Row 2's printed figure is also what the May version printed, from `r b3(n_may2)` in the May
+   workbook. No
+   other printed number is built on these two cells. A test checks both.
+2. **Documentation.** The workbook's year-by-year list of billionaires (`data_sec_all`) repeats
+   rows 1338 to 1341, four 2025 entries, at rows 1342 to 1345. Counting both copies gives 244
+   billionaires for 2025. The workbook's own aggregate sheet and the paper's text give 240, and
+   so does the pipeline, which drops the repeat (`r link("R/compute_data_sec_agg.R")`). No
+   printed number changes.
+3. **Documentation.** `Tab5!H6` types the share of income tax lost to leavers as a literal 0.05.
+   The row label, "10% evasion/avoidance (half due to mobility)", describes it as avoidance times
+   the share due to mobility, 0.10 &times; 0.5, the same value. The [explorer](explorer/) uses the
+   product, so the share moves with those two dials. At the authors' values the results are
+   identical.
+4. **Documentation.** Table 5's row 4 is described as rows 2 and 3 together, but it does not
+   subtract the phase-in deduction that row 2 subtracts (`Tab5!F9` against `Tab5!F7`). The printed
+   \$`r round(n_t5$wealth_tax_revenue[4])` billion comes from the workbook as it is, and this
+   reproduction and the explorer follow it. A consistent treatment would give
+   \$`r sprintf("%.1f", n_t5$wealth_tax_revenue[4] - n_inp$row4_phasein_gap)` billion,
+   \$`r sprintf("%.1f", n_inp$row4_phasein_gap)` billion less.
+5. **Documentation.** Appendix Table A1's annualized growth row (`TabA1!B18:G18`) spreads the
+   growth from 1982 to 2026 over 43 years. Table 1 uses 44 (`Tab1!C18:H18`). The paper prints the
+   workbook's 43-year values, and so does this reproduction. The
+   [report](repro.html#appendix-table-a1-us-billionaires) states what 44 would give.
+6. **Documentation.** The text's break-even (PDF p.22: 25 years if all billionaires left, 100 if
+   one fourth did) uses the ratio of income tax to wealth the text states, about 0.2% a year
+   (the abstract and Table 2's recent years). Both figures reproduce from that ratio. Table 5 uses
+   the 2019-2025 average tax against 1 July 2026 wealth, `r p1(n_ratio, 2)`. On Table 5's inputs
+   the break-even is about `r round(n_years)` years (`r round(4 * n_years)` if one fourth left).
+7. **Small numerical difference.** The text gives the revenue-maximising rate of a permanent
+   tax with de-concentration as 1/(1 + d + e) = 1/26 = 3.8% (PDF p.30), a first-order formula.
+   The exact peak of the workbook's own Figure 9 curve, which this code reproduces, is
+   `r p1(n_peak)`. In the same way, the text's "about 15%" of the base lost at a 1% tax is
+   d &times; 1%. The curve's factor, 1 &minus; 0.99<sup>15</sup>, gives `r p1(n_d15)`.
+8. **Small numerical difference.** The text says a 1% permanent tax keeps 88% of its mechanical
+   revenue (PDF pp.29-30), adding up first-order effects (100% &minus; 10% &minus; 2%). The
+   workbook's curve gives `r p1(n_kept)`.
+
+### Errors in this OPA, found and fixed
+
 - **A display error** in this reproduction's Tables 1 and A1: the display put Panel B's values
   under Panel A's headers and formats and kept the May workbook's labels (GDP for AGI, 2025 for
   2026); fixed in the display code on 2026-10-15.
-- **Appendix Table A1 counts 43 years**: the workbook (`TabA1!B18:G18`) and the paper
-  annualize the 1982 to 2026 growth over 43 years, where 1982 to 2026 is 44. This reproduction
-  first used 44, so three cells of the row printed lower than the paper. It now uses 43, as the
-  paper does, and a test checks each cell of the row. The report states what 44 would give.
+- **Appendix Table A1 at first used 44 years**, so three cells of the annualized row printed
+  lower than the paper. It now uses 43, as the paper and the workbook do (note 5), and a test
+  checks each cell of the row.
 - **A malformed row in our own source manifest**: two `provider` fields contained an
   unquoted comma, which shifted every later column for any CSV reader; quoted on 2026-09-23.
-- **Not reproduced**: the paper's Figure 8 and Appendix Figure A1 (wealth relative to AGI), and the
-  raw data behind the workbook, which the pipeline takes as given.
+- **Stale positions in this OPA's code.** When the authors updated the workbook, 184 of this
+  reproduction's tests failed on row positions and constants that this OPA's code had fixed at
+  the earlier layout. All were fixed (`r link("VERIFY-AUGUST.md")`).
+
+### Not reproduced
+
+The paper's Figure 8 and Appendix Figure A1 (wealth relative to AGI) have no builder yet. The raw
+data behind the workbook is taken as given.
 
 ::: {.site-nav}
 BSZ analysis of California Proposition 40:

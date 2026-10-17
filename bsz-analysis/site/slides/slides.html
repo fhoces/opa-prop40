@@ -388,6 +388,7 @@ background: transparent; border: 1px solid var(--link); border-radius: 0; cursor
 
 a.q-survey { color: var(--paper) !important; text-decoration: none !important; }
 .q-mini { display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0 16px; }
+.q-mini .q-for { align-self: center; font-size: 14px; color: var(--ink-2); }
 .q-survey.q-survey-mini { font-size: 15px; padding: 5px 14px; }
 .q-copy.q-copy-mini { font-size: 15px; padding: 5px 14px; margin-left: 0; }
 
@@ -397,6 +398,9 @@ letter-spacing: 0; line-height: 1.35; text-decoration: none !important; white-sp
 .ai-badge:hover, .ai-badge:focus { text-decoration: underline !important; }
 a.ai-badge-yellow, .ai-badge-yellow { background: #f5c518; color: #3b2c00 !important; }
 a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; }
+
+.ai-badge-line { margin: 0 0 12px; font-size: 15px; color: var(--ink-2); }
+.ai-badge-line .ai-badge { font-size: 0.9em; margin-left: 0.35em; }
 </style>
     <style type="text/css">
 body, .remark-slide-content, .remark-slide-content h1, .remark-slide-content h2, .remark-slide-content h3 {
@@ -583,7 +587,7 @@ BSZ analysis of California Proposition 40:
 &lt;tr&gt;&lt;td style=&quot;padding:6px;&quot;&gt;&lt;b&gt;&lt;a href=&quot;#part-policy&quot;&gt;1. What is being estimated&lt;/a&gt;&lt;/b&gt;&lt;/td&gt;&lt;td style=&quot;padding:6px;&quot;&gt;The tax, and the two documents that make BSZ&#39;s case&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td style=&quot;padding:6px;&quot;&gt;&lt;b&gt;&lt;a href=&quot;#part-steps&quot;&gt;2. Five steps to $104 billion&lt;/a&gt;&lt;/b&gt;&lt;/td&gt;&lt;td style=&quot;padding:6px;&quot;&gt;The base scenario, built one line at a time&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td style=&quot;padding:6px;&quot;&gt;&lt;b&gt;&lt;a href=&quot;#part-rows&quot;&gt;3. Alternative scenarios&lt;/a&gt;&lt;/b&gt;&lt;/td&gt;&lt;td style=&quot;padding:6px;&quot;&gt;Three more scenarios, the bottom line, and how far each guess moves it&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td style=&quot;padding:6px;&quot;&gt;&lt;b&gt;&lt;a href=&quot;#part-repro&quot;&gt;4. What reproduces&lt;/a&gt;&lt;/b&gt;&lt;/td&gt;&lt;td style=&quot;padding:6px;&quot;&gt;Tests, mismatches found, and what is not checked&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td style=&quot;padding:6px;&quot;&gt;&lt;b&gt;&lt;a href=&quot;#part-repro&quot;&gt;4. What reproduces&lt;/a&gt;&lt;/b&gt;&lt;/td&gt;&lt;td style=&quot;padding:6px;&quot;&gt;Tests, the notes kept, and what is not checked&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td style=&quot;padding:6px;&quot;&gt;&lt;b&gt;&lt;a href=&quot;#backup&quot;&gt;Backup&lt;/a&gt;&lt;/b&gt;&lt;/td&gt;&lt;td style=&quot;padding:6px;&quot;&gt;How the Pareto extrapolation finds the missing billionaires&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
 
@@ -942,18 +946,20 @@ class: center, middle, inverse
 ---
 name: repro-checks
 
-# Checked, found, and not checked
+# Checked, reproduced, and not checked
 
 .pull-left[
-**Checked.** 778 test expectations pass, 0 fail
+**Checked.** 794 test expectations pass, 0 fail
 (August workbook, run 2026-10-16). They compare every formula cell the
 pipeline re-derives against the workbook&#39;s own cached value, check the Python twin and
 the SQL queries against R, and pin the explorer to Table 5.
 
-**Found.**
-- a block of 4 rows pasted twice in the workbook&#39;s year-by-year billionaire list (244 counted for 2025, 240 real; the estimate uses the 1 July 2026 list)
+**Reproduces.** The code reproduces the paper&#39;s published results. Eight notes are
+kept for transparency ([materials page](../materials.html#what-the-checks-found)); none is a
+failure to reproduce. Three of them:
+- 4 rows appear twice in the workbook&#39;s year-by-year billionaire list (244 for 2025; the workbook&#39;s own total and the paper use 240)
 - the missing + leavers scenario skips a deduction the missing billionaires scenario applies
-- two printed Table 5 cells round differently from the workbook
+- two printed Table 5 cells are the workbook&#39;s value cut, not rounded, at the last digit
 ]
 
 .pull-right[

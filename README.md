@@ -63,8 +63,8 @@ transcribed in `comparison/data/document-inputs.csv`.
 
 | Part | State | Tests | CI |
 |---|---|---|---|
-| `bsz-analysis/` | BSZ reproduced cell by cell; OPA site (explorer, report, slides, materials) | [materials page](https://fhoces.github.io/opa-prop40/bsz-analysis/site/materials.html#tests), which reads the test output | `bsz-ci.yml`, green |
-| `rjkdc-analysis/` | JR reproduced from the authors' code, R and Python; 10 documented mismatches (`MISMATCHES.md`); OPA site | [materials page](https://fhoces.github.io/opa-prop40/rjkdc-analysis/site/materials.html#tests), which reads the test output | `rjkdc-ci.yml`, green |
+| `bsz-analysis/` | BSZ reproduced cell by cell; the published results reproduce, with 8 notes on how the paper's text, tables and workbook describe them (materials page); OPA site (explorer, report, slides, materials) | [materials page](https://fhoces.github.io/opa-prop40/bsz-analysis/site/materials.html#tests), which reads the test output | `bsz-ci.yml`, green |
+| `rjkdc-analysis/` | JR reproduced from the authors' code, R and Python; the published results reproduce, with 10 notes on how text, README and code describe them (`MISMATCHES.md`); OPA site | [materials page](https://fhoces.github.io/opa-prop40/rjkdc-analysis/site/materials.html#tests), which reads the test output | `rjkdc-ci.yml`, green |
 | `comparison/` | Comparison overview at the site root, explorer with two slider panels, report and materials page; 10 disputed inputs (`DISPUTES.md`), 8 explorer dials and a switch for 3 minor inputs | [materials page](https://fhoces.github.io/opa-prop40/comparison/site/materials.html#tests), which reads the test output | `comparison-ci.yml`, green |
 
 CI is continuous integration: an automatic rebuild and test run on every change, in

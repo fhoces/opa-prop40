@@ -7,7 +7,7 @@ HORIZONS <- c(5, 10, 20, 30, 50, Inf)
 # base grown 7% to the 31 December 2026 valuation date, net of real estate, the seven
 # confirmed departures, the litigation-survival weight and the independently drawn share of
 # the income tax base that leaves. The ceiling is the script's literal, 72 (the person-level
-# file gives 72.05; the JR analysis's mismatch 4), so that the function returns the authors'
+# file gives 72.05; the JR analysis's note 4), so that the function returns the authors'
 # own expectation exactly. The discount rate is 3% at the BSZ end (BSZ_RATE_ID in model.R) and,
 # at the JR end, the one rate worth the same as the authors' draw (r - g) ~ U[r_min, r_max]:
 # r_jr = 1 / E_r[1/r], computed here from the JR contract (jr_discount_rate() in model.R).
@@ -27,7 +27,7 @@ bridge_inputs <- function(k) {
   # Table 5): the four pre-2026 leavers, plus Brin, plus Spielberg and Sacks, whom the BSZ
   # workbook does not list by name and who are valued at the JR file's net worth. On the JR
   # list (grown 7%, net of real estate): the four from the person-level file, and all seven
-  # as the base less the script's 72 ceiling (the file itself sums to 72.05; mismatch 4).
+  # as the base less the script's 72 ceiling (the file itself sums to 72.05; JR note 4).
   four_b  <- pick(si, "pre2026_leavers_wealth")
   seven_b <- four_b + pick(si, "brin_wealth") + pick(oi, "nber_spielberg_sacks_net_worth")
   four_j  <- pick(oi, "nber_departed_four_grown")
@@ -94,10 +94,10 @@ bridge_input_table <- function(bi) {
       "the Forbes 2025 list grown 7% (1 = JR list)",
       "chapter Table 6, PDF p.17 (residential real estate excluded); 1 - nber_domestic_grown / (5% x grown base) from the JR export: the person-level file nets out directly held real estate (NBER README; chapter p.19)",
       "the seven publicly reported moves (Page, Brin, Thiel, Hankey, Spielberg, Kalanick, Sacks) valued on the BSZ list: BSZ exports pre2026_leavers_wealth and brin_wealth (Table 5, 1 Jul 2026), plus Spielberg and Sacks at the JR file's net worth (JR export nber_spielberg_sacks_net_worth), as the BSZ workbook does not list them by name",
-      "chapter Table 7, PDF p.21; the same seven on the JR list: (nber_domestic_grown - 72) / 5%, the script's ceiling literal (NPV_dist_v8.R:19; the person-level file sums to 72.05, mismatch 4)",
+      "chapter Table 7, PDF p.21; the same seven on the JR list: (nber_domestic_grown - 72) / 5%, the script's ceiling literal (NPV_dist_v8.R:19; the person-level file sums to 72.05, JR note 4)",
       "the seven's own income tax as the BSZ analysis counts it: BSZ exports pre2026_leavers_annual_inctax and brin_annual_inctax, plus Spielberg and Sacks at resid_inctax_rate (used only under the BSZ rule for the share lost)",
       "none: no avoidance allowance (NBER chapter Secs. 4-5)",
-      "q = 0.50 'as our central estimate', the ASC 740-10 'more likely than not' threshold (chapter eq. 3, PDF pp.19-20; NBER README). The script draws WT ~ U[0, 72], whose mean is 0.5 x 72; its comment says the draw 'embeds litigation range', and the chapter also grounds the 0 floor in unreported departures (fn.32, PDF p.34; mismatch 5)",
+      "q = 0.50 'as our central estimate', the ASC 740-10 'more likely than not' threshold (chapter eq. 3, PDF pp.19-20; NBER README). The script draws WT ~ U[0, 72], whose mean is 0.5 x 72; its comment says the draw 'embeds litigation range', and the chapter also grounds the 0 floor in unreported departures (fn.32, PDF p.34; JR note 5)",
       "the BSZ rule (the leavers' own tax) is not applied",
       "midpoint of f ~ U[0.30, 0.60], drawn independently of the revenue, 'centered conservatively around the observed wealth-base departure fraction' and covering departures 'not publicly documented' (chapter PDF p.31 and p.33; eq. 19, PDF p.35; NPV_dist_v8.R:20): guesswork",
       "midpoint of C ~ U[3.3, 5.8] (chapter Sec. 5.1, Table 9, PDF pp.28-30; NPV_dist_v8.R:21): the top is the Pareto fit at K = 212; the floor's K = 500 is the authors' judgement ('a reasonable lower bound', PDF p.28)",
