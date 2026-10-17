@@ -810,10 +810,15 @@ render_site <- function(root = comparison_root(),
   q_path <- dp$change[dp$step_id == q_id]
   q_first <- local({ s <- bi0$sup; s$q <- bi0$rauh$q; score_common(s)[["b"]] - score_common(bi0$sup)[["b"]] })
   stopifnot(length(q_path) == 1, q_first < q_path)
-  apply_q_first <- sprintf(paste(
-    "The Apply buttons work from left to right, each unlocking the next, so each press changes the",
-    "estimate by its amount in the equation. Moved first, <i>q</i> would take %s instead of %s,",
-    "because it would also halve the tax on the billionaires who already left."),
+  apply_q_first <- paste("The Apply buttons work from left to right, each unlocking the next, so each press",
+                         "changes the estimate by its amount in the equation.")
+  # footnote 2 opens with the order: the equation adds up only along this path, and another order
+  # gives the terms other amounts (author request 2026-10-16)
+  order_lead <- sprintf(paste(
+    "The equation adds up only when the terms are switched one after another, in this order, from left",
+    "to right. In another order the same dials split the gap differently among the terms: moved first,",
+    "<i>q</i> would take %s instead of %s, because it would also halve the tax on the billionaires who",
+    "already left. "),
     sprintf('<span style="white-space:nowrap">%s</span>', money(q_first, 2)),
     sprintf('<span style="white-space:nowrap">%s</span>', money(q_path, 2)))
   # the explorer keeps one short line here; the explanation is footnote 2 (author rule 2026-10-16:
@@ -854,10 +859,10 @@ render_site <- function(root = comparison_root(),
   tok$pseudo_eq_note_x <- paste0("Each amount is what its dials change when they are moved to the JR values, ",
                                  "term by term from left to right, as the Walk the path button does.",
                                  '<sup><a class="fn-link" href="#fn-eq">2</a></sup>')
-  tok$eq_fn_x <- paste(eq_note("../repro.html#the-bridge", "BSZ panel",
+  tok$eq_fn_x <- paste0(order_lead, paste(eq_note("../repro.html#the-bridge", "BSZ panel",
                                paste("The Walk the path button in each panel does it for you.",
                                      "The JR panel's button walks it backwards, from the last term to the first. "),
-                               "../repro.html#order-free-check"), apply_q_first)
+                               "../repro.html#order-free-check"), apply_q_first))
   # the overview names no dial letters (author request 2026-10-15), so its note says the same in
   # words; its old "Each term is what its group changes" is now the first sentence of order_note()
   tok$pseudo_eq_note_root <- paste0(
