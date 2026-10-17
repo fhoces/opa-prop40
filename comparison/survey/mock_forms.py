@@ -459,7 +459,7 @@ def build(items, treated):
     title = "What are the actual quantities? Proposition 40, input by input"
     desc = DESC
     expert = next(e for e in items if e["title"].startswith("Do you consider yourself an expert"))
-    prior = {"title": "Before opening this survey, had you looked at news sources, web pages or academic studies comparing estimates of Proposition 40, the Billionaire Wealth Tax Proposal in California?",
+    prior = {"title": "Before opening this survey, had you looked at news sources, web pages or academic studies discussing estimates of Proposition 40, the Billionaire Wealth Tax Proposal in California?",
              "help": "", "choices": ["Yes", "No", "Not sure"], "required": True}
     pages = [[]]
     for e in items:

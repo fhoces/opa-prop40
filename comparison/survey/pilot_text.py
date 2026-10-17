@@ -18,7 +18,7 @@ import mock_forms as m  # noqa: E402
 
 TITLE = "What are the actual quantities? Proposition 40, input by input"
 PRIOR = {"title": "Before opening this survey, had you looked at news sources, web pages or academic studies "
-                  "comparing estimates of Proposition 40, the Billionaire Wealth Tax Proposal in California?",
+                  "discussing estimates of Proposition 40, the Billionaire Wealth Tax Proposal in California?",
          "help": "", "choices": ["Yes", "No", "Not sure"], "required": True, "kind": 2}
 
 

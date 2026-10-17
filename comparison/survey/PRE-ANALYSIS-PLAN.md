@@ -109,7 +109,7 @@ The landing panel is shown to every visitor of the explorer, once per browser, b
    - "Do you consider yourself an expert in tax or fiscal policy?" (Yes / Somewhat / No; moved here
      from the end of the current survey)
    - "Before opening this survey, had you looked at news sources, web pages or academic studies
-     comparing estimates of Proposition 40, the Billionaire Wealth Tax Proposal in California?"
+     discussing estimates of Proposition 40, the Billionaire Wealth Tax Proposal in California?"
      (Yes / No / Not sure; new)
 2. I1 (treatment forms only).
 3. The five required input questions, in three groups under plain section headings, in the order

@@ -13,7 +13,7 @@ Q1. Do you consider yourself an expert in tax or fiscal policy? (required)
    (2) Somewhat
    (3) No
 
-Q2. Before opening this survey, had you looked at news sources, web pages or academic studies comparing estimates of Proposition 40, the Billionaire Wealth Tax Proposal in California? (required)
+Q2. Before opening this survey, had you looked at news sources, web pages or academic studies discussing estimates of Proposition 40, the Billionaire Wealth Tax Proposal in California? (required)
    (1) Yes
    (2) No
    (3) Not sure
