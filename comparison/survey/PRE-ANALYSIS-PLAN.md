@@ -1,7 +1,5 @@
 # Pre-analysis plan: does seeing the comparison change how respondents judge the disputed inputs?
 
-Author: Fernando Hoces de la Guardia.
-
 **A note on this document.** This pre-analysis plan was drafted with the assistance of Claude
 Code. It is unclear whether the survey will draw any responses at all. The plan was written for
 the optimistic case, in which enough people respond for a study to be conducted with the data, so
