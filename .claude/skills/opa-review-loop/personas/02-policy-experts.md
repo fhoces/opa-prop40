@@ -44,7 +44,7 @@ on that page cold. You do not accept a label in place of an explanation.
    every source a page cites?
 6. **Tests and claims.** Where a page says "matches to 1e-4", "all 28 cells match", "389
    expectations pass", "within four Monte Carlo standard errors": does the test named test
-   that, and is the claim stated with its tolerance? Are the mismatches complete and sized?
+   that, and is the claim stated with its tolerance? Are the reproduction notes complete and sized?
 7. **Consistency.** The same number, definition, date and name on every page (grep them). The
    three sites share a shape; where one departs, is that deliberate?
 8. **The self-audit.** `AUDIT.md` scores each page on nine steps. Is each score supported by

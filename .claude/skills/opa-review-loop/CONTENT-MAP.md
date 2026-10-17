@@ -36,7 +36,7 @@ Review the files in the working tree, not the live site.
    (the `.html` next to each is the rendered deck).
 5. The three materials pages: `*/site/materials.html` rendered, `*/site/materials.qmd` source.
 6. The READMEs: `README.md`, `bsz-analysis/README.md`, `rjkdc-analysis/README.md`, `comparison/README.md`.
-7. The records: `comparison/DISPUTES.md` (the eight disputed inputs), `rjkdc-analysis/MISMATCHES.md`
+7. The records: `comparison/DISPUTES.md` (the eight disputed inputs), `rjkdc-analysis/NOTES.md`
    (the reproduction notes: where the authors' text, READMEs and code describe a step differently), `bsz-analysis/VERIFY-AUGUST.md` (the BSZ analysis's reproduction notes are in `bsz-analysis/site/materials.qmd`, "What the checks found"),
    `AUDIT.md`, `PLAN.md` (the pre-specified output and every decision), `review/README.md`
    (the code review ledgers), `*/site/credit/CREDIT.md` (the CRediT and AI-use answers),
@@ -111,7 +111,7 @@ Same shape as BSZ: `README.md` (source, no include block), `site/index.html` and
 by `R/site.R`), `site/repro.qmd` and `site/materials.qmd` (source; `quarto render site/repro.qmd`
 from `rjkdc-analysis/`; the report needs `RAUH_REPO_DIR` set to a clone of the authors'
 repository at the pinned commit), `site/slides/slides.Rmd` (source), `site/credit/` (read-only),
-`MISMATCHES.md` and `DATA-SOURCES.csv` (source), `export/` (generated), `R/`, `py/`, `tests/` (code).
+`NOTES.md` and `DATA-SOURCES.csv` (source), `export/` (generated), `R/`, `py/`, `tests/` (code).
 
 ### The comparison, `comparison/`
 

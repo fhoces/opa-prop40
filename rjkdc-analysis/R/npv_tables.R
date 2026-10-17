@@ -16,7 +16,7 @@ npv_table9_scenarios <- function() {
 npv_discount_rates <- function() c(0.015, 0.03, 0.045)
 
 # Sheet1!B14/B19/B24: f = 1 - WT/baseline (baseline = Sheet1!B5 = 94.2, the
-# literal, same one revenue_chain.R flags in MISMATCHES #6).
+# literal, same one revenue_chain.R flags in NOTES.md note 6).
 compute_npv_table9 <- function(baseline = 94.2,
                                 scenarios = npv_table9_scenarios(),
                                 r_values = npv_discount_rates()) {

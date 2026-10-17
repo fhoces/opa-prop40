@@ -12,7 +12,7 @@
 # Summary_Expanded!F5  = SUMIF(Calculations_Expanded!F="N", O)/1e9 -> 55.10B (10 departures removed)
 # Summary_Preferred!F8 = (1 - 0.516) * 94.2                        -> 45.59B (literature-calibrated;
 #   0.516 = 10.32 (Brulhart et al. migration semi-elasticity, eq.12) * 0.05 (tax rate, eq.13);
-#   NOTE: this branch uses the literal 94.2, not the more precise C5 = 94.30426206 - see MISMATCHES.md #6)
+#   NOTE: this branch uses the literal 94.2, not the more precise C5 = 94.30426206 - see NOTES.md note 6)
 
 read_calc_column <- function(path, sheet, col, rows = 3:214, col_name) {
   rng <- paste0(sheet, "!", col, min(rows), ":", col, max(rows))
@@ -63,7 +63,7 @@ compute_revenue_chain <- function(calc_preferred, calc_expanded,
 
   list(
     baseline_precise = baseline_precise,             # 94.30 (Summary_Preferred!C5), paper prints 94.20
-    baseline_literal = baseline_literal,              # 94.2, literal used downstream in F8 (MISMATCHES #6)
+    baseline_literal = baseline_literal,              # 94.2, literal used downstream in F8 (NOTES.md note 6)
     confirmed6_ceiling = confirmed6_ceiling,           # 67.51 (Summary_Preferred!F5), paper 67.51
     expanded10_estimate = expanded10_estimate,         # 55.10 (Summary_Expanded!F5), paper 55.10
     migration_share = migration_share,                # 0.516

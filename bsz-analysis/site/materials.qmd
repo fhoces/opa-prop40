@@ -227,7 +227,7 @@ printed result. They are of three kinds, and each note states its kind:
 An earlier version of these pages called the first note a pair of cells that "differ from the
 workbook", the repeated rows "a data-entry error", and notes 6 to 8 numbers that "differ" or are
 "close". They were reclassified on 2026-10-16 under the standard first applied to the
-[JR analysis](../../rjkdc-analysis/site/materials.html#mismatches);
+[JR analysis](../../rjkdc-analysis/site/materials.html#reproduction-notes);
 `feedback/007-2026-10-16-bsz-reproduction-standard/REPORT.md` gives each item's old and new label.
 
 ### Notes on the authors' materials

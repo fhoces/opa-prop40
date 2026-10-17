@@ -68,7 +68,7 @@ step_texts <- function(inp, id) {
   if (id == "confirmed_departures") {
     b <- ii[ii$input == "dep_b", ]; j <- ii[ii$input == "dep_j", ]
     return(list(bsz = "no named leaver",
-                rjkdc = sprintf("the JR seven: %s on the BSZ list, %s on the JR list",
+                rjkdc = sprintf("seven moves: %s on the BSZ list, %s on the JR list",
                                 money(b$jr_value, 0), money(j$jr_value, 0)),
                 bsz_source = b$bsz_source, rjkdc_source = paste(b$jr_source, j$jr_source, sep = "; "),
                 # the dial end names the count with a noun, not the coinage (review 005, U-12)

@@ -36,7 +36,7 @@ step that requires sharing (1 to 5, and 8 at level 1) was then Level 0, and so w
 | 2 | Input-output link | 3 | 7-dial explorer, 2,187 cells, computed by `npv_expectation()` and `npv_share_negative_exact()` in `R/npv_mc.R`, the functions behind the reproduction's `npv_mc_analytic_mean()` (`test-site.R` asserts both paths call them) | None (top level) |
 | 3 | Methodological accounts | 3 | `site/repro.qmd`, dynamic document | None |
 | 4 | Data | 3 | Analytic data: `export/{r,py}/*.csv`. Raw: the authors' public repo, pinned at `bjaros20/wealth_tax@25e84dd` and cloned by `.github/workflows/rjkdc-ci.yml` | None |
-| 5 | Open report | 3 | `site/repro.qmd` in git; `MISMATCHES.md` (10 reproduction notes, each with its kind) linked from the materials page | None |
+| 5 | Open report | 3 | `site/repro.qmd` in git; `NOTES.md` (10 reproduction notes, each with its kind) linked from the materials page | None |
 | 6 | File structure | 3 | Self-contained `rjkdc-analysis/`, same layout as BSZ, with `README.md` | None |
 | 7 | Label inputs | 3 | 22 inputs in `export/r/inputs.csv` (data 9, research 4, guesswork 6, guesswork on data 1, derived 1, scenario 1), each with a code or workbook location and a page. The 7% growth rate became guesswork on data on 2026-10-16 (author answer) | Same gap as BSZ: guesswork rows name no analyst or date |
 | 8 | Reproducible code | 2 | `rjkdc-ci.yml` rebuilds R and Python from scratch, runs parity; first run green (11m22s) | One click (Binder/devcontainer). The run needs `RAUH_REPO_DIR`; a devcontainer would set it |

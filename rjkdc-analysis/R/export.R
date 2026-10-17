@@ -44,7 +44,7 @@ compute_export_inputs <- function(pareto_fit, revenue_chain, nber_ceiling) {
     "nber_mc_f_max", "nber", "NBER departure fraction of the income tax base: upper bound", mc_nber$f_max, "share", "guesswork", "public",
       "NPV_dist_v8.R; Jaros and Rauh NBER c15504 Sec 5.4", 35,
     "q_litigation_survival", "nber", "Probability the Act survives constitutional challenge (ASC 740-10 more-likely-than-not)", 0.50, "probability", "guesswork", "public",
-      "NBER_2026_litigation_weighted/README.md (assumptions table); not an explicit multiplier in NPV_dist_v8.R - see MISMATCHES.md #5", NA_real_,
+      "NBER_2026_litigation_weighted/README.md (assumptions table); not an explicit multiplier in NPV_dist_v8.R - see NOTES.md note 5", NA_real_,
     "nber_growth_rate", "nber", "Growth applied to the Jan-1-2026 snapshot to the Dec-31-2026 valuation date", 0.07, "rate", "guesswork on data", "public",
       "final.csv (net_worth_usd_7pct column); NBER README assumptions table", NA_real_,
     "nber_ceiling_hardcoded", "nber", "wt_max literal in NPV_dist_v8.R (script uses this, not the value re-derived from final.csv)", 72, "$B", "data", "public",

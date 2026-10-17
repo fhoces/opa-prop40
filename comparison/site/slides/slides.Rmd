@@ -97,11 +97,11 @@ compare_figs <- function(page) {
 
 # Counts the opa-bsz and opa-jr slides print, read from the two analyses' own files so they
 # cannot drift (author request 2026-10-16): the JR analysis's reproduction notes
-# (rjkdc-analysis/MISMATCHES.md, one "## n." heading each), and the settings on each checks page
+# (rjkdc-analysis/NOTES.md, one "## n." heading each), and the settings on each checks page
 # (the rendered table under "Settings the paper(s) does/do not print", less its reference row).
 n_words <- function(n) c("one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
                          "ten", "eleven", "twelve")[n]
-jr_mismatches <- sum(grepl("^## [0-9]+[.]", readLines(file.path(root, "rjkdc-analysis", "MISMATCHES.md"), warn = FALSE)))
+jr_notes <- sum(grepl("^## [0-9]+[.]", readLines(file.path(root, "rjkdc-analysis", "NOTES.md"), warn = FALSE)))
 # The BSZ analysis's reproduction notes: one "n. **Kind.**" item each under "What the checks
 # found" on its materials page (bsz-analysis/site/materials.qmd).
 bsz_notes <- sum(grepl("^[0-9]+[.] [*][*](Rounding|Small numerical difference|Documentation)[.][*][*]",
@@ -582,7 +582,7 @@ class: opa-card
 .pull-left[
 Jaros and Rauh find a mean net present value of `r usd(rj_print)`: the wealth tax minus the income tax lost for ever when billionaires leave. This OPA reruns the authors' own code as shipped, in R with a Python twin and tests, and computes the exact average of their Monte Carlo, `r usd(rj_main, 2)`.
 
-**What reproduces.** The authors' code reproduces the published results. `r cap1(n_words(jr_mismatches))` notes on where their text, READMEs and code describe a step differently are kept for transparency; none is a failure to reproduce. Every variation the papers print reproduces (`r jr_checks$match` of `r jr_checks$n`). `r cap1(n_words(jr_settings))` settings the papers do not print have been sent to the authors to test. [Checks](../../../rjkdc-analysis/site/checks.html)
+**What reproduces.** The authors' code reproduces the published results. `r cap1(n_words(jr_notes))` notes on where their text, READMEs and code describe a step differently are kept for transparency; none is a failure to reproduce. Every variation the papers print reproduces (`r jr_checks$match` of `r jr_checks$n`). `r cap1(n_words(jr_settings))` settings the papers do not print have been sent to the authors to test. [Checks](../../../rjkdc-analysis/site/checks.html)
 
 [The JR analysis overview](../../../rjkdc-analysis/site/) &middot; Its layers, with screenshots: [Output](#layer-jr-output), [Analysis](#layer-jr-analysis), [Materials](#layer-jr-materials), [Code review](#layer-jr-review)
 ]

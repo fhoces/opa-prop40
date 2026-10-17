@@ -9,7 +9,7 @@ revenue_chain_fixture <- function() {
 
 test_that("revenue chain matches the paper's printed figures (pp.10-14)", {
   rc <- revenue_chain_fixture()
-  expect_equal(round(rc$baseline_precise, 2), 94.30)   # paper rounds to 94.20 - MISMATCHES #6
+  expect_equal(round(rc$baseline_precise, 2), 94.30)   # paper rounds to 94.20 - NOTES.md note 6
   expect_equal(round(rc$confirmed6_ceiling, 2), 67.51)
   expect_equal(round(rc$expanded10_estimate, 2), 55.10)
   expect_equal(round(rc$literature_calibrated, 2), 45.59)

@@ -235,7 +235,7 @@ def main():
                   "the authors' script: revenue if the Act survives, after removing seven confirmed "
                   "departures. The pipeline rebuilds it from the NBER person-level file final.csv: "
                   "5% of each domestic billionaire's grown wealth, summed, minus the seven who left, "
-                  "gives 72.05 (mismatch 4: 72 in the script, 72.06 in the README). The 0 bottom is "
+                  "gives 72.05 (note 4: 72 in the script, 72.06 in the README). The 0 bottom is "
                   "the Act struck down. The f, C and r ranges are the script's literals; C's ends "
                   "are the two income tax Monte Carlo bounds of Table 8."),
             inputs="final.csv from the authors' repository",
@@ -243,7 +243,7 @@ def main():
             other_inputs="the C range 3.3 to 5.8 from Table 8 (target income_tax_table8, off this chain)",
             outputs="ceiling_recomputed = 72.051 ($B), 212 domestic rows, 7 removed departures",
             method_ref=("NBER PDF pp.22-23 and the NBER README. Matches with a caveat: the Monte "
-                        "Carlo uses the script's 72, not the recomputed 72.05 (MISMATCHES.md 4); "
+                        "Carlo uses the script's 72, not the recomputed 72.05 (NOTES.md note 4); "
                         "test-nber-final.R checks both numbers."),
             method_status="matches_with_caveat",
             r=loc(f"{SIDE}/R/nber_final.R", "extract_nber_final(), compute_nber_ceiling()", [8, 52]),

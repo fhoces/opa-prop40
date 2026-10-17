@@ -16,7 +16,7 @@ extract_nber_final <- function(path = rauh_nber_final_csv()) {
 # Domestic total at grown (7%) vintage = the NBER version's "$100.9B face
 # value" (NBER README table). Removing the 7 removed_departed rows gives
 # the ceiling the README calls "$72.06B" (we recompute 72.05B - see
-# MISMATCHES.md #4). The 7 = SSRN's 6 confirmed departures (Page, Brin,
+# NOTES.md note 4). The 7 = SSRN's 6 confirmed departures (Page, Brin,
 # Thiel, Hankey, Spielberg, Sacks) plus Travis Kalanick (net worth $3.5B,
 # added for the NBER vintage).
 compute_nber_ceiling <- function(final_df) {

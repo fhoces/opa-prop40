@@ -34,8 +34,8 @@ bridge_inputs <- function(k) {
   seven_j <- (R0_r - ceiling) / tau
   # The leavers' own income tax at each stop, as the BSZ analysis counts it (Table 5): its
   # aggressive row loses the tax of all seven named leavers (four escape the wealth tax, three
-  # pay it and leave later); the JR seven are Page, Thiel, Hankey and Kalanick, Brin, and
-  # Spielberg and Sacks at BSZ's rate for billionaires without SEC data.
+  # pay it and leave later); the seven publicly reported moves are Page, Thiel, Hankey and
+  # Kalanick, Brin, and Spielberg and Sacks at BSZ's rate for billionaires without SEC data.
   L_bsz   <- pick(si, "leavers_annual_inctax")
   L_seven <- pick(si, "pre2026_leavers_annual_inctax") + pick(si, "brin_annual_inctax") +
     pick(si, "resid_inctax_rate") * pick(oi, "nber_spielberg_sacks_net_worth")

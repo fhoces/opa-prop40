@@ -58,7 +58,7 @@ test_that("analytic mean cross-check agrees with the Monte Carlo mean (both vers
   expect_equal(analytic_nber, nber$summary$mean, tolerance = mc_tol(nber$summary$sd, nber$summary$n) / abs(analytic_nber))
 })
 
-test_that("the exact SD rounds to the printed SD, and each seeded run lies within Monte Carlo error of it (MISMATCHES.md note 9)", {
+test_that("the exact SD rounds to the printed SD, and each seeded run lies within Monte Carlo error of it (NOTES.md note 9)", {
   ssrn <- compute_npv_mc_ssrn()
   nber <- compute_npv_mc_nber()
   sd_ssrn <- npv_mc_analytic_sd(35, 67.51, 3.3, 5.8, 0.015, 0.045,

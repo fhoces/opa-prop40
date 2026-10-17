@@ -726,7 +726,7 @@ name: perpetuity
 .small[
 The paper values a growing loss, so the rate is `\(r - g\)`, anchored at 1.5% (the S&amp;P 500 dividend
 yield). The Monte Carlo draws `\(r - g\)` from 1.5% to 4.5%; one sentence after it writes `\(C/r\)`
-([note 3](../materials.html#mismatches)).
+([note 3](../materials.html#reproduction-notes)).
 The authors count the loss **for ever** because the Act permanently lifts the cap on taxing
 intangible property (PDF p.32). The [BSZ analysis](../../../bsz-analysis/site/) (Boll, Saez and
 Zucman) objects that it lasts only a few years (five is its example).
@@ -772,7 +772,7 @@ Draw 100,000 times, independently:
 .small[
 Revenue is drawn **from zero**: mean 36 = 0.5 × 72. The code never
 multiplies by `\(q\)`; this zero is its only trace of `\(q\)`, and the chapter also grounds it in unreported
-departures (fn.32; [note 5](../materials.html#mismatches)). A uniform draw
+departures (fn.32; [note 5](../materials.html#reproduction-notes)). A uniform draw
 from 0 has the same **mean** as a coin flip on 72, not the same distribution. Lost income tax is
 **not** scaled by `\(q\)`: leavers do not come back if the Act is struck down.
 ]
@@ -811,7 +811,7 @@ The data (Forbes, FTB, the Pareto fit) set the scale; the sign is decided by the
 ]
 
 ---
-name: mismatches
+name: reproduction-notes
 
 # Reproduction notes: text, README and code
 
@@ -829,7 +829,7 @@ README and the code describe a step differently:
 .blue-box[
 None is a failure to reproduce a printed result. We reproduce the code as shipped and record each
 note rather than fix it. Full text on the
-[materials page](../materials.html#mismatches); every one is pinned by a test.&lt;sup&gt;1&lt;/sup&gt;
+[materials page](../materials.html#reproduction-notes); every one is pinned by a test.&lt;sup&gt;1&lt;/sup&gt;
 ]
 
 .footnote[&lt;sup&gt;1&lt;/sup&gt; Five more concern only the authors&#39; first version (March 2026): notes 1, 2, 7, 8, 9.]

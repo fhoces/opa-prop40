@@ -14,7 +14,7 @@ test_that("rank-implied income schedule matches the paper's top-212 share (p.16)
   # rescales it to the continuous share (monte_carlo_sim.R:69): 34.75%. The text
   # prints the same formula as "a 39.0% share ... $4.3 billion in Tax Year 2023"
   # (chapter PDF p.27, eq. 10; first version p.15) and as 38.8% (chapter PDF
-  # p.28); no step of the code gives 39.0% (MISMATCHES.md #10).
+  # p.28); no step of the code gives 39.0% (NOTES.md note 10).
   expect_equal(round(sched$discrete_top_share * 100, 2), 34.75)
 })
 

@@ -134,10 +134,10 @@ test_that("every number typed into the landing page matches its source", {
   flat <- gsub("\\s+", " ", html)
   expect_true(grepl(sprintf("of the %s inputs of the authors' simulation, %s are guesswork",
                             words[length(own)], words[n_guess]), flat, fixed = TRUE))
-  # ten reproduction notes listed, as in MISMATCHES.md (the tenth added 2026-10-16, author
+  # ten reproduction notes listed, as in NOTES.md (the tenth added 2026-10-16, author
   # answer 17), with their kinds counted from each note's "**Kind:**" line (reclassified
   # 2026-10-16, feedback/006)
-  mm <- readLines(project_path("MISMATCHES.md"))
+  mm <- readLines(project_path("NOTES.md"))
   n_mm <- sum(grepl("^## [0-9]+\\.", mm))
   expect_equal(n_mm, 10)
   expect_equal(lengths(regmatches(html, gregexpr("<li( value=\"[0-9]+\")?>", html))), n_mm)

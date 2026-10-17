@@ -70,7 +70,7 @@ p.20, `R/npv_mc.R`), each with a Python twin. The report's appendix presents it;
 
 The Monte Carlo draws revenue from 0 to the 72 ceiling, an income tax range from Table 9, a rate
 range and an independent departure fraction `f`, on a 7%-grown, 240-row person-level `final.csv`
-base. `MISMATCHES.md` keeps the reproduction notes: where the text, the README and the code
+base. `NOTES.md` keeps the reproduction notes: where the text, the README and the code
 describe a step differently.
 
 ## How to run
@@ -141,7 +141,7 @@ draw ranges (`rauh_mc_*`, `nber_mc_*`), taken from the simulation functions' own
 `../comparison/` reads from here.
 
 [^scenario]: The one `scenario` row, the first version's Table 9 central revenue, is explained in
-`MISMATCHES.md`, note 8.
+`NOTES.md`, note 8.
 
 ## The OPA site (`site/`)
 
@@ -158,14 +158,14 @@ when it rounds to the printed digit, or differs only because the paper rounded o
 intermediate figure (0.1% or less). A simulated figure reproduces when it lies within four Monte
 Carlo standard errors of the printed value.
 
-`MISMATCHES.md` keeps ten notes, for transparency, on where the text, the READMEs and the code
+`NOTES.md` keeps ten notes, for transparency, on where the text, the READMEs and the code
 describe the same step differently. None is a failure to reproduce a printed result. Each states
 its kind: three rounded or typed inputs (notes 4, 6 and 8), one seed variation (note 9) and six
 documentation notes (1, 2, 3, 5, 7 and 10). Five concern the chapter (one of them, note 10, is in
 the first version too).[^mm] We do not fix any of these; the pipeline reproduces the code as
-shipped and records the note. The file keeps its name from before the notes were reclassified on
-2026-10-16, after one of the JR authors pointed out that the earlier list counted rounding and seed
-differences as mismatches.
+shipped and records the note. The notes were reclassified on 2026-10-16, after one of the JR
+authors pointed out that the earlier list, then called mismatches, counted rounding and seed
+differences as results that did not match.
 
 [^mm]: The other five concern only the first version. One of them (note 9) is seed variation: the
 *printed* Monte Carlo summary is not the one the shipped seed gives, but it is within Monte Carlo

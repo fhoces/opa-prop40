@@ -43,11 +43,11 @@ dials <- site_dials(rc)
 # the authors' Monte Carlo inputs; q and g are this OPA's settings, named on the seven-inputs slide
 own_dials <- Filter(function(d) !d$key %in% c("q", "g"), dials)
 stopifnot(length(dials) - length(own_dials) == 2)
-mm_lines <- sub("^## ", "", grep("^## [0-9]+\\.", readLines("../../MISMATCHES.md"), value = TRUE))
+mm_lines <- sub("^## ", "", grep("^## [0-9]+\\.", readLines("../../NOTES.md"), value = TRUE))
 mm_first <- grepl("^[0-9]+\\. First version: ", mm_lines)
 # each note's kind, from the "**Kind:**" line under its heading
 mm_kind <- sub("^[*][*]Kind:[*][*] ([^.]+)[.].*", "\\1",
-               grep("^[*][*]Kind:[*][*] ", readLines("../../MISMATCHES.md"), value = TRUE))
+               grep("^[*][*]Kind:[*][*] ", readLines("../../NOTES.md"), value = TRUE))
 stopifnot(length(mm_kind) == length(mm_lines))
 # The break-even table at the paper's central revenue (q x 72) and midpoint income tax
 n10 <- compute_npv_table10(scenarios = list(central = list(label = "Central", WT = 0.5 * nb$wt_max, C = 4.55)))
@@ -344,7 +344,7 @@ ggplot(data.frame(r, m = 1 / r), aes(100 * r, m)) + geom_line(linewidth = 1, col
 .small[
 The paper values a growing loss, so the rate is $r - g$, anchored at 1.5% (the S&P 500 dividend
 yield). The Monte Carlo draws $r - g$ from 1.5% to 4.5%; one sentence after it writes $C/r$
-([note 3](../materials.html#mismatches)).
+([note 3](../materials.html#reproduction-notes)).
 The authors count the loss **for ever** because the Act permanently lifts the cap on taxing
 intangible property (PDF p.32). The [BSZ analysis](../../../bsz-analysis/site/) (Boll, Saez and
 Zucman) objects that it lasts only a few years (five is its example).
@@ -394,7 +394,7 @@ Draw 100,000 times, independently:
 .small[
 Revenue is drawn **from zero**: mean `r num(h("nber","mc_expected_revenue"), 0)` = 0.5 × 72. The code never
 multiplies by $q$; this zero is its only trace of $q$, and the chapter also grounds it in unreported
-departures (fn.32; [note 5](../materials.html#mismatches)). A uniform draw
+departures (fn.32; [note 5](../materials.html#reproduction-notes)). A uniform draw
 from 0 has the same **mean** as a coin flip on 72, not the same distribution. Lost income tax is
 **not** scaled by $q$: leavers do not come back if the Act is struck down.
 ]
@@ -444,7 +444,7 @@ The data (Forbes, FTB, the Pareto fit) set the scale; the sign is decided by the
 ]
 
 ---
-name: mismatches
+name: reproduction-notes
 
 # Reproduction notes: text, README and code
 
@@ -461,7 +461,7 @@ cat(paste0("- **Note ", sub("[.].*", "", mm_lines[!mm_first]), "** (", mm_kind[!
 .blue-box[
 None is a failure to reproduce a printed result. We reproduce the code as shipped and record each
 note rather than fix it. Full text on the
-[materials page](../materials.html#mismatches); every one is pinned by a test.<sup>1</sup>
+[materials page](../materials.html#reproduction-notes); every one is pinned by a test.<sup>1</sup>
 ]
 
 .footnote[<sup>1</sup> `r c("One","Two","Three","Four","Five","Six","Seven","Eight","Nine")[sum(mm_first)]` more concern only the authors' first version (March 2026): notes `r paste(sub("[.].*", "", mm_lines[mm_first]), collapse = ", ")`.]

@@ -2816,8 +2816,8 @@ The endpoint checks
 <span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>  seven_j <span class="ot">&lt;-</span> (R0_r <span class="sc">-</span> ceiling) <span class="sc">/</span> tau</span>
 <span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># The leavers&#39; own income tax at each stop, as the BSZ analysis counts it (Table 5): its</span></span>
 <span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>  <span class="co"># aggressive row loses the tax of all seven named leavers (four escape the wealth tax, three</span></span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  <span class="co"># pay it and leave later); the JR seven are Page, Thiel, Hankey and Kalanick, Brin, and</span></span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Spielberg and Sacks at BSZ&#39;s rate for billionaires without SEC data.</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  <span class="co"># pay it and leave later); the seven publicly reported moves are Page, Thiel, Hankey and</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Kalanick, Brin, and Spielberg and Sacks at BSZ&#39;s rate for billionaires without SEC data.</span></span>
 <span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  L_bsz   <span class="ot">&lt;-</span> <span class="fu">pick</span>(si, <span class="st">&quot;leavers_annual_inctax&quot;</span>)</span>
 <span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  L_seven <span class="ot">&lt;-</span> <span class="fu">pick</span>(si, <span class="st">&quot;pre2026_leavers_annual_inctax&quot;</span>) <span class="sc">+</span> <span class="fu">pick</span>(si, <span class="st">&quot;brin_annual_inctax&quot;</span>) <span class="sc">+</span></span>
 <span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pick</span>(si, <span class="st">&quot;resid_inctax_rate&quot;</span>) <span class="sc">*</span> <span class="fu">pick</span>(oi, <span class="st">&quot;nber_spielberg_sacks_net_worth&quot;</span>)</span>
@@ -3048,8 +3048,8 @@ Steps 1 to 4, and output (a)
 <span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  seven_j <span class="ot">&lt;-</span> (R0_r <span class="sc">-</span> ceiling) <span class="sc">/</span> tau</span>
 <span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># The leavers&#39; own income tax at each stop, as the BSZ analysis counts it (Table 5): its</span></span>
 <span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  <span class="co"># aggressive row loses the tax of all seven named leavers (four escape the wealth tax, three</span></span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  <span class="co"># pay it and leave later); the JR seven are Page, Thiel, Hankey and Kalanick, Brin, and</span></span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Spielberg and Sacks at BSZ&#39;s rate for billionaires without SEC data.</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  <span class="co"># pay it and leave later); the seven publicly reported moves are Page, Thiel, Hankey and</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Kalanick, Brin, and Spielberg and Sacks at BSZ&#39;s rate for billionaires without SEC data.</span></span>
 <span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>  L_bsz   <span class="ot">&lt;-</span> <span class="fu">pick</span>(si, <span class="st">&quot;leavers_annual_inctax&quot;</span>)</span>
 <span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>  L_seven <span class="ot">&lt;-</span> <span class="fu">pick</span>(si, <span class="st">&quot;pre2026_leavers_annual_inctax&quot;</span>) <span class="sc">+</span> <span class="fu">pick</span>(si, <span class="st">&quot;brin_annual_inctax&quot;</span>) <span class="sc">+</span></span>
 <span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pick</span>(si, <span class="st">&quot;resid_inctax_rate&quot;</span>) <span class="sc">*</span> <span class="fu">pick</span>(oi, <span class="st">&quot;nber_spielberg_sacks_net_worth&quot;</span>)</span>
@@ -3338,7 +3338,7 @@ guesswork on data
 no named leaver
 </td>
 <td style="text-align:left;">
-the JR seven: $614B on the BSZ list, $578B on the JR list
+seven moves: $614B on the BSZ list, $578B on the JR list
 </td>
 <td style="text-align:left;">
 <span style="white-space:nowrap">−$29.89B</span>
@@ -3807,7 +3807,7 @@ guesswork on data
 no named leaver
 </td>
 <td style="text-align:left;">
-the JR seven: $614B on the BSZ list, $578B on the JR list
+seven moves: $614B on the BSZ list, $578B on the JR list
 </td>
 <td style="text-align:left;">
 <span style="white-space:nowrap">−$23.63B</span>
@@ -4154,7 +4154,7 @@ guesswork on data
 no named leaver
 </td>
 <td style="text-align:left;">
-the JR seven: $614B on the BSZ list, $578B on the JR list
+seven moves: $614B on the BSZ list, $578B on the JR list
 </td>
 <td style="text-align:left;">
 <span style="white-space:nowrap">−$21.18B</span>
@@ -4743,8 +4743,8 @@ NBER p.1 abstract, p.23 (0.5 x the recognized base, Zuckerberg excluded)
 <span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>  seven_j <span class="ot">&lt;-</span> (R0_r <span class="sc">-</span> ceiling) <span class="sc">/</span> tau</span>
 <span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># The leavers&#39; own income tax at each stop, as the BSZ analysis counts it (Table 5): its</span></span>
 <span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>  <span class="co"># aggressive row loses the tax of all seven named leavers (four escape the wealth tax, three</span></span>
-<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>  <span class="co"># pay it and leave later); the JR seven are Page, Thiel, Hankey and Kalanick, Brin, and</span></span>
-<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Spielberg and Sacks at BSZ&#39;s rate for billionaires without SEC data.</span></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>  <span class="co"># pay it and leave later); the seven publicly reported moves are Page, Thiel, Hankey and</span></span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Kalanick, Brin, and Spielberg and Sacks at BSZ&#39;s rate for billionaires without SEC data.</span></span>
 <span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>  L_bsz   <span class="ot">&lt;-</span> <span class="fu">pick</span>(si, <span class="st">&quot;leavers_annual_inctax&quot;</span>)</span>
 <span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>  L_seven <span class="ot">&lt;-</span> <span class="fu">pick</span>(si, <span class="st">&quot;pre2026_leavers_annual_inctax&quot;</span>) <span class="sc">+</span> <span class="fu">pick</span>(si, <span class="st">&quot;brin_annual_inctax&quot;</span>) <span class="sc">+</span></span>
 <span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pick</span>(si, <span class="st">&quot;resid_inctax_rate&quot;</span>) <span class="sc">*</span> <span class="fu">pick</span>(oi, <span class="st">&quot;nber_spielberg_sacks_net_worth&quot;</span>)</span>
@@ -4947,7 +4947,7 @@ guesswork on data
 <b>no named leaver</b>. benchmark taxes all 1 Jan 2026 residents (BSZ PDF p.23); the aggressive row 3 (Page, Thiel, Hankey, Kalanick, BSZ export pre2026_leavers_wealth) is the dial’s middle stop
 </td>
 <td style="text-align:left;">
-<b>the JR seven: $614B on the BSZ list, $578B on the JR list</b>. the seven publicly reported moves (Page, Brin, Thiel, Hankey, Spielberg, Kalanick, Sacks) valued on the BSZ list: BSZ exports pre2026_leavers_wealth and brin_wealth (Table 5, 1 Jul 2026), plus Spielberg and Sacks at the JR file’s net worth (JR export nber_spielberg_sacks_net_worth), as the BSZ workbook does not list them by name; chapter Table 7, PDF p.21; the same seven on the JR list: (nber_domestic_grown - 72) / 5%, the script’s ceiling literal (NPV_dist_v8.R:19; the person-level file sums to 72.05, JR note 4)
+<b>seven moves: $614B on the BSZ list, $578B on the JR list</b>. the seven publicly reported moves (Page, Brin, Thiel, Hankey, Spielberg, Kalanick, Sacks) valued on the BSZ list: BSZ exports pre2026_leavers_wealth and brin_wealth (Table 5, 1 Jul 2026), plus Spielberg and Sacks at the JR file’s net worth (JR export nber_spielberg_sacks_net_worth), as the BSZ workbook does not list them by name; chapter Table 7, PDF p.21; the same seven on the JR list: (nber_domestic_grown - 72) / 5%, the script’s ceiling literal (NPV_dist_v8.R:19; the person-level file sums to 72.05, JR note 4)
 </td>
 </tr>
 <tr>

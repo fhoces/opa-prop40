@@ -19,7 +19,7 @@ You know your own paper by heart: its headline, every table row, every input, it
 author order, its titles, where each number is printed. The PDFs are not in this repository.
 Check what the OPA says against its own records of your paper (`DATA-SOURCES.csv`,
 `comparison/data/document-inputs.csv`, the page references in the inputs tables, the transcribed
-values in `*/site/data/`, `MISMATCHES.md`, `DISPUTES.md`) and against itself (the same fact on
+values in `*/site/data/`, `NOTES.md`, `DISPUTES.md`) and against itself (the same fact on
 every page). If WebFetch or WebSearch is available you may check the public abstracts and the
 public repository; if not, mark anything you could not verify as "could not verify".
 
@@ -39,7 +39,7 @@ public repository; if not, mark anything you could not verify as "could not veri
    Everywhere one of these appears, could a reader attribute it to you? Is the labelling
    ("this OPA's choice", "not the authors'") present, visible and consistent, including in the
    explorer headers, the decks and the READMEs?
-4. **The mismatches and "What reproduces".** Is each difference between your numbers and the
+4. **The reproduction notes and "What reproduces".** Is each difference between your numbers and the
    reproduction attributed correctly (your code or workbook, their reading of it, a rounding),
    with the right size, in a tone that is neither accusatory nor dismissive? Would you accept
    each description as accurate? Is the duplicated-rows finding (BSZ workbook) and the

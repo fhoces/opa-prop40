@@ -102,7 +102,7 @@ Following the [Open Policy Analysis](https://doi.org/10.1093/scipol/scaa067) fra
   Carlo and two settings this OPA adds
 - **Open Analysis**: this document, and [the slide deck](slides/slides.html)
 - **Open Materials**: [the repository](https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis), every script, test, CSV and
-  source (guide, with all `r tolower(c("One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve")[sum(grepl("^## [0-9]+[.]", readLines(file.path("..", "MISMATCHES.md"))))])` reproduction notes kept along the way: [the materials page](materials.html#mismatches))
+  source (guide, with all `r tolower(c("One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve")[sum(grepl("^## [0-9]+[.]", readLines(file.path("..", "NOTES.md"))))])` reproduction notes kept along the way: [the materials page](materials.html#reproduction-notes))
 :::
 
 ::: {.callout-note collapse="true" title="Sources and how they are read"}
@@ -171,7 +171,7 @@ The script draws $WT \sim U[`r nb$wt_min`, `r nb$wt_max`]$ (\$B). The top, `r nb
 the revenue if the Act survives in court, after removing the seven publicly reported moves. Summing
 the authors' person-level file `final.csv` gives \$`r num(nc$ceiling_recomputed, 2)`B for the same
 quantity. The script's 72 is that value rounded, as the chapter rounds it on PDF pp.24 and 33
-([note 4](materials.html#mismatches)). The bottom,
+([note 4](materials.html#reproduction-notes)). The bottom,
 `r nb$wt_min`, is the Act struck down. The chapter also grounds the 0 in its stress test of
 unreported departures, in which revenue falls to \$4.82B (fn.32, PDF p.34; Appendix B, PDF p.43).
 The mean of the draw is
@@ -282,7 +282,7 @@ Forbes list (with the authors' corrections), subtract their directly held reside
 **\$`r num(rc$baseline_precise, 2)`B**; the paper prints \$`r num(out("revenue_baseline","printed_value"), 2)`B
 (PDF p.19, eq. 2), a value typed into the workbook, `r pct(100 * (rc$baseline_precise / rc$baseline_literal - 1), 1)`
 below its own sum. Every later number in the first version is built on the typed value, and each
-reproduces ([note 6](materials.html#mismatches)).
+reproduces ([note 6](materials.html#reproduction-notes)).
 
 $$R_{\text{base}} = \sum_{i=1}^{N} \tau \times \text{TaxBase}_i, \qquad \text{TaxBase}_i = \text{NetWorth}_i - \text{TRRE}_i$$
 
@@ -321,7 +321,7 @@ and the 1 January 2026 residency date (Table 7, PDF p.21). Removing their
 `final.csv`. The paper (eq. 4, p.22) and the authors' README print
 \$`r out("nber_ceiling","printed_value")`B, the difference of two figures each rounded to two
 decimals (`r num(nc$domestic_total_grown, 2)` − `r num(nc$removed_departed_total, 2)`), and the
-script and the chapter's later pages use `r nb$wt_max` ([note 4](materials.html#mismatches)): one
+script and the chapter's later pages use `r nb$wt_max` ([note 4](materials.html#reproduction-notes)): one
 value at three roundings. The paper then asks how big a behavioural response that is.
 It divides the share of revenue lost by the rate change, in percentage points (eq. 4, PDF p.22):
 
@@ -338,7 +338,7 @@ eps7
 This gives `r num(eps7, 2)`. The printed 5.73 is the same formula with the round ceiling,
 (`r num(nc$domestic_total_grown, 1)` − `r nb$wt_max`)/`r num(nc$domestic_total_grown, 1)`/5 =
 `r num(100 * (1 - nb$wt_max / round(nc$domestic_total_grown, 1)) / 5, 2)`, so the two differ only in
-rounding ([note 4](materials.html#mismatches)). A 1-point tax rate rise drives out about
+rounding ([note 4](materials.html#reproduction-notes)). A 1-point tax rate rise drives out about
 `r num(eps7, 1)`% of the base. The authors treat this as a floor, because it counts only
 departures that made the news (PDF pp.22-24).
 
@@ -479,8 +479,8 @@ Three things are worth knowing before reading the rest:
 - **Which rate is drawn.** The chapter's eq. 18 and its code (`NPV_dist_v8.R`) draw the 1.5% to
   4.5% rate as $r - g$, the discount rate net of growth, and the NBER README describes the draw
   the same way. One sentence after eq. 19 writes $C/r$ (PDF p.35)
-  ([note 3](materials.html#mismatches)). The first version's code divides by plain $r$
-  ([note 2](materials.html#mismatches)). The explorer's dial for further growth on top of the
+  ([note 3](materials.html#reproduction-notes)). The first version's code divides by plain $r$
+  ([note 2](materials.html#reproduction-notes)). The explorer's dial for further growth on top of the
   drawn $r - g$ is this OPA's illustration, not part of the authors' model.
 - **The loss is not scaled by $q$.** People who left do not come back if the Act is struck down,
   so the income tax loss stays even when the wealth tax collects nothing (PDF p.33).
@@ -532,7 +532,7 @@ Two details matter:
 
 1. **Revenue is drawn from zero.** The mean of $U[0, 72]$, \$`r num(h("nber","mc_expected_revenue"), 0)`B,
    is $0.5 \times 72$, the paper's central estimate (PDF p.33). This is the only place $q$
-   appears in the code: there is no explicit multiplier ([note 5](materials.html#mismatches)).
+   appears in the code: there is no explicit multiplier ([note 5](materials.html#reproduction-notes)).
    The script's comment says the draw "embeds litigation range", and the chapter also grounds the
    0 in unreported departures (fn.32, PDF p.34). A uniform draw from 0 is a different assumption
    from a survive-or-not coin flip on a fixed base. The two share a mean, not a distribution.
@@ -669,8 +669,8 @@ cat("The code reproduces the chapter's published results (tests in `tests/testth
     "The deterministic figures round to the printed digit, apart from ",
     c("one", "two", "three", "four")[length(off_print)], " where the paper prints a typed or ",
     "rounded intermediate value: the baseline revenue, a typed 94.20 ",
-    "([note 6](materials.html#mismatches)), and the ceiling, the difference of two rounded ",
-    "figures ([note 4](materials.html#mismatches)). The larger gap is the baseline revenue's, ",
+    "([note 6](materials.html#reproduction-notes)), and the ceiling, the difference of two rounded ",
+    "figures ([note 4](materials.html#reproduction-notes)). The larger gap is the baseline revenue's, ",
     num(max(ob$abs_diff), 2), " (", num(top_rel, 1), "%). Table 9's 21 cells and Table 10's 3 cells, ",
     "shown above, match as well.^[The first version's own outputs are in the ",
     "[appendix](#appendix-first-version).]\n",
@@ -681,7 +681,7 @@ cat("The code reproduces the chapter's published results (tests in `tests/testth
 #| label: reproduction-notes
 #| results: asis
 #| code-summary: "R code for the list of reproduction notes"
-mm <- readLines("../MISMATCHES.md")
+mm <- readLines("../NOTES.md")
 mm_lines <- sub("^## ", "", grep("^## [0-9]+\\.", mm, value = TRUE))
 mm_first <- grepl("^[0-9]+\\. First version: ", mm_lines)
 # each note's kind, from the "**Kind:**" line under its heading
@@ -703,7 +703,7 @@ cat(paste0(
   "^[The other ", tolower(word(sum(mm_first))), " concern only the authors' first version: ",
   paste(paste0(sub("First version: ", "", mm_lines[mm_first]), " (", mm_kind[mm_first], ")"), collapse = "; "), ".]\n\n",
   paste0(mm_lines[!mm_first], " (", mm_kind[!mm_first], ")", collapse = "\n"),
-  "\n\nFull text: [the materials page](materials.html#mismatches).\n"))
+  "\n\nFull text: [the materials page](materials.html#reproduction-notes).\n"))
 ```
 
 ### Internal identities {#internal-identities}

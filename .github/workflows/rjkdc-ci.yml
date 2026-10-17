@@ -5,7 +5,7 @@ name: rjkdc-analysis CI
 # then rebuilds both the R pipeline and its Python twin and runs both test
 # suites. The workbook, MC scripts and final.csv this pipeline reads all
 # live inside that cloned repo - nothing else needs to be fetched. See
-# rjkdc-analysis/README.md and MISMATCHES.md.
+# rjkdc-analysis/README.md and NOTES.md.
 
 on:
   push:

@@ -84,7 +84,7 @@ def build_inputs(pareto_fit, revenue_chain, nber_ceiling):
          "Probability the Act survives constitutional challenge (ASC 740-10 more-likely-than-not)",
          0.50, "probability", "guesswork", "public",
          "NBER_2026_litigation_weighted/README.md (assumptions table); not an explicit "
-         "multiplier in NPV_dist_v8.R - see MISMATCHES.md #5", ""),
+         "multiplier in NPV_dist_v8.R - see NOTES.md note 5", ""),
         ("nber_growth_rate", "nber",
          "Growth applied to the Jan-1-2026 snapshot to the Dec-31-2026 valuation date", 0.07,
          "rate", "guesswork on data", "public",

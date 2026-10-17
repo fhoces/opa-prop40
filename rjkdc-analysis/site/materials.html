@@ -2519,7 +2519,7 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
   <li><a href="#scripts" id="toc-scripts" class="nav-link" data-scroll-target="#scripts">Scripts</a></li>
   <li><a href="#data-files-the-site-publishes" id="toc-data-files-the-site-publishes" class="nav-link" data-scroll-target="#data-files-the-site-publishes">Data files the site publishes</a></li>
   <li><a href="#sources" id="toc-sources" class="nav-link" data-scroll-target="#sources">Sources</a></li>
-  <li><a href="#mismatches" id="toc-mismatches" class="nav-link" data-scroll-target="#mismatches">What the checks found</a></li>
+  <li><a href="#reproduction-notes" id="toc-reproduction-notes" class="nav-link" data-scroll-target="#reproduction-notes">What the checks found</a></li>
   </ul>
 </nav>
 </div>
@@ -2999,7 +2999,7 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 <td style="text-align: left;"><a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6340778">link</a></td>
 <td style="text-align: left;"><code>edb4ad1e9c165b34…</code></td>
 <td style="text-align: left;">do-not-redistribute</td>
-<td style="text-align: left;">reference only (page citations in MISMATCHES.md and export/{r,py}/inputs.csv, outputs.csv); not read programmatically - the pipeline reads the authors&#39; own repo…</td>
+<td style="text-align: left;">reference only (page citations in NOTES.md and export/{r,py}/inputs.csv, outputs.csv); not read programmatically - the pipeline reads the authors&#39; own repo inst…</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">original-materials/additional-documentation/caltax-walczak-2026-04-22.pdf</td>
@@ -3045,9 +3045,10 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
 </table>
 
 </div>
+<p><span id="mismatches"></span></p>
 </section>
-<section id="mismatches" class="level2">
-<h2 class="anchored" data-anchor-id="mismatches">What the checks found</h2>
+<section id="reproduction-notes" class="level2">
+<h2 class="anchored" data-anchor-id="reproduction-notes">What the checks found</h2>
 <p>The pipeline reproduces the published results of both versions of the JR analysis from the authors’ own code, workbooks and data: the revenue chain, the income tax tables, the NPV and break-even tables and both Monte Carlo summaries. A deterministic figure counts as reproduced when it rounds to the printed digit, or when it differs only because the paper rounded or typed an intermediate figure (0.1% or less in every case below). A simulated figure counts as reproduced when it lies within four Monte Carlo standard errors of the printed value. Two runs of a Monte Carlo with different seeds never give identical figures.</p>
 <p>The ten notes below are kept for transparency. Each records a place where the authors’ text, their READMEs and their code describe the same step in different words or numbers. None of them is a failure to reproduce a printed result. They are of three kinds, and each note states its kind under its heading:</p>
 <ul>

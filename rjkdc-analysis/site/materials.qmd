@@ -187,11 +187,13 @@ scroll(kable(ds[, c("file", "provider", "obtained_via", "date_obtained", "url_or
              escape = FALSE, row.names = FALSE))
 ```
 
-## What the checks found {#mismatches}
+[]{#mismatches}
+
+## What the checks found {#reproduction-notes}
 
 ```{r}
 #| results: asis
-mm <- readLines(file.path(root, "MISMATCHES.md"))
+mm <- readLines(file.path(root, "NOTES.md"))
 mm_kind <- sub("^[*][*]Kind:[*][*] ([^.]+)[.].*", "\\1", grep("^[*][*]Kind:[*][*] ", mm, value = TRUE))
 stopifnot(length(mm_kind) == sum(grepl("^## [0-9]+[.]", mm)))   # one kind per note
 mm <- mm[-seq_len(which(grepl("^# ", mm))[1])]      # drop the file's own title

@@ -20,7 +20,7 @@ test_that("NBER ceiling rebuilds the README's printed figures from final.csv", {
   expect_equal(round(ceiling$domestic_total_grown, 1), 100.9)
   expect_equal(round(ceiling$international_net_worth, 1), 146.3)
   # README prints 72.06; our recomputation is 72.05 (rounds differently -
-  # MISMATCHES.md #4). Both are within 1 cent of the true sum.
+  # NOTES.md note 4). Both are within 1 cent of the true sum.
   expect_equal(round(ceiling$ceiling_recomputed, 2), 72.05)
   expect_equal(round(ceiling$ceiling_recomputed, 1), 72.1)
 
@@ -33,7 +33,7 @@ test_that("NBER ceiling rebuilds the README's printed figures from final.csv", {
 test_that("NPV_dist_v8.R's hard-coded wt_max (72) differs from the recomputed ceiling", {
   df <- nber_final_fixture()
   ceiling <- compute_nber_ceiling(df)
-  # This is MISMATCHES.md #4: the script itself uses the literal 72, not
+  # This is NOTES.md note 4: the script itself uses the literal 72, not
   # the ~72.05 this function derives from final.csv.
   expect_gt(abs(72 - ceiling$ceiling_recomputed), 0.001)
 })

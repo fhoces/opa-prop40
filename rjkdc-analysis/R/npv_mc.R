@@ -9,7 +9,7 @@
 #
 # SSRN (NPV_dist.R:24-63): f is NOT an independent draw. It is implied by
 # the WT draw: f = 1 - WT/baseline_revenue. NPV = WT - f*C/r (plain r, not
-# r-g - see MISMATCHES.md #2/#3).
+# r-g - see NOTES.md notes 2 and 3).
 compute_npv_mc_ssrn <- function(seed = 2026, n_sims = 100000,
                                  baseline_revenue = 94.2,
                                  wt_min = 35, wt_max = 67.51,
@@ -33,12 +33,12 @@ compute_npv_mc_ssrn <- function(seed = 2026, n_sims = 100000,
 }
 
 # NBER (NPV_dist_v8.R:24-32): f IS an independent draw, U[0.30, 0.60],
-# unrelated to the WT draw (mismatch candidate #5 in MISMATCHES.md - the
+# unrelated to the WT draw (note 5 in NOTES.md - the
 # NBER README's q=0.50 litigation-survival weight never appears as an
 # explicit multiplier in this script). wt_max defaults to 72 (the script's
 # own hard-coded literal, NPV_dist_v8.R:19) rather than the value
 # re-derived from final.csv by compute_nber_ceiling() (R/nber_final.R) -
-# see MISMATCHES.md #4.
+# see NOTES.md note 4.
 compute_npv_mc_nber <- function(seed = 2026, n_sims = 100000,
                                  wt_min = 0, wt_max = 72,
                                  f_min = 0.30, f_max = 0.60,
@@ -90,7 +90,7 @@ npv_e_inv_rate <- function(lo, hi, g = 0) {
 #   an independent uniform (NBER, list(mode = "uniform", lo, hi)), or fixed
 #   (list(mode = "fixed", value)). q (litigation survival applied to revenue)
 #   and g (growth of the lost income) are 1 and 0 in both scripts as shipped;
-#   the explorer moves them (MISMATCHES #2, #3, #5). Used by
+#   the explorer moves them (NOTES.md notes 2, 3 and 5). Used by
 #   npv_mc_analytic_mean() below and by the explorer grid (R/site.R).
 npv_expectation <- function(wt_min, wt_max, c_min, c_max, rate_min, rate_max,
                             f_spec, q = 1, g = 0) {
@@ -147,7 +147,7 @@ npv_mc_analytic_mean <- function(wt_min, wt_max, c_min, c_max,
 # The model's exact standard deviation (q = 1, g = 0, as both scripts ship), for the same
 # settings as npv_mc_analytic_mean(). NPV = WT - f*C*X with X = 1/rate; C and X are independent
 # of WT and f, so E[NPV^2] = E[WT^2] - 2 E[WT f] E[C] E[X] + E[f^2] E[C^2] E[X^2], with
-# E[X^2] = (1/a - 1/b)/(b - a) for rate ~ U[a, b]. Used for MISMATCHES.md note 9: the first
+# E[X^2] = (1/a - 1/b)/(b - a) for rate ~ U[a, b]. Used for NOTES.md note 9: the first
 # version's printed sd (38.4) is this value at the printed digit.
 npv_mc_analytic_sd <- function(wt_min, wt_max, c_min, c_max,
                                rate_min, rate_max,

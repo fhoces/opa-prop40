@@ -169,7 +169,7 @@ Table 5 step by step. Sections II and III reproduce the paper's other tables fir
 reproduces the paper's published results. All `r nrow(t5pr)` cells of Table 5 match the workbook,
 and `r sum(t5pr$matches_printed)` round to the digit the paper prints. The paper prints the other
 `r nrow(t5pr) - sum(t5pr$matches_printed)` cut rather than rounded (see
-[Reproduction notes](#mismatches-found-and-how-each-was-resolved)).
+[Reproduction notes](#reproduction-notes)).
 
 **Not the authors' choice.** BSZ's own headline is the wealth tax alone: about \$100 billion in the
 abstract and in GGSS, `r usd(wt_printed, 0)` in Table 5 (p.39), reproduced here as
@@ -244,7 +244,7 @@ The 2025 count is `r agg$n[agg$year == 2025]` billionaires holding
 `r usd(agg$forbes_worth[agg$year == 2025], 0)`, which is the paper's own figure
 ("240 billionaires with total wealth of \$2055 billion", Appendix A). Four rows of the
 workbook's raw list appear twice; the workbook's own aggregate and the paper count them once,
-and so does the pipeline (note 2 under [Reproduction notes](#mismatches-found-and-how-each-was-resolved)).
+and so does the pipeline (note 2 under [Reproduction notes](#reproduction-notes)).
 
 ::: {.table-scroll}
 ```{r}
@@ -776,7 +776,7 @@ to. The other `r nrow(miss)` are both in the income tax loss column:
 the paper's text quotes the printed figures (\$0.19 billion on PDF p.25, \$0.51 billion on
 p.26). Each printed figure is the workbook's value cut at the second decimal rather than
 rounded, less than a cent of a billion a year (note 1 under
-[Reproduction notes](#mismatches-found-and-how-each-was-resolved)). No other printed number is
+[Reproduction notes](#reproduction-notes)). No other printed number is
 built on them.
 
 ### What the tax collects, and what it costs
@@ -880,7 +880,7 @@ uses as a check, 10.32; its first version preferred 12 to 13, `comparison/DISPUT
 wealth itself: $d$ = 15 years of paying the tax shrinks fortunes by $(1-\tau)^d$, and revenue
 then peaks at `r pct(laf$tax_rate[which.max(laf$long_run_tax_revenue)])`. The paper prints the
 first-order formula $1/(1+d+e) = 1/26 = 3.8\%$, the optimum once $(1-\tau)^d$ is replaced by $e^{-d\tau}$
-(note 7 under [Reproduction notes](#mismatches-found-and-how-each-was-resolved)).
+(note 7 under [Reproduction notes](#reproduction-notes)).
 
 ```{r}
 #| echo: false
@@ -1028,7 +1028,9 @@ tests compare R against the workbook's cached cells, formula by formula, at a st
 (`snapshots`). One checks the explorer against the reproduction (`site`). Figures are checked
 for structure and a few anchor values, not pixel by pixel.
 
-## Reproduction notes {#mismatches-found-and-how-each-was-resolved}
+[]{#mismatches-found-and-how-each-was-resolved}
+
+## Reproduction notes {#reproduction-notes}
 
 ```{r}
 #| label: notes-kinds
