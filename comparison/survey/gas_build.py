@@ -103,8 +103,27 @@ function regroup_(f) {{
   seq.forEach(function (it, j) {{ f.moveItem(it.getIndex(), start + j); }});
 }}
 
+// A run stops at Apps Script's six-minute cap after about three forms, leaving the next form half
+// built. Finished means the last edits are in: "Unsure" in the choices, and in a treated form the
+// study labels. A half-built copy is trashed and rebuilt; a finished one is skipped.
+function complete_(f, spec) {{
+  var choices = [];
+  f.getItems(FormApp.ItemType.MULTIPLE_CHOICE).forEach(function (it) {{
+    it.asMultipleChoiceItem().getChoices().forEach(function (c) {{ choices.push(c.getValue()); }});
+  }});
+  var unsure = choices.indexOf(UNSURE[1]) >= 0;
+  var labelled = choices.some(function (c) {{ return c.indexOf("BSZ: ") === 0; }});
+  return spec.treated ? (unsure && labelled) : unsure;
+}}
+
 function buildOne_(spec) {{
-  if (DriveApp.getFilesByName(spec.name).hasNext()) {{ Logger.log("exists, skipped: " + spec.name); return; }}
+  var files = DriveApp.getFilesByName(spec.name);
+  while (files.hasNext()) {{
+    var file = files.next();
+    if (complete_(FormApp.openById(file.getId()), spec)) {{ Logger.log("exists, skipped: " + spec.name); return; }}
+    file.setTrashed(true);
+    Logger.log("trashed a half-built copy: " + spec.name);
+  }}
   var copy = DriveApp.getFileById(SOURCE_ID).makeCopy(spec.name);
   var f = FormApp.openById(copy.getId());
   f.setAcceptingResponses(false);
