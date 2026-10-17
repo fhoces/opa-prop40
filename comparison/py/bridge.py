@@ -98,7 +98,7 @@ STEPS = [
     ("noncitizens", "8", "Non-US-citizen residents", "data vs guesswork"),
     ("base_list", "7", "Forbes source: which list and valuation date", "data vs guesswork on data"),
     ("real_estate", "7", "Real-estate deduction", "guesswork vs data"),
-    ("confirmed_departures", "3", "Billionaires already departed", "guesswork on data"),
+    ("confirmed_departures", "3", "Billionaires who moved out in time", "guesswork on data"),
     ("avoidance", "(not a row)", "Avoidance and evasion allowance", "guesswork"),
     ("litigation_survival", "9", "Chance the tax does not survive litigation", "guesswork"),
     ("income_loss_share", "6", "Share of billionaire income tax lost", "guesswork"),

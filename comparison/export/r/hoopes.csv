@@ -2,7 +2,7 @@
 "galle_estimate",100,100,0.6,"GGSS printed headline"
 "ggss_rounding",3.81500000000001,NA,NA,"GGSS's own rounding of their estimate"
 "residency_correction",-12.58038,-12.6,0.6,"Non-US-citizen residents + base list and valuation date"
-"confirmed_departures",-26.0150043632985,-17.02,0.6,"Billionaires already departed"
+"confirmed_departures",-26.0150043632985,-17.02,0.6,"Billionaires who moved out in time"
 "additional_movers",NA,-12.5,0.6,"(none: Rauh's Monte Carlo headline does not use the ten 'expanded' departures)"
 "additional_behavioral_response",-28.986495838534,-9.16,0.6,"Avoidance allowance + chance the tax does not survive litigation (his bar is the March 2026 version's elasticity response, which the September version does not use)"
 "real_estate_exclusion",-0.233119798167493,-1.05,0.8,"Real-estate deduction"

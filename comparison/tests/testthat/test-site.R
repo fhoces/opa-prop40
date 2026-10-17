@@ -117,7 +117,8 @@ test_that("pressing the Apply buttons left to right gives each printed term exac
   d <- diff(v)
   expect_identical(vapply(abs(d), money, "", 2), b[2:5])
   expect_identical(ifelse(d < 0, "&minus;", "+"), ops[1:4])
-  expect_identical(money(v[1], 2), b[1]); expect_identical(money(v[5], 2), b[6])
+  # the two ends print at one decimal since 2026-10-17 (author request), the main estimates' figures
+  expect_identical(money(v[1], 1), b[1]); expect_identical(money(v[5], 1), b[6])
   expect_identical(b[2:5], c("$29.89B", "$39.44B", "$81.34B", "$4.89B"))
   expect_identical(ops[4], "+")
 })
@@ -157,17 +158,19 @@ test_that("both pages carry the pseudo-equation: D and q, the loss box added up,
     expect_identical(lengths(regmatches(eq, gregexpr('class="term"', eq, fixed = TRUE))), 6L, label = paste(p, "six terms"))
     # the four printed terms take the printed BSZ estimate exactly to the printed JR estimate
     # (author decision 2026-10-16: "=", every amount to two decimals, 106.80 - 29.89 - 39.44 -
-    # 81.34 + 4.89 = -38.98)
+    # 81.34 + 4.89 = -38.98). Since 2026-10-17 the two ends print at one decimal ($106.8B and
+    # -$39.0B, author request), matching the headline's main estimates; the four terms still add
+    # up to -38.98, which prints as -39.0, and this check keeps the two-decimal values.
     printed <- round(c(dp$change[main], sum(dp$change[loss]), sum(dp$change[rest])), 2)
     expect_lt(abs(round(eb$bsz_model, 2) + sum(printed) - round(eb$jr_own, 2)), 1e-9, label = paste(p, "sum"))
     expect_true(grepl('<span class="op">=</span><span class="term" data-end=', eq, fixed = TRUE), label = paste(p, "equals"))
     expect_false(grepl("&asymp;", eq, fixed = TRUE), label = paste(p, "no about"))
-    expect_true(grepl(sprintf('<b>%s</b><small>BSZ estimate</small>', money(eb$bsz_model, 2)), eq, fixed = TRUE), label = p)
+    expect_true(grepl(sprintf('<b>%s</b><small>BSZ estimate</small>', money(eb$bsz_model, 1)), eq, fixed = TRUE), label = p)
     # BSZ at the left, JR at the right
     expect_lt(regexpr("<small>BSZ estimate</small>", eq, fixed = TRUE)[[1]], at[1])
     expect_gt(max(gregexpr("JR estimate", eq, fixed = TRUE)[[1]]), at[length(at)])
     # the printed end is the JR estimate, the authors' exact mean (-$39.0B), and no rate-gap note is left
-    expect_true(grepl(sprintf('<b>%s</b><small>JR estimate</small>', money(eb$jr_own, 2)), eq, fixed = TRUE), label = p)
+    expect_true(grepl(sprintf('<b>%s</b><small>JR estimate</small>', money(eb$jr_own, 1)), eq, fixed = TRUE), label = p)
     expect_identical(money(eb$jr_own, 1), "\u2212$39.0B")
     expect_false(grepl("eq-gap", html, fixed = TRUE), label = p)
     for (x in c("rate gap", "one 3% rate", "worth about $6.7B")) expect_false(grepl(x, html, fixed = TRUE), label = paste(p, x))
@@ -175,11 +178,20 @@ test_that("both pages carry the pseudo-equation: D and q, the loss box added up,
     expect_false(grepl("shapley", html, ignore.case = TRUE), label = p)
   }
   ex_html <- read_page(explorer)
-  expect_true(grepl(paste("Move the BSZ panel's dials to their far ends, term by term from left to right.",
-                          "The D and q terms are those two steps of that walk.",
-                          "Lost income tax is the four loss-box dials of the walk added up (H, f, C and r).",
-                          "The last term is the other three steps added up (W, a and the minor switch)."),
-                    ex_html, fixed = TRUE))
+  # Footnote 2 on the explorer: the order point and the Apply buttons, then a link to the report.
+  # The pin held the sentences on how the terms group the dials until 2026-10-17, when the author
+  # asked for notes of three sentences at most (the rest in the report): those sentences now print
+  # in the report's "The explorer's equation" (eq_terms()$note), so the pin moves to the new text.
+  dp_q <- dp$change[dp$step_id == "litigation_survival"]
+  fn2 <- regmatches(ex_html, regexpr('(?s)<p class="fn" id="fn-eq">.*?</p>', ex_html, perl = TRUE))
+  expect_length(fn2, 1)
+  expect_true(grepl(paste("<sup>2</sup> The equation adds up only when the terms are switched one after another,",
+                          "in this order, from left to right."), fn2, fixed = TRUE))
+  expect_true(grepl(sprintf('instead of <span style="white-space:nowrap">%s</span>', money(dp_q, 2)), fn2, fixed = TRUE))
+  expect_true(grepl(paste("The Apply buttons work from left to right, each unlocking the next, so each press",
+                          "changes the estimate by its amount in the equation (more in the report:",
+                          '<a href="../repro.html#the-equation">The explorer\'s equation</a>).</p>'),
+                    fn2, fixed = TRUE))
   for (panel in c("bsz", "rjkdc"))
     expect_true(grepl(sprintf('<button type="button" class="reset walk" data-panel="%s">Walk the path</button>', panel), ex_html, fixed = TRUE), label = panel)
   # the overview's section has no dial letters in brackets, in the equation or its note
@@ -541,15 +553,22 @@ test_that("the explorer's quantities section: the subtitle and the survey button
   expect_true(grepl('<h3 id="q-title">But what are the actual quantities?</h3>', html, fixed = TRUE))
   expect_gt(at('<section class="quantities"'), at('<div class="pseudo-eq apply-eq"'))
   expect_lt(at('<section class="quantities"'), at('<details class="fold notes" id="notes-estimates">'))
-  expect_true(grepl("Most of these are empirical quantities; H and r are scenario choices. Their values should not depend on whether one\n    supports or opposes a wealth tax. An expert should be able to appraise each value from more to less\n    credible.", html, fixed = TRUE))
+  # the subtitle and the share line below follow the survey's approved wording since 2026-10-17
+  # (author request 2026-10-17, survey wording carried to the pages): the survey asks which of two
+  # values is more credible, not for a ranking or for the respondent's own values
+  expect_true(grepl("Most of these are empirical quantities, and none should depend on whether one supports\n    or opposes a wealth tax. H and r are scenario choices. An expert should be able to judge which of\n    the two values is more credible.", html, fixed = TRUE))
+  expect_false(grepl("appraise each value from more to less", html, fixed = TRUE))
   expect_false(grepl('<table class="q-table">', html, fixed = TRUE))
   expect_true(grepl('<p class="q-cta">', html, fixed = TRUE))
-  expect_true(grepl("Take the survey: what do you think these values are?", html, fixed = TRUE))
-  expect_true(grepl("Share this survey with people you think have expertise in this area, to learn what they think these values are.", html, fixed = TRUE))
-  # the button's links come from the survey file: with none yet it is shown disabled
-  sv <- read_csv_plain(file.path(root, "comparison", "data", "survey-links.csv"))
-  urls <- sv$url[!is.na(sv$url) & nzchar(sv$url)]
-  if (length(urls)) expect_true(grepl(sprintf('data-links="%s"', paste(urls, collapse = " ")), html, fixed = TRUE))
+  # the label asks which value is more credible (author, 2026-10-17; pilot 008: "what do you
+  # think these values are?" led respondents to expect to type their own numbers)
+  expect_true(grepl("Take the survey: which values are more credible?", html, fixed = TRUE))
+  expect_false(grepl("Take the survey: what do you think these values are?", html, fixed = TRUE))
+  expect_true(grepl("Share this survey with people you think have expertise in this area, to learn which values they find more credible.", html, fixed = TRUE))
+  expect_false(grepl("to learn what they think these values are", html, fixed = TRUE))
+  # the button's links are the explorer entry point's pair: with none yet it is shown disabled
+  pair <- survey_pair(read_survey_links(root), "explorer")
+  if (length(pair)) expect_true(grepl(sprintf('data-entry="explorer" data-links="%s"', paste(pair, collapse = " ")), html, fixed = TRUE))
   else expect_true(grepl('<span class="q-survey is-off" aria-disabled="true">', html, fixed = TRUE))
 })
 
@@ -619,15 +638,15 @@ test_that("the overview's \"The differences\" fold holds the quantities table; t
   btn <- function(h) regmatches(h, regexpr('<p class="q-cta">.*?</p>', h))
   expect_true(grepl('<p class="q-cta">', fold, fixed = TRUE))
   expect_identical(btn(ov), btn(ex))
-  # a "Copy link" button next to the share line on both pages, and the share page that picks a
-  # version at random (author request 2026-10-15)
-  sv <- read_csv_plain(file.path(root, "comparison", "data", "survey-links.csv"))
-  urls <- sv$url[!is.na(sv$url) & nzchar(sv$url)]
-  if (length(urls)) {
+  # a "Copy link" button next to the share line on both pages, and the share page that draws a
+  # form at random (author request 2026-10-15), now from the share entry point's pair (plan 4.3)
+  pair <- survey_pair(read_survey_links(root), "share")
+  if (length(pair)) {
     for (h in list(ov, ex)) expect_true(grepl(sprintf('<button type="button" class="q-copy" data-url="%s">Copy link</button>', SURVEY_SHARE_URL), h, fixed = TRUE))
     sp <- read_page(file.path(root, "comparison", "site", "survey", "index.html"))
-    for (u in urls) expect_true(grepl(u, sp, fixed = TRUE))
-    expect_true(grepl("location.replace(L[Math.floor(Math.random() * L.length)])", sp, fixed = TRUE))
+    for (u in pair) expect_true(grepl(u, sp, fixed = TRUE))
+    expect_true(grepl('var arm = Math.random() < 0.5 ? "treatment" : "control";', sp, fixed = TRUE))
+    expect_true(grepl('location.replace(L[arm === "treatment" ? 1 : 0]);', sp, fixed = TRUE))
   }
 })
 
@@ -646,16 +665,170 @@ test_that("an assessment in the author's file shows in the table when the column
 test_that("the overview's differences fold opens with two smaller survey buttons: take it and share it", {
   ov <- read_page(file.path(root, "index.html"))
   fold <- regmatches(ov, regexpr('<details class="fold" id="differences">.*?</details>', ov))
-  sv <- read_csv_plain(file.path(root, "comparison", "data", "survey-links.csv"))
-  urls <- sv$url[!is.na(sv$url) & nzchar(sv$url)]
+  # the overview's buttons join the explorer entry point (author decision 2026-10-17)
+  urls <- survey_pair(read_survey_links(root), "explorer")
   if (length(urls)) {
     mini <- regmatches(fold, regexpr('<p class="q-mini">.*?</p>', fold))
     expect_length(mini, 1)
-    expect_true(grepl(sprintf('data-links="%s"', paste(urls, collapse = " ")), mini, fixed = TRUE))
+    expect_true(grepl(sprintf('data-entry="explorer" data-links="%s"', paste(urls, collapse = " ")), mini, fixed = TRUE))
     expect_true(grepl(">Take the survey</a>", mini, fixed = TRUE))
     expect_true(grepl(sprintf('data-url="%s">Share the survey: copy link</button>', SURVEY_SHARE_URL), mini, fixed = TRUE))
     # above the table, below the fold's first paragraph
     expect_lt(regexpr('<p class="q-mini">', fold), regexpr('<table class="q-table">', fold))
   } else expect_false(grepl('class="q-mini"', fold, fixed = TRUE))
   expect_false(grepl("crosswalk", fold, fixed = TRUE))
+})
+
+# The survey experiment (comparison/survey/PRE-ANALYSIS-PLAN.md, 4.2, 4.3 and 8;
+# feedback/005-2026-10-16-explorer-ux/03-landing-survey-plan.md, B1, B3 and B5).
+share_page <- file.path(root, "comparison", "site", "survey", "index.html")
+# every survey link on a page: its entry point and its links
+survey_links_on <- function(html) {
+  m <- regmatches(html, gregexpr('<a [^>]*data-entry="[a-z]+" data-links="[^"]*"[^>]*>', html))[[1]]
+  data.frame(entry = sub('.*data-entry="([a-z]+)".*', "\\1", m),
+             links = sub('.*data-links="([^"]*)".*', "\\1", m), stringsAsFactors = FALSE)
+}
+
+test_that("survey-links.csv lists the six forms, one per entry point and arm", {
+  sv <- read_survey_links(root)
+  expect_identical(names(sv), c("entry", "arm", "url"))
+  expect_setequal(paste(sv$entry, sv$arm), as.vector(outer(SURVEY_ENTRIES, SURVEY_ARMS, paste)))
+  expect_true(all(grepl("^https://docs[.]google[.]com/forms/", sv$url)))
+  for (e in SURVEY_ENTRIES) expect_length(survey_pair(sv, e), 2)
+})
+
+test_that("every survey link carries exactly two links, its own entry point's pair, control first", {
+  sv <- read_survey_links(root)
+  ex <- survey_links_on(read_page(explorer))
+  ov <- survey_links_on(read_page(file.path(root, "index.html")))
+  # the explorer: the landing panel's button and the lower button; the overview: its two buttons,
+  # both in the explorer entry point (author decision 2026-10-17)
+  expect_identical(ex$entry, c("landing", "explorer"))
+  expect_identical(ov$entry, c("explorer", "explorer"))
+  for (d in list(ex, ov)) for (i in seq_len(nrow(d))) {
+    l <- strsplit(d$links[i], " ", fixed = TRUE)[[1]]
+    expect_length(l, 2)
+    expect_identical(l, survey_pair(sv, d$entry[i]), label = d$entry[i])
+  }
+  # each draws its arm at the click with probability 1/2 (plan 4.2)
+  for (h in list(read_page(explorer), read_page(file.path(root, "index.html")))) {
+    expect_true(grepl('var arm = Math.random() < 0.5 ? "treatment" : "control";', h, fixed = TRUE))
+    expect_true(grepl('a.href = L[arm === "treatment" ? 1 : 0];', h, fixed = TRUE))
+  }
+  # opened without a click, a survey link goes to the share page, which draws, never to one form
+  for (h in list(read_page(explorer), read_page(file.path(root, "index.html")))) {
+    a <- regmatches(h, gregexpr('<a [^>]*data-entry="[a-z]+"[^>]*>', h))[[1]]
+    expect_true(all(grepl(sprintf('href="%s"', SURVEY_SHARE_URL), a, fixed = TRUE)))
+  }
+})
+
+test_that("the share page draws from the share pair; without JavaScript it opens the share control form", {
+  pair <- survey_pair(read_survey_links(root), "share")
+  sp <- read_page(share_page)
+  expect_true(grepl(sprintf('If nothing happens, <a href="%s">open it here</a>.', pair[1]), sp, fixed = TRUE))
+  expect_true(grepl(sprintf('var L = ["%s","%s"], entry = "share";', pair[1], pair[2]), sp, fixed = TRUE))
+  # no other form address on the page
+  forms <- regmatches(sp, gregexpr("https://docs[.]google[.]com/forms/[^\"' ]+", sp))[[1]]
+  expect_setequal(unique(forms), pair)
+})
+
+test_that("Copy link and the share text carry the share page's address, never a form's", {
+  expect_false(grepl("docs.google.com", SURVEY_SHARE_URL, fixed = TRUE))
+  for (p in c(explorer, file.path(root, "index.html"))) {
+    h <- read_page(p)
+    urls <- sub('.*data-url="([^"]*)".*', "\\1", regmatches(h, gregexpr('<button type="button" class="q-copy[^"]*" data-url="[^"]*"', h))[[1]])
+    expect_gt(length(urls), 0)
+    expect_true(all(urls == SURVEY_SHARE_URL), label = p)
+    # the share line's text names no form address either
+    sh <- regmatches(h, gregexpr('<p class="q-(share|mini)">.*?</p>', h))[[1]]
+    expect_false(any(grepl("docs.google.com", gsub('data-links="[^"]*"', "", sh), fixed = TRUE)), label = p)
+  }
+})
+
+test_that("the landing panel: on the explorer only, its text, its two buttons, shown once per browser", {
+  ex <- read_page(explorer); ov <- read_page(file.path(root, "index.html"))
+  panel <- regmatches(ex, regexpr('<div id="landing" role="dialog".*?\n</div>', ex))
+  expect_length(panel, 1)
+  expect_true(grepl('aria-modal="true" aria-labelledby="landing-h"', panel, fixed = TRUE))
+  expect_true(grepl('<h2 id="landing-h">Before you look at the results</h2>', panel, fixed = TRUE))
+  expect_true(grepl(paste("Two analyses of Proposition 40 reach very different numbers. Before you see why, we",
+                          "invite you to judge which of two proposed values for each key input is more credible.",
+                          "It takes 5 to 10 minutes. You can also take it later from the button on this page."),
+                    panel, fixed = TRUE))
+  expect_true(grepl('target="_blank" rel="noopener">Take the survey first</a>', panel, fixed = TRUE))
+  expect_true(grepl('<button type="button" class="landing-skip">Skip to the results</button>', panel, fixed = TRUE))
+  # the body's first element, and the class that shows it set in the head, before the first paint
+  expect_true(grepl('<body class="pg pg-explorer">\n<div id="landing"', ex, fixed = TRUE))
+  head <- regmatches(ex, regexpr("<head>.*?</head>", ex))
+  expect_lt(regexpr('classList.add("has-landing")', head, fixed = TRUE), regexpr("<style>", head, fixed = TRUE))
+  expect_true(grepl('localStorage.getItem("p40.landing") === "seen"', head, fixed = TRUE))
+  expect_true(grepl('localStorage.setItem("p40.landing", "seen")', ex, fixed = TRUE))
+  # Escape dismisses it; the page behind is blurred and does not scroll
+  expect_true(grepl('e.key === "Escape"', ex, fixed = TRUE))
+  expect_true(grepl("html.has-landing body > :not(#landing) { filter: blur(6px); }", ex, fixed = TRUE))
+  expect_true(grepl("html.has-landing { overflow: hidden; }", ex, fixed = TRUE))
+  expect_true(grepl("max-width: 30em", regmatches(ex, regexpr("\n  [.]landing-box [{][^}]*[}]", ex)), fixed = TRUE))
+  expect_true(grepl("@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }", ex, fixed = TRUE))
+  # its script does not depend on the data file: it runs before it loads
+  expect_lt(regexpr('var LP = document.getElementById("landing")', ex, fixed = TRUE),
+            regexpr('<script src="../../../assets/comparison-data.js', ex, fixed = TRUE))
+  # the overview has no panel
+  expect_false(grepl('id="landing"', ov, fixed = TRUE))
+  expect_false(grepl("has-landing", ov, fixed = TRUE))
+})
+
+test_that("the texts a respondent meets before a form name neither analysis", {
+  names_re <- "BSZ|JR|RJKDC|Saez|Zucman|Boll|Jaros|Rauh|Kearney|supporting|opposing"
+  ex <- read_page(explorer)
+  panel <- regmatches(ex, regexpr('<div id="landing" role="dialog".*?\n</div>', ex))
+  shown <- function(h) gsub("<[^>]+>", " ", h)
+  expect_false(grepl(names_re, shown(panel)))
+  expect_false(grepl(names_re, SURVEY_LABEL))
+  expect_false(grepl(names_re, paste(unlist(LANDING), collapse = " ")))
+  for (h in list(ex, read_page(file.path(root, "index.html")))) {
+    links <- regmatches(h, gregexpr('<a [^>]*data-entry="[a-z]+"[^>]*>[^<]*</a>', h))[[1]]
+    expect_false(any(grepl(names_re, shown(links))))
+  }
+  sp <- read_page(share_page)
+  expect_false(grepl(names_re, shown(gsub("<script>.*?</script>", "", sp))))
+})
+
+test_that("the draw count: no request while draws_url is empty; with it, one beacon per draw, entry and arm only", {
+  cf <- file.path(root, "comparison", "data", "survey-config.csv")
+  expect_identical(read_survey_config(root)$draws_url, "")
+  for (h in list(read_page(explorer), read_page(file.path(root, "index.html")), read_page(share_page))) {
+    expect_false(grepl("sendBeacon", h, fixed = TRUE))
+    expect_false(grepl("DRAWS_URL", h, fixed = TRUE))
+  }
+  expect_false(grepl("Survey links.", read_page(explorer), fixed = TRUE))
+  old <- readLines(cf); on.exit(writeLines(old, cf), add = TRUE)
+  writeLines(c("key,value", "draws_url,https://script.google.com/macros/s/TEST/exec"), cf)
+  s <- render_site(root); sp <- survey_share_page(root)
+  beacon <- 'try { navigator.sendBeacon(DRAWS_URL + "?entry=" + entry + "&arm=" + arm); } catch (e) {}'
+  for (h in list(s$explorer, s$html, sp)) {
+    expect_true(grepl('var DRAWS_URL = "https://script.google.com/macros/s/TEST/exec";', h, fixed = TRUE))
+    expect_identical(lengths(regmatches(h, gregexpr("sendBeacon(", h, fixed = TRUE))), 1L)
+    expect_true(grepl(beacon, h, fixed = TRUE))
+    expect_false(grepl("document.cookie", h, fixed = TRUE))
+  }
+  # right after the draw: in drawSurvey() after the arm, on the share page before it leaves
+  expect_lt(regexpr("var arm = Math.random()", sp, fixed = TRUE), regexpr("sendBeacon", sp, fixed = TRUE))
+  expect_lt(regexpr("sendBeacon", sp, fixed = TRUE), regexpr("location.replace", sp, fixed = TRUE))
+  expect_true(grepl("This page records, without any identifying data, that a survey link was opened and which form it drew.", s$explorer, fixed = TRUE))
+  writeLines(c("key,value", "draws_url,http://example.com/x?y"), cf)
+  expect_error(read_survey_config(root))
+})
+
+test_that("a missing pair turns its button off and, for the landing pair, drops the panel", {
+  f <- file.path(root, "comparison", "data", "survey-links.csv")
+  old <- readLines(f); on.exit(writeLines(old, f), add = TRUE)
+  writeLines(old[!grepl("^(landing|explorer),treatment,", old)], f)
+  s <- render_site(root)
+  expect_false(grepl('id="landing"', s$explorer, fixed = TRUE))
+  expect_false(grepl('classList.add("has-landing")', s$explorer, fixed = TRUE))
+  expect_true(grepl(sprintf('<span class="q-survey is-off" aria-disabled="true">%s (opening soon)</span>', SURVEY_LABEL), s$explorer, fixed = TRUE))
+  expect_false(grepl('class="q-mini"', s$html, fixed = TRUE))
+  # a row outside the six stops the build
+  writeLines(c(old, "other,control,https://example.com/form"), f)
+  expect_error(render_site(root))
 })

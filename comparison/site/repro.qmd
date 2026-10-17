@@ -126,11 +126,11 @@ twin_fold <- function(exhibit, fns, py = fns) {
 Proposition 40 would tax Californians worth \$1 billion or more once, at 5% of their net
 worth. The [BSZ analysis](../../bsz-analysis/site/) estimates about
 `r bsz_round_words` of wealth tax (its Table 5 prints
-`r usd(epv("bsz_tab5_row1", "printed_value"), 0)`). The
+`r usd(epv("bsz_tab5_row1", "printed_value"), 0)`), or `r usd(eb$bsz_model)` net of the income
+tax it adds and loses over `r fmt_input("H", inp$bsz_value[inp$input == "H"])`. The
 [JR analysis](../../rjkdc-analysis/site/) finds the state about
-**`r usd(-eb$jr_own, 0)`** poorer in today's dollars (their paper prints an average of
-`r usd(epv("rauh_nber_npv", "printed_value"))`), because
-billionaires who leave stop paying California income tax for ever. Two inputs are among the
+**`r usd(-eb$jr_own, 0)`** poorer in today's dollars, net of the income tax lost for ever
+(their paper prints an average of `r usd(epv("rauh_nber_npv", "printed_value"))`). Two inputs are among the
 three largest both on the explorer's path and averaged over every order: how long the lost
 income tax is counted, and the chance the tax survives a court challenge. The third depends on
 the order, because the inputs multiply each other: a departure matters more when more wealth
@@ -318,10 +318,16 @@ cf_c  <- (pick(oi0, "rauh_mc_c_min") + pick(oi0, "rauh_mc_c_max")) / 2
 cf_a  <- expected_annuity(Inf, pick(oi0, "rauh_mc_r_min"), pick(oi0, "rauh_mc_r_max"))
 cf_npv <- cf_wt - cf_f * cf_c * cf_a
 stopifnot(isTRUE(all.equal(cf_npv, eb$jr_own)))
+# The litigation dial at the JR end (the explorer's note links here): the common function has no
+# revenue draw, so q at the JR value turns the ceiling into the draw's mean, E[WT]. Stop if not.
+cf_ceil <- pick(oi0, "nber_ceiling_hardcoded")
+q_jr <- bridge_inputs(k)$rauh$q
+stopifnot(isTRUE(all.equal(score_common(bridge_inputs(k)$rauh)[["a"]], cf_wt)),
+          isTRUE(all.equal(q_jr * cf_ceil, cf_wt)))
 sgn <- function(x, d) paste0(if (x < 0) "&minus;" else "", formatC(abs(x), format = "f", digits = d))
 ```
 
-In billions of dollars, with WT the wealth tax, f the share of the income tax base that leaves,
+In billions of dollars, with WT the wealth tax, f the share of all billionaires' income tax that is lost,
 C the yearly income tax of California's billionaires and r &minus; g the discount rate net of
 the loss's growth:
 
@@ -331,6 +337,14 @@ the loss's growth:
 
 The `r usd(epv("rauh_nber_npv", "printed_value"))` that the authors print is the average of one
 seeded run of the same draws, so it differs from this mean by simulation noise.
+
+[]{#the-litigation-dial}**The litigation dial.** In the line above, E[WT] is where the chance
+that the tax survives a court challenge, q, enters the JR end. The authors' Monte Carlo draws
+the revenue anywhere between zero (the tax struck down) and the ceiling, `r usd(cf_ceil, 0)`, so
+the mean revenue is half the ceiling, `r usd(cf_wt, 0)`. The JR analysis's own explorer has a
+litigation dial that reads 1 at the main estimate, because there this draw already halves the
+mean revenue. The common function has no revenue draw. So the comparison applies the same half
+as q = `r pct(q_jr)` of the ceiling, and its JR end collects the same `r usd(cf_wt, 0)`.
 
 In words, the function computes seven quantities in order.
 
@@ -351,10 +365,10 @@ their names, and a is `alpha`.
    `re` is the share of the revenue the real-estate deduction removes ("Real-estate
    deduction").
 2. `S = 1 - d_conf`: the share of the base still taxed. `d_conf = D / Wn` is the share of the
-   base that had already left ("Billionaires already departed"): `D` is their wealth, valued on
+   base that had already left ("Billionaires who moved out in time"): `D` is their wealth, valued on
    the Forbes list in use (`lam` picks it), and `Wn` the base net of real estate. The departures
-   dial has three stops: none, the BSZ analysis's aggressive scenario (Table 5 row 3) and the JR
-   analysis's seven. For the JR analysis, `R0 * S` is its ceiling, the most the tax can collect
+   dial has three stops: none, the BSZ analysis's Table 5 row 3 scenario, which counts four named
+   billionaires as having moved in time, and the JR analysis's seven. For the JR analysis, `R0 * S` is its ceiling, the most the tax can collect
    after the seven publicly reported moves.
 3. `WT = R0 * (1 - alpha) * S * q`: output (a), the gross one-time revenue, after the avoidance
    allowance `alpha`, a share of the base ("Avoidance and evasion allowance"), weighted by `q`,
@@ -373,9 +387,10 @@ and `r formatC(mv("A_inf"), format = "f", digits = 1)` for ever at `r r_jr`.
    billionaire income tax lost"). The first term is the BSZ movers' share (`m` is the part of
    the avoidance allowance that is people leaving California). Under the BSZ rule (`own = 1`)
    the leavers' own income tax, `L` dollars a year as BSZ Table 5 counts it for the people at
-   the departures stop, is lost. Under the JR rule (`own = 0`) a flat share `f0` is lost
-   whoever leaves (the JR analysis's independent draw of 30% to 60%). At the aggressive stop
-   the BSZ end reproduces Table 5 row 3 in all three columns.
+   the departures stop, is lost. Under the JR rule (`own = 0`) a flat share `f0` of all
+   billionaires' income tax is lost, set above the share of wealth that left (the JR analysis's
+   independent draw of 30% to 60%). At the middle stop the BSZ end reproduces Table 5 row 3 in
+   all three columns.
 6. `PV = f * C * annuity(r, H)`: the present value of the lost income tax. `C` is
    billionaires' annual California income tax, in billions of dollars a year ("Billionaires'
    annual CA income tax"), lost for `H` years ("How long the income tax loss lasts"; for ever
@@ -448,6 +463,9 @@ The BSZ main estimate is **`r usd(eb$bsz_model)`** and the JR main estimate
 **`r usd(rj_main)`**. On the common output the two ends are
 `r usd(eb$bsz_model)` and `r usd(eb$jr_model)`, a gap of **`r usd(eb$bsz_model - eb$jr_model)`**.
 The JR main estimate is the JR end: the exact mean of the authors' Monte Carlo.
+The BSZ net total is this OPA's choice, not the authors'. Their own headline is the wealth tax
+alone, Table 5 row 1 (printed `r usd(epv("bsz_tab5_row1", "printed_value"), 0)`), and the
+[BSZ analysis overview](../../bsz-analysis/site/) explains the choice.
 
 <details class="report-fold"><summary>Steps 1 to 4, and output (a)</summary>
 
@@ -469,7 +487,7 @@ income tax loss discounted at `r r3`: **`r usd(v_sup[["b"]], 3)`**, shown as
 
 **Step 2: the JR main estimate, and the JR end on (b).** In the Monte Carlo of Jaros and
 Rauh's NBER version the revenue is drawn uniformly between zero and
-`r usd(pick(oi, "nber_ceiling_hardcoded"), 0)`, the share of the income tax base that leaves
+`r usd(pick(oi, "nber_ceiling_hardcoded"), 0)`, the share of all billionaires' income tax that is lost
 between `r pick(oi, "nber_mc_f_min")` and `r pick(oi, "nber_mc_f_max")`, the annual income tax
 between `r usd(pick(oi, "rauh_mc_c_min"))` and `r usd(pick(oi, "rauh_mc_c_max"))`, and the
 discount rate net of the loss's growth, r &minus; g, between `r r_lo` and `r r_hi`, all
@@ -521,17 +539,16 @@ the minor switch. Each step is what one dial changes. The nine steps take the BS
 `r usd(dp$to[nrow(dp)])`, exactly. On this path, three of them make most of the `r usd(gap_b)` gap: how long
 the lost income tax is counted (`r usd(dp$change[dp$step_id == "horizon"], 1, TRUE)`), the
 chance the tax does not survive litigation
-(`r usd(dp$change[dp$step_id == "litigation_survival"], 1, TRUE)`) and the billionaires already
-departed (`r usd(dp$change[dp$step_id == "confirmed_departures"], 1, TRUE)`). The other
+(`r usd(dp$change[dp$step_id == "litigation_survival"], 1, TRUE)`) and the billionaires who
+moved out in time (`r usd(dp$change[dp$step_id == "confirmed_departures"], 1, TRUE)`). The other
 `r nrow(dp) - 3` together add
 `r usd(sum(dp$change[!dp$step_id %in% top3p$step_id]), 1, TRUE)`.
 
 The inputs interact, so a step's size depends on where the other dials stand when it moves.
 A departure matters more when the base is larger, for example. This path uses the equation's
-order, left to right, so a reader can reproduce every step with the dials. The equation's
-Apply buttons, pressed left to right, give each of its terms. The explorer's "Walk the path"
-button moves one dial per press. An order-free check, the Shapley average, closes this
-section.
+order, left to right, so a reader can reproduce every step with the dials
+([The explorer's equation](#the-equation) below). An order-free check, the Shapley average,
+closes this section.
 
 ```{r}
 #| results: asis
@@ -599,6 +616,56 @@ ggplot(wf) +
   guides(fill = guide_legend(nrow = 2)) +
   theme(legend.position = "bottom", panel.grid.major.y = element_blank(), panel.grid.minor = element_blank())
 ```
+
+```{r}
+# The explorer's equation (its footnote 2 links here; author request 2026-10-17: the explorer's
+# notes are three sentences at most, the rest is here). et: how the four terms group the nine
+# steps (R/site.R eq_terms()). q_first: what q would take if moved first, as in footnote 2.
+# The loss term along the path, and the share lost there, against the two analyses' own present
+# values of the lost income tax.
+et <- eq_terms(dp)
+loss_ids <- c("income_loss_share", "income_level", "horizon", "discount_rate")
+q_path <- dp$change[dp$step_id == "litigation_survival"]
+q_first <- local({ s <- sup; s$q <- bi$rauh$q; score_common(s)[["b"]] - score_common(sup)[["b"]] })
+at_path <- function(ids) {
+  pos <- setNames(lapply(ids, slider_max), ids)
+  score_common(slider_inputs(bi$sup, bi$rauh, pos, bi$ladder))
+}
+before_loss <- at_path(c("confirmed_departures", "litigation_survival"))
+after_loss <- at_path(c("confirmed_departures", "litigation_survival", loss_ids))
+loss_term <- sum(dp$change[dp$step_id %in% loss_ids])
+movers <- sup$alpha * sup$m
+stopifnot(length(q_path) == 1, q_first < q_path,
+          abs(after_loss[["PV"]] - before_loss[["PV"]] + loss_term) < 1e-9,
+          isTRUE(all.equal(after_loss[["f"]], v_rj[["f"]] + movers)),
+          -loss_term > v_rj[["PV"]] - v_sup[["PV"]],
+          abs(round(eb$bsz_model, 2) + sum(round(et$terms$change, 2)) - round(eb$jr_model, 2)) < 1e-9)
+```
+
+[]{#the-equation}**The explorer's equation.** The equation at the top of the explorer walks this
+path and groups its `r et$n_words` steps into four terms. `r et$note` `r et$loss_order` The
+four amounts, rounded to two decimals, add up exactly from `r usd(eb$bsz_model, 2)` to
+`r usd(eb$jr_model, 2)`. The equation prints its two ends at one decimal,
+`r usd(eb$bsz_model)` and `r usd(eb$jr_model)`, the figures of the two main estimates.
+
+The equation adds up only along this path. In another order the same dials split the gap
+differently among the terms. Moved first, q would take `r usd(q_first, 2)` instead of
+`r usd(q_path, 2)`. With D still at the BSZ value, the revenue still counts the tax on the
+billionaires who already left, so halving it halves that tax too.
+
+The Apply buttons under the equation work from left to right. A term can be applied once every
+term to its left is applied, and undone once every term to its right is undone, so each press
+changes the BSZ panel by that term's amount. Reset and Apply all always work. The Walk the path
+button in each panel moves one dial per press along the same path. The JR panel's button walks
+it backwards, from the last term to the first.
+
+[]{#lost-income-tax-scale}For scale, the lost income tax itself is worth
+`r usd(v_rj[["PV"]])` today in the JR analysis and `r usd(v_sup[["PV"]])` in the BSZ
+analysis. The equation's lost income tax term, `r usd(abs(loss_term), 2)`, is neither. It is the
+change along the path, from `r usd(before_loss[["PV"]])` to `r usd(after_loss[["PV"]])`. It ends
+above the JR analysis's `r usd(v_rj[["PV"]])` because the avoidance dial, a, has not moved yet.
+Until it does, the share lost is `r pct(after_loss[["f"]])` instead of `r pct(v_rj[["f"]])`,
+because it still holds the BSZ movers' `r pct(movers)`.
 
 <details class="report-fold" id="the-shapley-check"><summary><span id="order-free-check"></span>An order-free check: the Shapley average</summary>
 
@@ -831,12 +898,13 @@ cat("\n")
 # Every input, by origin {#every-input-by-origin}
 
 The OPA framework sorts every input by where it comes from: **data** (settled by observable
-facts), **research** (a published estimate), **guesswork** (asserted without data or a study
+facts), **research** (a published estimate), **guesswork** (an assumption with no data or study
 behind it, legal judgements included) and **scenario** (a choice of which world is
 estimated). This OPA adds **derived** (computed from the analysis's own inputs) and
 **guesswork on data** (a judgement applied to observed facts). Each bridge step carries one of
 these kinds (the tables above); a kind written "A vs B" is A for the BSZ value and B for the JR
-value. The values the comparison transcribes from the PDFs
+value. A kind says what evidence is behind a value, not whether the quantity itself can be
+observed. The values the comparison transcribes from the PDFs
 itself, because neither contract carries them, are in `comparison/data/document-inputs.csv`.
 
 <details class="report-fold"><summary>The transcribed inputs</summary>

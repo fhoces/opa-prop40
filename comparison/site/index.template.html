@@ -301,10 +301,11 @@
     1 January 2026 and are worth $1 billion or more, at 5% of their net worth, payable over five
     years. The
     <a href="bsz-analysis/site/">BSZ analysis</a> (Boll, Saez and Zucman, NBER, August 2026)
-    finds that it raises about {{bsz_round_words}} of wealth tax (its Table 5 prints {{bsz_printed}}). The
+    finds that it raises about {{bsz_round_words}} of wealth tax (its Table 5 prints {{bsz_printed}}), or
+    {{hl_bsz}} net of the income tax it adds and loses over {{h_bsz}}. The
     <a href="rjkdc-analysis/site/">JR analysis</a> (Jaros and Rauh, NBER, September 2026) finds
-    that it leaves the state about {{nber_npv_round}} poorer (their paper prints an average of
-    <span style="white-space:nowrap">{{nber_printed}}</span>), because billionaires who leave stop paying California income tax for ever.
+    that it leaves the state about {{nber_npv_round}} poorer, net of the income tax lost for ever
+    (their paper prints an average of <span style="white-space:nowrap">{{nber_printed}}</span>).
     This page puts both on one definition and shows which
     assumptions make the difference. It follows the
     <a href="https://doi.org/10.1093/scipol/scaa067">Open Policy Analysis</a> (OPA) framework:
@@ -402,7 +403,7 @@
   <a class="subopa-card" href="bsz-analysis/site/">
     <span class="kicker">BSZ analysis: a revenue estimate</span>
     <h3>Boll, Saez, Zucman, NBER WP 35218 (Aug 2026) &rarr;</h3>
-    <p>The Forbes list on 1 July 2026, less a 10% allowance for avoidance and evasion, half of it billionaires who moved away.</p>
+    <p>The Forbes list of 1 July 2026, a {{alpha_bsz}} allowance for avoidance and evasion (half of it people who moved out in time), no court discount, lost income tax for {{h_bsz}}.</p>
     <span class="headline">Main estimate, net total: {{hl_bsz}}</span>
     <span class="headline">Table 5 row 1, wealth tax: {{bsz_row1}} (the paper prints {{bsz_printed}})</span>
     <div class="card-icon-box" aria-hidden="true"><img src="assets/opa/opa-all.png" alt=""></div>
@@ -410,7 +411,7 @@
   <a class="subopa-card" href="rjkdc-analysis/site/">
     <span class="kicker">JR analysis: a net present value estimate</span>
     <h3>Jaros and Rauh, NBER c15504 (Sep 2026) &rarr;</h3>
-    <p>Person-by-person base, observed departures, a litigation weight, lost income tax for ever.</p>
+    <p>The Forbes list of 2025 grown to the valuation date, seven reported moves, a court discount, lost income tax for ever.</p>
     <span class="headline">Main estimate, mean NPV: {{nber_npv}}</span>
     <div class="card-icon-box" aria-hidden="true"><img src="assets/opa/opa-all.png" alt=""></div>
   </a>
@@ -528,11 +529,12 @@ versions than this site. So the two do not line up step for step.</p>
 {{quantity_table_root}}
 {{quantity_survey_root}}
 <p class="small">Kinds: <b>data</b> (settled by observable facts), <b>research</b> (a published
-estimate), <b>guesswork</b> (asserted without data or a study behind it), <b>guesswork on data</b> (a
+estimate), <b>guesswork</b> (an assumption with no data or study behind it), <b>guesswork on data</b> (a
 judgement applied to observed facts), <b>scenario</b> (a choice of which world is estimated) and
 <b>derived</b> (computed from the analysis's own inputs: the JR discount rate is the one rate worth
 the same as the authors' random draw of it). A source ending in .R is a script in the authors'
-repository.</p>
+repository. A kind says what evidence is behind a value, not whether the quantity itself can be
+observed.</p>
   </div>
 </details>
 
@@ -610,9 +612,11 @@ repository.</p>
   // ---- END fold URLs (script) ----
 </script>
 <script>
-// The survey button: each click opens one of the two survey versions at random (they swap Value A and B).
+// The survey buttons (pre-analysis plan, comparison/survey/PRE-ANALYSIS-PLAN.md, 4.2 and 4.3): both
+// use the explorer entry point's pair of forms, drawn at the click.
 (function () {
-  // "Copy link": copies the survey's share address (a page that opens one version at random).
+  // "Copy link": copies the survey's share address (a page that draws a form at random), never a
+  // form's own address.
   Array.prototype.slice.call(document.querySelectorAll("button.q-copy")).forEach(function (b) {
     b.addEventListener("click", function () {
       var url = b.getAttribute("data-url");
@@ -623,12 +627,7 @@ repository.</p>
       else window.prompt("Copy this link:", url);
     });
   });
-  Array.prototype.slice.call(document.querySelectorAll("a.q-survey[data-links]")).forEach(function (sv) {
-    sv.addEventListener("click", function () {
-      var links = sv.getAttribute("data-links").split(" ");
-      sv.href = links[Math.floor(Math.random() * links.length)];
-    });
-  });
+{{survey_draw_js}}
 })();
 </script>
 </body>

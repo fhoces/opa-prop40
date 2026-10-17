@@ -60,15 +60,17 @@ step_texts <- function(inp, id) {
   ii <- inp[inp$step_id == id, ]
   if (id == "income_loss_share") {
     k <- ii[ii$input == "own", ]; f <- ii[ii$input == "f0", ]
-    return(list(bsz = "the movers' proportional share, plus named leavers' own tax",
-                rjkdc = sprintf("%s of all", fmt_input("f0", f$jr_value)),
+    # both values as a share of all billionaires' income tax, each set against the share of
+    # wealth that leaves (author request 2026-10-17, survey wording carried to the pages)
+    return(list(bsz = "no more than the share of wealth that leaves (the movers' proportional share, plus named leavers' own tax)",
+                rjkdc = sprintf("%s of all, more than the share of wealth that left", fmt_input("f0", f$jr_value)),
                 bsz_source = paste(k$bsz_source, f$bsz_source, sep = "; "),
                 rjkdc_source = paste(f$jr_source, k$jr_source, sep = "; ")))
   }
   if (id == "confirmed_departures") {
     b <- ii[ii$input == "dep_b", ]; j <- ii[ii$input == "dep_j", ]
-    return(list(bsz = "no named leaver",
-                rjkdc = sprintf("seven moves: %s on the BSZ list, %s on the JR list",
+    return(list(bsz = "none counted by name",
+                rjkdc = sprintf("seven counted by name: %s on the BSZ list, %s on the JR list",
                                 money(b$jr_value, 0), money(j$jr_value, 0)),
                 bsz_source = b$bsz_source, rjkdc_source = paste(b$jr_source, j$jr_source, sep = "; "),
                 # the dial end names the count with a noun, not the coinage (review 005, U-12)
@@ -85,6 +87,15 @@ step_texts <- function(inp, id) {
     out$bsz <- paste0("Forbes 2026, ", out$bsz); out$rjkdc <- paste0("Forbes 2025 grown 7%, ", out$rjkdc)
   }
   out
+}
+# The JR range of C rests on two counts of California's top earners (K = 212 at its top, K = 500
+# at its floor). They are read from the C row's source note in export/r/inputs.csv, as
+# comparison/survey/mock_forms.py reads them (`_K`), so the pages and the survey print the same two.
+jr_top_earners <- function(inp) {
+  src <- inp$jr_source[inp$input == "C"]
+  k <- sort(as.integer(sub("K = ", "", regmatches(src, gregexpr("K = [0-9]+", src))[[1]], fixed = TRUE)))
+  stopifnot(length(k) == 2)
+  k
 }
 # The two ends as an explorer dial prints them: the short form where there is one.
 # The share-lost dial's ends are f itself at each analysis's inputs (bi, from bridge_inputs());
@@ -138,7 +149,9 @@ eq_terms <- function(dp) {
     and_list(dp$symbol[main]), words[length(main)], words[length(loss)], and_list(loss_syms),
     words[length(rest)], and_list(rest_names))
   # why the label puts H first, and the order the walk moves the four (consistency review 004,
-  # C-13): said once, in the explorer's footnote 2; stop if H's step stops being the largest
+  # C-13): said once, in the report's "The explorer's equation" (repro.qmd prints `note` and
+  # `loss_order`; the explorer's footnote 2 dropped them on 2026-10-17, author request); stop if
+  # H's step stops being the largest
   stopifnot(identical(dp$symbol[loss][which.max(abs(dp$change[loss]))], "H"))
   loss_order <- sprintf("H is listed first because its step is the largest. The walk moves the four in the order %s.",
                         and_list(dp$symbol[loss]))
@@ -168,7 +181,7 @@ EXPLORER_BOXES <- list(
                  report = "step-revenue",   # the report's steps 1 to 3 of score_common()
                  name = "Wealth tax collected",
                  eq = "Wealth tax collected = 5% &times; (W &minus; D) &times; (1 &minus; a) &times; q",
-                 lead = "The tax takes 5% of the wealth. W is the wealth on the list, D the part already gone, a the share lost to avoidance, q the chance the tax survives in court.",
+                 lead = "The tax takes 5% of the wealth. W is the wealth on the list, D the part counted as moved out in time, a the share lost to avoidance, q the chance the tax survives in court.",
                  more = "The four dials multiply, so one dial's effect depends on the others. W and D are valued on the same Forbes list."),
   loss = list(ids = c("income_loss_share", "income_level", "horizon", "discount_rate"),
               report = "step-loss",      # the report's steps 5 and 6
@@ -219,7 +232,7 @@ QUANTITY_SOURCE_PATTERN <- paste0(
 quantity_source <- function(hit) sub("^(NBER )?chapter .*?(PDF pp?[.])", "chapter \\2", hit, perl = TRUE)
 # What each symbol stands for, at the start of its tip. The bridge's step names (short_labels)
 # name a step, not the dial: "No avoidance" is the JR end of the a dial, not the dial.
-DIAL_NAMES <- c(base_list = "wealth on the list", confirmed_departures = "wealth already gone",
+DIAL_NAMES <- c(base_list = "wealth on the list", confirmed_departures = "wealth counted as moved out",
                 avoidance = "avoidance share", litigation_survival = "chance it survives court",
                 income_loss_share = "share lost", income_level = "yearly income tax",
                 horizon = "years counted", discount_rate = "discount rate")
@@ -357,6 +370,10 @@ render_site <- function(root = comparison_root(),
   tok$r_bsz <- rate_txt(mv("r_bsz")); tok$r_jr <- rate_txt(mv("r_jr"))
   r_min <- pct(mv("r_min_jr"), 1); r_max <- pct(mv("r_max_jr"), 1)
   tok$nber_growth <- pct(pick(k$rjkdc$inputs, "nber_growth_rate"))
+  # the overview's BSZ card names the avoidance allowance and the horizon (author request
+  # 2026-10-17: both cards name the same four inputs, as the survey states them)
+  tok$alpha_bsz <- pct(inp$bsz_value[inp$input == "alpha"])
+  tok$h_bsz <- fmt_input("H", inp$bsz_value[inp$input == "H"])
 
   # ---- the headline: the two analyses' main estimates, next to each other ----
   # The BSZ main estimate is the net total over 5 years, which is also the BSZ end of the
@@ -373,20 +390,25 @@ render_site <- function(root = comparison_root(),
   tok$hl_rjkdc <- money(rj_main, 1)
   tok$jr_end_b <- money(eb$jr_model, 1)
   tok$bsz_end_b <- money(eb$bsz_model, 1)
-  # Footnote 1's provenance sentence for the JR number, on both pages (hrefs per page).
-  # The last sentence glosses "seeded run" (test-site.R pins the first two together, so the gloss
-  # follows them).
-  jr_fn <- function(report, jr_report) sprintf(paste(
+  # Footnote 1's provenance sentences for the JR number, on both pages. test-site.R pins these
+  # two together. The overview follows them with its links and a gloss of "seeded run" (hrefs
+  # per page). The explorer's notes are three sentences at most (author request 2026-10-17), so
+  # its template ends them with one link to the report, which glosses the seeded run.
+  jr_fn_core <- sprintf(paste(
     "The paper prints %s, the average of one seeded run of 100,000 draws.",
-    "The exact average of the same formula is %s, used throughout this page",
+    "The exact average of the same formula is %s, used throughout this page"),
+    money(rj_printed, 1), money(eb$jr_own, 2))
+  jr_fn <- function(report, jr_report) paste(jr_fn_core, sprintf(paste(
     "(<a href=\"%s\">report</a>, <a href=\"%s\">Step 6 of the JR analysis's report</a>).",
     "A seeded run starts the random draws from a fixed number, so it gives the same draws every time."),
-    money(rj_printed, 1), money(eb$jr_own, 2), report, jr_report)
+    report, jr_report))
   tok$jr_fn_root <- jr_fn("comparison/site/repro.html#the-main-estimate", "rjkdc-analysis/site/repro.html#step-npv")
-  tok$jr_fn_x <- jr_fn("../repro.html#the-main-estimate", "../../../rjkdc-analysis/site/repro.html#step-npv")
-  # Footnote 1's first sentences, on both pages: which number each analysis's overview leads
+  tok$jr_fn_x <- jr_fn_core
+  # Footnote 1's first sentences on the overview: which number each analysis's overview leads
   # with (the BSZ overview the net total, the JR overview the printed figure) and which one
-  # this page uses (consistency review 004, C-05).
+  # this page uses (consistency review 004, C-05). The explorer's footnote 1 dropped them on
+  # 2026-10-17 (author request: notes of three sentences at most); the report's "The two main
+  # estimates" says the same.
   tok$fn1_lead <- sprintf(paste(
     "Each analysis can be run at many settings.",
     "The BSZ overview leads with %s, this OPA's net total.",
@@ -424,12 +446,16 @@ render_site <- function(root = comparison_root(),
   # one-sentence definition, and each end says what that analysis assumes and its one reason.
   slider_tips <- c(
     base_list = "The billionaires' wealth the tax applies to, from one of two Forbes lists.",
-    confirmed_departures = "Wealth that left before the 1 January 2026 residency date. Middle stop: BSZ Table 5 row 3, where Page, Thiel, Hankey and Kalanick left in time.",
-    avoidance = "The share of the tax lost to avoidance and evasion, including moves by people no one names (D holds the named ones).",
-    litigation_survival = "The chance that the tax survives a court challenge, applied to the revenue.",
+    # the survey's wording carried to the pages (author request 2026-10-17): the middle stop is
+    # "counted as moved", not stated as fact (its table, Table 5 row 3, is in the note under the
+    # dial at that stop: the tip would run to four lines at 390 px); q discounts the revenue; f is
+    # a share of all billionaires' income tax, the base the survey's question uses
+    confirmed_departures = "It left before the 1 January 2026 residency date. Middle stop: a BSZ scenario counting Page, Thiel, Hankey and Kalanick as moved.",
+    avoidance = "The share of the wealth that escapes the tax through avoidance and evasion, including moves no one names (D holds the named ones).",
+    litigation_survival = "The chance that the tax survives a court challenge. Below 100%, it discounts the revenue for the chance courts strike the tax down.",
     # "lost to leavers", not "California loses to people leaving": the longer wording takes the
     # tip to four lines at 390 px
-    income_loss_share = "The share of billionaires' income tax lost to leavers. Both ends include the movers in a (at the JR end, this OPA's addition), and the BSZ end also the leavers in D.",
+    income_loss_share = "The share of all billionaires' income tax lost to leavers. Both ends include the movers in a (at the JR end, this OPA's addition), and the BSZ end also the leavers in D.",
     income_level = "Billionaires' yearly California income tax revenue, the amount at risk each year.",
     horizon = sprintf("How many years the lost income tax is counted. Middle stops: %s years.",
                       paste(hz_fin[-1], collapse = ", ") |> sub(pattern = ", ([^,]*)$", replacement = " and \\1")),
@@ -437,7 +463,7 @@ render_site <- function(root = comparison_root(),
                             r_min, r_max),
     minor_inputs = "One switch for three inputs that each move the estimate by less than $7 billion. Open the fold below to set them one by one.",
     noncitizens = "Wealth of California billionaires who are not US citizens.",
-    real_estate = "The share of the base deducted for directly held homes.",
+    real_estate = "The share of the base deducted for directly held real estate.",
     asset_sales = "The share of the tax paid by selling assets, whose gains raise extra income tax.")
   # The share of the JR list's wealth the seven publicly reported moves took: the script's ceiling
   # literal over the grown domestic face value, the 28.6% around which the chapter sets its draw of
@@ -445,50 +471,66 @@ render_site <- function(root = comparison_root(),
   d_conf_jr <- 1 - pick(k$rjkdc$inputs, "nber_ceiling_hardcoded") / pick(k$rjkdc$outputs, "nber_domestic_grown")
   c_bounds <- formatC(c(pick(k$rjkdc$inputs, "rauh_mc_c_min"), pick(k$rjkdc$inputs, "rauh_mc_c_max")),
                       format = "f", digits = 1)
+  # The JR range's two counts of top earners (K = 212 at the top, K = 500 at the floor), read from
+  # the C row's source note, as comparison/survey/mock_forms.py reads them (`_K`)
+  jr_k <- jr_top_earners(inp)
   # What each dial end means, shown while the pointer is over that end (or on a tap). An end that
   # the quantities table shows (q_cell) must fit there in 25 words, with its source and kind, either
-  # whole, without its parentheses, or as its first sentence: the wording of D, q, f and r at the
-  # ends below is cut to fit.
+  # whole, without its parentheses, or as its first sentence: the wording of D, q, f, C and r at the
+  # ends below is cut to fit. Since 2026-10-17 the ends follow the survey's approved wording
+  # (author request; feedback/009-2026-10-17-rct-pilot-2/05-wording-proposals.md, items 2 to 14):
+  # both ends state the same kind of claim, each gives its own reason, and neither argues against
+  # the other. Where the survey's sentence runs past the table's 25 words, it is split in two, so
+  # the table keeps the value and the tip keeps the reason.
   end_tips <- list(
     # the W dial's BSZ end is the US citizens' wealth only (W_core); the non-citizens are their own dial
     base_list = c(
       bsz = sprintf("BSZ: the Forbes list on 1 July 2026, %s California billionaires, of whom the US citizens hold %s. The %s of non-US citizens is a separate dial.",
                     n_sup, money(bi0$sup$W_core, 0), money(bi0$sup$W_noncit, 0)),
-      rjkdc = sprintf("JR: the 2025 list, %s billionaires, grown %s to the 31 December 2026 valuation date: %s.",
+      # the date in parentheses, so the quantities table can drop it and stay within 25 words
+      rjkdc = sprintf("JR: the Forbes list of 2025, %s California billionaires, grown %s to the valuation date (31 December 2026): %s.",
                       n_rauh, tok$nber_growth, money(bi0$rauh$W_core, 0))),
     # BSZ remove no named leaver (BSZ PDF p.23 fn.30), but half of their 10% avoidance is
     # billionaires who left before 1 January (BSZ PDF p.24): alpha times m. Tips name no source
     # (author tip rules 2026-10-15); the quantities table adds it from export/r/inputs.csv.
+    # each end states its own standard for counting a move (survey Q11)
     confirmed_departures = c(
-      bsz = "BSZ: no named move counted, since press reports do not establish a residence change before 1 January. Half of a is people who left in time.",
-      rjkdc = "JR: seven publicly reported moves, by Page, Thiel, Hankey, Kalanick, Brin, Spielberg and Sacks."),
+      bsz = "BSZ: no one counted by name without evidence of a change of legal residence before 1 January. Half of a is people who moved in time.",
+      rjkdc = "JR: seven counted as having moved in time, on public reports of their moves (Page, Thiel, Hankey, Kalanick, Brin, Spielberg and Sacks)."),
+    # both halves of the BSZ 10%, as the survey splits them (Q11 and Q14)
     avoidance = c(
-      bsz = "BSZ: a small allowance, argued from enforcement rather than estimated. Half of it is moving away, which also costs income tax (f).",
+      bsz = "BSZ: a small allowance argued from enforcement. Half is people who moved out in time, who also cost income tax (f); half is avoidance.",
       # the chapter puts unreported departures in the 0 floor of its revenue draw (fn.32, PDF
       # p.34) and in its draw of f (PDF p.33)
       rjkdc = "JR: none on top of the departures it counts. Its revenue draw (down to 0) and its share-lost range allow for unreported moves."),
+    # whether the revenue is discounted for court risk (survey Q9); each reason has the authors as
+    # its subject
     litigation_survival = c(
-      bsz = "BSZ: collected in full; its expert report argues the Act was designed to stay clear of constitutional issues.",
-      rjkdc = "JR: half the revenue, the 'more likely than not' line an accounting rule (ASC 740-10) uses to judge whether a tax stands."),
-    # the BSZ end at the BSZ values is alpha times m, the movers among the avoiders, who take a
-    # proportional share of the income tax with them (BSZ PDF p.24); both ends are guesswork
+      bsz = "BSZ: no discount; the tax is assessed at face value, as written. The authors' expert report judges it drafted to stay clear of constitutional issues.",
+      rjkdc = "JR: a discount; the revenue is multiplied by the chance the tax survives. The authors set it at the 'more likely than not' threshold of ASC 740-10."),
+    # Both rules against one yardstick, the share of wealth that leaves (survey Q3). The BSZ end at
+    # the BSZ values is alpha times m, the movers among the avoiders, who take a proportional share
+    # of the income tax with them (BSZ PDF p.24), plus the named leavers' own tax, small for their
+    # wealth (BSZ Table 4); the mechanics stay in the symbol tip and the box's "more"; both ends
+    # are guesswork
     income_loss_share = c(
-      bsz = "The BSZ rule: only the leavers' own income tax is lost, with the movers from a assumed to pay a proportional share. Leavers in D add theirs, from tax filings.",
+      bsz = "The BSZ rule: no more than the share of wealth that leaves. The largest reported leavers pay little income tax for their wealth.",
       # the chapter centres its draw of f "conservatively around the observed wealth-base departure
       # fraction" (PDF p.31) and lets it cover departures "not publicly documented" (PDF p.33)
-      rjkdc = sprintf("The JR rule: %s of all billionaires' income tax, whoever leaves, from a draw set around the %s of wealth that left. It covers unreported moves too.",
-                      pct(bi0$rauh$f0), pct(d_conf_jr, 1))),
+      rjkdc = sprintf("The JR rule: more than the %s of wealth reported to have left. Income tax need not leave in step with wealth, and some moves go unreported.",
+                      pct(d_conf_jr, 1))),
+    # both from California tax data (survey Q7); the JR counts of top earners from the source note
     income_level = c(
-      bsz = "BSZ: from tax data, since top wealth holders earn about half of what top earners do.",
-      rjkdc = sprintf("JR: the middle of $%s billion to $%s billion, both estimated from tax data. The floor's pool of 500 filers is the authors' judgement.",
-                      c_bounds[1], c_bounds[2])),
+      bsz = "BSZ: from California tax data, taking billionaires to have about half the income of the state's highest earners. A study of top wealth holders finds that ratio.",
+      rjkdc = sprintf("JR: from California tax data, taking billionaires to be among the state's %s to %s highest earners. The value is the middle of $%s billion to $%s billion.",
+                      jr_k[1], jr_k[2], c_bounds[1], c_bounds[2])),
     # the BSZ end carries the worked 5-year value of A(H, r) (confusion log 2026-10-15, review 005
     # U-14): meta.csv's A_5, checked here against annuity() at the BSZ rate and horizon
     horizon = c(
       bsz = local({
         h_bsz <- inp$bsz_value[inp$step_id == "horizon" & inp$input == "H"]
         stopifnot(length(h_bsz) == 1, abs(mv("A_5") - annuity(mv("r_bsz"), h_bsz)) < 1e-9)
-        sprintf("BSZ: about the payment period, treating the responses as temporary. $1 a year for %s is worth $%s at %s.",
+        sprintf("BSZ: about the payment period, treating the departures as temporary. $1 a year for %s is worth $%s at %s.",
                 fmt_input("H", h_bsz), formatC(mv("A_5"), format = "f", digits = 1), tok$r_bsz)
       }),
       rjkdc = "JR: for ever, since leavers are assumed not to return once the Act permanently lifts the intangible property tax cap."),
@@ -501,16 +543,18 @@ render_site <- function(root = comparison_root(),
                       tok$r_jr, r_min, r_max, formatC(mv("A_inf_jr_draw"), format = "f", digits = 1))),
     minor_inputs = c(
       bsz = "BSZ: non-citizens taxed, no real-estate deduction, the extra tax from asset sales counted.",
-      rjkdc = "JR: non-citizens left out, homes deducted, no extra tax from asset sales."),
+      rjkdc = "JR: non-citizens left out, real estate deducted, no extra tax from asset sales."),
+    # the three minor inputs: the same lead words at both ends (survey Q16 to Q18)
     noncitizens = c(
-      bsz = "BSZ: taxed like any other California resident.",
-      rjkdc = "JR: left out. The 28 non-citizen billionaires live in California, but the chapter deems them too uncertain to collect from (treaties, apportionment)."),
+      bsz = "BSZ: taxed. The non-citizen billionaires are in the base, like any other California resident.",
+      rjkdc = "JR: not taxed. The 28 non-citizens are left out of the base, since the chapter judges collecting from them too uncertain (treaties, apportionment)."),
     real_estate = c(
-      bsz = "BSZ: no deduction.",
-      rjkdc = "JR: nets out directly held real estate, about 0.5% of the base."),
+      bsz = "BSZ: no deduction. Directly held real estate stays in the base.",
+      rjkdc = sprintf("JR: a deduction. Directly held real estate, about %s of the base, is taken out of it.",
+                      pct(bi0$rauh$re, 1))),
     asset_sales = c(
-      bsz = "BSZ: one third, an assumption (BSZ p.24: \"paid one-third by selling assets\").",
-      rjkdc = "JR: does not count this extra income tax."))
+      bsz = "BSZ: counted. One third of the tax is paid by selling assets, and the gains on them are taxed.",
+      rjkdc = "JR: not counted. No extra income tax from selling assets is included."))
   # Each end's tip closes with the kind of that analysis's value (bridge_steps()$kind; a step
   # whose kind reads "X vs Y" is X in the BSZ analysis and Y in the JR analysis).
   end_kind <- function(id, side) {
@@ -580,10 +624,14 @@ render_site <- function(root = comparison_root(),
   tok$quantity_heads <- paste(sprintf("<th>%s</th>", esc(q_heads)), collapse = "")
   # The same table on the explorer and in the overview's "The differences" fold (author request
   # 2026-10-15); only the link to the report differs by page.
+  # The subtitle follows the survey's description (author request 2026-10-17): none of the values
+  # should depend on one's view of the tax, and an expert judges which of the two is more credible.
+  q_sub <- paste0(
+    '    <p class="q-sub">Most of these are empirical quantities, and none should depend on whether one supports\n',
+    '    or opposes a wealth tax. H and r are scenario choices. An expert should be able to judge which of\n',
+    '    the two values is more credible.</p>\n')
   q_table <- function(report) paste0(
-    '    <p class="q-sub">Most of these are empirical quantities; H and r are scenario choices. Their values should not depend on whether one\n',
-    '    supports or opposes a wealth tax. An expert should be able to appraise each value from more to less\n',
-    '    credible.</p>\n',
+    q_sub,
     '    <table class="q-table">\n',
     '      <thead><tr>', tok$quantity_heads, '</tr></thead>\n',
     '      <tbody>\n', tok$quantity_rows, '\n      </tbody>\n',
@@ -592,37 +640,68 @@ render_site <- function(root = comparison_root(),
     '#the-disputed-inputs">report\'s table of differences</a>.</p>')
   tok$quantity_table_root <- q_table("comparison/site/repro.html")
   # The explorer's section shows no table (author request 2026-10-15): the subtitle, then one large
-  # button to the survey. The two survey versions (Value A and B swapped) live in
-  # comparison/data/survey-links.csv; the page script sends each click to one of them at random.
-  # With no links yet, the button is shown disabled.
-  sv <- read_csv_plain(file.path(root, "comparison", "data", "survey-links.csv"))
-  sv <- sv[!is.na(sv$url) & nzchar(sv$url), , drop = FALSE]
-  stopifnot(all(grepl("^https://", sv$url)))
+  # button to the survey. The survey is an experiment (comparison/survey/PRE-ANALYSIS-PLAN.md,
+  # 4.2 and 4.3): six forms, a control and a treatment form for each of three entry points,
+  # listed in comparison/data/survey-links.csv. Each survey link carries its entry point's pair
+  # in data-links (control first), and the page script draws the arm at the click
+  # (survey_draw_js()). This button, on the explorer and the overview, and the overview's
+  # smaller one use the explorer pair (author decision 2026-10-17); the explorer's landing panel
+  # uses the landing pair; the share page the share pair. A survey link opened without a click
+  # (no JavaScript, a long press, "Open in new tab") goes to the share page, which draws in its
+  # own stratum, rather than to one form, which would skip the draw. A button whose pair has no
+  # links yet is shown disabled.
+  sv <- read_survey_links(root)
+  pair_explorer <- survey_pair(sv, "explorer")
+  has_share <- length(survey_pair(sv, "share")) > 0
+  survey_link <- function(pair, entry, cls, label) sprintf(
+    '<a class="%s" href="%s" data-entry="%s" data-links="%s" target="_blank" rel="noopener">%s</a>',
+    cls, esc(if (has_share) SURVEY_SHARE_URL else pair[1]), entry, esc(paste(pair, collapse = " ")), label)
   survey_button <- paste0(
     '    <p class="q-cta">',
-    if (nrow(sv)) sprintf('<a class="q-survey" href="%s" data-links="%s" target="_blank" rel="noopener">Take the survey: what do you think these values are?</a>',
-                          esc(sv$url[1]), esc(paste(sv$url, collapse = " ")))
-    else '<span class="q-survey is-off" aria-disabled="true">Take the survey: what do you think these values are? (opening soon)</span>',
+    if (length(pair_explorer)) survey_link(pair_explorer, "explorer", "q-survey", SURVEY_LABEL)
+    else sprintf('<span class="q-survey is-off" aria-disabled="true">%s (opening soon)</span>', SURVEY_LABEL),
     '</p>\n',
-    '    <p class="q-share">The survey is primarily for economists and policy analysts. Share this survey with people you think have expertise in this area, to learn what they think these values are.',
-    if (nrow(sv)) paste0(' <button type="button" class="q-copy" data-url="', SURVEY_SHARE_URL, '">Copy link</button>') else "",
+    '    <p class="q-share">The survey is primarily for economists and policy analysts. Share this survey with people you think have expertise in this area, to learn which values they find more credible.',
+    if (has_share) paste0(' <button type="button" class="q-copy" data-url="', SURVEY_SHARE_URL, '">Copy link</button>') else "",
     '</p>')
-  tok$quantity_survey_x <- paste0(
-    '    <p class="q-sub">Most of these are empirical quantities; H and r are scenario choices. Their values should not depend on whether one\n',
-    '    supports or opposes a wealth tax. An expert should be able to appraise each value from more to less\n',
-    '    credible.</p>\n', survey_button)
+  tok$quantity_survey_x <- paste0(q_sub, survey_button)
   # the overview's differences fold: the same button under its table (author request 2026-10-15)
   tok$quantity_survey_root <- survey_button
   # Two smaller buttons at the top of the overview's differences fold, above the table (author
-  # request 2026-10-15): take the survey (a random version, as above) and share it (copies the
-  # share page's address). Nothing when the survey has no links yet.
-  tok$quantity_survey_mini <- if (nrow(sv)) paste0(
+  # request 2026-10-15): take the survey (the explorer pair, drawn as above) and share it (copies
+  # the share page's address, never a form's). Nothing while the explorer pair has no links.
+  tok$quantity_survey_mini <- if (length(pair_explorer)) paste0(
     '<p class="q-mini">',
-    sprintf('<a class="q-survey q-survey-mini" href="%s" data-links="%s" target="_blank" rel="noopener">Take the survey</a>',
-            esc(sv$url[1]), esc(paste(sv$url, collapse = " "))),
-    sprintf('<button type="button" class="q-copy q-copy-mini" data-url="%s">Share the survey: copy link</button>', SURVEY_SHARE_URL),
+    survey_link(pair_explorer, "explorer", "q-survey q-survey-mini", "Take the survey"),
+    if (has_share) sprintf('<button type="button" class="q-copy q-copy-mini" data-url="%s">Share the survey: copy link</button>', SURVEY_SHARE_URL) else "",
     '<span class="q-for">The survey is primarily for economists and policy analysts.</span>',
     '</p>') else ""
+  # The landing panel (feedback/005-2026-10-16-explorer-ux/03-landing-survey-plan.md, B3, text as
+  # revised 2026-10-17; plan 4.3), on the comparison explorer only: a dialog shown once per
+  # browser before the results, the page blurred behind it, the headline numbers left in place.
+  # It is the body's first element, and the head script (survey_landing_head()) sets
+  # html.has-landing before the first paint unless this browser dismissed it before, so a
+  # returning visitor sees no flash. The survey script in the template dismisses it. Like every
+  # text a respondent meets before the form, it names neither analysis. No panel, and no head
+  # script, while the landing pair has no links.
+  pair_landing <- survey_pair(sv, "landing")
+  tok$landing_head <- if (length(pair_landing)) survey_landing_head() else ""
+  tok$landing_x <- if (length(pair_landing)) paste0(
+    '<div id="landing" role="dialog" aria-modal="true" aria-labelledby="landing-h" aria-describedby="landing-p">\n',
+    '  <div class="landing-box">\n',
+    '    <h2 id="landing-h">', LANDING$heading, '</h2>\n',
+    '    <p id="landing-p">', LANDING$text, '</p>\n',
+    '    <p class="landing-btns">', survey_link(pair_landing, "landing", "landing-go", LANDING$go),
+    '<button type="button" class="landing-skip">', LANDING$skip, '</button></p>\n',
+    '  </div>\n',
+    '</div>') else ""
+  # The draw at the click, and the draw count when comparison/data/survey-config.csv names its
+  # address (plan 8, item 3); the explorer's notes then say what is recorded.
+  draws_url <- read_survey_config(root)$draws_url
+  tok$survey_draw_js <- survey_draw_js(draws_url)
+  tok$draws_note_x <- if (nzchar(draws_url)) paste0(
+    '\n      <p><strong>Survey links.</strong> This page records, without any identifying data, ',
+    'that a survey link was opened and which form it drew.</p>') else ""
   # Which analysis's value sits at the left end of dial `id` in `panel`: the smaller one (ties
   # and the minor switch, whose two ends are not numbers, keep the BSZ value at the left). The
   # share-lost dial compares its two rules' f at the panel's starting positions; a dial that
@@ -776,13 +855,16 @@ render_site <- function(root = comparison_root(),
   say <- function(j) sprintf("%s %s for %s", if (et$terms$change[j] < 0) "minus" else "plus",
                              money(abs(et$terms$change[j]), 2),
                              sub("^([A-Z])", "\\L\\1", et$terms$label[j], perl = TRUE))
-  eq_amounts <- c(money(eb$bsz_model, 2), money(abs(et$terms$change), 2), money(eb$jr_model, 2))
+  # The two ends print at one decimal, the figures of the headline's main estimates ($106.8B and
+  # -$39.0B; author request 2026-10-17); the four terms stay at two decimals and add up to the
+  # ends' values rounded to two decimals (the check above).
+  eq_amounts <- c(money(eb$bsz_model, 1), money(abs(et$terms$change), 2), money(eb$jr_model, 1))
   pseudo_eq <- function(page) eq_html(
     "pseudo-eq",
     paste0(' role="img" aria-label="', esc(sprintf(
       "The BSZ estimate, %s, %s, equals the JR estimate, %s.",
-      money(eb$bsz_model, 2), paste(vapply(seq_len(nrow(et$terms)), say, ""), collapse = ", "),
-      money(eb$jr_model, 2))), '"'),
+      money(eb$bsz_model, 1), paste(vapply(seq_len(nrow(et$terms)), say, ""), collapse = ", "),
+      money(eb$jr_model, 1))), '"'),
     # the overview's labels drop the bracketed dial letters (author request 2026-10-15): the
     # letters name the explorer's dials, which the overview does not show
     sprintf("<b>%s</b><small>%s</small>", eq_amounts,
@@ -811,7 +893,7 @@ render_site <- function(root = comparison_root(),
   q_first <- local({ s <- bi0$sup; s$q <- bi0$rauh$q; score_common(s)[["b"]] - score_common(bi0$sup)[["b"]] })
   stopifnot(length(q_path) == 1, q_first < q_path)
   apply_q_first <- paste("The Apply buttons work from left to right, each unlocking the next, so each press",
-                         "changes the estimate by its amount in the equation.")
+                         "changes the estimate by its amount in the equation")
   # footnote 2 opens with the order: the equation adds up only along this path, and another order
   # gives the terms other amounts (author request 2026-10-16)
   order_lead <- sprintf(paste(
@@ -832,12 +914,13 @@ render_site <- function(root = comparison_root(),
     sprintf('<b class="ap-label">%s</b>%s', sub(" (", "<br>(", esc(eq_labels), fixed = TRUE), ap_btns),
     rep("", length(eq_labels)))
   tok$pseudo_eq <- pseudo_eq("root")
-  # Both notes end by saying the terms depend on the path's order, and why, and are not totals;
+  # The overview's note ends by saying the terms depend on the path's order, and why, and are not totals;
   # that the amounts, at two decimals, add up exactly to the JR end; and the two analyses' own present values
   # of lost income tax for scale (the equation's loss term is a change along the path, not either
   # of these). The order-free check is the report's fold #order-free-check; the link names no
   # method (test-site.R bans the method's name on both pages). Every amount is kept on one line
-  # with its sign.
+  # with its sign. The explorer's footnote 2 left these sentences to the report's "The explorer's
+  # equation" on 2026-10-17 (author request: notes of three sentences at most).
   nowrap <- function(x) paste0('<span style="white-space:nowrap">', x, '</span>')
   order_note <- function(href) sprintf(paste(
     " Each amount is what its group changes when the dials move in this order. It is not a total,",
@@ -848,21 +931,17 @@ render_site <- function(root = comparison_root(),
     "is worth %s today in the JR analysis and %s in the BSZ analysis."),
     href, nowrap(money(eb$jr_model, 2)),
     nowrap(money(score_common(bi0$rauh)[["PV"]], 1)), nowrap(money(score_common(bi0$sup)[["PV"]], 1)))
-  # The explorer's note names the dial letters and the Walk the path button.
-  eq_note <- function(href, panel, walk, of_href) paste0(
-    "Move the ", panel, "'s dials to their far ends, term by term from left to right. ", esc(et$note), " ",
-    esc(et$loss_order), " ", walk,
-    sprintf("The <a href=\"%s\">report</a> gives all %s steps.", href, et$n_words),
-    order_note(of_href))
   # "moved to the JR values", not "from left to right": four of the BSZ panel's dials start at
   # their right end, so the path moves them left (review 005, U-01)
   tok$pseudo_eq_note_x <- paste0("Each amount is what its dials change when they are moved to the JR values, ",
                                  "term by term from left to right, as the Walk the path button does.",
                                  '<sup><a class="fn-link" href="#fn-eq">2</a></sup>')
-  tok$eq_fn_x <- paste0(order_lead, paste(eq_note("../repro.html#the-bridge", "BSZ panel",
-                               paste("The Walk the path button in each panel does it for you.",
-                                     "The JR panel's button walks it backwards, from the last term to the first. "),
-                               "../repro.html#order-free-check"), apply_q_first))
+  # Footnote 2 is three sentences (author request 2026-10-17: notes of two to three sentences,
+  # the rest in the report): the order point, the Apply buttons, and a link to the report's
+  # "The explorer's equation", which now carries how the terms group the dials (et$note,
+  # et$loss_order), the Walk the path buttons, the rounding and the lost income tax for scale.
+  tok$eq_fn_x <- paste0(order_lead, apply_q_first,
+                        ' (more in the report: <a href="../repro.html#the-equation">The explorer\'s equation</a>).')
   # the overview names no dial letters (author request 2026-10-15), so its note says the same in
   # words; its old "Each term is what its group changes" is now the first sentence of order_note()
   tok$pseudo_eq_note_root <- paste0(
@@ -965,22 +1044,108 @@ render_site <- function(root = comparison_root(),
   list(html = html, explorer = html_explorer, js = js)
 }
 
-# The survey's shareable address: a page that sends each visitor to one of the two versions at
-# random, so a copied link keeps the half-and-half split (author request 2026-10-15).
+# The survey experiment (comparison/survey/PRE-ANALYSIS-PLAN.md, section 4). The six forms, one
+# row per entry point and arm, are in comparison/data/survey-links.csv (columns entry, arm, url;
+# lines starting with "#" are comments). The survey button's label and the landing panel's text
+# are pinned by tests/testthat/test-site.R.
+SURVEY_ENTRIES <- c("landing", "explorer", "share")
+SURVEY_ARMS <- c("control", "treatment")
+SURVEY_LABEL <- "Take the survey: which values are more credible?"
+LANDING <- list(
+  heading = "Before you look at the results",
+  text = paste("Two analyses of Proposition 40 reach very different numbers. Before you see why, we",
+               "invite you to judge which of two proposed values for each key input is more credible.",
+               "It takes 5 to 10 minutes. You can also take it later from the button on this page."),
+  go = "Take the survey first",
+  skip = "Skip to the results")
+read_survey_links <- function(root) {
+  f <- file.path(root, "comparison", "data", "survey-links.csv")
+  ln <- readLines(f, encoding = "UTF-8", warn = FALSE)
+  sv <- utils::read.csv(text = ln[!grepl("^\\s*#", ln)], stringsAsFactors = FALSE,
+                        na.strings = c("NA", ""), colClasses = "character")
+  stopifnot(identical(names(sv), c("entry", "arm", "url")),
+            all(sv$entry %in% SURVEY_ENTRIES), all(sv$arm %in% SURVEY_ARMS),
+            !anyDuplicated(sv[c("entry", "arm")]))
+  sv <- sv[!is.na(sv$url) & nzchar(sv$url), , drop = FALSE]
+  stopifnot(all(grepl("^https://[^ ]+$", sv$url)))
+  sv
+}
+# One entry point's two links, control first; none while either is missing.
+survey_pair <- function(sv, entry) {
+  u <- vapply(SURVEY_ARMS, function(a) {
+    x <- sv$url[sv$entry == entry & sv$arm == a]
+    if (length(x)) x else NA_character_
+  }, "")
+  if (anyNA(u)) character(0) else unname(u)
+}
+# comparison/data/survey-config.csv (columns key, value). draws_url is the address of the draw
+# count's web app (comparison/survey/draws.gs); empty, the pages send nothing.
+read_survey_config <- function(root) {
+  cf <- read_csv_plain(file.path(root, "comparison", "data", "survey-config.csv"))
+  v <- as.character(cf$value[cf$key == "draws_url"])
+  draws <- if (length(v) == 1 && !is.na(v)) trimws(v) else ""
+  stopifnot(!nzchar(draws) || grepl("^https://[^ ?#]+$", draws))
+  list(draws_url = draws)
+}
+# The draw count (plan, section 8, item 3): right after a draw, one request carrying the entry
+# point and the arm, nothing else (no identifier, no cookie). Emitted only when draws_url is set.
+survey_beacon_js <- function(draws_url, indent) if (nzchar(draws_url)) paste0(
+  indent, '// the draw count (pre-analysis plan, 8): the entry point and the arm, nothing else\n',
+  indent, 'try { navigator.sendBeacon(DRAWS_URL + "?entry=" + entry + "&arm=" + arm); } catch (e) {}\n') else ""
+survey_draws_var <- function(draws_url, indent) if (nzchar(draws_url))
+  paste0(indent, 'var DRAWS_URL = ', jsonlite::toJSON(draws_url, auto_unbox = TRUE), ';\n') else ""
+# The draw at the click (plan 4.2), for the explorer and the overview: a survey link opens its
+# entry point's control or treatment form, each with probability 1/2. data-links holds the pair,
+# control first. A middle click opens a tab without a click event, so it draws as well.
+survey_draw_js <- function(draws_url) paste0(
+  survey_draws_var(draws_url, "  "),
+  '  function drawSurvey(a) {\n',
+  '    var L = a.getAttribute("data-links").split(" "), entry = a.getAttribute("data-entry");\n',
+  '    var arm = Math.random() < 0.5 ? "treatment" : "control";\n',
+  '    a.href = L[arm === "treatment" ? 1 : 0];\n',
+  survey_beacon_js(draws_url, "    "),
+  '  }\n',
+  '  Array.prototype.slice.call(document.querySelectorAll("a[data-entry][data-links]")).forEach(function (a) {\n',
+  '    a.addEventListener("click", function () { drawSurvey(a); });\n',
+  '    a.addEventListener("auxclick", function (e) { if (e.button === 1) drawSurvey(a); });\n',
+  '  });')
+# The explorer's head script: shows the landing panel before the first paint unless this browser
+# dismissed it before (localStorage p40.landing = seen). With storage blocked it shows each visit.
+survey_landing_head <- function() paste0(
+  '<script>\n',
+  '  /* The survey invitation (pre-analysis plan, 4.3): set before the first paint, so a returning\n',
+  '     visitor never sees it flash. The survey script below the page dismisses it. */\n',
+  '  (function () {\n',
+  '    var seen = false;\n',
+  '    try { seen = localStorage.getItem("p40.landing") === "seen"; } catch (e) {}\n',
+  '    if (!seen) document.documentElement.classList.add("has-landing");\n',
+  '  })();\n',
+  '</script>')
+
+# The survey's shareable address, the one "Copy link" copies and the share text carries: a page
+# that draws the share entry point's control or treatment form at random, so a copied link keeps
+# the draw (author request 2026-10-15; plan 4.3). Without JavaScript it links the share pair's
+# control form (plan 8, "Links that skip the draw").
 SURVEY_SHARE_URL <- "https://fhoces.github.io/opa-prop40/comparison/site/survey/"
 survey_share_page <- function(root) {
-  sv <- read_csv_plain(file.path(root, "comparison", "data", "survey-links.csv"))
-  urls <- sv$url[!is.na(sv$url) & nzchar(sv$url)]
+  pair <- survey_pair(read_survey_links(root), "share")
+  draws_url <- read_survey_config(root)$draws_url
   paste0('<!doctype html>\n<html lang="en"><head><meta charset="utf-8">\n',
          '<meta name="viewport" content="width=device-width, initial-scale=1">\n',
          '<title>Proposition 40 survey</title>\n<meta name="robots" content="noindex">\n',
          '<link rel="stylesheet" href="../../../assets/paper.css">\n</head>\n<body class="pg">\n',
          '<!-- Generated by comparison/R/site.R from comparison/data/survey-links.csv. Do not edit. -->\n',
          '<p style="margin:3em auto;max-width:30em;text-align:center">Opening the survey&hellip; ',
-         if (length(urls)) sprintf('If nothing happens, <a href="%s">open it here</a>.', esc(urls[1])) else 'The survey is not open yet.',
+         if (length(pair)) sprintf('If nothing happens, <a href="%s">open it here</a>.', esc(pair[1])) else 'The survey is not open yet.',
          '</p>\n',
-         if (length(urls)) sprintf('<script>var L = %s; location.replace(L[Math.floor(Math.random() * L.length)]);</script>\n',
-                                   jsonlite::toJSON(urls, auto_unbox = FALSE)) else '',
+         if (length(pair)) paste0(
+           '<script>\n',
+           survey_draws_var(draws_url, ""),
+           'var L = ', jsonlite::toJSON(pair, auto_unbox = FALSE), ', entry = "share";\n',
+           'var arm = Math.random() < 0.5 ? "treatment" : "control";\n',
+           survey_beacon_js(draws_url, ""),
+           'location.replace(L[arm === "treatment" ? 1 : 0]);\n',
+           '</script>\n') else '',
          '</body></html>\n')
 }
 write_site <- function(root = comparison_root()) {

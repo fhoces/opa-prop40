@@ -77,7 +77,7 @@ bridge_input_table <- function(bi) {
       "BSZ export baseline_net_worth ($2,307B, 1 Jul 2026; BSZ PDF p.24, GGSS p.4) minus the non-citizens",
       "the Forbes 2026 list (0 = BSZ list)",
       "no separate deduction (BSZ PDF p.24: 90% x 5% x $2,307B)",
-      "benchmark taxes all 1 Jan 2026 residents (BSZ PDF p.23); the aggressive row 3 (Page, Thiel, Hankey, Kalanick, BSZ export pre2026_leavers_wealth) is the dial's middle stop",
+      "benchmark taxes all 1 Jan 2026 residents (BSZ PDF p.23); row 3, which BSZ label 'Aggressive assumptions for reported leavers' (Page, Thiel, Hankey, Kalanick, BSZ export pre2026_leavers_wealth), is the dial's middle stop",
       "no departures (on the JR list)",
       "no leavers' income tax lost",
       "BSZ export avoidance_rate (GGSS p.4; BSZ PDF p.24)",
@@ -217,7 +217,7 @@ build_all <- function(k = read_contracts()) {
   A5 <- annuity(sup$r, 5); Ainf <- annuity(rauh$r, Inf)
   loss <- data.frame(
     source_id = c("bsz_row1", "bsz_row3", "lao_upper", "rauh_nber", "walczak_low", "walczak_high"),
-    label = c("BSZ Table 5 row 1 (benchmark)", "BSZ Table 5 row 3 (aggressive leavers)",
+    label = c("BSZ Table 5 row 1 (benchmark)", "BSZ Table 5 row 3 (four reported leavers counted)",
               "LAO ballot analysis (upper bound, 'less than $1 billion')",
               "JR, Jaros and Rauh NBER: E[f] x E[C]",
               "Walczak / CalTax, low (incl. spillovers)", "Walczak / CalTax, high (incl. spillovers)"),
@@ -251,7 +251,7 @@ build_all <- function(k = read_contracts()) {
   hoopes$hoopes_uncertainty <- hz$uncertainty[match(hoopes$step_id, hz$step_id)]
   hoopes$our_steps <- c("GGSS printed headline", "GGSS's own rounding of their estimate",
                         "Non-US-citizen residents + base list and valuation date",
-                        "Billionaires already departed",
+                        "Billionaires who moved out in time",
                         "(none: Rauh's Monte Carlo headline does not use the ten 'expanded' departures)",
                         "Avoidance allowance + chance the tax does not survive litigation (his bar is the March 2026 version's elasticity response, which the September version does not use)",
                         "Real-estate deduction", "(none: the common function returns the September version's expectation exactly)",

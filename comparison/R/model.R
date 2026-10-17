@@ -78,7 +78,7 @@ bridge_steps <- function() {
       "Non-US-citizen residents",
       "Forbes source: which list and valuation date",
       "Real-estate deduction",
-      "Billionaires already departed",
+      "Billionaires who moved out in time",
       "Avoidance and evasion allowance",
       "Chance the tax does not survive litigation",
       "Share of billionaire income tax lost",

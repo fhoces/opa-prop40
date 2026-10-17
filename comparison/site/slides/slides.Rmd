@@ -139,6 +139,8 @@ cap1 <- function(x) paste0(toupper(substring(x, 1, 1)), substring(x, 2))
 
 # The share of the base already departed at an end; used in the main body and the appendix.
 dshare <- function(x) score_common(x)[["d_conf"]]
+# The JR range of C's two counts of top earners, from the C row's source note (site.R)
+jr_k <- jr_top_earners(inp)
 
 # Ties to the pipeline: a drift fails the render instead of shipping.
 stopifnot(
@@ -674,15 +676,15 @@ authors' Monte Carlo; their seeded run prints `r usd(rj_print)`.
 Next, we analyze each component, one at a time:
 
 .eq-list[
-(i) Who has already left?<br>
-(ii) Will the tax survive in court?<br>
+(i) Who moved out in time?<br>
+(ii) Is the revenue discounted for court risk?<br>
 (iii) For how long is the income tax lost? Then *f*, *C* and *r*<br>
 (iv) The other three steps
 ]
 
 .small[
 Each slide labels the kind of claim. **data**: settled by observable facts (lists, filings, tax statistics). **research**: a parameter
-taken from published studies. **guesswork**: asserted without data or a study behind it, legal
+taken from published studies. **guesswork**: an assumption with no data or study behind it, legal
 judgements included. **scenario**: a choice of which world to estimate, which neither data nor
 studies settle. **derived**: computed from the analysis's own inputs.
 ]
@@ -690,7 +692,7 @@ studies settle. **derived**: computed from the analysis's own inputs.
 ---
 name: diff-departed
 
-# (i) Who has already left?
+# (i) Who moved out in time?
 
 ```{r claims-fn}
 claim_table <- function(bsz, jr) {
@@ -702,8 +704,8 @@ claim_table <- function(bsz, jr) {
 
 ```{r claims-dep, results="asis"}
 claim_table(
-  sprintf("<b>No named departure is removed.</b> The benchmark taxes everyone resident in California on 1 January 2026. Press reports do not establish that any named mover changed residence in time (BSZ PDF p.23 fn.30). Its %s avoidance already counts %s of billionaires who left in time (BSZ PDF p.24). Its aggressive scenario (Table 5 row 3) assumes four named billionaires left: Page, Thiel, Hankey and Kalanick.", pct(sup$alpha, 0), pct(sup$alpha * sup$m, 0)),
-  sprintf("<b>Seven publicly reported moves</b> (Page, Brin, Thiel, Hankey, Spielberg, Kalanick and Sacks) are taken out of the base before the tax: %s of its wealth (NPV_dist_v8.R:19).", pct(dshare(rj), 1)))
+  sprintf("<b>No named departure is removed.</b> The benchmark taxes everyone resident in California on 1 January 2026. No one is counted by name without evidence of a change of legal residence before 1 January (BSZ PDF p.23 fn.30). Its %s avoidance already counts %s of billionaires who left in time (BSZ PDF p.24). Its Table 5 row 3 scenario counts four named billionaires as having moved in time: Page, Thiel, Hankey and Kalanick.", pct(sup$alpha, 0), pct(sup$alpha * sup$m, 0)),
+  sprintf("<b>Seven billionaires are counted as having moved in time</b>, on public reports of their moves (Page, Brin, Thiel, Hankey, Spielberg, Kalanick and Sacks), and taken out of the base before the tax: %s of its wealth (NPV_dist_v8.R:19).", pct(dshare(rj), 1)))
 ```
 
 .pull-left[
@@ -729,12 +731,12 @@ of the revenue is lost in full.
 ---
 name: diff-litigation
 
-# (ii) Will the tax survive in court?
+# (ii) Is the revenue discounted for court risk?
 
 ```{r claims-lit, results="asis"}
 claim_table(
-  sprintf("<b><i>q</i> = %s.</b> The Act as written, collected in full. Neither BSZ nor the expert report it builds on (GGSS: Galle, Gamage, Saez and Shanske) discounts the revenue for litigation risk (BSZ Table 5; GGSS p.4). The expert report argues the Act was designed to stay clear of constitutional issues (GGSS p.11).", fmt_input("q", sup$q)),
-  sprintf("<b><i>q</i> = %s.</b> The chance the Act survives a court challenge, set at the &quot;more likely than not&quot; threshold of an accounting rule (ASC 740-10; NBER README; chapter Secs. 4.2 and 4.4, PDF pp.19-23, eqs. 3 and 6). The Monte Carlo draws the revenue anywhere between zero (struck down) and the %s ceiling; its average is half the ceiling.", fmt_input("q", rj$q), usd(ceiling72, 0)))
+  sprintf("<b>No discount (<i>q</i> = %s).</b> The Act as written, collected in full. Neither BSZ nor the expert report it builds on (GGSS: Galle, Gamage, Saez and Shanske) discounts the revenue for litigation risk (BSZ Table 5; GGSS p.4). The authors' expert report judges the Act drafted to stay clear of constitutional issues (GGSS p.11).", fmt_input("q", sup$q)),
+  sprintf("<b>A discount (<i>q</i> = %s).</b> The revenue is multiplied by the chance the Act survives a court challenge, which the authors set at the &quot;more likely than not&quot; threshold of ASC 740-10 (NBER README; chapter Secs. 4.2 and 4.4, PDF pp.19-23, eqs. 3 and 6). The Monte Carlo draws the revenue anywhere between zero (struck down) and the %s ceiling; its average is half the ceiling.", fmt_input("q", rj$q), usd(ceiling72, 0)))
 ```
 
 .pull-left[
@@ -772,7 +774,7 @@ class: wide-right
 
 ```{r claims-hz, results="asis"}
 claim_table(
-  sprintf("<b>%s.</b> BSZ argue the losses should be temporary, since a one-time tax should cause a temporary response (BSZ PDF p.22), and give five years, the payment period, as an example (&quot;If they last say only 5 years&quot;, PDF p.27). Table 5 takes no stand on how long they last. The five years are this OPA's reading of that example.", fmt_input("H", sup$H)),
+  sprintf("<b>%s.</b> BSZ argue the losses should be temporary, since a one-time tax should cause only temporary departures (BSZ PDF p.22), and give five years, the payment period, as an example (&quot;If they last say only 5 years&quot;, PDF p.27). Table 5 takes no stand on how long they last. The five years are this OPA's reading of that example.", fmt_input("H", sup$H)),
   sprintf("<b>%s.</b> Departed billionaires are assumed not to return, because the Act permanently removes the constitutional cap on intangible property taxes and lets the Legislature amend it by a two-thirds vote (chapter PDF p.32, Sec. 6). The lost stream is valued as a growing perpetuity, 1/(r &minus; g) (chapter Sec. 5.2, eqs. 13-14, PDF pp.30-31).", tools::toTitleCase(fmt_input("H", rj$H))))
 ```
 
@@ -836,16 +838,17 @@ cat("</table>")
 ```
 
 .small[
-- **Share of income tax lost**: at its benchmark the BSZ analysis counts the avoiders who move
-  (`r pct(sup$m, 0)` of its `r pct(sup$alpha, 0)` allowance), each taking a proportional share of
-  the income tax (BSZ PDF p.24), plus named leavers' tax from filings. The JR analysis takes a
-  flat `r pct(rj$f0)` of all billionaires' income tax, the middle of a `r pct(f_lo)` to
-  `r pct(f_hi)` draw set around the `r pct(vr[["d_conf"]], 1)` of wealth that left, to cover
-  unreported moves (chapter PDF pp.31, 33). The step is small here because it comes before the
+- **Share of income tax lost**: the BSZ analysis loses no more of billionaires' income tax than
+  the share of their wealth that leaves. The avoiders who move take a proportional share, and
+  named leavers add their own tax from filings, which is small for their wealth (BSZ PDF p.24,
+  Table 4). The JR analysis loses a flat `r pct(rj$f0)` of it, more than the
+  `r pct(vr[["d_conf"]], 1)` of wealth reported to have left, because income tax need not leave in
+  step with wealth and some moves go unreported (chapter PDF pp.31, 33). The step is small here because it comes before the
   horizon, while the loss lasts `r fmt_input("H", sup$H)`. Averaged over every order it is among
   the three largest.
-- **Yearly income tax**: BSZ take the 2019 to 2025 average from tax statistics and research. JR
-  take the middle of a range whose floor is the authors' judgement.
+- **Yearly income tax**: both start from California tax data on the highest earners. BSZ take
+  billionaires to have about half their income, as a study of top wealth holders finds. JR take
+  them to be among the `r jr_k[1]` to `r jr_k[2]` highest earners and use the middle of the range.
 - **Discount rate**: `r r3` at the BSZ end, a scenario (BSZ give no rate). `r r_jr` at the JR end,
   derived: worth the same as the authors' draw of r &minus; g, the real rate net of the loss's
   growth, from `r r_lo` to `r r_hi`. It moves after the horizon, on a loss that lasts for ever.
@@ -1042,7 +1045,7 @@ name: term-wealth
 # One function, term 1: the wealth tax collected
 
 .highlight-box[
-**Wealth tax collected** = 5% &times; the base &times; (1 &minus; share already departed)
+**Wealth tax collected** = 5% &times; the base &times; (1 &minus; share that moved out in time)
 &times; (1 &minus; avoidance allowance) &times; chance the tax survives litigation
 ]
 
@@ -1057,7 +1060,7 @@ rows <- list(
   c("Wealth on the list", usd(w_s, 0), usd(w_s, 0), usd(w_r, 0), usd(w_r, 0)),
   c("&times; tax rate", fac(sup$tau), usd(run_s[2]), fac(rj$tau), usd(run_r[2])),
   c("&times; (1 &minus; real-estate deduction)", fac(1 - sup$re), usd(run_s[3]), fac(1 - rj$re), usd(run_r[3])),
-  c("&times; (1 &minus; share already departed)", fac(1 - dshare(sup)), usd(run_s[4]), fac(1 - dshare(rj)), usd(run_r[4])),
+  c("&times; (1 &minus; share that moved out in time)", fac(1 - dshare(sup)), usd(run_s[4]), fac(1 - dshare(rj)), usd(run_r[4])),
   c("&times; (1 &minus; avoidance allowance)", fac(1 - sup$alpha), usd(run_s[5]), fac(1 - rj$alpha), usd(run_r[5])),
   c("&times; chance it survives litigation, <i>q</i>", fac(sup$q), usd(run_s[6]), fac(rj$q), usd(run_r[6])))
 cat('<table class="dt"><tr><th>Step</th><th>BSZ factor</th><th>BSZ running total</th><th>JR factor</th><th>JR running total</th></tr>')
