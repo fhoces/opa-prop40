@@ -140,6 +140,8 @@ function buildOne_(spec) {{
   // the form's description (the test stand-in for FormApp has no setDescription)
   if (typeof f.setDescription === "function") f.setDescription(DESC);
   if (typeof f.setConfirmationMessage === "function") f.setConfirmationMessage(THANKS);
+  // no "Submit another response" link: a second submission from one person is a duplicate (plan, section 8)
+  if (typeof f.setShowLinkToRespondAgain === "function") f.setShowLinkToRespondAgain(false);
   // the questions whose two values are replaced, in the same A/B order
   CHOICES.forEach(function (s) {{
     var it = find_(f, s.title).asMultipleChoiceItem();
@@ -200,9 +202,11 @@ function fixEnding() {{
     while (files.hasNext()) {{
       var f = FormApp.openById(files.next().getId());
       f.setConfirmationMessage(THANKS);
+      f.setShowLinkToRespondAgain(false);
       var pb = find_(f, CLOSE.new);
       if (pb) pb.setHelpText("");
-      Logger.log(spec.name + ": confirmation set; closing page description " + (pb ? "emptied" : "NOT FOUND"));
+      Logger.log(spec.name + ": confirmation set; submit-another-response link shown: " + f.hasRespondAgainLink() +
+                 "; closing page description " + (pb ? "emptied" : "NOT FOUND"));
     }}
   }});
 }}
