@@ -348,12 +348,6 @@ class: big-bullets
 /* A button in the lower-right corner, above the slide number: links to appendix slides and back. */
 .corner-btn { position: absolute; right: 2em; bottom: 48px; font-size: 75%; font-weight: 600;
   padding: 0.3em 0.8em; border: 1px solid #1d4e89; border-radius: 4px; text-decoration: none; }
-/* The summary slide: the three-OPA figure, centred, with a link label on each OPA. */
-.go-explore { text-align: center; font-size: 130%; font-weight: 700; margin-top: -0.4em; }
-.summary-fig { position: relative; width: fit-content; margin: 0 auto; }
-.summary-fig img { height: 340px; display: block; }
-.sum-label { position: absolute; transform: translateY(-50%); margin-right: 0.6em; white-space: nowrap; font-size: 0.85em; font-weight: 600; }
-.summary-text { text-align: center; max-width: 80%; margin: 0.6em auto 0; }
 /* contents: the deck's table of contents; parts already covered are greyed. */
 .toc { font-size: 130%; margin-top: 1.2em; }
 .toc li { margin-bottom: 0.7em; }
@@ -910,14 +904,23 @@ cat("</table>")
 
 ---
 name: next
+class: head-beside
 
 # Summary
 
-<div class="go-explore">Go and explore</div>
+.beside[
+**Go and [explore](../explorer/).**
 
-<div class="summary-fig"><img src="../../../assets/figures/evidence-to-policy-competing-from-analysis-opa-third.svg" alt="The two analyses, each an Open Policy Analysis, feed a third Open Policy Analysis, the comparison, which informs both decision makers."><a class="sum-label" style="right:97%; top:15%;" href="../../../bsz-analysis/site/">The BSZ analysis</a><a class="sum-label" style="right:97%; top:87%;" href="../../../rjkdc-analysis/site/">The JR analysis</a><a class="sum-label" style="right:77%; top:50%;" href="../../../index.html">The comparison</a></div>
+The comparison does not pick the most credible values. It lays out the key empirical quantities behind the gap, so experts and voters can inspect them and [record their views](../survey/) on which are most credible today.
+]
 
-<div class="summary-text">The comparison does not pick the most credible values. It lays out the key empirical quantities behind the gap, so experts and voters can inspect them and <a href="../survey/">record their views</a> on which are most credible today.</div>
+.fig-pinned.fig-split.fig-tall[<img src="../../../assets/figures/evidence-to-policy-competing-from-analysis-opa-third.svg" alt="The two analyses, each an Open Policy Analysis, feed a third Open Policy Analysis, the comparison, which informs both decision makers.">]
+
+<div class="opa-labels">
+<a class="opa-label" style="left:46.4%; top:37%;" href="../../../bsz-analysis/site/">The BSZ analysis</a>
+<a class="opa-label" style="left:46.4%; bottom:31%;" href="../../../rjkdc-analysis/site/">The JR analysis</a>
+<a class="opa-label opa-label-left" style="right:45%; top:53%;" href="../../../index.html">The comparison</a>
+</div>
 
 ---
 name: appendix
