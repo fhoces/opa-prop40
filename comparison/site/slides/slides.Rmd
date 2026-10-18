@@ -585,7 +585,9 @@ Boll, Saez and Zucman estimate the one-time tax at about $100 billion of wealth 
 
 **What reproduces.** The authors' workbook and this code reproduce the published results. `r cap1(n_words(bsz_notes))` notes on where the paper's text, tables and workbook describe a step differently are kept for transparency; none is a failure to reproduce. Every variation the paper prints reproduces (`r bsz_checks$match` of `r bsz_checks$n`). `r cap1(n_words(bsz_settings))` settings the paper does not print have been sent to the authors to test. [Checks](../../../bsz-analysis/site/checks.html)
 
-[The BSZ analysis overview](../../../bsz-analysis/site/) &middot; Its layers, with screenshots: [Output](#layer-bsz-output), [Analysis](#layer-bsz-analysis), [Materials](#layer-bsz-materials), [Code review](#layer-bsz-review)
+[The BSZ analysis overview](../../../bsz-analysis/site/)
+
+<a class="corner-btn" href="#layer-bsz-output">Its layers, with screenshots &rarr;</a>
 ]
 
 .pull-right[
@@ -605,7 +607,9 @@ Jaros and Rauh find a mean net present value of `r usd(rj_print)`: the wealth ta
 
 **What reproduces.** The authors' code reproduces the published results. `r cap1(n_words(jr_notes))` notes on where their text, READMEs and code describe a step differently are kept for transparency; none is a failure to reproduce. Every variation the papers print reproduces (`r jr_checks$match` of `r jr_checks$n`). `r cap1(n_words(jr_settings))` settings the papers do not print have been sent to the authors to test. [Checks](../../../rjkdc-analysis/site/checks.html)
 
-[The JR analysis overview](../../../rjkdc-analysis/site/) &middot; Its layers, with screenshots: [Output](#layer-jr-output), [Analysis](#layer-jr-analysis), [Materials](#layer-jr-materials), [Code review](#layer-jr-review)
+[The JR analysis overview](../../../rjkdc-analysis/site/)
+
+<a class="corner-btn" href="#layer-jr-output">Its layers, with screenshots &rarr;</a>
 ]
 
 .pull-right[
@@ -627,7 +631,9 @@ The comparison puts both analyses on one common output, the net fiscal effect (t
 
 **A previous comparison.** Jeffrey L. Hoopes (2026), ["Galle v Rauh: Comparing Two Revenue Estimates for California Billionaire Taxation"](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6428578), SSRN Working Paper 6428578, compares earlier versions of the two analyses: the February 2026 GGSS expert report, on which the BSZ analysis builds, and the JR analysis's March 2026 version. He draws the gap as a waterfall chart. This OPA reruns his steps [in the appendix](#hoopes), and its own waterfall is [there too](#waterfall).
 
-[The comparison overview](../../../index.html) &middot; Its layers, with screenshots: [Output](#layer-cmp-output), [Analysis](#layer-cmp-analysis), [Materials](#layer-cmp-materials), [Code review](#layer-cmp-review)
+[The comparison overview](../../../index.html)
+
+<a class="corner-btn" href="#layer-cmp-output">Its layers, with screenshots &rarr;</a>
 ]
 
 .pull-right[
