@@ -294,7 +294,7 @@ class: head-beside
 - The comparison does not pick the most credible estimate. It shows which components drive the gap.
 ]
 
-.footnote.beside[<sup>1</sup> Boll, J., Saez, E. and Zucman, G. (2026), "California Billionaires: Wealth, Taxes, and Wealth Tax Revenue Estimates", NBER Working Paper 35218, August. Jaros, B. and Rauh, J. (2026), "The Net Present Value of the California Billionaire Tax Act", NBER chapter c15504, *Tax Policy and the Economy* 41, September.]
+.footnote.beside[<sup>1</sup> Boll, J., Saez, E. and Zucman, G. (2026), ["California Billionaires: Wealth, Taxes, and Wealth Tax Revenue Estimates"](https://www.nber.org/papers/w35218), NBER Working Paper 35218, August. Jaros, B. and Rauh, J. (2026), ["The Net Present Value of the California Billionaire Tax Act"](https://www.nber.org/system/files/chapters/c15504/c15504.pdf), NBER chapter c15504, *Tax Policy and the Economy* 41, September.]
 
 .fig-pinned.fig-split.fig-tall[<img src="../../../assets/figures/evidence-to-policy-competing-from-analysis-opa-third.svg" alt="The two analyses, each an Open Policy Analysis, feed a third Open Policy Analysis, the comparison, which informs both decision makers.">]
 
