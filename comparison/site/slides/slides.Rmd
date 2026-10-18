@@ -220,9 +220,8 @@ name: why-opa-2
 # Why do we need Open Policy Analysis?
 
 .beside[Often there are **competing analyses**, and each decision maker cites the one that fits. Proposition
-40 has two: the BSZ analysis, at `r usd(eb$bsz_model)` on this deck's common definition, and the JR
-analysis, at `r usd(rj_main)`. A reader sees two numbers and cannot tell which assumptions produce
-the gap. An Open Policy Analysis makes each one checkable, from the output to the code.]
+40 has two, and they disagree on the sign: one finds a gain in revenue, the other a loss. A reader
+sees two conflicting results and cannot tell which assumptions produce the gap. An Open Policy Analysis makes each one checkable, from the output to the code.]
 
 .fig-pinned[<img src="../../../assets/figures/evidence-to-policy-competing-from-analysis.svg" alt="Two competing policy analyses of the same policy: one shows only gains and leads Decision Maker 1 to support it; the other shows only losses and leads Decision Maker 2 to oppose it.">]
 
