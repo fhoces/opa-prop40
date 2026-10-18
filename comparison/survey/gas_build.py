@@ -149,6 +149,8 @@ function buildOne_(spec) {{
     it.setChoiceValues(it.getChoices().map(function (c) {{ return s.map[c.getValue()] || c.getValue(); }}));
   }});
   find_(f, EMAIL.old).setTitle(EMAIL.title).setHelpText(EMAIL.help);
+  // the email question goes on page 1, after the two pre-treatment questions (author, 2026-10-18)
+  f.moveItem(find_(f, EMAIL.title).getIndex(), 2);
   // the share lost becomes its own question; departures and avoidance stay one question
   var bd = f.getItems(FormApp.ItemType.MULTIPLE_CHOICE).filter(function (it) {{
     return it.getTitle().indexOf(BUNDLE_PREFIX) === 0; }})[0].asMultipleChoiceItem();
@@ -179,7 +181,7 @@ function buildOne_(spec) {{
   }});
   if (spec.treated) {{
     var pb = f.addPageBreakItem().setTitle(TREAT.title).setHelpText(TREAT.help);
-    f.moveItem(pb.getIndex(), 2);
+    f.moveItem(pb.getIndex(), 3);   // after page 1's three questions
     f.getItems(FormApp.ItemType.MULTIPLE_CHOICE).forEach(function (it) {{
       var mc = it.asMultipleChoiceItem(), ch = mc.getChoices().map(function (c) {{ return c.getValue(); }});
       if (ch.some(function (c) {{ return LABELS[c]; }})) {{
@@ -208,6 +210,31 @@ function fixEnding() {{
       Logger.log(spec.name + ": confirmation set; submit-another-response link shown: " + f.hasRespondAgainLink() +
                  "; closing page description " + (pb ? "emptied" : "NOT FOUND"));
     }}
+  }});
+}}
+
+// Moves the email question to page 1, after the two pre-treatment questions (author, 2026-10-18), in
+// the six built forms; sets the description (no longer "near the end") and the opt-in text, whose
+// main-part length now counts the email. Idempotent. Logs page 1 of each form.
+function moveEmail() {{
+  FORMS.forEach(function (spec) {{
+    var files = DriveApp.getFilesByName(spec.name), n = 0;
+    while (files.hasNext()) {{
+      var f = FormApp.openById(files.next().getId());
+      n++;
+      var em = find_(f, EMAIL.title);
+      if (!em) {{ Logger.log(spec.name + ": EMAIL QUESTION NOT FOUND"); continue; }}
+      if (em.getIndex() !== 2) f.moveItem(em.getIndex(), 2);
+      f.setDescription(DESC);
+      var oi = f.getItems(FormApp.ItemType.MULTIPLE_CHOICE).filter(function (it) {{
+        return it.getTitle().indexOf("The next ") === 0; }})[0];
+      if (oi) oi.setTitle(SMALL.optin.title);
+      var its = f.getItems();
+      Logger.log(spec.name + ": " + [0, 1, 2, 3].map(function (i) {{
+        return i + " " + its[i].getType() + " " + its[i].getTitle().slice(0, 40); }}).join(" | ") +
+        "; opt-in " + (oi ? "set" : "NOT FOUND"));
+    }}
+    if (n !== 1) Logger.log("WARNING: " + n + " copies named " + spec.name);
   }});
 }}
 

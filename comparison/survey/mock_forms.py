@@ -243,6 +243,10 @@ def rewrite(items):
     assert sum(e["title"] == HORIZON["title"] for e in out) == 1 and wealth is not None and avoid is not None
     # "Unsure" replaces "I can't judge this one" in every question (author, 2026-10-17)
     out = [dict(e, choices=[UNSURE[1] if c == UNSURE[0] else c for c in e["choices"]]) for e in out]
+    # the email question moves to page 1, after the two pre-treatment questions (author, 2026-10-18); put
+    # first here, it counts in the main part for the opt-in, and build() places it on page 1
+    email = next(e for e in out if e["title"] == EMAIL["title"])
+    out = [email] + [e for e in out if e is not email]
     x, y, z = optin_numbers(out)
     OPTIN["title"] = OPTIN_T.format(x=x, y=y, z=z)
     out = [dict(e, title=OPTIN["title"]) if e["title"] == OPTIN_T else e for e in out]
@@ -327,7 +331,7 @@ DESC = ("Proposition 40 would tax Californians worth $1 billion or more once, at
         "answers will help us get closer to agreeing on common facts to inform important policy discussions.\n\n"
         "Most of these are empirical quantities, and none should depend on whether one supports or opposes a "
         f"wealth tax.\n\nIt takes {MINUTES[0]} to {MINUTES[1]} minutes. Answers are anonymous unless you leave an "
-        "email near the end.")
+        "email.")
 
 
 def share_words(x):
@@ -467,14 +471,16 @@ def build(items, treated):
              "help": "", "choices": ["Yes", "No", "Not sure"], "required": True}
     pages = [[]]
     for e in items:
-        if e is expert or e["title"] == "Which field best describes your work?":
+        if e is expert or e["title"] in ("Which field best describes your work?", EMAIL["title"]):
             continue
         if e["kind"] == 8:
             pages.append([e])
         else:
             pages[-1].append(e)
-    # page 1: the two pre-treatment questions; the field question is dropped (plan, section 4.4)
-    pages[0] = pages[0] + [("new", expert), ("new", prior)]
+    # page 1: the two pre-treatment questions, then the email (author, 2026-10-18); the field question is
+    # dropped (plan, section 4.4)
+    email = next(e for e in items if e["title"] == EMAIL["title"])
+    pages[0] = pages[0] + [("new", expert), ("new", prior), ("new", email)]
     out = [f"<div class='card top'><h1>{html.escape(title)}</h1><div class='desc'>{html.escape(desc)}</div></div>"]
     n = len(pages) + (1 if treated else 0)
     k = 1

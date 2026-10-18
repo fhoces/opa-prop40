@@ -118,12 +118,14 @@ input values, not their first exposure to it.
 
 ### 4.4 Page order (all forms)
 
-1. Description, then two pre-treatment questions:
+1. Description, then two pre-treatment questions and the optional email:
    - "Do you consider yourself an expert in tax or fiscal policy?" (Yes / Somewhat / No; moved here
      from the end of the current survey)
    - "Before opening this survey, had you looked at news sources, web pages or academic studies
      discussing estimates of Proposition 40, the Billionaire Wealth Tax Proposal in California?"
      (Yes / No / Not sure; new)
+   - "Your email (optional)" (moved here from the closing page on 2026-10-18, so it is asked before
+     treatment; nothing is verified)
 2. I1 (treatment forms only).
 3. The five required input questions, in three groups under plain section headings, in the order
    of the treatment page's first three terms (`GROUPS`, `regroup()` and `split_bundle()` in
@@ -147,7 +149,7 @@ input values, not their first exposure to it.
    avoidance (optional), so both choices of each answer the same thing. The wealth question moves
    from the required questions to the optional page. I2 applies to all ten input questions in the
    treatment forms.
-4. The closing page, "Anything else (optional)": missing inputs, optional email, and support for
+4. The closing page, "Anything else (optional)": missing inputs and support for
    Proposition 40. Every question on it is optional.
 
 The question order and the three headings are the same in both arms, so they are not part of the
@@ -276,7 +278,8 @@ Every heterogeneity test below is secondary. None changes the conclusion on H1.
 
 The plan declares D = 3 candidate dimensions, all binary and recorded before treatment: entry
 point (H2), prior exposure (H3) and expertise (H4). Whether a respondent gives an email is asked
-after treatment, so it is descriptive and is not one of the three. No other dimension is used
+before treatment, on page 1, but it was not registered as a dimension, so it stays descriptive and
+is not one of the three. No other dimension is used
 unless it is registered before the data are seen, and adding one enlarges every family below.
 
 H2 to H4 are the one-dimension analyses. With H5 below, they form one family of four tests
@@ -509,6 +512,11 @@ test of salience (sections 1 and 4.3); the expected number of responses is 0 to 
 expert respondents without
 prior exposure form a registered subgroup (section 6.2); and the share link keeps opening a form,
 so that some respondents may not have seen the estimates.
+
+On 2026-10-18, before launch, the author moved the email question from the closing page to page 1,
+after the two pre-treatment questions (section 4.4). It stays descriptive (section 5). The form's
+description no longer says that the email comes near the end, and the opt-in's stated extra length
+fell from 60% to 55%, because the main part now includes the email question.
 
 ## Appendix A. Treatment page text
 
