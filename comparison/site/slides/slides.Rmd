@@ -614,6 +614,8 @@ The comparison puts both analyses on one common output, the net fiscal effect (t
 
 **What reproduces.** Both main estimates are rebuilt on the common output from the two analyses' exported files, `r usd(eb$bsz_model)` and `r usd(rj_main)`. Each step of the bridge is the change from moving one explorer dial, in R and in the browser (the steps add up to the gap by construction). The R and Python versions agree.
 
+**A previous comparison.** Jeffrey L. Hoopes (2026), ["Galle v Rauh: Comparing Two Revenue Estimates for California Billionaire Taxation"](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6428578), SSRN Working Paper 6428578, compares earlier versions of the two analyses: the February 2026 GGSS expert report, on which the BSZ analysis builds, and the JR analysis's March 2026 version. He draws the gap as a waterfall chart. This OPA reruns his steps [in the appendix](#hoopes), and its own waterfall is [there too](#waterfall).
+
 [The comparison overview](../../../index.html) &middot; Its layers, with screenshots: [Output](#layer-cmp-output), [Analysis](#layer-cmp-analysis), [Materials](#layer-cmp-materials), [Code review](#layer-cmp-review)
 ]
 
@@ -624,7 +626,6 @@ compare_figs("index.html")
 ]
 
 
-.footnote[The one published comparison, [Hoopes (2026)](#hoopes), draws this gap for earlier versions of the two analyses as a waterfall; this project's own waterfall is [in the appendix](#waterfall).]
 ---
 name: contents-3
 
