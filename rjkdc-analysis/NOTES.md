@@ -24,8 +24,7 @@ under its heading:
 
 An earlier version of these pages called all ten "mismatches", one list on an equal footing, and
 counted the rounding and seed differences as results that did not match. That overstated them,
-and the notes were reclassified on 2026-10-16;
-`feedback/006-2026-10-16-jr-author-mismatches/REPORT.md` gives each note's old and new label.
+and the notes were reclassified on 2026-10-16.
 
 Notes 1, 2, 7, 8 and 9 concern only the authors' first version (Rauh, Jaros, Kearney, Doran and
 Cosso, Hoover Institution, SSRN 6340778, March 2026), which the pipeline also reproduces. Notes 3
