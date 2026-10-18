@@ -250,7 +250,7 @@ class: head-beside
 
 .fig-pinned.fig-split[<img class="half-bottom" src="../../../assets/figures/evidence-to-policy-competing-from-analysis-blackbox.svg" aria-hidden="true" alt="Two competing policy analyses of the same policy, drawn as black boxes: one shows only gains and leads Decision Maker 1 to support it; the other shows only losses and leads Decision Maker 2 to oppose it."><img class="half-top" src="../../../assets/figures/evidence-to-policy-competing-from-analysis-blackbox.svg" alt="Two competing policy analyses of the same policy, drawn as black boxes: one shows only gains and leads Decision Maker 1 to support it; the other shows only losses and leads Decision Maker 2 to oppose it.">]
 
-.footnote.beside[<sup>1</sup> What Manski calls *dueling certitudes*: rival analyses that each report one number with confidence and reach opposite conclusions (Charles F. Manski, "Policy Analysis with Incredible Certitude", *The Economic Journal*, 2011).]
+.footnote.beside[<sup>1</sup> What Manski calls *dueling certitudes*: rival analyses that each report one number with confidence and reach opposite conclusions (Charles F. Manski, ["Policy Analysis with Incredible Certitude"](https://doi.org/10.1111/j.1468-0297.2011.02457.x), *The Economic Journal*, 2011).]
 
 
 ---
