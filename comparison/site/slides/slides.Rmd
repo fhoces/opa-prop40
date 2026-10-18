@@ -206,9 +206,11 @@ name: why-opa
 
 # Why do we need Open Policy Analysis?
 
-.beside[Between the research and the decision sits a **policy analysis**: it turns evidence into the
-gains and losses of one policy. Two decision makers can read the same analysis and still disagree,
-because they weigh those gains and losses differently.]
+.beside[
+- Researchers, government agencies and think tanks produce **policy analyses**. These estimate the costs and benefits of a proposed policy from the best available research.
+- A policy analysis reports positive (empirical) quantities. It does not judge whether those costs and benefits are good or bad.
+- Decision makers can use the same analysis and still decide differently, because they value the same facts differently.
+]
 
 .fig-pinned[<img src="../../../assets/figures/evidence-to-policy-from-analysis.svg" alt="One policy analysis leads one decision maker to support a policy and another to oppose it.">]
 
