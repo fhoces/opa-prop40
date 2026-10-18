@@ -512,6 +512,27 @@ class: mid-bullets
 
 
 ---
+name: verification
+
+# Verification: what was checked, and how
+
+```{r verification-checks}
+stopifnot(bsz_checks$match == bsz_checks$n, jr_checks$match == jr_checks$n)
+```
+
+<div class="opa-trio">
+<figure><img src="../../../assets/opa/opa-all.png" alt="The OPA icon: four stacked layers."><figcaption>The BSZ analysis</figcaption></figure>
+<figure><img src="../../../assets/opa/opa-all.png" alt="The OPA icon: four stacked layers."><figcaption>The JR analysis</figcaption></figure>
+<figure><img src="../../../assets/opa/opa-all.png" alt="The OPA icon: four stacked layers."><figcaption>The comparison</figcaption></figure>
+</div>
+
+- **Three OPAs, five objects each**: an explorer, a report, slides, a repository and an overview page. With 15 objects in all, human verification was limited.
+- **Two tests** check the output:
+  - *Results the papers print*, rerun in each OPA: all match (BSZ `r bsz_checks$match` of `r bsz_checks$n`, JR `r jr_checks$match` of `r jr_checks$n`).
+  - *Estimates the papers do not print*, sent to the authors to run in their own models: `r bsz_settings` settings to the BSZ team, `r jr_settings` to the JR team.
+- **Next, an approach to disclose and verify**: an [attribution table](#disclosure) for each OPA shows what was human generated, what was human reviewed and what was neither. Readers can weigh each piece accordingly.
+
+---
 name: disclosure
 
 # Disclosure and verification: the BSZ analysis
@@ -529,27 +550,6 @@ cat('<div class="ai-use-slide">', gsub("\n\\s*", " ", tab), gsub("\n\\s*", " ", 
 
 An example from the [BSZ analysis OPA](../../../bsz-analysis/site/). The columns group the 14 roles of the [CRediT contributor taxonomy](https://credit.niso.org/) (ANSI/NISO Z39.104-2022) into three: ideas and direction, doing the work, and writing. The last column, **human verification**, is this OPA's addition: how closely the author has checked each part. When an object is lightly reviewed or not reviewed, its title carries a badge: <span class="ai-badge ai-badge-yellow inline">AI generated, partially reviewed</span> or <span class="ai-badge ai-badge-red inline">AI generated, not reviewed yet</span>.
 
-
----
-name: verification
-
-# Verification: what was checked, and how
-
-```{r verification-checks}
-stopifnot(bsz_checks$match == bsz_checks$n, jr_checks$match == jr_checks$n)
-```
-
-<div class="opa-trio">
-<figure><img src="../../../assets/opa/opa-all.png" alt="The OPA icon: four stacked layers."><figcaption>The BSZ analysis</figcaption></figure>
-<figure><img src="../../../assets/opa/opa-all.png" alt="The OPA icon: four stacked layers."><figcaption>The JR analysis</figcaption></figure>
-<figure><img src="../../../assets/opa/opa-all.png" alt="The OPA icon: four stacked layers."><figcaption>The comparison</figcaption></figure>
-</div>
-
-- **Three OPAs, five objects each**: an explorer, a report, slides, a repository and an overview page. With 15 objects in all, human verification was limited.
-- **An attribution table for each OPA** ([previous slide](#disclosure)) shows what was human generated, what was human reviewed and what was neither. Readers can weigh each piece accordingly.
-- **Two further tests** check the output:
-  - *Results the papers print*, rerun in each OPA: all match (BSZ `r bsz_checks$match` of `r bsz_checks$n`, JR `r jr_checks$match` of `r jr_checks$n`).
-  - *Estimates the papers do not print*, sent to the authors to run in their own models: `r bsz_settings` settings to the BSZ team, `r jr_settings` to the JR team.
 
 ---
 name: contents-2
