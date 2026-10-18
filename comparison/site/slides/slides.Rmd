@@ -894,41 +894,6 @@ cat("</table>")
 ]
 
 ---
-name: hoopes
-
-# The one published comparison
-
-.small[
-Jeffrey L. Hoopes (2026), ["Galle v Rauh: Comparing Two Revenue Estimates for California Billionaire Taxation"](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6428578), SSRN Working Paper 6428578, compares **earlier versions**: the February 2026
-GGSS expert report, on which the BSZ analysis builds, and the March 2026 version by Rauh, Jaros,
-Kearney, Doran and Cosso. His Figure 2 is a waterfall that prints no values, so his column is read
-off the chart. This OPA's bridge follows his order and ends at the September 2026 version's exact mean.
-]
-
-```{r tab-hoopes, results="asis"}
-lab <- k$hoopes$step_label[match(hz$step_id, k$hoopes$step_id)]
-keep <- !is.na(lab) | abs(hz$ours) > 1e-9
-lab[is.na(lab)] <- paste0("(no bar: ", hz$our_steps[is.na(lab)], ")")
-hm <- function(x, first) if (is.na(x)) "none" else money(x, 1, !first)
-cat('<table class="dt"><tr><th>Hoopes Figure 2 bar</th><th>Hoopes (read off the chart)</th><th>This OPA, his order</th></tr>')
-for (i in which(keep)) {
-  first <- hz$step_id[i] == "galle_estimate"
-  cat(sprintf('<tr><td>%s</td><td>%s</td><td>%s</td></tr>', esc(lab[i]), hm(hz$hoopes[i], first), hm(hz$ours[i], first)))
-}
-cat(sprintf('<tr class="tot"><td>Where the waterfall ends</td><td>%s</td><td>%s</td></tr>',
-            money(sum(hz$hoopes, na.rm = TRUE), 1), money(sum(hz$ours, na.rm = TRUE), 1)))
-cat("</table>")
-stopifnot(abs(sum(hz$ours, na.rm = TRUE) - eb$jr_model) < 1e-9)
-```
-
-.small[
-The residency bars agree. The income tax bars differ by `r usd(abs(hz$hoopes[hz$step_id == "income_tax_loss"] - hz$ours[hz$step_id == "income_tax_loss"]))`. The departures and behaviour bars differ because
-the versions differ: September counts seven departures on a grown base and adds the litigation
-weight; March used an elasticity response and ten "expanded" departures, which September does not.
-This project's own waterfall, on the September version, is [in the appendix](#waterfall).
-]
-
----
 name: next
 
 # What reproduces, and where to go next
@@ -1228,6 +1193,41 @@ Each bar moves one dial of the BSZ panel to its JR end, in the equation's order.
 shows `r eq_d_q` on their own. It adds up the four loss-box steps, `r eq_loss`, into one
 term, and the other inputs (W, a and the minor switch) into another. Only dropping the BSZ `r pct(sup$alpha, 0)` avoidance allowance raises the estimate,
 because the JR analysis applies none.
+]
+
+---
+name: hoopes
+
+# The one published comparison
+
+.small[
+Jeffrey L. Hoopes (2026), ["Galle v Rauh: Comparing Two Revenue Estimates for California Billionaire Taxation"](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6428578), SSRN Working Paper 6428578, compares **earlier versions**: the February 2026
+GGSS expert report, on which the BSZ analysis builds, and the March 2026 version by Rauh, Jaros,
+Kearney, Doran and Cosso. His Figure 2 is a waterfall that prints no values, so his column is read
+off the chart. This OPA's bridge follows his order and ends at the September 2026 version's exact mean.
+]
+
+```{r tab-hoopes, results="asis"}
+lab <- k$hoopes$step_label[match(hz$step_id, k$hoopes$step_id)]
+keep <- !is.na(lab) | abs(hz$ours) > 1e-9
+lab[is.na(lab)] <- paste0("(no bar: ", hz$our_steps[is.na(lab)], ")")
+hm <- function(x, first) if (is.na(x)) "none" else money(x, 1, !first)
+cat('<table class="dt"><tr><th>Hoopes Figure 2 bar</th><th>Hoopes (read off the chart)</th><th>This OPA, his order</th></tr>')
+for (i in which(keep)) {
+  first <- hz$step_id[i] == "galle_estimate"
+  cat(sprintf('<tr><td>%s</td><td>%s</td><td>%s</td></tr>', esc(lab[i]), hm(hz$hoopes[i], first), hm(hz$ours[i], first)))
+}
+cat(sprintf('<tr class="tot"><td>Where the waterfall ends</td><td>%s</td><td>%s</td></tr>',
+            money(sum(hz$hoopes, na.rm = TRUE), 1), money(sum(hz$ours, na.rm = TRUE), 1)))
+cat("</table>")
+stopifnot(abs(sum(hz$ours, na.rm = TRUE) - eb$jr_model) < 1e-9)
+```
+
+.small[
+The residency bars agree. The income tax bars differ by `r usd(abs(hz$hoopes[hz$step_id == "income_tax_loss"] - hz$ours[hz$step_id == "income_tax_loss"]))`. The departures and behaviour bars differ because
+the versions differ: September counts seven departures on a grown base and adds the litigation
+weight; March used an elasticity response and ten "expanded" departures, which September does not.
+This project's own waterfall, on the September version, is [the previous slide](#waterfall). [Back to the comparison OPA](#opa-comparison)
 ]
 
 ---
