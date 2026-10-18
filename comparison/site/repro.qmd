@@ -711,8 +711,10 @@ The tables show two answers:
   `r nrow(steps)` steps. The code computes this exactly, by estimating the model at every one
   of the `r format(2^nrow(steps), big.mark = ",")` subsets of switched inputs. The steps then
   add up to the total gap whatever order they are read in.
-- **One order**: a single sequence, the one Hoopes (2026) reads in (see
-  [below](#the-hoopes-comparison)).
+- **One order**: a single sequence, the order of a previous comparison.^[Hoopes, J. L. (2026),
+  ["Galle v Rauh: Comparing Two Revenue Estimates for California Billionaire Taxation"](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6428578),
+  SSRN Working Paper 6428578. [The appendix](#the-hoopes-comparison) sets its steps beside this
+  bridge.]
 
 ```{r}
 #| results: asis
@@ -776,7 +778,7 @@ Reading the (b) table: the three largest Shapley steps are
 top3b <- b_b[order(-abs(b_b$shapley)), ][1:3, ]
 cat(paste(sprintf("%s (%s)", tolower(top3b$title), usd(top3b$shapley, 1, TRUE)), collapse = "; "), ".", sep = "")
 ```
-The horizon is the largest step read in Hoopes's order
+The horizon is the largest step read in that one order
 (`r usd(b_b$sequential[b_b$step_id == "horizon"], 1, TRUE)`, switched last, when the loss is
 already JR-sized) but `r usd(b_b$shapley[b_b$step_id == "horizon"], 1, TRUE)` averaged over
 orders, because a perpetuity multiplies whatever annual loss the other inputs imply.
@@ -863,65 +865,6 @@ scroll(show(data.frame(
   `BSZ value and source` = paste0("<b>", vapply(tx, `[[`, "", "bsz"), "</b>. ", esc(vapply(tx, `[[`, "", "bsz_source"))),
   `JR value and source` = paste0("<b>", vapply(tx, `[[`, "", "rjkdc"), "</b>. ", esc(vapply(tx, `[[`, "", "rjkdc_source"))),
   check.names = FALSE)))
-```
-
-# The Hoopes comparison {#the-hoopes-comparison}
-
-Jeffrey Hoopes, "Galle v Rauh: Comparing Two Revenue Estimates for California Billionaire
-Taxation" (SSRN 6428578; SSRN is a preprint site), is the one published comparison of the two
-estimates. It compares their earlier versions: the February 2026 text of the GGSS expert
-report, on which the BSZ analysis builds, and the March 2026 version of the JR analysis. His Figure 2 (p.6) is a
-waterfall from the "Galle estimate" to "Rauh net fiscal effect". It
-prints no values, so his column below is read off the chart with
-`comparison/tools/digitize_hoopes_fig2.py`. The script fits the chart's dollar scale to its
-axis ticks, and the fitted scale misses a tick by at most
-`r usd(as.numeric(k$hoopes$tick_fit_max_resid[1]), 1)`. Beside his column is the bridge read
-in his order, ending at the JR analysis's September 2026 version, which postdates his note.
-The list below gives every difference between the two.
-
-```{r}
-#| results: asis
-twin_fold("the Hoopes comparison", "build_all")
-```
-
-```{r}
-#| results: asis
-hz <- ex$hoopes
-scroll(show(data.frame(
-  `Hoopes Figure 2 bar` = {lab <- k$hoopes$step_label[match(hz$step_id, k$hoopes$step_id)]; ifelse(is.na(lab), "(no bar)", lab)},
-  `Hoopes (read off the chart)` = ifelse(is.na(hz$hoopes), "none",
-    paste0(vapply(hz$hoopes, function(x) if (is.na(x)) "" else money(x, 1, TRUE), "") |>
-             replace(hz$step_id == "galle_estimate", money(hz$hoopes[hz$step_id == "galle_estimate"], 1)),
-           ifelse(is.na(hz$hoopes_uncertainty), "", paste0(" &plusmn; ", formatC(hz$hoopes_uncertainty, format = "f", digits = 1))))),
-  `This OPA, one order` = vapply(seq_along(hz$ours), function(i) { x <- hz$ours[i]
-    if (is.na(x)) "none" else money(x, if (abs(x) < 0.05) 4 else 1, hz$step_id[i] != "galle_estimate") }, ""),
-  `This OPA's steps` = esc(hz$our_steps), check.names = FALSE)))
-```
-
-This OPA's column follows Hoopes's construction. Its revenue rows are steps on output (a), starting
-from the BSZ wealth tax (`r usd(ea$bsz_model)`), and its last row adds the JR analysis's whole
-income tax loss. The "One order" column of the (b) table in [the order-free
-check](#order-free-check) reads the same order on the net fiscal effect, so its sizes differ.
-
-The "Galle estimate" bar is clipped by the chart's frame at
-`r usd(hz$hoopes[hz$step_id == "galle_estimate"], 0)`; its value is taken from the note's text
-(p.3), so the reading uncertainty printed with it is the digitizer's default for every bar,
-not a measurement.
-
-The note discloses two things. Hoopes states his priors: "To lay my cards on the table, I
-believe that the world is complicated, and that when possible, empirical analysis should be
-done in as detailed a way as possible" (p.2). He also thanks "David Gamage for encouraging me
-to read both of these analyses carefully and compare the two" (p.1). Gamage is a GGSS
-co-author.
-
-### Every difference
-
-```{r}
-#| results: asis
-# hoopes_differences() is in R/site.R; a dollar sign in markdown starts a formula, so escape it,
-# and a signed amount stays on one line
-cat(paste0("- ", gsub("$", "\\$", nobr_amounts(hoopes_differences(ex, k)), fixed = TRUE)), sep = "\n")
-cat("\n")
 ```
 
 # Every input, by origin {#every-input-by-origin}
@@ -1068,4 +1011,63 @@ document.querySelectorAll("details.twin > summary a.lang").forEach(function (a) 
   });
 });
 </script>
+```
+
+# Appendix: a previous comparison, Hoopes (2026) {#the-hoopes-comparison}
+
+Jeffrey Hoopes, "Galle v Rauh: Comparing Two Revenue Estimates for California Billionaire
+Taxation" (SSRN 6428578; SSRN is a preprint site), is a previous comparison of the two
+estimates. It compares their earlier versions: the February 2026 text of the GGSS expert
+report, on which the BSZ analysis builds, and the March 2026 version of the JR analysis. His Figure 2 (p.6) is a
+waterfall from the "Galle estimate" to "Rauh net fiscal effect". It
+prints no values, so his column below is read off the chart with
+`comparison/tools/digitize_hoopes_fig2.py`. The script fits the chart's dollar scale to its
+axis ticks, and the fitted scale misses a tick by at most
+`r usd(as.numeric(k$hoopes$tick_fit_max_resid[1]), 1)`. Beside his column is the bridge read
+in his order, ending at the JR analysis's September 2026 version, which postdates his note.
+The list below gives every difference between the two.
+
+```{r}
+#| results: asis
+twin_fold("the Hoopes comparison", "build_all")
+```
+
+```{r}
+#| results: asis
+hz <- ex$hoopes
+scroll(show(data.frame(
+  `Hoopes Figure 2 bar` = {lab <- k$hoopes$step_label[match(hz$step_id, k$hoopes$step_id)]; ifelse(is.na(lab), "(no bar)", lab)},
+  `Hoopes (read off the chart)` = ifelse(is.na(hz$hoopes), "none",
+    paste0(vapply(hz$hoopes, function(x) if (is.na(x)) "" else money(x, 1, TRUE), "") |>
+             replace(hz$step_id == "galle_estimate", money(hz$hoopes[hz$step_id == "galle_estimate"], 1)),
+           ifelse(is.na(hz$hoopes_uncertainty), "", paste0(" &plusmn; ", formatC(hz$hoopes_uncertainty, format = "f", digits = 1))))),
+  `This OPA, one order` = vapply(seq_along(hz$ours), function(i) { x <- hz$ours[i]
+    if (is.na(x)) "none" else money(x, if (abs(x) < 0.05) 4 else 1, hz$step_id[i] != "galle_estimate") }, ""),
+  `This OPA's steps` = esc(hz$our_steps), check.names = FALSE)))
+```
+
+This OPA's column follows Hoopes's construction. Its revenue rows are steps on output (a), starting
+from the BSZ wealth tax (`r usd(ea$bsz_model)`), and its last row adds the JR analysis's whole
+income tax loss. The "One order" column of the (b) table in [the order-free
+check](#order-free-check) reads the same order on the net fiscal effect, so its sizes differ.
+
+The "Galle estimate" bar is clipped by the chart's frame at
+`r usd(hz$hoopes[hz$step_id == "galle_estimate"], 0)`; its value is taken from the note's text
+(p.3), so the reading uncertainty printed with it is the digitizer's default for every bar,
+not a measurement.
+
+The note discloses two things. Hoopes states his priors: "To lay my cards on the table, I
+believe that the world is complicated, and that when possible, empirical analysis should be
+done in as detailed a way as possible" (p.2). He also thanks "David Gamage for encouraging me
+to read both of these analyses carefully and compare the two" (p.1). Gamage is a GGSS
+co-author.
+
+### Every difference
+
+```{r}
+#| results: asis
+# hoopes_differences() is in R/site.R; a dollar sign in markdown starts a formula, so escape it,
+# and a signed amount stays on one line
+cat(paste0("- ", gsub("$", "\\$", nobr_amounts(hoopes_differences(ex, k)), fixed = TRUE)), sep = "\n")
+cat("\n")
 ```

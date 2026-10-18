@@ -266,16 +266,6 @@
     .cards { grid-template-columns: 1fr; }
     .card-subgrid { grid-template-columns: 1fr; }
   }
-  /* The two-panel comparison in the last fold: the original analysis beside this OPA. */
-  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 18px 0 4px; }
-  .compare figure {
-    margin: 0; padding: 16px 18px 14px; border: 1px solid var(--rule); border-radius: 10px;
-    background: var(--panel); color: var(--ink-3);
-  }
-  .compare svg { width: 100%; max-width: 300px; height: auto; display: block; margin: 6px auto 0; }
-  .compare figcaption { font-size: 14px; color: var(--ink-2); margin-top: 10px; line-height: 1.5; }
-  .compare figcaption strong { color: var(--ink); font-weight: 600; }
-  @media (max-width: 560px) { .compare { grid-template-columns: 1fr; } }
 </style>
 <link rel="stylesheet" href="assets/paper.css">
 </head>
@@ -377,8 +367,8 @@
         <div class="card-subgrid">
           <a class="subcard" href="comparison/site/repro.html">
             <h3>The reproduction report &rarr;</h3>
-            <p>The common output, both estimates derived on it, the bridge step by step and the
-            Hoopes comparison, with R and Python code in folds.</p>
+            <p>The common output, both estimates derived on it and the bridge step by step, with R
+            and Python code in folds.</p>
           </a>
           <a class="subcard" href="comparison/site/slides/slides.html">
             <h3>The slides &rarr;</h3>
@@ -479,54 +469,17 @@ original authors have not reviewed it.</p>
   </div>
 </details>
 
-<details class="fold" id="difference">
-  <summary><h2 id="hoopes">This OPA and the Hoopes comparison <a class="fold-link" href="#difference" aria-label="Link to this section">#</a></h2> <span class="teaser">the one published comparison, and what this OPA adds</span></summary>
-  <div class="fold-body">
-<p>Jeffrey Hoopes (SSRN 6428578, 2026) is the one published comparison of the two estimates. It
-   compares earlier versions: the February 2026 GGSS expert report (Galle, Gamage, Saez and
-   Shanske), on which the BSZ analysis builds, and the March 2026 JR analysis. Its Figure 2
-   prints no values and comes with no code or data, so its steps cannot be recomputed. This OPA
-   uses the latest versions, publishes the code, and bridges the two estimates step by step (a
-   sequence of steps from one main estimate to the other, one input at a time). The
-   <a href="comparison/site/repro.html#the-hoopes-comparison">report</a> sets his bars beside this
-   bridge, difference by difference.</p>
-
-<div class="compare">
-  <figure>
-    <span class="kicker">The Hoopes comparison</span>
-    <svg viewBox="0 0 300 290" role="img" aria-label="The Hoopes comparison: a solid output layer, a details layer apart from it whose front half is solid and whose back half is a dashed outline, and an empty dashed outline where a materials layer would be" xmlns="http://www.w3.org/2000/svg"><polygon points="92,170 184,216 184,242 92,288 0,242 0,216" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.55"/><polyline points="0,216 92,262 184,216" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.55"/><polygon points="116,138 208,92 254,115 162,161 162,187 116,164" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.55"/><polyline points="116,138 162,161" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.55"/><polygon points="162,161 208,184 208,210 162,187" fill="#1581ab"/><polygon points="208,184 300,138 300,164 208,210" fill="#1582b8"/><polygon points="162,161 254,115 300,138 208,184" fill="#1484c5"/><text transform="matrix(0.894 -0.447 0 1 254.0 179.7)" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-weight="600" font-size="11" letter-spacing="1.5" fill="#fff">DETAILS</text><polygon points="0,52 92,98 92,124 0,78" fill="#da9516"/><polygon points="92,98 184,52 184,78 92,124" fill="#eca516"/><polygon points="92,6 184,52 92,98 0,52" fill="#fcb415"/><text transform="matrix(0.894 -0.447 0 1 138.0 93.7)" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-weight="600" font-size="11" letter-spacing="1.5" fill="#fff">OUTPUT</text></svg>
-    <figcaption><strong>An output, part of the details, no materials.</strong> The charts give
-      the result, and the text explains the methods in words. The step sizes are not printed (the
-      dashed half), and with no code a reader cannot get from the text to the bars.</figcaption>
-  </figure>
-  <figure>
-    <span class="kicker">This OPA</span>
-    <svg viewBox="0 0 300 290" role="img" aria-label="This OPA: output, assumptions, details and materials stacked tightly in one vertical plane; the output and assumptions layers together make the open output" xmlns="http://www.w3.org/2000/svg"><polygon points="58,181 150,227 150,253 58,207" fill="#002547"/><polygon points="150,227 242,181 242,207 150,253" fill="#003262"/><polygon points="150,135 242,181 150,227 58,181" fill="#0b4a7c"/><text transform="matrix(0.894 -0.447 0 1 196.0 222.7)" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-weight="600" font-size="10" letter-spacing="1.5" fill="#fff">MATERIALS</text><polygon points="58,150 150,196 150,222 58,176" fill="#1581ab"/><polygon points="150,196 242,150 242,176 150,222" fill="#1582b8"/><polygon points="150,104 242,150 150,196 58,150" fill="#1484c5"/><text transform="matrix(0.894 -0.447 0 1 196.0 191.7)" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-weight="600" font-size="11" letter-spacing="1.5" fill="#fff">DETAILS</text><polygon points="58,110 150,156 150,182 58,136" fill="#c97f0a"/><polygon points="150,156 242,110 242,136 150,182" fill="#e08e0b"/><polygon points="150,64 242,110 150,156 58,110" fill="#f39c12"/><text transform="matrix(0.894 -0.447 0 1 196.0 151.7)" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-weight="600" font-size="9" letter-spacing="1.2" fill="#fff">ASSUMPTIONS</text><polygon points="58,80 150,126 150,152 58,106" fill="#da9516"/><polygon points="150,126 242,80 242,106 150,152" fill="#eca516"/><polygon points="150,34 242,80 150,126 58,80" fill="#fcb415"/><text transform="matrix(0.894 -0.447 0 1 196.0 121.7)" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-weight="600" font-size="11" letter-spacing="1.5" fill="#fff">OUTPUT</text></svg>
-    <figcaption><strong>Three layers, tightly connected.</strong> The open output has two parts, the output and the assumptions that produce it, and the explorer lets a reader move the assumptions. Both estimates and every bridge
-      step, here and in the <a href="comparison/site/explorer/">explorer</a>, are computed by the R code in the
-      <a href="https://github.com/fhoces/opa-prop40/tree/main/comparison">repository</a>, with a
-      Python twin. The <a href="comparison/site/repro.html">report</a> derives each step, and the
-      test suite checks that each step is the change from moving one dial, in R and in the browser
-      (the steps add up to the gap by construction).</figcaption>
-  </figure>
-</div>
-
-  </div>
-</details>
-
 <details class="fold" id="document-versions">
   <summary><h2>Which document versions are used <a class="fold-link" href="#document-versions" aria-label="Link to this section">#</a></h2> <span class="teaser">the dated version of each document the numbers come from</span></summary>
   <div class="fold-body">
 <p>This table gives the dated version of each document that the numbers on this site come
-from. The versions matter because the Hoopes comparison, described above, uses earlier
-versions than this site. So the two do not line up step for step.</p>
+from.<sup><a href="#fn2" id="fnref2">2</a></sup></p>
 <div class="table-scroll">
 <table>
   <thead><tr><th>Document</th><th>Date</th><th>Base it uses</th></tr></thead>
   <tbody>
     <tr><td>Rauh et al., SSRN 6340778</td><td>17 Mar 2026</td><td>212 billionaires, $1,894.8B, 2025 Forbes list (p.5)</td></tr>
     <tr><td>Galle, Gamage, Saez, Shanske, response to Rauh</td><td>17 Mar 2026</td><td>answers Rauh's 4 Mar version, not the 17 Mar version this project reproduces as the JR first version</td></tr>
-    <tr><td>Hoopes, SSRN 6428578</td><td>2026 (uses the February GGSS text)</td><td>213 billionaires, $2,182B (p.3 fn.1)</td></tr>
     <tr><td>GGSS expert report</td><td>updated 20 Jul 2026</td><td>250 billionaires, $2,307B at 1 Jul 2026, non-citizens included, Ellison excluded</td></tr>
     <tr><td>Boll, Saez, Zucman, NBER WP 35218</td><td>Aug 2026 revision</td><td>same 1 Jul 2026 base; Table 5 adds missing billionaires and leaver scenarios</td></tr>
     <tr><td>Jaros and Rauh, NBER c15504</td><td>Sep 2026</td><td>Rauh's base grown 7% to 31 Dec 2026, seven departures, litigation weight</td></tr>
@@ -576,6 +529,12 @@ observed.</p>
     tax from asset sales, minus income tax lost to leavers. BSZ's own headline is the wealth tax
     alone. The JR number is the authors' mean net present value in perpetuity. The paper prints −$38.9B, the average of one seeded run of 100,000 draws. The exact average of the same formula is −$38.98B, used throughout this page (<a href="comparison/site/repro.html#the-main-estimate">report</a>, <a href="rjkdc-analysis/site/repro.html#step-npv">Step 6 of the JR analysis's report</a>). A seeded run starts the random draws from a fixed number, so it gives the same draws every time. The
     <a href="comparison/site/repro.html#the-main-estimate">report</a> gives the details.</p>
+  <p class="fn" id="fn2"><sup>2</sup> A previous comparison, Hoopes, J. L. (2026), <a
+    href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6428578">"Galle v Rauh: Comparing Two
+    Revenue Estimates for California Billionaire Taxation"</a>, SSRN Working Paper 6428578, uses
+    earlier versions of both analyses. The report's
+    <a href="comparison/site/repro.html#the-hoopes-comparison">appendix</a> sets its steps beside
+    this OPA's bridge.</p>
 </section>
 
 <footer>
@@ -588,7 +547,7 @@ observed.</p>
 
 </div>
 <script>
-  // A link into a folded section (index.html#hoopes, or an anchor inside one) opens it.
+  // A link into a folded section (index.html#differences, or an anchor inside one) opens it.
   // The bridge chart now lives in the report: an old link to it here (index.html#the-bridge)
   // goes to the report's bridge section, and an old deep link into the explorer's settings
   // (index.html#out=b&method=sequential&h=common_20) goes to the explorer.
@@ -604,7 +563,9 @@ observed.</p>
     // folds renamed on 2026-10-15: an old link still opens the right one (two-analyses is now
     // the id of the two analysis boxes, and the two full analyses are those boxes too)
     var OLD = { "vintage-gap": "document-versions", "disputed-inputs": "differences",
-                "full-analyses": "two-analyses" };
+                "full-analyses": "two-analyses",
+                // the Hoopes fold, removed 2026-10-18: its citation is now footnote 2, on the versions fold
+                "difference": "document-versions", "hoopes": "document-versions" };
     function alias(id) { return OLD[id] || id; }
     function reveal(id) {
       if (!id) return;

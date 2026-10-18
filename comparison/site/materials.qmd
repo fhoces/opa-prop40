@@ -256,7 +256,7 @@ The full crosswalk of disputed inputs, with every page reference checked against
 - **Two March disputes are closed in the BSZ analysis by August**: Larry Ellison's exclusion
   and the non-US-citizen residents (rows 7 and 8).
 - **One Hoopes bar could not be traced.** His confirmed-departures bar matches no number in
-  the March 2026 version of the JR analysis (see the [report's Hoopes section](repro.html#the-hoopes-comparison)).
+  the March 2026 version of the JR analysis (see the [report's appendix](repro.html#the-hoopes-comparison)).
 
 ::: {.site-nav}
 Prop 40 comparison:

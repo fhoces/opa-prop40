@@ -84,8 +84,9 @@ and_syms <- function(x) paste0(paste(sprintf("*%s*", head(x, -1)), collapse = ",
 eq_d_q <- and_syms(dp$symbol[et$main]); eq_loss <- and_syms(dp$symbol[et$loss])
 
 # The two figures (the original analysis, and this OPA) of an overview page's "Difference" section,
-# read from the built page so the slides always show what the site shows.
-compare_figs <- function(page) {
+# read from the built page so the slides always show what the site shows. only = 2 draws this
+# OPA's figure alone (the comparison card: it has no original analysis to set beside it).
+compare_figs <- function(page, only = NULL) {
   h <- paste(readLines(file.path(root, page), warn = FALSE), collapse = "\n")
   blk <- regmatches(h, regexpr('(?s)<div class="compare">.*?</div>\\s*\n', h, perl = TRUE))
   figs <- regmatches(blk, gregexpr('(?s)<figure>.*?</figure>', blk, perl = TRUE))[[1]]
@@ -95,6 +96,7 @@ compare_figs <- function(page) {
     s <- regmatches(f, regexpr('(?s)<svg.*?</svg>', f, perl = TRUE))
     paste0('<div class="cmp-fig"><span class="cmp-kicker">', k, '</span>', gsub("\n\\s*", " ", s), '</div>')
   }
+  if (!is.null(only)) return(cat('<div class="cmp cmp-one">', one(figs[only]), '</div>', sep = ""))
   cat('<div class="cmp">', one(figs[1]), '<span class="cmp-arrow">&rarr;</span>', one(figs[2]), '</div>', sep = "")
 }
 
@@ -357,6 +359,8 @@ class: big-bullets
 .cmp-fig svg { width: 100%; height: auto; }
 .cmp-kicker { display: block; font-size: 70%; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: #666; margin-bottom: 4px; }
 .cmp-arrow { font-size: 160%; color: #999; }
+/* one figure alone (the comparison card): the size of one of a pair */
+.cmp-one .cmp-fig { flex: 0 1 50%; margin: 0 auto; }
 /* disclosure: the overview's credit table at slide size. */
 .ai-badge.inline { font-size: 0.72em; margin-left: 0.1em; vertical-align: 0.05em; }
 /* pseudo-eq: the four terms, one slide each. */
@@ -626,11 +630,9 @@ class: opa-card
 # The comparison OPA
 
 .pull-left[
-The comparison puts both analyses on one common output, the net fiscal effect (the wealth tax, plus income tax from asset sales, minus the present value of income tax lost), and moves from one main estimate to the other one disputed input at a time. Its explorer lets a reader set each input to either analysis's value.
+The comparison puts both analyses on one common output, the net fiscal effect (the wealth tax, plus income tax from asset sales, minus the present value of income tax lost), and moves from one main estimate to the other one disputed input at a time.<sup>1</sup> Its explorer lets a reader set each input to either analysis's value.
 
 **What reproduces.** Both main estimates are rebuilt on the common output from the two analyses' exported files, `r usd(eb$bsz_model)` and `r usd(rj_main)`. Each step of the bridge is the change from moving one explorer dial, in R and in the browser (the steps add up to the gap by construction). The R and Python versions agree.
-
-**A previous comparison.** Jeffrey L. Hoopes (2026), ["Galle v Rauh: Comparing Two Revenue Estimates for California Billionaire Taxation"](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6428578), SSRN Working Paper 6428578, compares earlier versions of the two analyses: the February 2026 GGSS expert report, on which the BSZ analysis builds, and the JR analysis's March 2026 version. He draws the gap as a waterfall chart. This OPA reruns his steps [in the appendix](#hoopes), and its own waterfall is [there too](#waterfall).
 
 [The comparison overview](../../../index.html)
 
@@ -639,9 +641,12 @@ The comparison puts both analyses on one common output, the net fiscal effect (t
 
 .pull-right[
 ```{r cmp-comparison, results="asis"}
-compare_figs("index.html")
+# the comparison's overview has no "Difference" figures; its layers are the same as the BSZ OPA's
+compare_figs("bsz-analysis/site/index.html", only = 2)
 ```
 ]
+
+.footnote.beside[<sup>1</sup> A previous comparison, Hoopes, J. L. (2026), ["Galle v Rauh: Comparing Two Revenue Estimates for California Billionaire Taxation"](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6428578), SSRN Working Paper 6428578, uses earlier versions of both analyses. [The appendix](#hoopes) sets its steps beside this bridge.]
 
 
 ---
@@ -1200,7 +1205,7 @@ because the JR analysis applies none.
 ---
 name: hoopes
 
-# The one published comparison
+# A previous comparison: Hoopes (2026)
 
 .small[
 Jeffrey L. Hoopes (2026), ["Galle v Rauh: Comparing Two Revenue Estimates for California Billionaire Taxation"](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6428578), SSRN Working Paper 6428578, compares **earlier versions**: the February 2026

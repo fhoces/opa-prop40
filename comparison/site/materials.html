@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-10-17">
+<meta name="dcterms.date" content="2026-10-18">
 
 <title>Prop 40, the comparison: the materials</title>
 <style>
@@ -2544,7 +2544,7 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 17, 2026</p>
+      <p class="date">October 18, 2026</p>
     </div>
   </div>
   
@@ -2691,7 +2691,7 @@ skipped
 31
 </td>
 <td style="text-align:right;">
-811
+863
 </td>
 <td style="text-align:right;">
 0
@@ -2725,7 +2725,7 @@ skipped
 62
 </td>
 <td style="text-align:right;">
-1122
+1174
 </td>
 <td style="text-align:right;">
 0
@@ -2737,7 +2737,7 @@ skipped
 </tbody>
 </table>
 </div>
-<p>Run while this page was rendered: <strong>1122 expectations passed, 0 failed</strong>, in 62 test blocks. The files check:</p>
+<p>Run while this page was rendered: <strong>1174 expectations passed, 0 failed</strong>, in 62 test blocks. The files check:</p>
 <ul>
 <li><code>test-endpoints.R</code>: each end of the bridge against the number its authors print (BSZ Table 5 row 1, the NBER mean NPV; NBER is the National Bureau of Economic Research, which circulates working papers), plus the earlier figures the code still checks: the headline of GGSS (the Galle, Gamage, Saez and Shanske expert report of July 2026, by some of the experts who drafted the initiative, GGSS p.1), behind the BSZ analysis, and the March 2026 version of the JR analysis. The bridge itself ends at the September 2026 version.</li>
 <li><code>test-shapley.R</code>: the Shapley steps sum exactly to the gap in every setting, and match a brute-force average over orders (a Shapley value: a step’s effect averaged over every order the inputs could be switched in, so the steps add up to the gap).</li>
@@ -2803,7 +2803,7 @@ every number the page shows, written to export/r/*.csv
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/R/site.R"><code>R/site.R</code></a>
 </td>
 <td style="text-align:right;">
-1211
+1174
 </td>
 <td style="text-align:left;">
 renders the overview page (index.html), the explorer (site/explorer/index.html) and their data file from site/index.template.html and site/explorer.template.html
@@ -2858,7 +2858,7 @@ score_common() and the slider rule ported to JavaScript; the explorer’s panels
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/site/repro.qmd"><code>site/repro.qmd</code></a>
 </td>
 <td style="text-align:right;">
-1071
+1073
 </td>
 <td style="text-align:left;">
 the reproduction report
@@ -2869,7 +2869,7 @@ the reproduction report
 <a href="https://github.com/fhoces/opa-prop40/blob/main/comparison/site/slides/slides.Rmd"><code>site/slides/slides.Rmd</code></a>
 </td>
 <td style="text-align:right;">
-1466
+1499
 </td>
 <td style="text-align:left;">
 the slide deck: what is in the report and where the main differences come from (xaringan; every number read from export/r/)
@@ -3149,7 +3149,7 @@ public-government-document (not committed per repo policy)
 <li><strong>The printed NPV is one run, not the expectation.</strong> The exact expectation of the NBER Monte Carlo is −$38.98B against a printed −$38.9B. The bridge’s JR end is that expectation, with the authors’ random rate replaced by the one rate worth the same, 2.73% (<a href="repro.html#the-discount-rate">the report</a>). The JR pipeline reproduces the seeded run as −$38.886B. The comparison’s pages use the exact expectation as the JR main estimate.</li>
 <li><strong>Both readings of the March version’s discount factor are right.</strong> The GGSS response says the loss is magnified by a factor 67 (1/1.5%, Resp p.3); BSZ say 33 (1/3%, PDF p.22 fn.29). The first is the rate the JR text anchors its range of r − g on, the second the mean rate of its Monte Carlo (<code>DISPUTES.md</code>, row 2). Averaged over the draw the perpetuity factor is ln(3)/0.03 = 36.6, the value of one rate of 2.73%, the JR end of the comparison’s rate dial (row 10).</li>
 <li><strong>Two March disputes are closed in the BSZ analysis by August</strong>: Larry Ellison’s exclusion and the non-US-citizen residents (rows 7 and 8).</li>
-<li><strong>One Hoopes bar could not be traced.</strong> His confirmed-departures bar matches no number in the March 2026 version of the JR analysis (see the <a href="repro.html#the-hoopes-comparison">report’s Hoopes section</a>).</li>
+<li><strong>One Hoopes bar could not be traced.</strong> His confirmed-departures bar matches no number in the March 2026 version of the JR analysis (see the <a href="repro.html#the-hoopes-comparison">report’s appendix</a>).</li>
 </ul>
 <div class="site-nav">
 <p>Prop 40 comparison: <a href="../../index.html">Overview</a> · Open Output: <a href="explorer/index.html">Explorer</a> · Open Analysis: <a href="repro.html">Report</a> and <a href="slides/slides.html">Slides</a> · <a href="https://github.com/fhoces/opa-prop40/tree/main/comparison">Open Materials</a> (this page is its guide)</p>
