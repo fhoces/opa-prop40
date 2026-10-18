@@ -345,6 +345,12 @@ class: big-bullets
 .opa-label { position: absolute; transform: translateX(-50%); pointer-events: auto; white-space: nowrap;
   font-size: 0.8em; font-weight: 600; }
 .opa-label-left { transform: translateY(-50%); }
+/* The summary slide: the three-OPA figure, centred, with a link label on each OPA. */
+.go-explore { text-align: center; font-size: 130%; font-weight: 700; margin-top: -0.4em; }
+.summary-fig { position: relative; width: fit-content; margin: 0 auto; }
+.summary-fig img { height: 340px; display: block; }
+.sum-label { position: absolute; transform: translateY(-50%); margin-right: 0.6em; white-space: nowrap; font-size: 0.85em; font-weight: 600; }
+.summary-text { text-align: center; max-width: 80%; margin: 0.6em auto 0; }
 /* contents: the deck's table of contents; parts already covered are greyed. */
 .toc { font-size: 130%; margin-top: 1.2em; }
 .toc li { margin-bottom: 0.7em; }
@@ -896,41 +902,13 @@ cat("</table>")
 ---
 name: next
 
-# What reproduces, and where to go next
+# Summary
 
-.pull-left[
+<div class="go-explore">Go and explore</div>
 
-**What reproduces**
+<div class="summary-fig"><img src="../../../assets/figures/evidence-to-policy-competing-from-analysis-opa-third.svg" alt="The two analyses, each an Open Policy Analysis, feed a third Open Policy Analysis, the comparison, which informs both decision makers."><a class="sum-label" style="right:97%; top:15%;" href="../../../bsz-analysis/site/">The BSZ analysis</a><a class="sum-label" style="right:97%; top:87%;" href="../../../rjkdc-analysis/site/">The JR analysis</a><a class="sum-label" style="right:77%; top:50%;" href="../../../index.html">The comparison</a></div>
 
-.small[
-- At the BSZ inputs the function returns Table 5 row 1, `r usd(ea$bsz_model, 3)` (printed `r usd(bsz_print, 0)`).
-- At the JR inputs, with the rate at `r r_jr`, it returns the exact average of the authors' Monte Carlo,
-  `r usd(eb$jr_own, 3)` (printed `r usd(rj_print)` from one seeded run).
-- Each step on the dial path is the change from moving one dial, in R and in the browser. The steps add up to the gap by construction. The report's order-free check, each input's Shapley value (its step averaged over every order the inputs could be switched in), adds up too, and a test checks it against a brute-force average over orders.
-- A Python twin writes the same tables. The largest difference from R is `r if (py_ok) formatC(maxdiff, format = "e", digits = 1) else "not checked"`; the tests require 1e-9.
-- **Not reproduced here:** the comparison takes each analysis's exported inputs and outputs as
-  given. Each analysis's own reproduction is on its overview page.
-]
-
-]
-
-.pull-right[
-
-**Where to go next**
-
-.small[
-- [The explorer](../explorer/): move each disputed input from one analysis's value to the other's
-- [The report](../repro.html): every step in a table, with the R and Python code in folds
-- [The materials page](../materials.html) and [the repository](https://github.com/fhoces/opa-prop40/tree/main/comparison)
-- [The comparison overview](../../../index.html)
-- [The BSZ analysis](../../../bsz-analysis/site/) and [the JR analysis](../../../rjkdc-analysis/site/), each with its own deck
-]
-
-]
-
-.blue-box[
-The bridge shows where the `r usd(gap_b, 0)` gap comes from. It cannot say which value of each input is right.
-]
+<div class="summary-text">The comparison does not pick the most credible values. It lays out the key empirical quantities behind the gap, so experts and voters can inspect them and <a href="../survey/">record their views</a> on which are most credible today.</div>
 
 ---
 name: appendix

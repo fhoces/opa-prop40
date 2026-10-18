@@ -641,6 +641,12 @@ class: big-bullets
 .opa-label { position: absolute; transform: translateX(-50%); pointer-events: auto; white-space: nowrap;
   font-size: 0.8em; font-weight: 600; }
 .opa-label-left { transform: translateY(-50%); }
+/* The summary slide: the three-OPA figure, centred, with a link label on each OPA. */
+.go-explore { text-align: center; font-size: 130%; font-weight: 700; margin-top: -0.4em; }
+.summary-fig { position: relative; width: fit-content; margin: 0 auto; }
+.summary-fig img { height: 340px; display: block; }
+.sum-label { position: absolute; transform: translateY(-50%); margin-right: 0.6em; white-space: nowrap; font-size: 0.85em; font-weight: 600; }
+.summary-text { text-align: center; max-width: 80%; margin: 0.6em auto 0; }
 /* contents: the deck&#39;s table of contents; parts already covered are greyed. */
 .toc { font-size: 130%; margin-top: 1.2em; }
 .toc li { margin-bottom: 0.7em; }
@@ -1085,41 +1091,13 @@ class: tight-table
 ---
 name: next
 
-# What reproduces, and where to go next
+# Summary
 
-.pull-left[
+&lt;div class=&quot;go-explore&quot;&gt;Go and explore&lt;/div&gt;
 
-**What reproduces**
+&lt;div class=&quot;summary-fig&quot;&gt;&lt;img src=&quot;../../../assets/figures/evidence-to-policy-competing-from-analysis-opa-third.svg&quot; alt=&quot;The two analyses, each an Open Policy Analysis, feed a third Open Policy Analysis, the comparison, which informs both decision makers.&quot;&gt;&lt;a class=&quot;sum-label&quot; style=&quot;right:97%; top:15%;&quot; href=&quot;../../../bsz-analysis/site/&quot;&gt;The BSZ analysis&lt;/a&gt;&lt;a class=&quot;sum-label&quot; style=&quot;right:97%; top:87%;&quot; href=&quot;../../../rjkdc-analysis/site/&quot;&gt;The JR analysis&lt;/a&gt;&lt;a class=&quot;sum-label&quot; style=&quot;right:77%; top:50%;&quot; href=&quot;../../../index.html&quot;&gt;The comparison&lt;/a&gt;&lt;/div&gt;
 
-.small[
-- At the BSZ inputs the function returns Table 5 row 1, &lt;span class=&quot;nb&quot;&gt;$103.815B&lt;/span&gt; (printed &lt;span class=&quot;nb&quot;&gt;$104B&lt;/span&gt;).
-- At the JR inputs, with the rate at 2.73%, it returns the exact average of the authors&#39; Monte Carlo,
-  &lt;span class=&quot;nb&quot;&gt;−$38.980B&lt;/span&gt; (printed &lt;span class=&quot;nb&quot;&gt;−$38.9B&lt;/span&gt; from one seeded run).
-- Each step on the dial path is the change from moving one dial, in R and in the browser. The steps add up to the gap by construction. The report&#39;s order-free check, each input&#39;s Shapley value (its step averaged over every order the inputs could be switched in), adds up too, and a test checks it against a brute-force average over orders.
-- A Python twin writes the same tables. The largest difference from R is 5.0e-13; the tests require 1e-9.
-- **Not reproduced here:** the comparison takes each analysis&#39;s exported inputs and outputs as
-  given. Each analysis&#39;s own reproduction is on its overview page.
-]
-
-]
-
-.pull-right[
-
-**Where to go next**
-
-.small[
-- [The explorer](../explorer/): move each disputed input from one analysis&#39;s value to the other&#39;s
-- [The report](../repro.html): every step in a table, with the R and Python code in folds
-- [The materials page](../materials.html) and [the repository](https://github.com/fhoces/opa-prop40/tree/main/comparison)
-- [The comparison overview](../../../index.html)
-- [The BSZ analysis](../../../bsz-analysis/site/) and [the JR analysis](../../../rjkdc-analysis/site/), each with its own deck
-]
-
-]
-
-.blue-box[
-The bridge shows where the &lt;span class=&quot;nb&quot;&gt;$146B&lt;/span&gt; gap comes from. It cannot say which value of each input is right.
-]
+&lt;div class=&quot;summary-text&quot;&gt;The comparison does not pick the most credible values. It lays out the key empirical quantities behind the gap, so experts and voters can inspect them and &lt;a href=&quot;../survey/&quot;&gt;record their views&lt;/a&gt; on which are most credible today.&lt;/div&gt;
 
 ---
 name: appendix
