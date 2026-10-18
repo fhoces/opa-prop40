@@ -231,15 +231,15 @@ name: why-opa-3
 # How do we move from many analyses to one?
 
 .pull-left[
-.center[<img src="../../../assets/figures/evidence-to-policy-competing-from-analysis.svg" style="width:96%;" alt="Two competing policy analyses of the same policy: one shows only gains and leads Decision Maker 1 to support it; the other shows only losses and leads Decision Maker 2 to oppose it.">]
+Each decision maker picks the analysis that fits. We see which facts they chose, but we learn nothing about what they value.
 
-[Text for the left figure, to come]
+.center[<img src="../../../assets/figures/evidence-to-policy-competing-from-analysis.svg" style="width:85%;" alt="Two competing policy analyses of the same policy: one shows only gains and leads Decision Maker 1 to support it; the other shows only losses and leads Decision Maker 2 to oppose it.">]
 ]
 
 .pull-right[
-.center[<img src="../../../assets/figures/evidence-to-policy-from-analysis.svg" style="width:96%;" alt="One policy analysis leads one decision maker to support a policy and another to oppose it.">]
+One analysis gives every decision maker the same starting facts. Their choices then show what each of them truly values.
 
-[Text for the right figure, to come]
+.center[<img src="../../../assets/figures/evidence-to-policy-from-analysis.svg" style="width:85%;" alt="One policy analysis leads one decision maker to support a policy and another to oppose it.">]
 ]
 
 ---
