@@ -670,12 +670,13 @@ render_site <- function(root = comparison_root(),
   tok$quantity_table_root <- q_table("comparison/site/repro.html")
   # The explorer's section shows no table (author request 2026-10-15): the subtitle, then one large
   # button to the survey. The survey is an experiment (comparison/survey/PRE-ANALYSIS-PLAN.md,
-  # 4.2 and 4.3): six forms, a control and a treatment form for each of three entry points,
+  # 4.2 and 4.3): four forms, a control and a treatment form for each of two entry points,
   # listed in comparison/data/survey-links.csv. Each survey link carries its entry point's pair
   # in data-links (control first), and the page script draws the arm at the click
   # (survey_draw_js()). This button, on the explorer and the overview, and the overview's
-  # smaller one use the explorer pair (author decision 2026-10-17); the explorer's landing panel
-  # uses the landing pair; the share page the share pair. A survey link opened without a click
+  # smaller one use the explorer pair (author decision 2026-10-17); the share page uses the
+  # share pair. The explorer's landing panel was removed (author decision 2026-10-17), so the
+  # explorer opens straight on the results. A survey link opened without a click
   # (no JavaScript, a long press, "Open in new tab") goes to the share page, which draws in its
   # own stratum, rather than to one form, which would skip the draw. A button whose pair has no
   # links yet is shown disabled.
@@ -705,25 +706,6 @@ render_site <- function(root = comparison_root(),
     if (has_share) sprintf('<button type="button" class="q-copy q-copy-mini" data-url="%s">Share the survey: copy link</button>', SURVEY_SHARE_URL) else "",
     '<span class="q-for">The survey is primarily for economists and policy analysts.</span>',
     '</p>') else ""
-  # The landing panel (feedback/005-2026-10-16-explorer-ux/03-landing-survey-plan.md, B3, text as
-  # revised 2026-10-17; plan 4.3), on the comparison explorer only: a dialog shown once per
-  # browser before the results, the page blurred behind it, the headline numbers left in place.
-  # It is the body's first element, and the head script (survey_landing_head()) sets
-  # html.has-landing before the first paint unless this browser dismissed it before, so a
-  # returning visitor sees no flash. The survey script in the template dismisses it. Like every
-  # text a respondent meets before the form, it names neither analysis. No panel, and no head
-  # script, while the landing pair has no links.
-  pair_landing <- survey_pair(sv, "landing")
-  tok$landing_head <- if (length(pair_landing)) survey_landing_head() else ""
-  tok$landing_x <- if (length(pair_landing)) paste0(
-    '<div id="landing" role="dialog" aria-modal="true" aria-labelledby="landing-h" aria-describedby="landing-p">\n',
-    '  <div class="landing-box">\n',
-    '    <h2 id="landing-h">', LANDING$heading, '</h2>\n',
-    '    <p id="landing-p">', LANDING$text, '</p>\n',
-    '    <p class="landing-btns">', survey_link(pair_landing, "landing", "landing-go", LANDING$go),
-    '<button type="button" class="landing-skip">', LANDING$skip, '</button></p>\n',
-    '  </div>\n',
-    '</div>') else ""
   # The draw at the click, and the draw count when comparison/data/survey-config.csv names its
   # address (plan 8, item 3); the explorer's notes then say what is recorded.
   draws_url <- read_survey_config(root)$draws_url
@@ -1094,20 +1076,14 @@ render_site <- function(root = comparison_root(),
   list(html = html, explorer = html_explorer, js = js)
 }
 
-# The survey experiment (comparison/survey/PRE-ANALYSIS-PLAN.md, section 4). The six forms, one
+# The survey experiment (comparison/survey/PRE-ANALYSIS-PLAN.md, section 4). The four forms, one
 # row per entry point and arm, are in comparison/data/survey-links.csv (columns entry, arm, url;
-# lines starting with "#" are comments). The survey button's label and the landing panel's text
-# are pinned by tests/testthat/test-site.R.
-SURVEY_ENTRIES <- c("landing", "explorer", "share")
+# lines starting with "#" are comments). The file has exactly one row for each of the two entry
+# points (explorer, share) and two arms; a row's url may be empty while its form does not exist.
+# The survey button's label is pinned by tests/testthat/test-site.R.
+SURVEY_ENTRIES <- c("explorer", "share")
 SURVEY_ARMS <- c("control", "treatment")
 SURVEY_LABEL <- "Take the survey: which values are more credible?"
-LANDING <- list(
-  heading = "Before you look at the results",
-  text = paste("Two analyses of Proposition 40 reach very different numbers. Before you see why, we",
-               "invite you to judge which of two proposed values for each key input is more credible.",
-               "It takes 5 to 10 minutes. You can also take it later from the button on this page."),
-  go = "Take the survey first",
-  skip = "Skip to the results")
 read_survey_links <- function(root) {
   f <- file.path(root, "comparison", "data", "survey-links.csv")
   ln <- readLines(f, encoding = "UTF-8", warn = FALSE)
@@ -1115,7 +1091,8 @@ read_survey_links <- function(root) {
                         na.strings = c("NA", ""), colClasses = "character")
   stopifnot(identical(names(sv), c("entry", "arm", "url")),
             all(sv$entry %in% SURVEY_ENTRIES), all(sv$arm %in% SURVEY_ARMS),
-            !anyDuplicated(sv[c("entry", "arm")]))
+            !anyDuplicated(sv[c("entry", "arm")]),
+            nrow(sv) == length(SURVEY_ENTRIES) * length(SURVEY_ARMS))
   sv <- sv[!is.na(sv$url) & nzchar(sv$url), , drop = FALSE]
   stopifnot(all(grepl("^https://[^ ]+$", sv$url)))
   sv
@@ -1159,18 +1136,6 @@ survey_draw_js <- function(draws_url) paste0(
   '    a.addEventListener("click", function () { drawSurvey(a); });\n',
   '    a.addEventListener("auxclick", function (e) { if (e.button === 1) drawSurvey(a); });\n',
   '  });')
-# The explorer's head script: shows the landing panel before the first paint unless this browser
-# dismissed it before (localStorage p40.landing = seen). With storage blocked it shows each visit.
-survey_landing_head <- function() paste0(
-  '<script>\n',
-  '  /* The survey invitation (pre-analysis plan, 4.3): set before the first paint, so a returning\n',
-  '     visitor never sees it flash. The survey script below the page dismisses it. */\n',
-  '  (function () {\n',
-  '    var seen = false;\n',
-  '    try { seen = localStorage.getItem("p40.landing") === "seen"; } catch (e) {}\n',
-  '    if (!seen) document.documentElement.classList.add("has-landing");\n',
-  '  })();\n',
-  '</script>')
 
 # The survey's shareable address, the one "Copy link" copies and the share text carries: a page
 # that draws the share entry point's control or treatment form at random, so a copied link keeps

@@ -684,7 +684,8 @@ test_that("the overview's differences fold opens with two smaller survey buttons
 })
 
 # The survey experiment (comparison/survey/PRE-ANALYSIS-PLAN.md, 4.2, 4.3 and 8;
-# feedback/005-2026-10-16-explorer-ux/03-landing-survey-plan.md, B1, B3 and B5).
+# feedback/005-2026-10-16-explorer-ux/03-landing-survey-plan.md, B1 and B5). Two entry points,
+# explorer and share; the explorer's landing panel was removed (author decision 2026-10-17).
 share_page <- file.path(root, "comparison", "site", "survey", "index.html")
 # every survey link on a page: its entry point and its links
 survey_links_on <- function(html) {
@@ -693,9 +694,11 @@ survey_links_on <- function(html) {
              links = sub('.*data-links="([^"]*)".*', "\\1", m), stringsAsFactors = FALSE)
 }
 
-test_that("survey-links.csv lists the six forms, one per entry point and arm", {
+test_that("survey-links.csv lists the four forms, one per entry point and arm", {
   sv <- read_survey_links(root)
+  expect_identical(SURVEY_ENTRIES, c("explorer", "share"))
   expect_identical(names(sv), c("entry", "arm", "url"))
+  expect_equal(nrow(sv), 4)
   expect_setequal(paste(sv$entry, sv$arm), as.vector(outer(SURVEY_ENTRIES, SURVEY_ARMS, paste)))
   expect_true(all(grepl("^https://docs[.]google[.]com/forms/", sv$url)))
   for (e in SURVEY_ENTRIES) expect_length(survey_pair(sv, e), 2)
@@ -705,9 +708,9 @@ test_that("every survey link carries exactly two links, its own entry point's pa
   sv <- read_survey_links(root)
   ex <- survey_links_on(read_page(explorer))
   ov <- survey_links_on(read_page(file.path(root, "index.html")))
-  # the explorer: the landing panel's button and the lower button; the overview: its two buttons,
-  # both in the explorer entry point (author decision 2026-10-17)
-  expect_identical(ex$entry, c("landing", "explorer"))
+  # the explorer: the lower button; the overview: its two buttons, all in the explorer entry
+  # point (author decision 2026-10-17)
+  expect_identical(ex$entry, "explorer")
   expect_identical(ov$entry, c("explorer", "explorer"))
   for (d in list(ex, ov)) for (i in seq_len(nrow(d))) {
     l <- strsplit(d$links[i], " ", fixed = TRUE)[[1]]
@@ -749,46 +752,29 @@ test_that("Copy link and the share text carry the share page's address, never a 
   }
 })
 
-test_that("the landing panel: on the explorer only, its text, its two buttons, shown once per browser", {
-  ex <- read_page(explorer); ov <- read_page(file.path(root, "index.html"))
-  panel <- regmatches(ex, regexpr('<div id="landing" role="dialog".*?\n</div>', ex))
-  expect_length(panel, 1)
-  expect_true(grepl('aria-modal="true" aria-labelledby="landing-h"', panel, fixed = TRUE))
-  expect_true(grepl('<h2 id="landing-h">Before you look at the results</h2>', panel, fixed = TRUE))
-  expect_true(grepl(paste("Two analyses of Proposition 40 reach very different numbers. Before you see why, we",
-                          "invite you to judge which of two proposed values for each key input is more credible.",
-                          "It takes 5 to 10 minutes. You can also take it later from the button on this page."),
-                    panel, fixed = TRUE))
-  expect_true(grepl('target="_blank" rel="noopener">Take the survey first</a>', panel, fixed = TRUE))
-  expect_true(grepl('<button type="button" class="landing-skip">Skip to the results</button>', panel, fixed = TRUE))
-  # the body's first element, and the class that shows it set in the head, before the first paint
-  expect_true(grepl('<body class="pg pg-explorer">\n<div id="landing"', ex, fixed = TRUE))
-  head <- regmatches(ex, regexpr("<head>.*?</head>", ex))
-  expect_lt(regexpr('classList.add("has-landing")', head, fixed = TRUE), regexpr("<style>", head, fixed = TRUE))
-  expect_true(grepl('localStorage.getItem("p40.landing") === "seen"', head, fixed = TRUE))
-  expect_true(grepl('localStorage.setItem("p40.landing", "seen")', ex, fixed = TRUE))
-  # Escape dismisses it; the page behind is blurred and does not scroll
-  expect_true(grepl('e.key === "Escape"', ex, fixed = TRUE))
-  expect_true(grepl("html.has-landing body > :not(#landing) { filter: blur(6px); }", ex, fixed = TRUE))
-  expect_true(grepl("html.has-landing { overflow: hidden; }", ex, fixed = TRUE))
-  expect_true(grepl("max-width: 30em", regmatches(ex, regexpr("\n  [.]landing-box [{][^}]*[}]", ex)), fixed = TRUE))
-  expect_true(grepl("@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }", ex, fixed = TRUE))
-  # its script does not depend on the data file: it runs before it loads
-  expect_lt(regexpr('var LP = document.getElementById("landing")', ex, fixed = TRUE),
-            regexpr('<script src="../../../assets/comparison-data.js', ex, fixed = TRUE))
-  # the overview has no panel
-  expect_false(grepl('id="landing"', ov, fixed = TRUE))
-  expect_false(grepl("has-landing", ov, fixed = TRUE))
+test_that("no page shows the removed landing panel: the explorer opens straight on the results", {
+  pages <- c(explorer, file.path(root, "index.html"), share_page,
+             list.files(file.path(root, "comparison", "site"), pattern = "[.]html$", full.names = TRUE))
+  # the panel's text and its markup, script and storage key (removed 2026-10-17)
+  gone <- c("Before you look at the results", "Two analyses of Proposition 40 reach very different numbers",
+            "Take the survey first", "Skip to the results", 'id="landing"', "has-landing",
+            "p40.landing", 'data-entry="landing"', "landing-go", "landing-skip")
+  for (p in pages) {
+    h <- paste(readLines(p, encoding = "UTF-8", warn = FALSE), collapse = "\n")
+    for (g in gone) expect_false(grepl(g, h, fixed = TRUE), label = paste(basename(dirname(p)), basename(p), g))
+  }
+  expect_false(exists("LANDING")); expect_false(exists("survey_landing_head"))
+  # the explorer's body opens on the sticky result bar, not on a dialog
+  ex <- read_page(explorer)
+  expect_true(grepl('<body class="pg pg-explorer">\n\n<div class="sticky-result"', ex, fixed = TRUE))
+  expect_false(grepl('role="dialog"', ex, fixed = TRUE))
 })
 
 test_that("the texts a respondent meets before a form name neither analysis", {
   names_re <- "BSZ|JR|RJKDC|Saez|Zucman|Boll|Jaros|Rauh|Kearney|supporting|opposing"
   ex <- read_page(explorer)
-  panel <- regmatches(ex, regexpr('<div id="landing" role="dialog".*?\n</div>', ex))
   shown <- function(h) gsub("<[^>]+>", " ", h)
-  expect_false(grepl(names_re, shown(panel)))
   expect_false(grepl(names_re, SURVEY_LABEL))
-  expect_false(grepl(names_re, paste(unlist(LANDING), collapse = " ")))
   for (h in list(ex, read_page(file.path(root, "index.html")))) {
     links <- regmatches(h, gregexpr('<a [^>]*data-entry="[a-z]+"[^>]*>[^<]*</a>', h))[[1]]
     expect_false(any(grepl(names_re, shown(links))))
@@ -823,16 +809,19 @@ test_that("the draw count: no request while draws_url is empty; with it, one bea
   expect_error(read_survey_config(root))
 })
 
-test_that("a missing pair turns its button off and, for the landing pair, drops the panel", {
+test_that("a pair with an empty link turns its button off; a row outside the four stops the build", {
   f <- file.path(root, "comparison", "data", "survey-links.csv")
   old <- readLines(f); on.exit(writeLines(old, f), add = TRUE)
-  writeLines(old[!grepl("^(landing|explorer),treatment,", old)], f)
+  writeLines(sub("^(explorer,treatment,).*$", "\\1", old), f)
   s <- render_site(root)
-  expect_false(grepl('id="landing"', s$explorer, fixed = TRUE))
-  expect_false(grepl('classList.add("has-landing")', s$explorer, fixed = TRUE))
   expect_true(grepl(sprintf('<span class="q-survey is-off" aria-disabled="true">%s (opening soon)</span>', SURVEY_LABEL), s$explorer, fixed = TRUE))
   expect_false(grepl('class="q-mini"', s$html, fixed = TRUE))
-  # a row outside the six stops the build
+  # a row outside the four stops the build: another entry point, the removed landing one, or a
+  # missing row
   writeLines(c(old, "other,control,https://example.com/form"), f)
+  expect_error(render_site(root))
+  writeLines(c(old, "landing,control,https://example.com/form"), f)
+  expect_error(render_site(root))
+  writeLines(old[!grepl("^share,treatment,", old)], f)
   expect_error(render_site(root))
 })

@@ -7,8 +7,8 @@ with the dates 2026-10-19 (start) and 2026-12-31 (end), IRB "No", both PDFs atta
 Drafted 2026-10-17 from `comparison/survey/PRE-ANALYSIS-PLAN.md` for the author to review. Every field
 below is a proposal; the registry's own labels may differ slightly. Nothing here has been submitted.
 
-**Title.** Does seeing the comparison change how respondents judge disputed inputs? A survey
-experiment on two estimates of California's Proposition 40
+**Title.** Does making the comparison salient change how respondents judge disputed inputs? A
+survey experiment on two estimates of California's Proposition 40
 
 **Country.** United States
 
@@ -26,8 +26,10 @@ the other that it loses money. An Open Policy Analysis of both puts them on one 
 which inputs explain the gap. A short survey asks respondents which of two proposed values of each
 disputed input they find more credible. This experiment randomizes, at the click on a survey link,
 whether the respondent first sees a page that explains how the two estimates differ and labels each
-value with its study. The main outcome is a lean index over the five required questions. The study
-tests whether seeing the comparison changes the answers.
+value with its study. The main outcome is a lean index over the five required questions. The
+OPA pages point readers to the comparison several times, so many respondents will have seen it
+already. The study therefore mainly tests whether making the comparison salient when respondents
+choose the input values changes the answers.
 
 **Trial start date.** 2026-10-19 (the launch date).
 
@@ -48,15 +50,16 @@ billionaires who moved out of California before the residency date. The index ru
 answers; S3 each of the five questions separately; S4 the mean absolute lean index (distance from
 neutral).
 
-**Experimental design (public).** Respondents reach the survey through one of three entry points:
-a panel on the comparison explorer, a button on the explorer or the project's overview, and a
-shared link. Each entry point has a control form and a treatment form; the arm is drawn with
+**Experimental design (public).** Respondents reach the survey through one of two entry points:
+a button on the comparison explorer or the project's overview, whose users have all seen the two
+estimates, and a shared link that opens the survey directly, whose users may or may not have
+seen them. Each entry point has a control form and a treatment form; the arm is drawn with
 probability one half at the click. The treatment form adds one page after the two opening
 questions, explaining how the two estimates differ and which inputs explain the gap, and labels
 each value with its study. The control form is identical without that page and with the values
 labelled A and B. Analysis: OLS of the lean index on the treatment indicator with entry-point fixed
 effects and HC2 standard errors, two-sided test at 5%. Heterogeneity by entry point, prior exposure
-and expertise is secondary, adjusted with the Romano-Wolf step-down, and run only above
+and expertise, and the effect among experts without prior exposure, are secondary, adjusted with the Romano-Wolf step-down, and run only above
 pre-registered sample-size thresholds.
 
 **Experimental design details (hidden until the trial ends).** The full plan and its power
@@ -69,7 +72,8 @@ respondent's browser at the click on a survey link, separately for each entry po
 
 **Was the treatment clustered?** No.
 
-**Planned number of clusters.** Not applicable (unclustered). Observations: 50 to 200 expected.
+**Planned number of clusters.** Not applicable (unclustered). Observations: 0 to 200. The number depends on whether the OPA's
+launch gains traction on social media; none or very few responses are likely.
 
 **Sample size by arm.** About half in each arm; not controlled.
 

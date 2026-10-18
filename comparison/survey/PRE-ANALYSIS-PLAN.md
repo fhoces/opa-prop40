@@ -1,4 +1,4 @@
-# Pre-analysis plan: does seeing the comparison change how respondents judge the disputed inputs?
+# Pre-analysis plan: does making the comparison salient change how respondents judge the disputed inputs?
 
 **A note on this document.** This pre-analysis plan was drafted with the assistance of Claude
 Code. It is unclear whether the survey will draw any responses at all. The plan was written for
@@ -7,7 +7,7 @@ that the analysis is fixed before any response is seen. **At this point, it is t
 author that no human should spend much time reading this pre-analysis plan. It is only intended
 as a record.**
 
-Status: draft, 2026-10-16. Not registered. To be registered on the AEA RCT Registry before the
+Status: draft, 2026-10-17. Not registered. To be registered on the AEA RCT Registry before the
 forms open. Structure follows the minimal elements of a clear hypothesis: population,
 interventions, arms, outcomes, hypotheses (contrasts, tests, alternative, estimation, standard
 errors), and heterogeneity stated separately and in full.
@@ -16,8 +16,9 @@ errors), and heterogeneity stated separately and in full.
 
 The Proposition 40 survey asks respondents which of two proposed values of each disputed input
 they find more credible. The comparison explorer shows the same inputs, which study uses which
-value, and what each value does to the estimate. This study asks whether seeing that comparison
-before answering changes the answers.
+value, and what each value does to the estimate. Most respondents will have seen that comparison
+on the site before they open the survey. This study asks whether restating it, with each value
+labelled by its study, at the moment respondents choose the input values changes the answers.
 
 ## 2. Population and sample
 
@@ -25,8 +26,9 @@ before answering changes the answers.
   respondents without prior exposure are subgroups (section 6), not the sample. 
 - **Unit of randomization.** The respondent, drawn at the click on a survey link (section 4.2).
 - **Unit of analysis.** One submitted response.
-- **Sample size.** Not controlled: it is whoever responds in the window. The author expects 50 to
-  200 responses. The staged rule of section 7 decides which analyses run once the realized number
+- **Sample size.** Not controlled: it is whoever responds in the window. The number of
+  responses depends on whether the launch of the OPA gains traction on social media, and it is
+  likely that there will be none or very few. A reasonable range is 0 to 200. The staged rule of section 7 decides which analyses run once the realized number
   is known, and section 7 gives the detectable effects for a range of sizes.
 
 ## 3. Interventions
@@ -46,21 +48,23 @@ Two manipulations, both delivered only in the treatment forms. Nothing is delive
 - **I2, the study labels.** In the input questions, each choice is labelled with its study ("BSZ:"
   or "JR:") instead of "A." or "B.". The choice text and order are otherwise unchanged.
 
-The four terms, as generated at commit e345b64 (gap $145.8 billion):
+The four terms, as generated at commit e345b64 (gap $145.8 billion):[^terms]
 
 | Term on the page | Amount | Share of the gap |
-|---|---|---|
+|------------------------------------------|------------|----------------|
 | The income tax lost when billionaires leave: the share lost, how long it is counted, and billionaires' yearly income tax, together | -$81.3 billion | 56% |
 | Discounting the revenue for court risk | -$39.4 billion | 27% |
 | Billionaires who moved out in time | -$29.9 billion | 21% |
 | Other inputs together: the wealth on the list, avoidance, and three smaller inputs | +$4.9 billion | offsets 3% |
 
-The shares add to 101% because of rounding. Each amount is the sum of the explorer's walk steps
-in that term (`comparison/export/r/dial_path.csv`). The walk moves the inputs one after another
-from the BSZ values to the JR values. The values come from `comparison/export/r/inputs.csv`.
-`comparison/survey/mock_forms.py` and `gas_build.py` generate the page from those files, so no
-number is typed. They also check that every walk step belongs to one term and that the terms add
-up to the gap.
+The shares add to 101% because of rounding.
+
+[^terms]: Each amount is the sum of the explorer's walk steps in that term
+    (`comparison/export/r/dial_path.csv`). The walk moves the inputs one after another from the BSZ
+    values to the JR values. The values come from `comparison/export/r/inputs.csv`.
+    `comparison/survey/mock_forms.py` and `gas_build.py` generate the page from those files, so no
+    number is typed. They also check that every walk step belongs to one term and that the terms
+    add up to the gap.
 
 The page does not give one amount per survey question. The lost income tax is a product of the
 share lost, how long it is counted and the yearly amount. A split among those three factors would
@@ -69,8 +73,8 @@ page shows them as one term and says why. As a result, the terms do not match th
 one to one. The first term covers three whole questions: the share lost, how long it is counted,
 and the yearly income tax. The question on billionaires who moved out in time spans two terms.
 The JR value (seven named moves) is the third term. The BSZ value (an allowance for unnamed
-movers, half of the BSZ avoidance allowance) sits in the fourth. The optional avoidance and
-wealth questions also sit inside the fourth term. Only the court question matches one
+movers, half of the BSZ avoidance allowance) sits in the fourth. The two optional questions, on
+avoidance and on the wealth the tax applies to, also sit inside the fourth term. Only the court question matches one
 term. The small difference in
 discount rates is inside the first term and is not named, since the horizon question no longer
 asks about it.
@@ -93,17 +97,26 @@ opens its entry point's control form or treatment form with probability 1/2, dra
 
 ### 4.3 Entry points and forms
 
-Six forms: three entry points, two arms each. The form a response lands in records its entry point and its arm. Respondents see neither label.
+Four forms: two entry points, two arms each. The form a response lands in records its entry point and its arm. Respondents see neither label.
 
 | Entry point | Who arrives there | Control | Treatment |
 |------|------------------|------|------|
-| `landing` | the explorer's landing panel, "Take the survey first" | form 1 | form 2 |
 | `explorer` | the survey button lower on the explorer page, and the overview page's survey button | form 3 | form 4 |
 | `share` | the copied share link (`comparison/site/survey/`), including links already sent by email | form 5 | form 6 |
 
-The landing panel is shown to every visitor of the explorer, once per browser, before the results. It is not randomized.
+Forms 1 and 2 belonged to a third entry point, `landing`: a panel shown to every visitor of the
+explorer before the results, inviting them to take the survey first. The panel was removed on
+2026-10-17, before launch, because it stood between visitors and the explorer and could deter
+them from using it. Forms 1 and 2 were built but are never opened.
 
-### 4.4 Page order (all six forms)
+The OPA pages point readers to the comparison explorer several times, and the explorer shows the
+two competing estimates side by side. Every respondent who arrives through the `explorer` entry
+point has therefore seen the comparison before opening the survey. The `share` link opens a form
+directly, so its respondents are a mix: some have seen the estimates and some have not. For this
+reason the experiment mainly tests the salience of that information when respondents choose the
+input values, not their first exposure to it.
+
+### 4.4 Page order (all forms)
 
 1. Description, then two pre-treatment questions:
    - "Do you consider yourself an expert in tax or fiscal policy?" (Yes / Somewhat / No; moved here
@@ -130,7 +143,7 @@ The landing panel is shown to every visitor of the explorer, once per browser, b
    to pay the tax.
 
    The current survey bundles departures, avoidance and the share lost into one question. In all
-   six forms that question becomes three: the share lost and moved out in time (required), and
+   the forms that question becomes three: the share lost and moved out in time (required), and
    avoidance (optional), so both choices of each answer the same thing. The wealth question moves
    from the required questions to the optional page. I2 applies to all ten input questions in the
    treatment forms.
@@ -138,7 +151,7 @@ The landing panel is shown to every visitor of the explorer, once per browser, b
    Proposition 40. Every question on it is optional.
 
 The question order and the three headings are the same in both arms, so they are not part of the
-treatment. They differ from the current survey's order. All six forms use one fixed choice order
+treatment. They differ from the current survey's order. All the forms use one fixed choice order
 within each question, that of the current version 1. The simulated pilot (section 9) showed no
 sign that the first-listed value gains from its place: in the control forms the second-listed
 value won the share-lost question (21 to 9) and the court question (18 to 4). The horizon question drops the
@@ -202,6 +215,11 @@ income tax; the chance the tax survives in court; billionaires who moved out in 
 - $y_{ik} = -1$ if the answer is the JR value,
 - $y_{ik} = 0$ if the answer is "About equally credible" or "Unsure".
 
+The two neutral answers mean different things. "Unsure" is a don't-know: the respondent cannot
+judge. "About equally credible" is a judged tie: the respondent has judged and neither value wins.
+Both are offered because dropping an explicit don't-know would push respondents without a view
+onto the middle answer. Both score 0 in the lean index, and S1 and S2 report them separately.
+
 In the treatment forms the label gives the study. In the control forms the private Key tab of the
 responses sheet gives which of A and B is the BSZ value in version 1's order. All five questions
 are required, so no value is missing. The avoidance and wealth questions are now optional (section
@@ -244,7 +262,7 @@ descriptively.
 
 Estimated by OLS with entry-point fixed effects (the strata):
 
-$$\mathrm{Lean}_i = \alpha + \beta\, T_i + \gamma_{\mathrm{explorer}} E_{\mathrm{explorer},i} + \gamma_{\mathrm{share}} E_{\mathrm{share},i} + \varepsilon_i$$
+$$\mathrm{Lean}_i = \alpha + \beta\, T_i + \gamma\, E_{\mathrm{share},i} + \varepsilon_i$$
 
 H1 is $\beta = 0$. Standard errors are heteroskedasticity-robust (HC2). The test is at the 5% level. The
 robustness specification adds the two pre-treatment answers as indicators.
@@ -261,23 +279,31 @@ point (H2), prior exposure (H3) and expertise (H4). Whether a respondent gives a
 after treatment, so it is descriptive and is not one of the three. No other dimension is used
 unless it is registered before the data are seen, and adding one enlarges every family below.
 
-H2 to H4 are the one-dimension analyses. They form one family of $\binom{3}{1} = 3$ tests, adjusted
-together with the Romano-Wolf procedure. Each is one interaction coefficient, estimated in the H1 equation
+H2 to H4 are the one-dimension analyses. With H5 below, they form one family of four tests
+($\binom{3}{1} = 3$ and H5), adjusted together with the Romano-Wolf procedure. Each is one interaction coefficient, estimated in the H1 equation
 with the subgroup indicator and its interaction with T added:
 
-$$\mathrm{Lean}_i = \alpha + \beta\, T_i + \delta\,(T_i \times G_i) + \lambda\, G_i + \gamma_{\mathrm{explorer}} E_{\mathrm{explorer},i} + \gamma_{\mathrm{share}} E_{\mathrm{share},i} + \varepsilon_i$$
+$$\mathrm{Lean}_i = \alpha + \beta\, T_i + \delta\,(T_i \times G_i) + \lambda\, G_i + \gamma\, E_{\mathrm{share},i} + \varepsilon_i$$
 
 The test is $\delta = 0$ against $\delta \neq 0$, with HC2 standard errors.
 
 - **H2, entry point.** $G_i = 1$ if the response came through the `explorer` button, 0 if through
-  `landing` or `share`. Prediction: the effect is smaller in absolute value for `explorer`, whose
-  respondents have just seen the comparison on the page. The entry point is not randomized:
+  the `share` link. Prediction: the effect is smaller in absolute value for `explorer`, whose
+  respondents have all seen the comparison on the page. Some `share` respondents have not. The entry point is not randomized:
   differences in levels between entry points describe who arrives where. Within each entry point,
-  T is randomized. For H2, the entry-point fixed effects already contain G.
+  T is randomized. For H2, G is the entry-point indicator itself, so $\lambda G_i$ is dropped.
 - **H3, prior exposure.** $G_i = 1$ if the answer to the prior-exposure question is "No", 0 if "Yes" or
   "Not sure". Prediction: the effect is larger in absolute value for G = 1.
 - **H4, expertise.** $G_i = 1$ if the answer to the expertise question is "Yes" or "Somewhat", 0 if
   "No". No direction is predicted.
+- **H5, experts without prior exposure.** The subgroup is the respondents who answer "Yes" or
+  "Somewhat" to the expertise question and "No" to the prior-exposure question. H5 is that the
+  treatment effect on the lean index inside this subgroup is 0, against the two-sided alternative.
+  It is estimated with the H1 equation on the subgroup's responses only, with HC2 standard errors.
+  These respondents know the field but had not seen estimates of Proposition 40, so for them the
+  treatment page is closest to a first exposure. H5 is tested together with H2 to H4, in one
+  Romano-Wolf family of four tests, and is run only once N reaches that family's threshold
+  (section 7).
 
 Analyses that cross two or three dimensions are staged secondary analyses (section 7). Crossing $k$
 dimensions gives $2^k$ cells. The $k$-way difference of effects is the coefficient on
@@ -293,8 +319,8 @@ the share who answer it is reported by arm alongside its descriptive results.
 
 ### 6.3 Multiple testing
 
-Every family of secondary tests (the five questions of S3, the one-dimension interactions, the
-two-way and three-way differences, the effects inside cells) is adjusted with the Romano-Wolf
+Every family of secondary tests (the five questions of S3, the one-dimension interactions with
+H5, the two-way and three-way differences, the effects inside cells) is adjusted with the Romano-Wolf
 step-down procedure (Romano and Wolf 2005; the algorithm of Clarke, Romano and Wolf 2020). The
 procedure controls the family-wise error rate over the bootstrap distribution of the largest
 studentized statistic in the family, so correlated tests cost less than under Holm or Bonferroni,
@@ -314,7 +340,7 @@ simulations of the registered estimator are in the power appendix,
 number in it).
 
 Summary (the appendix's Table 1): responses needed for 80% power against an effect of 0.3 SD,
-equal shares, the Romano-Wolf step-down within each family. "RW" is the simulated Romano-Wolf
+the two entry points at 60% (`explorer`) and 40% (`share`) and other halves equal, the Romano-Wolf step-down within each family. "RW" is the simulated Romano-Wolf
 threshold; "Bound" is the closed-form Bonferroni bound it sits below. A dagger marks a family
 whose tests are nearly independent, where the simulation found no threshold below the bound and
 the bound is used. For the five questions, column A is 0.3 SD on a question and column B is the
@@ -325,25 +351,29 @@ difference of effects. Each family covers every combination of the three dimensi
 | | Analysis | A: tests | A: RW | A: bound | B: tests | B: RW | B: bound |
 |--|--------------------------|-----|------|------|-----|------|------|
 | 1 | Main hypothesis H1, the lean index | 1 | 349 | | | | |
-| 2 | H1 by outcome, each of the five questions | 5 | 410 | 520 | 5 | 1,130 | 1,433 |
-| 3 | Heterogeneity, one dimension at a time (3 combinations, 2 cells each) | 6 | 890 | 1,077 | 3 | 1,862 (dagger) | 1,862 |
-| 4 | Heterogeneity, two dimensions at a time (3 combinations, 4 cells each) | 12 | 1,960 | 2,443 | 3 | 7,445 (dagger) | 7,445 |
-| 5 | Heterogeneity, three dimensions at a time (1 combination, 8 cells) | 8 | 3,670 | 4,547 | 1 | 22,326 | |
+| 2 | H1 by outcome, each of the five questions | 5 | 440 | 520 | 5 | 1,110 | 1,410 |
+| 3 | Heterogeneity, one dimension at a time (3 combinations, 2 cells each) | 6 | 920 | 1,346 | 4 | 1,983 (dagger) | 1,983 |
+| 4 | Heterogeneity, two dimensions at a time (3 combinations, 4 cells each) | 12 | 2,010 | 3,054 | 3 | 7,090 | 7,445 |
+| 5 | Heterogeneity, three dimensions at a time (1 combination, 8 cells) | 8 | 3,850 | 5,684 | 1 | 23,256 | |
 
-Staged rule (the appendix's Table 4), at the registered target of 0.5 SD with equal shares. The
+Staged rule (the appendix's Table 4), at the registered target of 0.5 SD with the same shares. The
 Romano-Wolf threshold governs; the bound is given for reference.
 
 | Tier | Analysis | Tests | Responses needed (RW) | Bound |
 |----|--------------------------------|----|----------------|---------|
 | 0 | H1, the lean index | 1 | always run; detects 0.5 SD from 126 | |
-| 1 | Each of the five questions | 5 | 150 (about 390 for an effect matching 0.5 SD on the index) | 187 (479) |
-| 2a | One dimension at a time: the effect inside each half (expertise, prior exposure, entry point; email descriptively) | 6 | 320 (540 if one half holds a quarter) | 388 (776) |
-| 2b | One dimension at a time: the difference between the halves (H2 to H4) | 3 | 660 (880 if one half holds a quarter) | 671 (894) |
-| 3a | Two dimensions at a time: the effect inside each of four cells | 12 | 690 | 880 |
+| 1 | Each of the five questions | 5 | 150 (about 400 for an effect matching 0.5 SD on the index) | 187 (497) |
+| 2a | One dimension at a time: the effect inside each half (expertise, prior exposure, entry point; email descriptively) | 6 | 330 (540 if one half holds a quarter) | 485 (776) |
+| 2b | The difference between the halves (H2 to H4) and H5, experts without prior exposure | 4 | 714 (dagger) (950 if one half holds a quarter) | 714 (952) |
+| 3a | Two dimensions at a time: the effect inside each of four cells | 12 | 740 | 1,100 |
 | 3b | Two dimensions at a time: the two-way difference | 3 | 2,681 (dagger) | 2,681 |
-| 4a | Three dimensions: the effect inside each of eight cells | 8 | 1,290 | 1,637 |
-| 4b | Three dimensions: the three-way difference (one test) | 1 | 8,038 | |
-| 5 | Each question inside each half, one dimension at a time | 30 | 390 (about 1,010 for an effect matching 0.5 SD on the index) | 509 (1,302) |
+| 4a | Three dimensions: the effect inside each of eight cells | 8 | 1,380 | 2,047 |
+| 4b | Three dimensions: the three-way difference (one test) | 1 | 8,373 | |
+| 5 | Each question inside each half, one dimension at a time | 30 | 390 (about 1,070 for an effect matching 0.5 SD on the index) | 509 (1,351) |
+
+The 2b threshold assumes the H5 subgroup holds a quarter of the responses. If it holds half, H5
+alone would need 357, and H2 to H4 set the threshold. Explorer respondents have all seen the comparison, so the subgroup will sit
+mostly in the `share` stratum; the rule is applied at the realized shares.
 
 Heterogeneity is unlocked one order at a time. Two-dimension analyses are run only if the
 one-dimension analyses of the same kind are run, and three-dimension analyses only if the
@@ -366,7 +396,7 @@ appendix's Table 3 and Figure 1 give these, with the responses H1 needs at each 
 
 ## 8. Checks, attrition and exclusions
 
-- **Sample.** Every response submitted to the six forms in the window. Excluded: test responses
+- **Sample.** Every response submitted to the four open forms (3 to 6) in the window. Excluded: test responses
   made before launch (deleted from the sheet), and responses to the two current forms, which
   predate the experiment and are reported on their own.
 - **Attrition.** Google Forms records only submitted responses. If the comparison page makes people
@@ -400,7 +430,7 @@ appendix's Table 3 and Figure 1 give these, with the responses H1 needs at each 
 
 ## 9. Timeline, registration and priors
 
-- **Registration.** On the AEA RCT Registry, before the six forms open.
+- **Registration.** On the AEA RCT Registry, before the four forms open.
 - **Launch.** The forms open together with the site change. The launch commit is recorded here.
 - **Close.** 4 November 2026. Responses submitted after it are not part of this analysis.
   Responses submitted after the vote of 3 November 2026 and before the close count. The time of
@@ -417,7 +447,8 @@ appendix's Table 3 and Figure 1 give these, with the responses H1 needs at each 
 
 **How to launch.**
 
-1. Run the Apps Script that `comparison/survey/gas_build.py` writes. It builds the six forms,
+1. Run the Apps Script that `comparison/survey/gas_build.py` writes. It builds the six forms (forms 1 and 2, for the
+   dropped `landing` entry point, are never opened),
    named "exp: Prop 40 survey (<entry>, <arm>)". Each form takes about 110 seconds and a run
    stops at six minutes, so a run builds three forms; before running again, move the half-built
    fourth form to the trash (the builder skips any form whose name exists), then run again.
@@ -431,14 +462,15 @@ appendix's Table 3 and Figure 1 give these, with the responses H1 needs at each 
    header says. Paste its URL into `comparison/data/survey-config.csv` as `draws_url`.
 4. Rebuild with `Rscript comparison/run.R`, then run `Rscript comparison/tests/testthat.R`.
 5. Commit, and record the commit under "Launch" above.
-6. Register on the AEA RCT Registry. Then push: the push puts the six forms' links on the site.
+6. Register on the AEA RCT Registry. Then push: the push puts the four forms' links on the site.
 
 ## 10. Limits
 
 - **Who answers.** The results describe people who take the survey, not experts in general. The
   randomization makes the two arms comparable, not representative.
-- **Prior exposure.** Many respondents will have seen the overviews or the explorer before the
-  survey, which shrinks the effect. H2 and H3 are there to show it.
+- **Prior exposure.** Every `explorer` respondent, and many `share` respondents, will have seen
+  the comparison before the survey. The treatment therefore restates information most respondents
+  already have, which likely shrinks the effect. H2 and H3 are there to show it.
 - **A bundled treatment.** I1 adds how much of the gap each of four groups of inputs explains. I2
   adds which study holds each value. Naming the studies may move answers through views of the authors or of the tax, not only
   through the numbers. H1 measures the two together.
@@ -463,14 +495,20 @@ appendix's Table 3 and Figure 1 give these, with the responses H1 needs at each 
 
 ## 11. Decisions taken
 
-All of the open decisions were settled on 2026-10-17: the two current forms close when the six
+All of the open decisions were settled on 2026-10-17: the two current forms close when the new
 forms open; the overview's survey button sends to the `explorer` pair; the value texts revised
 after the pretest (section 4.4); the treatment page (Appendix A); the bulk-submission rule, the
 draw count and the links that skip the draw (section 8); the secondary outcome S4 (section 5.3);
-the close date and the post-vote responses (section 9); the expected number of responses, 50 to
-200 (section 2); the Romano-Wolf adjustment (section 6.3); the two neutral answers, kept as they
+the close date and the post-vote responses (section 9); the Romano-Wolf adjustment (section 6.3); the two neutral answers, kept as they
 are (section 5.1); the public post, edited before posting (section 10); and the support question,
 kept after treatment (section 6.2).
+
+Later on 2026-10-17, before launch, the author made four more decisions: the `landing` entry point
+and its panel are dropped, so forms 1 and 2 are never opened and the experiment is framed as a
+test of salience (sections 1 and 4.3); the expected number of responses is 0 to 200 (section 2); the
+expert respondents without
+prior exposure form a registered subgroup (section 6.2); and the share link keeps opening a form,
+so that some respondents may not have seen the estimates.
 
 ## Appendix A. Treatment page text
 

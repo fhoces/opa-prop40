@@ -32,6 +32,12 @@ responses is large enough for that analysis to detect an effect of a stated size
 gives the formulas behind those thresholds, checks them with simulations of the registered
 estimator, and states the rule that decides which analyses are run.
 
+The experiment mainly tests the salience of the comparison when respondents choose the input
+values. Respondents reach the survey through two entry points. The explorer (forms 3 and 4) is
+opened from the comparison explorer, so these respondents have all seen the two estimates. The
+share link (forms 5 and 6) brings a mix of respondents who have seen them and respondents who have
+not. An earlier design had a third entry point, a landing panel. It has been removed.
+
 Every number below is computed by \texttt{comparison/survey/power/sim.py} and read into this
 document from its output. None is typed by hand.
 
@@ -39,7 +45,8 @@ document from its output. None is typed by hand.
 
 Table~\ref{tab:summary} gives the smallest number of responses at which each analysis has 80\%
 power against an effect of $\DSum$ standard deviations, at the 5\% level with the Romano-Wolf
-adjustment inside each family (Section~\ref{sec:rw}). Subgroups have equal shares. Column $N^{*}$ is
+adjustment inside each family (Section~\ref{sec:rw}). Expertise and prior exposure are split
+50/50. The entry point is split $\PExpl$ explorer and $\PShare$ share link. Column $N^{*}$ is
 the Romano-Wolf threshold from the simulations of Section~\ref{sec:rwthr}. Column Bound is the
 closed-form Bonferroni bound, which is at or above it. For the \KWord{} questions, column A is an effect of
 $\DSum$ standard deviations on one question. Column B is the smaller effect on each question,
@@ -53,7 +60,7 @@ candidate dimensions at that order.
   \small
   \input{out/summary.tex}
   \caption{Responses needed for 80\% power against an effect of $\DSum$ standard deviations,
-  equal shares. $N^{*}$: the simulated Romano-Wolf threshold, rounded up to the next $\RoundTo$.
+  with the shares of Section~\ref{sec:sim}. $N^{*}$: the simulated Romano-Wolf threshold, rounded up to the next $\RoundTo$.
   Bound: the Bonferroni bound from equations~\eqref{eq:nstar}, \eqref{eq:shrink}
   and~\eqref{eq:nstar-het}. A single test ($m = 1$) needs no adjustment, so its $N^{*}$ comes from
   the formula. $^{\dagger}$The simulation found no Romano-Wolf threshold below the bound, so the
@@ -64,7 +71,7 @@ candidate dimensions at that order.
 \section{Setup}
 
 Respondent $i = 1, \dots, N$ is assigned to treatment, $T_i = 1$, or control, $T_i = 0$, with
-probability $1/2$, within three entry-point strata. On each of the $K = \K$ required questions the
+probability $1/2$, within two entry-point strata, the explorer and the share link. On each of the $K = \K$ required questions the
 answer is coded
 \[
   y_{ik} = \begin{cases} +1 & \text{the BSZ value} \\ -1 & \text{the JR value} \\ \phantom{+}0 & \text{about equally credible, or unsure.} \end{cases}
@@ -72,10 +79,10 @@ answer is coded
 The primary outcome is the lean index, $\mathrm{Lean}_i = \frac{1}{K} \sum_{k=1}^{K} y_{ik}$. The
 main hypothesis is tested with
 \begin{equation}
-  \mathrm{Lean}_i = a + b\,T_i + \textstyle\sum_{s} g_s E_{s,i} + e_i,
+  \mathrm{Lean}_i = a + b\,T_i + g\,E_i + e_i,
   \qquad H_1\colon b = 0 \text{ against } b \neq 0, \label{eq:main}
 \end{equation}
-with entry-point indicators $E_{s,i}$ and HC2 standard errors.
+with the explorer indicator $E_i$ and HC2 standard errors.
 
 Effects are stated in standard-deviation units of the outcome in the control group: a
 standardized effect $d = b/\sigma$. This avoids guessing the outcome's spread, which we cannot know
@@ -86,7 +93,7 @@ before the data arrive.
 \paragraph{Families.} The main hypothesis H1 is one test and is not adjusted. Every other analysis
 is a family of tests, and each family is adjusted on its own. The families are the \KWord{}
 question-level tests, the questions inside each half, the effects inside the cells (one family per
-order), the one-dimension differences (H2 to H4), and the two-way differences
+order), the one-dimension differences (H2 to H4, joined by H5), and the two-way differences
 (Section~\ref{sec:het}). The three-way difference is a single test.
 
 \paragraph{The procedure.} Each family is adjusted with the Romano-Wolf step-down procedure
@@ -143,7 +150,8 @@ number of responses the analysis needs:
 
 \paragraph{The candidate dimensions.} The plan declares $D = \NDims$ binary dimensions, all
 recorded before treatment: expertise (Yes or Somewhat, against No), prior exposure (No, against Yes
-or Not sure), and entry point (the explorer button, against the landing panel or the share link).
+or Not sure), and entry point (the explorer, against the share link). The entry point is also the
+stratum, so for it the stratum indicator already holds the subgroup indicator.
 Whether a respondent gives an email is asked after treatment. It is descriptive and is not one of
 the $D$. Any analysis of heterogeneity picks some of the $D$ dimensions, and the more it picks, the
 more combinations there are to test and the thinner each cell becomes. The thresholds below count
@@ -184,7 +192,8 @@ For $k = 1$ this is the familiar $1/\bigl(p(1-p)\bigr)$.
 
 \paragraph{Families.} The tests of one order form one Romano-Wolf family. For the cell effects of order
 $k$ the family has $m = \binom{D}{k} 2^k$ tests: every cell of every combination. For the $k$-way
-differences it has $m = \binom{D}{k}$ tests. With $D = \NDims$, the cell families have
+differences it has $m = \binom{D}{k}$ tests. The one-dimension family also holds H5, the effect
+among experts without prior exposure (described with the staged rule), so it has one test more. With $D = \NDims$, the cell families have
 $\FamCellOne$, $\FamCellTwo$ and $\FamCellThree$ tests for $k = 1, 2, 3$, and the difference
 families have $\FamDiffOne$, $\FamDiffTwo$ and $\FamDiffThree$.
 
@@ -195,11 +204,13 @@ families have $\FamDiffOne$, $\FamDiffTwo$ and $\FamDiffThree$.
   \label{eq:nstar-het}
 \end{equation}
 each with its own family's $m$. Table~\ref{tab:orders} gives them for $k = 1, 2, 3$. By these
-bounds, a one-dimension difference needs $\NStarDiffOne$ responses, a two-way difference
+bounds, with expertise and exposure split 50/50 and the entry point $\PExpl$ explorer, a
+one-dimension difference needs $\NStarDiffOne$ responses, a two-way difference
 $\NStarDiffTwo$, and the three-way difference $\NStarDiffThree$. The three-way family is a single test, so its
 multiplier is the smallest, and the factor of four per dimension still dominates. The unequal
-columns split one dimension $\PUneq$ to the rest (such as the explorer entry point) and the others
-50/50, independently.
+columns split expertise $\PUneq$ to the rest, independently of the other two. The bound for a cell
+family is set by its smallest cell. Every family has cells in the share stratum, so these bounds
+are above those for a 50/50 entry point.
 
 \begin{table}[!htbp]
   \centering
@@ -210,8 +221,8 @@ columns split one dimension $\PUneq$ to the rest (such as the explorer entry poi
   candidate dimensions, from equation~\eqref{eq:nstar-het}. $m$ is the number of tests in the
   order's family and $M = M(m)$, with the Bonferroni critical value, so the entries are upper
   bounds. Table~\ref{tab:n} gives the Romano-Wolf thresholds. Columns 0.5 and 0.3 give $d^{*}$
-  with equal shares. The unequal columns use $d^{*} = 0.5$ with one dimension split $\PUneq$ to the
-  rest.}
+  with expertise and exposure split 50/50 and the entry point $\PExpl$ explorer. The unequal columns
+  use $d^{*} = 0.5$ with expertise split $\PUneq$ to the rest.}
   \label{tab:orders}
 \end{table}
 
@@ -287,7 +298,10 @@ one way and some the other. $\tau = \Tau$ is calibrated so that the lean index h
 deviation $\SDIndex$. This spread is an assumption, since no answers exist yet. A single question then has standard
 deviation $\SDQ$. For each panel of Figure~\ref{fig:main}, the treatment shift $\beta$ is chosen so
 the standardized effect on the index is 0.1, 0.3 or 0.5. For $\DTarget$ it is $\beta = \BetaStar$. Every sample also draws the $D = \NDims$ binary
-dimensions, independent of each other and of the strata, each split 50/50 unless stated. The
+dimensions, independent of each other. Expertise and prior exposure are each split 50/50 unless
+stated. The third dimension is the entry point, which is also the stratum. Of the respondents,
+$\PExpl$ enter through the explorer and $\PShare$ through the share link. This split is an
+assumption. The
 estimator is the registered one: equation~\eqref{eq:main}, with HC2 standard errors and $t$
 critical values for a single test. Each point is $\Reps$ replications ($\RepsHet$ for the
 heterogeneity curves).
@@ -302,8 +316,8 @@ dimension, or across the cells of one pair, so that the standardized $k$-way dif
 $\DTarget$. The other dimensions or pairs of the family carry no difference. For $k = 2$ the shift
 is $\pm h/4$ across the four cells of two independent 50/50 dimensions, and the test is on the
 coefficient of $T_i \times G_{1i} \times G_{2i}$ in the saturated version of
-equation~\eqref{eq:main}. Each replication applies Romano-Wolf to its order's whole family: the
-$\FamDiffOne$ one-dimension differences, or the $\FamDiffTwo$ two-way differences.
+equation~\eqref{eq:main}. Each replication applies Romano-Wolf to its order's whole family. That
+is the $\FamDiffOne$ tests of H2 to H5, or the $\FamDiffTwo$ two-way differences.
 
 \paragraph{Results.} Figure~\ref{fig:main} shows the power of the main test and of a single-question
 test, in three panels, one for each true effect on the index. The simulated points lie on the
@@ -343,7 +357,7 @@ $\SimHetTwoThreeThousand$ against $\AnaHetTwoThreeThousand$.
   \centering
   \includegraphics[width=0.9\textwidth]{out/power_het.pdf}
   \caption{Power to detect a $k$-way difference of $\DTarget$ standard deviations: one dimension
-  split 50/50 or 25/75 (Romano-Wolf over $\FamDiffOne$), and two dimensions split 50/50 each
+  split 50/50 or 25/75 (Romano-Wolf over the $\FamDiffOne$ tests of H2 to H5), and two dimensions split 50/50 each
   (Romano-Wolf over $\FamDiffTwo$). Lines: the Bonferroni bound from equation~\eqref{eq:var-diff}.
   Points: simulations of the registered estimator with the Romano-Wolf step-down.}
   \label{fig:het}
@@ -386,7 +400,7 @@ about treatment effects, so applying it does not depend on the results.
 
 \paragraph{Heterogeneity by order.} Heterogeneity is unlocked one order at a time. Analyses of one
 dimension come first. Analyses of order $k$ are run only if those of order $k - 1$ of the same
-kind are run, and only if $N$ reaches their own threshold. With equal shares the thresholds already
+kind are run, and only if $N$ reaches their own threshold. With the assumed shares the thresholds already
 rise with $k$, so this condition matters only when realized shares are very uneven.
 
 \paragraph{The target.} $d^{*} = \DTarget$ is a medium standardized effect. A smaller target, such as
@@ -401,7 +415,8 @@ gives both.
   threshold, rounded up to the next $\RoundTo$. For a single test ($m = 1$), the formula. Bound: the
   Bonferroni bound from equations~\eqref{eq:nstar} and~\eqref{eq:nstar-het}. $^{\dagger}$The
   simulation found no Romano-Wolf threshold below the bound, so the bound is kept. Heterogeneity
-  rows assume equal shares. At the close they are recomputed at the realized shares.}
+  rows assume the shares of Section~\ref{sec:sim}. Row 2b assumes that the H5 subgroup holds a
+  quarter of the responses. If it holds half, H5 alone needs $\NStarHFiveHalfRW$. At the close all rows are recomputed at the realized shares.}
   \label{tab:n}
 \end{table}
 
@@ -416,12 +431,12 @@ Table~\ref{tab:n} at $d^{*} = \DTarget$.
   as estimates with confidence intervals, not as tests of a common effect.
   \item From $\NStarCellOneRW$ responses, the effect inside each half of each dimension is reported
   (tier 2a, Romano-Wolf over $\FamCellOne$): experts and non-experts, respondents with and without prior
-  exposure, and the explorer entry point against the other two. If one half holds only a quarter
+  exposure, and the explorer against the share link. If one half of expertise holds only a quarter
   of the responses, this needs $\NStarCellOneUneqRW$. The same split by whether a respondent gives an
   email is descriptive only (see below).
-  \item From $\NStarDiffOneRW$ responses, the tests that two halves' effects differ are run (tier 2b,
-  the plan's H2 to H4, Romano-Wolf over $\FamDiffOne$). With one half holding a quarter,
-  $\NStarDiffOneUneqRW$.
+  \item From $\NStarDiffOneRW$ responses, the tests that two halves' effects differ are run, together
+  with H5 (tier 2b, the plan's H2 to H5, Romano-Wolf over $\FamDiffOne$). With one half holding a
+  quarter, the differences need $\NStarDiffOneUneqRW$.
   \item Two dimensions at a time: the effect inside each of the four cells from $\NStarCellTwoRW$
   (tier 3a), and the two-way differences from $\NStarDiffTwoRW$ (tier 3b).
   \item Three dimensions at a time: the effect inside each of the eight cells from
@@ -431,6 +446,20 @@ Table~\ref{tab:n} at $d^{*} = \DTarget$.
   $\FamQHalf$), need $\NStarQHalfEffRW$ responses once equation~\eqref{eq:shrink} is taken into
   account.
 \end{itemize}
+
+\paragraph{Experts without prior exposure (H5).} H5 is the treatment effect on the lean index
+among respondents who answer ``Yes'' or ``Somewhat'' to the expertise question and ``No'' to the
+prior-exposure question. Both questions come before treatment. H5 is equation~\eqref{eq:main}
+estimated inside this subgroup, with HC2 standard errors. It joins the family of H2 to H4, so
+tier 2b has $\FamDiffOne$ tests under one Romano-Wolf adjustment. The tier's threshold is the
+larger of two simulated thresholds. In one, the halves of one dimension differ by $\DTarget$
+standard deviations. In the other, treatment has an effect of $\DTarget$ on everyone, which H5
+must detect inside its subgroup. The simulations draw expertise and exposure 50/50 and
+independently, so the subgroup holds a quarter of the responses. The tier then needs
+$\NStarDiffOneRW$ responses (bound $\NStarDiffOne$). If the subgroup holds half, H5 alone needs
+$\NStarHFiveHalfRW$ (bound $\NStarHFiveHalf$), and H2 to H4 set the tier's threshold. Without
+any adjustment, H5 as a single test would need $\NStarHFiveUnadj$ responses at a quarter and
+$\NStarHFiveHalfUnadj$ at a half.
 
 \paragraph{Email.} Whether a respondent gives an email is asked at the end, after treatment, so
 treatment could change who gives one. Analyses split by email are therefore descriptive. They are
@@ -444,8 +473,8 @@ after treatment is descriptive only.
 \begin{figure}[!htbp]
   \centering
   \includegraphics[width=0.9\textwidth]{out/nstar.pdf}
-  \caption{Responses needed, $N^{*}$, against the effect the analysis must detect, with equal
-  shares. Lines: equations~\eqref{eq:nstar} and~\eqref{eq:nstar-het}, Bonferroni bounds for the
+  \caption{Responses needed, $N^{*}$, against the effect the analysis must detect, with the shares
+  of Section~\ref{sec:sim}. Lines: equations~\eqref{eq:nstar} and~\eqref{eq:nstar-het}, Bonferroni bounds for the
   families. Points: the simulated Romano-Wolf thresholds at $d = 0.3$ and $\DTarget$. Log scale.}
   \label{fig:nstar}
 \end{figure}
@@ -459,6 +488,12 @@ the index and single questions narrows. If they are less correlated, it widens. 
 affects the validity of the main test, whose level the simulations confirm at every sample size.
 It affects only how large the effects must be to be seen. The Romano-Wolf thresholds also depend on
 the assumed effect patterns and correlations. The Bonferroni bounds do not.
+
+The simulations draw the three dimensions independently. Respondents who enter through the
+explorer have all seen the two estimates, so many of them may answer ``Yes'' to the prior-exposure
+question. Then the cells that cross exposure with the entry point are thin, and their thresholds
+rise. The staged rule recomputes every threshold at the realized shares, so it accounts for this
+at the close.
 
 \begin{thebibliography}{2}
 \bibitem[Clarke et~al.(2020)Clarke, Romano, and Wolf]{clarke2020romano}

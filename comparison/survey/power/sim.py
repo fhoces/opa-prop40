@@ -44,6 +44,8 @@ D_FIG = (0.1, 0.3, 0.5)  # true standardized effects on the index shown in Figur
 D_MAG = (0.1, 0.2, 0.3, 0.4, 0.5)  # effects translated into index units in Table 1
 B_REG = 2000     # bootstrap draws in the registered Romano-Wolf adjustment
 B_SIM = 199      # bootstrap draws inside each simulated sample, for speed; ALPHA * (B_SIM + 1) is whole
+P_EXPL = 0.6     # assumed share entering through the explorer (forms 3 and 4); the rest through share (5 and 6)
+SHARES0 = (0.5, 0.5, P_EXPL)   # expertise, prior exposure, entry point (explorer = 1)
 
 
 # ---------- analytic ----------
@@ -89,7 +91,7 @@ CUT = 0.5
 def draw(N, beta, tau, p_sub=0.5, het=0.0):
     T = rng.permutation(np.arange(N) % 2)
     G = (rng.random(N) < p_sub).astype(float)            # a pre-treatment subgroup
-    E = rng.integers(0, 3, N)                              # entry point, three strata
+    E = (rng.random(N) < P_EXPL).astype(int)               # entry point, two strata: explorer 1, share 0
     theta = rng.normal(0, tau, N)
     shift = (beta + het * (G - p_sub)) * T
     lat = theta[:, None] + A_K[None, :] + shift[:, None] + rng.normal(0, 1, (N, K))
@@ -97,13 +99,13 @@ def draw(N, beta, tau, p_sub=0.5, het=0.0):
     return y, T, G, E
 
 
-def draw_dims(N, beta, tau, shares=(0.5, 0.5, 0.5), het=0.0, het2=0.0):
-    """The same population with all three binary dimensions G1, G2, G3, independent of each other and
-    of the strata. het is a difference in the latent shift across the halves of G1; het2 a two-way
+def draw_dims(N, beta, tau, shares=SHARES0, het=0.0, het2=0.0):
+    """The same population with all three binary dimensions G1, G2, G3, independent of each other. G3 is
+    the entry point (explorer 1, share 0), which is also the stratum E. het is a difference in the latent shift across the halves of G1; het2 a two-way
     difference across the four cells of G1 and G2 (each cell gets +-het2/4)."""
     T = rng.permutation(np.arange(N) % 2)
     G = (rng.random((N, 3)) < np.asarray(shares)).astype(int)
-    E = rng.integers(0, 3, N)
+    E = G[:, 2]
     theta = rng.normal(0, tau, N)
     shift = (beta + het * (G[:, 0] - shares[0]) + het2 * (G[:, 0] - 0.5) * (G[:, 1] - 0.5)) * T
     lat = theta[:, None] + A_K[None, :] + shift[:, None] + rng.normal(0, 1, (N, K))
@@ -122,7 +124,7 @@ def hc2_t(X, y, j):
 
 
 def design(T, E, G=None):
-    cols = [np.ones_like(T, float), T.astype(float), (E == 1).astype(float), (E == 2).astype(float)]
+    cols = [np.ones_like(T, float), T.astype(float), (E == 1).astype(float)]
     if G is not None:
         cols += [G, T * G]
     return np.column_stack(cols)
@@ -133,41 +135,67 @@ def crit(N, k, m=1):
 
 
 # ---------- Romano-Wolf step-down, vectorized ----------
-# Every regressor is a function of the respondent's fine cell: arm T (2) x stratum E (3) x G1, G2, G3
-# (8), 48 cells. OLS and HC2 then need only, per cell, the count of respondents and the sums of y and
+# Every regressor is a function of the respondent's fine cell: arm T (2) x stratum E (2) x G1, G2, G3
+# (8), 32 cells, of which the 16 with E equal to G3 can hold respondents. OLS and HC2 then need only, per cell, the count of respondents and the sums of y and
 # y^2. A bootstrap sample is a vector of counts over the distinct (cell, answers) types, so B samples
 # are a B x types matrix and every regression of a family runs on all of them at once.
-NC = 48
+NC = 32
 _CI = np.arange(NC)
 CT = (_CI % 2).astype(float)
-CE = (_CI // 2) % 3
-CG = np.column_stack([((_CI // 6) >> j) & 1 for j in range(3)]).astype(float)
-X0 = np.column_stack([np.ones(NC), CT, (CE == 1).astype(float), (CE == 2).astype(float)])
+CE = (_CI // 2) % 2
+CG = np.column_stack([((_CI // 4) >> j) & 1 for j in range(3)]).astype(float)
+VALID = CE == CG[:, 2]
+X0 = np.column_stack([np.ones(NC), CT, (CE == 1).astype(float)])
 PAIRS = ((0, 1), (0, 2), (1, 2))
 
 
+def prune(X, mask, r):
+    """Drop the columns that are collinear inside the regression's cells. The entry-point dimension is
+    the stratum, so its indicator repeats the stratum dummy, which is dropped. Returns X and the tested
+    column."""
+    rows = (mask > 0) & VALID
+    keep = []
+    for j in range(X.shape[1]):
+        if np.linalg.matrix_rank(X[rows][:, keep + [j]]) == len(keep) + 1:
+            keep.append(j)
+    assert r in keep
+    return X[:, keep], keep.index(r)
+
+
 def family(kind):
-    """Cell designs of one family's regressions: X (S, C, p), subsample masks (S, C), tested column."""
+    """Cell designs of one family's regressions, in groups of consecutive regressions of the same shape:
+    X (S, C, p), subsample masks (S, C), tested column."""
+    one = np.ones(NC)
     if kind == "full":
-        return X0[None], np.ones((1, NC)), 1
-    if kind == "diff1":   # H2 to H4: T x Gj in the H1 equation, one regression per dimension
-        X = np.stack([np.column_stack([X0, CG[:, j], CT * CG[:, j]]) for j in range(3)])
-        return X, np.ones((3, NC)), 5
-    if kind == "diff2":   # T x Ga x Gb in the saturated equation, one regression per pair
-        X = np.stack([np.column_stack([X0, CG[:, a], CG[:, b], CG[:, a] * CG[:, b], CT * CG[:, a],
-                                       CT * CG[:, b], CT * CG[:, a] * CG[:, b]]) for a, b in PAIRS])
-        return X, np.ones((3, NC)), 9
-    if kind == "cell1":   # the H1 equation inside each half of each dimension
-        m = [CG[:, j] == g for j in range(3) for g in (0, 1)]
-    elif kind == "cell2":
-        m = [(CG[:, a] == x) & (CG[:, b] == z) for a, b in PAIRS for x in (0, 1) for z in (0, 1)]
-    else:                 # cell3
-        m = [(CG[:, 0] == x) & (CG[:, 1] == z) & (CG[:, 2] == v) for x in (0, 1) for z in (0, 1) for v in (0, 1)]
-    m = np.array(m, float)
-    return np.broadcast_to(X0, (len(m), NC, 4)).copy(), m, 1
+        regs = [(X0, one, 1)]
+    elif kind == "diff1":   # H2 to H4: T x Gj in the H1 equation, one regression per dimension
+        regs = [(np.column_stack([X0, CG[:, j], CT * CG[:, j]]), one, 4) for j in range(3)]
+    elif kind == "diff2":   # T x Ga x Gb in the saturated equation, one regression per pair
+        regs = [(np.column_stack([X0, CG[:, a], CG[:, b], CG[:, a] * CG[:, b], CT * CG[:, a], CT * CG[:, b],
+                                  CT * CG[:, a] * CG[:, b]]), one, 8) for a, b in PAIRS]
+    elif kind == "h5cell":  # H5: the H1 equation inside experts (G1 = 1) without prior exposure (G2 = 1)
+        regs = [(X0, ((CG[:, 0] == 1) & (CG[:, 1] == 1)).astype(float), 1)]
+    else:                   # the H1 equation inside each cell of each combination
+        if kind == "cell1":
+            m = [CG[:, j] == g for j in range(3) for g in (0, 1)]
+        elif kind == "cell2":
+            m = [(CG[:, a] == x) & (CG[:, b] == z) for a, b in PAIRS for x in (0, 1) for z in (0, 1)]
+        else:               # cell3
+            m = [(CG[:, 0] == x) & (CG[:, 1] == z) & (CG[:, 2] == v) for x in (0, 1) for z in (0, 1) for v in (0, 1)]
+        regs = [(X0, mi.astype(float), 1) for mi in m]
+    groups = []
+    for X, mask, r in regs:
+        Xp, rp = prune(X, mask, r)
+        if groups and groups[-1][2] == rp and groups[-1][0][-1].shape == Xp.shape:
+            groups[-1][0].append(Xp)
+            groups[-1][1].append(mask)
+        else:
+            groups.append(([Xp], [mask], rp))
+    return [(np.stack(Xs), np.array(ms, float), r) for Xs, ms, r in groups]
 
 
-FAMILY = {k: family(k) for k in ("full", "diff1", "diff2", "cell1", "cell2", "cell3")}
+FAMILY = {k: family(k) for k in ("full", "diff1", "diff2", "cell1", "cell2", "cell3", "h5cell")}
+FAMILY["h5"] = FAMILY["diff1"] + FAMILY["h5cell"]   # H2 to H4 joined by H5: tests 0 to 2, then H5
 
 
 def boot_stats(cell, Y, B):
@@ -181,7 +209,7 @@ def boot_stats(cell, Y, B):
     tcell = cell[first]
     W = np.zeros((B + 1, U))
     W[0] = cnt
-    for s in range(3):
+    for s in range(2):
         cols = np.flatnonzero(CE[tcell] == s)
         n_s = int(cnt[cols].sum())
         if B == 0 or n_s == 0:
@@ -204,7 +232,11 @@ def boot_stats(cell, Y, B):
 
 def coef_se(n, S1, S2, kind):
     """Tested coefficient, its HC2 standard error (both B+1 x S*L) and residual df (S*L) per test."""
-    X, masks, r = FAMILY[kind]
+    parts = [coef_se_group(n, S1, S2, *g) for g in FAMILY[kind]]
+    return tuple(np.concatenate([p[i] for p in parts], axis=-1) for i in range(3))
+
+
+def coef_se_group(n, S1, S2, X, masks, r):
     S, C, p = X.shape
     B1, _, L = S1.shape
     w = masks[:, None, :] * n[None]                                    # (S, B1, C)
@@ -243,12 +275,12 @@ def romano_wolf(b, se, alpha=ALPHA):
     return rej
 
 
-def run_family(kind, N, beta=0.0, het=0.0, het2=0.0, shares=(0.5, 0.5, 0.5), B=B_SIM):
+def run_family(kind, N, beta=0.0, het=0.0, het2=0.0, shares=SHARES0, B=B_SIM):
     """One simulated sample: Romano-Wolf and Bonferroni rejections for every test of the family.
     kind "questions": the K question-level tests. "q5": each question inside each half of each
     dimension. Otherwise a heterogeneity family on the lean index."""
     y, T, E, G = draw_dims(N, beta, TAU, shares, het, het2)
-    cell = T + 2 * E + 6 * (G[:, 0] + 2 * G[:, 1] + 4 * G[:, 2])
+    cell = T + 2 * E + 4 * (G[:, 0] + 2 * G[:, 1] + 4 * G[:, 2])
     Y = y if kind in ("questions", "q5") else y.sum(1, keepdims=True)
     n, S1, S2 = boot_stats(cell, Y, B)
     if Y.shape[1] == 1:
@@ -316,7 +348,7 @@ def sim_power_main(N, beta, reps=REPS, questions=True):
         X = design(T, E)
         rej_i += abs(hc2_t(X, y.mean(1), 1)) > crit(N, X.shape[1])
         if questions:
-            cell = T + 2 * E + 6 * (G[:, 0] + 2 * G[:, 1] + 4 * G[:, 2])
+            cell = T + 2 * E + 4 * (G[:, 0] + 2 * G[:, 1] + 4 * G[:, 2])
             r = romano_wolf(*coef_se(*boot_stats(cell, y, B_SIM), "full")[:2])
             rej_q += r
             rej_any += r.any()
@@ -335,15 +367,16 @@ lap("main simulations done")
 # 2^k cells. Its families: the effect inside every cell of every combination (C(D,k) 2^k tests) and
 # the k-way difference of effects for every combination (C(D,k) tests).
 DIMS = ["expertise (Yes or Somewhat, against No)", "prior exposure (No, against Yes or Not sure)",
-        "entry point (explorer, against landing or share)"]
+        "entry point (explorer, against share)"]
 D = len(DIMS)
 assert D == CG.shape[1]
-P_UNEQ = 0.25    # unequal example: one dimension split 25/75 (such as the explorer entry point)
+P_UNEQ = 0.25    # unequal example: expertise split 25/75
 ORDERS = (1, 2, 3)
 
 
 def fam(k, kind):
-    return comb(D, k) * (2 ** k if kind == "cell" else 1)
+    """Tests in a family. The one-dimension differences (H2 to H4) share their family with H5."""
+    return comb(D, k) * (2 ** k if kind == "cell" else 1) + (1 if (k, kind) == (1, "diff") else 0)
 
 
 def factor(k, kind, shares):
@@ -354,13 +387,18 @@ def factor(k, kind, shares):
     return float(np.prod([1 / (q * (1 - q)) for q in shares]))
 
 
-def shares_for(k, unequal=False):
-    return ([P_UNEQ] if unequal else [0.5]) + [0.5] * (k - 1)
+def shares_for(k, kind, unequal=False):
+    """Shares that set an order-k family's bound. Cells: the k most uneven dimensions, which make the
+    family's smallest cell. Differences: the first k dimensions, the combination that carries the effect."""
+    s = [P_UNEQ if unequal else SHARES0[0]] + list(SHARES0[1:])
+    if kind == "cell":
+        return sorted(s, key=lambda q: min(q, 1 - q))[:k]
+    return s[:k]
 
 
 def n_star_order(k, kind, d=D_TARGET, unequal=False):
     m = fam(k, kind)
-    return int(np.ceil(factor(k, kind, shares_for(k, unequal)) * (2 * mult(m=m) / d) ** 2))
+    return int(np.ceil(factor(k, kind, shares_for(k, kind, unequal)) * (2 * mult(m=m) / d) ** 2))
 
 
 def power_factor(N, d, F, m):
@@ -373,7 +411,7 @@ hets = np.linspace(0.1, 2.5, 25)
 
 
 def diff_d(het, p, n=200000):
-    y, T, E, G = draw_dims(n, 0.0, TAU, shares=(p, 0.5, 0.5), het=het)
+    y, T, E, G = draw_dims(n, 0.0, TAU, shares=(p, 0.5, P_EXPL), het=het)
     G = G[:, 0]
     idx = y.mean(1)
     sd = idx[T == 0].std()
@@ -423,8 +461,8 @@ def sim_power_het(kind, N, reps=REPS_HET, **dgp):
 
 
 Ns_h = np.array([100, 200, 400, 600, 800, 1000, 1200])
-het_pow = {0.5: np.array([sim_power_het("diff1", N, het=HET_STAR) for N in Ns_h]),
-           P_UNEQ: np.array([sim_power_het("diff1", N, het=HET_UNEQ, shares=(P_UNEQ, 0.5, 0.5)) for N in Ns_h])}
+het_pow = {0.5: np.array([sim_power_het("h5", N, het=HET_STAR) for N in Ns_h]),
+           P_UNEQ: np.array([sim_power_het("h5", N, het=HET_UNEQ, shares=(P_UNEQ, 0.5, P_EXPL)) for N in Ns_h])}
 Ns_h2 = np.array([500, 1000, 1500, 2000, 2500, 3000, 4000])
 het2_pow = np.array([sim_power_het("diff2", N, het2=HET2_STAR) for N in Ns_h2])
 lap("heterogeneity figure simulations done")
@@ -495,15 +533,31 @@ THR_SPEC = {   # name: (family, effect pattern, Bonferroni bound, tests whose po
     "qh5": ("q5", dict(beta=BETA_Q[D_TARGET]), n_star("within", d=D_TARGET, p=0.5, m=MQ), ALL),
     "qh3": ("q5", dict(beta=BETA_Q[0.3]), n_star("within", d=0.3, p=0.5, m=MQ), ALL),
     "qhi5": ("q5", dict(beta=BETA[D_TARGET]), n_star("within", d=D_Q_MEAN, p=0.5, m=MQ), ALL),
-    "c1u": ("cell1", dict(beta=BETA[D_TARGET], shares=(P_UNEQ, 0.5, 0.5)),
+    "c1u": ("cell1", dict(beta=BETA[D_TARGET], shares=(P_UNEQ, 0.5, P_EXPL)),
             n_star_order(1, "cell", unequal=True), [1]),
-    "d1u": ("diff1", dict(het=HET_UNEQ, shares=(P_UNEQ, 0.5, 0.5)), n_star_order(1, "diff", unequal=True), [0]),
+    "d1u": ("h5", dict(het=HET_UNEQ, shares=(P_UNEQ, 0.5, P_EXPL)), n_star_order(1, "diff", unequal=True), [0]),
 }
 for d, tag in ((D_TARGET, "5"), (0.3, "3")):
     for k in (1, 2, 3):
         THR_SPEC[f"c{k}_{tag}"] = (f"cell{k}", dict(beta=BETA[d]), n_star_order(k, "cell", d=d), ALL)
-    THR_SPEC[f"d1_{tag}"] = ("diff1", dict(het=HET[d]), n_star_order(1, "diff", d=d), [0])
+    THR_SPEC[f"d1_{tag}"] = ("h5", dict(het=HET[d]), n_star_order(1, "diff", d=d), [0])
     THR_SPEC[f"d2_{tag}"] = ("diff2", dict(het2=HET2[d]), n_star_order(2, "diff", d=d), [0])
+
+# H5 in the family of H2 to H4 (M1 tests), with a treatment effect on everyone, so that H5 carries d* and
+# H2 to H4 carry none. The subgroup is the cell of two independent dimensions: 50/50 each gives the main
+# share of a quarter; sqrt(1/2) each gives the sensitivity share of a half.
+M5 = M1
+P_H5, P_H5_HI = 0.25, 0.5
+SH_H5_HI = (np.sqrt(P_H5_HI), np.sqrt(P_H5_HI), P_EXPL)
+
+
+def n_star_h5(p=P_H5, d=D_TARGET, m=M5):
+    return n_star("within", d=d, p=p, m=m)
+
+
+THR_SPEC["h5_5"] = ("h5", dict(beta=BETA[D_TARGET]), n_star_h5(), [3])
+THR_SPEC["h5_3"] = ("h5", dict(beta=BETA[0.3]), n_star_h5(d=0.3), [3])
+THR_SPEC["h5hi"] = ("h5", dict(beta=BETA[D_TARGET], shares=SH_H5_HI), n_star_h5(p=P_H5_HI), [3])
 
 THR = {}
 for name, (kind, dgp, bound, which) in THR_SPEC.items():
@@ -519,6 +573,16 @@ def rw_n(name):
     return min(int(np.ceil(r["rw"] / ROUND) * ROUND), r["bound"])
 
 
+def rw_fam(names):
+    """Threshold of a family whose tests have different effect patterns: the largest of them."""
+    n = max(rw_n(x) for x in names)
+    b = max(THR[x]["bound"] for x in names)
+    return n, (f"{b:,}$^{{\\dagger}}$" if n == b else f"{n:,}")
+
+
+ONE = {"5": ("d1_5", "h5_5"), "3": ("d1_3", "h5_3")}   # tier 2b: H2 to H4 and H5
+
+
 def rw_cell(name):
     """Table entry: the Romano-Wolf threshold, or the bound with a dagger where the bound is kept."""
     r = THR[name]
@@ -527,7 +591,7 @@ def rw_cell(name):
 
 RW_ERR = max(r["se"] / r["rw"] for r in THR.values())
 BONF_RATIO = np.array([r["bonf_sim"] / r["bound"] for r in THR.values()])
-RW_RATIO = np.array([rw_n(n) / THR[n]["bound"] for n in THR if not n.startswith("d")])   # questions, cells
+RW_RATIO = np.array([rw_n(n) / THR[n]["bound"] for n in THR if not n.startswith(("d", "h5"))])   # questions, cells
 N_CAPPED = sum(int(np.ceil(r["rw"] / ROUND) * ROUND) > r["bound"] for r in THR.values())
 
 # ---------- figures ----------
@@ -558,7 +622,7 @@ for k, unequal, xs, ys, c, lab in (
         (1, False, Ns_h, het_pow[0.5], "#673ab7", "One dimension, 50/50"),
         (1, True, Ns_h, het_pow[P_UNEQ], "#e08a00", f"One dimension, {int(100 * P_UNEQ)}/{int(100 - 100 * P_UNEQ)}"),
         (2, False, Ns_h2, het2_pow, "#2e7d32", "Two dimensions, 50/50 each")):
-    F = factor(k, "diff", shares_for(k, unequal))
+    F = factor(k, "diff", shares_for(k, "diff", unequal))
     ax.plot(NN, power_factor(NN, D_TARGET, F, fam(k, "diff")), color=c, label=f"{lab}, Bonferroni bound")
     ax.plot(xs, ys, "o", color=c, ms=4, label=f"{lab}, Romano-Wolf, simulated")
 ax.axhline(POWER, color="grey", lw=0.6, ls="--")
@@ -574,14 +638,15 @@ fig, ax = plt.subplots(figsize=(5.6, 3.9))
 dd = np.linspace(0.2, 1.0, 100)
 rows_plot = [(lambda x: n_star("main", d=x), "H1: lean index", "#673ab7", "-", None),
              (lambda x: n_star("main", d=x, m=K), f"Each question (bound over {K})", "#e08a00", "-", "q"),
-             (lambda x: n_star_order(1, "diff", d=x), "One-dimension differences (H2 to H4, bound)", "#c62828", "-",
+             (lambda x: n_star_order(1, "diff", d=x), "One-dimension differences and H5 (bound)", "#c62828", "-",
               "d1_"),
              (lambda x: n_star_order(2, "diff", d=x), "Two-way differences (bound)", "#c62828", "--", "d2_"),
              (lambda x: n_star_order(3, "diff", d=x), "Three-way difference (one test)", "#c62828", ":", None)]
 for fn, lab, c, ls, key in rows_plot:
     ax.plot(dd, [fn(x) for x in dd], color=c, ls=ls, label=lab)
     if key:
-        ax.plot([0.3, D_TARGET], [rw_n(f"{key}3"), rw_n(f"{key}5")], "o", color=c, ms=4)
+        pts = ([rw_fam(ONE["3"])[0], rw_fam(ONE["5"])[0]] if key == "d1_" else [rw_n(f"{key}3"), rw_n(f"{key}5")])
+        ax.plot([0.3, D_TARGET], pts, "o", color=c, ms=4)
 ax.plot([], [], "o", color="black", ms=4, label="Romano-Wolf, simulated")
 ax.set_yscale("log")
 ax.set_xlabel("Smallest standardized effect the analysis must detect, d")
@@ -605,9 +670,12 @@ for k, t in zip(ORDERS, ("2", "3", "4")):
     TABLE.append((t + "a", f"Effect inside each cell, {ORD[k]} at a time ({comb(D, k)} combination"
                   f"{'s' if comb(D, k) > 1 else ''}, {2 ** k} cells each)", mc,
                   rw_cell(f"c{k}_5"), n_star_order(k, "cell"), rw_cell(f"c{k}_3"), n_star_order(k, "cell", d=0.3)))
-    lab = ("Difference between the two halves, one dimension at a time (H2 to H4)" if k == 1
+    lab = ("Difference between the two halves (H2 to H4) and H5, experts without prior exposure" if k == 1
            else f"{k}-way difference of effects, {ORD[k]} at a time" + (" (one test)" if md == 1 else ""))
-    if md > 1:
+    if k == 1:
+        TABLE.append((t + "b", lab, md, rw_fam(ONE["5"])[1], n_star_order(k, "diff"),
+                      rw_fam(ONE["3"])[1], n_star_order(k, "diff", d=0.3)))
+    elif md > 1:
         TABLE.append((t + "b", lab, md, rw_cell(f"d{k}_5"), n_star_order(k, "diff"),
                       rw_cell(f"d{k}_3"), n_star_order(k, "diff", d=0.3)))
     else:
@@ -649,9 +717,10 @@ for k in ORDERS:
     word = {1: "one dimension", 2: "two dimensions", 3: "three dimensions"}[k]
     lab = (f"Heterogeneity, {word} at a time ({comb(D, k)} combination{'s' if comb(D, k) > 1 else ''}). "
            f"A: the effect inside each of {2 ** k} cells. B: the "
-           + ("difference between the two halves" if k == 1 else f"{k}-way difference"))
+           + ("difference between the two halves, in one family with H5" if k == 1 else f"{k}-way difference"))
     md = fam(k, "diff")
-    b_cols = ((md, rw_cell(f"d{k}_3"), n_star_order(k, "diff", d=D_SUM)) if md > 1
+    b_cols = ((md, rw_fam(ONE["3"])[1], n_star_order(k, "diff", d=D_SUM)) if k == 1
+              else (md, rw_cell(f"d{k}_3"), n_star_order(k, "diff", d=D_SUM)) if md > 1
               else (md, n_star_order(k, "diff", d=D_SUM), ""))
     srows.append((lab, fam(k, "cell"), rw_cell(f"c{k}_3"), n_star_order(k, "cell", d=D_SUM)) + b_cols)
 
@@ -715,6 +784,7 @@ mac = {
     "AnaHetHalfEightHundred": pc(power_factor(800, D_TARGET, factor(1, "diff", [0.5]), M1)),
     "SimHetTwoThreeThousand": pc(het2_pow[list(Ns_h2).index(3000)]),
     "AnaHetTwoThreeThousand": pc(power_factor(3000, D_TARGET, factor(2, "diff", [0.5, 0.5]), M2)),
+    "PExpl": pc(P_EXPL), "PShare": pc(1 - P_EXPL),
     "NDims": str(D), "PUneq": f"{P_UNEQ:.2f}", "RepsHetTwo": f"{REPS_HET:,}",
     "NStarCellOne": f"{n_star_order(1, 'cell'):,}", "NStarCellTwo": f"{n_star_order(2, 'cell'):,}",
     "NStarCellThree": f"{n_star_order(3, 'cell'):,}",
@@ -746,10 +816,13 @@ mac = {
     "NStarQRW": f"{rw_n('q5'):,}", "NStarQEffRW": f"{rw_n('qi5'):,}", "NStarQHalfEffRW": f"{rw_n('qhi5'):,}",
     "NStarQHalfRW": f"{rw_n('qh5'):,}", "NStarQHalf": f"{n_star('within', d=D_TARGET, p=0.5, m=MQ):,}",
     "NStarCellOneRW": f"{rw_n('c1_5'):,}", "NStarCellTwoRW": f"{rw_n('c2_5'):,}",
-    "NStarCellThreeRW": f"{rw_n('c3_5'):,}", "NStarDiffOneRW": f"{rw_n('d1_5'):,}",
+    "NStarCellThreeRW": f"{rw_n('c3_5'):,}", "NStarDiffOneRW": f"{rw_fam(ONE['5'])[0]:,}",
     "NStarDiffTwoRW": f"{rw_n('d2_5'):,}", "NStarCellOneUneqRW": f"{rw_n('c1u'):,}",
     "NStarDiffOneUneqRW": f"{rw_n('d1u'):,}",
     "SimPowQAvgTwoHundred": pc(main[list(Ns).index(200), 3]),
+    # H5
+    "NStarHFiveHalfRW": f"{rw_n('h5hi'):,}", "NStarHFiveHalf": f"{n_star_h5(p=P_H5_HI):,}",
+    "NStarHFiveUnadj": f"{n_star_h5(m=1):,}", "NStarHFiveHalfUnadj": f"{n_star_h5(p=P_H5_HI, m=1):,}",
 }
 for d, w in zip(D_MAG, ("Low", "LowMid", "Mid", "MidHigh", "High")):
     mac[f"Delta{w}"] = f2(MAG[d]["delta"])
