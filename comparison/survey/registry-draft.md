@@ -86,4 +86,4 @@ gives the thresholds for every secondary analysis.
 **Analysis plan documents to upload.** `comparison/survey/plan/plan.pdf` (the pre-analysis plan)
 and `comparison/survey/power/power.pdf` (the appendix on power).
 
-**Other.** Launch commit f9137bd in https://github.com/fhoces/opa-prop40 (pushed on launch day).
+**Other.** Launch commit 9101947 in https://github.com/fhoces/opa-prop40 (pushed on launch day).
