@@ -720,6 +720,8 @@ table.dt.verif td { vertical-align: top; text-align: left; padding: 8px 10px; }
 /* why-opa-5: its title wraps to four lines in the column, so the bullets sit below it. */
 .remark-slide-content.head-small h1 { font-size: 44px; }
 .head-beside .beside.mid { top: 63%; }
+/* The summary slide: a heading and four bullets, centred between the title and the bottom. */
+.summary .beside.mid { top: 58%; }
 .tiny { font-size: 65%; }
 .highlight-box {
   border-left: 1px solid #666666;
@@ -1089,16 +1091,17 @@ class: tight-table
 
 ---
 name: next
-class: head-beside
+class: head-beside, summary
 
 # Summary
 
-.beside[
+.beside.mid[
 **Go and [explore](../explorer/).**
 
 - The comparison does not pick the most credible values.
 - It lays out the key empirical quantities behind the gap, so experts and voters can inspect them.
 - Everyone is invited to [record their views](../survey/) on which values are most credible today.
+- This does not take us all the way to one set of common facts, but it moves us in that direction.
 ]
 
 .fig-pinned.fig-split.fig-tall[&lt;img src=&quot;../../../assets/figures/evidence-to-policy-competing-from-analysis-opa-third.svg&quot; alt=&quot;The two analyses, each an Open Policy Analysis, feed a third Open Policy Analysis, the comparison, which informs both decision makers.&quot;&gt;]
