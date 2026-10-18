@@ -23,8 +23,8 @@ under its heading:
   as shipped gives the printed results.
 
 An earlier version of these pages called all ten "mismatches", one list on an equal footing, and
-counted the rounding and seed differences as results that did not match. One of the JR authors
-pointed out that this overstated them. The notes were reclassified on 2026-10-16;
+counted the rounding and seed differences as results that did not match. That overstated them,
+and the notes were reclassified on 2026-10-16;
 `feedback/006-2026-10-16-jr-author-mismatches/REPORT.md` gives each note's old and new label.
 
 Notes 1, 2, 7, 8 and 9 concern only the authors' first version (Rauh, Jaros, Kearney, Doran and

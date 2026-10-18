@@ -208,9 +208,9 @@
     <h1>How much would the one-time billionaire tax raise, net?</h1>
     <div class="hero-left">
       <p class="standfirst">
-        Boll, Saez and Zucman (BSZ, 2026) put the one-time tax at about $100 billion of wealth tax.
+        Boll, Saez and Zucman (BSZ, NBER, August 2026) put the one-time tax at about $100 billion of wealth tax.
         This Open Policy Analysis (OPA) adds its income tax effects to get the <strong>main estimate</strong>.
-        Most inputs are guesswork. Move them and the estimate updates.
+        Five of the six inputs below are guesswork. Move them and the estimate updates.
       </p>
     </div>
     <div class="headline">
@@ -218,8 +218,9 @@
       <span class="name" id="cell-name"></span>
       <span class="value" id="cell-value"></span>
       <span class="def">Defined as the wealth tax, plus the extra income tax from assets sold to pay it,
-        minus the income tax lost to billionaires who leave, counted over 5 years
-        (present value at 3% a year). The wealth tax is counted at face value.
+        minus the income tax lost to billionaires who leave, counted over 5 years and converted to
+        today's dollars at 3% a year (present value: what money lost in future years is worth now).
+        The wealth tax is counted at face value.
         <a class="more" href="../repro.html#the-main-estimate">more</a></span>
     </div>
   </header>
@@ -347,6 +348,11 @@
   fixedLink.className = "more"; fixedLink.href = "../repro.html#every-input-by-origin";
   fixedLink.textContent = "report's table of every input";
   fixed.appendChild(fixedLink);
+  fixed.appendChild(document.createTextNode(". To count the loss for longer, use the H dial of the "));
+  var cmpLink = document.createElement("a");
+  cmpLink.className = "more"; cmpLink.href = "../../../comparison/site/explorer/";
+  cmpLink.textContent = "comparison explorer";
+  fixed.appendChild(cmpLink);
   fixed.appendChild(document.createTextNode("."));
 
   // ---- dial rack --------------------------------------------------------
@@ -429,9 +435,10 @@
   // What each scenario means, with the added count read from the grid (not typed).
   var nAdd = G.snap[namedIdx["Missing billionaires"]][K.n_billionaires] - G.snap[namedIdx[PREF]][K.n_billionaires];
   var KEY = {
-    "Base": "Table 5 row 1: the Forbes list, every input at the authors' value.",
+    "Base": "Table 5 row 1, BSZ's benchmark: the Forbes list, every input at the authors' value.",
     "Missing billionaires": "adds about " + Math.round(nAdd) + " smaller fortunes ($1B to $4.5B) that Forbes " +
-      "misses, estimated with a Pareto extrapolation and taxed with 20% avoidance (Table 5 row 2).",
+      "misses, estimated by extending the shape of the list above $4.5B down to $1B (a Pareto " +
+      "extrapolation) and taxed with 20% avoidance (Table 5 row 2).",
     "Leavers": "assumes four billionaires (Page, Thiel, Hankey, Kalanick) left before 1 January 2026 " +
       "and escape the tax, which BSZ call an aggressive assumption. Three more leave later, taking " +
       "their income tax (Table 5 row 3).",

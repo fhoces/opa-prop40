@@ -401,7 +401,7 @@
 
   <section class="board" id="panels" aria-labelledby="board-title">
     <h2 id="board-title">The inputs</h2>
-    <p class="board-lead">Each slider moves one disputed input between the two analyses' values.
+    <p class="board-lead">Each dial (a slider) moves one disputed input between the two analyses' values.
     Every dial has its smaller value at the left end and its larger value at the right end, and
     each end names whose value it is. The BSZ panel starts at the BSZ values, the JR panel at the
     JR values, so a dial can start at either end. Tap or hover over a symbol or an end for what it
@@ -626,7 +626,7 @@
       case "q": case "f0": return (100 * v).toFixed(0) + "%";
       case "own": return v.toFixed(2);
       case "C": return "$" + v.toFixed(2) + "B/yr";
-      case "H": return v === Infinity ? "perpetuity" : v + " years";
+      case "H": return v === Infinity ? "for ever" : v + " years";
       case "r": return Math.abs(100 * v - Math.round(100 * v)) < 1e-9 ? Math.round(100 * v) + "%" : (100 * v).toFixed(2) + "%";
       default: return String(v);
     }

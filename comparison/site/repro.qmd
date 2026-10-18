@@ -126,8 +126,10 @@ twin_fold <- function(exhibit, fns, py = fns) {
 Proposition 40 would tax Californians worth \$1 billion or more once, at 5% of their net
 worth. The [BSZ analysis](../../bsz-analysis/site/) estimates about
 `r bsz_round_words` of wealth tax (its Table 5 prints
-`r usd(epv("bsz_tab5_row1", "printed_value"), 0)`), or `r usd(eb$bsz_model)` net of the income
-tax it adds and loses over `r fmt_input("H", inp$bsz_value[inp$input == "H"])`. The
+`r usd(epv("bsz_tab5_row1", "printed_value"), 0)`). Adding the income tax raised on assets sold
+to pay it, and subtracting the income tax lost to billionaires who leave over
+`r fmt_input("H", inp$bsz_value[inp$input == "H"])`, gives this OPA's net total for the BSZ
+analysis, `r usd(eb$bsz_model)`. The
 [JR analysis](../../rjkdc-analysis/site/) finds the state about
 **`r usd(-eb$jr_own, 0)`** poorer in today's dollars, net of the income tax lost for ever
 (their paper prints an average of `r usd(epv("rauh_nber_npv", "printed_value"))`). Two inputs are among the
@@ -150,8 +152,10 @@ report cites each analysis in its latest version.
 The BSZ analysis is Boll, Saez and Zucman, NBER WP 35218 (August 2026). NBER is the National
 Bureau of Economic Research, which circulates working papers. Its Table 5 row 1 prints
 `r usd(epv("bsz_tab5_row1", "printed_value"), 0)` of wealth tax, reproduced here as
-**`r usd(epv("bsz_tab5_row1"))`**. With the income tax the tax changes added in, the net
-total is **`r usd(eb$bsz_model)`**.
+**`r usd(epv("bsz_tab5_row1"))`**. Adding the income tax raised on assets sold to pay it and
+subtracting the income tax lost to leavers over
+`r fmt_input("H", inp$bsz_value[inp$input == "H"])` gives this OPA's net total,
+**`r usd(eb$bsz_model)`**, not a figure BSZ print.
 
 The JR analysis is Jaros and Rauh, NBER chapter c15504, Tax Policy and the Economy vol. 41
 (September 2026). It revises the March 2026 version by Rauh, Jaros, Kearney, Doran and Cosso.
@@ -164,6 +168,16 @@ now.
 
 </details>
 
+<details class="report-fold"><summary>When the output and the bridge were fixed</summary>
+
+The common output, both its definitions and the bridge's direction were fixed on 23 September
+2026, before any bridge number (`PLAN.md`). After results, `PLAN.md` decisions 9 to 13 changed
+the bridge. Its JR end moved to the September 2026 version (14 October 2026), its steps became
+one path through the explorer's dials (15 October), the discount rate became a dial with
+`r r_jr` at the JR end (15 October), and the path follows the equation's order (15 October).
+
+</details>
+
 This report is part of the comparison's [Open Policy Analysis](https://doi.org/10.1093/scipol/scaa067) (OPA):
 
 - **Open Output**: [the explorer](explorer/index.html), with the two main estimates on the
@@ -172,7 +186,7 @@ This report is part of the comparison's [Open Policy Analysis](https://doi.org/1
   estimate with `explorer/model.js`, a copy of `score_common()` that a test checks against the
   R values. The explorer's equation shows two of the bridge's nine steps in this report on their own
   (D and q). It adds up the four steps of the loss box (H, f, C and r) into one term, and the
-  other three steps into another.
+  other inputs (W, a and the minor switch) into another.
 - **Open Analysis**: this document
 - **Open Materials**: [the repository folder](https://github.com/fhoces/opa-prop40/tree/main/comparison), every script, test and data file (guide: [the materials page](materials.html))
 :::
@@ -233,8 +247,8 @@ property taxes (chapter PDF p.32).
 []{#the-discount-rate}The discount rate r is an input of the bridge too, with its own dial
 (author decision, 15 October 2026). The BSZ analysis gives no rate. This OPA discounts its
 5-year loss at `r r3`, the rate of the BSZ analysis overview and the middle of the JR range
-(a scenario). The JR analysis values a growing loss: its rate is r &minus; g, the real
-discount rate net of the growth of the lost income tax (chapter eqs. 13-14, PDF p.31). It
+(a scenario). The JR analysis values a growing loss: its rate is r &minus; g, the interest
+rate minus the lost income tax's yearly growth (a real rate; chapter eqs. 13-14, PDF p.31). It
 draws r &minus; g at random, uniformly between `r r_lo` and `r r_hi` (eq. 18, PDF p.35), and
 averages the results. That draw is worth the same as one rate, `r r_jr`, which is the JR value
 of the dial. The derivation is short. A perpetuity of 1 a year is worth 1/r at the rate r.
@@ -249,6 +263,8 @@ it the common function returns the authors' exact mean.
 
 []{#conventions}**Conventions.** All amounts are billions of dollars. Present values are as of the date the
 wealth tax is assessed, and the first year of lost income tax is counted one year later. The
+Act makes the tax due with the 2026 income tax return, or in five yearly installments
+(§50301(c)), and the pages' "today's dollars" are dollars of that date. The
 wealth tax is counted at its face value when assessed (the BSZ analysis values the base on 1
 July 2026; the JR analysis's September version grows the base it used in March, the 2025
 Forbes list, by `r pct(pick(k$rjkdc$inputs, "nber_growth_rate"))` to 31 December 2026),
@@ -256,11 +272,13 @@ undiscounted, as both analyses count it, and the comparison follows them. The Ac
 taxpayer pay at once or in five yearly installments, each later one with a deferral charge of
 7.5% a year on the unpaid balance (§50301(c)). An Optional Deferral Account (§50304) can delay
 the tax on illiquid assets. Neither analysis counts either provision, and this OPA does not
-estimate them. The lost income tax is a flat yearly amount, discounted at the rate dial's value.
-The JR analysis's rate is a real rate net of the growth of the lost tax, r &minus; g (chapter
-eqs. 14 and 18), so a flat loss at that rate is the chapter's growing loss. Its code, eq. 18
-and its NBER README all draw r &minus; g; one sentence after eq. 19 writes r alone (the JR
-analysis's note 3). The BSZ end's `r r3` is the middle of the same draw.
+estimate them. The lost income tax is a flat yearly amount, discounted at the rate dial's
+value, r. For a loss that grows, the same present value comes from discounting a flat loss at
+the interest rate minus the growth. The JR analysis draws that rate, r &minus; g, the interest
+rate minus the lost tax's yearly growth (a real rate; chapter eqs. 14 and 18), so a flat loss
+at its rate is the chapter's growing loss. Its code, eq. 18 and its NBER README all draw
+r &minus; g; one sentence after eq. 19 writes r alone (the JR analysis's note 3). The BSZ end's
+`r r3` is read the same way, as r &minus; g, and is the middle of the same draw.
 
 ```{r}
 #| results: asis
@@ -324,12 +342,19 @@ cf_ceil <- pick(oi0, "nber_ceiling_hardcoded")
 q_jr <- bridge_inputs(k)$rauh$q
 stopifnot(isTRUE(all.equal(score_common(bridge_inputs(k)$rauh)[["a"]], cf_wt)),
           isTRUE(all.equal(q_jr * cf_ceil, cf_wt)))
+# The two share-lost rules in step 5 below: the BSZ movers' share of the base (alpha times m,
+# BSZ PDF p.24), and the share of the JR list's wealth the seven reported moves took (the
+# script's ceiling over the grown base net of real estate, as R/site.R computes it), which the
+# JR value of f, the middle of its draw, is set above
+f_movers <- with(bridge_inputs(k)$sup, alpha * m)
+d_conf_jr <- 1 - cf_ceil / pick(k$rjkdc$outputs, "nber_domestic_grown")
+stopifnot(isTRUE(all.equal(bridge_inputs(k)$rauh$f0, cf_f)), cf_f > d_conf_jr)
 sgn <- function(x, d) paste0(if (x < 0) "&minus;" else "", formatC(abs(x), format = "f", digits = d))
 ```
 
 In billions of dollars, with WT the wealth tax, f the share of all billionaires' income tax that is lost,
-C the yearly income tax of California's billionaires and r &minus; g the discount rate net of
-the loss's growth:
+C the yearly income tax of California's billionaires and r &minus; g the interest rate minus
+the loss's yearly growth:
 
 <p class="display-line">E[NPV] = E[WT] &minus; E[f] &times; E[C] &times; E[1/(r &minus; g)]
 = `r format(cf_wt)` &minus; `r format(cf_f)` &times; `r format(cf_c)` &times;
@@ -383,18 +408,22 @@ their names, and a is `alpha`.
 is `annuity(r, H)`, about `r formatC(mv("A_5"), format = "f", digits = 1)` for 5 years at `r r3`
 and `r formatC(mv("A_inf"), format = "f", digits = 1)` for ever at `r r_jr`.
 
-5. `f = alpha*m + own * L / C + f0`: the share of billionaire income tax lost ("Share of
-   billionaire income tax lost"). The first term is the BSZ movers' share (`m` is the part of
-   the avoidance allowance that is people leaving California). Under the BSZ rule (`own = 1`)
-   the leavers' own income tax, `L` dollars a year as BSZ Table 5 counts it for the people at
-   the departures stop, is lost. Under the JR rule (`own = 0`) a flat share `f0` of all
-   billionaires' income tax is lost, set above the share of wealth that left (the JR analysis's
-   independent draw of 30% to 60%). At the middle stop the BSZ end reproduces Table 5 row 3 in
-   all three columns.
+5. `f = alpha*m + own * L / C + f0`: the share of billionaires' income tax lost ("Share of
+   billionaires' income tax lost"). The first term is the BSZ movers' share (`m` is the part of
+   the avoidance allowance that is people leaving California): the movers in a take the same
+   share of the income tax as of the wealth (`r pct(f_movers)` at the BSZ values; BSZ PDF
+   p.24). Under the BSZ rule (`own = 1`) named leavers take only their own income tax, `L`
+   dollars a year as BSZ Table 5 counts it for the people at the departures stop, which is
+   small for their wealth (BSZ Table 4). Under the JR rule (`own = 0`) a flat share `f0` of all
+   billionaires' income tax is lost: `r pct(cf_f)` at the JR value, the middle of the JR
+   analysis's independent draw of 30% to 60%. It is more than the `r pct(d_conf_jr, 1)` of
+   wealth reported to have left, because income tax need not leave in step with wealth and
+   some moves go unreported (chapter PDF pp.31, 33). At the middle stop the BSZ end reproduces
+   Table 5 row 3 in all three columns.
 6. `PV = f * C * annuity(r, H)`: the present value of the lost income tax. `C` is
-   billionaires' annual California income tax, in billions of dollars a year ("Billionaires'
-   annual CA income tax"), lost for `H` years ("How long the income tax loss lasts"; for ever
-   at the JR end); `annuity(r, H) = (1 - (1 + r)^-H) / r` is what 1 a year for `H` years is
+   billionaires' yearly California income tax, in billions of dollars a year ("Billionaires'
+   yearly California income tax"), counted for `H` years ("How long the lost income tax is
+   counted"; for ever at the JR end); `annuity(r, H) = (1 - (1 + r)^-H) / r` is what 1 a year for `H` years is
    worth today at the discount rate `r` ("Discount rate for the lost income tax": `r r3` at the
    BSZ end, `r r_jr` at the JR end).
 7. `NET = WT + X - PV`: output (b), the net fiscal effect.
@@ -490,7 +519,7 @@ Rauh's NBER version the revenue is drawn uniformly between zero and
 `r usd(pick(oi, "nber_ceiling_hardcoded"), 0)`, the share of all billionaires' income tax that is lost
 between `r pick(oi, "nber_mc_f_min")` and `r pick(oi, "nber_mc_f_max")`, the annual income tax
 between `r usd(pick(oi, "rauh_mc_c_min"))` and `r usd(pick(oi, "rauh_mc_c_max"))`, and the
-discount rate net of the loss's growth, r &minus; g, between `r r_lo` and `r r_hi`, all
+interest rate minus the loss's yearly growth, r &minus; g, between `r r_lo` and `r r_hi`, all
 independently. The mean net present value is
 therefore `r usd(nber[["a"]], 1)` &minus; `r f_mid` &times; `r usd(c_mid, 3)` &times;
 `r formatC(a_inf, format = "f", digits = 3)` (the average of 1/r, or 1/r at `r r_jr`) =
@@ -864,12 +893,12 @@ scroll(show(data.frame(
     paste0(vapply(hz$hoopes, function(x) if (is.na(x)) "" else money(x, 1, TRUE), "") |>
              replace(hz$step_id == "galle_estimate", money(hz$hoopes[hz$step_id == "galle_estimate"], 1)),
            ifelse(is.na(hz$hoopes_uncertainty), "", paste0(" &plusmn; ", formatC(hz$hoopes_uncertainty, format = "f", digits = 1))))),
-  `Ours, one order` = vapply(seq_along(hz$ours), function(i) { x <- hz$ours[i]
+  `This OPA, one order` = vapply(seq_along(hz$ours), function(i) { x <- hz$ours[i]
     if (is.na(x)) "none" else money(x, if (abs(x) < 0.05) 4 else 1, hz$step_id[i] != "galle_estimate") }, ""),
-  `Our steps` = esc(hz$our_steps), check.names = FALSE)))
+  `This OPA's steps` = esc(hz$our_steps), check.names = FALSE)))
 ```
 
-Our column follows Hoopes's construction. Its revenue rows are steps on output (a), starting
+This OPA's column follows Hoopes's construction. Its revenue rows are steps on output (a), starting
 from the BSZ wealth tax (`r usd(ea$bsz_model)`), and its last row adds the JR analysis's whole
 income tax loss. The "One order" column of the (b) table in [the order-free
 check](#order-free-check) reads the same order on the net fiscal effect, so its sizes differ.
@@ -960,7 +989,7 @@ maxdiff <- if (py_ok) max(vapply(c("ends", "bridge", "endpoints", "dial_path"), 
   dial path add up to the gap, and that each equals the difference between two explorer values
   in both panels, in R and in `model.js`.
 - **The code does what the method says.** Shapley values sum to the gap by construction;
-  `test-shapley.R` checks that ours do in every horizon setting and for both outputs, and that
+  `test-shapley.R` checks that this OPA's do in every horizon setting and for both outputs, and that
   they equal a brute-force average over orders. This is a check of the code, not a finding
   about the analyses.
 - **R and Python agree.** The Python twin writes the same tables;

@@ -149,8 +149,12 @@ test_that("both pages carry the pseudo-equation: D and q, the loss box added up,
       i, money(abs(dp$change[i]), 2), dp$title[i], lt(dp$symbol[i])), ""),
       sprintf('<span class="term" data-steps="%s"><b>%s</b><small>Lost income tax%s</small></span>',
               paste(loss, collapse = " "), money(abs(sum(dp$change[loss])), 2), lt("H, f, C, r")),
-      sprintf('<span class="term" data-steps="%s"><b>%s</b><small>The other three steps together%s</small></span>',
-              paste(rest, collapse = " "), money(abs(sum(dp$change[rest])), 2), lt("W, a, the minor switch")))
+      # the last term in the survey's words on the overview, with the dial letters on the explorer
+      # (review 010, E-27 and V-27)
+      sprintf('<span class="term" data-steps="%s"><b>%s</b><small>%s</small></span>',
+              paste(rest, collapse = " "), money(abs(sum(dp$change[rest])), 2),
+              if (identical(p, explorer)) "Other inputs together (W, a, the minor switch)"
+              else "Other inputs together: the wealth on the list, avoidance, and three smaller inputs"))
     if (!identical(p, explorer)) expect_false(grepl("\\([A-Za-z, ]+\\)</small>", eq), label = "no letters on the overview")
     at <- vapply(pins, function(x) regexpr(x, eq, fixed = TRUE)[[1]], 0)
     expect_true(all(at > 0), label = paste(p, "terms"))

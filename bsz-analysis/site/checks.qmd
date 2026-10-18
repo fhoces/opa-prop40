@@ -149,7 +149,8 @@ knitr::kable(data.frame(checks$variation, checks$paper, checks$printed, f2(check
 
 **The valuation date.** The authors' workbook gives the revenue for every day of 2026. It is
 $92.5 billion on 1 January (the residency date), $87.0 billion at the year's low on 30 March, and
-$110.9 billion at its high so far on 6 October. This OPA values wealth on 1 July 2026. The
+$110.9 billion at its high so far on 6 October (the workbook's `shortrunseries` sheet, rows 15 to
+272, column D). This OPA values wealth on 1 July 2026. The
 measure values wealth on 31 December 2026 (BSZ PDF p.23); the BSZ analysis uses the 1 July list,
 and this OPA follows it. The only
 other date it can use is 15 April, through the May workbook. It has no setting for any other
@@ -176,8 +177,8 @@ The full record, with the source of every figure, is in
 [bsz-sensitivity.md](https://github.com/fhoces/opa-prop40/blob/main/feedback/scenario-tests-2026-10-15/bsz-sensitivity.md).
 A second record, [bsz.md](https://github.com/fhoces/opa-prop40/blob/main/feedback/scenario-tests-2026-10-15/bsz.md),
 checks ten other numbers the paper prints. All ten reproduce from the inputs the paper states.
-Six round to the printed digit. One is a Table 5 loss cell that the paper prints cut rather
-than rounded. Two come from first-order formulas in the text. The revenue-maximising rate with
+Six round to the printed digit. One is a Table 5 loss cell that the paper prints one unit lower
+in the last digit. Two come from first-order formulas in the text. The revenue-maximising rate with
 de-concentration is printed as 1/26 = 3.8%, and the workbook's own curve peaks at
 `r p1(oth_peak)`. A 1% permanent tax is said to keep 88% of its revenue, and the curve gives
 `r p1(oth_kept)`. The last is the break-even on page 22. There the paper says that if all
@@ -186,7 +187,7 @@ uses the text's ratio of income tax to wealth, 0.2% (abstract, Table 2), and rep
 Table 5's inputs, the 2019-2025 average tax against 1 July 2026 wealth, give
 `r p1(oth_ratio, 2)` and about `r round(oth_years)` years. The
 [materials page](materials.html#what-the-checks-found) keeps each as a note, with its kind
-(notes 1, 6, 7 and 8). None is a failure to reproduce a printed result.
+(notes 1, 5, 6 and 7). None is a failure to reproduce a printed result.
 
 ## Settings the paper does not print
 
@@ -194,8 +195,8 @@ This OPA lets a reader change assumptions the paper holds fixed. The table below
 changes, each made one at a time from the main assumptions, with the result this OPA gives. The
 paper prints no figure for any of them, so they are untested against the authors' own work.
 
-We have sent this table to the original authors, requesting them to test whether they obtain the
-same results. We will update the responses here.
+The author of this OPA has sent this table to the original authors, asking them to test whether
+they obtain the same results. Their responses will be posted here.
 
 All figures are in billions of dollars. Wealth tax revenue, the extra income tax from asset sales
 (over five years) and the income tax lost per year are the three result columns of the paper's

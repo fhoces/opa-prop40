@@ -54,7 +54,7 @@ new Figure 8 and Appendix Figure A1, not built) plus a Quarto report.
 
 | Layer | Source of truth | Status |
 |---|---|---|
-| Paper PDF | `original-materials/BSZ26CAbillionaires.pdf` | **Required input. NOT redistributed in this repo** |
+| Paper PDF | `original-materials/BSZ26CAbillionaires.pdf` | Reference only (quoted in the report); not read by the pipeline. **NOT redistributed in this repo** |
 | Authors' supplementary workbook | `original-materials/BSZ_MainTablesFigures.xlsx` (August, data appendix of 2026-10-08, default), `original-materials/september-2026/BSZ_MainTablesFigures.xlsx` (August, data appendix of 2026-09-04, `BSZ_VINTAGE=september`) or `original-materials/may-2026/BSZ_MainTablesFigures.xlsx` (`BSZ_VINTAGE=may`) | **Required input. NOT redistributed in this repo** |
 | Excel extractors | 14 `tar_target`s reading the workbook, one per sheet | Complete |
 | R re-derivations | 8 `compute_*` functions, ~1,640 Excel formula cells | Complete; all verified within tolerance |
@@ -482,12 +482,13 @@ added since this README.
 - It reproduces the paper's six tables and the twelve figures of the May paper (August
   adds a new Figure 8 and Appendix Figure A1, not built), formatted for
   HTML / LaTeX / PNG / PDF.
-- The code reproduces the paper's published results. Eight notes are kept for transparency,
-  each with its kind (one rounding, two small numerical differences, five documentation), on the
+- The code reproduces the paper's published results. Seven notes are kept for transparency,
+  each with its kind (one rounding, two small numerical differences, four documentation), on the
   [materials page](https://fhoces.github.io/opa-prop40/bsz-analysis/site/materials.html#what-the-checks-found).
-  None is a failure to reproduce a printed result. One is that the workbook repeats rows 1338 to
-  1341 of `data_sec_all` at rows 1342 to 1345; the workbook's own aggregate and the paper count
-  them once, and so does `R/compute_data_sec_agg.R` (not yet reported to the authors). The
+  None is a failure to reproduce a printed result. The notes cover the current workbook only.
+  The 2026-09-04 copy of the workbook (`BSZ_VINTAGE=september`) listed four 2025 rows of
+  `data_sec_all` twice; `R/compute_data_sec_agg.R` still drops rows that repeat year, person and
+  wealth exactly, so that copy also gives the paper's 240. The
   labels of Tables 1 and A1, which kept the May wording, were fixed on 2026-10-15. See
   `VERIFY-AUGUST.md` and `site/materials.qmd`.
 - It does **not yet** independently re-fetch raw data from SEC EDGAR, BEA,

@@ -18,8 +18,9 @@ also kept in [`review/`](review/README.md).
 
 1 - **[The BSZ analysis](bsz-analysis/README.md).** Boll, Saez and Zucman, NBER Working Paper 35218 (August 2026;
 NBER is the National Bureau of Economic Research, which circulates working papers): a one-time
-wealth tax of about $100 billion. This OPA's main estimate, $106.8 billion, nets it of the income
-tax it changes (not the authors' headline, which is the wealth tax alone). [Overview page](https://fhoces.github.io/opa-prop40/bsz-analysis/site/). Materials
+wealth tax of about $100 billion. This OPA's main estimate, $106.8 billion, adds the income tax
+from assets sold to pay it and subtracts the income tax lost to leavers over 5 years (not the
+authors' headline, which is the wealth tax alone). [Overview page](https://fhoces.github.io/opa-prop40/bsz-analysis/site/). Materials
 can be found in [`bsz-analysis/`](bsz-analysis/).
 
 2 - **[The JR analysis](rjkdc-analysis/README.md).** Jaros and Rauh, NBER chapter c15504 (Tax Policy and the Economy, vol. 41; September 2026), the
@@ -34,8 +35,8 @@ Materials can be found in [`comparison/`](comparison/).
 
 This project follows the [Open Policy Analysis (OPA) framework](https://doi.org/10.1093/scipol/scaa067) (Hoces de la
 Guardia, Grant and Miguel, 2021). [`AUDIT.md`](AUDIT.md) scores each page against the OPA
-Guidelines' nine steps, and [`PLAN.md`](PLAN.md) records the plan and every decision that fixed the
-output before results.
+Guidelines' nine steps, and [`PLAN.md`](PLAN.md) records the plan, the output fixed before
+results, and the dated decisions that changed it after results.
 
 <br clear="right">
 
@@ -63,7 +64,7 @@ transcribed in `comparison/data/document-inputs.csv`.
 
 | Part | State | Tests | CI |
 |---|---|---|---|
-| `bsz-analysis/` | BSZ reproduced cell by cell; the published results reproduce, with 8 notes on how the paper's text, tables and workbook describe them (materials page); OPA site (explorer, report, slides, materials) | [materials page](https://fhoces.github.io/opa-prop40/bsz-analysis/site/materials.html#tests), which reads the test output | `bsz-ci.yml`, green |
+| `bsz-analysis/` | BSZ reproduced cell by cell; the published results reproduce, with 7 notes on how the paper's text, tables and workbook describe them (materials page); OPA site (explorer, report, slides, materials) | [materials page](https://fhoces.github.io/opa-prop40/bsz-analysis/site/materials.html#tests), which reads the test output | `bsz-ci.yml`, green |
 | `rjkdc-analysis/` | JR reproduced from the authors' code, R and Python; the published results reproduce, with 10 notes on how text, README and code describe them (`NOTES.md`); OPA site | [materials page](https://fhoces.github.io/opa-prop40/rjkdc-analysis/site/materials.html#tests), which reads the test output | `rjkdc-ci.yml`, green |
 | `comparison/` | Comparison overview at the site root, explorer with two slider panels, report and materials page; 10 disputed inputs (`DISPUTES.md`), 8 explorer dials and a switch for 3 minor inputs | [materials page](https://fhoces.github.io/opa-prop40/comparison/site/materials.html#tests), which reads the test output | `comparison-ci.yml`, green |
 

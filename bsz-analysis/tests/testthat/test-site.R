@@ -81,8 +81,9 @@ test_that("exactly two Table 5 cells miss the digit the paper prints", {
   expect_equal(nrow(p), 28L)
   expect_equal(paste(miss$column, miss$row),
                c("annual_ca_inctax_loss 2", "annual_ca_inctax_loss 3"))
-  # Each is the workbook's value cut at the second decimal, not rounded: one unit lower in the
-  # last printed digit (reproduction note 1, reclassified 2026-10-16, feedback/007).
+  # Each is printed one unit lower in the last digit than the workbook's value rounded; row 4 of
+  # the same column is rounded, and the paper does not say why (reproduction note 1, reclassified
+  # 2026-10-16, feedback/007; review 010, A-04). The check below holds numerically for these two.
   expect_equal(unname(trunc(miss$reproduced * 100) / 100), unname(miss$printed))
   expect_true(all(abs(miss$reproduced - miss$printed) < 0.01))
 })
@@ -96,7 +97,9 @@ test_that("the reproduction notes are counted by kind the same way on every page
   kind <- sub("^[0-9]+[.] [*][*]([^.]+)[.][*][*].*", "\\1", item)
   no   <- as.integer(sub("^([0-9]+)[.].*", "\\1", item))
   expect_equal(no, seq_along(no))
-  expect_equal(length(no), 8L)
+  # seven since 2026-10-17: the note on the 2026-09-04 copy's repeated rows was dropped (author,
+  # notes cover the current workbook only; review 010, question 5)
+  expect_equal(length(no), 7L)
   words <- c("one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten")
   k <- function(x) sum(kind == x)
   listed <- function(label) {
@@ -115,7 +118,7 @@ test_that("the reproduction notes are counted by kind the same way on every page
                             words[k("Documentation")]), html, fixed = TRUE))
 })
 
-# The figures the overview types for notes 6 to 8, recomputed from the workbook.
+# The figures the overview types for notes 5 to 7, recomputed from the workbook.
 test_that("the overview's break-even and Laffer figures match the workbook", {
   skip_if_not(identical(bsz_vintage(), "august"), "the site is published for the August vintage")
   html <- gsub("\\s+", " ", paste(readLines(file.path(SITE, "index.html"), encoding = "UTF-8"), collapse = " "))

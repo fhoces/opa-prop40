@@ -150,6 +150,8 @@
   details.fold > summary { cursor: pointer; font-size: 13.5px; font-weight: 500; padding: 6px 0; color: var(--ink); }
   details.fold[open] > summary { margin-bottom: 8px; }
   details.fold a { color: var(--link); }
+  /* A link into the Notes (the headline's "not a probability") stops below the sticky result bar. */
+  details.fold.notes p[id] { scroll-margin-top: 48px; }
   /* On a narrow screen the headline scrolls away while the reader moves the dials, so a thin
      bar at the top repeats it once the headline is out of view (the script sets .show). */
   .sticky-result { display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 40;
@@ -220,7 +222,8 @@
         <summary>Notes</summary>
         <p>Each setting shows the exact average of the authors' formula, not a new random run. At
         the main setting that is <span id="gap-text"></span> The printed figure comes from one
-        seeded run, and the gap is sampling error (<a href="../repro.html#step-npv">report, Step 6</a>).
+        seeded run (a run started from a fixed random number, so it gives the same draws every
+        time), and the gap is sampling error (<a href="../repro.html#step-npv">report, Step 6</a>).
         The input labels follow the report's
         <a href="../repro.html#every-input-by-origin">input table</a>. The litigation dial reads the
         chapter's q (PDF pp.19-20), which the code does not apply separately
@@ -230,9 +233,11 @@
         draw's 0 floor. The growth dial is this OPA's
         illustration of growth beyond the authors' r &minus; g
         (<a href="../materials.html#reproduction-notes">note 3</a>).</p>
-        <p>The share below zero sums up the authors' independent, uniform draws over ranges that are
-        themselves guesswork. It is not a probability that the tax loses money: it moves with those
-        ranges, as the explorer's Rate 1.5% and Rate 4.5% settings show.</p>
+        <p id="share-below-zero">The authors report the share below zero as the share of plausible
+        parameter combinations with a negative net present value (PDF p.35). Their draws are
+        independent and uniform over ranges that are themselves guesswork, so the share is not a
+        probability that the tax loses money: it moves with those ranges, as the explorer's Rate
+        1.5% and Rate 4.5% settings show.</p>
         <!-- Lesson O3: when the tool departs from the source analysis's own
              convention, say how and give the size of the gap, here. -->
       </details>
@@ -539,8 +544,14 @@
     sub.textContent = "";
     if (p) {
       sub.appendChild(document.createTextNode("As printed (" + p.printed_page + "): " +
-        p.printed_pct_negative + "% of draws fall below zero. This page's exact average: " +
-        f2(snap[0]) + " ("));
+        p.printed_pct_negative + "% of draws fall below zero ("));
+      // The share is not a probability: the link opens the Notes fold at the paragraph that says why.
+      var np = document.createElement("a");
+      np.href = "#share-below-zero";
+      np.textContent = "not a probability";
+      np.addEventListener("click", openNote);
+      sub.appendChild(np);
+      sub.appendChild(document.createTextNode("). This page's exact average: " + f2(snap[0]) + " ("));
       var why = document.createElement("a");
       why.href = "../repro.html#step-npv";
       why.textContent = "why";
@@ -591,6 +602,22 @@
 
   render();
   window.addEventListener("resize", function () { drawBars(idx(state)); });
+
+  // A link to a paragraph inside the closed Notes fold (#share-below-zero) opens the fold first,
+  // on a click and when the page is opened at that address.
+  function openNote() {
+    var t = document.getElementById("share-below-zero");
+    var d = t && t.closest ? t.closest("details") : null;
+    if (d) d.open = true;
+  }
+  function revealHash() {
+    var id = location.hash.slice(1), t = id ? document.getElementById(id) : null;
+    if (!t) return;
+    var d = t.closest ? t.closest("details") : null;
+    if (d && !d.open) { d.open = true; t.scrollIntoView(); }
+  }
+  window.addEventListener("hashchange", revealHash);
+  revealHash();
 
   // The sticky result bar (narrow screens only, by CSS): shown once the headline block has
   // scrolled out of view above the screen.

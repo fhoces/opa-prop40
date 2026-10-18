@@ -113,10 +113,11 @@ Kearney, Doran and Cosso (SSRN 6340778, March 2026; SSRN is a preprint site). It
 revenue of about \$30B (\$`r h("nber","revenue_range_low","printed")`B to
 \$`r h("nber","revenue_range_high","printed")`B) and a mean NPV of
 `r usdb(h("nber","mc_mean_npv","printed"))`, with `r h("nber","mc_pct_negative","printed")`%
-of simulated outcomes negative (the Figure 3 note, PDF p.35; the text on p.1 says 85%). The share
-below zero sums up the authors' independent, uniform draws over ranges that are themselves
-guesswork. It is not a probability that the tax loses money: it moves with those ranges, as the
-explorer's Rate 1.5% and Rate 4.5% settings show. The mean
+of simulated outcomes negative (the Figure 3 note, PDF p.35; the text on p.1 says 85%). The
+authors report the share below zero as the share of plausible parameter combinations with a
+negative net present value (PDF p.35). Their draws are independent and uniform over ranges that
+are themselves guesswork, so the share is not a probability that the tax loses money: it moves
+with those ranges, as the explorer's Rate 1.5% and Rate 4.5% settings show. The mean
 NPV is **the main estimate**, derived step by
 step in [the next section](#the-main-estimate).^[The authors released a first version in March
 2026: Rauh, Jaros, Kearney, Doran and Cosso, Hoover Institution, SSRN 6340778. It printed revenue
@@ -136,6 +137,14 @@ current); the only numbers typed in are the paper's printed values this OPA comp
 with its PDF page (page numbers are PDF pages throughout).
 :::
 
+::: {.callout-note collapse="true" title="When the main estimate was chosen"}
+The project's pre-specified output (`PLAN.md`, 23 September 2026) reported the March 2026 and
+September 2026 versions side by side, with the March 2026 mean as the comparison's anchor. On
+14 October 2026, after results, the September 2026 mean became the main estimate and the
+comparison's anchor, because the pages follow each analysis's latest version (`PLAN.md`,
+decisions 7 and 9).
+:::
+
 **The shape of the argument**, in one line: net present value = wealth tax collected once, minus
 the present value of the income tax that departing billionaires would have paid in every future
 year. Sections 4 and 5.1 of the paper estimate the two pieces; Sections 5.2 to 5.4 combine them.
@@ -149,8 +158,8 @@ This report follows that order.
 | $WT$ | one-time wealth tax revenue actually collected | \$B |
 | $C$ | annual California income tax paid by the billionaires | \$B per year |
 | $f$ | share of that income tax base that leaves the state | share |
-| $r - g$ | real discount rate net of the growth of the lost income tax (the Monte Carlo's draw) | per year |
-| $g$ | growth of the lost income tax stream; the explorer's further growth on top of the draw is this OPA's illustration | per year |
+| $r - g$ | the interest rate minus the lost tax's yearly growth (a real rate; the Monte Carlo's draw) | per year |
+| $g$ | growth of the lost income tax stream; the explorer's further growth on top of the draw, $\Delta g$, is this OPA's illustration | per year |
 | $\varepsilon$ | migration semi-elasticity: % of the base lost per percentage point of tax | |
 | $q$ | probability the Act survives constitutional challenge | probability |
 | NPV | $WT - f \cdot C/(r-g)$, the net fiscal effect today | \$B |
@@ -161,7 +170,7 @@ The main estimate is the paper's mean net present value, printed as
 **`r usdb(h("nber","mc_mean_npv","printed"))`** (PDF p.1 and p.35). The authors get it from a
 Monte Carlo: they draw four inputs at random 100,000 times, compute
 $NPV = WT - f \cdot C / (r - g)$ for each draw, and average. Because the four draws are independent,
-the average has an exact value too, and we build it one input at a time. Every number below is
+the average has an exact value too, and this report builds it one input at a time. Every number below is
 read from the pipeline (`R/npv_mc.R`, `R/nber_final.R`); the draw ranges are the defaults of
 `compute_npv_mc_nber()`, which copies the authors' script `NPV_dist_v8.R`.
 
@@ -194,16 +203,17 @@ $E[C]$ = `r num((nb$c_min + nb$c_max) / 2, 2)`.
 
 ### Step 4: the discount rate net of growth, $r - g$ {#step-r}
 
-The script draws $r - g \sim U[`r nb$rg_min`, `r nb$rg_max`]$, the real discount rate net of the
-growth of the lost tax, between `r pct(100 * nb$rg_min)` and `r pct(100 * nb$rg_max)` a year. A
+The script draws $r - g \sim U[`r nb$rg_min`, `r nb$rg_max`]$, the interest rate minus the lost
+tax's yearly growth (a real rate), between `r pct(100 * nb$rg_min)` and `r pct(100 * nb$rg_max)` a year. A
 stream of \$1 a year, growing at $g$ for ever, is worth $1/(r-g)$ today, so what enters is the
 mean of $1/(r-g)$, not $1/E[r-g]$:
 $$E\!\left[\tfrac{1}{r-g}\right] = \frac{\ln(`r nb$rg_max` / `r nb$rg_min`)}{`r nb$rg_max` - `r nb$rg_min`} = `r num(npv_e_inv_rate(nb$rg_min, nb$rg_max), 2)`.$$
 In words: at these rates, \$1 lost this year, and growing every year for ever, is worth about
 \$`r num(npv_e_inv_rate(nb$rg_min, nb$rg_max), 0)` today. The range is **guesswork**. Its
 `r pct(100 * nb$rg_min)` anchor is a published market yield, but the width of the band, to
-`r pct(100 * nb$rg_max)`, is the authors' judgement, and the width is what moves the
-result.^[The pipeline's input file (`export/r/inputs.csv`) labels the range research, because of
+`r pct(100 * nb$rg_max)`, is the authors' allowance for illiquidity, mean reversion in
+entrepreneurial returns and a baseline outflow of high earners of about 1% a year (PDF p.32), not
+an estimate, and the width is what moves the result.^[The pipeline's input file (`export/r/inputs.csv`) labels the range research, because of
 its published anchor. The comparison, which uses one rate worth the same as the draw, labels that
 rate derived ([disputes row 10](https://github.com/fhoces/opa-prop40/blob/main/comparison/DISPUTES.md)).
 This report labels the range guesswork, because the width of the band moves the result.]
@@ -221,7 +231,7 @@ $$= `r num(h("nber","mc_expected_revenue"), 2)` - `r num(h("nber","pv_lost"), 2)
 
 The authors do not print this exact expectation. They print the average of one seeded run of
 100,000 draws. A seeded run starts the random draws from a fixed number (2026), so it gives the
-same draws every time. Our R port replays it draw for draw:
+same draws every time. This OPA's R port replays it draw for draw:
 **`r usdb(mcn$summary$mean, 3)`**, printed as `r num(h("nber","mc_mean_npv","printed"))`. The
 gap, `r num(abs(mcn$summary$mean - tr("npv_mc_nber_analytic_mean")), 2)`, is less than one Monte
 Carlo standard error (`r num(mcn$summary$sd / sqrt(mcn$summary$n), 2)`). The overview and the explorer show the printed
@@ -266,8 +276,9 @@ fold("Python code for the main estimate", "python", c(
 
 ## Section 4: the wealth tax revenue
 
-This section builds the revenue. The base is \$`r num(rc$baseline_precise, 2)`B before anyone
-leaves and grows to \$`r num(nc$domestic_total_grown, 2)`B by the valuation date. Removing the
+This section builds the revenue. At `r pct(100*inp("tax_rate"),0)` of the base, it is
+\$`r num(rc$baseline_precise, 2)`B before anyone leaves and \$`r num(nc$domestic_total_grown, 2)`B
+at the valuation date. Removing the
 seven publicly reported moves leaves \$`r num(nc$ceiling_recomputed, 2)`B. Leaving out three
 pre-filing departures and Zuckerberg, and halving for the chance the Act is struck down, gives
 the paper's about \$30B (p.23).
@@ -315,8 +326,8 @@ standard's 50% threshold, not from a legal assessment of the challenges, so it i
 The chapter calls them "publicly confirmed pre-snapshot departures" (Table 7, PDF p.21). This OPA
 says "publicly reported moves", because whether each ended legal residence in time is disputed
 ([disputes row 3](https://github.com/fhoces/opa-prop40/blob/main/comparison/DISPUTES.md)).
-Page, Brin, Thiel, Hankey, Spielberg, Kalanick and Sacks moved out between the initiative's filing
-and the 1 January 2026 residency date (Table 7, PDF p.21). Removing their
+Table 7 lists Page, Brin, Thiel, Hankey, Spielberg, Kalanick and Sacks as having moved out between
+the initiative's filing and the 1 January 2026 residency date (PDF p.21). Removing their
 \$`r num(nc$removed_departed_total, 2)`B leaves **\$`r num(nc$ceiling_recomputed, 2)`B** in
 `final.csv`. The paper (eq. 4, p.22) and the authors' README print
 \$`r out("nber_ceiling","printed_value")`B, the difference of two figures each rounded to two
@@ -554,7 +565,7 @@ scroll(kable(data.frame(
   caption = "NPV Monte Carlo, $B, seed 2026, 100,000 draws"))
 ```
 
-Our R port replays the authors' script exactly (same seed, same draw order) and agrees with an
+This OPA's R port replays the authors' script exactly (same seed, same draw order) and agrees with an
 unmodified run of `NPV_dist_v8.R` to machine precision (`tests/testthat/test-npv-mc.R`). The
 printed summary reproduces to within Monte Carlo error, with no systematic gap. Its exact
 expectation is `r usdb(tr("npv_mc_nber_analytic_mean"), 2)`, which rounds to
@@ -605,7 +616,7 @@ semi-elasticity as its workbook applies it. The [appendix](#appendix-first-versi
 #| code-summary: "R code for the input table"
 dials <- site_dials(rc)
 dial_rows <- do.call(rbind, lapply(dials, function(d) data.frame(
-  input = d$key, origin = d$origin, what = d$label, `value(s)` = paste(d$labels, collapse = "; "),
+  input = if (d$key == "g") d$sym else d$key, origin = d$origin, what = d$label, `value(s)` = paste(d$labels, collapse = "; "),
   where = "explorer dial (R/site.R)", check.names = FALSE)))
 # The rows only the first version uses (version "ssrn") go to the appendix.
 first_only <- inputs$version == "ssrn"
@@ -832,7 +843,7 @@ scroll(kable(data.frame(
   caption = "First version, NPV Monte Carlo, $B, seed 2026, 100,000 draws"))
 ```
 
-Our R port agrees with an unmodified run of `NPV_dist.R` to machine precision. The median and
+This OPA's R port agrees with an unmodified run of `NPV_dist.R` to machine precision. The median and
 share negative round to the printed values. The mean (`r num(mcs$summary$mean, 2)` against
 `r num(h("ssrn","mc_mean_npv","printed"))`) and the standard deviation
 (`r num(mcs$summary$sd, 2)` against `r h("ssrn","mc_sd_npv","printed")`) lie within Monte Carlo

@@ -203,7 +203,7 @@ class: center, middle, inverse
 
 - a **one-time** 5% tax on net worth
 - on California residents on **1 January 2026**
-- payable 1% a year over **five years**
+- payable at once or in **five yearly installments**
 - wealth valued on 31 December 2026
 
 Directly held real estate is excluded; business real estate is not.
@@ -337,8 +337,8 @@ $$L = -\alpha \, m \, C = -`r bn(a, 2)` \times `r m` \times `r bn(C, 2)` = -`r b
 The minus sign means revenue lost. $L$ is **per year**, and Table 5 does not say for how many
 years. BSZ argue the losses should be temporary and give 5 years as an example (PDF p.27). The
 [JR analysis](../../../rjkdc-analysis/site/) (Jaros and Rauh, September 2026; first version by
-Rauh, Jaros, Kearney, Doran and Cosso) counts them forever. That horizon is one of the largest
-differences between the two analyses.
+Rauh, Jaros, Kearney, Doran and Cosso) counts them forever, assuming leavers do not come back
+(chapter PDF p.32).
 ]
 
 ---
@@ -573,9 +573,9 @@ the SQL queries against R, and pin the explorer to Table 5.
 **Reproduces.** The code reproduces the paper's published results. `r c("One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten")[n_notes]` notes are
 kept for transparency ([materials page](../materials.html#what-the-checks-found)); none is a
 failure to reproduce. Three of them:
-- 4 rows appear twice in the workbook's year-by-year billionaire list (244 for 2025; the workbook's own total and the paper use 240)
+- Appendix Table A1 annualizes 1982 to 2026 over 43 years, where the workbook's own Table 1 uses 44
 - the missing + leavers scenario skips a deduction the missing billionaires scenario applies
-- two printed Table 5 cells are the workbook's value cut, not rounded, at the last digit
+- two printed Table 5 cells are one unit lower in the last digit than the workbook's rounded value
 ]
 
 .pull-right[

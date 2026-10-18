@@ -570,8 +570,9 @@ JR analysis of California Proposition 40:
 .blue-box[
 Every number in this deck comes from the project&#39;s `{targets}` pipeline, which reproduces the
 authors&#39; own workbook, person-level file and R scripts (github.com/bjaros20/wealth_tax, commit
-`25e84dd`). The deck reads that pipeline&#39;s store; nothing here is retyped except the paper&#39;s
-printed values.
+`25e84dd`). `{targets}` is an R package that runs the pipeline&#39;s steps in order and records which
+outputs are current. The deck reads that pipeline&#39;s store; nothing here is retyped except the
+paper&#39;s printed values.
 ]
 
 ---
@@ -596,7 +597,7 @@ The JR analysis asks a different question: **is the state better off, counting w
 - `\(WT\)`: wealth tax collected, **once**
 - `\(C\)`: income tax the billionaires pay, **per year**
 - `\(f\)`: share of that income tax that leaves the state
-- `\(r - g\)`: discount rate net of the growth of the lost tax; `\(C/(r-g)\)` is a growing stream of `\(C\)` **for ever**, valued today
+- `\(r - g\)`: the interest rate minus the lost tax&#39;s yearly growth (a real rate); `\(C/(r-g)\)` is a growing stream of `\(C\)` **for ever**, valued today
 
 ]
 
@@ -618,7 +619,7 @@ name: headline
 version, March 2026, was by Rauh, Jaros, Kearney, Doran and Cosso)
 
 .big[−$38.9B]
-mean NPV; 85.2% of outcomes negative (a summary of the draws&#39; ranges, not a probability; PDF p.35, Figure 3 note; 85% in the text, p.1)&lt;sup&gt;1&lt;/sup&gt;&lt;br&gt;
+mean NPV; 85.2% of outcomes negative (the share of draws below zero, which moves with the ranges drawn, so not a probability; PDF p.35, Figure 3 note; 85% in the text, p.1)&lt;sup&gt;1&lt;/sup&gt;&lt;br&gt;
 revenue &quot;approximately 30 billion&quot; ($28.4B to $35.6B)
 
 Reproduced: &amp;minus;38.89 (the authors&#39; seeded run, replayed draw for draw) and
@@ -802,7 +803,7 @@ name: seven-inputs
 
 # The seven inputs that move the answer
 
-&lt;table class=&quot;dt&quot;&gt;&lt;tr&gt;&lt;th&gt;Input&lt;/th&gt;&lt;th&gt;Values in the explorer&lt;/th&gt;&lt;th&gt;Origin&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lowest revenue the draw can pick ($B)&lt;/td&gt;&lt;td&gt;0; 35; 45.59&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Highest revenue the draw can pick ($B)&lt;/td&gt;&lt;td&gt;55.10; 67.51; 72&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og data&#39;&gt;data&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Extra litigation weight on the revenue&lt;/td&gt;&lt;td&gt;1 (none extra); 0.75; 0.50&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Billionaires&#39; yearly California income tax ($B)&lt;/td&gt;&lt;td&gt;3.3 to 5.8; 3.3 only; 5.8 only&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Discount rate net of growth&lt;/td&gt;&lt;td&gt;1.5% to 4.5%; 1.5% only; 4.5% only&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Share of the income tax base that leaves&lt;/td&gt;&lt;td&gt;1 − WT/94.2; 0.30 to 0.60; 0.283 fixed&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Further growth of the lost income tax&lt;/td&gt;&lt;td&gt;0; 0.5%; 1.0%&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;table class=&quot;dt&quot;&gt;&lt;tr&gt;&lt;th&gt;Input&lt;/th&gt;&lt;th&gt;Values in the explorer&lt;/th&gt;&lt;th&gt;Origin&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lowest revenue the draw can pick ($B)&lt;/td&gt;&lt;td&gt;0; 35; 45.59&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Highest revenue the draw can pick ($B)&lt;/td&gt;&lt;td&gt;55.10; 67.51; 72&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og data&#39;&gt;data&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Extra litigation weight on the revenue&lt;/td&gt;&lt;td&gt;1 (none extra); 0.75; 0.50&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Billionaires&#39; yearly California income tax ($B)&lt;/td&gt;&lt;td&gt;3.3 to 5.8; 3.3 only; 5.8 only&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Discount rate net of growth&lt;/td&gt;&lt;td&gt;1.5% to 4.5%; 1.5% only; 4.5% only&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Share of the income tax base that leaves&lt;/td&gt;&lt;td&gt;tied to revenue; 0.30 to 0.60; 0.283 fixed&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Further growth of the lost income tax&lt;/td&gt;&lt;td&gt;0; 0.5%; 1.0%&lt;/td&gt;&lt;td&gt;&lt;span class=&#39;og guesswork&#39;&gt;guesswork&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 
 .highlight-box[
 4 of the authors&#39; 5 inputs are guesswork; the litigation weight and further growth rows are this OPA&#39;s settings.
@@ -827,8 +828,8 @@ README and the code describe a step differently:
 ]
 
 .blue-box[
-None is a failure to reproduce a printed result. We reproduce the code as shipped and record each
-note rather than fix it. Full text on the
+None is a failure to reproduce a printed result. This OPA reproduces the code as shipped and
+records each note rather than fixing it. Full text on the
 [materials page](../materials.html#reproduction-notes); every one is pinned by a test.&lt;sup&gt;1&lt;/sup&gt;
 ]
 

@@ -43,9 +43,12 @@ mv  <- function(key) ex$meta$value[ex$meta$key == key]
 rj_main  <- eb$jr_own   # the JR main estimate: the exact expectation of the authors' model (author decision 2026-10-15)
 rj_print <- epv("rauh_nber_npv", "printed_value")
 bsz_print <- epv("bsz_tab5_row1", "printed_value")
-# the March 2026 (SSRN) mean net present value, from the JR export contract, for slide 2's
-# "$25/39 billion" (consistency review 004, C-10)
+# the March 2026 (SSRN) mean net present value, from the JR export contract. Slide 2 quotes the
+# voter guide's argument against, which cites "$25 billion in lost revenue" from "a study by
+# Stanford University economists" (guide p.57), the March version: stop if the contract's
+# value no longer rounds to the quoted figure (review 010, A-19)
 rj_march <- pick(k$rjkdc$outputs, "npv_mc_ssrn_mean")
+stopifnot(round(abs(rj_march)) == 25)
 oi <- k$rjkdc$inputs
 ceiling72 <- pick(oi, "nber_ceiling_hardcoded")
 f_lo <- pick(oi, "nber_mc_f_min"); f_hi <- pick(oi, "nber_mc_f_max")
@@ -188,8 +191,9 @@ $1 billion or more, payable over five years, with the revenue mainly for health 
 <img src="figs/prop40/yes-panel.png" alt="The Yes on 40 campaign page, small, with the line it circles zoomed in: research estimates Prop 40 could raise about $100 billion.">
 ]
 .arg.arg-no[
-.arg-text[**Against:** a "poorly designed tax scheme". Among the reasons: $`r round(abs(rj_march))`/`r round(abs(rj_main))` billion in
-  lost revenue (the JR analysis, March/September versions).]
+.arg-text[**Against:** a "poorly designed tax scheme". Among the reasons: "$25 billion in lost
+  revenue", from "a study by Stanford University economists" (the JR analysis's March 2026
+  version).]
 <img src="figs/prop40/no-panel.png" alt="The No on 40 campaign page, small, with the sentence it circles zoomed in: a poorly designed tax scheme that will cost the state budget billions of dollars.">
 ]
 ]
@@ -516,7 +520,7 @@ tab <- sub('<span class="table-subhead">this page</span>', '<span class="table-s
 cat('<div class="ai-use-slide">', gsub("\n\\s*", " ", tab), gsub("\n\\s*", " ", key), "</div>")
 ```
 
-An example from the [BSZ analysis OPA](../../../bsz-analysis/site/). The columns group the 14 roles of the [CRediT contributor taxonomy](https://credit.niso.org/) (ANSI/NISO Z39.104-2022) into three: ideas and direction, doing the work, and writing. The last column, **human verification**, is our addition: how closely the author has checked each part. When an object is lightly reviewed or not reviewed, its title carries a badge: <span class="ai-badge ai-badge-yellow inline">AI generated, partially reviewed</span> or <span class="ai-badge ai-badge-red inline">AI generated, not reviewed yet</span>.
+An example from the [BSZ analysis OPA](../../../bsz-analysis/site/). The columns group the 14 roles of the [CRediT contributor taxonomy](https://credit.niso.org/) (ANSI/NISO Z39.104-2022) into three: ideas and direction, doing the work, and writing. The last column, **human verification**, is this OPA's addition: how closely the author has checked each part. When an object is lightly reviewed or not reviewed, its title carries a badge: <span class="ai-badge ai-badge-yellow inline">AI generated, partially reviewed</span> or <span class="ai-badge ai-badge-red inline">AI generated, not reviewed yet</span>.
 
 
 ---
@@ -678,8 +682,8 @@ Next, we analyze each component, one at a time:
 .eq-list[
 (i) Who moved out in time?<br>
 (ii) Is the revenue discounted for court risk?<br>
-(iii) For how long is the income tax lost? Then *f*, *C* and *r*<br>
-(iv) The other three steps
+(iii) How long is the lost income tax counted? Then *f*, *C* and *r*<br>
+(iv) The other inputs together
 ]
 
 .small[
@@ -763,7 +767,7 @@ leave.
 name: diff-horizon
 class: wide-right
 
-# (iii) For how long is the income tax lost?
+# (iii) How long is the lost income tax counted?
 
 ```{css, echo=FALSE}
 /* diff-horizon: both claim cells run five lines, so the dollars box takes the wider column
@@ -838,27 +842,27 @@ cat("</table>")
 ```
 
 .small[
-- **Share of income tax lost**: the BSZ analysis loses no more of billionaires' income tax than
-  the share of their wealth that leaves. The avoiders who move take a proportional share, and
-  named leavers add their own tax from filings, which is small for their wealth (BSZ PDF p.24,
-  Table 4). The JR analysis loses a flat `r pct(rj$f0)` of it, more than the
+- **Share of income tax lost**: in the BSZ analysis the movers in *a* take the same share of the
+  income tax as of the wealth (`r pct(sup$alpha * sup$m)` at the BSZ values; BSZ PDF p.24), and
+  named leavers take only their own income tax, which is small for their wealth (BSZ Table 4).
+  The JR analysis loses a flat `r pct(rj$f0)` of all billionaires' income tax, more than the
   `r pct(vr[["d_conf"]], 1)` of wealth reported to have left, because income tax need not leave in
   step with wealth and some moves go unreported (chapter PDF pp.31, 33). The step is small here because it comes before the
-  horizon, while the loss lasts `r fmt_input("H", sup$H)`. Averaged over every order it is among
+  horizon, while the loss is counted for `r fmt_input("H", sup$H)`. Averaged over every order it is among
   the three largest.
 - **Yearly income tax**: both start from California tax data on the highest earners. BSZ take
   billionaires to have about half their income, as a study of top wealth holders finds. JR take
   them to be among the `r jr_k[1]` to `r jr_k[2]` highest earners and use the middle of the range.
 - **Discount rate**: `r r3` at the BSZ end, a scenario (BSZ give no rate). `r r_jr` at the JR end,
-  derived: worth the same as the authors' draw of r &minus; g, the real rate net of the loss's
-  growth, from `r r_lo` to `r r_hi`. It moves after the horizon, on a loss that lasts for ever.
+  derived: worth the same as the authors' draw of r &minus; g, the interest rate minus the loss's
+  yearly growth, from `r r_lo` to `r r_hi`. It moves after the horizon, on a loss counted for ever.
 ]
 
 ---
 name: smaller
 class: tight-table
 
-# (iv) The other three steps
+# (iv) The other inputs together
 
 ```{r tab-rest, results="asis"}
 # the equation's last term: the path steps outside D, q and the loss box (eq_terms()), in path
@@ -893,7 +897,7 @@ name: hoopes
 Jeffrey L. Hoopes (2026), ["Galle v Rauh: Comparing Two Revenue Estimates for California Billionaire Taxation"](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6428578), SSRN Working Paper 6428578, compares **earlier versions**: the February 2026
 GGSS expert report, on which the BSZ analysis builds, and the March 2026 version by Rauh, Jaros,
 Kearney, Doran and Cosso. His Figure 2 is a waterfall that prints no values, so his column is read
-off the chart. Ours follows his order and ends at the September 2026 version's exact mean.
+off the chart. This OPA's bridge follows his order and ends at the September 2026 version's exact mean.
 ]
 
 ```{r tab-hoopes, results="asis"}
@@ -901,7 +905,7 @@ lab <- k$hoopes$step_label[match(hz$step_id, k$hoopes$step_id)]
 keep <- !is.na(lab) | abs(hz$ours) > 1e-9
 lab[is.na(lab)] <- paste0("(no bar: ", hz$our_steps[is.na(lab)], ")")
 hm <- function(x, first) if (is.na(x)) "none" else money(x, 1, !first)
-cat('<table class="dt"><tr><th>Hoopes Figure 2 bar</th><th>Hoopes (read off the chart)</th><th>Ours, his order</th></tr>')
+cat('<table class="dt"><tr><th>Hoopes Figure 2 bar</th><th>Hoopes (read off the chart)</th><th>This OPA, his order</th></tr>')
 for (i in which(keep)) {
   first <- hz$step_id[i] == "galle_estimate"
   cat(sprintf('<tr><td>%s</td><td>%s</td><td>%s</td></tr>', esc(lab[i]), hm(hz$hoopes[i], first), hm(hz$ours[i], first)))
@@ -1032,8 +1036,8 @@ cat("</table>")
 The horizon H is itself disputed: 5 years for the BSZ analysis (this OPA's reading of BSZ's
 example, PDF p.27), for ever for the JR analysis.
 So is the discount rate r. The BSZ analysis gives none, and this OPA uses `r r3`, the rate of
-the BSZ overview. The JR analysis draws r &minus; g, the real rate net of the loss's growth, at
-random between `r r_lo` and `r r_hi`, which is
+the BSZ overview. The JR analysis draws r &minus; g, the interest rate minus the loss's yearly
+growth, at random between `r r_lo` and `r r_hi`, which is
 worth the same as one rate of `r r_jr` ([term 2](#term-loss)). Output (b) is the one both main
 estimates answer, so the rest of the deck uses it. For the JR analysis, both outputs are the
 exact average of the authors' Monte Carlo.
@@ -1090,7 +1094,7 @@ stopifnot(abs(vs[["annual_loss"]] * vs[["annuity"]] - vs[["PV"]]) < 1e-9,
           abs(vr[["annual_loss"]] * vr[["annuity"]] - vr[["PV"]]) < 1e-9)
 hz_txt <- function(H) if (is.infinite(H)) "for ever" else paste(H, "years")
 cat('<table class="dt"><tr><th>Step</th><th>BSZ analysis</th><th>JR analysis</th></tr>')
-cat(sprintf('<tr><td>Share of billionaire income tax lost</td><td>%s</td><td>%s</td></tr>', pct(vs[["f"]], 0), pct(vr[["f"]], 0)))
+cat(sprintf('<tr><td>Share of billionaires&#39; income tax lost</td><td>%s</td><td>%s</td></tr>', pct(vs[["f"]], 0), pct(vr[["f"]], 0)))
 cat(sprintf('<tr><td>&times; billionaires&#39; yearly California income tax</td><td>%s</td><td>%s</td></tr>', usd(sup$C, 2), usd(rj$C, 2)))
 cat(sprintf('<tr><td>= yearly loss</td><td>%s</td><td>%s</td></tr>', usd(vs[["annual_loss"]], 2), usd(vr[["annual_loss"]], 2)))
 cat(sprintf('<tr><td>&times; value today of 1 dollar a year, %s at %s for BSZ, %s at %s for JR</td><td>%s</td><td>%s</td></tr>',
@@ -1217,7 +1221,7 @@ ggplot(wf) +
 .small[
 Each bar moves one dial of the BSZ panel to its JR end, in the equation's order. The equation on [What separates the two numbers](#pseudo-eq)
 shows `r eq_d_q` on their own. It adds up the four loss-box steps, `r eq_loss`, into one
-term, and the other three into another. Only dropping the BSZ `r pct(sup$alpha, 0)` avoidance allowance raises the estimate,
+term, and the other inputs (W, a and the minor switch) into another. Only dropping the BSZ `r pct(sup$alpha, 0)` avoidance allowance raises the estimate,
 because the JR analysis applies none.
 ]
 

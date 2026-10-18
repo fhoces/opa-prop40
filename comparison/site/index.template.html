@@ -299,10 +299,14 @@
   <p class="byline">
     Proposition 40, the Billionaire Tax Act, would tax, once, people who lived in California on
     1 January 2026 and are worth $1 billion or more, at 5% of their net worth, payable over five
-    years. The
+    years. After administration costs, the Act puts 90% of the revenue in a health care account
+    and 10% in an education and food assistance account (<a href="docs/initiative/README.md">the
+    Act</a>, PDF pp.7-8). The
     <a href="bsz-analysis/site/">BSZ analysis</a> (Boll, Saez and Zucman, NBER, August 2026)
-    finds that it raises about {{bsz_round_words}} of wealth tax (its Table 5 prints {{bsz_printed}}), or
-    {{hl_bsz}} net of the income tax it adds and loses over {{h_bsz}}. The
+    finds that it raises about {{bsz_round_words}} of wealth tax (its Table 5 prints {{bsz_printed}}).
+    Adding the income tax raised on assets sold to pay it, and subtracting the income tax lost to
+    billionaires who leave over {{h_bsz}}, gives this OPA's net total for the BSZ analysis,
+    {{hl_bsz}}. The
     <a href="rjkdc-analysis/site/">JR analysis</a> (Jaros and Rauh, NBER, September 2026) finds
     that it leaves the state about {{nber_npv_round}} poorer, net of the income tax lost for ever
     (their paper prints an average of <span style="white-space:nowrap">{{nber_printed}}</span>).
@@ -327,7 +331,7 @@
       <span class="def">Net present value: the wealth tax minus the income tax lost for ever, in today's dollars. It is the exact average of the authors' model. Jaros and Rauh (September 2026) print <span style="white-space:nowrap">{{nber_printed}}</span>, the average of one simulation of 100,000 random draws.</span>
     </div>
   </div>
-  <p class="def" style="margin:6px 0 0">Both numbers measure the same thing: the wealth tax collected, counted at face value, minus the present value of the income tax lost (<a href="comparison/site/repro.html#the-common-output">the report's definition</a>). The Act lets the wealth tax be paid in five yearly installments, each later one with a deferral charge of 7.5% a year on the unpaid balance, which neither analysis counts.</p>
+  <p class="def" style="margin:6px 0 0">Both numbers measure the same thing: the wealth tax collected, counted at face value, plus the income tax from assets sold to pay it, minus the present value of the income tax lost (<a href="comparison/site/repro.html#the-common-output">the report's definition</a>). The Act lets the wealth tax be paid in five yearly installments, each later one with a deferral charge of 7.5% a year on the unpaid balance, which neither analysis counts.</p>
 </div>
 
 <section class="eq-box" id="what-separates" aria-labelledby="eq-title">
@@ -403,7 +407,7 @@
   <a class="subopa-card" href="bsz-analysis/site/">
     <span class="kicker">BSZ analysis: a revenue estimate</span>
     <h3>Boll, Saez, Zucman, NBER WP 35218 (Aug 2026) &rarr;</h3>
-    <p>The Forbes list of 1 July 2026, a {{alpha_bsz}} allowance for avoidance and evasion (half of it people who moved out in time), no court discount, lost income tax for {{h_bsz}}.</p>
+    <p>The Forbes list of 1 July 2026, a {{alpha_bsz}} allowance for avoidance and evasion (half of it people who moved out in time), no court discount, lost income tax counted for {{h_bsz}} (this OPA's reading of BSZ's example).</p>
     <span class="headline">Main estimate, net total: {{hl_bsz}}</span>
     <span class="headline">Table 5 row 1, wealth tax: {{bsz_row1}} (the paper prints {{bsz_printed}})</span>
     <div class="card-icon-box" aria-hidden="true"><img src="assets/opa/opa-all.png" alt=""></div>

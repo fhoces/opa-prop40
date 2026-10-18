@@ -193,8 +193,8 @@ assumptions, with the result this OPA gives. Each changes one assumption, except
 weight, which the explorer pairs with a higher revenue floor. The papers print no figure for any of
 them, so they are untested against the authors' own work.
 
-We have sent this table to the original authors, requesting them to test whether they obtain the
-same results. We will update the responses here.
+The author of this OPA has sent this table to the original authors, asking them to test whether
+they obtain the same results. Their responses will be posted here.
 
 The mean net present value is in billions of dollars. This OPA computes the exact average of the
 authors' formula over the same random draws, not a new seeded run. A seeded run of the authors'

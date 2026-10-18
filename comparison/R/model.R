@@ -21,7 +21,7 @@
 #         uniformly between 0 (struck down) and the ceiling R0 S, whose mean is the ceiling
 #         times q = 0.5, the weight the authors' README states
 #   X   = WT * s * g * t_cg                                extra income tax from asset sales
-#   f   = alpha*m + own * L / C + f0                       share of billionaire income tax lost:
+#   f   = alpha*m + own * L / C + f0                       share of billionaires' income tax lost:
 #         the BSZ movers' share; with own = 1 (the BSZ analysis) the leavers' own income tax,
 #         L dollars a year, as BSZ Table 5 counts it for the people who leave; with own = 0
 #         (the JR analysis) none of that, and
@@ -81,9 +81,9 @@ bridge_steps <- function() {
       "Billionaires who moved out in time",
       "Avoidance and evasion allowance",
       "Chance the tax does not survive litigation",
-      "Share of billionaire income tax lost",
-      "Billionaires' annual CA income tax",
-      "How long the income tax loss lasts",
+      "Share of billionaires' income tax lost",
+      "Billionaires' yearly California income tax",
+      "How long the lost income tax is counted",
       "Discount rate for the lost income tax",
       "Extra income tax from selling assets to pay"),
     # non-citizens: the BSZ analysis taxes them as residents (data); the JR analysis leaves them

@@ -1,7 +1,7 @@
 ---
 title: 'Prop 40, BSZ analysis: the reproduction <a class="ai-badge ai-badge-yellow" href="index.html#how-ai-was-used">AI generated, partially reviewed</a>'
 pagetitle: "Prop 40, BSZ analysis: the reproduction"
-subtitle: "Boll, Saez and Zucman (BSZ, 2026) and the Galle, Gamage, Saez and Shanske (GGSS) expert report, reproduced step by step from the authors' August 2026 workbook"
+subtitle: "Boll, Saez and Zucman (BSZ, NBER, August 2026) and the Galle, Gamage, Saez and Shanske (GGSS) expert report, reproduced step by step from the authors' workbook (August 2026 revision, data appendix of 8 October 2026)"
 date: today
 format:
   html:
@@ -137,7 +137,9 @@ twin_html("the setup",
 
 California's Proposition 40, the Billionaire Tax Act, would levy, once, a 5% tax on the
 whole net worth of people who lived in California on 1 January 2026 and are worth \$1 billion
-or more, valued on 31 December 2026 and payable 1% a year over five years. BSZ's paper and the
+or more, valued on 31 December 2026 and payable at once with the 2026 income tax or in five
+yearly installments, each later one with a deferral charge of 7.5% a year on the unpaid balance
+(§50301(c)). BSZ's paper and the
 GGSS expert report carry the same number. Reproducing one reproduces the other.
 
 ::: {.callout-note collapse="true" title="The two documents"}
@@ -168,7 +170,7 @@ arithmetic is in [The main estimate](#the-main-estimate). [Section IV.A](#table-
 Table 5 step by step. Sections II and III reproduce the paper's other tables first. The code
 reproduces the paper's published results. All `r nrow(t5pr)` cells of Table 5 match the workbook,
 and `r sum(t5pr$matches_printed)` round to the digit the paper prints. The paper prints the other
-`r nrow(t5pr) - sum(t5pr$matches_printed)` cut rather than rounded (see
+`r nrow(t5pr) - sum(t5pr$matches_printed)` one unit lower in the last digit (see
 [Reproduction notes](#reproduction-notes)).
 
 **Not the authors' choice.** BSZ's own headline is the wealth tax alone: about \$100 billion in the
@@ -242,9 +244,8 @@ reported on tax returns.
 
 The 2025 count is `r agg$n[agg$year == 2025]` billionaires holding
 `r usd(agg$forbes_worth[agg$year == 2025], 0)`, which is the paper's own figure
-("240 billionaires with total wealth of \$2055 billion", Appendix A). Four rows of the
-workbook's raw list appear twice; the workbook's own aggregate and the paper count them once,
-and so does the pipeline (note 2 under [Reproduction notes](#reproduction-notes)).
+("240 billionaires with total wealth of \$2055 billion", Appendix A), and the workbook's own
+aggregate gives the same.
 
 ::: {.table-scroll}
 ```{r}
@@ -493,7 +494,7 @@ tr("fig7")
 
 This is the section BSZ's headline rests on. Table 5 has four scenarios: the **base**
 scenario (row 1), the **missing billionaires** scenario (row 2), the **leavers** scenario (row 3),
-and **missing + leavers** (row 4). We build the base scenario in five steps, then each other
+and **missing + leavers** (row 4). This OPA builds the base scenario in five steps, then each other
 scenario as a change to it.
 
 ### Step 1: the tax base
@@ -528,7 +529,7 @@ move the revenue (see [Every input, by origin](#every-input-by-origin)).
 
 $$T = \tau\,W^{\text{tax}} = 0.05 \times `r bn(t5$taxable_wealth[1])` = `r bn(t5$wealth_tax_revenue[1])`.$$
 That is Table 5's row 1, printed as `r usd(wt_printed, 0)` and reproduced here as
-`r usd(t5$wealth_tax_revenue[1])`, collected once (payable in five annual installments). Before avoidance, 5% of the base would be
+`r usd(t5$wealth_tax_revenue[1])`, collected once (payable at once or in five annual installments). Before avoidance, 5% of the base would be
 `r usd(0.05 * inp$W0)`; avoidance costs `r usd(0.05 * inp$W0 - t5$wealth_tax_revenue[1])`.
 
 ### Step 4: extra state income tax from selling assets {#step-4-extra-state-income-tax-from-selling-assets}
@@ -591,7 +592,8 @@ This is a *yearly* loss. The paper argues that, for a genuinely one-time tax, th
 should be temporary, and gives five years, the payment period, as an example ("If they last
 say only 5 years", PDF p.27). Table 5 itself takes no stand on how long they last.
 The [JR analysis](../../rjkdc-analysis/site/) (Jaros and Rauh; first version Rauh, Jaros, Kearney, Doran and Cosso) counts the loss
-forever. That difference in horizon is one of the largest disputes between the two analyses
+forever, because it assumes leavers do not come back once the Act permanently lifts the
+constitutional cap on taxes on intangible property (chapter PDF p.32). That difference in horizon is one of the largest disputes between the two analyses
 (`comparison/DISPUTES.md`, row 2). The [comparison's report](../../comparison/site/repro.html#the-bridge)
 gives each dispute's size in dollars.
 
@@ -720,8 +722,8 @@ wealth of the four assumed to have left before 1 January 2026, and revenue
 to `r usd(t5$wealth_tax_revenue[3])`. The yearly income tax loss grows to
 `r usd(-t5$annual_ca_inctax_loss[3], 2)`, still small, because the SEC data show the top three
 pay little income tax relative to their wealth. Whether any of these people has actually
-changed legal residence is a legal judgment, and the most important guesswork in the whole
-dispute (`comparison/DISPUTES.md`, row 3).
+changed legal residence is a legal judgment, and one of the inputs the two analyses dispute
+(`comparison/DISPUTES.md`, row 3).
 
 ### Missing + leavers scenario (Table 5, row 4) {#row-4-rows-2-and-3-together}
 
@@ -729,7 +731,7 @@ This scenario adds the missing billionaires to the leavers scenario: `r usd(t5$w
 with a yearly income tax loss of `r usd(-t5$annual_ca_inctax_loss[4], 2)`. One detail: it does **not**
 subtract the phase-in deduction that the missing billionaires scenario subtracts for the same
 added billionaires (`Tab5!F9` against `Tab5!F7`). This OPA reproduces the workbook as it is. A consistent
-treatment would lower it by `r usd(inp$row4_phasein_gap)`. We list this under
+treatment would lower it by `r usd(inp$row4_phasein_gap)`. This OPA lists this under
 [What reproduces](#what-reproduces).
 
 ### Table 5, reproduced
@@ -772,10 +774,11 @@ miss_txt <- paste0("row ", miss$row, " (printed ", formatC(miss$printed, format 
 Matching the *printed* table is a stricter test, because the paper rounds. Of the
 `r nrow(pr)` printed cells, `r sum(pr$matches_printed)` are what the reproduced value rounds
 to. The other `r nrow(miss)` are both in the income tax loss column:
-`r paste(miss_txt, collapse = " and ")`. The workbook's own cached values agree with ours, and
+`r paste(miss_txt, collapse = " and ")`. The workbook's own cached values agree with this OPA's, and
 the paper's text quotes the printed figures (\$0.19 billion on PDF p.25, \$0.51 billion on
-p.26). Each printed figure is the workbook's value cut at the second decimal rather than
-rounded, less than a cent of a billion a year (note 1 under
+p.26). Each printed figure is one unit lower in the last digit than the workbook's value
+rounded, less than a cent of a billion a year. Row 4 of the same column is rounded, and the
+paper does not say why these two differ (note 1 under
 [Reproduction notes](#reproduction-notes)). No other printed number is
 built on them.
 
@@ -880,7 +883,7 @@ uses as a check, 10.32; its first version preferred 12 to 13, `comparison/DISPUT
 wealth itself: $d$ = 15 years of paying the tax shrinks fortunes by $(1-\tau)^d$, and revenue
 then peaks at `r pct(laf$tax_rate[which.max(laf$long_run_tax_revenue)])`. The paper prints the
 first-order formula $1/(1+d+e) = 1/26 = 3.8\%$, the optimum once $(1-\tau)^d$ is replaced by $e^{-d\tau}$
-(note 7 under [Reproduction notes](#reproduction-notes)).
+(note 6 under [Reproduction notes](#reproduction-notes)).
 
 ```{r}
 #| echo: false
@@ -1007,8 +1010,10 @@ guesswork, and they are exactly the explorer's `r n_guess_dials` guesswork dials
 income tax columns, or matter only in the scenario rows. So Table 5's row 1
 (`r usd(t5$wealth_tax_revenue[1])` here, printed as `r usd(wt_printed, 0)`) is Forbes' list, times 5%, times one minus a single guessed
 avoidance rate; the only other guess that moves it is who has already left. The disputes with the [JR analysis](../../rjkdc-analysis/site/) are mostly about inputs this
-table labels guesswork or scenario: who has left (disputes row 3), how long losses last, and whether a
-one-time tax triggers permanent departures.
+table labels guesswork or scenario: who has left (disputes row 3), how long the lost income tax is
+counted, and whether a one-time tax triggers permanent departures. The JR analysis also discounts
+the revenue for the chance that courts strike the tax down, an input the BSZ analysis does not
+have (disputes row 9).
 
 # What reproduces {#what-reproduces}
 
@@ -1052,31 +1057,27 @@ None is a failure to reproduce a printed result. By kind: `r nk("Rounding")` rou
 
 1. **Rounding.** Table 5's income tax loss in rows 2 and 3 is printed as \$0.19 and \$0.51
    billion. The workbook, and this reproduction, give values that round to \$0.20 and \$0.52.
-   The paper cuts these two at the second decimal instead of rounding them (see
+   Each printed figure is one unit lower in the last digit than the workbook's value rounded.
+   Row 4 of the same column is rounded, and the paper does not say why these two differ (see
    [Table 5, reproduced](#table-5-reproduced)).
-2. **Documentation.** In the `data_sec_all` sheet, rows 1338 to 1341 (four 2025 entries:
-   Sijbrandij, Rihanna, Preston-Werner, Stephens) appear a second time at rows 1342 to 1345.
-   Counting both copies gives 244 billionaires; dropping the repeat gives 240, which matches the
-   workbook's own aggregate sheet and the paper's text. The pipeline drops rows that repeat
-   year, person and wealth exactly (`R/compute_data_sec_agg.R`).
-3. **Documentation.** `Tab5!H6` types the income tax loss share as a literal 0.05. We read it
+2. **Documentation.** `Tab5!H6` types the income tax loss share as a literal 0.05. This OPA reads it
    as avoidance times the leaving share (0.10 × 0.5), as the row label says. It matters only
    when the explorer moves those inputs.
-4. **Documentation.** Row 4 omits row 2's phase-in deduction (`Tab5!F9`), worth
+3. **Documentation.** Row 4 omits row 2's phase-in deduction (`Tab5!F9`), worth
    `r usd(inp$row4_phasein_gap)`. The printed row 4 follows the workbook, and so does this
    reproduction.
-5. **Documentation.** The workbook (`TabA1!B18:G18`) and the paper annualize Appendix Table
+4. **Documentation.** The workbook (`TabA1!B18:G18`) and the paper annualize Appendix Table
    A1's 1982 to 2026 growth over 43 years, where the workbook's own Table 1 uses 44
    (`Tab1!C18:H18`). This reproduction uses 43, as the paper does, and the report states what
    44 would give (see [Appendix Table A1](#appendix-table-a1-us-billionaires)).
-6. **Documentation.** The text's 25-year break-even (PDF p.22) uses its own ratio of income tax
+5. **Documentation.** The text's 25-year break-even (PDF p.22) uses its own ratio of income tax
    to wealth, about 0.2% a year, and reproduces from it. Table 5's inputs give
    `r pct(inp$C / inp$W0, 2)` and about `r round(0.05 / (inp$C / inp$W0))` years.
-7. **Small numerical difference.** The revenue-maximising rate with de-concentration is printed
+6. **Small numerical difference.** The revenue-maximising rate with de-concentration is printed
    as the first-order 1/26 = 3.8%; the workbook's curve peaks at
    `r pct(laf$tax_rate[which.max(laf$long_run_tax_revenue)])` (see the
    [Laffer curve](#b.-a-permanent-annual-wealth-tax-the-laffer-curve)).
-8. **Small numerical difference.** The text's 88% of mechanical revenue kept by a 1% permanent
+7. **Small numerical difference.** The text's 88% of mechanical revenue kept by a 1% permanent
    tax adds up first-order effects (100% − 10% − 2%); the workbook's curve gives
    `r pct((laf$actual_tax_revenue[which.min(abs(laf$tax_rate - 0.012))] - 0.002 * 2000) / (0.01 * 2000))`.
 
@@ -1089,7 +1090,7 @@ None is a failure to reproduce a printed result. By kind: `r nk("Rounding")` rou
   2026 dollars). Both were fixed in the display code on 15 October 2026. The values the tests
   check did not change.
 - Appendix Table A1 at first used 44 years, so `r sum(a1_diff)` cells of the annualized row
-  printed lower than the paper. It now uses 43, as the paper does (note 5). A test now checks
+  printed lower than the paper. It now uses 43, as the paper does (note 4). A test now checks
   each cell of the row; the whole-column comparison before it had not caught the gap.
 
 **What is not reproduced.**

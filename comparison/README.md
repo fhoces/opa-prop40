@@ -53,8 +53,8 @@ input-by-input bridge. The disputed inputs on the JR end are those of its latest
 September 2026. The discount rate of the lost income tax is one of the bridge's inputs
 (author decision 2026-10-15): 3% at the BSZ end (the row `common_discount_rate` of
 `data/document-inputs.csv`; the BSZ analysis gives no rate) and 2.73% at the JR end, the one
-rate worth the same as the authors' draw of r - g, the real discount rate net of the loss's
-growth, between 1.5% and 4.5% (1 / E[1/r] = 0.03 / ln(3), computed from the JR contract). So the common function returns that version's exact Monte
+rate worth the same as the authors' draw of r - g, the interest rate minus the loss's yearly
+growth (a real rate), between 1.5% and 4.5% (1 / E[1/r] = 0.03 / ln(3), computed from the JR contract). So the common function returns that version's exact Monte
 Carlo mean on both outputs. It renders the site-root
 page, `../index.html`, and the explorer, `site/explorer/index.html`.
 
@@ -63,8 +63,9 @@ page, `../index.html`, and the explorer, `site/explorer/index.html`.
 - `../bsz-analysis/export/r/{inputs,outputs}.csv` and
   `../rjkdc-analysis/export/r/{inputs,outputs}.csv`: each analysis's export contract.
 - `data/document-inputs.csv`: values neither contract carries, transcribed from the PDFs with
-  their page (the two analyses' horizons, the published revenue headlines, GGSS's non-citizen
-  wealth, the 3% rate at the BSZ end, Walczak and the LAO for reference, Hoopes's text figures).
+  their page, or set by this OPA where its row says so (the two analyses' horizons, the
+  published revenue headlines, GGSS's non-citizen wealth, the 3% rate this OPA sets at the BSZ
+  end, Walczak and the LAO for reference, Hoopes's text figures).
   The JR Monte Carlo ranges are read from the JR export contract, not from this file.
 - `data/hoopes-fig2.csv`: Hoopes (2026) Figure 2, read off the chart by
   `tools/digitize_hoopes_fig2.py` (the note prints no values).
@@ -72,7 +73,7 @@ page, `../index.html`, and the explorer, `site/explorer/index.html`.
 ## Common output
 
 (a) gross one-time wealth tax revenue; (b) net fiscal effect = (a) + extra income tax from
-assets sold to pay - present value of income tax lost to departures, over a horizon H (a dial).
+assets sold to pay - present value of income tax lost to departures, over a horizon H at a rate r (both dials).
 
 ## Code
 

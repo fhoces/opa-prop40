@@ -163,9 +163,9 @@ describe the same step differently. None is a failure to reproduce a printed res
 its kind: three rounded or typed inputs (notes 4, 6 and 8), one seed variation (note 9) and six
 documentation notes (1, 2, 3, 5, 7 and 10). Five concern the chapter (one of them, note 10, is in
 the first version too).[^mm] We do not fix any of these; the pipeline reproduces the code as
-shipped and records the note. The notes were reclassified on 2026-10-16, after one of the JR
-authors pointed out that the earlier list, then called mismatches, counted rounding and seed
-differences as results that did not match.
+shipped and records the note. The notes were reclassified on 2026-10-16: the earlier list, then
+called mismatches, counted rounding and seed differences as results that did not match, which
+overstated them.
 
 [^mm]: The other five concern only the first version. One of them (note 9) is seed variation: the
 *printed* Monte Carlo summary is not the one the shipped seed gives, but it is within Monte Carlo

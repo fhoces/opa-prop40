@@ -4,9 +4,10 @@ What this record is about (added 2026-10-16). The failures and "mismatches" coun
 this reproduction's own tests failing when the authors updated their workbook: row positions and
 constants that this OPA's code had fixed at the earlier layout. All were fixed (section 0). None
 is a failure of the paper's results to reproduce. The one finding about the authors' materials
-(RC10, four rows of `data_sec_all` that appear twice) is note 2 of the reproduction notes on the
-materials page (`site/materials.qmd`, "What the checks found"), where the paper's results are
-summarised.
+(RC10, four rows of `data_sec_all` listed twice, in the 2026-09-04 copy of the workbook only) is
+not among the reproduction notes on the materials page (`site/materials.qmd`, "What the checks
+found"), which cover the current workbook only; the 2026-10-08 update lists each row once (note
+dropped 2026-10-17).
 
 Report only. No computation code, test literal, or snapshot was changed to produce this
 report; `git status --short` before writing it showed no modifications under `R/`, `tests/`,
@@ -40,6 +41,9 @@ What changed between the two appendices (October minus September, R pipeline out
 - data_sec_all has the seven larry-ellison rows again (1,348 rows, against 1,345 with none).
   `compute_data_sec_agg()` filters them out as before, so the aggregates differ from the
   September ones only through the data changes below.
+- The update also lists each 2025 row of `data_sec_all` once: the four rows repeated at 1342 to
+  1345 in the 2026-09-04 copy are gone, and seven Ellison rows are added (1,348 rows against
+  1,345).
 - The 2025 SEC data moved slightly. In data_sec_agg 2025, non-equity compensation went from
   0.0383 to 0.0367 $B and economic income from 58.09 to 58.44 $B; CA income tax from
   1.21225 to 1.21210 $B.
@@ -82,7 +86,7 @@ commit message for the full derivation; this table is only an index.
 
 | RC | What | Commit |
 |---|---|---|
-| RC10 | `compute_data_sec_agg` dedupes an accidentally re-pasted 4-row block in August's `data_sec_all` (n 244 -> 240, matching the workbook's own cache and the paper's stated count) | `009e539` |
+| RC10 | `compute_data_sec_agg` dedupes an accidentally re-pasted 4-row block in the 2026-09-04 copy of August's `data_sec_all` (n 244 -> 240, matching the workbook's own cache and the paper's stated count); the 2026-10-08 update lists each row once | `009e539` |
 | RC1 | `compute_shortrunseries`: vintage-keyed column-letter lookup (`R/vintage.R`'s `srs_col()`); August dropped the "CA wealth, US citizens only" column entirely, falling back to the all-CA-billionaires total | `0b27883` |
 | RC2 | `compute_billionaires_ca_inctax`: `bci_row()` row-offset helper (+1 for rows 16-143, +2 for rows >=144); August also folds the passthrough-entity tax into row 15 for 2021-2023, changed the sales gross-up rate 11%->9.5%, and changed the private-wealth passthrough/private-C weights 71.8/61 -> 93/116 (adding a new "property tax on passthrough" term) | `0b27883` |
 | RC3 | `compute_tab5`: vintage-keyed benchmark n/wealth and per-leaver wealth constants (`.TAB5_CONST` in `R/vintage.R`) | `09b46ab` |

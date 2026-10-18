@@ -234,7 +234,9 @@
   <p class="byline">
     Proposition 40, the Billionaire Tax Act, would tax, once, people who lived in California on
     1 January 2026 and are worth $1 billion or more, at 5% of their net worth, payable over five
-    years. The JR analysis argues the state ends up
+    years. After administration costs, the Act puts 90% of the revenue in a health care account and
+    10% in an education and food assistance account (<a href="../../docs/initiative/README.md">the
+    Act</a>, PDF pp.7-8). The JR analysis argues the state ends up
     poorer, because billionaires who leave take their income tax with them for ever. This site
     reproduces Jaros and Rauh,
     <cite><a href="https://www.nber.org/system/files/chapters/c15504/c15504.pdf">The Net Present
@@ -254,11 +256,12 @@
     runs of the authors' model (a Monte Carlo simulation). Today's dollars (present value): what
     money received or lost in future years is worth now.</span>
   <p class="sign">The loss decides the sign. The income tax lost for ever is worth about $75B
-    today, against $36B of wealth tax collected once (<a href="#what-the-model-says">what the model says</a>).</p>
+    today, against $36B, the average wealth tax in the authors' simulation (their own estimate of
+    what is collected is about $30B; <a href="#what-the-model-says">what the model says</a>).</p>
   <p class="fn"><sup>1</sup> Jaros and Rauh, NBER chapter c15504, Tax Policy and the Economy
     vol. 41, PDF p.1. The figure is the average of one seeded run of the authors' simulation (a
-    fixed starting number, so the same draws every time). It revises a March 2026 first version
-    by Rauh, Jaros, Kearney, Doran and Cosso (footnote 2).</p>
+    run started from a fixed random number, so it gives the same draws every time). It revises a
+    March 2026 first version by Rauh, Jaros, Kearney, Doran and Cosso (footnote 2).</p>
 </div>
 <script src="explorer/grid.js"></script>
 <script>
@@ -325,7 +328,8 @@
       <div class="card-text">
         <span class="kicker">Open Materials</span>
         <h3>Materials for computational reproduction &rarr;</h3>
-        <p>The R pipeline and its Python twin, the tests, every exported CSV, the source files'
+        <p>The R pipeline and its Python twin (the same computation written again in Python and
+        checked against the R result), the tests, every exported CSV, the source files'
         hashes, and ten notes on where the authors' text, READMEs and code describe a step differently.</p>
       </div>
       <div class="card-icon-box" aria-hidden="true">
@@ -389,7 +393,7 @@ author has not yet reviewed these checks.</p>
 <div class="note">
   <strong>A note on the source.</strong> The authors released their workbooks, scripts and
   person-level data under an MIT licence. This OPA does not redistribute them or the paper: the pipeline
-  reads a local clone pinned at commit <code>25e84dd</code>, and the source manifest lists each file
+  reads a local clone pinned at commit <a href="https://github.com/bjaros20/wealth_tax/tree/25e84ddbb67fe0293a64cd9108ed4d35d8ae37ab"><code>25e84dd</code></a>, and the source manifest lists each file
   with its SHA-256 hash.
 </div>
   </div>
@@ -478,16 +482,19 @@ author has not yet reviewed these checks.</p>
 </table>
 </div>
 
-<p style="margin-top:14px;">The share below zero sums up the authors' independent, uniform draws
-   over ranges that are themselves guesswork. It is not a probability that the tax loses money: it
-   moves with those ranges, as the explorer's Rate 1.5% and Rate 4.5% settings show.</p>
+<p style="margin-top:14px;">The authors report the share below zero as the share of plausible
+   parameter combinations with a negative net present value (PDF p.35). Their draws are independent
+   and uniform over ranges that are themselves guesswork, so the share is not a probability that the
+   tax loses money: it moves with those ranges, as the explorer's Rate 1.5% and Rate 4.5% settings
+   show.</p>
 <p style="margin-top:14px;">Printed values are from NBER PDF pp.1, 23 and 35. The numbers show three
    things. First, the result is driven by the loss term: roughly 75 of present value lost against
    36 collected. At the draws' 1.5% to 4.5% values of r &minus; g, a dollar a year for ever, growing, is
    worth 22 to 67 dollars today.</p>
 <p style="margin-top:14px;">Second, the paper says the tax would collect about $30 billion (p.23). The
    simulation behind the headline draws revenue anywhere from 0 to 72, the most left after the
-   seven publicly reported moves. That draw averages 36 (0.5 &times; 72, p.33), above the 30 the
+   seven publicly reported moves (the chapter's &quot;publicly confirmed pre-snapshot
+   departures&quot;, PDF p.21). That draw averages 36 (0.5 &times; 72, p.33), above the 30 the
    paper calls collectible. The chapter uses 36 as its central revenue in the break-even analysis
    (p.33) and treats both 72 and 30 as upper bounds that assume no undocumented departures
    (p.24).</p>
@@ -501,9 +508,11 @@ author has not yet reviewed these checks.</p>
 <p style="margin-top:14px;"><strong>What this OPA does not estimate.</strong> Both analyses take the
    measure as written (<a href="../../docs/initiative/README.md">docs/initiative/</a>), with the
    wealth tax at face value. Neither counts the deferral charge of 7.5% a year that the Act adds to
-   installment payments. Neither predicts the Forbes base on the 31 December 2026 valuation date.
-   The BSZ analysis uses the 1 July 2026 list (BSZ's website tracks the estimate day by day, PDF
-   p.23), and the JR analysis grows the 2025 list by 7%. The BSZ analysis alone counts the income
+   installment payments. Only the JR analysis projects the base to the 31 December 2026 valuation
+   date. It grows the 2025 list by 7%, the yearly growth of billionaire wealth that the Act's own
+   findings state, and checks the result against a forecast from past growth (chapter PDF
+   pp.12-13). The BSZ analysis uses the 1 July 2026 list (BSZ's website tracks the estimate day by
+   day, PDF p.23). The BSZ analysis alone counts the income
    tax from asset sales and the non-US-citizen residents. The JR analysis alone weights the revenue
    by the chance the Act survives in court.</p>
   </div>
@@ -525,7 +534,8 @@ author has not yet reviewed these checks.</p>
             script and the chapter's later pages use 72 (note 4)</td></tr>
     <tr><td>Collectible revenue, Sec 4.4 (pp.22-23)</td>
         <td>29.57 (printed 29.6), range 28.40 to 35.59</td></tr>
-    <tr><td>Pareto fit and Table 9, income tax (pp.26-30)</td>
+    <tr><td>Pareto fit (a line fitted to the counts of top earners by income, used to estimate
+            what the top earners make) and Table 9, income tax (pp.26-30)</td>
         <td>alpha 1.44; all 21 cells round to the printed digit, replaying the authors' random draws</td></tr>
     <tr><td>Table 10, break-even share (p.34)</td>
         <td>all 3 cells match the printed digit</td></tr>
@@ -536,7 +546,8 @@ author has not yet reviewed these checks.</p>
             the authors' repository cannot be set here. <a href="checks.html">The checks</a></td></tr>
     <tr><td>Other numbers the papers print</td>
         <td>Of ten, nine reproduce: seven at the printed digit, and two once the paper's rounding
-            (the semi-elasticity of 5.73 uses the round 72) and seed are allowed for. One does not
+            (the semi-elasticity of 5.73, the percentage of the tax base lost per percentage point
+            of tax, uses the round 72) and seed are allowed for. One does not
             quite: Table 8's &quot;expanded departures&quot; (about 42% of the base) gives a
             semi-elasticity of 8.35 from the authors' records against the printed 8.41. It is not an
             input to any estimate. <a href="checks.html">The checks</a></td></tr>
@@ -557,7 +568,7 @@ to reproduce a printed result. Three are rounded or typed inputs, one is seed va
 documentation notes. Five concern the September chapter. The other five concern only the March
 first version.<sup>3</sup> This OPA reproduces the code as shipped and records each one:</p>
 <ol start="3" style="margin:0 0 14px; padding-left:22px; color:var(--ink-2); font-size:15px;">
-  <li>Documentation. The chapter's draw is r &minus; g, the real discount rate net of the growth of the lost income tax: eq. 18, the code and the NBER README all say so. One sentence after eq. 19 writes C/r instead (p.35).</li>
+  <li>Documentation. The chapter's draw is r &minus; g, the interest rate minus the lost income tax's yearly growth (a real rate): eq. 18, the code and the NBER README all say so. One sentence after eq. 19 writes C/r instead (p.35).</li>
   <li>Rounding. The revenue ceiling is 72 in the script and on the chapter's later pages (pp.24, 33), 72.06 in the README and in eq. 4 (p.22), and 72.05 in the person-level data: one value at three roundings.</li>
   <li>Documentation. The paper sets the litigation weight q, the chance the Act survives in court, at 0.50. The code never multiplies by q. Its revenue draw from 0 to 72 has the same mean, 0.5 &times; 72, but a different spread.</li>
   <li>Typed input. The baseline revenue sums to 94.30 in the authors' workbook, and the grown person-level data give the same. The text prints 94.20 (p.19), a value typed into the workbook, and every later number built on it reproduces.</li>

@@ -248,8 +248,9 @@ The full crosswalk of disputed inputs, with every page reference checked against
   `r rate_txt(ex$meta$value[ex$meta$key == "r_jr"])` ([the report](repro.html#the-discount-rate)). The JR pipeline reproduces
   the seeded run as `r usd(ep$contract_value[ep$endpoint_id == "rauh_nber_npv"], 3)`. The
   comparison's pages use the exact expectation as the JR main estimate.
-- **Both analyses' discount factors are right.** One reading magnifies the loss by a factor
-  67 (1/1.5%), BSZ say 33 (1/3%). The first is the rate the JR text anchors its range of r &minus; g on, the second the mean
+- **Both readings of the March version's discount factor are right.** The GGSS response says
+  the loss is magnified by a factor 67 (1/1.5%, Resp p.3); BSZ say 33 (1/3%, PDF p.22 fn.29).
+  The first is the rate the JR text anchors its range of r &minus; g on, the second the mean
   rate of its Monte Carlo (`DISPUTES.md`, row 2). Averaged over the draw the perpetuity factor is
   ln(3)/0.03 = `r formatC(ex$meta$value[ex$meta$key == "A_inf_jr_draw"], format = "f", digits = 1)`, the value of one rate of `r rate_txt(ex$meta$value[ex$meta$key == "r_jr"])`, the JR end of the comparison's rate dial (row 10).
 - **Two March disputes are closed in the BSZ analysis by August**: Larry Ellison's exclusion

@@ -63,8 +63,9 @@ This page is a guide to the **Open Materials** layer (the repository) of the JR 
 NBER chapter c15504, Tax Policy and the Economy vol. 41, September 2026; first version by Rauh, Jaros, Kearney, Doran and Cosso, March 2026): everything needed to rebuild every number on this
 site, in the repository [github.com/fhoces/opa-prop40](https://github.com/fhoces/opa-prop40/tree/main/rjkdc-analysis),
 folder `rjkdc-analysis/`. The analysis is an R [`{targets}`](https://docs.ropensci.org/targets/)
-pipeline with a Python twin; the site's explorer grid, report and deck read that pipeline's store and
-exports, so none of them retypes a number.
+pipeline with a Python twin. `{targets}` is an R package that runs the pipeline's steps in order and
+records which outputs are current. The site's explorer grid, report and deck read that pipeline's
+store and exports, so none of them retypes a number.
 :::
 
 ## Rebuild everything

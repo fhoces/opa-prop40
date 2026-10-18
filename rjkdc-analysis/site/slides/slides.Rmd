@@ -166,8 +166,9 @@ JR analysis of California Proposition 40:
 .blue-box[
 Every number in this deck comes from the project's `{targets}` pipeline, which reproduces the
 authors' own workbook, person-level file and R scripts (github.com/bjaros20/wealth_tax, commit
-`25e84dd`). The deck reads that pipeline's store; nothing here is retyped except the paper's
-printed values.
+`25e84dd`). `{targets}` is an R package that runs the pipeline's steps in order and records which
+outputs are current. The deck reads that pipeline's store; nothing here is retyped except the
+paper's printed values.
 ]
 
 ---
@@ -192,7 +193,7 @@ $$NPV = WT - f \cdot \frac{C}{r - g}$$
 - $WT$: wealth tax collected, **once**
 - $C$: income tax the billionaires pay, **per year**
 - $f$: share of that income tax that leaves the state
-- $r - g$: discount rate net of the growth of the lost tax; $C/(r-g)$ is a growing stream of $C$ **for ever**, valued today
+- $r - g$: the interest rate minus the lost tax's yearly growth (a real rate); $C/(r-g)$ is a growing stream of $C$ **for ever**, valued today
 
 ]
 
@@ -214,7 +215,7 @@ name: headline
 version, March 2026, was by Rauh, Jaros, Kearney, Doran and Cosso)
 
 .big[`r usdb(h("nber","mc_mean_npv","printed"))`]
-mean NPV; `r h("nber","mc_pct_negative","printed")`% of outcomes negative (a summary of the draws' ranges, not a probability; PDF p.35, Figure 3 note; 85% in the text, p.1)<sup>1</sup><br>
+mean NPV; `r h("nber","mc_pct_negative","printed")`% of outcomes negative (the share of draws below zero, which moves with the ranges drawn, so not a probability; PDF p.35, Figure 3 note; 85% in the text, p.1)<sup>1</sup><br>
 revenue "approximately 30 billion" (`r usdb(h("nber","revenue_range_low","printed"))` to `r usdb(h("nber","revenue_range_high","printed"))`)
 
 Reproduced: `r num(mcn$summary$mean, 2)` (the authors' seeded run, replayed draw for draw) and
@@ -459,8 +460,8 @@ cat(paste0("- **Note ", sub("[.].*", "", mm_lines[!mm_first]), "** (", mm_kind[!
 ]
 
 .blue-box[
-None is a failure to reproduce a printed result. We reproduce the code as shipped and record each
-note rather than fix it. Full text on the
+None is a failure to reproduce a printed result. This OPA reproduces the code as shipped and
+records each note rather than fixing it. Full text on the
 [materials page](../materials.html#reproduction-notes); every one is pinned by a test.<sup>1</sup>
 ]
 

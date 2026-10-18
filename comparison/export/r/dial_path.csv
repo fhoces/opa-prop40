@@ -1,9 +1,9 @@
 "step","step_id","symbol","title","from","to","change"
 1,"confirmed_departures","D","Billionaires who moved out in time",106.795964515949,76.9015656901693,-29.8943988257798
 2,"litigation_survival","q","Chance the tax does not survive litigation",76.9015656901693,37.4652740701693,-39.43629162
-3,"income_loss_share","f","Share of billionaire income tax lost",37.4652740701693,32.4262167794906,-5.03905729067869
-4,"income_level","C","Billionaires' annual CA income tax",32.4262167794906,29.0174577691324,-3.40875901035815
-5,"horizon","H","How long the income tax loss lasts",29.0174577691324,-36.3970417133333,-65.4144994824657
+3,"income_loss_share","f","Share of billionaires' income tax lost",37.4652740701693,32.4262167794906,-5.03905729067869
+4,"income_level","C","Billionaires' yearly California income tax",32.4262167794906,29.0174577691324,-3.40875901035815
+5,"horizon","H","How long the lost income tax is counted",29.0174577691324,-36.3970417133333,-65.4144994824657
 6,"discount_rate","r","Discount rate for the lost income tax",-36.3970417133333,-43.875140270665,-7.47809855733166
 7,"base_list","W","Forbes source: which list and valuation date",-43.875140270665,-46.0503628883567,-2.17522261769175
 8,"avoidance","a","Avoidance and evasion allowance",-46.0503628883567,-33.579100921256,12.4712619671007

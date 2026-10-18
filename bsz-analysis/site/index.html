@@ -240,7 +240,9 @@
   <p class="byline">
     Proposition 40, the Billionaire Tax Act, would tax, once, people who lived in California on
     1 January 2026 and are worth $1 billion or more, at 5% of their net worth, payable over five
-    years. <cite>Boll, Saez and Zucman</cite> (BSZ) estimate
+    years. After administration costs, the Act puts 90% of the revenue in a health care account
+    and 10% in an education and food assistance account (<a href="../../docs/initiative/README.md">the
+    Act</a>, PDF pp.7-8). <cite>Boll, Saez and Zucman</cite> (BSZ) estimate
     it raises about $100 billion. This
     <a href="https://doi.org/10.1093/scipol/scaa067">Open Policy Analysis</a> (OPA) reproduces
     that estimate, adds its income tax effects to get the main estimate below, and marks which
@@ -249,11 +251,12 @@
 </header>
 
 <div class="headline">
-  <span class="name">Main estimate<sup>1</sup>, base scenario (the authors' main case, row 1 of their Table 5)</span>
+  <span class="name">Main estimate<sup>1</sup>, base scenario (BSZ's benchmark, row 1 of their Table 5, plus its income tax effects)</span>
   <span class="value" id="hl-main">$106.8B</span>
   <span class="def">Defined as the wealth tax, plus the extra income tax from assets sold to pay it,
-    minus the income tax lost to billionaires who leave, counted over 5 years
-    (present value at 3% a year). The wealth tax is counted at face value.
+    minus the income tax lost to billionaires who leave, counted over 5 years and converted to
+    today's dollars at 3% a year (present value: what money lost in future years is worth now).
+    The wealth tax is counted at face value.
     <a href="repro.html#the-main-estimate">More in the report</a>.</span>
   <p class="fn"><sup>1</sup> BSZ's headline is the wealth tax alone: $104 billion in their Table 5,
     <span id="hl-wt">$103.8 billion</span> here. This OPA adds the income tax effects to compare
@@ -325,7 +328,8 @@
       <div class="card-text">
         <span class="kicker">Open Materials</span>
         <h3><a href="https://github.com/fhoces/opa-prop40/tree/main/bsz-analysis">Materials for computational reproduction &rarr;</a></h3>
-        <p>The R pipeline, its Python twin, the SQL that rebuilds several of the workbook's data
+        <p>The R pipeline, its Python twin (the same computation written again in Python and
+        checked against the R result), the SQL that rebuilds several of the workbook's data
         sheets from raw data the authors shared (not public), the test suite and every exported CSV.
         A guided tour is on the <a href="materials.html">materials page</a>.</p>
       </div>
@@ -452,7 +456,7 @@ not yet reviewed these checks.</p>
   <summary><h2>What the model says <a class="fold-link" href="#what-the-model-says" aria-label="Link to this section">#</a></h2></summary>
   <div class="fold-body">
 <p>This OPA's main estimate is the base scenario of Table 5 in Boll, Saez and Zucman (2026),
-net of its income tax effects. The wealth tax is 5% of the $2,307 billion that Forbes lists for 250
+which they call the benchmark, with its income tax effects added. The wealth tax is 5% of the $2,307 billion that Forbes lists for 250
 California billionaires on 1 July 2026, less 10% for avoidance and evasion: <strong>$103.8 billion</strong>,
 collected once (the paper prints $104 billion; the abstract says about $100 billion). Selling assets to pay it adds $3.68B of income tax. Leavers take $0.15B a year with
 them, worth $0.70B over 5 years at 3%. The total is <strong>$106.8 billion</strong>.<sup>1</sup>
@@ -460,9 +464,9 @@ The other rows are the authors' own sensitivity checks.</p>
 
 <div class="table-scroll">
 <table class="scen">
-  <thead><tr><th>Scenario (Table 5 row)</th><th>Wealth tax, one time</th><th>Extra income tax from sales</th><th>Income tax lost, per year</th><th>Total (main estimate)<sup>2</sup></th></tr></thead>
+  <thead><tr><th>Scenario (Table 5 row)</th><th>Wealth tax, one time</th><th>Extra income tax from sales</th><th>Income tax lost, per year</th><th>Net total<sup>2</sup></th></tr></thead>
   <tbody>
-    <tr class="pref"><td><strong>Base (1)</strong></td><td>$103.8B</td><td>$3.7B</td><td>$0.15B</td><td><strong>$106.8B</strong></td></tr>
+    <tr class="pref"><td><strong>Base (1), the main estimate</strong></td><td>$103.8B</td><td>$3.7B</td><td>$0.15B</td><td><strong>$106.8B</strong></td></tr>
     <tr><td>Missing billionaires (2)</td><td>$127.9B</td><td>$4.5B</td><td>$0.20B<sup>&dagger;</sup></td><td>$131.5B</td></tr>
     <tr><td>Leavers (3)</td><td>$88.8B</td><td>$3.1B</td><td>$0.52B<sup>&dagger;</sup></td><td>$89.6B</td></tr>
     <tr><td>Missing + leavers (4)</td><td>$114.8B</td><td>$4.1B</td><td>$0.56B</td><td>$116.3B</td></tr>
@@ -485,9 +489,11 @@ See <a href="repro.html#every-input-by-origin">every input, by origin</a>.</p>
 <p style="margin-top:14px;"><strong>What this OPA does not estimate.</strong> Both analyses take the
 measure as written (<a href="../../docs/initiative/README.md">docs/initiative/</a>), with the wealth
 tax at face value. Neither counts the deferral charge of 7.5% a year that the Act adds to
-installment payments. Neither predicts the Forbes base on the 31 December 2026 valuation date. The
-BSZ analysis uses the 1 July 2026 list (BSZ's website tracks the estimate day by day, PDF p.23),
-and the JR analysis grows the 2025 list by 7%. The BSZ analysis alone counts the income tax from
+installment payments. Only the JR analysis projects the base to the 31 December 2026 valuation
+date. It grows the 2025 list by 7%, the yearly growth of billionaire wealth that the Act's own
+findings state, and checks the result against a forecast from past growth (chapter PDF pp.12-13).
+The BSZ analysis uses the 1 July 2026 list (BSZ's website tracks the estimate day by day, PDF p.23).
+The BSZ analysis alone counts the income tax from
 asset sales and the non-US-citizen residents. The JR analysis alone weights the revenue by the
 chance the Act survives in court.</p>
   </div>
@@ -506,29 +512,28 @@ workbook. None is a failure to reproduce a printed result.</p>
     <tr><td>Table 5, estimating the one-time tax (PDF p.39)</td>
         <td>Reproduces. All 28 cells match the workbook's cached values. 26 round to the digit the paper
         prints; the other 2, the income tax loss in rows 2 and 3, are printed as $0.19B and
-        $0.51B where the workbook gives $0.20B and $0.52B. The paper cuts these two at the second
-        decimal instead of rounding them (note 1)</td></tr>
+        $0.51B where the workbook gives $0.20B and $0.52B, one unit lower in the last digit. Row 4
+        of the same column is rounded as usual, and the paper does not say why these two differ
+        (note 1)</td></tr>
     <tr><td>Tables 1 to 4 and A1, Figures 1 to 7, 9 and A2 to A4</td>
         <td>Reproduce. Every formula cell the pipeline re-derives matches the workbook's cached value
         within the tolerances the README lists (1e-4 for Table 5; 1e-3 to 1e-2 for the formula
         sheets, where the workbook rounds to cents). Figures are checked for structure and anchor values.
         Appendix Table A1's annualized growth row counts 43 years, as the paper and the workbook
-        do, though 1982 to 2026 is 44 years. The report states what 44 would give (note 5)</td></tr>
+        do, though 1982 to 2026 is 44 years. The report states what 44 would give (note 4)</td></tr>
     <tr><td>The authors' workbook</td>
-        <td>Reproduces the paper's count of 240 billionaires for 2025. Four 2025 rows of the workbook's
-        year-by-year billionaire list (<code>data_sec_all</code>) appear twice, which would give 244;
-        the workbook's own aggregate and the paper count them once, and so does the pipeline. The
-        estimate itself uses the 1 July 2026 Forbes list of 250. No published number changes (note 2)</td></tr>
+        <td>Reproduces the paper's count of 240 billionaires for 2025. The estimate itself uses the
+        1 July 2026 Forbes list of 250</td></tr>
     <tr><td>The revenue under the paper's other assumptions (Table 5, August and May versions)</td>
         <td>All 7 printed variations match. The revenue on other valuation dates, in the authors'
         workbook, cannot be set here. <a href="checks.html">The checks</a></td></tr>
     <tr><td>Other numbers the paper prints</td>
         <td>All ten reproduce from the inputs the paper states. Six round to the printed digit, and
         one is the Table 5 loss cell above. Two come from first-order formulas in the text: the
-        revenue-maximising rate of 3.8%, where the workbook's own curve peaks at 3.9% (note 7), and
-        the 88% of revenue a 1% permanent tax keeps, where the curve gives 88.6% (note 8). The 25-year
+        revenue-maximising rate of 3.8%, where the workbook's own curve peaks at 3.9% (note 6), and
+        the 88% of revenue a 1% permanent tax keeps, where the curve gives 88.6% (note 7). The 25-year
         break-even on PDF p.22 uses the text's ratio of income tax to wealth, 0.2%; Table 5's inputs
-        give 0.13% and about 38 years (note 6).
+        give 0.13% and about 38 years (note 5).
         <a href="checks.html">The checks</a></td></tr>
     <tr><td>Not reproduced</td>
         <td>The paper's Figure 8 and Appendix Figure A1 (wealth relative to AGI); the raw data behind the workbook
@@ -538,12 +543,12 @@ workbook. None is a failure to reproduce a printed result.</p>
 </div>
 
 <p style="margin-top:14px;">"Match" and "reproduces" mean the reproduced value rounds to the printed
-digit, or the paper prints the same value cut rather than rounded. A figure the text derives
+digit, or the paper prints it one unit lower in the last digit (note 1). A figure the text derives
 reproduces when the inputs the text states give it.</p>
 
-<p style="margin-top:14px;">Along the way this OPA kept <strong>eight notes</strong> on where the
+<p style="margin-top:14px;">Along the way this OPA kept <strong>seven notes</strong> on where the
 paper's text, its tables and the workbook describe the same step differently. None is a failure
-to reproduce a printed result. One is rounding, two are small numerical differences and five are
+to reproduce a printed result. One is rounding, two are small numerical differences and four are
 documentation notes. The full text is on the <a href="materials.html#what-the-checks-found">materials
 page</a>, with test counts, scripts and the source manifest; the
 <a href="repro.html#reproduction-notes">report</a> gives each with its
