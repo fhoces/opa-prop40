@@ -687,6 +687,11 @@ table.dt.verif td { vertical-align: top; text-align: left; padding: 8px 10px; }
 /* ai-challenges: a little larger than the default, with sub-bullets. */
 .mid-bullets &gt; ul, .mid-bullets .remark-slide-content &gt; ul { font-size: 105%; }
 .mid-bullets li { margin-bottom: 0.3em; }
+/* The verification slide: three small OPA icons in a row. */
+.opa-trio { display: flex; justify-content: center; gap: 7%; margin: 0.2em 0 0.6em; }
+.opa-trio figure { margin: 0; text-align: center; }
+.opa-trio img { height: 120px; }
+.opa-trio figcaption { font-size: 70%; margin-top: 0.2em; }
 /* prop40: the newspaper quote, set apart from the bullets. */
 .quote-box { margin-top: 0.6em; padding: 0.2em 0.9em; border-left: 4px solid #999; color: #444; font-style: italic; font-size: 80%; }
 .quote-box p { margin: 0.2em 0; }
@@ -815,13 +820,21 @@ An example from the [BSZ analysis OPA](../../../bsz-analysis/site/). The columns
 ---
 name: verification
 
-# Verification: where each OPA stands
+# Verification: what was checked, and how
 
-&lt;table class=&quot;dt verif&quot;&gt;&lt;tr&gt;&lt;th&gt;&lt;/th&gt;&lt;th&gt;1. Review of each layer&lt;br&gt;&lt;small&gt;the code review&lt;/small&gt;&lt;/th&gt; &lt;th&gt;2. The variations the papers print&lt;br&gt;&lt;small&gt;rerun in this OPA&lt;/small&gt;&lt;/th&gt; &lt;th&gt;3. Settings the papers do not print&lt;br&gt;&lt;small&gt;sent to the authors to run&lt;/small&gt;&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;The BSZ analysis&lt;/b&gt;&lt;/td&gt;&lt;td&gt;0 of 8 layers reviewed, 4 lightly&lt;/td&gt;&lt;td&gt;7 of 7 match&lt;/td&gt;&lt;td&gt;10 settings&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;The JR analysis&lt;/b&gt;&lt;/td&gt;&lt;td&gt;0 of 8 layers reviewed, 0 lightly&lt;/td&gt;&lt;td&gt;4 of 4 match; 1 more cannot be set&lt;/td&gt;&lt;td&gt;9 settings&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;The comparison&lt;/b&gt;&lt;/td&gt;&lt;td&gt;0 of 8 layers reviewed, 0 lightly&lt;/td&gt;&lt;td&gt;none printed; the one published comparison is redone (&lt;a href=&quot;#hoopes&quot;&gt;slide&lt;/a&gt;)&lt;/td&gt;&lt;td&gt;none: it is built from the two analyses&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 
-.small[
-The three columns are the three strategies of [the earlier slide](#ai-challenges). The first comes from the [code review page](https://claude.ai/artifact/6VZEezoAsCNACjmgPLEvah): the author marks each layer of the code behind a main estimate as reviewed, lightly reviewed or not reviewed. The other two come from each analysis&#39;s checks page ([BSZ](../../../bsz-analysis/site/checks.html), [JR](../../../rjkdc-analysis/site/checks.html)). &quot;Match&quot; means this OPA&#39;s value rounds to the printed figure.
-]
+
+&lt;div class=&quot;opa-trio&quot;&gt;
+&lt;figure&gt;&lt;img src=&quot;../../../assets/opa/opa-all.png&quot; alt=&quot;The OPA icon: four stacked layers.&quot;&gt;&lt;figcaption&gt;The BSZ analysis&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;figure&gt;&lt;img src=&quot;../../../assets/opa/opa-all.png&quot; alt=&quot;The OPA icon: four stacked layers.&quot;&gt;&lt;figcaption&gt;The JR analysis&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;figure&gt;&lt;img src=&quot;../../../assets/opa/opa-all.png&quot; alt=&quot;The OPA icon: four stacked layers.&quot;&gt;&lt;figcaption&gt;The comparison&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;/div&gt;
+
+- **Three OPAs, five objects each**: an explorer, a report, slides, a repository and an overview page. With 15 objects in all, human verification was limited.
+- **An attribution table for each OPA** ([previous slide](#disclosure)) shows what was human generated, what was human reviewed and what was neither. Readers can weigh each piece accordingly.
+- **Two further tests** check the output:
+  - *Results the papers print*, rerun in each OPA: all match (BSZ 7 of 7, JR 4 of 4).
+  - *Estimates the papers do not print*, sent to the authors to run in their own models: 10 settings to the BSZ team, 9 to the JR team.
 
 ---
 name: contents-2

@@ -391,6 +391,11 @@ table.dt.verif td { vertical-align: top; text-align: left; padding: 8px 10px; }
 /* ai-challenges: a little larger than the default, with sub-bullets. */
 .mid-bullets > ul, .mid-bullets .remark-slide-content > ul { font-size: 105%; }
 .mid-bullets li { margin-bottom: 0.3em; }
+/* The verification slide: three small OPA icons in a row. */
+.opa-trio { display: flex; justify-content: center; gap: 7%; margin: 0.2em 0 0.6em; }
+.opa-trio figure { margin: 0; text-align: center; }
+.opa-trio img { height: 120px; }
+.opa-trio figcaption { font-size: 70%; margin-top: 0.2em; }
 /* prop40: the newspaper quote, set apart from the bullets. */
 .quote-box { margin-top: 0.6em; padding: 0.2em 0.9em; border-left: 4px solid #999; color: #444; font-style: italic; font-size: 80%; }
 .quote-box p { margin: 0.2em 0; }
@@ -528,26 +533,23 @@ An example from the [BSZ analysis OPA](../../../bsz-analysis/site/). The columns
 ---
 name: verification
 
-# Verification: where each OPA stands
+# Verification: what was checked, and how
 
-```{r verification-table, results="asis"}
+```{r verification-checks}
 stopifnot(bsz_checks$match == bsz_checks$n, jr_checks$match == jr_checks$n)
-rv <- function(chain) with(review_counts(chain), sprintf("%d of %d layers reviewed, %d lightly", done, n, partly))
-cat('<table class="dt verif"><tr><th></th><th>1. Review of each layer<br><small>the code review</small></th>',
-    '<th>2. The variations the papers print<br><small>rerun in this OPA</small></th>',
-    '<th>3. Settings the papers do not print<br><small>sent to the authors to run</small></th></tr>')
-cat(sprintf('<tr><td><b>The BSZ analysis</b></td><td>%s</td><td>%d of %d match</td><td>%d settings</td></tr>',
-            rv("bsz"), bsz_checks$match, bsz_checks$n, bsz_settings))
-cat(sprintf('<tr><td><b>The JR analysis</b></td><td>%s</td><td>%d of %d match; %d more cannot be set</td><td>%d settings</td></tr>',
-            rv("rjkdc"), jr_checks$match, jr_checks$n, jr_checks$cannot, jr_settings))
-cat(sprintf('<tr><td><b>The comparison</b></td><td>%s</td><td>none printed; the one published comparison is redone (<a href="#hoopes">slide</a>)</td><td>none: it is built from the two analyses</td></tr>',
-            rv("comparison")))
-cat("</table>")
 ```
 
-.small[
-The three columns are the three strategies of [the earlier slide](#ai-challenges). The first comes from the [code review page](https://claude.ai/artifact/6VZEezoAsCNACjmgPLEvah): the author marks each layer of the code behind a main estimate as reviewed, lightly reviewed or not reviewed. The other two come from each analysis's checks page ([BSZ](../../../bsz-analysis/site/checks.html), [JR](../../../rjkdc-analysis/site/checks.html)). "Match" means this OPA's value rounds to the printed figure.
-]
+<div class="opa-trio">
+<figure><img src="../../../assets/opa/opa-all.png" alt="The OPA icon: four stacked layers."><figcaption>The BSZ analysis</figcaption></figure>
+<figure><img src="../../../assets/opa/opa-all.png" alt="The OPA icon: four stacked layers."><figcaption>The JR analysis</figcaption></figure>
+<figure><img src="../../../assets/opa/opa-all.png" alt="The OPA icon: four stacked layers."><figcaption>The comparison</figcaption></figure>
+</div>
+
+- **Three OPAs, five objects each**: an explorer, a report, slides, a repository and an overview page. With 15 objects in all, human verification was limited.
+- **An attribution table for each OPA** ([previous slide](#disclosure)) shows what was human generated, what was human reviewed and what was neither. Readers can weigh each piece accordingly.
+- **Two further tests** check the output:
+  - *Results the papers print*, rerun in each OPA: all match (BSZ `r bsz_checks$match` of `r bsz_checks$n`, JR `r jr_checks$match` of `r jr_checks$n`).
+  - *Estimates the papers do not print*, sent to the authors to run in their own models: `r bsz_settings` settings to the BSZ team, `r jr_settings` to the JR team.
 
 ---
 name: contents-2
