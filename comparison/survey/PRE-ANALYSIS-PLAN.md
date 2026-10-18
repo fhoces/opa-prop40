@@ -426,9 +426,9 @@ appendix's Table 3 and Figure 1 give these, with the responses H1 needs at each 
 - **Links that skip the draw.** The share page sends the
   browser to the form's own address, which a respondent can copy and forward. Everyone who opens a
   forwarded form address lands in one arm. The share page's fallback for browsers without
-  JavaScript also opens one form. Neither group can be identified in the data. The share post and
-  the Copy link button ask people to share the project link, not the form's address, and the
-  fallback opens the share pair's control form. A form with many submissions and few draws is
+  JavaScript also opens one form. Neither group can be identified in the data. The Copy link
+  button asks people to share the project link, not the form's address (the public posts no
+  longer do, section 11), and the fallback opens the share pair's control form. A form with many submissions and few draws is
   the sign of a forwarded address.
 
 ## 9. Timeline, registration and priors
@@ -494,7 +494,7 @@ appendix's Table 3 and Figure 1 give these, with the responses H1 needs at each 
   pretest, ten of the eighteen simulated respondents who came by that link to a treatment form
   noticed the contradiction. The drafts were edited on 2026-10-17, before posting: no promise
   about naming, "5 to 10 minutes", and a request to pass on the project link rather than the
-  form's address.
+  form's address. That request was removed on 2026-10-18 (section 11).
 
 ## 11. Decisions taken
 
@@ -517,6 +517,12 @@ On 2026-10-18, before launch, the author moved the email question from the closi
 after the two pre-treatment questions (section 4.4). It stays descriptive (section 5). The form's
 description no longer says that the email comes near the end, and the opt-in's stated extra length
 fell from 60% to 55%, because the main part now includes the email question.
+
+Also on 2026-10-18, before launch, the author removed from the public posts (LinkedIn and Bluesky)
+the request to pass on the project link rather than the form's address (sections 8 and 10). A
+respondent who forwards a form's address sends the people who open it to one arm, with no draw.
+The sign of this in the data is unchanged: a form with many submissions and few draws
+(section 8).
 
 ## Appendix A. Treatment page text
 
