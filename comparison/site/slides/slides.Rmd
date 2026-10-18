@@ -911,7 +911,9 @@ class: head-beside
 .beside[
 **Go and [explore](../explorer/).**
 
-The comparison does not pick the most credible values. It lays out the key empirical quantities behind the gap, so experts and voters can inspect them and [record their views](../survey/) on which are most credible today.
+- The comparison does not pick the most credible values.
+- It lays out the key empirical quantities behind the gap, so experts and voters can inspect them.
+- Everyone is invited to [record their views](../survey/) on which values are most credible today.
 ]
 
 .fig-pinned.fig-split.fig-tall[<img src="../../../assets/figures/evidence-to-policy-competing-from-analysis-opa-third.svg" alt="The two analyses, each an Open Policy Analysis, feed a third Open Policy Analysis, the comparison, which informs both decision makers.">]
