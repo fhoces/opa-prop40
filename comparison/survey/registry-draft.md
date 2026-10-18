@@ -54,8 +54,8 @@ neutral).
 a button on the comparison explorer or the project's overview, whose users have all seen the two
 estimates, and a shared link that opens the survey directly, whose users may or may not have
 seen them. Each entry point has a control form and a treatment form; the arm is drawn with
-probability one half at the click. The treatment form adds one page after the two opening
-questions, explaining how the two estimates differ and which inputs explain the gap, and labels
+probability one half at the click. The treatment form adds one page after page 1 (the two opening
+questions and the optional email), explaining how the two estimates differ and which inputs explain the gap, and labels
 each value with its study. The control form is identical without that page and with the values
 labelled A and B. Analysis: OLS of the lean index on the treatment indicator with entry-point fixed
 effects and HC2 standard errors, two-sided test at 5%. Heterogeneity by entry point, prior exposure

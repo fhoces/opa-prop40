@@ -7,7 +7,7 @@ that the analysis is fixed before any response is seen. **At this point, it is t
 author that no human should spend much time reading this pre-analysis plan. It is only intended
 as a record.**
 
-Status: draft, 2026-10-17. Not registered. To be registered on the AEA RCT Registry before the
+Status: the version registered on the AEA RCT Registry (trial 19997) on 2026-10-19, before the
 forms open. Structure follows the minimal elements of a clear hypothesis: population,
 interventions, arms, outcomes, hypotheses (contrasts, tests, alternative, estimation, standard
 errors), and heterogeneity stated separately and in full.
@@ -48,7 +48,7 @@ Two manipulations, both delivered only in the treatment forms. Nothing is delive
 - **I2, the study labels.** In the input questions, each choice is labelled with its study ("BSZ:"
   or "JR:") instead of "A." or "B.". The choice text and order are otherwise unchanged.
 
-The four terms, as generated at commit e345b64 (gap $145.8 billion):[^terms]
+The four terms, as generated at the launch commit (section 9; gap $145.8 billion):[^terms]
 
 | Term on the page | Amount | Share of the gap |
 |------------------------------------------|------------|----------------|
@@ -102,7 +102,7 @@ Four forms: two entry points, two arms each. The form a response lands in record
 | Entry point | Who arrives there | Control | Treatment |
 |------|------------------|------|------|
 | `explorer` | the survey button lower on the explorer page, and the overview page's survey button | form 3 | form 4 |
-| `share` | the copied share link (`comparison/site/survey/`), including links already sent by email | form 5 | form 6 |
+| `share` | the share link (`comparison/site/survey/`): copied from the site, sent by email, or opened from the public posts through tinyurl.com/prop40-survey | form 5 | form 6 |
 
 Forms 1 and 2 belonged to a third entry point, `landing`: a panel shown to every visitor of the
 explorer before the results, inviting them to take the survey first. The panel was removed on
@@ -134,7 +134,7 @@ input values, not their first exposure to it.
      when people leave: which is more credible?", then how long the lost income tax is counted,
      then billionaires' yearly income tax. The three are ordered by each input's effect on the
      estimate averaged over all orders of the dials, largest first.
-   - "2. The chance the tax survives in court": the court question.
+   - "2. Discounting the revenue for court risk": the court question.
    - "3. Billionaires who moved out in time": "Billionaires who moved out of California before
      the 1 January 2026 residency date: which is more credible?" It spans two of the page's terms
      (section 3).
@@ -203,7 +203,7 @@ reason, or neither does. Neither value argues against the other. The texts are g
   the explorer's "other" term) and make the survey a stated share longer (the optional section's words over the main
   part's), and that answering them is optional. The email question is "Your email (optional)":
   nothing is verified. After submitting, every form shows the same confirmation: thanks, the
-  motivation sentence, and the address of the comparison explorer.
+  motivation sentence, and two short links, tinyurl.com/prop40-explorer and tinyurl.com/prop40-opa.
 
 ## 5. Outcomes
 
@@ -278,7 +278,7 @@ Every heterogeneity test below is secondary. None changes the conclusion on H1.
 
 The plan declares D = 3 candidate dimensions, all binary and recorded before treatment: entry
 point (H2), prior exposure (H3) and expertise (H4). Whether a respondent gives an email is asked
-before treatment, on page 1, but it was not registered as a dimension, so it stays descriptive and
+before treatment, on page 1, but it is not registered as a dimension, so it stays descriptive and
 is not one of the three. No other dimension is used
 unless it is registered before the data are seen, and adding one enlarges every family below.
 
@@ -334,7 +334,7 @@ the thresholds under this procedure and the Bonferroni bound they sit below.
 
 ## 7. Power and staged analyses
 
-The number of responses is unknown: it may be a few dozen or a few hundred. The plan therefore
+The number of responses is unknown: the expected range is 0 to 200 (section 2). The plan therefore
 has one main hypothesis with one outcome (H1, the lean index), tested whatever the number of
 responses. Further analyses are run only once the realized number of responses N reaches the
 threshold at which each can detect a standardized effect of 0.5 SD with 80% power. The thresholds, their formulas and
@@ -427,8 +427,8 @@ appendix's Table 3 and Figure 1 give these, with the responses H1 needs at each 
   browser to the form's own address, which a respondent can copy and forward. Everyone who opens a
   forwarded form address lands in one arm. The share page's fallback for browsers without
   JavaScript also opens one form. Neither group can be identified in the data. The Copy link
-  button asks people to share the project link, not the form's address (the public posts no
-  longer do, section 11), and the fallback opens the share pair's control form. A form with many submissions and few draws is
+  button copies the share page's address, not a form's address (the public posts no longer ask
+  readers to share it, section 11), and the fallback opens the share pair's control form. A form with many submissions and few draws is
   the sign of a forwarded address.
 
 ## 9. Timeline, registration and priors
@@ -442,7 +442,10 @@ appendix's Table 3 and Figure 1 give these, with the responses H1 needs at each 
 - **Pretest.** On 2026-10-17, 100 simulated respondents (language-model agents given personas,
   entry paths and arms) took mock versions of the six forms, and ten of them were interviewed
   (`feedback/008-2026-10-17-rct-pilot/`). The pretest tested wording and comprehension only. Its
-  answers are not data for this study. The question texts were revised after it (section 4.4).
+  answers are not data for this study. The question texts were revised after it (section 4.4). A
+  second pretest the same day, with 100 new simulated respondents and no interviews, ran the revised
+  forms through this plan's analysis (`feedback/009-2026-10-17-rct-pilot-2/`); its answers are not
+  data either.
 - **No interim analysis.** Before the close, only response counts per form are looked at.
 - **Priors.** No forecasts of the effect are collected.
 - **Deviations.** Any change after registration is logged at the end of this file with its date
@@ -534,5 +537,24 @@ Proposition 40 is worth to California:") with one bullet per study, its month an
 two paragraphs (the gap and the common measure; the two largest terms and their share), the four
 terms of section 3 with the BSZ and JR values of the first three, a two-sentence note (why the
 lost income tax is one term, and that each amount depends on the order in which the inputs are
-changed), and one closing sentence. The registered version will include the full text as
-generated at the registered commit.
+changed), and one closing sentence. The full text, as generated at the launch commit, follows.
+
+### How the two estimates differ
+
+Two academic studies estimate what Proposition 40 is worth to California:
+
+- Boll, Saez and Zucman (BSZ, August 2026): +$106.8 billion.
+- Jaros and Rauh (JR, September 2026): -$39.0 billion.
+
+The gap is $145.8 billion. Both are on one measure: the wealth tax collected, plus the extra income tax from assets sold to pay it, minus the income tax lost when people leave.
+
+Two parts explain 83% of the gap: the income tax lost when billionaires leave, and the chance the tax survives in court. Below, how much of the gap each part explains, with each study's values for the first three.
+
+1. **The income tax lost when billionaires leave: the share lost, how long it is counted, and billionaires' yearly income tax, together**: $81.3 billion, 56% of the gap. BSZ: 5% of all the income tax that billionaires pay is lost; counted for 5 years; $3.06 billion a year. JR: 45% of all the income tax that billionaires pay is lost; counted for ever; $4.55 billion a year.
+2. **Discounting the revenue for court risk**: $39.4 billion, 27% of the gap. BSZ: no discount. JR: a 50% discount.
+3. **Billionaires who moved out in time**: $29.9 billion, 21% of the gap. BSZ: no billionaire counted by name (its allowance for 5% of the wealth moving away in time is in part 4). JR: seven billionaires counted on public reports of their moves.
+4. **Other inputs together: the wealth on the list, avoidance, and three smaller inputs**: +$4.9 billion, offsetting 3% of the gap.
+
+The income tax lost is shown as one amount because its three inputs multiply each other. For the same reason, each amount depends on the order in which the inputs are changed.
+
+The questions that follow ask which study's value of each input you find more credible.

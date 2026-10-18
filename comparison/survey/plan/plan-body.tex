@@ -5,7 +5,7 @@ that the analysis is fixed before any response is seen. \textbf{At this point, i
 author that no human should spend much time reading this pre-analysis plan. It is only intended
 as a record.}
 
-Status: draft, 2026-10-17. Not registered. To be registered on the AEA RCT Registry before the
+Status: the version registered on the AEA RCT Registry (trial 19997) on 2026-10-19, before the
 forms open. Structure follows the minimal elements of a clear hypothesis: population,
 interventions, arms, outcomes, hypotheses (contrasts, tests, alternative, estimation, standard
 errors), and heterogeneity stated separately and in full.
@@ -58,7 +58,7 @@ Two manipulations, both delivered only in the treatment forms. Nothing is delive
   or ``JR:'') instead of ``A.'' or ``B.''. The choice text and order are otherwise unchanged.
 \end{itemize}
 
-The four terms, as generated at commit e345b64 (gap \$145.8 billion):\footnote{Each amount is the sum of the explorer's walk steps in that term
+The four terms, as generated at the launch commit (section 9; gap \$145.8 billion):\footnote{Each amount is the sum of the explorer's walk steps in that term
   (\texttt{comparison/export/r/dial\_path.csv}). The walk moves the inputs one after another from the BSZ
   values to the JR values. The values come from \texttt{comparison/export/r/inputs.csv}.
   \texttt{comparison/survey/mock\_forms.py} and \texttt{gas\_build.py} generate the page from those files, so no
@@ -153,7 +153,7 @@ Treatment
 \bottomrule\noalign{}
 \endlastfoot
 \texttt{explorer} & the survey button lower on the explorer page, and the overview page's survey button & form 3 & form 4 \\
-\texttt{share} & the copied share link (\texttt{comparison/site/survey/}), including links already sent by email & form 5 & form 6 \\
+\texttt{share} & the share link (\texttt{comparison/site/survey/}): copied from the site, sent by email, or opened from the public posts through tinyurl.com/prop40-survey & form 5 & form 6 \\
 \end{longtable}
 }
 
@@ -174,7 +174,7 @@ input values, not their first exposure to it.
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \item
-  Description, then two pre-treatment questions:
+  Description, then two pre-treatment questions and the optional email:
 
   \begin{itemize}
   \tightlist
@@ -185,6 +185,9 @@ input values, not their first exposure to it.
     ``Before opening this survey, had you looked at news sources, web pages or academic studies
     discussing estimates of Proposition 40, the Billionaire Wealth Tax Proposal in California?''
     (Yes / No / Not sure; new)
+  \item
+    ``Your email (optional)'' (moved here from the closing page on 2026-10-18, so it is asked before
+    treatment; nothing is verified)
   \end{itemize}
 \item
   I1 (treatment forms only).
@@ -201,7 +204,7 @@ input values, not their first exposure to it.
     then billionaires' yearly income tax. The three are ordered by each input's effect on the
     estimate averaged over all orders of the dials, largest first.
   \item
-    ``2. The chance the tax survives in court'': the court question.
+    ``2. Discounting the revenue for court risk'': the court question.
   \item
     ``3. Billionaires who moved out in time'': ``Billionaires who moved out of California before
     the 1 January 2026 residency date: which is more credible?'' It spans two of the page's terms
@@ -219,7 +222,7 @@ input values, not their first exposure to it.
   from the required questions to the optional page. I2 applies to all ten input questions in the
   treatment forms.
 \item
-  The closing page, ``Anything else (optional)'': missing inputs, optional email, and support for
+  The closing page, ``Anything else (optional)'': missing inputs and support for
   Proposition 40. Every question on it is optional.
 \end{enumerate}
 
@@ -281,7 +284,7 @@ reason, or neither does. Neither value argues against the other. The texts are g
   the explorer's ``other'' term) and make the survey a stated share longer (the optional section's words over the main
   part's), and that answering them is optional. The email question is ``Your email (optional)'':
   nothing is verified. After submitting, every form shows the same confirmation: thanks, the
-  motivation sentence, and the address of the comparison explorer.
+  motivation sentence, and two short links, tinyurl.com/prop40-explorer and tinyurl.com/prop40-opa.
 \end{itemize}
 
 \section{5. Outcomes}\label{outcomes}
@@ -370,7 +373,8 @@ Every heterogeneity test below is secondary. None changes the conclusion on H1.
 
 The plan declares D = 3 candidate dimensions, all binary and recorded before treatment: entry
 point (H2), prior exposure (H3) and expertise (H4). Whether a respondent gives an email is asked
-after treatment, so it is descriptive and is not one of the three. No other dimension is used
+before treatment, on page 1, but it is not registered as a dimension, so it stays descriptive and
+is not one of the three. No other dimension is used
 unless it is registered before the data are seen, and adding one enlarges every family below.
 
 H2 to H4 are the one-dimension analyses. With H5 below, they form one family of four tests
@@ -432,7 +436,7 @@ the thresholds under this procedure and the Bonferroni bound they sit below.
 
 \section{7. Power and staged analyses}\label{power-and-staged-analyses}
 
-The number of responses is unknown: it may be a few dozen or a few hundred. The plan therefore
+The number of responses is unknown: the expected range is 0 to 200 (section 2). The plan therefore
 has one main hypothesis with one outcome (H1, the lean index), tested whatever the number of
 responses. Further analyses are run only once the realized number of responses N reaches the
 threshold at which each can detect a standardized effect of 0.5 SD with 80\% power. The thresholds, their formulas and
@@ -594,9 +598,9 @@ appendix's Table 3 and Figure 1 give these, with the responses H1 needs at each 
   \textbf{Links that skip the draw.} The share page sends the
   browser to the form's own address, which a respondent can copy and forward. Everyone who opens a
   forwarded form address lands in one arm. The share page's fallback for browsers without
-  JavaScript also opens one form. Neither group can be identified in the data. The share post and
-  the Copy link button ask people to share the project link, not the form's address, and the
-  fallback opens the share pair's control form. A form with many submissions and few draws is
+  JavaScript also opens one form. Neither group can be identified in the data. The Copy link
+  button copies the share page's address, not a form's address (the public posts no longer ask
+  readers to share it, section 11), and the fallback opens the share pair's control form. A form with many submissions and few draws is
   the sign of a forwarded address.
 \end{itemize}
 
@@ -617,7 +621,10 @@ appendix's Table 3 and Figure 1 give these, with the responses H1 needs at each 
   \textbf{Pretest.} On 2026-10-17, 100 simulated respondents (language-model agents given personas,
   entry paths and arms) took mock versions of the six forms, and ten of them were interviewed
   (\texttt{feedback/008-2026-10-17-rct-pilot/}). The pretest tested wording and comprehension only. Its
-  answers are not data for this study. The question texts were revised after it (section 4.4).
+  answers are not data for this study. The question texts were revised after it (section 4.4). A
+  second pretest the same day, with 100 new simulated respondents and no interviews, ran the revised
+  forms through this plan's analysis (\texttt{feedback/009-2026-10-17-rct-pilot-2/}); its answers are not
+  data either.
 \item
   \textbf{No interim analysis.} Before the close, only response counts per form are looked at.
 \item
@@ -692,7 +699,7 @@ appendix's Table 3 and Figure 1 give these, with the responses H1 needs at each 
   pretest, ten of the eighteen simulated respondents who came by that link to a treatment form
   noticed the contradiction. The drafts were edited on 2026-10-17, before posting: no promise
   about naming, ``5 to 10 minutes'', and a request to pass on the project link rather than the
-  form's address.
+  form's address. That request was removed on 2026-10-18 (section 11).
 \end{itemize}
 
 \section{11. Decisions taken}\label{decisions-taken}
@@ -712,6 +719,17 @@ expert respondents without
 prior exposure form a registered subgroup (section 6.2); and the share link keeps opening a form,
 so that some respondents may not have seen the estimates.
 
+On 2026-10-18, before launch, the author moved the email question from the closing page to page 1,
+after the two pre-treatment questions (section 4.4). It stays descriptive (section 5). The form's
+description no longer says that the email comes near the end, and the opt-in's stated extra length
+fell from 60\% to 55\%, because the main part now includes the email question.
+
+Also on 2026-10-18, before launch, the author removed from the public posts (LinkedIn and Bluesky)
+the request to pass on the project link rather than the form's address (sections 8 and 10). A
+respondent who forwards a form's address sends the people who open it to one arm, with no draw.
+The sign of this in the data is unchanged: a form with many submissions and few draws
+(section 8).
+
 \section{Appendix A. Treatment page text}\label{appendix-a.-treatment-page-text}
 
 Generated by \texttt{python3\ comparison/survey/gas\_build.py\ ITEMS.json\ SOURCE\_FORM\_ID} (the Apps Script
@@ -721,5 +739,37 @@ Proposition 40 is worth to California:'') with one bullet per study, its month a
 two paragraphs (the gap and the common measure; the two largest terms and their share), the four
 terms of section 3 with the BSZ and JR values of the first three, a two-sentence note (why the
 lost income tax is one term, and that each amount depends on the order in which the inputs are
-changed), and one closing sentence. The registered version will include the full text as
-generated at the registered commit.
+changed), and one closing sentence. The full text, as generated at the launch commit, follows.
+
+\subsection{How the two estimates differ}\label{how-the-two-estimates-differ}
+
+Two academic studies estimate what Proposition 40 is worth to California:
+
+\begin{itemize}
+\tightlist
+\item
+  Boll, Saez and Zucman (BSZ, August 2026): +\$106.8 billion.
+\item
+  Jaros and Rauh (JR, September 2026): -\$39.0 billion.
+\end{itemize}
+
+The gap is \$145.8 billion. Both are on one measure: the wealth tax collected, plus the extra income tax from assets sold to pay it, minus the income tax lost when people leave.
+
+Two parts explain 83\% of the gap: the income tax lost when billionaires leave, and the chance the tax survives in court. Below, how much of the gap each part explains, with each study's values for the first three.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{The income tax lost when billionaires leave: the share lost, how long it is counted, and billionaires' yearly income tax, together}: \$81.3 billion, 56\% of the gap. BSZ: 5\% of all the income tax that billionaires pay is lost; counted for 5 years; \$3.06 billion a year. JR: 45\% of all the income tax that billionaires pay is lost; counted for ever; \$4.55 billion a year.
+\item
+  \textbf{Discounting the revenue for court risk}: \$39.4 billion, 27\% of the gap. BSZ: no discount. JR: a 50\% discount.
+\item
+  \textbf{Billionaires who moved out in time}: \$29.9 billion, 21\% of the gap. BSZ: no billionaire counted by name (its allowance for 5\% of the wealth moving away in time is in part 4). JR: seven billionaires counted on public reports of their moves.
+\item
+  \textbf{Other inputs together: the wealth on the list, avoidance, and three smaller inputs}: +\$4.9 billion, offsetting 3\% of the gap.
+\end{enumerate}
+
+The income tax lost is shown as one amount because its three inputs multiply each other. For the same reason, each amount depends on the order in which the inputs are changed.
+
+The questions that follow ask which study's value of each input you find more credible.
