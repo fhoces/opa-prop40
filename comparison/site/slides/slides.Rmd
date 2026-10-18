@@ -345,6 +345,9 @@ class: big-bullets
 .opa-label { position: absolute; transform: translateX(-50%); pointer-events: auto; white-space: nowrap;
   font-size: 0.8em; font-weight: 600; }
 .opa-label-left { transform: translateY(-50%); }
+/* A button in the lower-right corner, above the slide number: links to appendix slides and back. */
+.corner-btn { position: absolute; right: 2em; bottom: 48px; font-size: 75%; font-weight: 600;
+  padding: 0.3em 0.8em; border: 1px solid #1d4e89; border-radius: 4px; text-decoration: none; }
 /* The summary slide: the three-OPA figure, centred, with a link label on each OPA. */
 .go-explore { text-align: center; font-size: 130%; font-weight: 700; margin-top: -0.4em; }
 .summary-fig { position: relative; width: fit-content; margin: 0 auto; }
@@ -544,17 +547,23 @@ name: disclosure
 # Disclosure and verification: the BSZ analysis
 
 ```{r ai-use-table, results="asis"}
-# The BSZ analysis overview's credit table and its key, read from the built page so the slide
-# always matches it (bsz-analysis/site/index.html).
-ov <- paste(readLines(file.path(root, "bsz-analysis", "site", "index.html"), warn = FALSE), collapse = "\n")
-tab <- regmatches(ov, regexpr('(?s)<table class="ai-use">.*?</table>', ov, perl = TRUE))
-key <- regmatches(ov, regexpr('(?s)<div class="ai-key">.*?</div>\\s*</div>', ov, perl = TRUE))
-stopifnot(length(tab) == 1, length(key) == 1)
-tab <- sub('<span class="table-subhead">this page</span>', '<span class="table-subhead">the overview</span>', tab, fixed = TRUE)
-cat('<div class="ai-use-slide">', gsub("\n\\s*", " ", tab), gsub("\n\\s*", " ", key), "</div>")
+# An overview page's credit table and its key, read from the built page so the slide always
+# matches it. Used here for the BSZ analysis (bsz-analysis/site/index.html) and in the appendix
+# for the other two OPAs.
+credit_table <- function(page) {
+  ov <- paste(readLines(file.path(root, page), warn = FALSE), collapse = "\n")
+  tab <- regmatches(ov, regexpr('(?s)<table class="ai-use">.*?</table>', ov, perl = TRUE))
+  key <- regmatches(ov, regexpr('(?s)<div class="ai-key">.*?</div>\\s*</div>', ov, perl = TRUE))
+  stopifnot(length(tab) == 1, length(key) == 1)
+  tab <- sub('<span class="table-subhead">this page</span>', '<span class="table-subhead">the overview</span>', tab, fixed = TRUE)
+  cat('<div class="ai-use-slide">', gsub("\n\\s*", " ", tab), gsub("\n\\s*", " ", key), "</div>")
+}
+credit_table("bsz-analysis/site/index.html")
 ```
 
 An example from the [BSZ analysis OPA](../../../bsz-analysis/site/). The columns group the 14 roles of the [CRediT contributor taxonomy](https://credit.niso.org/) (ANSI/NISO Z39.104-2022) into three: ideas and direction, doing the work, and writing. The last column, **human verification**, is this OPA's addition: how closely the author has checked each part. When an object is lightly reviewed or not reviewed, its title carries a badge: <span class="ai-badge ai-badge-yellow inline">AI generated, partially reviewed</span> or <span class="ai-badge ai-badge-red inline">AI generated, not reviewed yet</span>.
+
+<a class="corner-btn" href="#credit-jr">The other two OPAs&rsquo; tables &rarr;</a>
 
 
 ---
@@ -1207,6 +1216,32 @@ the versions differ: September counts seven departures on a grown base and adds 
 weight; March used an elasticity response and ten "expanded" departures, which September does not.
 This project's own waterfall, on the September version, is [the previous slide](#waterfall). [Back to the comparison OPA](#opa-comparison)
 ]
+
+---
+name: credit-jr
+
+# Disclosure and verification: the JR analysis
+
+```{r ai-use-jr, results="asis"}
+credit_table("rjkdc-analysis/site/index.html")
+```
+
+From the [JR analysis OPA](../../../rjkdc-analysis/site/). Columns and key as on [the BSZ table](#disclosure).
+
+<a class="corner-btn" href="#disclosure">&larr; Back</a>
+
+---
+name: credit-comparison
+
+# Disclosure and verification: the comparison
+
+```{r ai-use-cmp, results="asis"}
+credit_table("index.html")
+```
+
+From [the comparison OPA](../../../index.html). Columns and key as on [the BSZ table](#disclosure).
+
+<a class="corner-btn" href="#disclosure">&larr; Back</a>
 
 ---
 name: layer-bsz-output
