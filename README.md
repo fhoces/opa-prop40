@@ -43,6 +43,9 @@ gives each one with its numbers and its alternative.
 2. The BSZ end adds these income tax effects to the BSZ headline, which is the wealth tax alone.
 3. The JR end is the average of the authors' Monte Carlo simulation of 100,000 draws, the figure
    their abstract leads with. The draws themselves spread widely, and the report shows that spread.
+   This sets aside the JR analysis's effort to report and assess the uncertainty in its estimate.
+   The comparison uses the average to represent the two estimates as the policy debate uses them,
+   one number on each side, as in the [voter guide's arguments](https://voterguide.sos.ca.gov/propositions/40/arguments-rebuttals.htm).
 4. The rate at the JR end is the single rate worth the same as the authors' random draw of
    r - g (2.73%), not the 3% midpoint of the draw.
 5. Litigation risk at the JR end is a 50% chance on the revenue ceiling. This keeps the average

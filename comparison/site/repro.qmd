@@ -263,7 +263,12 @@ team. Each says what the choice changes and what the alternative would be.
    `r usd(pick(dk_oo, "npv_mc_nber_min"))` and `r usd(pick(dk_oo, "npv_mc_nber_max"))`, and
    `r formatC(pick(dk_oo, "npv_mc_nber_pct_negative"), format = "f", digits = 0)`% are below zero.
    The bridge splits the gap between averages, so its steps describe the averages, not single
-   draws ([The bridge](#the-bridge)).
+   draws ([The bridge](#the-bridge)). This decision sets aside a feature of the JR analysis, its
+   effort to report and assess the uncertainty in its estimate as a distribution of outcomes
+   rather than one number. The comparison focuses on the average because its goal is to
+   represent the two estimates as the current policy debate uses them, one number on each side:
+   the [voter guide's arguments](https://voterguide.sos.ca.gov/propositions/40/arguments-rebuttals.htm) cite about \$100 billion in favor and a \$25 billion loss
+   against.
 4. **The rate at the JR end is `r r_jr`, not `r rate_txt(dk_r_mid)`.** The JR simulation draws
    r &minus; g between `r r_lo` and `r r_hi`. A single rate of `r r_jr` gives the same average as
    that draw, so the JR end matches the paper's mean. At the paper's central value,
