@@ -1,4 +1,4 @@
-# Pre-analysis plan: does making the comparison salient change how respondents judge the disputed inputs?
+# Pre-analysis plan for a study of salience of study information and credibility assessment of key assumptions and inputs
 
 **A note on this document.** This pre-analysis plan was drafted with the assistance of Claude
 Code. It is unclear whether the survey will draw any responses at all. The plan was written for
