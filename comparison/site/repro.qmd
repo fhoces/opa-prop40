@@ -118,6 +118,18 @@ twin_fold <- function(exhibit, fns, py = fns) {
 }
 ```
 
+::: {.callout-important}
+## About this reproduction
+
+This is an independent reproduction of two published analyses. Fernando Hoces de la Guardia
+built it with AI coding tools (Claude Code) and has not yet reviewed all of it. Neither author
+team has reviewed or endorsed it. The authors' own papers and code are the reference for their
+results. For the JR analysis, see the [NBER chapter](https://www.nber.org/books-and-chapters/tax-policy-and-economy-volume-41/net-present-value-california-billionaire-tax-act) (Section 5.4 for the
+simulation) and the [authors' replication code](https://github.com/bjaros20/wealth_tax/tree/main/NBER_2026_litigation_weighted). For the BSZ analysis, see the
+[NBER working paper](https://www.nber.org/papers/w35218). Where this page and a paper differ,
+the paper states the authors' result.
+:::
+
 ## Introduction
 
 ::: {.report-intro}
@@ -475,6 +487,13 @@ nber <- rauh_nber_expectation(wt_min = 0, wt_max = pick(oi, "nber_ceiling_hardco
 v_rj <- score_common(bi$rauh)                 # the JR end, both outputs
 rj_main <- eb$jr_own                              # the JR main estimate: the exact expectation (author decision 2026-10-15)
 rj_run <- epv("rauh_nber_npv", "contract_value")    # the authors' seeded run, as the JR pipeline reproduces it
+# The spread of that run (JR contract; p05, p95 and the share below zero are printed on p.35,
+# the extremes are Figure 3's "roughly -$200B to $50B"). The bridge decomposes the mean only.
+oo <- k$rjkdc$outputs
+jr_p05 <- pick(oo, "npv_mc_nber_p05"); jr_p95 <- pick(oo, "npv_mc_nber_p95")
+jr_min <- pick(oo, "npv_mc_nber_min"); jr_max <- pick(oo, "npv_mc_nber_max")
+jr_neg <- pick(oo, "npv_mc_nber_pct_negative")
+stopifnot(jr_min < jr_p05, jr_p05 < rj_run, rj_run < jr_p95, jr_p95 < jr_max)
 f_mid <- (pick(oi, "nber_mc_f_min") + pick(oi, "nber_mc_f_max")) / 2
 c_mid <- (pick(oi, "rauh_mc_c_min") + pick(oi, "rauh_mc_c_max")) / 2
 a_inf <- expected_annuity(Inf, pick(oi, "rauh_mc_r_min"), pick(oi, "rauh_mc_r_max"))   # E[1/r] over the draw
@@ -526,7 +545,10 @@ therefore `r usd(nber[["a"]], 1)` &minus; `r f_mid` &times; `r usd(c_mid, 3)` &t
 **`r usd(nber[["b"]], 3)`**, the JR end on (b). The authors print `r usd(epv("rauh_nber_npv", "printed_value"))`
 from one seeded run of the same Monte Carlo, which the JR pipeline reproduces as
 `r usd(rj_run, 3)`. The comparison's pages use the exact mean as the JR main estimate, shown
-as `r usd(rj_main)`.
+as `r usd(rj_main)`. The mean summarizes a wide distribution. In the authors' run, 90% of the
+draws fall between `r usd(jr_p05)` and `r usd(jr_p95)`, all of them between `r usd(jr_min)` and
+`r usd(jr_max)`, and `r formatC(jr_neg, format = "f", digits = 1)`% are below zero (PDF p.35,
+Figure 3).
 
 **Step 3: the gap on (b).** `r usd(v_sup[["b"]], 3)` &minus; (`r usd(v_rj[["b"]], 3)`) =
 **`r usd(gap_b, 3)`**, shown as `r usd(gap_b)`.
@@ -573,6 +595,18 @@ moved out in time (`r usd(dp$change[dp$step_id == "confirmed_departures"], 1, TR
 `r nrow(dp) - 3` together add
 `r usd(sum(dp$change[!dp$step_id %in% top3p$step_id]), 1, TRUE)`.
 
+**What the bridge decomposes.** The JR analysis's result is a distribution of outcomes, not one
+number. Its simulation (Section 5.4 of the [paper](https://www.nber.org/books-and-chapters/tax-policy-and-economy-volume-41/net-present-value-california-billionaire-tax-act)) draws the wealth tax revenue,
+the share of income tax lost, the annual income tax and r &minus; g at random, 100,000 times.
+The bridge works with the average of those draws, the JR main estimate on these pages, and its
+steps split the gap between the two analyses' averages. The steps are exact for the averages
+because the four draws are independent, so the average net present value is the formula at the
+average revenue, share and income tax, and the average of 1/(r &minus; g). They do not describe
+single draws. The net present value is not linear in the inputs, and the draws spread from
+`r usd(jr_min)` to `r usd(jr_max)`, 90% of them between `r usd(jr_p05)` and `r usd(jr_p95)`.
+The last row of the table and the line on the figure's JR bar show that spread. The
+[authors' code](https://github.com/bjaros20/wealth_tax/tree/main/NBER_2026_litigation_weighted) runs the full simulation.
+
 The inputs interact, so a step's size depends on where the other dials stand when it moves.
 A departure matters more when the base is larger, for example. This path uses the equation's
 order, left to right, so a reader can reproduce every step with the dials
@@ -608,7 +642,10 @@ blank <- function(label, change, run) data.frame(Dial = label, `DISPUTES row` = 
 cat("\n**Output (b), net fiscal effect, each analysis's own horizon.** The horizon dial moves from the BSZ analysis's 5 years to a perpetuity.\n\n")
 scroll(show(rbind(blank("<b>BSZ end, (b)</b>", "", money(dp$from[1], 2)), path_rows,
                   blank("Sum of the steps", money(sum(dp$change), 2, TRUE), ""),
-                  blank("<b>JR end, (b), the JR main estimate</b>", "", money(eb$jr_own, 2)))))
+                  blank("<b>JR end, (b), the JR main estimate</b>", "", money(eb$jr_own, 2)),
+                  blank("The spread of the authors' 100,000 draws behind the JR end", "",
+                        sprintf("90%% between %s and %s; all between %s and %s",
+                                money(jr_p05, 1), money(jr_p95, 1), money(jr_min, 1), money(jr_max, 1))))))
 ```
 
 Reading the table: the horizon step is the largest because it moves after f and C, when the
@@ -626,7 +663,7 @@ of the rate (r &minus; g) adds to a loss that lasts for ever: at `r r_jr` a perp
 #| label: fig-waterfall
 #| fig-width: 6
 #| fig-height: 5
-#| fig-cap: "Output (b), the dial path: the explorer's dials moved in the equation's order, each to its far end."
+#| fig-cap: "Output (b), the dial path: the explorer's dials moved in the equation's order, each to its far end. The JR bar is the average of the authors' draws; the thin line on it spans the middle 90% of them."
 library(ggplot2)
 wf_short <- ifelse(dp$step_id == "minor_inputs", "Minor inputs",
                    paste0(dp$symbol, ": ", unname(DIAL_NAMES[dp$step_id])))
@@ -637,6 +674,9 @@ wf <- rbind(
   data.frame(i = nrow(dp) + 2, short = unname(short_labels["nber"]), y0 = 0, y1 = eb$jr_model, fill = "an analysis's estimate"))
 ggplot(wf) +
   geom_rect(aes(xmin = i - 0.38, xmax = i + 0.38, ymin = pmin(y0, y1), ymax = pmax(y0, y1), fill = fill)) +
+  # the middle 90% of the JR draws (5th to 95th percentile), on the JR bar
+  geom_errorbar(data = data.frame(i = nrow(dp) + 2, lo = jr_p05, hi = jr_p95),
+                aes(x = i, ymin = lo, ymax = hi), inherit.aes = FALSE, width = 0.25, colour = "#888888", linewidth = 0.8) +
   scale_fill_manual(values = c("an analysis's estimate" = "#222222",
                                "step that raises it" = "#555555", "step that lowers it" = "#9a9a9a"), name = NULL) +
   # horizontal bars, the BSZ estimate at the top, so the labels read on a phone

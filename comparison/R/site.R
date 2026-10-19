@@ -400,6 +400,17 @@ render_site <- function(root = comparison_root(),
   tok$hl_bsz <- money(eb$bsz_model, 1)
   tok$hl_rjkdc <- money(rj_main, 1)
   tok$jr_end_b <- money(eb$jr_model, 1)
+  # The spread of the authors' draws behind that average (JR contract; p05 and p95 printed on
+  # p.35), under the JR panel's source line, and the sources the disclaimer under the header
+  # points to (added 2026-10-19).
+  oo <- k$rjkdc$outputs
+  tok$jr_spread <- sprintf(
+    "It averages the authors' 100,000 draws. 90%% of them fall between %s and %s, and all between %s and %s.",
+    money(pick(oo, "npv_mc_nber_p05"), 1), money(pick(oo, "npv_mc_nber_p95"), 1),
+    money(pick(oo, "npv_mc_nber_min"), 1), money(pick(oo, "npv_mc_nber_max"), 1))
+  tok$jr_paper_url <- "https://www.nber.org/books-and-chapters/tax-policy-and-economy-volume-41/net-present-value-california-billionaire-tax-act"
+  tok$jr_code_url <- "https://github.com/bjaros20/wealth_tax/tree/main/NBER_2026_litigation_weighted"
+  tok$bsz_paper_url <- "https://www.nber.org/papers/w35218"
   tok$bsz_end_b <- money(eb$bsz_model, 1)
   # Footnote 1's provenance sentences for the JR number, on both pages. test-site.R pins these
   # two together. The overview follows them with its links and a gloss of "seeded run" (hrefs
