@@ -773,10 +773,26 @@ coded the same way (Yes or No). `pilot_analysis.py` finds the opt-in column by i
 so at the close it is read under the new title.
 
 **2026-10-19, launch day, before the launch posts.** The author answered form 3 (explorer,
-control) once, to record their own answers. They opened it through its direct Google Forms link,
-not the site or the share link, so no draw was counted. They gave their email address in the
-form. This response is excluded from every analysis in this plan, like a test response. It is
-identified in the responses sheet by the author's email address.
+control) once, to record their own answers, and form 4 (explorer, treatment) once, to check it.
+They opened both through their direct Google Forms links, not the site or the share link, so no
+draw was counted. They gave their email address in both. These two responses are excluded from
+every analysis in this plan, like test responses. They are identified in the responses sheets by
+the author's email address.
+
+**2026-10-19, launch day, before the launch posts.** The two control forms (3 and 5) got a short
+introduction to their inputs section. The author found that control respondents met the input
+questions with no context. The section's help text "For each input, pick the value you find more
+credible." now reads: "Estimates of what Proposition 40 is worth to California add up three
+things: the wealth tax collected, the extra income tax from assets sold to pay it, and the income
+tax lost when billionaires leave the state. Each question below is one input to that sum, such as
+the share of income tax lost when billionaires leave, or the chance that the tax survives in
+court. Two values have been proposed for each input. Pick the one you find more credible. If
+neither stands out, say they are about equally credible or that you can't judge it." The
+treatment forms (4 and 6) are unchanged. Their comparison page already states the same measure
+("Both are on one measure: ..."), so the contrast between the arms is now the two studies, their
+estimates, the gap and its parts, not the measure. The text names no study, value or sign.
+Appendix B and `comparison/survey/plan/forms/control.json` show the control forms as registered.
+The only response submitted before this change is the author's own, excluded above.
 
 ## Appendix A. Treatment page text
 
