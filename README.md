@@ -33,6 +33,22 @@ Materials can be found in [`rjkdc-analysis/`](rjkdc-analysis/).
 that explains the gap one disputed input at a time. [Overview page](https://fhoces.github.io/opa-prop40/).
 Materials can be found in [`comparison/`](comparison/).
 
+**Decisions the comparison makes.** To put the two papers side by side, the comparison makes six
+analytical decisions. Each is a choice of this OPA, not of either author team. The report's
+[Decisions this comparison makes](https://fhoces.github.io/opa-prop40/comparison/site/repro.html#the-decisions)
+gives each one with its numbers and its alternative.
+
+1. One common output for both, the net fiscal effect: the wealth tax collected, plus the extra
+   income tax from assets sold to pay it, minus the income tax lost to billionaires who leave.
+2. The BSZ end adds these income tax effects to the BSZ headline, which is the wealth tax alone.
+3. The JR end is the average of the authors' Monte Carlo simulation of 100,000 draws, the figure
+   their abstract leads with. The draws themselves spread widely, and the report shows that spread.
+4. The rate at the JR end is the single rate worth the same as the authors' random draw of
+   r - g (2.73%), not the 3% midpoint of the draw.
+5. Litigation risk at the JR end is a 50% chance on the revenue ceiling. This keeps the average
+   of the authors' revenue draw, from zero to the ceiling, but not its spread.
+6. Each end keeps its own horizon for the lost income tax: 5 years for BSZ, for ever for JR.
+
 The comparison pages also open a short survey, which is itself a registered experiment. It asks
 respondents which of two proposed values of each disputed input, the BSZ analysis's or the JR
 analysis's, they find more credible. Half of the respondents, drawn at random when they click a

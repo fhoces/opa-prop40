@@ -407,6 +407,21 @@ render_site <- function(root = comparison_root(),
     "It averages the authors' 100,000 draws. 90%% of them fall between %s and %s, and all between %s and %s.",
     money(pick(oo, "npv_mc_nber_p05"), 1), money(pick(oo, "npv_mc_nber_p95"), 1),
     money(pick(oo, "npv_mc_nber_min"), 1), money(pick(oo, "npv_mc_nber_max"), 1))
+  # A short summary of the comparison's decisions under the two main estimates, on the overview and
+  # the explorer, linking to the report's full list (author request 2026-10-19).
+  # The explorer shows no gross revenue number (test-site.R), so its summary leaves out the
+  # BSZ headline's amount.
+  dec <- function(href, bsz_amount = TRUE) sprintf(paste(
+    "Both numbers rest on decisions this comparison makes, not the authors.",
+    "The BSZ number adds income tax effects to the paper's headline, the wealth tax alone%s.",
+    "The JR number is the average of the authors' 100,000 draws, which spread from %s to %s.",
+    "Each keeps its own horizon, %s against for ever.",
+    "<a href=\"%s\">The six decisions, in the report</a>."),
+    if (bsz_amount) sprintf(" (%s)", money(ea$bsz_model, 1)) else "",
+    money(pick(oo, "npv_mc_nber_min"), 1), money(pick(oo, "npv_mc_nber_max"), 1),
+    fmt_input("H", inp$bsz_value[inp$input == "H"]), href)
+  tok$decisions_root <- dec("comparison/site/repro.html#the-decisions")
+  tok$decisions_x <- dec("../repro.html#the-decisions", bsz_amount = FALSE)
   tok$bsz_end_b <- money(eb$bsz_model, 1)
   # Footnote 1's provenance sentences for the JR number, on both pages. test-site.R pins these
   # two together. The overview follows them with its links and a gloss of "seeded run" (hrefs

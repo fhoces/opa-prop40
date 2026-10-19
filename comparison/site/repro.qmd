@@ -224,6 +224,62 @@ their Python twins (a Python twin: the same computation written a second time in
 checked against the R result). Page numbers are PDF pages. The Shapley average, an order-free
 check on the bridge, is defined at the end of [The bridge](#the-bridge).
 
+# Decisions this comparison makes {#the-decisions}
+
+```{r}
+# The values the decisions list cites, from the contracts and the export (added 2026-10-19).
+dk_bi <- bridge_inputs(k)
+dk_sup <- score_common(dk_bi$sup)                                  # the BSZ end, both outputs
+dk_oo <- k$rjkdc$outputs; dk_oi <- k$rjkdc$inputs
+dk_r_mid <- (mv("r_min_jr") + mv("r_max_jr")) / 2                  # the paper's central r - g
+dk_at_mid <- local({ s <- dk_bi$rauh; s$r <- dk_r_mid; score_common(s)[["b"]] })
+dk_ceil <- pick(dk_oi, "nber_ceiling_hardcoded")
+stopifnot(isTRUE(all.equal(dk_sup[["b"]], eb$bsz_model)), isTRUE(all.equal(dk_sup[["a"]], ea$bsz_model)),
+          isTRUE(all.equal(dk_bi$rauh$q * dk_ceil, ea$jr_own)), dk_at_mid > eb$jr_own)
+```
+
+The two papers answer different questions in different units. To put them side by side, this
+comparison makes the decisions below. Each one is a choice of this OPA, not of either author
+team. Each says what the choice changes and what the alternative would be.
+
+1. **One common output for both, the net fiscal effect.** It is the wealth tax collected, plus
+   the extra income tax from assets sold to pay it, minus the income tax lost to billionaires who
+   leave, in today's dollars ([the definition](#the-common-output)). The BSZ paper's headline is
+   the wealth tax alone. The JR paper's net present value fits this definition, with no extra
+   income tax from asset sales.
+2. **The BSZ end adds income tax effects that the BSZ headline leaves out.** The BSZ headline is
+   the wealth tax alone, `r usd(dk_sup[["a"]])` (Table 5 row 1, printed
+   `r usd(epv("bsz_tab5_row1", "printed_value"), 0)`). Adding `r usd(dk_sup[["X"]])` of income tax
+   from asset sales and subtracting `r usd(dk_sup[["PV"]])` of income tax lost over
+   `r fmt_input("H", inp$bsz_value[inp$input == "H"])` gives `r usd(eb$bsz_model)`. The
+   alternative is the wealth tax alone, which leaves out the income tax effects that the JR paper
+   puts at the center of its result ([The two main estimates](#the-main-estimate)).
+3. **The JR end is the average of the authors' simulation.** The JR paper draws four inputs at
+   random 100,000 times. The comparison uses the average of the draws, `r usd(eb$jr_own)` (exact
+   value `r usd(eb$jr_own, 2)`; the paper prints `r usd(epv("rauh_nber_npv", "printed_value"))`
+   from one seeded run). This is the figure the paper's abstract leads with. The alternative is
+   the whole distribution. 90% of the draws fall between `r usd(pick(dk_oo, "npv_mc_nber_p05"))`
+   and `r usd(pick(dk_oo, "npv_mc_nber_p95"))`, all of them between
+   `r usd(pick(dk_oo, "npv_mc_nber_min"))` and `r usd(pick(dk_oo, "npv_mc_nber_max"))`, and
+   `r formatC(pick(dk_oo, "npv_mc_nber_pct_negative"), format = "f", digits = 0)`% are below zero.
+   The bridge splits the gap between averages, so its steps describe the averages, not single
+   draws ([The bridge](#the-bridge)).
+4. **The rate at the JR end is `r r_jr`, not `r rate_txt(dk_r_mid)`.** The JR simulation draws
+   r &minus; g between `r r_lo` and `r r_hi`. A single rate of `r r_jr` gives the same average as
+   that draw, so the JR end matches the paper's mean. At the paper's central value,
+   `r rate_txt(dk_r_mid)`, the JR end would be `r usd(dk_at_mid)` instead
+   ([The discount rate](#the-discount-rate)).
+5. **Litigation risk at the JR end is a `r pct(dk_bi$rauh$q)` chance on the
+   `r usd(dk_ceil, 0)` ceiling.** The JR simulation draws the revenue anywhere from zero (the tax
+   struck down) to `r usd(dk_ceil, 0)`. The comparison uses `r pct(dk_bi$rauh$q)` of the ceiling,
+   `r usd(ea$jr_own, 0)`. This keeps the average revenue but not its spread
+   ([The litigation dial](#the-litigation-dial)).
+6. **Each end keeps its own horizon.** The BSZ end counts the lost income tax for
+   `r fmt_input("H", inp$bsz_value[inp$input == "H"])`, the JR end for ever. Moving the horizon is
+   the largest single step on the bridge's path,
+   `r usd(dp$change[dp$step_id == "horizon"], 1, TRUE)`. The alternative is one common horizon for
+   both. The explorer's years dial, H, shows what each horizon gives.
+
 # The common output, and what each analysis reports {#the-common-output}
 
 The BSZ analysis says how much the one-time tax collects. The JR analysis says what the state

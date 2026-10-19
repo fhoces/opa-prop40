@@ -2518,6 +2518,7 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
    
   <ul class="collapse">
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#the-decisions" id="toc-the-decisions" class="nav-link" data-scroll-target="#the-decisions">Decisions this comparison makes</a></li>
   <li><a href="#the-common-output" id="toc-the-common-output" class="nav-link" data-scroll-target="#the-common-output">The common output, and what each analysis reports</a></li>
   <li><a href="#the-two-ends" id="toc-the-two-ends" class="nav-link" data-scroll-target="#the-two-ends">One function, both ends</a>
   <ul class="collapse">
@@ -2603,6 +2604,18 @@ When the output and the bridge were fixed
 <h3 class="anchored" data-anchor-id="how-to-read-this-report">How to read this report</h3>
 <p>Every number in running text is computed when this page is rendered, from the files <code>comparison/run.R</code> writes. Open any “code” fold to see the R functions behind an exhibit and their Python twins (a Python twin: the same computation written a second time in Python and checked against the R result). Page numbers are PDF pages. The Shapley average, an order-free check on the bridge, is defined at the end of <a href="#the-bridge">The bridge</a>.</p>
 </section>
+</section>
+<section id="the-decisions" class="level1">
+<h1>Decisions this comparison makes</h1>
+<p>The two papers answer different questions in different units. To put them side by side, this comparison makes the decisions below. Each one is a choice of this OPA, not of either author team. Each says what the choice changes and what the alternative would be.</p>
+<ol type="1">
+<li><strong>One common output for both, the net fiscal effect.</strong> It is the wealth tax collected, plus the extra income tax from assets sold to pay it, minus the income tax lost to billionaires who leave, in today’s dollars (<a href="#the-common-output">the definition</a>). The BSZ paper’s headline is the wealth tax alone. The JR paper’s net present value fits this definition, with no extra income tax from asset sales.</li>
+<li><strong>The BSZ end adds income tax effects that the BSZ headline leaves out.</strong> The BSZ headline is the wealth tax alone, <span style="white-space:nowrap">$103.8B</span> (Table 5 row 1, printed <span style="white-space:nowrap">$104B</span>). Adding <span style="white-space:nowrap">$3.7B</span> of income tax from asset sales and subtracting <span style="white-space:nowrap">$0.7B</span> of income tax lost over 5 years gives <span style="white-space:nowrap">$106.8B</span>. The alternative is the wealth tax alone, which leaves out the income tax effects that the JR paper puts at the center of its result (<a href="#the-main-estimate">The two main estimates</a>).</li>
+<li><strong>The JR end is the average of the authors’ simulation.</strong> The JR paper draws four inputs at random 100,000 times. The comparison uses the average of the draws, <span style="white-space:nowrap">−$39.0B</span> (exact value <span style="white-space:nowrap">−$38.98B</span>; the paper prints <span style="white-space:nowrap">−$38.9B</span> from one seeded run). This is the figure the paper’s abstract leads with. The alternative is the whole distribution. 90% of the draws fall between <span style="white-space:nowrap">−$107.9B</span> and <span style="white-space:nowrap">$15.9B</span>, all of them between <span style="white-space:nowrap">−$208.8B</span> and <span style="white-space:nowrap">$47.7B</span>, and 85% are below zero. The bridge splits the gap between averages, so its steps describe the averages, not single draws (<a href="#the-bridge">The bridge</a>).</li>
+<li><strong>The rate at the JR end is 2.73%, not 3%.</strong> The JR simulation draws r − g between 1.5% and 4.5%. A single rate of 2.73% gives the same average as that draw, so the JR end matches the paper’s mean. At the paper’s central value, 3%, the JR end would be <span style="white-space:nowrap">−$32.3B</span> instead (<a href="#the-discount-rate">The discount rate</a>).</li>
+<li><strong>Litigation risk at the JR end is a 50% chance on the <span style="white-space:nowrap">$72B</span> ceiling.</strong> The JR simulation draws the revenue anywhere from zero (the tax struck down) to <span style="white-space:nowrap">$72B</span>. The comparison uses 50% of the ceiling, <span style="white-space:nowrap">$36B</span>. This keeps the average revenue but not its spread (<a href="#the-litigation-dial">The litigation dial</a>).</li>
+<li><strong>Each end keeps its own horizon.</strong> The BSZ end counts the lost income tax for 5 years, the JR end for ever. Moving the horizon is the largest single step on the bridge’s path, <span style="white-space:nowrap">−$65.4B</span>. The alternative is one common horizon for both. The explorer’s years dial, H, shows what each horizon gives.</li>
+</ol>
 </section>
 <section id="the-common-output" class="level1">
 <h1>The common output, and what each analysis reports</h1>
