@@ -6,3 +6,5 @@
 - [Local session and cloud messaging](local-session-and-cloud-messaging.md): the author's local session on main messages cloud sessions; cloud cannot reply; deliver digests and handoffs through the repo.
 - [Stop hook wants commits](stop-hook-wants-commits.md): commit finished units by path while background agents edit; never `git add -A` mid-run.
 - [Run 001 state, 2026-10-14](run-001-state-2026-10-14.md): run 001 merged into main at 13eec44; the rebuild and twelve decisions wait for the author's machine.
+- [Project map](project-map.md): how every piece fits together, from the two analyses' sources to the comparison site, the survey experiment and the review machinery; read before working across parts.
+- [Lessons for the opa-framework session](lessons-for-opa-framework.md): what this OPA taught about the framework, the shared kit and the survey experiment, for the opa-framework session to fold into the template.

@@ -22,16 +22,21 @@ except the two data files the site reads (`../data/survey-links.csv`, the four f
 - `gas_build.py`: writes the Google Apps Script that built the six forms as copies of the version
   1 form (`buildExperiment()`) and later edited them in place (`fixEnding()`, `moveEmail()` and
   `fixPrior()`, whose log lists each form's links).
-- `fill_links.py`: fills `../data/survey-links.csv` from that log.
+- `fill_links.py`: fills `../data/survey-links.csv` from that log (`--out PATH` writes a scratch
+  copy first). It refuses a log that lacks a form, has two copies of one, or shows one unfinished.
 - `draws.gs`: the draw count's web app, one row (timestamp, entry point, arm) per click on a
   survey link; its header says how to deploy it.
 - `pilot_text.py`, `pilot_harvest.py`, `pilot_transcripts.py`: the two pretests with simulated
   respondents (`../../feedback/008-2026-10-17-rct-pilot/` and `009-2026-10-17-rct-pilot-2/`).
-- `pilot_analysis.py`: the analysis code, following the plan (the lean index, H1, the secondary
-  outcomes, the Romano-Wolf adjustment, heterogeneity, balance and attrition), run on the second
-  pretest.
+- `pilot_analysis.py`: the registered analysis (plan, section 9: its version at the launch commit
+  is the registered one). It reads the four forms' sheet exports, or a pretest's file, applies the
+  rules of section 8 (the window, email duplicates, bulk submissions), runs the attrition checks,
+  H1, S1 and S2, and each staged family once N reaches its threshold in `power/out/thresholds.tex`.
+  `check_pilot_analysis.py` checks every path of it. Its run on the second pretest is in
+  `../../feedback/011-2026-10-18-pap-review/pilot2-registered-run/`.
 - `registry-draft.md`: the fields entered in the registry's draft.
 
-The responses are collected by Google Forms in the forms' responses sheet, which holds a private
-Key tab (plan, section 5.1). After the close they are published in the repository without the
-email column and the free-text answers (plan, section 9).
+Each of forms 3 to 6 is linked to a responses spreadsheet at launch (plan, section 9, step 7).
+The control forms' A and B are mapped to the two studies in the plan, section 5.1. After the
+close, the responses are published in the repository without the email column and the free-text
+answers (plan, section 9).

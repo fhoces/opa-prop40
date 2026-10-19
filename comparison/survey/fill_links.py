@@ -1,6 +1,6 @@
 """Fill comparison/data/survey-links.csv from the Apps Script builder's execution log.
 
-Usage: python3 comparison/survey/fill_links.py LOG.txt
+Usage: python3 comparison/survey/fill_links.py LOG.txt [--out PATH]   (default: comparison/data/survey-links.csv)
 
 LOG.txt is the text of the Execution log (copy it from the Apps Script editor) after fixPrior()
 ran, which logs every existing form, or after buildExperiment() ran, which logs only the forms it
@@ -31,7 +31,7 @@ PAT = re.compile(r"exp: Prop 40 survey \((landing|explorer|share), (control|trea
                  r"(?:\s*\n\s*finished: (true|false))?")
 
 
-def main(log_path):
+def main(log_path, out=LINKS):
     text = open(log_path).read()
     copies = {}   # (entry, arm) -> {respond link: (edit link, finished flag or "")}
     for e, a, edit, respond, finished in PAT.findall(text):
@@ -50,7 +50,7 @@ def main(log_path):
     if bad:
         raise SystemExit("refusing to write the file:\n  " + "\n  ".join(bad))
     found = {r: (v[0], respond) for r in rows for respond, v in copies[r].items()}
-    with open(LINKS, "w", newline="") as f:
+    with open(out, "w", newline="") as f:
         f.write("# entry,arm,url: the four experiment forms, filled from the builder's log by fill_links.py\n")
         w = csv.writer(f, lineterminator="\n")
         w.writerow(["entry", "arm", "url"])
@@ -58,8 +58,9 @@ def main(log_path):
             w.writerow([r[0], r[1], found[r][1]])
     for r in rows:
         print(f"{r[0]:9s} {r[1]:10s} edit: {found[r][0]}")
-    print(f"wrote {LINKS} with {len(rows)} rows")
+    print(f"wrote {out} with {len(rows)} rows")
 
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    a = sys.argv[1:]
+    main(a[0], a[a.index("--out") + 1] if "--out" in a else LINKS)

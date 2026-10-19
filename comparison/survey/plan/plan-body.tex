@@ -821,15 +821,24 @@ expected numbers of responses the main test detects 0.79 SD with 50 responses, 0
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  Run the Google Apps Script program that \texttt{comparison/survey/gas\_build.py} writes. It builds the
-  six forms (forms 1 and 2, for the dropped \texttt{landing} entry point, are never opened), named
-  ``exp: Prop 40 survey (ENTRY, ARM)'', with the entry point and the arm in place of ENTRY and ARM. Each form takes about 110 seconds and a run stops at six
-  minutes, so a run builds three forms. Run it again. The builder trashes a half-built copy and
-  rebuilds it, and skips a form that is finished.
+  The six forms exist: \texttt{buildExperiment()} in the Google Apps Script program that
+  \texttt{comparison/survey/gas\_build.py} writes built them on 2026-10-17, named ``exp: Prop 40 survey
+  (ENTRY, ARM)'', with the entry point and the arm in place of ENTRY and ARM, and its \texttt{fixEnding()},
+  \texttt{moveEmail()} and \texttt{fixPrior()} edited them in place since (forms 1 and 2, for the dropped
+  \texttt{landing} entry point, are never opened). On launch day, run \texttt{fixPrior()} once more: it leaves a
+  finished form unchanged and logs, for every copy of each form, its edit and respondent links,
+  whether it is finished and its item count, in the format \texttt{fill\_links.py} reads. A WARNING line
+  in that log means two copies share a name: trash the unfinished one (finished: false) by hand
+  before step 2. \texttt{buildExperiment()} is run again only if a form is missing. Each form takes about
+  110 seconds and a run stops at six minutes, so a run builds three forms; run it again. It trashes
+  a half-built copy and rebuilds it, skips a finished form, and logs the links only of the forms it
+  builds in that run.
 \item
-  Paste each form's respondent link into \texttt{comparison/data/survey-links.csv}, in the row of its
-  entry point and arm (\texttt{python3\ comparison/survey/fill\_links.py\ LOG.txt} does it from the
-  execution log). Delete the comment line about placeholders.
+  Fill \texttt{comparison/data/survey-links.csv} from that execution log: \texttt{python3\ comparison/survey/fill\_links.py\ LOG.txt} writes the four rows (\texttt{entry}, \texttt{arm}, \texttt{url}), each
+  form's respondent link in the row of its entry point and arm, in place of the placeholder file
+  and its comment line. It refuses a log that lacks one of the four forms, names two copies of
+  one, or shows a form as unfinished. Pasting by hand works too: each respondent link in its row,
+  and the comment line about placeholders deleted.
 \item
   The thank-you screen after Submit carries the two short links (tinyurl.com/prop40-explorer and
   tinyurl.com/prop40-opa). \texttt{fixEnding()} adds them to forms built before the afternoon of
@@ -841,9 +850,20 @@ expected numbers of responses the main test detects 0.79 SD with 50 responses, 0
 \item
   Rebuild with \texttt{Rscript\ comparison/run.R}, then run \texttt{Rscript\ comparison/tests/testthat.R}.
 \item
-  Commit, and record the commit under ``Launch'' above.
+  Commit. Record that commit's hash under ``Launch'' above, in a second commit (a hash cannot sit
+  inside its own commit). The registry takes the same hash in step 7.
 \item
-  Register on the AEA RCT Registry. Then push. The push puts the four forms' links on the site.
+  Register on the AEA RCT Registry, with the current \texttt{comparison/survey/plan/plan.pdf} and
+  \texttt{comparison/survey/power/power.pdf} attached in place of any older copies, and the launch
+  commit's hash in the ``Experimental Design (Hidden)'' field and in the repository note under
+  ``Docs \& Materials''. Then link each of forms 3 to 6 to a spreadsheet (the form's Responses tab,
+  ``Link to Sheets''), because the builder makes each form as a Drive copy and a copy keeps no
+  spreadsheet link. The control forms' A and B are mapped to the two studies in section 5.1. Then
+  publish forms 3 to 6 (each form's ``Publish'' button, with responses accepted), because the forms
+  are built unpublished and closed, and push. The push puts the four forms' links on the
+  site. Once GitHub Pages has deployed it (a few minutes), close the two current forms, the
+  version 1 and version 2 forms whose links are the placeholders in \texttt{survey-links.csv} (section
+  11: they close when the new forms open).
 \end{enumerate}
 
 \section{10. Limits}\label{limits}

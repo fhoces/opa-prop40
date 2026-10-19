@@ -657,12 +657,15 @@ expected numbers of responses the main test detects 0.79 SD with 50 responses, 0
    header says. Paste its URL into `comparison/data/survey-config.csv` as `draws_url`.
 5. Rebuild with `Rscript comparison/run.R`, then run `Rscript comparison/tests/testthat.R`.
 6. Commit. Record that commit's hash under "Launch" above, in a second commit (a hash cannot sit
-   inside its own commit); the registry's "Other" field takes the same hash in step 7.
+   inside its own commit). The registry takes the same hash in step 7.
 7. Register on the AEA RCT Registry, with the current `comparison/survey/plan/plan.pdf` and
    `comparison/survey/power/power.pdf` attached in place of any older copies, and the launch
-   commit's hash in the "Other" field. Then open forms 3 to 6 to responses (each form's Responses
-   tab, "Accepting responses"), after checking that each form's responses go to a spreadsheet and
-   that the Key tab (section 5.1) is in it, and push. The push puts the four forms' links on the
+   commit's hash in the "Experimental Design (Hidden)" field and in the repository note under
+   "Docs & Materials". Then link each of forms 3 to 6 to a spreadsheet (the form's Responses tab,
+   "Link to Sheets"), because the builder makes each form as a Drive copy and a copy keeps no
+   spreadsheet link. The control forms' A and B are mapped to the two studies in section 5.1. Then
+   publish forms 3 to 6 (each form's "Publish" button, with responses accepted), because the forms
+   are built unpublished and closed, and push. The push puts the four forms' links on the
    site. Once GitHub Pages has deployed it (a few minutes), close the two current forms, the
    version 1 and version 2 forms whose links are the placeholders in `survey-links.csv` (section
    11: they close when the new forms open).
