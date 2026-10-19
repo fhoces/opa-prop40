@@ -87,7 +87,14 @@ compute_export_outputs <- function(pareto_fit, income_tax_table8, revenue_chain,
     "nber_international", "nber", nber_ceiling$international_net_worth, "$B", 146.3, 17,
     "npv_mc_nber_mean", "nber", npv_mc_nber_summary$mean, "$B", -38.9, 35,
     "npv_mc_nber_median", "nber", npv_mc_nber_summary$median, "$B", -35.3, 35,
-    "npv_mc_nber_pct_negative", "nber", npv_mc_nber_summary$pct_negative, "%", 85.2, 35
+    "npv_mc_nber_pct_negative", "nber", npv_mc_nber_summary$pct_negative, "%", 85.2, 35,
+    # the spread of the same run: SD and percentiles printed on p.35, the extremes only
+    # described there (Figure 3's alt text, "roughly -$200B to $50B"), so not compared
+    "npv_mc_nber_sd", "nber", npv_mc_nber_summary$sd, "$B", 37.6, 35,
+    "npv_mc_nber_p05", "nber", npv_mc_nber_summary$p05, "$B", -107.9, 35,
+    "npv_mc_nber_p95", "nber", npv_mc_nber_summary$p95, "$B", 15.9, 35,
+    "npv_mc_nber_min", "nber", npv_mc_nber_summary$min, "$B", NA_real_, 35,
+    "npv_mc_nber_max", "nber", npv_mc_nber_summary$max, "$B", NA_real_, 35
   )
   rows$abs_diff <- abs_diff(rows$value, rows$printed_value)
   rows

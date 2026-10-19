@@ -42,6 +42,8 @@ def npv_mc_summary(npv):
         "sd": float(np.std(npv, ddof=1)),
         "p05": float(np.percentile(npv, 5)),
         "p95": float(np.percentile(npv, 95)),
+        "min": float(np.min(npv)),
+        "max": float(np.max(npv)),
         "pct_negative": float(100 * np.mean(npv < 0)),
     }
 

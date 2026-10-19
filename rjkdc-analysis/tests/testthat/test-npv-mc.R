@@ -23,6 +23,16 @@ test_that("NBER NPV MC matches the NBER README's printed summary", {
   # The SD (PDF p.35), absolute (scale = 1): four standard errors of an SD over 100,000 draws,
   # 4 x sd / sqrt(2n), about 0.34 (author answer 2026-10-16). The seeded run gives 37.62.
   expect_equal(s$sd, 37.6, tolerance = 0.34, scale = 1)
+  # The 5th and 95th percentiles (PDF p.35), absolute: the printed digit's rounding (0.05)
+  # plus Monte Carlo error. The comparison's bridge shows them beside the mean.
+  expect_equal(s$p05, -107.9, tolerance = 1, scale = 1)
+  expect_equal(s$p95, 15.9, tolerance = 1, scale = 1)
+  # The extremes of the run lie inside the model's bounds, wt_min - f_max c_max / rg_min and
+  # wt_max - f_min c_min / rg_max (-232 and 50), and near Figure 3's "roughly -$200B to $50B".
+  a <- formals(compute_npv_mc_nber)
+  expect_gt(s$min, a$wt_min - a$f_max * a$c_max / a$rg_min)
+  expect_lt(s$max, a$wt_max - a$f_min * a$c_min / a$rg_max)
+  expect_lt(s$min, -200); expect_gt(s$max, 45)
 })
 
 test_that("SSRN NPV MC reproduces from the authors' own NPV_dist.R", {

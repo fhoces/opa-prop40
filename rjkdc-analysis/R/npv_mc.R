@@ -67,6 +67,8 @@ npv_mc_summary <- function(npv) {
     sd = stats::sd(npv),
     p05 = unname(stats::quantile(npv, 0.05)),
     p95 = unname(stats::quantile(npv, 0.95)),
+    min = min(npv),
+    max = max(npv),
     pct_negative = 100 * mean(npv < 0)
   )
 }

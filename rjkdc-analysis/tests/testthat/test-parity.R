@@ -21,13 +21,16 @@ test_that("export/r and export/py outputs agree within documented tolerance", {
   mc_ids <- c("income_tax_mc_k212", "income_tax_mc_k300", "income_tax_mc_k500",
               "npv_mc_ssrn_mean", "npv_mc_ssrn_median", "npv_mc_ssrn_sd",
               "npv_mc_ssrn_pct_negative", "npv_mc_nber_mean", "npv_mc_nber_median",
-              "npv_mc_nber_pct_negative")
+              "npv_mc_nber_pct_negative", "npv_mc_nber_sd", "npv_mc_nber_p05", "npv_mc_nber_p95")
+  # The extremes of one run of 100,000 draws are not estimates of a common quantity that two
+  # RNG streams agree on within 2.0; test-npv-mc.R checks each against the model's bounds.
+  extreme_ids <- c("npv_mc_nber_min", "npv_mc_nber_max")
 
   for (i in seq_len(nrow(merged))) {
     id <- merged$output_id[i]
     v_r <- merged$value_r[i]
     v_py <- merged$value_py[i]
-    if (is.na(v_r) || is.na(v_py)) next
+    if (is.na(v_r) || is.na(v_py) || id %in% extreme_ids) next
     # Monte-Carlo-derived rows: 4 x sd/sqrt(n) around the printed value
     # (brief's own tolerance rule), applied symmetrically to the R-vs-Python
     # gap since both are independent MC estimates of the same quantity.
