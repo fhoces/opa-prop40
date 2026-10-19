@@ -601,8 +601,8 @@ expected numbers of responses the main test detects 0.79 SD with 50 responses, 0
   Neither version says anything false, since the treatment page restates numbers from the
   project's own pages.
 - **Launch.** The forms open together with the site change. The launch commit is recorded here on
-  launch day (step 6 below): [commit hash, filled in at launch]. The registry's "Other" field
-  carries the same hash.
+  launch day (step 6 below): ea8995df886a3a1994bdebd8c8397746c69102e5. The registry's hidden
+  design details and its repository note carry the same hash.
 - **Close.** Collection closes on 4 November 2026 at 23:59 Pacific time, when the four forms stop
   accepting responses. Responses with a later timestamp are not part of this analysis. Responses
   submitted after the vote of 3 November 2026 and before the close are included. The time of
