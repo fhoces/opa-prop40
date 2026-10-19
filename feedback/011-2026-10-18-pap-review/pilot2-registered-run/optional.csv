@@ -1,0 +1,11 @@
+question,arm,answered,BSZ,JR,equal,unsure
+avoidance,control,10,4,1,0,5
+avoidance,treatment,13,6,0,0,7
+wealth_list,control,10,7,0,0,3
+wealth_list,treatment,13,9,0,0,4
+noncitizens,control,10,8,0,0,2
+noncitizens,treatment,13,3,0,0,10
+real_estate,control,9,2,1,2,4
+real_estate,treatment,13,0,0,6,7
+asset_sales,control,10,5,0,0,5
+asset_sales,treatment,13,9,0,0,4

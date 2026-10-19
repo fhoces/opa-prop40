@@ -1,0 +1,9 @@
+tier,tests,threshold,N,status
+1,5,150,67,not run: below its threshold
+2a,6,330,67,not run: below its threshold
+2b,4,714,67,not run: below its threshold
+3a,12,740,67,not run: tier 2a was not run
+3b,3,2681,67,not run: tier 2b was not run
+4a,8,1380,67,not run: tier 3a was not run
+4b,1,8373,67,not run: tier 3b was not run
+5,30,390,67,not run: below its threshold

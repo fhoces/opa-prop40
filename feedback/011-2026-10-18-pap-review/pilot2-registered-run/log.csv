@@ -1,0 +1,9 @@
+step,value
+sample: not one of forms 3 to 6 (excluded),33
+duplicates by email (removed),0
+bulk rule,not applied: no timestamps
+"N, the analysis sample",67
+H1: responses in strata with one arm only (dropped),0
+"H1 sample, explorer: control / treatment",14 / 22
+"H1 sample, share: control / treatment",19 / 12
+Lee bounds,not required: no differential attrition

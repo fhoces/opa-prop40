@@ -617,6 +617,7 @@ expected numbers of responses the main test detects 0.79 SD with 50 responses, 0
   no interviews, ran the revised forms through this plan's analysis as it stood on 2026-10-17,
   which still included the later-dropped secondary outcome S4
   (`feedback/009-2026-10-17-rct-pilot-2/`). Its answers are not data either.
+- **Analysis code.** `comparison/survey/pilot_analysis.py` runs this plan's analysis. Its version at the launch commit is the registered one. A later change is a deviation and is logged.
 - **No interim analysis.** Before the close, only response counts per form are looked at.
 - **Report.** The analysis is written up by 31 December 2026, the trial end date given to the
   registry.
