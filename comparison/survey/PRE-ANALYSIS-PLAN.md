@@ -632,7 +632,7 @@ expected numbers of responses the main test detects 0.79 SD with 50 responses, 0
 
 1. Run the Google Apps Script program that `comparison/survey/gas_build.py` writes. It builds the
    six forms (forms 1 and 2, for the dropped `landing` entry point, are never opened), named
-   "exp: Prop 40 survey (<entry>, <arm>)". Each form takes about 110 seconds and a run stops at six
+   "exp: Prop 40 survey (ENTRY, ARM)", with the entry point and the arm in place of ENTRY and ARM. Each form takes about 110 seconds and a run stops at six
    minutes, so a run builds three forms. Run it again. The builder trashes a half-built copy and
    rebuilds it, and skips a form that is finished.
 2. Paste each form's respondent link into `comparison/data/survey-links.csv`, in the row of its
