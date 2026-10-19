@@ -382,6 +382,9 @@ the mean revenue is half the ceiling, `r usd(cf_wt, 0)`. The JR analysis's own e
 litigation dial that reads 1 at the main estimate, because there this draw already halves the
 mean revenue. The common function has no revenue draw. So the comparison applies the same half
 as q = `r pct(q_jr)` of the ceiling, and its JR end collects the same `r usd(cf_wt, 0)`.
+This keeps the average revenue but not its spread: in the authors' simulation each draw's
+revenue can be anything from zero to the ceiling ([The bridge](#the-bridge) shows the spread
+of the outcomes).
 
 In words, the function computes seven quantities in order.
 
