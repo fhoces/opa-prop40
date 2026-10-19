@@ -128,6 +128,10 @@ CONTROL_INPUTS = ("Estimates of what Proposition 40 is worth to California add u
                   "income tax lost when billionaires leave, or the chance that the tax survives in court. Two values "
                   "have been proposed for each input. Pick the one you find more credible. If neither stands out, "
                   "say they are about equally credible or that you can't judge it.")
+# The treatment forms' inputs help, given the same last sentence the same day so the arms do not differ in
+# the invitation to answer neutrally.
+TREAT_INPUTS = ("For each input, pick the value you find more credible. If neither stands out, say they are "
+                "about equally credible or that you can't judge it.")
 
 
 def treatment_page():
@@ -511,7 +515,7 @@ def build(items, treated):
                 out.append(f"<div class='card grp'><b>{html.escape(e['title'])}</b></div>")
             elif e["kind"] == 8:
                 out.append(f"<div class='card head2'><h2>{html.escape(e['title'])}</h2></div>")
-                hp = CONTROL_INPUTS if e["title"] == "The inputs" and not treated else e["help"]
+                hp = (TREAT_INPUTS if treated else CONTROL_INPUTS) if e["title"] == "The inputs" else e["help"]
                 if hp:
                     out.append(f"<div class='card'>{html.escape(hp)}</div>")
             else:

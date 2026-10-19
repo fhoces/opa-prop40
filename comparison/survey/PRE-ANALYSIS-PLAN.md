@@ -788,11 +788,14 @@ tax lost when billionaires leave the state. Each question below is one input to 
 the share of income tax lost when billionaires leave, or the chance that the tax survives in
 court. Two values have been proposed for each input. Pick the one you find more credible. If
 neither stands out, say they are about equally credible or that you can't judge it." The
-treatment forms (4 and 6) are unchanged. Their comparison page already states the same measure
+treatment forms (4 and 6) do not get it. Their comparison page already states the same measure
 ("Both are on one measure: ..."), so the contrast between the arms is now the two studies, their
 estimates, the gap and its parts, not the measure. The text names no study, value or sign.
-Appendix B and `comparison/survey/plan/forms/control.json` show the control forms as registered.
-The only response submitted before this change is the author's own, excluded above.
+So that the arms do not differ in the invitation to answer neutrally, the treatment forms' help
+text got the same last sentence; it now reads "For each input, pick the value you find more
+credible. If neither stands out, say they are about equally credible or that you can't judge it."
+Appendix B and `comparison/survey/plan/forms/*.json` show the forms as registered. The only
+responses submitted before these changes are the author's own, excluded above.
 
 ## Appendix A. Treatment page text
 

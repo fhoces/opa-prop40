@@ -79,6 +79,7 @@ var EMAIL = {json.dumps(email_spec)};
 var DESC = {json.dumps(m.DESC)};
 var THANKS = {json.dumps(m.THANKS)};
 var CONTROL_INPUTS = {json.dumps(m.CONTROL_INPUTS)};
+var TREAT_INPUTS = {json.dumps(m.TREAT_INPUTS)};
 var FIELD = "Which field best describes your work?";
 var EXPERT = "Do you consider yourself an expert in tax or fiscal policy?";
 
@@ -189,9 +190,8 @@ function buildOne_(spec) {{
         mc.setChoiceValues(ch.map(function (c) {{ return LABELS[c] || c; }}));
       }}
     }});
-  }} else {{
-    inputsPage_(f).setHelpText(CONTROL_INPUTS);
   }}
+  inputsPage_(f).setHelpText(spec.treated ? TREAT_INPUTS : CONTROL_INPUTS);
   Logger.log(spec.name + "\\n  edit: " + f.getEditUrl() + "\\n  respond: " + f.getPublishedUrl());
   f.getItems().forEach(function (it, i) {{ Logger.log("  " + i + " " + it.getType() + " " + it.getTitle()); }});
 }}
@@ -203,15 +203,15 @@ function inputsPage_(f) {{
     return it.getTitle() === "The inputs"; }})[0].asPageBreakItem();
 }}
 
-// Sets the inputs section's help text (CONTROL_INPUTS) in the control forms, which the author set by hand
-// in forms 3 and 5 on 2026-10-19, after launch (plan, deviations). Treatment forms are left alone.
-// Idempotent. Logs each control form's text.
-function controlInputsIntro() {{
-  FORMS.filter(function (spec) {{ return !spec.treated; }}).forEach(function (spec) {{
+// Sets the inputs section's help text in the six forms: CONTROL_INPUTS in control, TREAT_INPUTS in
+// treatment, as set by hand in forms 3 to 6 on 2026-10-19, after launch (plan, deviations).
+// Idempotent. Logs each form's text.
+function inputsIntro() {{
+  FORMS.forEach(function (spec) {{
     var files = DriveApp.getFilesByName(spec.name);
     while (files.hasNext()) {{
       var pb = inputsPage_(FormApp.openById(files.next().getId()));
-      pb.setHelpText(CONTROL_INPUTS);
+      pb.setHelpText(spec.treated ? TREAT_INPUTS : CONTROL_INPUTS);
       Logger.log(spec.name + ": " + pb.getHelpText());
     }}
   }});
