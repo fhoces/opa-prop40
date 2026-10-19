@@ -67,7 +67,9 @@
   .standfirst { font-family: var(--serif); color: var(--ink-2); margin: 0; font-size: 15.5px; max-width: 46em; }
   .standfirst a { color: var(--link); text-decoration: none; }
   .standfirst a:hover { text-decoration: underline; }
-  .opa-note { float: right; margin: 4px 0 4px 18px; }
+  .standfirst:has(.opa-note) { text-align-last: right; }
+  .opa-note { float: right; margin: 4px 0 4px 12px; }
+  .standfirst .nowrap { white-space: nowrap; }
   .opa-note img { height: 96px; width: auto; display: block; }
 
 
@@ -336,8 +338,8 @@
         <a class="opa-note" href="../../../index.html"><img src="../../../assets/opa/opa-all.png" alt="Open Policy Analysis overview"></a>
         This page puts both on one measure, the net fiscal
         effect: the wealth tax collected, plus extra income tax from asset sales, minus the income
-        tax lost to people who leave. This is part of an Open Policy Analysis. See more
-        <a href="../../../index.html">here</a>.
+        tax lost to people who leave. This is part of an Open Policy Analysis. <span class="nowrap">See more
+        <a href="../../../index.html">here</a>:</span>
       </p>
     </div>
     <div class="headline">
