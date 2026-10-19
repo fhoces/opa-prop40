@@ -78,6 +78,7 @@ var CHOICES = {json.dumps(choice_specs)};
 var EMAIL = {json.dumps(email_spec)};
 var DESC = {json.dumps(m.DESC)};
 var THANKS = {json.dumps(m.THANKS)};
+var CONTROL_INPUTS = {json.dumps(m.CONTROL_INPUTS)};
 var FIELD = "Which field best describes your work?";
 var EXPERT = "Do you consider yourself an expert in tax or fiscal policy?";
 
@@ -188,12 +189,33 @@ function buildOne_(spec) {{
         mc.setChoiceValues(ch.map(function (c) {{ return LABELS[c] || c; }}));
       }}
     }});
+  }} else {{
+    inputsPage_(f).setHelpText(CONTROL_INPUTS);
   }}
   Logger.log(spec.name + "\\n  edit: " + f.getEditUrl() + "\\n  respond: " + f.getPublishedUrl());
   f.getItems().forEach(function (it, i) {{ Logger.log("  " + i + " " + it.getType() + " " + it.getTitle()); }});
 }}
 
 function buildExperiment() {{ FORMS.forEach(buildOne_); }}
+
+function inputsPage_(f) {{
+  return f.getItems(FormApp.ItemType.PAGE_BREAK).filter(function (it) {{
+    return it.getTitle() === "The inputs"; }})[0].asPageBreakItem();
+}}
+
+// Sets the inputs section's help text (CONTROL_INPUTS) in the control forms, which the author set by hand
+// in forms 3 and 5 on 2026-10-19, after launch (plan, deviations). Treatment forms are left alone.
+// Idempotent. Logs each control form's text.
+function controlInputsIntro() {{
+  FORMS.filter(function (spec) {{ return !spec.treated; }}).forEach(function (spec) {{
+    var files = DriveApp.getFilesByName(spec.name);
+    while (files.hasNext()) {{
+      var pb = inputsPage_(FormApp.openById(files.next().getId()));
+      pb.setHelpText(CONTROL_INPUTS);
+      Logger.log(spec.name + ": " + pb.getHelpText());
+    }}
+  }});
+}}
 
 // Sets the thank-you screen (THANKS, with the two short links) in the six forms and empties the
 // closing page's description, where an earlier hand edit had put a link before Submit (a control

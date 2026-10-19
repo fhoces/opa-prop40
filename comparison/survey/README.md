@@ -20,8 +20,9 @@ except the two data files the site reads (`../data/survey-links.csv`, the four f
 - `mock_forms.py`: the wording of every question, the treatment page and the form's description,
   with every number read from `../export/r/`; it writes HTML previews of the two forms.
 - `gas_build.py`: writes the Google Apps Script that built the six forms as copies of the version
-  1 form (`buildExperiment()`) and later edited them in place (`fixEnding()`, `moveEmail()` and
-  `fixPrior()`, whose log lists each form's links).
+  1 form (`buildExperiment()`) and later edited them in place (`fixEnding()`, `moveEmail()`,
+  `fixPrior()`, whose log lists each form's links, and `controlInputsIntro()`, the control forms'
+  inputs text set by hand on 2026-10-19).
 - `fill_links.py`: fills `../data/survey-links.csv` from that log (`--out PATH` writes a scratch
   copy first). It refuses a log that lacks a form, has two copies of one, or shows one unfinished.
 - `draws.gs`: the draw count's web app, one row (timestamp, entry point, arm) per click on a

@@ -119,6 +119,15 @@ INTRO = [
 NOTE = ("The income tax lost is shown as one amount because its three inputs multiply each other. For the "
         "same reason, each amount depends on the order in which the inputs are changed.")
 CLOSE = "The questions that follow ask which study's value of each input you find more credible."
+# The control forms' inputs section help, set after launch (plan, deviations, 2026-10-19): the author found that
+# control respondents met the input questions with no context. It names no study, value or sign; the treatment
+# page already states the same measure, so the treatment forms keep the source form's one line.
+CONTROL_INPUTS = ("Estimates of what Proposition 40 is worth to California add up three things: the wealth tax "
+                  "collected, the extra income tax from assets sold to pay it, and the income tax lost when "
+                  "billionaires leave the state. Each question below is one input to that sum, such as the share of "
+                  "income tax lost when billionaires leave, or the chance that the tax survives in court. Two values "
+                  "have been proposed for each input. Pick the one you find more credible. If neither stands out, "
+                  "say they are about equally credible or that you can't judge it.")
 
 
 def treatment_page():
@@ -502,8 +511,9 @@ def build(items, treated):
                 out.append(f"<div class='card grp'><b>{html.escape(e['title'])}</b></div>")
             elif e["kind"] == 8:
                 out.append(f"<div class='card head2'><h2>{html.escape(e['title'])}</h2></div>")
-                if e["help"]:
-                    out.append(f"<div class='card'>{html.escape(e['help'])}</div>")
+                hp = CONTROL_INPUTS if e["title"] == "The inputs" and not treated else e["help"]
+                if hp:
+                    out.append(f"<div class='card'>{html.escape(hp)}</div>")
             else:
                 out.append(q_html(e, labelled=treated))
     thanks = html.escape(THANKS)
