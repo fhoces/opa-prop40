@@ -88,5 +88,6 @@ power appendix gives the thresholds for every secondary analysis.
 titled "Pre-analysis plan for a study of salience of study information and credibility assessment
 of key assumptions and inputs") and `comparison/survey/power/power.pdf` (the appendix on power).
 
-**Experimental design details (hidden) and the repository note under Docs & Materials.** Launch commit: the hash recorded in the plan's section 9 on launch day (filled in at
-launch), in https://github.com/fhoces/opa-prop40.
+**Experimental design details (hidden) and the repository note under Docs & Materials.** Launch commit:
+ea8995df886a3a1994bdebd8c8397746c69102e5, in https://github.com/fhoces/opa-prop40. Submitted for review on
+2026-10-19 (initial registration date), with the plan as document 11591 and the power appendix as 11590.
