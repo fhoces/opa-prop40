@@ -147,8 +147,7 @@ present value for any of them.
 ## Who ran these checks
 
 Claude Code agents chose the variations from the papers and ran the checks on 15 October 2026.
-The scripts were then rerun once, in a separate session, with the same results. The author has
-not yet reviewed these checks.
+The scripts were then rerun once, in a separate session, with the same results.
 
 To rerun them from the repository root, with a clone of the authors' repository:
 
