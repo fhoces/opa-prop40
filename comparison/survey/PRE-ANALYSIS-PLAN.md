@@ -631,14 +631,24 @@ expected numbers of responses the main test detects 0.79 SD with 50 responses, 0
 
 **How to launch.**
 
-1. Run the Google Apps Script program that `comparison/survey/gas_build.py` writes. It builds the
-   six forms (forms 1 and 2, for the dropped `landing` entry point, are never opened), named
-   "exp: Prop 40 survey (ENTRY, ARM)", with the entry point and the arm in place of ENTRY and ARM. Each form takes about 110 seconds and a run stops at six
-   minutes, so a run builds three forms. Run it again. The builder trashes a half-built copy and
-   rebuilds it, and skips a form that is finished.
-2. Paste each form's respondent link into `comparison/data/survey-links.csv`, in the row of its
-   entry point and arm (`python3 comparison/survey/fill_links.py LOG.txt` does it from the
-   execution log). Delete the comment line about placeholders.
+1. The six forms exist: `buildExperiment()` in the Google Apps Script program that
+   `comparison/survey/gas_build.py` writes built them on 2026-10-17, named "exp: Prop 40 survey
+   (ENTRY, ARM)", with the entry point and the arm in place of ENTRY and ARM, and its `fixEnding()`,
+   `moveEmail()` and `fixPrior()` edited them in place since (forms 1 and 2, for the dropped
+   `landing` entry point, are never opened). On launch day, run `fixPrior()` once more: it leaves a
+   finished form unchanged and logs, for every copy of each form, its edit and respondent links,
+   whether it is finished and its item count, in the format `fill_links.py` reads. A WARNING line
+   in that log means two copies share a name: trash the unfinished one (finished: false) by hand
+   before step 2. `buildExperiment()` is run again only if a form is missing. Each form takes about
+   110 seconds and a run stops at six minutes, so a run builds three forms; run it again. It trashes
+   a half-built copy and rebuilds it, skips a finished form, and logs the links only of the forms it
+   builds in that run.
+2. Fill `comparison/data/survey-links.csv` from that execution log: `python3
+   comparison/survey/fill_links.py LOG.txt` writes the four rows (`entry`, `arm`, `url`), each
+   form's respondent link in the row of its entry point and arm, in place of the placeholder file
+   and its comment line. It refuses a log that lacks one of the four forms, names two copies of
+   one, or shows a form as unfinished. Pasting by hand works too: each respondent link in its row,
+   and the comment line about placeholders deleted.
 3. The thank-you screen after Submit carries the two short links (tinyurl.com/prop40-explorer and
    tinyurl.com/prop40-opa). `fixEnding()` adds them to forms built before the afternoon of
    2026-10-17. No link sits before Submit, because a control respondent could open it, go Back and
@@ -646,8 +656,16 @@ expected numbers of responses the main test detects 0.79 SD with 50 responses, 0
 4. Deploy `comparison/survey/draws.gs` as a web app (execute as me, anyone can access), as its
    header says. Paste its URL into `comparison/data/survey-config.csv` as `draws_url`.
 5. Rebuild with `Rscript comparison/run.R`, then run `Rscript comparison/tests/testthat.R`.
-6. Commit, and record the commit under "Launch" above.
-7. Register on the AEA RCT Registry. Then push. The push puts the four forms' links on the site.
+6. Commit. Record that commit's hash under "Launch" above, in a second commit (a hash cannot sit
+   inside its own commit); the registry's "Other" field takes the same hash in step 7.
+7. Register on the AEA RCT Registry, with the current `comparison/survey/plan/plan.pdf` and
+   `comparison/survey/power/power.pdf` attached in place of any older copies, and the launch
+   commit's hash in the "Other" field. Then open forms 3 to 6 to responses (each form's Responses
+   tab, "Accepting responses"), after checking that each form's responses go to a spreadsheet and
+   that the Key tab (section 5.1) is in it, and push. The push puts the four forms' links on the
+   site. Once GitHub Pages has deployed it (a few minutes), close the two current forms, the
+   version 1 and version 2 forms whose links are the placeholders in `survey-links.csv` (section
+   11: they close when the new forms open).
 
 ## 10. Limits
 
