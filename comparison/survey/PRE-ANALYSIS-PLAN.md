@@ -239,12 +239,6 @@ inputs.
 - S1. The share of the five questions answered "Unsure".
 - S2. The share answered "About equally credible".
 - S3. Each of the five $y_{ik}$, reported as three indicators (BSZ value, JR value, neutral answer).
-- S4. The mean of $|\mathrm{Lean}_i|$, how far each respondent is from neutral, estimated with the H1
-  equation. H1 is zero if naming the studies moves supporters of
-  the tax toward the BSZ values and opponents toward the JR values by the same amount. S4 is not.
-  The simulated pilot showed no such split ($|\mathrm{Lean}|$ 0.34 in control, 0.33 in treatment), so this
-  is a check, not a prediction. Support for Proposition 40 is asked after the treatment, so it
-  cannot split the sample for this test (section 6.2).
 
 In the simulated pilot, "About equally credible" was 2% of the required answers and "Unsure" 45%.
 The reasons given with "Unsure" on the horizon and court questions often said that neither value
@@ -504,7 +498,7 @@ appendix's Table 3 and Figure 1 give these, with the responses H1 needs at each 
 All of the open decisions were settled on 2026-10-17: the two current forms close when the new
 forms open; the overview's survey button sends to the `explorer` pair; the value texts revised
 after the pretest (section 4.4); the treatment page (Appendix A); the bulk-submission rule, the
-draw count and the links that skip the draw (section 8); the secondary outcome S4 (section 5.3);
+draw count and the links that skip the draw (section 8); the former secondary outcome S4 (the mean absolute lean index), dropped by the author on 2026-10-18;
 the close date and the post-vote responses (section 9); the Romano-Wolf adjustment (section 6.3); the two neutral answers, kept as they
 are (section 5.1); the public post, edited before posting (section 10); and the support question,
 kept after treatment (section 6.2).

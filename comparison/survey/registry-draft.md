@@ -47,8 +47,7 @@ California income tax, discounting the revenue for the chance that courts strike
 billionaires who moved out of California before the residency date. The index runs from -1 to +1.
 
 **Secondary outcomes.** S1 the share of Unsure answers; S2 the share of About equally credible
-answers; S3 each of the five questions separately; S4 the mean absolute lean index (distance from
-neutral).
+answers; S3 each of the five questions separately.
 
 **Experimental design (public).** Respondents reach the survey through one of two entry points:
 a button on the comparison explorer or the project's overview, whose users have all seen the two
