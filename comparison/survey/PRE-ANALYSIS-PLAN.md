@@ -7,8 +7,8 @@ was written now so that the analysis is fixed before any response is seen. **At 
 author that no human should spend much time reading this pre-analysis plan. It is only intended
 as a record.**
 
-Status: the version registered on the AEA RCT Registry (trial 19997) on 2026-10-19, before the
-forms open. The structure follows the minimal elements of a clear hypothesis: population,
+Status: the version registered on the AEA RCT Registry (the American Economic Association's
+registry of randomized controlled trials, trial 19997) on 2026-10-19, before the forms open. The structure follows the minimal elements of a clear hypothesis: population,
 interventions, arms, outcomes, hypotheses (contrasts, tests, alternative, estimation, standard
 errors), and heterogeneity stated separately and in full.
 
@@ -284,7 +284,9 @@ inputs.
 
 - S1. The share of the five questions answered "Unsure".
 - S2. The share answered "About equally credible".
-- S3. Each of the five $y_{ik}$, reported as three indicators (BSZ value, JR value, neutral answer).
+- S3. Each of the five $y_{ik}$, coded as in section 5.1, as the outcome of the H1 equation. For
+  each question, the shares of the three answers (the BSZ value, the JR value, a neutral answer)
+  are also reported by arm, descriptively.
 
 In the first pretest, "About equally credible" was 2% of the required answers and "Unsure" 45%.
 The reasons given with "Unsure" on the horizon and court questions often said that neither value
@@ -315,7 +317,8 @@ the error term. H1 is $\beta = 0$. Standard errors are heteroskedasticity-robust
 errors allow the lean index to vary more in one arm or entry point than in another, and the HC2
 variant corrects for small samples. The test is at the 5% level. The p-value uses the t
 distribution with degrees of freedom equal to the realized number of responses, N, minus the number
-of regressors. The estimate is an intention-to-treat effect, because whether a treated respondent
+of regressors. Below 30 responses the p-value of H1 comes from randomization inference instead
+(section 7). The estimate is an intention-to-treat effect, because whether a treated respondent
 read the comparison page is not observed. H1 is reported with the control-arm mean, the
 coefficient, its HC2 standard error, the 95% confidence interval, the p-value, N by arm and entry
 point, and the minimum detectable effect at the realized N. A second estimate, reported for
@@ -325,8 +328,9 @@ with "No" as the base) and the after-the-vote indicator of section 9, which is d
 response was submitted before the vote. The robustness estimate is reported alongside the main
 estimate and does not replace it.
 
-Secondary outcomes S1 to S3 are estimated with the same equation. The five S3 outcomes are adjusted
-with the Romano-Wolf step-down procedure within each answer type (section 6.3). S1 and S2 are one
+Secondary outcomes S1 to S3 are estimated with the same equation. For S3 the outcome is $y_{ik}$.
+The five S3 tests form one family, adjusted with the Romano-Wolf step-down procedure (section
+6.3). S1 and S2 are one
 test each. They are not adjusted, and they are run at any N together with H1. In their own
 standard-deviation units their minimum detectable effect is H1's.
 
@@ -429,6 +433,16 @@ simulations of the registered estimator are in the power appendix,
 `comparison/survey/power/power.pdf` (built from `power.tex` and `sim.py`, which generates every
 number in it).
 
+H1 is estimated whenever at least one entry-point stratum has responses in both arms. A stratum
+with responses in one arm only is dropped from the H1 equation, and the count dropped is
+reported. If only one stratum remains, the entry-point indicator is dropped with it. Below 30
+responses, the smallest N at which the appendix verified the test's level, the p-value of H1
+comes from randomization inference in place of the HC2 t-test. The treatment indicator is
+re-assigned at random within each stratum 10,000 times, keeping each stratum's realized number
+of treated responses, with the seed of section 6.3. The p-value is the share of re-assignments
+whose HC2 t-statistic for $\beta$ is at least as large in absolute value as the realized one.
+The estimate and its HC2 confidence interval are reported as well.
+
 The table below summarizes the appendix's Table 1. It gives the responses needed for 80% power
 against an effect of 0.3 SD, with the Romano-Wolf step-down applied within each family. It assumes
 that 60% of responses come through `explorer` and 40% through `share`, and that expertise and prior
@@ -530,9 +544,17 @@ expected numbers of responses the main test detects 0.79 SD with 50 responses, 0
   forms received submissions, or if either of its
   forms has more submissions than draws (the sign of a forwarded address, below).
 
-  If the checks show differential attrition, no correction is applied. H1 is then read as the
-  effect among respondents who complete the form they drew, and the submission rates by arm and
-  entry point are reported beside it.
+  If the checks show differential attrition, H1 is reported as registered and also with the
+  trimming bounds of Lee (2009). Differential attrition means that, within an entry point, the
+  two arms' submissions per draw differ at the 5% level in a two-sided test of two proportions,
+  or, when the count fails, that the exact binomial test of item 1 rejects at the 5% level.
+  Within each entry point, the arm with the higher submission rate $q_H$ is trimmed by the share
+  $(q_H - q_L)/q_H$ of its responses, where $q_L$ is the other arm's rate. It is trimmed once
+  from the top and once from the bottom of its lean-index distribution. The two trimmed estimates
+  of the H1 equation bound the effect among respondents who would have submitted in either arm.
+  When the count fails, the submission counts stand in for the rates, since the draw is even in
+  expectation. The bounds are reported without a test when an arm has fewer than 50 responses in
+  the entry point.
 - **Duplicates.** Of responses with the same email (compared after trimming spaces and
   lower-casing), only the earliest by timestamp is kept. Anonymous duplicates cannot be detected.
   One person can land in both arms, which shrinks any measured effect, because that person's
@@ -547,6 +569,10 @@ expected numbers of responses the main test detects 0.79 SD with 50 responses, 0
   identical answers to every choice question, count as one submission, and only the first is kept. The number removed per form is
   reported. H1 is also reported with no response removed. A burst in one arm also shows in the
   per-arm count check above.
+  A bot that varies its answers is not caught by this rule. As a robustness check, H1 is also
+  reported without the submissions of every clock hour (Pacific time) in which one form received
+  five or more submissions while its pair's form received none. The hours and forms removed are
+  reported.
 - **Respondents who give an email.** Their answers are also reported separately, as the survey
   promises. The registered analysis uses all responses.
 - **Links that skip the draw.** The share page sends the
@@ -567,9 +593,8 @@ expected numbers of responses the main test detects 0.79 SD with 50 responses, 0
 
 ## 9. Timeline, registration and priors
 
-- **Registration.** The plan is registered on the AEA RCT Registry (the American Economic
-  Association's registry of randomized controlled trials), trial 19997, before the four forms
-  open, with `comparison/survey/plan/plan.pdf` and `comparison/survey/power/power.pdf` attached.
+- **Registration.** The plan is registered on the AEA RCT Registry, trial 19997, before the four
+  forms open, with `comparison/survey/plan/plan.pdf` and `comparison/survey/power/power.pdf` attached.
 - **Ethics.** No IRB review was sought, and the registry's IRB field says so. Answers are anonymous
   unless the respondent gives an email, which is optional and is used as section 8 says, to remove
   duplicates and to report that group separately. The forms do not say that two versions exist.
@@ -595,6 +620,10 @@ expected numbers of responses the main test detects 0.79 SD with 50 responses, 0
 - **No interim analysis.** Before the close, only response counts per form are looked at.
 - **Report.** The analysis is written up by 31 December 2026, the trial end date given to the
   registry.
+- **Data.** After the close, the responses, with the email column and the free-text answers
+  removed, and the draw count are published in the repository with the analysis. The free-text
+  answers are never published. Where section 5.3 reports them, the analysis summarizes them
+  without quoting them.
 - **Priors.** No forecasts of the effect are collected.
 - **Deviations.** Any change after registration is logged at the end of this file with its date
   and reason.
@@ -696,6 +725,20 @@ the request to pass on the project link rather than the form's address (sections
 respondent who forwards a form's address sends the people who open it to one arm, with no draw.
 The sign of this in the data is unchanged: a form with many submissions and few draws
 (section 8).
+
+On 2026-10-19, before launch, the author settled the open items of the plan's review
+(`feedback/011-2026-10-18-pap-review/`).
+
+- S3 is one family of five tests on the coded answers (sections 5.3 and 6.1).
+- Differential attrition is met with the bounds of Lee (2009) (section 8).
+- A stratum with responses in one arm only is dropped, and below 30 responses the p-value of H1
+  comes from randomization inference (section 7).
+- A robustness check removes hours in which only one form of a pair received a burst of
+  submissions (section 8).
+- The responses are published after the close without the email column and the free-text
+  answers, which are never published (section 9).
+- The site's fallback for browsers without JavaScript stays as it is (section 8).
+- The title stays as it is.
 
 ## Appendix A. Treatment page text
 

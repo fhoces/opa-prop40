@@ -2,7 +2,7 @@
 
 For the Claude Code session on the author's machine, which has LaTeX, Chrome, R and Quarto. Work
 through this with the author at the keyboard, one part at a time, in order. Part 1 needs no
-decision and rebuilds the two PDFs. Part 2 is the author's decisions, asked one at a time. Part 3
+decision and rebuilds the two PDFs. Part 2 records the author's decisions, settled on 2026-10-19, so there is nothing to ask. Part 3
 is the follow-ups and confirmations. Commit after each part and push.
 
 The author can start you with: "Read `feedback/011-2026-10-18-pap-review/06-handoff-local.md`
@@ -44,14 +44,15 @@ The implementer applied 65, skipped 3 as duplicates or superseded, and left 9 fo
 which waits on a code fix). `05-applied.md` has one line per finding and the paste-ready text for
 each author item.
 
-**Files changed** (all under `comparison/survey/`): `PRE-ANALYSIS-PLAN.md` (563 to 740 lines),
+**Files changed** (all under `comparison/survey/`): `PRE-ANALYSIS-PLAN.md` (563 to 783 lines, the decisions of Part 2 included),
 `registry-draft.md`, `power/power.tex` (text only, no number or table), `power/sim.py` (one
 comment). Not changed: the forms, the site, `pilot_analysis.py`, `plan.tex`, `plan-body.tex`,
 `plan.pdf`, `power.pdf`, anything in `power/out/`. The pandoc step of `build.sh` was run in the
 cloud on the edited plan and passes. No em-dash or en-dash anywhere in the edited files.
 
-**Untouched on purpose.** The title (line 1), the status line's registration date, the S3
-definition (section 5.3 and 6.1), and every decision listed in the brief.
+**Untouched on purpose.** The title (line 1), the status line's registration date, and every
+decision listed in the brief. The implementer left the S3 definition alone, and the author's
+answer of 2026-10-19 then set it (Part 2, item 1).
 
 ## What changed in the plan, by section
 
@@ -83,7 +84,7 @@ definition (section 5.3 and 6.1), and every decision listed in the brief.
   (A is the JR value in four required questions and the BSZ value in the court question and the
   five optional questions). The fourth question is "discounting the revenue for court risk".
 - **5.2 and 5.3.** The lean index is introduced as the mean of the five coded answers. The
-  optional answers are reported with the share of each arm that opted in. S3's text is unchanged.
+  optional answers are reported with the share of each arm that opted in. S3 is set by the author's decision (Part 2, item 1).
 - **6.1 Main hypothesis.** H1 in words; OLS, every symbol of the equation and the HC2 standard
   errors defined; the t distribution's degrees of freedom; the intention-to-treat reading; what
   is reported for H1; the robustness specification's indicator variables with their base
@@ -107,9 +108,8 @@ definition (section 5.3 and 6.1), and every decision listed in the brief.
   detectable effects at 50, 100 and 200 responses (0.79, 0.56 and 0.40 SD).
 - **8. Checks, attrition and exclusions.** Full sentences throughout. The explorer's notes
   disclose the draw count (quoted). Draws count clicks, not people; the ratio is not a response
-  rate; the count's failure criterion. If the checks show differential attrition, no correction
-  is applied and the submission rates are reported beside H1 (the fallback sentence; see Part 2,
-  item 2). Emails compared after trimming and lower-casing, earliest kept; why the forms require
+  rate; the count's failure criterion. If the checks show differential attrition, H1 is also
+  reported with Lee (2009) bounds (Part 2, item 2). Emails compared after trimming and lower-casing, earliest kept; why the forms require
   no Google sign-in. The bulk rule's ten minutes is one span. Without JavaScript every button and
   the share page lead to form 5; a program reading the page finds the same address; these
   responses add control responses to the `share` stratum with no draw; the signature (submissions
@@ -160,67 +160,39 @@ the heterogeneity comment says the same about the email. No number changed.
    minus sign. The PDF was 14 pages before; the plan grew by about a third, so expect more.
 4. Commit `plan.pdf`, `plan-body.tex`, `power.pdf` and, if changed, `power/out/`. Push.
 
-## Part 2: the author's decisions, one at a time
+## Part 2: the author's decisions (settled on 2026-10-19)
 
-Each item gives the finding, the options and a recommendation. The paste-ready text for every
-option is in `05-applied.md`, section "For the author".
+The author answered each item in the cloud session on 2026-10-19, and the answers are applied to
+the plan and the registry draft. Section 11 of the plan lists them under 2026-10-19. Nothing here
+is left to ask.
 
-1. **What S3 tests** (01-1 and 02-1, severity A, both AUTHOR DECISION; 04-7 is the same issue).
-   The plan's section 5.3 defines S3 as "three indicators (BSZ value, JR value, neutral answer)"
-   and section 6.1 adjusts "within each answer type", which reads as fifteen tests in three
-   families. The power appendix (`sim.py` line 284, `out/thresholds.tex` row 1), the registry
-   draft ("each of the five questions separately"), `pilot_analysis.py` and the plan's own section
-   6.3 ("the five questions of S3") all treat S3 as one family of five tests on the coded answer
-   $y_{ik}$. The tier-1 threshold of 150 responses was simulated for five tests. Options: (a) five
-   tests on $y_{ik}$, one Romano-Wolf family, with the three answer shares reported descriptively
-   by arm; (b) fifteen indicator tests in three families, which needs tier 1 re-simulated before
-   registration. Recommendation: (a). It is what every other document and the code implement,
-   and the "three indicators" wording looks like a residue of the per-question multinomial
-   outcomes dropped on 2026-10-18. Apply the three replacements in `05-applied.md` (two in the
-   plan, one in the registry draft).
-2. **Differential attrition** (03-1, severity A, and 01-9, both AUTHOR DECISION). The attrition
-   checks are reported but had no registered consequence. The implementer applied the
-   non-decision fallback: no correction, H1 read as the effect among respondents who complete the
-   form they drew, submission rates reported beside it. Options: keep the fallback; or replace it
-   with Lee (2009) trimming bounds, computed within each entry point when the arms' submission
-   rates differ at the 5% level, reported without a test below 50 responses per arm.
-   Recommendation: add the bounds. Quitting on the comparison page is the one way the treatment
-   can bias H1, the bounds are the standard pre-specified answer, and they cost one paragraph and
-   one standard routine. With few responses they will be wide, which is itself the honest
-   report. Keeping the fallback is defensible if the author wants the plan minimal.
-3. **Very small samples** (01-8, severity B, AUTHOR DECISION). H1 is "tested whatever the number
-   of responses", but the appendix verified the test's level only from 30 responses, and a
-   stratum with responses in one arm only is not covered. Options: adopt the rule (drop a
-   one-arm stratum from the H1 equation and report the count; below 30 responses, take the
-   p-value from randomization inference, 10,000 re-draws of T within strata, and report the HC2
-   estimate and interval as well); or leave as is. Recommendation: adopt. The expected range of 0
-   to 200 makes fewer than 30 responses likely, the stratum rule is mechanical, and
-   randomization inference is exact under the null at any N.
-4. **Bots that vary their answers** (03-9, severity C, AUTHOR DECISION). The bulk rule catches
-   only identical bursts. Options: add a robustness report of H1 without the submissions of any
-   hour in which one form received five or more while its pair received none, with the hours and
-   forms reported; or decline, since the bulk rule and the per-arm count check exist.
-   Recommendation: add it. It is cheap, pre-specified and reported, not a change to H1.
-5. **Data availability** (01-20, severity C, AUTHOR DECISION). The plan has no statement.
-   Options: publish the responses without the email column and the free-text answers, plus the
-   draw count, in the repository with the analysis; the same with the free text after a review
-   for identifying detail; or no statement. Recommendation: the first, with the free text decided
-   after the close, once the author has read it. The free text is the only place identifying
-   detail can appear.
-6. **The no-script fallback** (03-2's alternative, AUTHOR DECISION, a site change). Without
-   JavaScript, every survey button and the share page lead to the `share` pair's control form,
-   and a program reading the page finds that one address. The plan now documents this and its
-   signature (form 5 with submissions above draws). Options: keep the site as it is; or make the
-   fallback a sentence that the survey needs JavaScript, with no form address in the page's HTML,
-   so that no-script visitors are lost rather than put into one arm. Recommendation: keep for
-   launch. The plan documents the path, the site's tests pin page strings, and no-script humans
-   are few. Revisit only if form 5 shows the signature during the window.
-7. **The title** (04-23, severity C). "Salience of study information and credibility assessment
-   of key assumptions and inputs" is a chain of nouns. Options: keep; or the reviewer's
-   "Pre-analysis plan: a survey experiment on the salience of study information when respondents
-   judge the credibility of disputed inputs". Recommendation: keep. It is the author's choice of
-   2026-10-18, and `plan.tex` line 20 and the registry draft name it. If changed, change all
-   three.
+1. **What S3 tests** (01-1, 02-1, 04-7). One Romano-Wolf family of five tests on the coded answer
+   $y_{ik}$, with the three answer shares reported by arm, descriptively. Applied to sections 5.3
+   and 6.1 and the registry draft's Secondary outcomes field. This matches the power appendix, so
+   nothing is re-simulated.
+2. **Differential attrition** (03-1, 01-9). Lee (2009) trimming bounds within each entry point
+   when the arms' submission rates differ at the 5% level, reported without a test below 50
+   responses per arm. Applied to section 8, in place of the "no correction" sentence.
+3. **Very small samples** (01-8). A stratum with responses in one arm only is dropped (and the
+   entry-point indicator with it if one stratum remains). Below 30 responses, H1's p-value comes
+   from randomization inference: 10,000 re-assignments of T within strata keeping each stratum's
+   number treated, the seed of section 6.3, and the HC2 t-statistic of beta as the statistic.
+   Applied to section 7, with a pointer in section 6.1.
+4. **Bots that vary their answers** (03-9). H1 is also reported without every clock hour (Pacific
+   time) in which one form received five or more submissions while its pair received none.
+   Applied to section 8.
+5. **Data availability** (01-20). After the close, the responses without the email column and
+   the free-text answers, and the draw count, are published in the repository. The free-text
+   answers are never published, and the analysis summarizes them without quoting them where
+   section 5.3 reports them. Applied to section 9.
+6. **The no-script fallback** (03-2's alternative). The site stays as it is. The plan already
+   documents the path and its sign in the data.
+7. **The title** (04-23). It stays as it is.
+
+The orchestrator added three small completions so the new rules leave no room for two readings:
+the randomization-inference statistic and seed (item 3), "clock hour (Pacific time)" (item 4),
+and "summarizes them without quoting them" (item 5). Change any of them if they are not what was
+meant.
 
 ## Part 3: follow-ups and confirmations
 
@@ -232,31 +204,26 @@ option is in `05-applied.md`, section "For the author".
    the base) is rank deficient with the two live entry points, so it would fail on real data.
    Remove S4, make the entry-point fixed effect a single `E_share` indicator, and add H5, the
    cell and tier-5 families, the staged rule, the deduplication and bulk rules of section 8, and
-   the decisions of Part 2. Then add the "Analysis code" bullet from `05-applied.md` to section 9,
+   the decisions of Part 2 (Lee bounds, randomization inference below 30 responses with the
+   one-arm stratum rule, the burst-hour check). Then add the "Analysis code" bullet from `05-applied.md` to section 9,
    so the script's version at the launch commit is the registered one. The second pretest's
    `report.qmd` (lines 85 and 145 to 146) also carries S4; remove it or leave the pilot outputs as
    a record.
-3. **Values the implementer chose** where the plan gave none. Each is the reviewer's proposal;
-   change any before registration: close at 23:59 Pacific time on 4 November 2026 (section 9 and
-   the registry draft); "after the vote" is a timestamp after 20:00 Pacific time on 3 November
-   2026, when California's polls close (section 9); Romano-Wolf seed 20261017 (section 6.3); the
-   draw count fails for an entry point if it recorded no draw on a day with submissions for that
-   entry point, or if a form has more submissions than draws (section 8); the robustness
-   specification's bases are "No" for expertise and "No" for prior exposure, with the
-   after-the-vote indicator dropped if no response comes after the vote (section 6.1).
-4. **A commitment to confirm.** Section 7 now says that at the close `sim.py` is rerun once with
-   the realized shares and the regenerated `out/thresholds.tex` is committed. This spells out what
-   `power.tex` already said ("At the close all rows are recomputed at the realized shares"). The
-   constants are `P_EXPL` and `SHARES0` (line 47 to 48) and `P_H5` (line 551). Confirm, or cut
-   the sentence and let the registered thresholds govern throughout.
-5. **Confirmations the reviewers asked for.** That the email is used for nothing but duplicates
-   and the separate report (Ethics bullet, section 9). That "one analysis's count of the wealth
-   that left but the other analysis's rule for which income tax is lost" is the intended meaning
-   of the share-lost sentence (section 4.4). Whether the status line may carry the expansion of
-   "AEA RCT Registry" (it was placed in section 9 because the brief said to leave line 10 alone).
+3. **Values the implementer chose.** Confirmed by the author on 2026-10-19: close at 23:59
+   Pacific time on 4 November 2026; "after the vote" is a timestamp after 20:00 Pacific time on 3
+   November 2026; Romano-Wolf seed 20261017; the draw count's failure criterion; the robustness
+   bases. No action.
+4. **The rerun of `sim.py` at the close.** Confirmed by the author on 2026-10-19. No action now.
+   At the close, rerun it once with the realized shares (`P_EXPL` and `SHARES0` at lines 47 to 48,
+   `P_H5` at line 551) before any outcome is tabulated, and commit `out/thresholds.tex` with the
+   shares.
+5. **Confirmations.** The author confirmed on 2026-10-19 that the email is used for nothing but
+   duplicates and the separate report, and that the rewritten share-lost sentence in section 4.4
+   has the intended meaning. The status line now carries the full name of the AEA RCT Registry,
+   at the author's choice, and section 9 uses the short name. No action.
 6. **The registry's private draft** (trial 19997). Re-enter the fields that changed in
    `registry-draft.md`: Trial end date, Minimum detectable effect size, Analysis plan documents,
-   Other, and Secondary outcomes if Part 2 item 1 changes S3. Attach the rebuilt `plan.pdf` and
+   Other, and Secondary outcomes (S3 now says it is coded +1, -1 and 0). Attach the rebuilt `plan.pdf` and
    `power.pdf`.
 7. **Branches.** `claude/optimistic-ramanujan-okbezb` stays at the brief (4b94536) and can be
    deleted after the merge. Never force-push `review/pap-2026-10-18`.
