@@ -4,7 +4,7 @@
 "The 2026 Billionaire Tax Act", as filed with the California Attorney General on
 November 24, 2025. It appears on the November 3, 2026 ballot as Proposition 40.
 
-This is a public record, so unlike the analyses it is committed here. Both sides and the
+This is a public record, so unlike the analyses it is committed here. Both analyses and the
 comparison refer to it.
 
 - Source: https://oag.ca.gov/system/files/initiatives/pdfs/25-0024A1%20%28Billionaire%20Tax%20%29.pdf

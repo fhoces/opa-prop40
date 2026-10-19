@@ -20,8 +20,9 @@ disputed input at a time. `PLAN.md` fixed the output definition before any compa
 `AUDIT.md` scores every page against the OPA Guidelines' nine steps.
 
 Live site (rebuilt from `main`, may lag the working tree): https://fhoces.github.io/opa-prop40/
-with `bsz-analysis/site/`, `rjkdc-analysis/site/` and `comparison/site/explorer/` under it.
-Review the files in the working tree, not the live site.
+with `bsz-analysis/site/`, `rjkdc-analysis/site/`, `comparison/site/explorer/` and the survey's
+share page `comparison/site/survey/` under it. Review the files in the working tree, not the live
+site.
 
 ## Reading order for a reviewer
 
@@ -40,7 +41,10 @@ Review the files in the working tree, not the live site.
    (the reproduction notes: where the authors' text, READMEs and code describe a step differently), `bsz-analysis/VERIFY-AUGUST.md` (the BSZ analysis's reproduction notes are in `bsz-analysis/site/materials.qmd`, "What the checks found"),
    `AUDIT.md`, `PLAN.md` (the pre-specified output and every decision), `review/README.md`
    (the code review ledgers), `*/site/credit/CREDIT.md` (the CRediT and AI-use answers),
-   `docs/initiative/README.md` (the ballot measure).
+   `docs/initiative/README.md` (the ballot measure), `comparison/survey/PRE-ANALYSIS-PLAN.md`
+   (the survey experiment's registered plan: what the survey asks, the two arms, the two entry
+   points and what the comparison pages promise it; the forms' exact wording is in
+   `comparison/survey/plan/forms/*.json`).
 8. The labelled inputs: `bsz-analysis/site/data/inputs.csv`, `rjkdc-analysis/export/r/inputs.csv`,
    `comparison/data/document-inputs.csv`, `comparison/export/r/inputs.csv`; and the source
    manifests `*/DATA-SOURCES.csv`.
@@ -81,7 +85,7 @@ loop. Read-only: kept untouched by decision (PLAN-5).
 | `AUDIT.md` | source | the OPA Guidelines audit; update the evidence when a change moves a step |
 | `docs/initiative/` | record | the measure's text (PDF) and a README |
 | `review/*.json`, `review/README.md` | record | code review ledgers; `README.md` is rendered by `python3 review/render.py`; the loop does not edit them |
-| `feedback/` | this loop | one directory per run |
+| `feedback/` | this loop | one directory per run or review; `feedback/README.md` says which directories are loop runs and which are focused reviews, the survey's pretests, the plan review (011) and the final review (012) |
 | `.github/workflows/*.yml` | source | CI; the comparison workflow checks that the committed generated pages equal the generator's output |
 
 ### The BSZ analysis, `bsz-analysis/`
@@ -130,6 +134,14 @@ repository at the pinned commit), `site/slides/slides.Rmd` (source), `site/credi
 | `DATA-SOURCES.csv` | source | |
 | `export/r/*.csv`, `export/py/*.csv` | generated | by `R/build.R` and `py/bridge.py` |
 | `R/`, `py/`, `tests/`, `run.R` | code | |
+| `data/survey-links.csv`, `data/survey-config.csv` | source | the four forms' respondent links (one row per entry point and arm) and the draw count's web app address; filled at launch (plan, section 9, "How to launch"); the pages' survey buttons and the share page read them |
+| `site/survey/index.html` | generated | the survey's share page, which draws one of the `share` entry point's two forms; written by `survey_share_page()` in `R/site.R` from the two CSVs above; rebuild `Rscript comparison/run.R` |
+| `survey/PRE-ANALYSIS-PLAN.md` | record | the survey experiment's pre-analysis plan, registered on the AEA RCT Registry (trial 19997) on 2026-10-19; the loop does not edit it; a change after registration is a logged deviation, the author's alone |
+| `survey/plan/plan.pdf`, `survey/plan/plan-body.tex`, `survey/plan/forms/*.pdf` | generated | by `zsh comparison/survey/plan/build.sh` (pandoc, Chrome and latexmk, the author's machine) from the plan, `survey/plan/plan.tex` and the forms' JSON; `plan.pdf` is attached to the registry entry, so the loop never rebuilds it |
+| `survey/plan/forms/control.json`, `treatment.json` | record | exact copies of the live control and treatment forms (Google Forms' preview, 2026-10-18); the reference wording for every page that names an input (run 010's scope): the page follows the form, never the other way round; `print_forms.py` beside them is code |
+| `survey/power/power.pdf`, `survey/power/out/` | generated | by `python3 comparison/survey/power/sim.py` (numpy, scipy, matplotlib) and then `latexmk -pdf power.tex` from `comparison/survey/power/`; `power.tex` is the write-up; `power.pdf` is attached to the registry entry; `power/explore/` is an unregistered exploration (record) |
+| `survey/registry-draft.md` | record | the registry fields as drafted |
+| `survey/mock_forms.py`, `survey/gas_build.py`, `survey/fill_links.py`, `survey/draws.gs`, `survey/pilot_*.py` | code | the form previews and the Apps Script builder (both read the explorer's export files, so the forms print the pages' numbers), the link filler, the draw count's web app, the pretests' harvest and analysis |
 
 ## Rules for an edit
 
@@ -159,6 +171,11 @@ repository at the pinned commit), `site/slides/slides.Rmd` (source), `site/credi
    already uses.
 7. HTML pages: the hand-written ones use the page's own markup for footnotes, tables and
    folds; copy it. No new frameworks, fonts or external scripts.
+8. The survey (`comparison/survey/`, `comparison/data/survey-*.csv`, the forms on Google Forms,
+   the share page's text): the forms are live and the plan is registered, so a finding about the
+   survey's wording, its forms, its plan or its PDFs goes to the author in the report, never into
+   an edit. Where a page and a form name the same input differently, the page changes to the
+   form's words (`survey/plan/forms/*.json`), or the difference is reported.
 
 ## Rebuild and test commands (local machine)
 
@@ -175,4 +192,6 @@ Rscript -e 'rmarkdown::render("rjkdc-analysis/site/slides/slides.Rmd")'
 bsz-analysis/tools/sync-readme.sh              # after editing bsz-analysis/_raw-sources.md
 python3 review/render.py                       # after editing review/*.json
 python3 .claude/skills/opa-review-loop/tools/check_links.py
+zsh comparison/survey/plan/build.sh            # plan.pdf, plan-body.tex and forms/*.pdf from PRE-ANALYSIS-PLAN.md (author's machine: pandoc, Chrome, latexmk; the author only, the PDF is registered)
+python3 comparison/survey/power/sim.py && (cd comparison/survey/power && latexmk -pdf power.tex)   # power/out/ and power.pdf (the author only, registered)
 ```
