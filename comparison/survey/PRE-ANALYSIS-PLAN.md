@@ -97,7 +97,7 @@ opens its entry point's control form or treatment form with probability 1/2, dra
 
 ### 4.3 Entry points and forms
 
-Four forms: two entry points, two arms each. The form a response lands in records its entry point and its arm. Respondents see neither label.
+Four forms: two entry points, two arms each. The form a response lands in records its entry point and its arm. Respondents see neither label. Appendix B reproduces the control and treatment forms.
 
 | Entry point | Who arrives there | Control | Treatment |
 |------|------------------|------|------|
@@ -558,3 +558,12 @@ Two parts explain 83% of the gap: the income tax lost when billionaires leave, a
 The income tax lost is shown as one amount because its three inputs multiply each other. For the same reason, each amount depends on the order in which the inputs are changed.
 
 The questions that follow ask which study's value of each input you find more credible.
+
+## Appendix B. The two forms
+
+The pages that follow reproduce the control form (form 3) and the treatment form (form 4) as
+respondents meet them, page by page, with the confirmation message shown after Submit. Each copy
+is printed from the form's own definition as Google Forms served it in preview on 18 October 2026
+(`comparison/survey/plan/forms/control.json` and `treatment.json`, printed by `print_forms.py` in
+the same folder). Forms 5 and 6, the `share` entry point's forms, carry the same text as forms 3
+and 4; only Google's internal item ids differ.

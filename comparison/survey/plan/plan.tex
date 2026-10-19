@@ -7,6 +7,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
 \usepackage{textcomp}
+\usepackage{pdfpages}
 \usepackage[hidelinks]{hyperref}
 \setlength{\parskip}{4pt}
 \setlength{\parindent}{0pt}
@@ -23,4 +24,7 @@
 \begin{document}
 \maketitle
 \input{plan-body.tex}
+% Appendix B: the two forms, printed by forms/print_forms.py and build.sh
+\includepdf[pages=-,pagecommand={\thispagestyle{plain}}]{forms/control.pdf}
+\includepdf[pages=-,pagecommand={\thispagestyle{plain}}]{forms/treatment.pdf}
 \end{document}
