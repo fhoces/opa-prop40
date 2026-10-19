@@ -62,6 +62,10 @@
   .standfirst + .standfirst { margin-top: 12px; }
   .standfirst a { color: var(--link); text-decoration: none; }
   .standfirst a:hover { text-decoration: underline; }
+  .standfirst:has(.opa-note) { text-align-last: right; }
+  .opa-note { float: right; margin: 4px 0 4px 12px; }
+  .opa-note img { height: 96px; width: auto; display: block; }
+  .standfirst .nowrap { white-space: nowrap; }
 
   .preferred {
     margin-top: 22px; padding: 14px 16px; background: var(--panel);
@@ -208,9 +212,12 @@
     <h1>How much would the one-time billionaire tax raise, net?</h1>
     <div class="hero-left">
       <p class="standfirst">
+        <a class="opa-note" href="../index.html"><img src="../assets/opa/opa-all.png" alt="Open Policy Analysis overview"></a>
         Boll, Saez and Zucman (BSZ, NBER, August 2026) put the one-time tax at about $100 billion of wealth tax.
         This Open Policy Analysis (OPA) adds its income tax effects to get the <strong>main estimate</strong>.
         Five of the six inputs below are guesswork. Move them and the estimate updates.
+        This is part of an Open Policy Analysis. <span class="nowrap">See more
+        <a href="../index.html">here</a>:</span>
       </p>
     </div>
     <div class="headline">

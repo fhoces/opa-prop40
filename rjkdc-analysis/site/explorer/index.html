@@ -66,6 +66,10 @@
   .standfirst + .standfirst { margin-top: 14px; }
   .standfirst a { color: var(--link); text-decoration: none; }
   .standfirst a:hover { text-decoration: underline; }
+  .standfirst:has(.opa-note) { text-align-last: right; }
+  .opa-note { float: right; margin: 4px 0 4px 12px; }
+  .opa-note img { height: 96px; width: auto; display: block; }
+  .standfirst .nowrap { white-space: nowrap; }
 
   .cols { display: grid; grid-template-columns: minmax(0, 400px) minmax(0, 1fr); gap: 34px; margin-top: 28px; align-items: start; }
   @media (max-width: 860px) { .cols { grid-template-columns: minmax(0, 1fr); gap: 30px; } }
@@ -188,11 +192,13 @@
     <h1>What the Billionaire Tax Act is worth to the state, by the JR method</h1>
     <div class="hero-left">
       <p class="standfirst">
+        <a class="opa-note" href="../index.html"><img src="../assets/opa/opa-all.png" alt="Open Policy Analysis overview"></a>
         Jaros and Rauh (JR, NBER, September 2026) find that the one-time billionaire tax leaves
         California poorer on average. The wealth tax is collected once, but billionaires who leave
         stop paying income tax for ever. Four of the authors' five inputs below are guesswork; the
         extra litigation weight and further growth dials are this OPA's additions. Move them and
-        the estimate updates.
+        the estimate updates. This is part of an Open Policy Analysis. <span class="nowrap">See more
+        <a href="../index.html">here</a>:</span>
       </p>
     </div>
     <div class="headline">
