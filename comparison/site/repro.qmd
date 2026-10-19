@@ -1108,7 +1108,36 @@ document.querySelectorAll("details.twin > summary a.lang").forEach(function (a) 
 </script>
 ```
 
-# Appendix: a previous comparison, Hoopes (2026) {#the-hoopes-comparison}
+# Conclusion {#conclusion}
+
+This is not the only attempt to make these two numbers inspectable. PolicyEngine built a
+[calculator](https://www.policyengine.org/us/california-wealth-tax) that applies each paper's assumptions to one person-level roster of Forbes
+billionaires and bridges the gap between them, and Hoopes (2026) walked between the two estimates
+in a note. Neither knew of this project, and I learned of PolicyEngine's work after launch. Their
+calculator and this comparison are built differently (settings inside one model, against
+reproductions of each paper's own pipeline) and land within a few billion of each other:
++\$106.2B and &minus;\$37.2B there, `r usd(eb$bsz_model)` and `r usd(eb$jr_own)` here. Three
+independent efforts in one year to open the same two numbers say something about where policy
+analysis is heading. The tools now make transparency cheap enough that people build it unasked.
+The appendix sets both beside this bridge.
+
+# Appendix: two other comparisons {#the-hoopes-comparison}
+
+## PolicyEngine's calculator
+
+PolicyEngine's [Proposition 40 calculator](https://www.policyengine.org/us/california-wealth-tax) (repository
+[PolicyEngine/california-wealth-tax](https://github.com/PolicyEngine/california-wealth-tax), started March 2026) takes the opposite route to
+the same place. It builds one person-level model over Forbes's California list, refreshed daily,
+and offers three starting points: the statute with no behavioural response (+\$117.6B), "Berkeley
+assumptions" (+\$106.2B) and "Hoover assumptions" (&minus;\$37.2B), each paper's assumptions applied
+to the calculator's own roster rather than a reproduction of the paper. Between any two settings
+it draws a Shapley bridge, the same order-free average this report uses as its check. This OPA
+reproduces each paper's pipeline and bridges the two results; the calculator applies both
+papers' assumptions inside one pipeline. The numbers were read from the app on 2026-10-19 and are
+cited, not recomputed here. That two constructions this different land within a few billion of
+each other (`r usd(eb$bsz_model)` and `r usd(eb$jr_own)` here) is itself a check on both.
+
+## Hoopes (2026)
 
 Jeffrey Hoopes, "Galle v Rauh: Comparing Two Revenue Estimates for California Billionaire
 Taxation" (SSRN 6428578; SSRN is a preprint site), is a previous comparison of the two

@@ -2532,7 +2532,12 @@ a.ai-badge-red, .ai-badge-red { background: #c62828; color: #ffffff !important; 
   <li><a href="#every-input-by-origin" id="toc-every-input-by-origin" class="nav-link" data-scroll-target="#every-input-by-origin">Every input, by origin</a></li>
   <li><a href="#what-reproduces" id="toc-what-reproduces" class="nav-link" data-scroll-target="#what-reproduces">What reproduces</a></li>
   <li><a href="#reproducing-this-document" id="toc-reproducing-this-document" class="nav-link" data-scroll-target="#reproducing-this-document">Reproducing this document</a></li>
-  <li><a href="#the-hoopes-comparison" id="toc-the-hoopes-comparison" class="nav-link" data-scroll-target="#the-hoopes-comparison">Appendix: a previous comparison, Hoopes (2026)</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  <li><a href="#the-hoopes-comparison" id="toc-the-hoopes-comparison" class="nav-link" data-scroll-target="#the-hoopes-comparison">Appendix: two other comparisons</a>
+  <ul class="collapse">
+  <li><a href="#policyengines-calculator" id="toc-policyengines-calculator" class="nav-link" data-scroll-target="#policyengines-calculator">PolicyEngine’s calculator</a></li>
+  <li><a href="#hoopes-2026" id="toc-hoopes-2026" class="nav-link" data-scroll-target="#hoopes-2026">Hoopes (2026)</a></li>
+  </ul></li>
   </ul>
 </nav>
 </div>
@@ -5675,8 +5680,18 @@ document.querySelectorAll("details.twin > summary a.lang").forEach(function (a) 
 });
 </script>
 </section>
+<section id="conclusion" class="level1">
+<h1>Conclusion</h1>
+<p>This is not the only attempt to make these two numbers inspectable. PolicyEngine built a <a href="https://www.policyengine.org/us/california-wealth-tax">calculator</a> that applies each paper’s assumptions to one person-level roster of Forbes billionaires and bridges the gap between them, and Hoopes (2026) walked between the two estimates in a note. Neither knew of this project, and I learned of PolicyEngine’s work after launch. Their calculator and this comparison are built differently (settings inside one model, against reproductions of each paper’s own pipeline) and land within a few billion of each other: +$106.2B and −$37.2B there, <span style="white-space:nowrap">$106.8B</span> and <span style="white-space:nowrap">−$39.0B</span> here. Three independent efforts in one year to open the same two numbers say something about where policy analysis is heading. The tools now make transparency cheap enough that people build it unasked. The appendix sets both beside this bridge.</p>
+</section>
 <section id="the-hoopes-comparison" class="level1">
-<h1>Appendix: a previous comparison, Hoopes (2026)</h1>
+<h1>Appendix: two other comparisons</h1>
+<section id="policyengines-calculator" class="level2">
+<h2 class="anchored" data-anchor-id="policyengines-calculator">PolicyEngine’s calculator</h2>
+<p>PolicyEngine’s <a href="https://www.policyengine.org/us/california-wealth-tax">Proposition 40 calculator</a> (repository <a href="https://github.com/PolicyEngine/california-wealth-tax">PolicyEngine/california-wealth-tax</a>, started March 2026) takes the opposite route to the same place. It builds one person-level model over Forbes’s California list, refreshed daily, and offers three starting points: the statute with no behavioural response (+$117.6B), “Berkeley assumptions” (+$106.2B) and “Hoover assumptions” (−$37.2B), each paper’s assumptions applied to the calculator’s own roster rather than a reproduction of the paper. Between any two settings it draws a Shapley bridge, the same order-free average this report uses as its check. This OPA reproduces each paper’s pipeline and bridges the two results; the calculator applies both papers’ assumptions inside one pipeline. The numbers were read from the app on 2026-10-19 and are cited, not recomputed here. That two constructions this different land within a few billion of each other (<span style="white-space:nowrap">$106.8B</span> and <span style="white-space:nowrap">−$39.0B</span> here) is itself a check on both.</p>
+</section>
+<section id="hoopes-2026" class="level2">
+<h2 class="anchored" data-anchor-id="hoopes-2026">Hoopes (2026)</h2>
 <p>Jeffrey Hoopes, “Galle v Rauh: Comparing Two Revenue Estimates for California Billionaire Taxation” (SSRN 6428578; SSRN is a preprint site), is a previous comparison of the two estimates. It compares their earlier versions: the February 2026 text of the GGSS expert report, on which the BSZ analysis builds, and the March 2026 version of the JR analysis. His Figure 2 (p.6) is a waterfall from the “Galle estimate” to “Rauh net fiscal effect”. It prints no values, so his column below is read off the chart with <code>comparison/tools/digitize_hoopes_fig2.py</code>. The script fits the chart’s dollar scale to its axis ticks, and the fitted scale misses a tick by at most <span style="white-space:nowrap">$0.1B</span>. Beside his column is the bridge read in his order, ending at the JR analysis’s September 2026 version, which postdates his note. The list below gives every difference between the two.</p>
 <details class="twin code-fold">
 <summary>
@@ -6126,6 +6141,7 @@ The JR analysis’s own NPV minus its own expected revenue (all income-tax steps
 <li><b>Order and labels.</b> His is one sequential order, with no provenance labels. This OPA’s bridge moves the explorer’s dials in the order of the equation at the top (D, q, the loss box’s dials, then the rest), with each step labelled data, research, guesswork, scenario or derived (“A vs B” reads the BSZ value’s kind against the JR value’s). The Shapley average (a step’s effect averaged over every order the inputs could be switched in) checks it without choosing an order, and the column here reads this OPA’s steps in his order.</li>
 <li><b>Steps he does not have.</b> The non-US-citizen residents, the BSZ analysis’s avoidance allowance being dropped, the asset-sale income tax, and the litigation weight of the September 2026 version (which postdates his note).</li>
 </ul>
+</section>
 </section>
 </section>
 
