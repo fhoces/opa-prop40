@@ -118,18 +118,6 @@ twin_fold <- function(exhibit, fns, py = fns) {
 }
 ```
 
-::: {.callout-important}
-## About this reproduction
-
-This is an independent reproduction of two published analyses. Fernando Hoces de la Guardia
-built it with AI coding tools (Claude Code) and has not yet reviewed all of it. Neither author
-team has reviewed or endorsed it. The authors' own papers and code are the reference for their
-results. For the JR analysis, see the [NBER chapter](https://www.nber.org/books-and-chapters/tax-policy-and-economy-volume-41/net-present-value-california-billionaire-tax-act) (Section 5.4 for the
-simulation) and the [authors' replication code](https://github.com/bjaros20/wealth_tax/tree/main/NBER_2026_litigation_weighted). For the BSZ analysis, see the
-[NBER working paper](https://www.nber.org/papers/w35218). Where this page and a paper differ,
-the paper states the authors' result.
-:::
-
 ## Introduction
 
 ::: {.report-intro}
