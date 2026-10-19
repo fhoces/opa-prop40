@@ -636,9 +636,9 @@ path_rows <- data.frame(
   `DISPUTES row` = vapply(pt, `[[`, "", "row"), Kind = vapply(pt, `[[`, "", "kind"),
   `BSZ value` = vapply(pt, `[[`, "", "bsz"), `JR value` = vapply(pt, `[[`, "", "rjkdc"),
   Change = vapply(dp$change, money, "", digits = 2, signed = TRUE),
-  `Running value` = vapply(dp$to, money, "", digits = 2), check.names = FALSE)
+  `Running average` = vapply(dp$to, money, "", digits = 2), check.names = FALSE)
 blank <- function(label, change, run) data.frame(Dial = label, `DISPUTES row` = "", Kind = "",
-  `BSZ value` = "", `JR value` = "", Change = change, `Running value` = run, check.names = FALSE)
+  `BSZ value` = "", `JR value` = "", Change = change, `Running average` = run, check.names = FALSE)
 cat("\n**Output (b), net fiscal effect, each analysis's own horizon.** The horizon dial moves from the BSZ analysis's 5 years to a perpetuity.\n\n")
 scroll(show(rbind(blank("<b>BSZ end, (b)</b>", "", money(dp$from[1], 2)), path_rows,
                   blank("Sum of the steps", money(sum(dp$change), 2, TRUE), ""),
