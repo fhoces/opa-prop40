@@ -362,8 +362,9 @@ size = np.array([sim_power_main(N, 0.0, questions=False)[0] for N in Ns])
 lap("main simulations done")
 
 # ---------- heterogeneity by order ----------
-# The candidate dimensions, all binary and asked or recorded before treatment. Email is asked after
-# treatment, so it is descriptive and not one of them. An order-k analysis crosses k dimensions into
+# The candidate dimensions, all binary and asked or recorded before treatment. Email is asked before
+# treatment but is not registered as a dimension, so it is descriptive and not one of them. An
+# order-k analysis crosses k dimensions into
 # 2^k cells. Its families: the effect inside every cell of every combination (C(D,k) 2^k tests) and
 # the k-way difference of effects for every combination (C(D,k) tests).
 DIMS = ["expertise (Yes or Somewhat, against No)", "prior exposure (No, against Yes or Not sure)",

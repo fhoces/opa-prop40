@@ -33,7 +33,7 @@ choose the input values changes the answers.
 
 **Trial start date.** 2026-10-19 (the launch date).
 
-**Trial end date.** 2026-12-31 (analysis done). Collection closes 4 November 2026.
+**Trial end date.** 2026-12-31 (analysis done). Collection closes 4 November 2026 at 23:59 Pacific time.
 
 **Intervention start date / end date.** 2026-10-19 / 2026-11-04.
 
@@ -76,13 +76,17 @@ launch gains traction on social media; none or very few responses are likely.
 
 **Sample size by arm.** About half in each arm; not controlled.
 
-**Minimum detectable effect size.** With 349 responses, 80% power against 0.3 standard deviations
-of the lean index (two-sided, 5%); with 126, against 0.5 standard deviations. The power appendix
-gives the thresholds for every secondary analysis.
+**Minimum detectable effect size.** For the main test (two-sided, 5%, 80% power): with 100
+responses the detectable effect is 0.56 standard deviations of the lean index, and with 200, the
+top of the expected range, 0.40 (with the assumed index standard deviation of 0.5, a change of 0.20
+in the mean index). Detecting 0.5 standard deviations needs 126 responses and 0.3 needs 349. The
+power appendix gives the thresholds for every secondary analysis.
 
 **IRB.** No IRB approval was obtained (the author's answer).
 
-**Analysis plan documents to upload.** `comparison/survey/plan/plan.pdf` (the pre-analysis plan)
-and `comparison/survey/power/power.pdf` (the appendix on power).
+**Analysis plan documents to upload.** `comparison/survey/plan/plan.pdf` (the pre-analysis plan,
+titled "Pre-analysis plan for a study of salience of study information and credibility assessment
+of key assumptions and inputs") and `comparison/survey/power/power.pdf` (the appendix on power).
 
-**Other.** Launch commit df3a50c in https://github.com/fhoces/opa-prop40 (pushed on launch day).
+**Other.** Launch commit: the hash recorded in the plan's section 9 on launch day (filled in at
+launch), in https://github.com/fhoces/opa-prop40.

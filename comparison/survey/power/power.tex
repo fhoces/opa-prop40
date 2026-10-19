@@ -152,8 +152,8 @@ number of responses the analysis needs:
 recorded before treatment: expertise (Yes or Somewhat, against No), prior exposure (No, against Yes
 or Not sure), and entry point (the explorer, against the share link). The entry point is also the
 stratum, so for it the stratum indicator already holds the subgroup indicator.
-Whether a respondent gives an email is asked after treatment. It is descriptive and is not one of
-the $D$. Any analysis of heterogeneity picks some of the $D$ dimensions, and the more it picks, the
+Whether a respondent gives an email is asked on page 1, before treatment, but the plan does not
+register it as a dimension. It is descriptive and is not one of the $D$. Any analysis of heterogeneity picks some of the $D$ dimensions, and the more it picks, the
 more combinations there are to test and the thinner each cell becomes. The thresholds below count
 both.
 
@@ -443,8 +443,10 @@ Table~\ref{tab:n} at $d^{*} = \DTarget$.
   $\NStarCellThreeRW$ (tier 4a), and the three-way difference, a single test, from
   $\NStarDiffThree$ (tier 4b).
   \item Question-by-subgroup effects, one dimension at a time (tier 5, Romano-Wolf over
-  $\FamQHalf$), need $\NStarQHalfEffRW$ responses once equation~\eqref{eq:shrink} is taken into
-  account.
+  $\FamQHalf$), are reported from $\NStarQHalfRW$ responses. A question-level effect that matches
+  an index effect of $\DTarget$ needs about $\NStarQHalfEffRW$ responses once
+  equation~\eqref{eq:shrink} is taken into account, so results between the two are read as in
+  tier 1, as estimates with confidence intervals.
 \end{itemize}
 
 \paragraph{Experts without prior exposure (H5).} H5 is the treatment effect on the lean index
@@ -461,9 +463,10 @@ $\NStarHFiveHalfRW$ (bound $\NStarHFiveHalf$), and H2 to H4 set the tier's thres
 any adjustment, H5 as a single test would need $\NStarHFiveUnadj$ responses at a quarter and
 $\NStarHFiveHalfUnadj$ at a half.
 
-\paragraph{Email.} Whether a respondent gives an email is asked at the end, after treatment, so
-treatment could change who gives one. Analyses split by email are therefore descriptive. They are
-reported only together with the treatment's effect on the share who give an email.
+\paragraph{Email.} Whether a respondent gives an email is asked on page 1, before treatment (moved
+there on 2026-10-18), so treatment cannot change it. The plan does not register it as a dimension,
+so analyses split by email are descriptive. They are reported together with the share who give an
+email, by arm.
 
 \paragraph{Other dimensions.} A dimension added later raises $D$, which enlarges every family
 and every threshold above. It must be registered before the data are seen, and
