@@ -1,6 +1,6 @@
-# Placeholders until the four forms exist: every control row holds the current version 1 form, every treatment row the current version 2 form. There are two entry points (explorer, share), each with a control and a treatment form. Replace each url with the respondent link of the form "exp: Prop 40 survey (<entry>, <arm>)" that comparison/survey/gas_build.py builds, then rebuild (Rscript comparison/run.R).
+# entry,arm,url: the four experiment forms, filled from the builder's log by fill_links.py
 entry,arm,url
-explorer,control,https://docs.google.com/forms/d/e/1FAIpQLSc2Jcz7e269a5QNjTOBnD7L1ijqgvM3VOg5ISB1z3-X61u9nQ/viewform
-explorer,treatment,https://docs.google.com/forms/d/e/1FAIpQLSfV2d4FBLeJx0dm2BpL3PO_EoKV8xppiKGxh-Ag8n61-MwAWA/viewform
-share,control,https://docs.google.com/forms/d/e/1FAIpQLSc2Jcz7e269a5QNjTOBnD7L1ijqgvM3VOg5ISB1z3-X61u9nQ/viewform
-share,treatment,https://docs.google.com/forms/d/e/1FAIpQLSfV2d4FBLeJx0dm2BpL3PO_EoKV8xppiKGxh-Ag8n61-MwAWA/viewform
+explorer,control,https://docs.google.com/forms/d/e/1FAIpQLSeG6V_QWDSf4UI_52OdbRkvbKnlFb90mFGZinbya60CxcLiEQ/viewform
+explorer,treatment,https://docs.google.com/forms/d/e/1FAIpQLSda5UPjKQfEOgK-FA2OKL7RD9SuNjJwR9tToX4YRCeFeM35dQ/viewform
+share,control,https://docs.google.com/forms/d/e/1FAIpQLSf6FXbE7U66KW4U2FKiL1yyE48bGDdIeR6_fiEK89ULWSZEhQ/viewform
+share,treatment,https://docs.google.com/forms/d/e/1FAIpQLSckcqvC_WVNiTRqriPtYLxj5naM1SHYPKIPAkoJt4q2vjlrhw/viewform

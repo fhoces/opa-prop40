@@ -785,12 +785,24 @@ test_that("the texts a respondent meets before a form name neither analysis", {
 
 test_that("the draw count: no request while draws_url is empty; with it, one beacon per draw, entry and arm only", {
   cf <- file.path(root, "comparison", "data", "survey-config.csv")
-  expect_identical(read_survey_config(root)$draws_url, "")
-  for (h in list(read_page(explorer), read_page(file.path(root, "index.html")), read_page(share_page))) {
-    expect_false(grepl("sendBeacon", h, fixed = TRUE))
-    expect_false(grepl("DRAWS_URL", h, fixed = TRUE))
+  # The committed pages match the committed config: no beacon while draws_url is empty (main before
+  # launch), and the configured address on every page once it is set (the launch branch, 2026-10-17).
+  url <- read_survey_config(root)$draws_url
+  pages_now <- list(read_page(explorer), read_page(file.path(root, "index.html")), read_page(share_page))
+  if (identical(url, "")) {
+    for (h in pages_now) {
+      expect_false(grepl("sendBeacon", h, fixed = TRUE))
+      expect_false(grepl("DRAWS_URL", h, fixed = TRUE))
+    }
+    expect_false(grepl("Survey links.", read_page(explorer), fixed = TRUE))
+  } else {
+    expect_true(grepl("^https://script\\.google\\.com/macros/s/[A-Za-z0-9_-]+/exec$", url))
+    for (h in pages_now) {
+      expect_true(grepl(sprintf('var DRAWS_URL = "%s";', url), h, fixed = TRUE))
+      expect_identical(lengths(regmatches(h, gregexpr("sendBeacon(", h, fixed = TRUE))), 1L)
+    }
+    expect_true(grepl("Survey links.", read_page(explorer), fixed = TRUE))
   }
-  expect_false(grepl("Survey links.", read_page(explorer), fixed = TRUE))
   old <- readLines(cf); on.exit(writeLines(old, cf), add = TRUE)
   writeLines(c("key,value", "draws_url,https://script.google.com/macros/s/TEST/exec"), cf)
   s <- render_site(root); sp <- survey_share_page(root)

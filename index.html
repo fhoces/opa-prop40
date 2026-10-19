@@ -495,7 +495,7 @@ from.<sup><a href="#fn2" id="fnref2">2</a></sup></p>
   <div class="fold-body">
 <p>One row per group of inputs the two estimates differ on, as in the
 <a href="comparison/site/explorer/#quantities">explorer</a>.</p>
-<p class="q-mini"><a class="q-survey q-survey-mini" href="https://fhoces.github.io/opa-prop40/comparison/site/survey/" data-entry="explorer" data-links="https://docs.google.com/forms/d/e/1FAIpQLSc2Jcz7e269a5QNjTOBnD7L1ijqgvM3VOg5ISB1z3-X61u9nQ/viewform https://docs.google.com/forms/d/e/1FAIpQLSfV2d4FBLeJx0dm2BpL3PO_EoKV8xppiKGxh-Ag8n61-MwAWA/viewform" target="_blank" rel="noopener">Take the survey</a><button type="button" class="q-copy q-copy-mini" data-url="https://fhoces.github.io/opa-prop40/comparison/site/survey/">Share the survey: copy link</button><span class="q-for">The survey is primarily for economists and policy analysts.</span></p>
+<p class="q-mini"><a class="q-survey q-survey-mini" href="https://fhoces.github.io/opa-prop40/comparison/site/survey/" data-entry="explorer" data-links="https://docs.google.com/forms/d/e/1FAIpQLSeG6V_QWDSf4UI_52OdbRkvbKnlFb90mFGZinbya60CxcLiEQ/viewform https://docs.google.com/forms/d/e/1FAIpQLSda5UPjKQfEOgK-FA2OKL7RD9SuNjJwR9tToX4YRCeFeM35dQ/viewform" target="_blank" rel="noopener">Take the survey</a><button type="button" class="q-copy q-copy-mini" data-url="https://fhoces.github.io/opa-prop40/comparison/site/survey/">Share the survey: copy link</button><span class="q-for">The survey is primarily for economists and policy analysts.</span></p>
     <p class="q-sub">Most of these are empirical quantities, and none should depend on whether one supports
     or opposes a wealth tax. H and r are scenario choices. An expert should be able to judge which of
     the two values is more credible.</p>
@@ -511,7 +511,7 @@ from.<sup><a href="#fn2" id="fnref2">2</a></sup></p>
       </tbody>
     </table>
     <p class="q-foot">Each value's full source is in the <a href="comparison/site/repro.html#the-disputed-inputs">report's table of differences</a>.</p>
-    <p class="q-cta"><a class="q-survey" href="https://fhoces.github.io/opa-prop40/comparison/site/survey/" data-entry="explorer" data-links="https://docs.google.com/forms/d/e/1FAIpQLSc2Jcz7e269a5QNjTOBnD7L1ijqgvM3VOg5ISB1z3-X61u9nQ/viewform https://docs.google.com/forms/d/e/1FAIpQLSfV2d4FBLeJx0dm2BpL3PO_EoKV8xppiKGxh-Ag8n61-MwAWA/viewform" target="_blank" rel="noopener">Take the survey: which values are more credible?</a></p>
+    <p class="q-cta"><a class="q-survey" href="https://fhoces.github.io/opa-prop40/comparison/site/survey/" data-entry="explorer" data-links="https://docs.google.com/forms/d/e/1FAIpQLSeG6V_QWDSf4UI_52OdbRkvbKnlFb90mFGZinbya60CxcLiEQ/viewform https://docs.google.com/forms/d/e/1FAIpQLSda5UPjKQfEOgK-FA2OKL7RD9SuNjJwR9tToX4YRCeFeM35dQ/viewform" target="_blank" rel="noopener">Take the survey: which values are more credible?</a></p>
     <p class="q-share">The survey is primarily for economists and policy analysts. Share this survey with people you think have expertise in this area, to learn which values they find more credible. <button type="button" class="q-copy" data-url="https://fhoces.github.io/opa-prop40/comparison/site/survey/">Copy link</button></p>
 <p class="small">Kinds: <b>data</b> (settled by observable facts), <b>research</b> (a published
 estimate), <b>guesswork</b> (an assumption with no data or study behind it), <b>guesswork on data</b> (a
@@ -620,10 +620,13 @@ observed.</p>
       else window.prompt("Copy this link:", url);
     });
   });
+  var DRAWS_URL = "https://script.google.com/macros/s/AKfycbxWQf3xOSxydh01wqhM2SZmTMbTTKJJTouOiAj_a1qIjcmmr6fR0SrEXEGF1rdIHZzJ/exec";
   function drawSurvey(a) {
     var L = a.getAttribute("data-links").split(" "), entry = a.getAttribute("data-entry");
     var arm = Math.random() < 0.5 ? "treatment" : "control";
     a.href = L[arm === "treatment" ? 1 : 0];
+    // the draw count (pre-analysis plan, 8): the entry point and the arm, nothing else
+    try { navigator.sendBeacon(DRAWS_URL + "?entry=" + entry + "&arm=" + arm); } catch (e) {}
   }
   Array.prototype.slice.call(document.querySelectorAll("a[data-entry][data-links]")).forEach(function (a) {
     a.addEventListener("click", function () { drawSurvey(a); });
