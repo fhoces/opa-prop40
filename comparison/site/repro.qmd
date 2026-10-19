@@ -647,7 +647,7 @@ moved out in time (`r usd(dp$change[dp$step_id == "confirmed_departures"], 1, TR
 `r nrow(dp) - 3` together add
 `r usd(sum(dp$change[!dp$step_id %in% top3p$step_id]), 1, TRUE)`.
 
-**What the bridge decomposes.** The JR analysis's result is a distribution of outcomes, not one
+[]{#what-the-bridge-decomposes}**What the bridge decomposes.** The JR analysis's result is a distribution of outcomes, not one
 number. Its simulation (Section 5.4 of the [paper](https://www.nber.org/books-and-chapters/tax-policy-and-economy-volume-41/net-present-value-california-billionaire-tax-act)) draws the wealth tax revenue,
 the share of income tax lost, the annual income tax and r &minus; g at random, 100,000 times.
 The bridge works with the average of those draws, the JR main estimate on these pages, and its
@@ -669,6 +669,8 @@ closes this section.
 #| results: asis
 twin_fold("the bridge table and the figure", c("slider_inputs", "slider_value", "dial_path"))
 ```
+
+[]{#the-bridge-table}
 
 ```{r}
 #| results: asis
