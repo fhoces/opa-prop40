@@ -9,7 +9,7 @@ puts the [BSZ analysis](https://fhoces.github.io/opa-prop40/bsz-analysis/site/) 
 common output, the net fiscal effect, and explains the gap between their numbers one disputed input at a time. The aim is a transparent account of why the two
 estimates differ, which anyone can check.
 
-### [Review the code behind the two main estimates, $106.8 billion and -$39.0 billion](https://claude.ai/artifact/6VZEezoAsCNACjmgPLEvah)
+### [Review the code behind the two main estimates, $106.8 billion and -$39.0 billion](https://claude.ai/artifact/RyHG9pVfrp3ZTxq2KJic4C)
 
 ($106.8 billion is this OPA's net total for the BSZ analysis, whose own headline is the wealth tax alone. -$39.0 billion is the exact average of the JR analysis's model; Jaros and Rauh print -$38.9 billion from one seeded run of it.)
 

@@ -3,8 +3,8 @@
 # (Open Output), the report (Open Analysis) and the folder's README on GitHub (Open Materials) of
 # the BSZ analysis, the JR analysis and the comparison. Rerun after the pages change (the READMEs
 # after a push), then re-render the deck. Needs Google Chrome and Python with Pillow.
-# The three code review shots (*-review.png) are not retaken here: the review page is a claude.ai
-# artifact (https://claude.ai/artifact/6VZEezoAsCNACjmgPLEvah) that reads its record from the
+# The three code review shots (*-review.png) are not retaken here: the review pages are claude.ai
+# artifacts (one per OPA; the URLs are in the three READMEs) that read their record from the
 # artifact's store. They were taken on 2026-10-16 from a local copy of the page fed the live record,
 # at layer 5 of each chain.
 set -e

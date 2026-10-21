@@ -7,7 +7,7 @@ of Jaros and Rauh (NBER chapter c15504, Tax Policy and the Economy vol. 41, Sept
 a transparent and reproducible analysis that anyone can check, and a shared basis for discussing
 the policy.
 
-### [Review the code behind the -$38.9 billion main estimate](https://claude.ai/artifact/6VZEezoAsCNACjmgPLEvah)
+### [Review the code behind the -$38.9 billion main estimate](https://claude.ai/artifact/MykX5F4qRYF9gzCAbxBQUL)
 
 A layer-by-layer walk from the number on the page down to the authors' pinned repository. Each
 layer is marked reviewed, lightly reviewed or not reviewed. Work in progress; the record is also

@@ -1416,11 +1416,11 @@ class: layer-slide
 
 Each layer shows its R or Python code, what goes in and out, whether the method matches the source, and how far it has been reviewed. Work in progress.
 
-[Open the code review](https://claude.ai/artifact/6VZEezoAsCNACjmgPLEvah) &middot; [Back to the JR analysis OPA](#opa-jr)
+[Open the code review](https://claude.ai/artifact/MykX5F4qRYF9gzCAbxBQUL) &middot; [Back to the JR analysis OPA](#opa-jr)
 ]
 
 .pull-right.layer-shot[
-[<img src="figs/layers/jr-review.png" alt="Screenshot of the code review page, showing the JR chain.">](https://claude.ai/artifact/6VZEezoAsCNACjmgPLEvah)
+[<img src="figs/layers/jr-review.png" alt="Screenshot of the code review page, showing the JR chain.">](https://claude.ai/artifact/MykX5F4qRYF9gzCAbxBQUL)
 ]
 
 ---
@@ -1496,9 +1496,9 @@ class: layer-slide
 
 Each layer shows its R or Python code, what goes in and out, whether the method matches the source, and how far it has been reviewed. Work in progress.
 
-[Open the code review](https://claude.ai/artifact/6VZEezoAsCNACjmgPLEvah) &middot; [Back to the comparison OPA](#opa-comparison)
+[Open the code review](https://claude.ai/artifact/RyHG9pVfrp3ZTxq2KJic4C) &middot; [Back to the comparison OPA](#opa-comparison)
 ]
 
 .pull-right.layer-shot[
-[<img src="figs/layers/cmp-review.png" alt="Screenshot of the code review page, showing the comparison chain.">](https://claude.ai/artifact/6VZEezoAsCNACjmgPLEvah)
+[<img src="figs/layers/cmp-review.png" alt="Screenshot of the code review page, showing the comparison chain.">](https://claude.ai/artifact/RyHG9pVfrp3ZTxq2KJic4C)
 ]

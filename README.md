@@ -8,7 +8,7 @@ output definition. Each analysis is reproduced in full and opens every input, ev
 and every number behind its main estimate. The aim is a transparent and reproducible account of
 both that anyone can check, and a shared basis for discussing the policy.
 
-### [Review the code behind each main estimate](https://claude.ai/artifact/6VZEezoAsCNACjmgPLEvah)
+### Review the code behind each main estimate: [BSZ](https://claude.ai/artifact/6VZEezoAsCNACjmgPLEvah), [JR](https://claude.ai/artifact/MykX5F4qRYF9gzCAbxBQUL), [the comparison](https://claude.ai/artifact/RyHG9pVfrp3ZTxq2KJic4C)
 
 A layer-by-layer walk from the number on each page down to its raw source, one chain per analysis.
 Each layer is marked reviewed, lightly reviewed or not reviewed. Work in progress; the record is
