@@ -65,6 +65,9 @@ compute_export_outputs <- function(pareto_fit, income_tax_table8, revenue_chain,
                                     npv_mc_nber_summary, nber_ceiling) {
   abs_diff <- function(v, p) abs(v - p)
 
+  # Table 9's "Central Scenario" row at r - g = 1.5% (SSRN first version, PDF p.19), the one
+  # row of Table 9 this export checks (table9_central_npv_r015 below); checks.qmd covers the
+  # other scenarios and discount rates.
   central9 <- npv_table9[npv_table9$scenario == "central" & npv_table9$r == 0.015, ]
 
   rows <- tibble::tribble(

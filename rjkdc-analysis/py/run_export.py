@@ -115,6 +115,9 @@ def build_inputs(pareto_fit, revenue_chain, nber_ceiling):
 def build_outputs(pareto_fit, income_tax_rows, revenue_chain, npv_table9,
                    npv_mc_ssrn_summary, npv_mc_nber_summary, nber_ceiling):
     by_k = {r["K"]: r for r in income_tax_rows}
+    # Table 9's "Central Scenario" row at r - g = 1.5% (SSRN first version, PDF p.19), the one
+    # row of Table 9 this export checks (table9_central_npv_r015 below); checks.qmd covers the
+    # other scenarios and discount rates.
     central9 = next(r for r in npv_table9 if r["scenario"] == "central" and r["r"] == 0.015)
 
     rows = [

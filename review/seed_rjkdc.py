@@ -176,7 +176,12 @@ def main():
                   "Python twin builds the same rows in export/py/outputs.csv. The R code below is "
                   "the function definition; it is called and assigned to the site_headlines target "
                   "in _targets.R:66-69 (tar_target(site_headlines, compute_site_headlines(...))), "
-                  "the same call the Pipeline line points to."),
+                  "the same call the Pipeline line points to. On the Python side there is no "
+                  "pipeline to register a target with: py/run_export.py's main() calls "
+                  "build_outputs() directly (run_export.py:187) and writes its return value "
+                  "straight to export/py/outputs.csv (run_export.py:191), every time the script "
+                  "runs top to bottom (python3 py/run_export.py). Nothing caches it between runs, "
+                  "unlike the R target."),
             inputs="the two Monte Carlo summaries, the two exact means, the grid, the revenue chain and the NBER collectible revenue",
             inputs_from=[dict(layer="rjkdc-5", what="npv_mc_nber_summary: the seeded run's mean, median, SD and share negative"),
                          dict(layer="rjkdc-6", what="npv_mc_nber_analytic_mean and the grid's NBER cell: the exact expectation")],
@@ -187,7 +192,7 @@ def main():
                         "printed one within four Monte Carlo standard errors."),
             method_status="matches",
             r=loc(f"{SIDE}/R/site.R", "compute_site_headlines()", [199, 227]),
-            py=loc(f"{SIDE}/py/run_export.py", "build_outputs()", [115, 148]),
+            py=loc(f"{SIDE}/py/run_export.py", "build_outputs()", [115, 151]),
             targets="_targets.R:66 site_headlines",
         ),
         dict(
