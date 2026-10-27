@@ -173,7 +173,10 @@ def main():
                   "NBER mean NPV row takes the printed -38.9 (typed from PDF p.1 and p.35, with "
                   "its page), the seeded Monte Carlo's mean (layer 5) as 'reproduced', and the "
                   "grid's exact expectation for the NBER setting (layer 6) as 'grid_exact'. The "
-                  "Python twin builds the same rows in export/py/outputs.csv."),
+                  "Python twin builds the same rows in export/py/outputs.csv. The R code below is "
+                  "the function definition; it is called and assigned to the site_headlines target "
+                  "in _targets.R:66-69 (tar_target(site_headlines, compute_site_headlines(...))), "
+                  "the same call the Pipeline line points to."),
             inputs="the two Monte Carlo summaries, the two exact means, the grid, the revenue chain and the NBER collectible revenue",
             inputs_from=[dict(layer="rjkdc-5", what="npv_mc_nber_summary: the seeded run's mean, median, SD and share negative"),
                          dict(layer="rjkdc-6", what="npv_mc_nber_analytic_mean and the grid's NBER cell: the exact expectation")],

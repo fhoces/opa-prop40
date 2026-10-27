@@ -8,7 +8,7 @@
     "definition": "the one-time wealth tax revenue minus the present value of California income tax lost for ever to billionaires who leave (NPV = WT - f.C / r), averaged over the authors' Monte Carlo draws",
     "where": "https://fhoces.github.io/opa-prop40/rjkdc-analysis/site/"
   },
-  "commit": "be05dc8",
+  "commit": "3359533",
   "seeded": "2026-10-27",
   "verified_by": "Rscript, from rjkdc-analysis/ after sourcing R/: compute_npv_mc_nber()$summary$mean = -38.886348 (printed -38.9, NBER PDF p.1); the exact expectation npv_mc_analytic_mean(0, 72, 3.3, 5.8, 0.015, 0.045, f_mode = 'nber', f_min = 0.30, f_max = 0.60) = -38.980289",
   "runs_for_a_stranger": "AUDIT.md step 8, level 2: .github/workflows/rjkdc-ci.yml clones the authors' repository at 25e84dd and rebuilds R and Python on a clean runner; no one-click (Binder) yet.",
@@ -50,7 +50,7 @@
           277
         ],
         "language": "html",
-        "url": "https://github.com/fhoces/opa-prop40/blob/be05dc8/rjkdc-analysis/site/index.html#L251-L277",
+        "url": "https://github.com/fhoces/opa-prop40/blob/3359533/rjkdc-analysis/site/index.html#L251-L277",
         "snippet": "<div class=\"headline\">\n  <span class=\"name\">Main estimate<sup>1</sup>, NBER September 2026</span>\n  <span class=\"value\" id=\"hl-main\">&minus;$38.9B</span>\n  <span class=\"def\">Defined as the one-time wealth tax revenue minus the present value of\n    California income tax lost for ever to billionaires who leave, averaged over 100,000 random\n    runs of the authors' model (a Monte Carlo simulation). Today's dollars (present value): what\n    money received or lost in future years is worth now.</span>\n  <p class=\"sign\">The loss decides the sign. The income tax lost for ever is worth about $75B\n    today, against $36B, the average wealth tax in the authors' simulation (their own estimate of\n    what is collected is about $30B; <a href=\"#what-the-model-says\">what the model says</a>).</p>\n  <p class=\"fn\"><sup>1</sup> Jaros and Rauh, NBER chapter c15504, Tax Policy and the Economy\n    vol. 41, PDF p.1. The figure is the average of one seeded run of the authors' simulation (a\n    run started from a fixed random number, so it gives the same draws every time). It revises a\n    March 2026 first version by Rauh, Jaros, Kearney, Doran and Cosso (footnote 2).</p>\n</div>\n<script src=\"explorer/grid.js\"></script>\n<script>\n  // Read the number from the explorer's grid (its preferred list) so it cannot drift from it.\n  (function () {\n    var G = window.__GRID__;\n    if (!G || !G.preferred) return;\n    function pick(k) { return G.preferred.filter(function (p) { return p.key === k; })[0]; }\n    function usd(x) { return (x < 0 ? \"\\u2212$\" : \"$\") + Math.abs(x).toFixed(1); }\n    var n = pick(\"nber\");\n    if (n) document.getElementById(\"hl-main\").textContent = usd(n.printed_npv) + \"B\";\n  })();\n</script>"
       },
       "py": null,
@@ -108,7 +108,7 @@
           4
         ],
         "language": "javascript",
-        "url": "https://github.com/fhoces/opa-prop40/blob/be05dc8/rjkdc-analysis/site/explorer/grid.js",
+        "url": "https://github.com/fhoces/opa-prop40/blob/3359533/rjkdc-analysis/site/explorer/grid.js",
         "snippet": "/* GENERATED FILE: written by rjkdc-analysis/R/site.R::write_site_grid_js()\n   (targets: site_grid_js) ... */\nwindow.__GRID__ = {\n  \"dials\": [wt_lo, wt_hi, q, c, rate, f, g],   // 3 levels each: 3^7 = 2187 settings\n  \"outcomes\": [\"Mean NPV, exact average\", \"Share of outcomes with NPV below zero, exact\", \"Expected wealth tax collected\", \"Expected present value of lost income tax\"],\n  \"named\": {\"ssrn\": [1, 1, 0, 0, 0, 0, 0], \"nber\": [0, 2, 0, 0, 0, 1, 0], \"rate15\": [0, 2, 0, 0, 1, 1, 0], \"rate45\": [0, 2, 0, 0, 2, 1, 0], \"q50\": [1, 2, 2, 0, 0, 1, 0]},   // 0-based level index per dial\n  \"preferred\": [\n    {\"key\": \"ssrn\", \"label\": \"First version, March 2026\", \"printed_npv\": -24.7, \"printed_pct_negative\": 71, \"printed_revenue\": 40, \"printed_page\": \"PDF p.1, p.20\", \"mc_npv\": -24.768, \"mc_pct_negative\": 71.024},\n    {\"key\": \"nber\", \"label\": \"NBER, Sept 2026\", \"printed_npv\": -38.9, \"printed_pct_negative\": 85.2, \"printed_revenue\": 29.6, \"printed_page\": \"PDF p.1, p.35\", \"mc_npv\": -38.886, \"mc_pct_negative\": 85.172}\n  ],\n  \"snap\": [ ... 2187 rows ... ]   // snap[489] = [-38.98, 85.321, 36, 74.98] (the NBER setting)\n};\n\n// site/data/headlines.csv, the row the number comes from:\n// \"version\",\"quantity\",\"printed\",\"printed_page\",\"reproduced\",\"reproduced_by\",\"grid_exact\"\n// \"nber\",\"mc_mean_npv\",-38.9,\"PDF p.1, p.35\",-38.8863482422633,\"npv_mc_nber_summary (seed 2026, 100,000 draws)\",-38.9802887015985"
       },
       "py": null,
@@ -164,7 +164,7 @@
           273
         ],
         "language": "r",
-        "url": "https://github.com/fhoces/opa-prop40/blob/be05dc8/rjkdc-analysis/R/site.R#L230-L273",
+        "url": "https://github.com/fhoces/opa-prop40/blob/3359533/rjkdc-analysis/R/site.R#L230-L273",
         "snippet": "\n# ---- grid.js writer ---------------------------------------------------------\nsite_grid_payload <- function(site_grid, revenue_chain, site_headlines) {\n  dials <- site_dials(revenue_chain)\n  named <- site_named()\n  outcome_cols <- c(\"mean_npv\", \"pct_negative\", \"wt_collected\", \"pv_lost\")\n  hl <- function(v, qn, col) site_headlines[[col]][site_headlines$version == v & site_headlines$quantity == qn]\n  # Printed values exist only for the two published versions.\n  pref <- lapply(intersect(names(named), unique(site_headlines$version)), function(v) list(\n    key = v, label = unname(site_named_labels()[v]),\n    printed_npv = hl(v, \"mc_mean_npv\", \"printed\"),\n    printed_pct_negative = hl(v, \"mc_pct_negative\", \"printed\"),\n    printed_revenue = hl(v, \"revenue_headline\", \"printed\"),\n    printed_page = hl(v, \"mc_mean_npv\", \"printed_page\"),\n    mc_npv = round(hl(v, \"mc_mean_npv\", \"reproduced\"), 3),\n    mc_pct_negative = round(hl(v, \"mc_pct_negative\", \"reproduced\"), 3)\n  ))\n  list(\n    generated_by = \"rjkdc-analysis/R/site.R::write_site_grid_js() via targets (target site_grid_js); do not edit by hand\",\n    dials = lapply(dials, function(d) list(key = d$key, sym = d$sym, label = d$label, origin = d$origin,\n                                           desc = d$desc, tips = d$tips, more = d$more,\n                                           labels = d$labels, levels = seq_along(d$labels) - 1L)),\n    outcomes = c(\"Mean NPV, exact average\", \"Share of outcomes with NPV below zero, exact\",\n                 \"Expected wealth tax collected\", \"Expected present value of lost income tax\"),\n    units = c(\"$B\", \"%\", \"$B\", \"$B\"),\n    named = lapply(named, function(x) unname(as.integer(x))),\n    named_labels = as.list(site_named_labels()),\n    preferred = pref,\n    snap = unname(lapply(seq_len(nrow(site_grid)), function(i)\n      round(unlist(site_grid[i, outcome_cols]), 3)))\n  )\n}\n\nwrite_site_grid_js <- function(site_grid, revenue_chain, site_headlines,\n                               path = \"site/explorer/grid.js\") {\n  payload <- site_grid_payload(site_grid, revenue_chain, site_headlines)\n  json <- jsonlite::toJSON(payload, auto_unbox = TRUE, digits = NA, pretty = FALSE)\n  dir.create(dirname(path), showWarnings = FALSE, recursive = TRUE)\n  writeLines(c(\n    \"/* GENERATED FILE: written by rjkdc-analysis/R/site.R::write_site_grid_js()\",\n    \"   (targets: site_grid_js). Do not edit by hand; tests/testthat/test-site.R\",\n    \"   fails if this file differs from the exporter's own output. */\",\n \n... (cut; open the file for the rest)"
       },
       "py": null,
@@ -182,7 +182,7 @@
     {
       "n": 4,
       "name": "The headline table",
-      "what": "One row per number either paper prints, beside the pipeline's value for it. The NBER mean NPV row takes the printed -38.9 (typed from PDF p.1 and p.35, with its page), the seeded Monte Carlo's mean (layer 5) as 'reproduced', and the grid's exact expectation for the NBER setting (layer 6) as 'grid_exact'. The Python twin builds the same rows in export/py/outputs.csv.",
+      "what": "One row per number either paper prints, beside the pipeline's value for it. The NBER mean NPV row takes the printed -38.9 (typed from PDF p.1 and p.35, with its page), the seeded Monte Carlo's mean (layer 5) as 'reproduced', and the grid's exact expectation for the NBER setting (layer 6) as 'grid_exact'. The Python twin builds the same rows in export/py/outputs.csv. The R code below is the function definition; it is called and assigned to the site_headlines target in _targets.R:66-69 (tar_target(site_headlines, compute_site_headlines(...))), the same call the Pipeline line points to.",
       "inputs": "the two Monte Carlo summaries, the two exact means, the grid, the revenue chain and the NBER collectible revenue",
       "inputs_from": [
         {
@@ -222,7 +222,7 @@
           227
         ],
         "language": "r",
-        "url": "https://github.com/fhoces/opa-prop40/blob/be05dc8/rjkdc-analysis/R/site.R#L199-L227",
+        "url": "https://github.com/fhoces/opa-prop40/blob/3359533/rjkdc-analysis/R/site.R#L199-L227",
         "snippet": "# other column is computed. The landing page and the deck quote this table,\n# and tests/testthat/test-site.R checks the landing page's strings against it.\ncompute_site_headlines <- function(site_grid, npv_mc_ssrn_summary, npv_mc_nber_summary,\n                                    npv_mc_ssrn_analytic_mean, npv_mc_nber_analytic_mean,\n                                    revenue_chain, nber_collectible) {\n  named <- site_named()\n  cell <- function(nm) site_grid_cell(site_grid, as.list(named[[nm]]))\n  s <- cell(\"ssrn\"); n <- cell(\"nber\")\n  tibble::tribble(\n    ~version, ~quantity, ~printed, ~printed_page, ~reproduced, ~reproduced_by, ~grid_exact,\n    \"ssrn\", \"revenue_headline\", 40, \"PDF p.1, p.14\", NA_real_, \"not computed by the authors' code (paper's rounded judgement, range 35 to 46)\", NA_real_,\n    \"ssrn\", \"revenue_range_high\", 46, \"PDF p.14\", revenue_chain$literature_calibrated, \"revenue_chain$literature_calibrated\", NA_real_,\n    \"ssrn\", \"mc_mean_npv\", -24.7, \"PDF p.1, p.20\", npv_mc_ssrn_summary$mean, \"npv_mc_ssrn_summary (seed 2026, 100,000 draws)\", s$mean_npv,\n    \"ssrn\", \"mc_median_npv\", -19.1, \"PDF p.20\", npv_mc_ssrn_summary$median, \"npv_mc_ssrn_summary\", NA_real_,\n    \"ssrn\", \"mc_sd_npv\", 38.4, \"PDF p.20\", npv_mc_ssrn_summary$sd, \"npv_mc_ssrn_summary\", NA_real_,\n    \"ssrn\", \"mc_pct_negative\", 71, \"PDF p.1, p.20\", npv_mc_ssrn_summary$pct_negative, \"npv_mc_ssrn_summary\", s$pct_negative,\n    \"ssrn\", \"analytic_mean_npv\", NA_real_, NA_character_, npv_mc_ssrn_analytic_mean, \"npv_mc_ssrn_analytic_mean\", s$mean_npv,\n    \"ssrn\", \"mc_expected_revenue\", NA_real_, NA_character_, s$wt_collected, \"site_grid (E[WT] of the draw)\", s$wt_collected,\n    \"ssrn\", \"pv_lost\", NA_real_, NA_character_, s$pv_lost, \"site_grid\", s$pv_lost,\n    \"nber\", \"revenue_headline\", 29.6, \"PDF p.23, eq.6 (about $30B, p.1)\", nber_collectible$central, \"nber_collectible$central\", NA_real_,\n    \"nber\", \"revenue_range_low\", 28.4, \"PDF p.23\", nber_collectible$lower, \"nber_collectible$lower\", NA_real_,\n    \"nber\", \"revenue_range_high\", 35.6, \"PDF p.23, eq.7\", nber_collectible$upper, \"nber_collectible$upper\", NA_real_,\n    \"nber\", \"mc_mean_npv\", -38.9, \"PDF p.1, p.35\", npv_mc_nber_summary$mean, \"npv_mc_nber_summary (seed 2026, 100,000 draws)\", n$mean_npv,\n    \"nber\", \"mc_median_npv\", -35.3, \"PDF p.35\", npv_mc_nber_summary$median, \"npv_mc_nber_summary\", NA_real_,\n    \"nber\", \"mc_sd_npv\", 37.6, \"PDF p.35\", npv_mc_nber_summary$sd, \"npv_mc_nber_summary\", NA_real_,\n    \"nber\", \"mc_pct_negative\", 85.2, \"P\n... (cut; open the file for the rest)"
       },
       "py": {
@@ -233,7 +233,7 @@
           148
         ],
         "language": "python",
-        "url": "https://github.com/fhoces/opa-prop40/blob/be05dc8/rjkdc-analysis/py/run_export.py#L115-L148",
+        "url": "https://github.com/fhoces/opa-prop40/blob/3359533/rjkdc-analysis/py/run_export.py#L115-L148",
         "snippet": "def build_outputs(pareto_fit, income_tax_rows, revenue_chain, npv_table9,\n                   npv_mc_ssrn_summary, npv_mc_nber_summary, nber_ceiling):\n    by_k = {r[\"K\"]: r for r in income_tax_rows}\n    central9 = next(r for r in npv_table9 if r[\"scenario\"] == \"central\" and r[\"r\"] == 0.015)\n\n    rows = [\n        (\"pareto_alpha\", \"both\", pareto_fit[\"alpha\"], \"coefficient\", 1.44, 15),\n        (\"income_tax_mc_k212\", \"both\", by_k[212][\"mean_fy25\"], \"$B\", 5.76, 17),\n        (\"income_tax_mc_k300\", \"both\", by_k[300][\"mean_fy25\"], \"$B\", 4.61, 17),\n        (\"income_tax_mc_k500\", \"both\", by_k[500][\"mean_fy25\"], \"$B\", 3.31, 17),\n        (\"revenue_baseline\", \"both\", revenue_chain[\"baseline_precise\"], \"$B\", 94.20, 10),\n        (\"revenue_confirmed6\", \"both\", revenue_chain[\"confirmed6_ceiling\"], \"$B\", 67.51, 11),\n        (\"revenue_expanded10\", \"both\", revenue_chain[\"expanded10_estimate\"], \"$B\", 55.10, 13),\n        (\"revenue_literature_calibrated\", \"ssrn\", revenue_chain[\"literature_calibrated\"], \"$B\", 45.59, 14),\n        (\"table9_central_npv_r015\", \"ssrn\", central9[\"npv\"], \"$B\", -126.1, 19),\n        (\"npv_mc_ssrn_mean\", \"ssrn\", npv_mc_ssrn_summary[\"mean\"], \"$B\", -24.7, 20),\n        (\"npv_mc_ssrn_median\", \"ssrn\", npv_mc_ssrn_summary[\"median\"], \"$B\", -19.1, 20),\n        (\"npv_mc_ssrn_sd\", \"ssrn\", npv_mc_ssrn_summary[\"sd\"], \"$B\", 38.4, 20),\n        (\"npv_mc_ssrn_pct_negative\", \"ssrn\", npv_mc_ssrn_summary[\"pct_negative\"], \"%\", 71, 20),\n        (\"nber_domestic_grown\", \"nber\", nber_ceiling[\"domestic_total_grown\"], \"$B\", 100.9, 19),\n        (\"nber_ceiling\", \"nber\", nber_ceiling[\"ceiling_recomputed\"], \"$B\", 72.06, 21),\n        (\"nber_international\", \"nber\", nber_ceiling[\"international_net_worth\"], \"$B\", 146.3, 17),\n        (\"npv_mc_nber_mean\", \"nber\", npv_mc_nber_summary[\"mean\"], \"$B\", -38.9, 35),\n        (\"npv_mc_nber_median\", \"nber\", npv_mc_nber_summary[\"median\"], \"$B\", -35.3, 35),\n        (\"npv_mc_nber_pct_negative\", \"nber\", npv_mc_nber_summary[\"pct_negative\"], \"%\", 85.2, 35),\n        # the spread of the same run: SD and percentiles printed on p.35, the extremes only\n        # described there (Figure 3's alt text, \"roughly -$200B to $50B\"), so not compared\n        (\"npv_mc_nber_sd\", \"nber\", npv_mc_nber_summary[\"sd\"], \"$B\", 37.6, 35),\n        (\"npv_mc_nber_p05\", \"nber\", npv_mc_nber_summary[\"p05\"], \"$B\", -107.9, 35),\n        (\"npv_mc_nber_p95\", \"nber\", npv_mc_nber_summary[\"p95\"], \"$B\", 15.9, 35),\n        (\"npv_mc_nber_min\", \"nber\", npv_mc_nber_summary[\"min\"], \"$B\", \"\", 35),\n     \n... (cut; open the file for the rest)"
       },
       "targets": "_targets.R:66 site_headlines",
@@ -242,11 +242,11 @@
         "py": "# Layer 4: the Python twin's export of the same numbers (written by py/run_export.py).\nimport pandas as pd\nout = pd.read_csv(\"export/py/outputs.csv\")\nout[out.version == \"nber\"][[\"output_id\", \"value\", \"printed_value\", \"abs_diff\"]]"
       },
       "id": "rjkdc-4",
-      "state": "not_reviewed",
-      "understanding": "",
-      "missing": "",
+      "state": "partly",
+      "understanding": "compute_site_headlines generates site_headlines",
+      "missing": "where is this assignment happening?",
       "feedback": [],
-      "updated": "2026-10-14"
+      "updated": "2026-10-27"
     },
     {
       "n": 5,
@@ -285,7 +285,7 @@
           72
         ],
         "language": "r",
-        "url": "https://github.com/fhoces/opa-prop40/blob/be05dc8/rjkdc-analysis/R/npv_mc.R#L42-L72",
+        "url": "https://github.com/fhoces/opa-prop40/blob/3359533/rjkdc-analysis/R/npv_mc.R#L42-L72",
         "snippet": "compute_npv_mc_nber <- function(seed = 2026, n_sims = 100000,\n                                 wt_min = 0, wt_max = 72,\n                                 f_min = 0.30, f_max = 0.60,\n                                 c_min = 3.3, c_max = 5.8,\n                                 rg_min = 0.015, rg_max = 0.045) {\n  set.seed(seed)\n  wt <- stats::runif(n_sims, wt_min, wt_max)\n  f  <- stats::runif(n_sims, f_min, f_max)\n  c_income <- stats::runif(n_sims, c_min, c_max)\n  rg_discount <- stats::runif(n_sims, rg_min, rg_max)\n\n  npv <- wt - (f * c_income) / rg_discount\n\n  list(\n    draws = tibble::tibble(wt = wt, f = f, c_income = c_income,\n                            rg_discount = rg_discount, npv = npv),\n    summary = npv_mc_summary(npv)\n  )\n}\n\nnpv_mc_summary <- function(npv) {\n  tibble::tibble(\n    n = length(npv),\n    mean = mean(npv),\n    median = stats::median(npv),\n    sd = stats::sd(npv),\n    p05 = unname(stats::quantile(npv, 0.05)),\n    p95 = unname(stats::quantile(npv, 0.95)),\n    min = min(npv),\n    max = max(npv),\n    pct_negative = 100 * mean(npv < 0)"
       },
       "py": {
@@ -296,7 +296,7 @@
           46
         ],
         "language": "python",
-        "url": "https://github.com/fhoces/opa-prop40/blob/be05dc8/rjkdc-analysis/py/npv_mc.py#L24-L46",
+        "url": "https://github.com/fhoces/opa-prop40/blob/3359533/rjkdc-analysis/py/npv_mc.py#L24-L46",
         "snippet": "def compute_npv_mc_nber(seed=2026, n_sims=100000, wt_min=0, wt_max=72,\n                         f_min=0.30, f_max=0.60, c_min=3.3, c_max=5.8,\n                         rg_min=0.015, rg_max=0.045):\n    rng = np.random.default_rng(seed)\n    wt = rng.uniform(wt_min, wt_max, n_sims)\n    f = rng.uniform(f_min, f_max, n_sims)\n    c_income = rng.uniform(c_min, c_max, n_sims)\n    rg_discount = rng.uniform(rg_min, rg_max, n_sims)\n\n    npv = wt - (f * c_income) / rg_discount\n    return {\"npv\": npv, \"summary\": npv_mc_summary(npv)}\n\n\ndef npv_mc_summary(npv):\n    return {\n        \"n\": len(npv),\n        \"mean\": float(np.mean(npv)),\n        \"median\": float(np.median(npv)),\n        \"sd\": float(np.std(npv, ddof=1)),\n        \"p05\": float(np.percentile(npv, 5)),\n        \"p95\": float(np.percentile(npv, 95)),\n        \"min\": float(np.min(npv)),\n        \"max\": float(np.max(npv)),"
       },
       "targets": "_targets.R:37 npv_mc_nber; :39 npv_mc_nber_summary",
@@ -346,7 +346,7 @@
           106
         ],
         "language": "r",
-        "url": "https://github.com/fhoces/opa-prop40/blob/be05dc8/rjkdc-analysis/R/npv_mc.R#L82-L106",
+        "url": "https://github.com/fhoces/opa-prop40/blob/3359533/rjkdc-analysis/R/npv_mc.R#L82-L106",
         "snippet": "# E[1/(rate - g)] for rate ~ U[lo, hi] (or a point when lo == hi). At g = 0\n# this is the closed form ln(hi/lo)/(hi - lo).\nnpv_e_inv_rate <- function(lo, hi, g = 0) {\n  if (hi > lo) log((hi - g) / (lo - g)) / (hi - lo) else 1 / (lo - g)\n}\n\n# The model's exact expectation for one setting of every input:\n#   NPV = q*WT - f*C/(rate - g), WT ~ U[wt_min, wt_max], C ~ U[c_min, c_max],\n#   rate ~ U[rate_min, rate_max], mutually independent, with f either implied\n#   by WT (SSRN, f_spec = list(mode = \"implied\", baseline = B): f = 1 - WT/B),\n#   an independent uniform (NBER, list(mode = \"uniform\", lo, hi)), or fixed\n#   (list(mode = \"fixed\", value)). q (litigation survival applied to revenue)\n#   and g (growth of the lost income) are 1 and 0 in both scripts as shipped;\n#   the explorer moves them (NOTES.md notes 2, 3 and 5). Used by\n#   npv_mc_analytic_mean() below and by the explorer grid (R/site.R).\nnpv_expectation <- function(wt_min, wt_max, c_min, c_max, rate_min, rate_max,\n                            f_spec, q = 1, g = 0) {\n  e_wt <- (wt_min + wt_max) / 2\n  e_f <- switch(f_spec$mode,\n    implied = 1 - e_wt / f_spec$baseline,\n    uniform = (f_spec$lo + f_spec$hi) / 2,\n    fixed   = f_spec$value\n  )\n  pv_lost <- e_f * mean(c(c_min, c_max)) * npv_e_inv_rate(rate_min, rate_max, g)\n  collected <- q * e_wt"
       },
       "py": {
@@ -357,7 +357,7 @@
           58
         ],
         "language": "python",
-        "url": "https://github.com/fhoces/opa-prop40/blob/be05dc8/rjkdc-analysis/py/npv_mc.py#L49-L58",
+        "url": "https://github.com/fhoces/opa-prop40/blob/3359533/rjkdc-analysis/py/npv_mc.py#L49-L58",
         "snippet": "\n\ndef npv_mc_analytic_mean(wt_min, wt_max, c_min, c_max, rate_min, rate_max,\n                          f_mode=\"ssrn\", baseline_revenue=None, f_min=None, f_max=None):\n    e_wt = (wt_min + wt_max) / 2\n    e_c = (c_min + c_max) / 2\n    e_inv_rate = math.log(rate_max / rate_min) / (rate_max - rate_min)\n    if f_mode == \"ssrn\":\n        e_f = 1 - e_wt / baseline_revenue\n    else:"
       },
       "targets": "_targets.R:45 npv_mc_nber_analytic_mean; :65 site_grid",
@@ -404,7 +404,7 @@
           52
         ],
         "language": "r",
-        "url": "https://github.com/fhoces/opa-prop40/blob/be05dc8/rjkdc-analysis/R/nber_final.R#L8-L52",
+        "url": "https://github.com/fhoces/opa-prop40/blob/3359533/rjkdc-analysis/R/nber_final.R#L8-L52",
         "snippet": "extract_nber_final <- function(path = rauh_nber_final_csv()) {\n  readr_read_csv <- function(path) {\n    df <- utils::read.csv(path, stringsAsFactors = FALSE, check.names = TRUE)\n    tibble::as_tibble(df)\n  }\n  readr_read_csv(path)\n}\n\n# Domestic total at grown (7%) vintage = the NBER version's \"$100.9B face\n# value\" (NBER README table). Removing the 7 removed_departed rows gives\n# the ceiling the README calls \"$72.06B\" (we recompute 72.05B - see\n# NOTES.md note 4). The 7 = SSRN's 6 confirmed departures (Page, Brin,\n# Thiel, Hankey, Spielberg, Sacks) plus Travis Kalanick (net worth $3.5B,\n# added for the NBER vintage).\ncompute_nber_ceiling <- function(final_df) {\n  dom <- final_df[final_df$panel == \"domestic\", ]\n  intl <- final_df[final_df$panel == \"international\", ]\n  removed <- dom[dom$bucket == \"removed_departed\", ]\n\n  domestic_total_grown <- sum(dom$face_tax_5pct) / 1e9\n  removed_departed_total <- sum(removed$face_tax_5pct) / 1e9\n  ceiling_recomputed <- domestic_total_grown - removed_departed_total\n  international_net_worth <- sum(intl$net_worth_usd) / 1e9\n  # Two subsets of the seven, for the comparison's departures dial: the four the BSZ\n  # analysis's aggressive row also removes, at this file's grown taxable value, and the two\n  # the BSZ workbook does not list by name, at their net worth.\n  four <- c(\"Larry Page\", \"Peter Thiel\", \"Don Hankey\", \"Travis Kalanick\")\n  two  <- c(\"Steven Spielberg\", \"David Sacks\")\n  stopifnot(all(c(four, two) %in% removed$name))\n  departed_four_grown <- sum(removed$wealth_in_tax_base_usd_7pct[removed$name %in% four]) / 1e9\n  spielberg_sacks_net_worth <- sum(removed$net_worth_usd[removed$name %in% two]) / 1e9\n\n  list(\n    n_domestic = nrow(dom),\n    n_international = nrow(intl),\n    n_removed_departed = nrow(removed),\n    domestic_total_grown = domestic_total_grown,        # ~100.906 (\"$100.9B\")\n    removed_departed_total = removed_departed_total,     # ~28.854\n    ceiling_recomputed = ceiling_recomputed,              # ~72.051 (README says 72.06)\n    international_net_worth = international_net_worth,   # ~146.3 (\"$146.3B\")\n    departed_four_grown = departed_four_grown,            # ~314.8 (Page, Thiel, Hankey, Kalanick)\n    spielberg_sacks_net_worth = spielberg_sacks_net_worth, # ~9.0\n    removed_names = removed$name\n  )\n}"
       },
       "py": {
@@ -415,7 +415,7 @@
           40
         ],
         "language": "python",
-        "url": "https://github.com/fhoces/opa-prop40/blob/be05dc8/rjkdc-analysis/py/nber_final.py#L5-L40",
+        "url": "https://github.com/fhoces/opa-prop40/blob/3359533/rjkdc-analysis/py/nber_final.py#L5-L40",
         "snippet": "def extract_nber_final(path):\n    with open(path, newline=\"\") as f:\n        return list(csv.DictReader(f))\n\n\ndef compute_nber_ceiling(final_rows):\n    dom = [r for r in final_rows if r[\"panel\"] == \"domestic\"]\n    intl = [r for r in final_rows if r[\"panel\"] == \"international\"]\n    removed = [r for r in dom if r[\"bucket\"] == \"removed_departed\"]\n\n    def s(rows, key):\n        return sum(float(r[key]) for r in rows if r[key] not in (\"\", None))\n\n    domestic_total_grown = s(dom, \"face_tax_5pct\") / 1e9\n    removed_departed_total = s(removed, \"face_tax_5pct\") / 1e9\n    ceiling_recomputed = domestic_total_grown - removed_departed_total\n    international_net_worth = s(intl, \"net_worth_usd\") / 1e9\n    four = (\"Larry Page\", \"Peter Thiel\", \"Don Hankey\", \"Travis Kalanick\")\n    two = (\"Steven Spielberg\", \"David Sacks\")\n    names = {r[\"name\"] for r in removed}\n    assert all(n in names for n in four + two)\n    departed_four_grown = s([r for r in removed if r[\"name\"] in four], \"wealth_in_tax_base_usd_7pct\") / 1e9\n    spielberg_sacks_net_worth = s([r for r in removed if r[\"name\"] in two], \"net_worth_usd\") / 1e9\n\n    return {\n        \"n_domestic\": len(dom),\n        \"n_international\": len(intl),\n        \"n_removed_departed\": len(removed),\n        \"domestic_total_grown\": domestic_total_grown,\n        \"removed_departed_total\": removed_departed_total,\n        \"ceiling_recomputed\": ceiling_recomputed,\n        \"international_net_worth\": international_net_worth,\n        \"departed_four_grown\": departed_four_grown,\n        \"spielberg_sacks_net_worth\": spielberg_sacks_net_worth,\n        \"removed_names\": [r[\"name\"] for r in removed],\n    }"
       },
       "targets": "_targets.R:31 nber_final_csv; :32 nber_final; :33 nber_ceiling",
@@ -459,7 +459,7 @@
           25
         ],
         "language": "python",
-        "url": "https://github.com/fhoces/opa-prop40/blob/be05dc8/rjkdc-analysis/py/rauh_repo.py#L1-L25",
+        "url": "https://github.com/fhoces/opa-prop40/blob/3359533/rjkdc-analysis/py/rauh_repo.py#L1-L25",
         "snippet": "\"\"\"Single resolver for the authors' MIT-licensed repo. Python twin of\nR/rauh_repo.R - same env var, same default, same file layout.\"\"\"\nimport os\n\nDEFAULT_RAUH_REPO_DIR = \"original-materials/author-shared/2026-09-23_wealth_tax-repo\"\n\n\ndef rauh_repo_dir():\n    return os.environ.get(\"RAUH_REPO_DIR\", DEFAULT_RAUH_REPO_DIR)\n\n\ndef rauh_path(*parts):\n    return os.path.join(rauh_repo_dir(), *parts)\n\n\ndef rauh_available():\n    return os.path.isdir(rauh_repo_dir())\n\n\ndef rauh_workbook_path():\n    return rauh_path(\"NPV_data\", \"CA_Billionaires_Revenues_and_Migration_final.xlsx\")\n\n\ndef rauh_nber_final_csv():\n    return rauh_path(\"NBER_2026_litigation_weighted\", \"NPV_data\", \"final.csv\")"
       },
       "targets": "_targets.R:31 nber_final_csv (R resolver: R/rauh_repo.R)",
