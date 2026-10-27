@@ -172,16 +172,22 @@ def main():
             what=("One row per number either paper prints, beside the pipeline's value for it. The "
                   "NBER mean NPV row takes the printed -38.9 (typed from PDF p.1 and p.35, with "
                   "its page), the seeded Monte Carlo's mean (layer 5) as 'reproduced', and the "
-                  "grid's exact expectation for the NBER setting (layer 6) as 'grid_exact'. The "
-                  "Python twin builds the same rows in export/py/outputs.csv. The R code below is "
-                  "the function definition; it is called and assigned to the site_headlines target "
-                  "in _targets.R:66-69 (tar_target(site_headlines, compute_site_headlines(...))), "
-                  "the same call the Pipeline line points to. On the Python side there is no "
-                  "pipeline to register a target with: py/run_export.py's main() calls "
-                  "build_outputs() directly (run_export.py:187) and writes its return value "
-                  "straight to export/py/outputs.csv (run_export.py:191), every time the script "
-                  "runs top to bottom (python3 py/run_export.py). Nothing caches it between runs, "
-                  "unlike the R target."),
+                  "grid's exact expectation for the NBER setting (layer 6) as 'grid_exact'. The R "
+                  "code below is the function definition; it is called and assigned to the "
+                  "site_headlines target in _targets.R:66-69 (tar_target(site_headlines, "
+                  "compute_site_headlines(...))), the same call the Pipeline line points to. "
+                  "Correction, 2026-10-27: this layer previously said the Python twin builds the "
+                  "same rows in export/py/outputs.csv. It does not. site_headlines (this table, "
+                  "with its quantity/printed/reproduced/grid_exact columns) feeds grid.js (layer 3) "
+                  "and has no Python twin, the same as grid.js itself (layer 3's note). Python's "
+                  "build_outputs() (py/run_export.py) is a different, broader table, keyed by "
+                  "output_id and printed_value, and its real R twin is compute_export_outputs() in "
+                  "R/export.R, which writes export/r/outputs.csv: a separate export the materials "
+                  "page's own parity test checks against export/py/outputs.csv (materials.qmd, "
+                  "test kind 3), outside this chain. build_outputs() does include the NBER mean NPV "
+                  "as one of its rows (npv_mc_nber_mean), computed independently from the same "
+                  "Monte Carlo (layer 5), which is why a reader can be misled into treating it as "
+                  "this layer's twin."),
             inputs="the two Monte Carlo summaries, the two exact means, the grid, the revenue chain and the NBER collectible revenue",
             inputs_from=[dict(layer="rjkdc-5", what="npv_mc_nber_summary: the seeded run's mean, median, SD and share negative"),
                          dict(layer="rjkdc-6", what="npv_mc_nber_analytic_mean and the grid's NBER cell: the exact expectation")],
@@ -192,7 +198,7 @@ def main():
                         "printed one within four Monte Carlo standard errors."),
             method_status="matches",
             r=loc(f"{SIDE}/R/site.R", "compute_site_headlines()", [199, 227]),
-            py=loc(f"{SIDE}/py/run_export.py", "build_outputs()", [115, 151]),
+            py=None,
             targets="_targets.R:66 site_headlines",
         ),
         dict(
@@ -337,11 +343,7 @@ hl2 <- compute_site_headlines(grid, tar_read(npv_mc_ssrn_summary), tar_read(npv_
                               tar_read(npv_mc_ssrn_analytic_mean), tar_read(npv_mc_nber_analytic_mean),
                               rc, tar_read(nber_collectible))
 hl2[hl2$version == "nber", c("quantity", "printed", "reproduced", "grid_exact")]
-identical(hl2, hl)                            # TRUE: same as the stored target""",
-                py=r"""# Layer 4: the Python twin's export of the same numbers (written by py/run_export.py).
-import pandas as pd
-out = pd.read_csv("export/py/outputs.csv")
-out[out.version == "nber"][["output_id", "value", "printed_value", "abs_diff"]]"""),
+identical(hl2, hl)                            # TRUE: same as the stored target"""),
         5: dict(r=r"""# Layer 5: the seeded Monte Carlo. This returns the headline: mean -38.886, printed -38.9.
 mcn <- compute_npv_mc_nber()
 mcn$summary                                   # mean -38.886, median -35.26, sd 37.62, 85.2% negative
