@@ -119,7 +119,7 @@ def main():
                         "averaged over the authors' Monte Carlo draws. Footnote 1 says it is the "
                         "authors' own headline (NBER PDF p.1)."),
             method_status="plumbing",
-            r=loc(f"{SIDE}/site/index.html", "the headline block and its script", [247, 272], language="html"),
+            r=loc(f"{SIDE}/site/index.html", "the headline block and its script", [251, 277], language="html"),
             py=None,
             targets=None,
         ),
@@ -152,7 +152,10 @@ def main():
                   "preferred list is built here: for each version it copies the printed mean, page "
                   "and share negative from the headline table, and the seeded rerun's mean rounded "
                   "to three decimals (mc_npv = -38.886). The snap rows are the grid's four outcomes "
-                  "rounded to three decimals. No Python twin writes this file."),
+                  "rounded to three decimals. The Python twin never produces this file: it exports "
+                  "its own parallel CSVs (export/py/outputs.csv), which layer 4 checks against the "
+                  "R output for parity, but the JavaScript grid file itself is generated once, by R "
+                  "only."),
             inputs="the grid table (2,187 rows), the revenue chain (for the dial labels) and the headline table",
             inputs_from=[dict(layer="rjkdc-4", what="site_headlines: the headline table"),
                          dict(layer="rjkdc-6", what="site_grid: one row per dial combination, the exact expectation in mean_npv")],
