@@ -354,17 +354,17 @@ with(mcn$draws[1, ], wt - f * c_income / rg_discount)   # one draw's NPV by hand
 mcn = compute_npv_mc_nber()
 mcn["summary"]                                # mean -39.14 on numpy's stream (R's stream gives -38.886)
 se = mcn["summary"]["sd"] / mcn["summary"]["n"] ** 0.5
-(mcn["summary"]["mean"] - npv_mc_analytic_mean(0, 72, 3.3, 5.8, 0.015, 0.045, f_mode="nber", f_min=0.30, f_max=0.60)) / se   # gap to the exact mean, in standard errors"""),
+(mcn["summary"]["mean"] - npv_mc_analytic_mean(wt_min=0, wt_max=72, c_min=3.3, c_max=5.8, rate_min=0.015, rate_max=0.045, f_mode="nber", f_min=0.30, f_max=0.60)) / se   # gap to the exact mean, in standard errors"""),
         6: dict(r=r"""# Layer 6: the exact expectation, piece by piece.
 npv_e_inv_rate(0.015, 0.045)                  # E[1/r] = ln(3)/0.03 = 36.62
 0.45 * 4.55 * npv_e_inv_rate(0.015, 0.045)    # E[f] E[C] E[1/r] = 74.98, the loss
 npv_expectation(0, 72, 3.3, 5.8, 0.015, 0.045, list(mode = "uniform", lo = 0.30, hi = 0.60))
-npv_mc_analytic_mean(0, 72, 3.3, 5.8, 0.015, 0.045, f_mode = "nber", f_min = 0.30, f_max = 0.60)
+npv_mc_analytic_mean(wt_min = 0, wt_max = 72, c_min = 3.3, c_max = 5.8, rate_min = 0.015, rate_max = 0.045, f_mode = "nber", f_min = 0.30, f_max = 0.60)
 site_grid_cell(grid, as.list(site_named()$nber))   # the explorer's NBER cell: the same -38.98""",
                 py=r"""# Layer 6: the exact expectation in the Python twin.
 import math
 math.log(0.045 / 0.015) / 0.03                # E[1/r] = 36.62
-npv_mc_analytic_mean(0, 72, 3.3, 5.8, 0.015, 0.045, f_mode="nber", f_min=0.30, f_max=0.60)   # -38.98
+npv_mc_analytic_mean(wt_min=0, wt_max=72, c_min=3.3, c_max=5.8, rate_min=0.015, rate_max=0.045, f_mode="nber", f_min=0.30, f_max=0.60)   # -38.98
 36 - 0.45 * 4.55 * math.log(3) / 0.03         # the same by hand"""),
         7: dict(r=r"""# Layer 7: the ceiling rebuilt from final.csv, beside the script's literal 72.
 nfinal <- extract_nber_final()
@@ -450,8 +450,9 @@ print("ready: authors' repository available:", rauh_available())""",
         "seeded": today,
         "verified_by": ("Rscript, from rjkdc-analysis/ after sourcing R/: "
                         "compute_npv_mc_nber()$summary$mean = -38.886348 (printed -38.9, NBER PDF p.1); "
-                        "the exact expectation npv_mc_analytic_mean(0, 72, 3.3, 5.8, 0.015, 0.045, "
-                        "f_mode = 'nber', f_min = 0.30, f_max = 0.60) = -38.980289"),
+                        "the exact expectation npv_mc_analytic_mean(wt_min = 0, wt_max = 72, c_min = 3.3, "
+                        "c_max = 5.8, rate_min = 0.015, rate_max = 0.045, f_mode = 'nber', f_min = 0.30, "
+                        "f_max = 0.60) = -38.980289"),
         "runs_for_a_stranger": ("AUDIT.md step 8, level 2: .github/workflows/rjkdc-ci.yml clones the "
                                 "authors' repository at 25e84dd and rebuilds R and Python on a clean "
                                 "runner; no one-click (Binder) yet."),
