@@ -256,9 +256,9 @@ class: head-beside
 .fig-pinned.fig-split.fig-tall[<img src="../../assets/figures/evidence-to-policy-competing-from-analysis-opa-third.svg" alt="The two analyses, each an Open Policy Analysis, feed a third Open Policy Analysis, the comparison, which informs both decision makers.">]
 
 <div class="opa-labels">
-<a class="opa-label" style="left:46.4%; top:37%;" href="../../bsz-analysis/site/">The BSZ analysis</a>
-<a class="opa-label" style="left:46.4%; bottom:31%;" href="../../rjkdc-analysis/site/">The JR analysis</a>
-<a class="opa-label opa-label-left" style="right:45%; top:53%;" href="../../index.html">The comparison</a>
+<a class="opa-label" style="left:46.4%; top:37%;" href="../../bsz-analysis/site/explorer/">The BSZ analysis</a>
+<a class="opa-label" style="left:46.4%; bottom:31%;" href="../../rjkdc-analysis/site/explorer/">The JR analysis</a>
+<a class="opa-label opa-label-left" style="right:45%; top:53%;" href="../../comparison/site/explorer/">The comparison</a>
 </div>
 
 
