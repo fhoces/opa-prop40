@@ -208,36 +208,40 @@ name: why-opa-3
 .pull-left[
 One analysis gives every decision maker the same starting facts. Their choices then show what each of them truly values.
 
-.center[<img src="../../assets/figures/evidence-to-policy-from-analysis.svg" style="width:85%;" alt="One policy analysis leads one decision maker to support a policy and another to oppose it.">]
+.center[<img src="../../assets/figures/evidence-to-policy-from-analysis.svg" style="width:60%;" alt="One policy analysis leads one decision maker to support a policy and another to oppose it.">]
 ]
 
 .pull-right[
 Each decision maker picks the analysis that fits. We see which facts they chose, but we learn nothing about what they value.
 
-.center[<img src="../../assets/figures/evidence-to-policy-competing-from-analysis.svg" style="width:85%;" alt="Two competing policy analyses of the same policy: one shows only gains and leads Decision Maker 1 to support it; the other shows only losses and leads Decision Maker 2 to oppose it.">]
+.center[<img src="../../assets/figures/evidence-to-policy-competing-from-analysis.svg" style="width:60%;" alt="Two competing policy analyses of the same policy: one shows only gains and leads Decision Maker 1 to support it; the other shows only losses and leads Decision Maker 2 to oppose it.">]
 ]
+
+.center[<br>**Multiple policy analyses of the same quantity &rarr; alternative facts**<sup>1</sup>]
+
+.footnote[<sup>1</sup> What Manski calls *dueling certitudes*: rival analyses that each report one number with confidence and reach opposite conclusions (Charles F. Manski, ["Policy Analysis with Incredible Certitude"](https://doi.org/10.1111/j.1468-0297.2011.02457.x), *The Economic Journal*, 2011).]
 
 ---
 name: why-opa-4
 class: head-beside, head-small
 
-# From alternative facts<sup>1</sup> to one common estimate
+# From alternative facts to one common estimate
 
 .fig-pinned.fig-split[<img class="half-bottom" src="../../assets/figures/evidence-to-policy-competing-from-analysis-blackbox.svg" aria-hidden="true" alt="Two competing policy analyses of the same policy, drawn as black boxes: one shows only gains and leads Decision Maker 1 to support it; the other shows only losses and leads Decision Maker 2 to oppose it."><img class="half-top" src="../../assets/figures/evidence-to-policy-competing-from-analysis-blackbox.svg" alt="Two competing policy analyses of the same policy, drawn as black boxes: one shows only gains and leads Decision Maker 1 to support it; the other shows only losses and leads Decision Maker 2 to oppose it.">]
 
 --
 
 .beside[
-**With transparency: Open Policy Analysis**<sup>2</sup>
+**With transparency: Open Policy Analysis**<sup>1</sup>
 
-- <b style="color:#d4880f">Open output</b>: one main estimate, with each assumption as a dial a reader can move.
+- <b style="color:#d4880f">Open output</b>: one main estimate, with each main assumption as an input that the reader can move.
 - <b style="color:#1484c5">Open analysis</b>: every step from the inputs to that estimate, written out, with the guesswork marked.
 - <b style="color:#0b4a7c">Open materials</b>: the data, code and tests that rerun it.
 ]
 
 .fig-pinned.fig-split[<img class="half-bottom" src="../../assets/figures/evidence-to-policy-competing-from-analysis-opa.svg" aria-hidden="true" alt="The same two competing analyses, each now an Open Policy Analysis with its output, assumptions, details and materials open; one shows only gains and leads Decision Maker 1 to support the policy, the other only losses and leads Decision Maker 2 to oppose it."><img class="half-top" src="../../assets/figures/evidence-to-policy-competing-from-analysis-opa.svg" alt="The same two competing analyses, each now an Open Policy Analysis with its output, assumptions, details and materials open; one shows only gains and leads Decision Maker 1 to support the policy, the other only losses and leads Decision Maker 2 to oppose it.">]
 
-.footnote.beside[<sup>1</sup> What Manski calls *dueling certitudes*: rival analyses that each report one number with confidence and reach opposite conclusions (Charles F. Manski, ["Policy Analysis with Incredible Certitude"](https://doi.org/10.1111/j.1468-0297.2011.02457.x), *The Economic Journal*, 2011). <sup>2</sup> Hoces de la Guardia, F., Grant, S. and Miguel, E. (2021), ["A framework for open policy analysis"](https://doi.org/10.1093/scipol/scaa067), *Science and Public Policy*.]
+.footnote.beside[<sup>1</sup> Hoces de la Guardia, F., Grant, S. and Miguel, E. (2021), ["A framework for open policy analysis"](https://doi.org/10.1093/scipol/scaa067), *Science and Public Policy*.]
 
 ---
 name: why-opa-7
