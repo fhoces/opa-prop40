@@ -235,7 +235,7 @@ class: head-beside, head-small
 **With transparency: Open Policy Analysis**<sup>1</sup>
 
 - <b style="color:#d4880f">Open output</b>: one main estimate, with each main assumption as an input that the reader can move.
-- <b style="color:#1484c5">Open analysis</b>: every step from the inputs to that estimate, written out, with the guesswork marked.
+- <b style="color:#1484c5">Open analysis</b>: every step from the inputs to that estimate, written out in prose, equations and code, with the guesswork marked.
 - <b style="color:#0b4a7c">Open materials</b>: the data, code and tests that rerun it.
 ]
 
