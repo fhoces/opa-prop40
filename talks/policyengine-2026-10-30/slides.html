@@ -780,12 +780,16 @@ class: mid-bullets, ai7-tight
    fit the closing bullets at normal size instead of shrinking them (author
    rules 2026-10-30). A custom class, since it must survive incremental
    builds if any are added later (see why-opa-3&#39;s .opa3-tight for why). */
-.ai7-tight h1 { margin-bottom: 0.1em; }
+.ai7-tight h1 { margin-bottom: 0.45em; }
 .ai7-tight .pull-left, .ai7-tight .pull-right { margin-top: 0; }
-.ai7-tight .pull-left h3, .ai7-tight .pull-right h3 { margin: 0 0 0.15em; }
-.ai7-tight .pull-left p, .ai7-tight .pull-right p { margin: 0 0 0.3em; }
-.ai7-tight .pull-left ol, .ai7-tight .pull-right ul { margin-top: 0.2em; }
-.ai7-tight .pull-left li, .ai7-tight .pull-right li { margin-bottom: 0.1em; }
+.ai7-tight .pull-left h3, .ai7-tight .pull-right h3 { margin: 0 0 0.3em; }
+/* the question under each header: the same height in both columns, so the two lists start level */
+.ai7-tight .pull-left p, .ai7-tight .pull-right p { margin: 0 0 0.35em; min-height: 2.6em; }
+.ai7-tight .pull-left ol, .ai7-tight .pull-right ul { margin-top: 0; }
+.ai7-tight .pull-left li, .ai7-tight .pull-right li { margin-bottom: 0.3em; }
+/* the two closing bullets: full width, set off from the columns */
+.ai7-tight &gt; ul { clear: both; margin-top: 1.1em; padding-top: 0.6em; border-top: 1px solid #e2e7ec; }
+.ai7-tight &gt; ul &gt; li { margin-bottom: 0.35em; }
 &lt;/style&gt;
 
 .pull-left[
