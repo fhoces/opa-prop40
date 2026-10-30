@@ -771,10 +771,11 @@ class: head-small, no-overview
 .gap-table { clear: both; padding-top: 0.1em; }
 .gap-table .gap-table-title { font-weight: 600; font-size: 92%; margin: 0; text-align: center; }
 .gap-table .cell-more { font-size: 80%; white-space: nowrap; }
+.gap-table table.dt td.num, .gap-table table.dt th.num { width: 2.2em; text-align: left; vertical-align: middle; color: #5b6873; padding-right: 0; }
 .gap-table table.dt { font-size: 82%; margin-top: 0; }   /* the bullets' size */
 .gap-table table.dt td, .gap-table table.dt th { padding: 1px 6px; line-height: 1.15; vertical-align: top; }
 /* the input column at its minimum, so every description wraps to two lines and each row has two lines of room */
-.gap-table table.dt td:first-child, .gap-table table.dt th:first-child { width: 185px; }
+.gap-table table.dt td:nth-child(2), .gap-table table.dt th:nth-child(2) { width: 185px; }
 /* a gap, not a heavier rule, separates the three groups (D alone, q alone, the loss box together) */
 .gap-table table.dt tr.grp-end td { padding-bottom: 8px; }
 .gap-table table.dt tr.grp-end + tr td { padding-top: 8px; }
@@ -817,18 +818,23 @@ defense <- list(
     bsz = "a one-time tax makes departures temporary; five years, the payment period, is the paper's own example",
     rjkdc = "leavers do not return: the cap on wealth taxation is gone for good and \u00a750310 lets the Legislature amend the Act"))
 cat('<div class="gap-table"><div class="gap-table-title">Key assumptions behind the differences: steelmanning each choice</div>')
-cat('<table class="dt"><tr><th>Input</th><th class="l">BSZ analysis</th><th class="l">JR analysis</th></tr>')
+# A thin first column numbers the three components, (i) D, (ii) q, (iii) the loss box, as the
+# equation slide does; the (iii) cell spans its three rows.
+cat('<table class="dt"><tr><th class="num"></th><th>Input</th><th class="l">BSZ analysis</th><th class="l">JR analysis</th></tr>')
 # Three groups, as in the equation: D alone, q alone, then the loss box without the discount
 # rate (f, C, H), which the author left out of this summary (2026-10-29).
 rows_shown <- setdiff(sort(c(et$main, et$loss)), which(dp$symbol == "r"))
 stopifnot(length(rows_shown) == 5)
+loss_rows <- setdiff(rows_shown, et$main)
 for (i in rows_shown) {
   ids <- dial_ids(dp$step_id[i]); tx <- lapply(ids, function(x) step_texts(inp, x))
   val <- function(side) if (dp$step_id[i] %in% names(short_vals)) short_vals[[dp$step_id[i]]][[side]] else paste(vapply(tx, `[[`, "", side), collapse = "; ")
   grp <- if (i %in% et$main) ' class="grp-end"' else ""
   stopifnot(dp$step_id[i] %in% names(defense))
   more <- function(side) sprintf(' <a class="cell-more" href="#defense-%s">more &rarr;</a>', if (side == "bsz") "bsz" else "jr")
-  cat(sprintf('<tr%s><td>%s (<i>%s</i>)</td><td class="l">%s - %s%s</td><td class="l">%s - %s%s</td></tr>', grp, esc(dp$title[i]), dp$symbol[i],
+  roman <- if (i %in% et$main) sprintf('<td class="num">(%s)</td>', c("i", "ii")[match(i, et$main)]) else
+    if (i == loss_rows[1]) sprintf('<td class="num" rowspan="%d">(iii)</td>', length(loss_rows)) else ""
+  cat(sprintf('<tr%s>%s<td>%s (<i>%s</i>)</td><td class="l">%s - %s%s</td><td class="l">%s - %s%s</td></tr>', grp, roman, esc(dp$title[i]), dp$symbol[i],
               val("bsz"), defense[[dp$step_id[i]]][["bsz"]], more("bsz"), val("rjkdc"), defense[[dp$step_id[i]]][["rjkdc"]], more("rjkdc")))
 }
 cat("</table></div>")
