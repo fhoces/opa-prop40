@@ -1,3 +1,11 @@
+<!-- xaringan writes no viewport meta. Without one a phone lays the page out at a 980px virtual
+     width and then "boosts" the font of some text blocks after layout (iOS text-size-adjust, Android
+     font boosting), so text changes size after a moment and remark's scaled slide loses figures.
+     Author report 2026-10-29. -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  html, body { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+</style>
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
   TeX: { extensions: ["color.js"], maxBuffer: 120 * 1024, maxMacros: 20000 }
