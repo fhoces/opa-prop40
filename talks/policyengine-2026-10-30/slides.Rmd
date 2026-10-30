@@ -900,6 +900,8 @@ class: head-small
 .shot-left p.quote { font-size: 104%; color: #222; margin: 14px 0 0; line-height: 1.4; }
 ```
 
+--
+
 .shot-left[
 <img class="title" src="figs/mr-post-title.png" alt="Blog post title: Errors in the research of Emmanuel Saez and Gabriel Zucman, by Tyler Cowen, October 28, 2026.">
 <img class="line" src="figs/mr-post-ai-judgment.png" alt="A line from the post: AI issues its judgment, as a link.">
