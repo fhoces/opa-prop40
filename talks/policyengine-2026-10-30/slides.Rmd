@@ -7,6 +7,7 @@ author: "Fernando Hoces de la Guardia"
 output:
   xaringan::moon_reader:
     self_contained: true
+    seal: false
     includes:
       in_header: mathjax-config.html
     css: [default, ../../assets/paper.css, ../../assets/paper-slides.css]
@@ -174,6 +175,25 @@ maxdiff <- if (py_ok) max(vapply(c("ends", "bridge", "endpoints"), function(f) {
 }, 0)) else NA
 ```
 
+class: center, middle, inverse, title-slide
+
+.title[
+# Transparency and AI in Policy Analysis
+]
+.subtitle[
+## Lessons from an Open Policy Analysis of California’s Wealth Tax Proposition
+]
+.author[
+### Fernando Hoces de la Guardia
+]
+.date[
+### PolicyEngine workshop, 30 October 2026
+]
+
+<p class="narration-note">AI-generated presentation based on these slides: <audio class="narration-player" controls preload="none"></audio><br><span class="narration-sub">Press play and move through the slides as you listen.</span></p>
+
+---
+
 name: prop40
 class: head-small
 
@@ -208,6 +228,12 @@ class: head-small, opa3-tight
 # What is the problem with multiple analyses?
 
 ```{css, echo=FALSE}
+/* The title slide's foot: the AI-generated narration, playable in place (the <audio> element stays
+   in the DOM while remark switches slides, so it keeps playing as the reader clicks through). */
+.title-slide .narration-note { position: absolute; left: 0; right: 0; bottom: 34px; margin: 0;
+  font-size: 58%; color: #555; line-height: 1.5; }
+.title-slide .narration-note audio { height: 28px; vertical-align: middle; margin-left: 6px; }
+.title-slide .narration-sub { font-size: 90%; color: #777; }
 /* why-opa-3: pull the text and figures up so the arrow line clears the footnote,
    without shrinking the figures themselves (author rule 2026-10-30).
    A custom class, not the auto id, because remark.js only tags the FIRST

@@ -43,6 +43,11 @@ MathJax.Hub.Config({
 </style>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+  // The title slide's narration player gets its file here, with the name split in two: xaringan's
+  // self-contained render embeds every file the slide source names (src, data-src, a JSON map of
+  // resources), which would put the 4.6 MB MP3 into this page as base64. The file sits next to
+  // slides.html.
+  document.querySelectorAll("audio.narration-player").forEach(function (el) { el.src = "narration" + ".mp3"; });
   var a = document.createElement("a");
   a.href = "../../index.html";  // the comparison overview is the site root (this deck sits at talks/<name>/)
   a.className = "site-footer-link";

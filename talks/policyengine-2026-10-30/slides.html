@@ -133,6 +133,11 @@ color: #1d4e89;
 </style>
     <script>
     document.addEventListener("DOMContentLoaded", function () {
+      // The title slide's narration player gets its file here, with the name split in two: xaringan's
+      // self-contained render embeds every file the slide source names (src, data-src, a JSON map of
+      // resources), which would put the 4.6 MB MP3 into this page as base64. The file sits next to
+      // slides.html.
+      document.querySelectorAll("audio.narration-player").forEach(function (el) { el.src = "narration" + ".mp3"; });
       var a = document.createElement("a");
       a.href = "../../index.html";  // the comparison overview is the site root (this deck sits at talks/<name>/)
       a.className = "site-footer-link";
@@ -474,6 +479,10 @@ font-variant-caps: all-small-caps; letter-spacing: 0.04em; }
   </head>
   <body>
     <textarea id="source">
+
+
+
+
 class: center, middle, inverse, title-slide
 
 .title[
@@ -489,10 +498,9 @@ class: center, middle, inverse, title-slide
 ### PolicyEngine workshop, 30 October 2026
 ]
 
+&lt;p class=&quot;narration-note&quot;&gt;AI-generated presentation based on these slides: &lt;audio class=&quot;narration-player&quot; controls preload=&quot;none&quot;&gt;&lt;/audio&gt;&lt;br&gt;&lt;span class=&quot;narration-sub&quot;&gt;Press play and move through the slides as you listen.&lt;/span&gt;&lt;/p&gt;
+
 ---
-
-
-
 
 name: prop40
 class: head-small
@@ -528,6 +536,12 @@ class: head-small, opa3-tight
 # What is the problem with multiple analyses?
 
 &lt;style type=&quot;text/css&quot;&gt;
+/* The title slide&#39;s foot: the AI-generated narration, playable in place (the &lt;audio&gt; element stays
+   in the DOM while remark switches slides, so it keeps playing as the reader clicks through). */
+.title-slide .narration-note { position: absolute; left: 0; right: 0; bottom: 34px; margin: 0;
+  font-size: 58%; color: #555; line-height: 1.5; }
+.title-slide .narration-note audio { height: 28px; vertical-align: middle; margin-left: 6px; }
+.title-slide .narration-sub { font-size: 90%; color: #777; }
 /* why-opa-3: pull the text and figures up so the arrow line clears the footnote,
    without shrinking the figures themselves (author rule 2026-10-30).
    A custom class, not the auto id, because remark.js only tags the FIRST
