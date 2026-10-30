@@ -182,7 +182,7 @@ On the ballot on 3 November 2026: a one-time tax of 5% on the net worth of Calif
 $1 billion or more, payable over five years, with the revenue mainly for health care.
 
 .quote-box[
-"Control of Congress is the biggest issue at stake in November’s elections. A close second might be the fight over a ballot initiative in California, Proposition 40, that seeks to impose a wealth tax on the state’s roughly 250 billionaires."
+“Control of Congress is the biggest issue at stake in November’s elections. A close second might be the fight over a ballot initiative in California, Proposition 40, that seeks to impose a wealth tax on the state’s roughly 250 billionaires.”
 
 .quote-src[*The New York Times Magazine*, [14 October 2026](https://www.nytimes.com/2026/10/14/magazine/california-billionaires-tax.html)]
 ]
@@ -525,7 +525,7 @@ class: mid-bullets, ai7-tight
 - Both fields require much human effort in "digesting"<sup>1</sup> the explanations.
 ]
 
-.footnote[<sup>1</sup> Terence Tao, ["Mathematics in the age of AI"](https://teorth.github.io/tao-web/slides/age-of-ai-icm-2026.pdf), public lecture, International Congress of Mathematicians, 2026: on "proof indigestion," the widening gap between generating, verifying and digesting proofs.]
+.footnote[<sup>1</sup> Terence Tao, ["Mathematics in the age of AI"](https://teorth.github.io/tao-web/slides/age-of-ai-icm-2026.pdf), public lecture, International Congress of Mathematicians, 2026: on "proof indigestion", the widening gap between generating, verifying and digesting proofs.]
 
 --
 
@@ -974,7 +974,7 @@ class: head-small, defense-slide
 
 # The CRediT squares: the question behind each one
 
-Every object (explorer, report, slides, repository, overview page) was scored by the author in a questionnaire, one question per CRediT role: *who contributed?*, answered human only, human lead, equal, AI lead, AI only or not applicable. A square is coloured by the answer; roles marked not applicable are left out. Funding acquisition and Resources, the two remaining CRediT roles, were not asked. The questions paraphrase the official definitions (credit.niso.org).
+Every object (explorer, report, slides, repository, overview page) was scored by the author in a questionnaire, one question per CRediT role (*who contributed?*), answered human only, human lead, equal, AI lead, AI only or not applicable. A square is coloured by the answer; roles marked not applicable are left out. Funding acquisition and Resources, the two remaining CRediT roles, were not asked. The questions paraphrase the official definitions (credit.niso.org).
 
 <table class="dt credit-q">
 <tr><th>Column</th><th>Square (CRediT role)</th><th class="l">The question: who did this?</th></tr>
