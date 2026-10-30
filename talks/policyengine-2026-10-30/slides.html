@@ -150,17 +150,37 @@ color: #1d4e89;
         a.style.top = (rect.bottom - a.offsetHeight - 10) + "px";
         a.style.left = (rect.left + 10) + "px";
       }
-      positionLink();
-      window.addEventListener("resize", positionLink);
+      // The slide number reads "n / 11" throughout: the numerator keeps counting into the backup
+      // slides, the denominator stays at the number of the thank-you slide (the last slide of the
+      // talk), which remark would otherwise report as the deck's full length (author rule 2026-10-29).
+      var talkEnd = null;
+      function pinDenominator() {
+        var nums = document.querySelectorAll(".remark-slide-number");
+        if (talkEnd === null) {
+          var thanks = document.getElementById("slide-thanks");
+          if (!thanks) return;
+          var n = thanks.querySelector(".remark-slide-number");
+          if (!n) return;
+          talkEnd = (n.textContent.split("/")[0] || "").trim();
+          if (!talkEnd) { talkEnd = null; return; }
+        }
+        nums.forEach(function (n) {
+          var parts = n.textContent.split("/");
+          if (parts.length === 2) n.textContent = parts[0].trim() + " / " + talkEnd;
+        });
+      }
+      function positionAndPin() { positionLink(); pinDenominator(); }
+      positionAndPin();
+      window.addEventListener("resize", positionAndPin);
       if (window.slideshow && typeof window.slideshow.on === "function") {
-        window.slideshow.on("afterShowSlide", positionLink);
-        window.slideshow.on("showSlide", positionLink);
+        window.slideshow.on("afterShowSlide", positionAndPin);
+        window.slideshow.on("showSlide", positionAndPin);
       }
       // Belt and suspenders: watch the DOM directly for whichever slide remark marks
       // visible, independent of which JS event API actually fires.
       var slidesArea = document.querySelector(".remark-slides-area");
       if (slidesArea && window.MutationObserver) {
-        new MutationObserver(positionLink).observe(slidesArea, {
+        new MutationObserver(positionAndPin).observe(slidesArea, {
           attributes: true, attributeFilter: ["class", "style"], subtree: true
         });
       }
@@ -831,7 +851,7 @@ class: mid-bullets, ai7-tight
 
 ---
 name: verification
-class: head-small, credit-slide, no-overview
+class: head-small, credit-slide, no-overview, credit-state1
 
 # Verification and disclosure of these three OPAs
 
@@ -845,6 +865,8 @@ class: head-small, credit-slide, no-overview
 .credit-slide .credit-left { float: left; width: 34%; }
 .credit-slide .credit-left ul { margin: 0; font-size: 92%; }
 .credit-slide .credit-left li { margin-bottom: 0.5em; }
+/* the first state shows the two checks only; the review bullets appear with the icons, in place */
+.credit-state1 .credit-left { visibility: hidden; }
 .credit-slide .credit-build { float: left; width: 62%; }
 .credit-slide .credit-right { float: right; width: 35%; font-size: 72%; line-height: 1.35; }
 .credit-slide .credit-right p { margin: 0 0 0.3em; }
@@ -882,7 +904,7 @@ class: head-small, credit-slide, no-overview
 .credit-build .credit-legend .sq { vertical-align: -2px; margin-right: 4px; }
 .credit-build .credit-legend .meter { margin-right: 4px; }
 .credit-build .layer-chip { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
-.credit-build.step1 table.ai-use th, .credit-build.step1 table.ai-use td { border-color: transparent; }
+.credit-build.step1 table.ai-use, .credit-build.step1 table.ai-use tr, .credit-build.step1 table.ai-use th, .credit-build.step1 table.ai-use td { border-color: transparent !important; }
 .credit-build .sq { width: 11px; height: 11px; margin-right: 2px; }
 .credit-build .pip { width: 9px; height: 9px; }
 &lt;/style&gt;
@@ -1114,7 +1136,6 @@ fhoces@gmail.com
 
 ---
 name: backup
-count: false
 class: center, middle
 
 # Backup
@@ -1122,7 +1143,6 @@ class: center, middle
 ---
 
 name: why-opa
-count: false
 
 # Why do we need Open Policy Analysis?
 
@@ -1136,7 +1156,6 @@ count: false
 
 ---
 name: why-opa-2
-count: false
 
 # Why do we need Open Policy Analysis?
 
@@ -1148,7 +1167,6 @@ sees two conflicting results and cannot tell which assumptions produce the gap. 
 
 ---
 name: why-opa-6
-count: false
 class: head-beside
 
 # With transparency
@@ -1162,7 +1180,6 @@ moving closer to a common reality.]
 
 ---
 name: opa-bsz
-count: false
 class: opa-card
 
 # The BSZ analysis OPA
@@ -1183,7 +1200,6 @@ Boll, Saez and Zucman estimate the one-time tax at about $100 billion of wealth 
 
 ---
 name: opa-jr
-count: false
 class: opa-card
 
 # The JR analysis OPA
@@ -1204,7 +1220,6 @@ Jaros and Rauh find a mean net present value of &lt;span class=&quot;nb&quot;&gt
 
 ---
 name: opa-comparison
-count: false
 class: opa-card
 
 # The comparison OPA
@@ -1228,7 +1243,6 @@ The comparison puts both analyses on one common output, the net fiscal effect (t
 
 ---
 name: pseudo-eq
-count: false
 
 # What separates the two numbers
 
@@ -1265,7 +1279,6 @@ studies settle. **derived**: computed from the analysis&#39;s own inputs.
 
 ---
 name: diff-departed
-count: false
 
 # (i) Who moved out in time?
 
@@ -1295,7 +1308,6 @@ of the revenue is lost in full.
 
 ---
 name: diff-litigation
-count: false
 
 # (ii) Is the revenue discounted for court risk?
 
@@ -1323,7 +1335,6 @@ leave.
 
 ---
 name: diff-horizon
-count: false
 class: wide-right
 
 # (iii) How long is the lost income tax counted?
@@ -1359,7 +1370,6 @@ larger than the JR row&#39;s last column. The rate dial moves next.
 
 ---
 name: diff-loss-rest
-count: false
 class: tight-table
 
 # (iii), continued: *f*, *C* and *r*
@@ -1385,7 +1395,6 @@ class: tight-table
 
 ---
 name: smaller
-count: false
 class: tight-table
 
 # (iv) The other inputs together
@@ -1399,7 +1408,6 @@ class: tight-table
 
 ---
 name: appendix
-count: false
 class: center, middle
 
 # Appendix
@@ -1408,7 +1416,6 @@ The method behind the comparison: the two main estimates, the common output, the
 
 ---
 name: estimates
-count: false
 
 # Two analyses, two main estimates
 
@@ -1447,7 +1454,6 @@ analysis&#39;s a loss of about &lt;span class=&quot;nb&quot;&gt;$39B&lt;/span&gt
 
 ---
 name: common-output
-count: false
 
 # Why the printed numbers are not comparable
 
@@ -1476,7 +1482,6 @@ exact average of the authors&#39; Monte Carlo.
 
 ---
 name: term-wealth
-count: false
 
 # One function, term 1: the wealth tax collected
 
@@ -1496,7 +1501,6 @@ survives a court challenge; the revenue is multiplied by it.
 
 ---
 name: term-loss
-count: false
 
 # One function, term 2: the income tax lost
 
@@ -1519,7 +1523,6 @@ count: false
 
 ---
 name: two-ends
-count: false
 
 # The two ends on output (b)
 
@@ -1545,7 +1548,6 @@ The same function gives both ends. The gap to explain is
 
 ---
 name: one-at-a-time
-count: false
 
 # The bridge: switch one input at a time
 
@@ -1570,7 +1572,6 @@ then the rest. Its 9 steps add up to the whole gap.
 
 ---
 name: waterfall
-count: false
 
 # The bridge on (b): the dial path, step by step
 
@@ -1585,7 +1586,6 @@ because the JR analysis applies none.
 
 ---
 name: hoopes
-count: false
 
 # A previous comparison: Hoopes (2026)
 
@@ -1607,7 +1607,6 @@ This project&#39;s own waterfall, on the September version, is [the previous sli
 
 ---
 name: credit-jr
-count: false
 
 # Disclosure and verification: the JR analysis
 
@@ -1619,7 +1618,6 @@ From the [JR analysis OPA](../../rjkdc-analysis/site/). Columns and key as on [t
 
 ---
 name: credit-comparison
-count: false
 
 # Disclosure and verification: the comparison
 
@@ -1631,7 +1629,6 @@ From [the comparison OPA](../../index.html). Columns and key as on [the BSZ tabl
 
 ---
 name: policyengine-detail
-count: false
 class: mid-bullets
 
 # PolicyEngine&#39;s calculator, in detail
@@ -1644,7 +1641,6 @@ class: mid-bullets
 
 ---
 name: layer-bsz-output
-count: false
 class: layer-slide
 
 # The BSZ analysis OPA: Open Output
@@ -1665,7 +1661,6 @@ Here it is the BSZ analysis explorer. Its dials are the inputs of BSZ’s Table 
 
 ---
 name: layer-bsz-analysis
-count: false
 class: layer-slide
 
 # The BSZ analysis OPA: Open Analysis
@@ -1686,7 +1681,6 @@ Here it is the report. It rebuilds BSZ’s tables step by step from the authors�
 
 ---
 name: layer-bsz-materials
-count: false
 class: layer-slide
 
 # The BSZ analysis OPA: its README
@@ -1707,7 +1701,6 @@ Here it is the bsz-analysis folder of the public repository. Its README says wha
 
 ---
 name: layer-bsz-review
-count: false
 class: layer-slide
 
 # The BSZ analysis OPA: its code review
@@ -1728,7 +1721,6 @@ Each layer shows its R or Python code, what goes in and out, whether the method 
 
 ---
 name: layer-jr-output
-count: false
 class: layer-slide
 
 # The JR analysis OPA: Open Output
@@ -1749,7 +1741,6 @@ Here it is the JR analysis explorer. Its dials are the inputs of the authors’ 
 
 ---
 name: layer-jr-analysis
-count: false
 class: layer-slide
 
 # The JR analysis OPA: Open Analysis
@@ -1770,7 +1761,6 @@ Here it is the report. It reruns the authors’ code as shipped, section by sect
 
 ---
 name: layer-jr-materials
-count: false
 class: layer-slide
 
 # The JR analysis OPA: its README
@@ -1791,7 +1781,6 @@ Here it is the rjkdc-analysis folder of the public repository. Its README says w
 
 ---
 name: layer-jr-review
-count: false
 class: layer-slide
 
 # The JR analysis OPA: its code review
@@ -1812,7 +1801,6 @@ Each layer shows its R or Python code, what goes in and out, whether the method 
 
 ---
 name: layer-cmp-output
-count: false
 class: layer-slide
 
 # The comparison OPA: Open Output
@@ -1833,7 +1821,6 @@ Here it is the comparison explorer. Each disputed input is a dial that can take 
 
 ---
 name: layer-cmp-analysis
-count: false
 class: layer-slide
 
 # The comparison OPA: Open Analysis
@@ -1854,7 +1841,6 @@ Here it is the report, and this deck. The report puts both analyses on one commo
 
 ---
 name: layer-cmp-materials
-count: false
 class: layer-slide
 
 # The comparison OPA: its README
@@ -1875,7 +1861,6 @@ Here it is the comparison folder of the public repository. Its README says what 
 
 ---
 name: layer-cmp-review
-count: false
 class: layer-slide
 
 # The comparison OPA: its code review

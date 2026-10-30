@@ -60,17 +60,37 @@ document.addEventListener("DOMContentLoaded", function () {
     a.style.top = (rect.bottom - a.offsetHeight - 10) + "px";
     a.style.left = (rect.left + 10) + "px";
   }
-  positionLink();
-  window.addEventListener("resize", positionLink);
+  // The slide number reads "n / 11" throughout: the numerator keeps counting into the backup
+  // slides, the denominator stays at the number of the thank-you slide (the last slide of the
+  // talk), which remark would otherwise report as the deck's full length (author rule 2026-10-29).
+  var talkEnd = null;
+  function pinDenominator() {
+    var nums = document.querySelectorAll(".remark-slide-number");
+    if (talkEnd === null) {
+      var thanks = document.getElementById("slide-thanks");
+      if (!thanks) return;
+      var n = thanks.querySelector(".remark-slide-number");
+      if (!n) return;
+      talkEnd = (n.textContent.split("/")[0] || "").trim();
+      if (!talkEnd) { talkEnd = null; return; }
+    }
+    nums.forEach(function (n) {
+      var parts = n.textContent.split("/");
+      if (parts.length === 2) n.textContent = parts[0].trim() + " / " + talkEnd;
+    });
+  }
+  function positionAndPin() { positionLink(); pinDenominator(); }
+  positionAndPin();
+  window.addEventListener("resize", positionAndPin);
   if (window.slideshow && typeof window.slideshow.on === "function") {
-    window.slideshow.on("afterShowSlide", positionLink);
-    window.slideshow.on("showSlide", positionLink);
+    window.slideshow.on("afterShowSlide", positionAndPin);
+    window.slideshow.on("showSlide", positionAndPin);
   }
   // Belt and suspenders: watch the DOM directly for whichever slide remark marks
   // visible, independent of which JS event API actually fires.
   var slidesArea = document.querySelector(".remark-slides-area");
   if (slidesArea && window.MutationObserver) {
-    new MutationObserver(positionLink).observe(slidesArea, {
+    new MutationObserver(positionAndPin).observe(slidesArea, {
       attributes: true, attributeFilter: ["class", "style"], subtree: true
     });
   }
