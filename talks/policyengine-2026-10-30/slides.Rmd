@@ -768,7 +768,7 @@ class: head-small
 /* the lower half: the key assumptions of each study, from the same export as the backup slides */
 .gap-table { clear: both; padding-top: 0.6em; }
 .gap-table .gap-table-title { font-weight: 600; font-size: 92%; margin: 0 0 0.15em; }
-.gap-table table.dt { font-size: 66%; margin-top: 0; }
+.gap-table table.dt { font-size: 82%; margin-top: 0; }   /* the bullets' size */
 .gap-table table.dt td, .gap-table table.dt th { padding: 1px 6px; line-height: 1.25; }
 ```
 
@@ -780,8 +780,7 @@ class: head-small
 ]
 
 .gap-right[
-<img src="figs/explorer-middle.png" alt="The comparison explorer: the BSZ panel's wealth-tax dials (wealth, departed, avoidance, litigation), each with its BSZ and JR ends, beside the two bars, $106.8B for the BSZ panel and -$39.0B for the JR panel.">
-<div class="cap">The comparison explorer (tinyurl.com/prop40-explorer): one panel's dials and the two estimates.</div>
+<a href="../../comparison/site/explorer/" title="The comparison explorer (tinyurl.com/prop40-explorer): one panel's dials and the two estimates. Click to open it."><img src="figs/explorer-middle.png" alt="The comparison explorer: the BSZ panel's wealth-tax dials (wealth, departed, avoidance, litigation), each with its BSZ and JR ends, beside the two bars, $106.8B for the BSZ panel and -$39.0B for the JR panel."></a>
 ]
 
 ```{r gap-assumptions, results="asis"}
