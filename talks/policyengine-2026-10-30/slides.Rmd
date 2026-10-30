@@ -798,7 +798,7 @@ cat('<table class="dt"><tr><th>Input</th><th class="l">BSZ analysis</th><th clas
 for (i in sort(c(et$main, et$loss))) {
   ids <- dial_ids(dp$step_id[i]); tx <- lapply(ids, function(x) step_texts(inp, x))
   val <- function(side) if (dp$step_id[i] %in% names(short_vals)) short_vals[[dp$step_id[i]]][[side]] else paste(vapply(tx, `[[`, "", side), collapse = "; ")
-  cat(sprintf('<tr><td><i>%s</i>, %s</td><td class="l">%s -</td><td class="l">%s -</td></tr>', dp$symbol[i], esc(dp$title[i]), val("bsz"), val("rjkdc")))
+  cat(sprintf('<tr><td>%s (<i>%s</i>)</td><td class="l">%s -</td><td class="l">%s -</td></tr>', esc(dp$title[i]), dp$symbol[i], val("bsz"), val("rjkdc")))
 }
 cat("</table></div>")
 ```
