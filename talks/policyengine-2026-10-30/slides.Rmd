@@ -733,6 +733,48 @@ credit_build(4)
 
 <!-- Space below the table is kept for one closing sentence (text to come from the author). -->
 ---
+name: gap-summary
+class: head-small
+
+# Where the difference comes from
+
+```{css, echo=FALSE}
+/* gap-summary: bullets left, the explorer's middle band right */
+.gap-left { float: left; width: 40%; font-size: 88%; }
+.gap-left li { margin-bottom: 0.5em; }
+.gap-right { float: right; width: 57%; }
+.gap-right img { width: 100%; border: 1px solid #ccc; box-shadow: 0 1px 4px rgba(0,0,0,.15); }
+.gap-right .cap { font-size: 65%; color: #5b6873; margin-top: 4px; }
+```
+
+.gap-left[
+- On one output, the net fiscal effect, the BSZ inputs give `r usd(eb$bsz_model)` and the JR inputs `r usd(eb$jr_model)`: a gap of `r usd(gap_b)`.
+- Three inputs make most of it: who is counted as having moved out in time (`r usd(ps("confirmed_departures"), 1, TRUE)`), whether the revenue is discounted for the chance the Act is struck down (`r usd(ps("litigation_survival"), 1, TRUE)`), and how long the lost income tax is counted, five years or for ever (`r usd(ps("horizon"), 1, TRUE)`).
+- None of the three is settled by data: a legal judgement, a guess about the courts, a choice of scenario.
+- The explorer moves each input between the two analyses' values, one at a time, and the number follows.
+]
+
+.gap-right[
+<img src="figs/explorer-middle.png" alt="The middle of the comparison explorer: the equation from the BSZ estimate to the JR estimate, term by term, and the two slider panels with the two bars between them.">
+<div class="cap">The comparison explorer, tinyurl.com/prop40-explorer: the equation walks the BSZ panel's dials to the JR values, term by term.</div>
+]
+
+---
+name: one-shot
+class: mid-bullets
+
+# A warning against one-shotting a policy analysis
+
+- The temptation is real: one prompt, one report, one number. The first draft of each of these OPAs looked finished.
+- What it took before the numbers could be trusted:
+  - every result the papers print, rerun as a test, and settings they do not print sent to both author teams; their replies changed the comparison (the JR analysis's September version became its anchor, and the report gained a section on the decisions the comparison makes);
+  - several review rounds by AI readers and by the author, dozens of findings each; the layer-by-layer code review caught R and Python code paired as twins that were not, after two edits had built on the mistake;
+  - a disclosure table on every page: what the AI did, what the author checked, and how far.
+- The lesson: agentic coding makes the first draft cheap. Verification is still human work, measured in days, not minutes, and the honest output says how far it went.
+
+.footnote[Explore: tinyurl.com/prop40-explorer &middot; Project: tinyurl.com/prop40-opa &middot; Survey: tinyurl.com/prop40-survey]
+
+---
 name: backup
 class: center, middle
 

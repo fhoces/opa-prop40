@@ -1018,6 +1018,48 @@ class: head-small, credit-slide, no-overview
 
 &lt;!-- Space below the table is kept for one closing sentence (text to come from the author). --&gt;
 ---
+name: gap-summary
+class: head-small
+
+# Where the difference comes from
+
+&lt;style type=&quot;text/css&quot;&gt;
+/* gap-summary: bullets left, the explorer&#39;s middle band right */
+.gap-left { float: left; width: 40%; font-size: 88%; }
+.gap-left li { margin-bottom: 0.5em; }
+.gap-right { float: right; width: 57%; }
+.gap-right img { width: 100%; border: 1px solid #ccc; box-shadow: 0 1px 4px rgba(0,0,0,.15); }
+.gap-right .cap { font-size: 65%; color: #5b6873; margin-top: 4px; }
+&lt;/style&gt;
+
+.gap-left[
+- On one output, the net fiscal effect, the BSZ inputs give &lt;span class=&quot;nb&quot;&gt;$106.8B&lt;/span&gt; and the JR inputs &lt;span class=&quot;nb&quot;&gt;−$39.0B&lt;/span&gt;: a gap of &lt;span class=&quot;nb&quot;&gt;$145.8B&lt;/span&gt;.
+- Three inputs make most of it: who is counted as having moved out in time (&lt;span class=&quot;nb&quot;&gt;−$29.9B&lt;/span&gt;), whether the revenue is discounted for the chance the Act is struck down (&lt;span class=&quot;nb&quot;&gt;−$39.4B&lt;/span&gt;), and how long the lost income tax is counted, five years or for ever (&lt;span class=&quot;nb&quot;&gt;−$65.4B&lt;/span&gt;).
+- None of the three is settled by data: a legal judgement, a guess about the courts, a choice of scenario.
+- The explorer moves each input between the two analyses&#39; values, one at a time, and the number follows.
+]
+
+.gap-right[
+&lt;img src=&quot;figs/explorer-middle.png&quot; alt=&quot;The middle of the comparison explorer: the equation from the BSZ estimate to the JR estimate, term by term, and the two slider panels with the two bars between them.&quot;&gt;
+&lt;div class=&quot;cap&quot;&gt;The comparison explorer, tinyurl.com/prop40-explorer: the equation walks the BSZ panel&#39;s dials to the JR values, term by term.&lt;/div&gt;
+]
+
+---
+name: one-shot
+class: mid-bullets
+
+# A warning against one-shotting a policy analysis
+
+- The temptation is real: one prompt, one report, one number. The first draft of each of these OPAs looked finished.
+- What it took before the numbers could be trusted:
+  - every result the papers print, rerun as a test, and settings they do not print sent to both author teams; their replies changed the comparison (the JR analysis&#39;s September version became its anchor, and the report gained a section on the decisions the comparison makes);
+  - several review rounds by AI readers and by the author, dozens of findings each; the layer-by-layer code review caught R and Python code paired as twins that were not, after two edits had built on the mistake;
+  - a disclosure table on every page: what the AI did, what the author checked, and how far.
+- The lesson: agentic coding makes the first draft cheap. Verification is still human work, measured in days, not minutes, and the honest output says how far it went.
+
+.footnote[Explore: tinyurl.com/prop40-explorer &amp;middot; Project: tinyurl.com/prop40-opa &amp;middot; Survey: tinyurl.com/prop40-survey]
+
+---
 name: backup
 class: center, middle
 
