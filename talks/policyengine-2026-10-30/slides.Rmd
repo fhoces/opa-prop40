@@ -847,6 +847,7 @@ fhoces@gmail.com
 
 ---
 name: backup
+count: false
 class: center, middle
 
 # Backup
@@ -854,6 +855,7 @@ class: center, middle
 ---
 
 name: why-opa
+count: false
 
 # Why do we need Open Policy Analysis?
 
@@ -867,6 +869,7 @@ name: why-opa
 
 ---
 name: why-opa-2
+count: false
 
 # Why do we need Open Policy Analysis?
 
@@ -878,6 +881,7 @@ sees two conflicting results and cannot tell which assumptions produce the gap. 
 
 ---
 name: why-opa-6
+count: false
 class: head-beside
 
 # With transparency
@@ -891,6 +895,7 @@ moving closer to a common reality.]
 
 ---
 name: opa-bsz
+count: false
 class: opa-card
 
 # The BSZ analysis OPA
@@ -913,6 +918,7 @@ compare_figs("bsz-analysis/site/index.html")
 
 ---
 name: opa-jr
+count: false
 class: opa-card
 
 # The JR analysis OPA
@@ -935,6 +941,7 @@ compare_figs("rjkdc-analysis/site/index.html")
 
 ---
 name: opa-comparison
+count: false
 class: opa-card
 
 # The comparison OPA
@@ -961,6 +968,7 @@ compare_figs("bsz-analysis/site/index.html", only = 2)
 
 ---
 name: pseudo-eq
+count: false
 
 # What separates the two numbers
 
@@ -1021,6 +1029,7 @@ studies settle. **derived**: computed from the analysis's own inputs.
 
 ---
 name: diff-departed
+count: false
 
 # (i) Who moved out in time?
 
@@ -1060,6 +1069,7 @@ of the revenue is lost in full.
 
 ---
 name: diff-litigation
+count: false
 
 # (ii) Is the revenue discounted for court risk?
 
@@ -1091,6 +1101,7 @@ leave.
 
 ---
 name: diff-horizon
+count: false
 class: wide-right
 
 # (iii) How long is the lost income tax counted?
@@ -1143,6 +1154,7 @@ larger than the JR row's last column. The rate dial moves next.
 
 ---
 name: diff-loss-rest
+count: false
 class: tight-table
 
 # (iii), continued: *f*, *C* and *r*
@@ -1186,6 +1198,7 @@ cat("</table>")
 
 ---
 name: smaller
+count: false
 class: tight-table
 
 # (iv) The other inputs together
@@ -1216,6 +1229,7 @@ cat("</table>")
 
 ---
 name: appendix
+count: false
 class: center, middle
 
 # Appendix
@@ -1224,6 +1238,7 @@ The method behind the comparison: the two main estimates, the common output, the
 
 ---
 name: estimates
+count: false
 
 # Two analyses, two main estimates
 
@@ -1262,6 +1277,7 @@ analysis's a loss of about `r usd(-rj_main, 0)`.
 
 ---
 name: common-output
+count: false
 
 # Why the printed numbers are not comparable
 
@@ -1297,6 +1313,7 @@ exact average of the authors' Monte Carlo.
 
 ---
 name: term-wealth
+count: false
 
 # One function, term 1: the wealth tax collected
 
@@ -1334,6 +1351,7 @@ survives a court challenge; the revenue is multiplied by it.
 
 ---
 name: term-loss
+count: false
 
 # One function, term 2: the income tax lost
 
@@ -1368,6 +1386,7 @@ cat("</table>")
 
 ---
 name: two-ends
+count: false
 
 # The two ends on output (b)
 
@@ -1400,6 +1419,7 @@ The same function gives both ends. The gap to explain is
 
 ---
 name: one-at-a-time
+count: false
 
 # The bridge: switch one input at a time
 
@@ -1438,6 +1458,7 @@ then the rest. Its `r nrow(dp)` steps add up to the whole gap.
 
 ---
 name: waterfall
+count: false
 
 # The bridge on (b): the dial path, step by step
 
@@ -1479,6 +1500,7 @@ because the JR analysis applies none.
 
 ---
 name: hoopes
+count: false
 
 # A previous comparison: Hoopes (2026)
 
@@ -1514,6 +1536,7 @@ This project's own waterfall, on the September version, is [the previous slide](
 
 ---
 name: credit-jr
+count: false
 
 # Disclosure and verification: the JR analysis
 
@@ -1527,6 +1550,7 @@ From the [JR analysis OPA](../../rjkdc-analysis/site/). Columns and key as on [t
 
 ---
 name: credit-comparison
+count: false
 
 # Disclosure and verification: the comparison
 
@@ -1540,6 +1564,7 @@ From [the comparison OPA](../../index.html). Columns and key as on [the BSZ tabl
 
 ---
 name: policyengine-detail
+count: false
 class: mid-bullets
 
 # PolicyEngine's calculator, in detail
@@ -1552,6 +1577,7 @@ class: mid-bullets
 
 ---
 name: layer-bsz-output
+count: false
 class: layer-slide
 
 # The BSZ analysis OPA: Open Output
@@ -1572,6 +1598,7 @@ Here it is the BSZ analysis explorer. Its dials are the inputs of BSZ’s Table 
 
 ---
 name: layer-bsz-analysis
+count: false
 class: layer-slide
 
 # The BSZ analysis OPA: Open Analysis
@@ -1592,6 +1619,7 @@ Here it is the report. It rebuilds BSZ’s tables step by step from the authors�
 
 ---
 name: layer-bsz-materials
+count: false
 class: layer-slide
 
 # The BSZ analysis OPA: its README
@@ -1612,6 +1640,7 @@ Here it is the bsz-analysis folder of the public repository. Its README says wha
 
 ---
 name: layer-bsz-review
+count: false
 class: layer-slide
 
 # The BSZ analysis OPA: its code review
@@ -1632,6 +1661,7 @@ Each layer shows its R or Python code, what goes in and out, whether the method 
 
 ---
 name: layer-jr-output
+count: false
 class: layer-slide
 
 # The JR analysis OPA: Open Output
@@ -1652,6 +1682,7 @@ Here it is the JR analysis explorer. Its dials are the inputs of the authors’ 
 
 ---
 name: layer-jr-analysis
+count: false
 class: layer-slide
 
 # The JR analysis OPA: Open Analysis
@@ -1672,6 +1703,7 @@ Here it is the report. It reruns the authors’ code as shipped, section by sect
 
 ---
 name: layer-jr-materials
+count: false
 class: layer-slide
 
 # The JR analysis OPA: its README
@@ -1692,6 +1724,7 @@ Here it is the rjkdc-analysis folder of the public repository. Its README says w
 
 ---
 name: layer-jr-review
+count: false
 class: layer-slide
 
 # The JR analysis OPA: its code review
@@ -1712,6 +1745,7 @@ Each layer shows its R or Python code, what goes in and out, whether the method 
 
 ---
 name: layer-cmp-output
+count: false
 class: layer-slide
 
 # The comparison OPA: Open Output
@@ -1732,6 +1766,7 @@ Here it is the comparison explorer. Each disputed input is a dial that can take 
 
 ---
 name: layer-cmp-analysis
+count: false
 class: layer-slide
 
 # The comparison OPA: Open Analysis
@@ -1752,6 +1787,7 @@ Here it is the report, and this deck. The report puts both analyses on one commo
 
 ---
 name: layer-cmp-materials
+count: false
 class: layer-slide
 
 # The comparison OPA: its README
@@ -1772,6 +1808,7 @@ Here it is the comparison folder of the public repository. Its README says what 
 
 ---
 name: layer-cmp-review
+count: false
 class: layer-slide
 
 # The comparison OPA: its code review
