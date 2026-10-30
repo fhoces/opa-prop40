@@ -791,7 +791,7 @@ class: head-small
 short_vals <- list(confirmed_departures = c(bsz = "none counted by name", rjkdc = "7 publicly reported moves"),
                    income_loss_share = c(bsz = sprintf("%s, the movers' share of the wealth", pct(vs[["f"]], 0)),
                                          rjkdc = sprintf("a flat %s of all billionaires' income tax", pct(vr[["f"]], 0))))
-cat('<div class="gap-table"><div class="gap-table-title">Summarizing the key assumptions for each study</div>')
+cat('<div class="gap-table"><div class="gap-table-title">Key assumptions behind the differences: steelmanning each choice</div>')
 cat('<table class="dt"><tr><th>Input</th><th>BSZ analysis</th><th>JR analysis</th></tr>')
 for (i in sort(c(et$main, et$loss))) {
   ids <- dial_ids(dp$step_id[i]); tx <- lapply(ids, function(x) step_texts(inp, x))
