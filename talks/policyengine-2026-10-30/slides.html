@@ -866,11 +866,12 @@ class: head-small, credit-slide, no-overview, credit-state1
    bottom of the slide kept clear for one closing sentence. */
 .credit-slide h1 { margin-bottom: 0.25em; }
 .credit-slide &gt; ul { margin: 0 0 0.1em; font-size: 92%; }
-.credit-slide .credit-left { float: left; width: 34%; }
-.credit-slide .credit-left ul { margin: 0; font-size: 92%; }
-.credit-slide .credit-left li { margin-bottom: 0.5em; }
+.credit-slide .credit-left { float: left; width: 34%; padding-right: 1%; box-sizing: content-box; }
+.credit-slide .credit-left ul { margin: 0; font-size: 96%; }
+.credit-slide .credit-left li { margin-bottom: 0.75em; }
+.credit-slide .credit-left .review-part { margin-top: 1.1em; }
 /* the first state shows the two checks only; the review bullets appear with the icons, in place */
-.credit-state1 .credit-left { visibility: hidden; }
+.credit-state1 .review-part { visibility: hidden; }
 .credit-slide .credit-build { float: left; width: 62%; }
 .credit-slide .credit-right { float: right; width: 35%; font-size: 72%; line-height: 1.35; }
 .credit-slide .credit-right p { margin: 0 0 0.3em; }
@@ -897,11 +898,11 @@ class: head-small, credit-slide, no-overview, credit-state1
 .credit-build.lay-tall table.ai-use th, .credit-build.lay-tall table.ai-use td { padding-left: 10px; padding-right: 10px; }
 .credit-build.lay-tall td.opa-lab { width: auto; padding-right: 6px; }
 .credit-build.lay-tall td.opa-ico { width: auto; padding-right: 14px; }
-.credit-build.lay-tall table.ai-use { font-size: 77%; }
-.credit-build.lay-tall table.ai-use th, .credit-build.lay-tall table.ai-use td { padding: 2px 8px; }
-.credit-build.lay-tall td.opa-ico img { height: 76px; }
-.credit-build.lay-tall .sq { width: 16px; height: 16px; margin-right: 3px; }
-.credit-build.lay-tall .pip { width: 14px; height: 14px; }
+.credit-build.lay-tall table.ai-use { font-size: 84%; }
+.credit-build.lay-tall table.ai-use th, .credit-build.lay-tall table.ai-use td { padding: 3px 9px; }
+.credit-build.lay-tall td.opa-ico img { height: 90px; }
+.credit-build.lay-tall .sq { width: 17px; height: 17px; margin-right: 3px; }
+.credit-build.lay-tall .pip { width: 15px; height: 15px; }
 /* the legend row under the table */
 .credit-build .credit-legend { font-size: 70%; color: #444; margin-top: 8px; white-space: nowrap; }
 .credit-build .credit-legend &gt; span { margin-right: 18px; }
@@ -913,15 +914,14 @@ class: head-small, credit-slide, no-overview, credit-state1
 .credit-build .pip { width: 9px; height: 9px; }
 &lt;/style&gt;
 
+.credit-left[
 - **Results the papers print**, rerun in each OPA: all match ([BSZ 7 of 7](../../bsz-analysis/site/checks.html#results), [JR 4 of 4](../../rjkdc-analysis/site/checks.html#results)).
 - **Estimates the papers do not print**, sent to the authors to run in their own models: 10 settings to the BSZ team, 9 to the JR team.
 
-.credit-left[
-
-&amp;nbsp;
-
-- **The review**: every object of the three OPAs, who did what and how far the I have checked it.
+.review-part[
+- **The review**: every object of the three OPAs, who did what and how far I have checked it.
 - **CRediT** (the Contributor Roles Taxonomy, ANSI/NISO Z39.104-2022) names 14 roles a contributor can take in a work, from conceptualization and methodology to software, validation and writing. The table groups them into three columns, one square per role, coloured by who led it. **Human verification** is this OPA&#39;s own addition. [The question behind each square &amp;rarr;](#credit-questions)
+]
 ]
 
 ---
@@ -931,12 +931,14 @@ class: head-small, credit-slide, no-overview
 
 # Verification and disclosure of these three OPAs
 
+.credit-left[
 - **Results the papers print**, rerun in each OPA: all match ([BSZ 7 of 7](../../bsz-analysis/site/checks.html#results), [JR 4 of 4](../../rjkdc-analysis/site/checks.html#results)).
 - **Estimates the papers do not print**, sent to the authors to run in their own models: 10 settings to the BSZ team, 9 to the JR team.
 
-.credit-left[
-- **The review**: every object of the three OPAs, who did what and how far the author checked it.
+.review-part[
+- **The review**: every object of the three OPAs, who did what and how far I have checked it.
 - **CRediT** (the Contributor Roles Taxonomy, ANSI/NISO Z39.104-2022) names 14 roles a contributor can take in a work, from conceptualization and methodology to software, validation and writing. The table groups them into three columns, one square per role, coloured by who led it. **Human verification** is this OPA&#39;s own addition. [The question behind each square &amp;rarr;](#credit-questions)
+]
 ]
 
 &lt;div class=&quot;ai-use-slide credit-build step1 lay-tall&quot;&gt;&lt;table class=&quot;ai-use&quot;&gt;&lt;tr&gt;&lt;th&gt;&lt;/th&gt;&lt;th&gt;&lt;/th&gt;&lt;th&gt;&lt;span style=&quot;visibility:hidden&quot;&gt;Object&lt;/span&gt;&lt;/th&gt;&lt;th&gt;&lt;span style=&quot;visibility:hidden&quot;&gt;Ideas and&lt;br&gt;direction&lt;/span&gt;&lt;/th&gt;&lt;th&gt;&lt;span style=&quot;visibility:hidden&quot;&gt;Doing&lt;br&gt;the work&lt;/span&gt;&lt;/th&gt;&lt;th&gt;&lt;span style=&quot;visibility:hidden&quot;&gt;Writing&lt;/span&gt;&lt;/th&gt;&lt;th&gt;&lt;span style=&quot;visibility:hidden&quot;&gt;Human&lt;br&gt;verification&lt;/span&gt;&lt;/th&gt;&lt;/tr&gt;
@@ -966,12 +968,14 @@ class: head-small, credit-slide, no-overview
 
 # Verification and disclosure of these three OPAs
 
+.credit-left[
 - **Results the papers print**, rerun in each OPA: all match ([BSZ 7 of 7](../../bsz-analysis/site/checks.html#results), [JR 4 of 4](../../rjkdc-analysis/site/checks.html#results)).
 - **Estimates the papers do not print**, sent to the authors to run in their own models: 10 settings to the BSZ team, 9 to the JR team.
 
-.credit-left[
-- **The review**: every object of the three OPAs, who did what and how far the author checked it.
+.review-part[
+- **The review**: every object of the three OPAs, who did what and how far I have checked it.
 - **CRediT** (the Contributor Roles Taxonomy, ANSI/NISO Z39.104-2022) names 14 roles a contributor can take in a work, from conceptualization and methodology to software, validation and writing. The table groups them into three columns, one square per role, coloured by who led it. **Human verification** is this OPA&#39;s own addition. [The question behind each square &amp;rarr;](#credit-questions)
+]
 ]
 
 &lt;div class=&quot;ai-use-slide credit-build step2 lay-tall&quot;&gt;&lt;table class=&quot;ai-use&quot;&gt;&lt;tr&gt;&lt;th&gt;&lt;/th&gt;&lt;th&gt;&lt;/th&gt;&lt;th&gt;Object&lt;/th&gt;&lt;th&gt;Ideas and&lt;br&gt;direction&lt;/th&gt;&lt;th&gt;Doing&lt;br&gt;the work&lt;/th&gt;&lt;th&gt;Writing&lt;/th&gt;&lt;th&gt;Human&lt;br&gt;verification&lt;/th&gt;&lt;/tr&gt;
@@ -1001,12 +1005,14 @@ class: head-small, credit-slide, no-overview
 
 # Verification and disclosure of these three OPAs
 
+.credit-left[
 - **Results the papers print**, rerun in each OPA: all match ([BSZ 7 of 7](../../bsz-analysis/site/checks.html#results), [JR 4 of 4](../../rjkdc-analysis/site/checks.html#results)).
 - **Estimates the papers do not print**, sent to the authors to run in their own models: 10 settings to the BSZ team, 9 to the JR team.
 
-.credit-left[
-- **The review**: every object of the three OPAs, who did what and how far the author checked it.
+.review-part[
+- **The review**: every object of the three OPAs, who did what and how far I have checked it.
 - **CRediT** (the Contributor Roles Taxonomy, ANSI/NISO Z39.104-2022) names 14 roles a contributor can take in a work, from conceptualization and methodology to software, validation and writing. The table groups them into three columns, one square per role, coloured by who led it. **Human verification** is this OPA&#39;s own addition. [The question behind each square &amp;rarr;](#credit-questions)
+]
 ]
 
 &lt;div class=&quot;ai-use-slide credit-build step3 lay-tall&quot;&gt;&lt;table class=&quot;ai-use&quot;&gt;&lt;tr&gt;&lt;th&gt;&lt;/th&gt;&lt;th&gt;&lt;/th&gt;&lt;th&gt;Object&lt;/th&gt;&lt;th&gt;Ideas and&lt;br&gt;direction&lt;/th&gt;&lt;th&gt;Doing&lt;br&gt;the work&lt;/th&gt;&lt;th&gt;Writing&lt;/th&gt;&lt;th&gt;Human&lt;br&gt;verification&lt;/th&gt;&lt;/tr&gt;
@@ -1036,12 +1042,14 @@ class: head-small, credit-slide, no-overview
 
 # Verification and disclosure of these three OPAs
 
+.credit-left[
 - **Results the papers print**, rerun in each OPA: all match ([BSZ 7 of 7](../../bsz-analysis/site/checks.html#results), [JR 4 of 4](../../rjkdc-analysis/site/checks.html#results)).
 - **Estimates the papers do not print**, sent to the authors to run in their own models: 10 settings to the BSZ team, 9 to the JR team.
 
-.credit-left[
-- **The review**: every object of the three OPAs, who did what and how far the author checked it.
+.review-part[
+- **The review**: every object of the three OPAs, who did what and how far I have checked it.
 - **CRediT** (the Contributor Roles Taxonomy, ANSI/NISO Z39.104-2022) names 14 roles a contributor can take in a work, from conceptualization and methodology to software, validation and writing. The table groups them into three columns, one square per role, coloured by who led it. **Human verification** is this OPA&#39;s own addition. [The question behind each square &amp;rarr;](#credit-questions)
+]
 ]
 
 &lt;div class=&quot;ai-use-slide credit-build step4 lay-tall&quot;&gt;&lt;table class=&quot;ai-use&quot;&gt;&lt;tr&gt;&lt;th&gt;&lt;/th&gt;&lt;th&gt;&lt;/th&gt;&lt;th&gt;Object&lt;/th&gt;&lt;th&gt;Ideas and&lt;br&gt;direction&lt;/th&gt;&lt;th&gt;Doing&lt;br&gt;the work&lt;/th&gt;&lt;th&gt;Writing&lt;/th&gt;&lt;th&gt;Human&lt;br&gt;verification&lt;/th&gt;&lt;/tr&gt;
@@ -1154,9 +1162,10 @@ class: center, middle
 
 # Thank you
 
-fhoces@gmail.com &amp;middot; [fhoces.github.io](https://fhoces.github.io)
+fhoces@gmail.com 
 
-.small[Explore: tinyurl.com/prop40-explorer &amp;middot; Project: tinyurl.com/prop40-opa &amp;middot; Survey: tinyurl.com/prop40-survey]
+[fhoces.github.io](https://fhoces.github.io)
+
 
 ---
 name: backup
