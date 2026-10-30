@@ -790,7 +790,7 @@ class: head-small, no-overview
 .gap-right { float: right; width: 36%; margin-top: -3.2em; }   /* up into the title band, which is short */
 .gap-right img { width: 100%; border: 1px solid #ccc; box-shadow: 0 1px 4px rgba(0,0,0,.15); }
 .gap-right .cap { font-size: 60%; color: #5b6873; margin-top: 3px; line-height: 1.3; }
-/* the lower half: the key assumptions of each study, from the same export as the backup slides */
+/* the lower half: the key assumptions of each study, from the same export as the additional slides */
 /* The key-assumptions table is revealed one row per click. remark's "--" fragments add content
    cumulatively, so each row is its own one-row table with the same fixed column widths, stacked
    with no gap: it reads as one table and nothing above it moves. */
@@ -827,10 +827,10 @@ table.gap-dt.grp-start td { padding-top: 6px; }
 
 ```{r gap-assumptions, results="asis"}
 # The main inputs of the path (D and q, and the loss box: H, f, C, r), in path order, with each
-# analysis's value: the helpers the backup's (iii) and (iv) slides use, with two long value texts
+# analysis's value: the helpers the additional (iii) and (iv) slides use, with two long value texts
 # shortened to one line.
 # Each analysis's value as a bare number, then a dash and the paper's own best defense of it in a
-# line, with a link to the backup slide (defense-bsz, defense-jr) that quotes the passages with
+# line, with a link to the additional slide (defense-bsz, defense-jr) that quotes the passages with
 # their pages. D counts the billionaires removed by name; f is the share lost.
 short_vals <- list(confirmed_departures = c(bsz = "0", rjkdc = "7"),
                    income_loss_share = c(bsz = pct(vs[["f"]], 0), rjkdc = pct(vr[["f"]], 0)))
@@ -865,7 +865,7 @@ for (i in rows_shown) {
   val <- function(side) if (dp$step_id[i] %in% names(short_vals)) short_vals[[dp$step_id[i]]][[side]] else paste(vapply(tx, `[[`, "", side), collapse = "; ")
   grp <- paste(c(if (i %in% et$main) "grp-end", if (i == loss_rows[1]) "grp-start"), collapse = " ")
   stopifnot(dp$step_id[i] %in% names(defense))
-  # the number itself links to the paper's backup slide (defense-bsz or defense-jr)
+  # the number itself links to the paper's additional slide (defense-bsz or defense-jr)
   linked <- function(side) sprintf('<a class="cell-num" href="#defense-%s">%s</a>', if (side == "bsz") "bsz" else "jr", val(side))
   roman <- if (i %in% et$main) c("i", "ii")[match(i, et$main)] else if (i == loss_rows[1]) "iii" else ""
   # one click for the header (above), one for (i), one for (ii), one for the whole loss box
@@ -953,7 +953,7 @@ fhoces@gmail.com
 name: backup
 class: center, middle
 
-# Backup
+# Additional slides
 
 
 ---
