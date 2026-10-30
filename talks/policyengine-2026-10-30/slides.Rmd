@@ -577,7 +577,7 @@ layer_name <- function(l) if (l == "this page") "the overview" else l
 # layout "wide" fills the slide's width and leaves room at the bottom; "tall" fills the height and
 # leaves room on the right (author request 2026-10-30, two designs to choose from).
 CREDIT_LAYOUT <- "tall"
-OPA_LABELS <- c("The BSZ analysis" = "BSZ", "The JR analysis" = "JR", "The comparison" = "compar&shy;ison")
+OPA_LABELS <- c("The BSZ analysis" = "BSZ", "The JR analysis" = "JR", "The comparison" = "Comp-<br>arison")
 credit_build <- function(step, layout = CREDIT_LAYOUT) {
   vis <- function(show, html) if (show) html else sprintf('<span style="visibility:hidden">%s</span>', html)
   hdr <- c("Object", "Ideas and<br>direction", "Doing<br>the work", "Writing", "Human<br>verification")
