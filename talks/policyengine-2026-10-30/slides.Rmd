@@ -533,7 +533,7 @@ class: mid-bullets, ai7-tight
 name: verification
 class: head-small, credit-slide, no-overview
 
-# Verification and disclosure ofthese three OPAs
+# Verification and disclosure of these three OPAs
 
 ```{r credit-build-fns, include=FALSE}
 stopifnot(bsz_checks$match == bsz_checks$n, jr_checks$match == jr_checks$n)
@@ -621,7 +621,9 @@ credit_example <- function() {
    bottom of the slide kept clear for one closing sentence. */
 .credit-slide h1 { margin-bottom: 0.25em; }
 .credit-slide > ul { margin: 0 0 0.1em; font-size: 92%; }
-.credit-slide .review-lead { margin: 0.1em 0 0; font-weight: 600; font-size: 92%; }
+.credit-slide .credit-left { float: left; width: 36%; }
+.credit-slide .credit-left ul { margin: 0; font-size: 92%; }
+.credit-slide .credit-left li { margin-bottom: 0.5em; }
 .credit-slide .credit-build { float: left; width: 62%; }
 .credit-slide .credit-right { float: right; width: 35%; font-size: 72%; line-height: 1.35; }
 .credit-slide .credit-right p { margin: 0 0 0.3em; }
@@ -642,19 +644,19 @@ credit_example <- function() {
 .credit-build.lay-wide .pip { width: 11px; height: 11px; }
 /* design B, "tall": the table runs to the very bottom of the slide (the Overview link is hidden
    on these slides, see mathjax-config.html), the right stays clear */
-.credit-slide .credit-build.lay-tall { float: none; width: auto; display: inline-block; }
+.credit-slide .credit-build.lay-tall { float: right; width: auto; margin-top: 0.15em; }
 /* the table takes only the width its columns need, so no column floats apart from its header */
 .credit-build.lay-tall table.ai-use { width: auto; }
 .credit-build.lay-tall table.ai-use th, .credit-build.lay-tall table.ai-use td { padding-left: 10px; padding-right: 10px; }
 .credit-build.lay-tall td.opa-lab { width: auto; padding-right: 6px; }
 .credit-build.lay-tall td.opa-ico { width: auto; padding-right: 14px; }
-.credit-build.lay-tall table.ai-use { font-size: 76%; }
-.credit-build.lay-tall table.ai-use th, .credit-build.lay-tall table.ai-use td { padding: 2px 8px; }
-.credit-build.lay-tall td.opa-ico img { height: 80px; }
-.credit-build.lay-tall .sq { width: 14px; height: 14px; margin-right: 3px; }
-.credit-build.lay-tall .pip { width: 12px; height: 12px; }
+.credit-build.lay-tall table.ai-use { font-size: 84%; }
+.credit-build.lay-tall table.ai-use th, .credit-build.lay-tall table.ai-use td { padding: 3px 8px; }
+.credit-build.lay-tall td.opa-ico img { height: 92px; }
+.credit-build.lay-tall .sq { width: 16px; height: 16px; margin-right: 3px; }
+.credit-build.lay-tall .pip { width: 14px; height: 14px; }
 /* the legend row under the table */
-.credit-build .credit-legend { font-size: 62%; color: #444; margin-top: 7px; white-space: nowrap; }
+.credit-build .credit-legend { font-size: 70%; color: #444; margin-top: 8px; white-space: nowrap; }
 .credit-build .credit-legend > span { margin-right: 18px; }
 .credit-build .credit-legend .sq { vertical-align: -2px; margin-right: 4px; }
 .credit-build .credit-legend .meter { margin-right: 4px; }
@@ -665,19 +667,27 @@ credit_example <- function() {
 ```
 
 - **Results the papers print**, rerun in each OPA: all match ([BSZ `r bsz_checks$match` of `r bsz_checks$n`](../../bsz-analysis/site/checks.html#results), [JR `r jr_checks$match` of `r jr_checks$n`](../../rjkdc-analysis/site/checks.html#results)).
+
+.credit-left[
 - **Estimates the papers do not print**, sent to the authors to run in their own models: `r bsz_settings` settings to the BSZ team, `r jr_settings` to the JR team.
+- **The review**: every object of the three OPAs, who did what and how far the author checked it.
+- &nbsp; <!-- placeholder: the author's bullet, to fill in -->
+]
 
 ---
 name: verification-2
 count: false
 class: head-small, credit-slide, no-overview
 
-# The verification and review of these three OPAs
+# Verification and disclosure of these three OPAs
 
 - **Results the papers print**, rerun in each OPA: all match ([BSZ `r bsz_checks$match` of `r bsz_checks$n`](../../bsz-analysis/site/checks.html#results), [JR `r jr_checks$match` of `r jr_checks$n`](../../rjkdc-analysis/site/checks.html#results)).
-- **Estimates the papers do not print**, sent to the authors to run in their own models: `r bsz_settings` settings to the BSZ team, `r jr_settings` to the JR team.
 
-.review-lead[The review: every object of the three OPAs, who did what and how far the author checked it.]
+.credit-left[
+- **Estimates the papers do not print**, sent to the authors to run in their own models: `r bsz_settings` settings to the BSZ team, `r jr_settings` to the JR team.
+- **The review**: every object of the three OPAs, who did what and how far the author checked it.
+- &nbsp; <!-- placeholder: the author's bullet, to fill in -->
+]
 
 ```{r credit-build-1, results="asis"}
 credit_build(1)
@@ -688,12 +698,15 @@ name: verification-3
 count: false
 class: head-small, credit-slide, no-overview
 
-# The verification and review of these three OPAs
+# Verification and disclosure of these three OPAs
 
 - **Results the papers print**, rerun in each OPA: all match ([BSZ `r bsz_checks$match` of `r bsz_checks$n`](../../bsz-analysis/site/checks.html#results), [JR `r jr_checks$match` of `r jr_checks$n`](../../rjkdc-analysis/site/checks.html#results)).
-- **Estimates the papers do not print**, sent to the authors to run in their own models: `r bsz_settings` settings to the BSZ team, `r jr_settings` to the JR team.
 
-.review-lead[The review: every object of the three OPAs, who did what and how far the author checked it.]
+.credit-left[
+- **Estimates the papers do not print**, sent to the authors to run in their own models: `r bsz_settings` settings to the BSZ team, `r jr_settings` to the JR team.
+- **The review**: every object of the three OPAs, who did what and how far the author checked it.
+- &nbsp; <!-- placeholder: the author's bullet, to fill in -->
+]
 
 ```{r credit-build-2, results="asis"}
 credit_build(2)
@@ -704,12 +717,15 @@ name: verification-4
 count: false
 class: head-small, credit-slide, no-overview
 
-# The verification and review of these three OPAs
+# Verification and disclosure of these three OPAs
 
 - **Results the papers print**, rerun in each OPA: all match ([BSZ `r bsz_checks$match` of `r bsz_checks$n`](../../bsz-analysis/site/checks.html#results), [JR `r jr_checks$match` of `r jr_checks$n`](../../rjkdc-analysis/site/checks.html#results)).
-- **Estimates the papers do not print**, sent to the authors to run in their own models: `r bsz_settings` settings to the BSZ team, `r jr_settings` to the JR team.
 
-.review-lead[The review: every object of the three OPAs, who did what and how far the author checked it.]
+.credit-left[
+- **Estimates the papers do not print**, sent to the authors to run in their own models: `r bsz_settings` settings to the BSZ team, `r jr_settings` to the JR team.
+- **The review**: every object of the three OPAs, who did what and how far the author checked it.
+- &nbsp; <!-- placeholder: the author's bullet, to fill in -->
+]
 
 ```{r credit-build-3, results="asis"}
 credit_build(3)
@@ -720,12 +736,15 @@ name: disclosure
 count: false
 class: head-small, credit-slide, no-overview
 
-# The verification and review of these three OPAs
+# Verification and disclosure of these three OPAs
 
 - **Results the papers print**, rerun in each OPA: all match ([BSZ `r bsz_checks$match` of `r bsz_checks$n`](../../bsz-analysis/site/checks.html#results), [JR `r jr_checks$match` of `r jr_checks$n`](../../rjkdc-analysis/site/checks.html#results)).
-- **Estimates the papers do not print**, sent to the authors to run in their own models: `r bsz_settings` settings to the BSZ team, `r jr_settings` to the JR team.
 
-.review-lead[The review: every object of the three OPAs, who did what and how far the author checked it.]
+.credit-left[
+- **Estimates the papers do not print**, sent to the authors to run in their own models: `r bsz_settings` settings to the BSZ team, `r jr_settings` to the JR team.
+- **The review**: every object of the three OPAs, who did what and how far the author checked it.
+- &nbsp; <!-- placeholder: the author's bullet, to fill in -->
+]
 
 ```{r credit-build-4, results="asis"}
 credit_build(4)
