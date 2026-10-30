@@ -202,22 +202,39 @@ $1 billion or more, payable over five years, with the revenue mainly for health 
 
 ---
 name: why-opa-3
+class: head-small, opa3-tight
 
 # What is the problem with multiple analyses?
+
+```{css, echo=FALSE}
+/* why-opa-3: pull the text and figures up so the arrow line clears the footnote,
+   without shrinking the figures themselves (author rule 2026-10-30).
+   A custom class, not the auto id, because remark.js only tags the FIRST
+   incremental build fragment with the name-derived id; the class from
+   "class:" propagates to every fragment of an incremental slide. */
+.opa3-tight { padding-top: 0.3em; }
+.opa3-tight h1 { margin: 0 0 0.1em; }
+.opa3-tight .pull-left, .opa3-tight .pull-right { margin-top: 0; font-size: 90%; }
+.opa3-tight .pull-left p, .opa3-tight .pull-right p { margin-bottom: 0.15em; }
+.opa3-tight .center { margin-top: 0; }
+.opa3-tight .center img { margin-bottom: -0.8em; }
+```
 
 .pull-left[
 One analysis gives every decision maker the same starting facts. Their choices then show what each of them truly values.
 
-.center[<img src="../../assets/figures/evidence-to-policy-from-analysis.svg" style="width:60%;" alt="One policy analysis leads one decision maker to support a policy and another to oppose it.">]
+.center[<img src="../../assets/figures/evidence-to-policy-from-analysis.svg" style="width:90%;" alt="One policy analysis leads one decision maker to support a policy and another to oppose it.">]
 ]
 
 .pull-right[
 Each decision maker picks the analysis that fits. We see which facts they chose, but we learn nothing about what they value.
 
-.center[<img src="../../assets/figures/evidence-to-policy-competing-from-analysis.svg" style="width:60%;" alt="Two competing policy analyses of the same policy: one shows only gains and leads Decision Maker 1 to support it; the other shows only losses and leads Decision Maker 2 to oppose it.">]
+.center[<img src="../../assets/figures/evidence-to-policy-competing-from-analysis.svg" style="width:90%;" alt="Two competing policy analyses of the same policy: one shows only gains and leads Decision Maker 1 to support it; the other shows only losses and leads Decision Maker 2 to oppose it.">]
 ]
 
-.center[<br>**Multiple policy analyses of the same quantity &rarr; alternative facts**<sup>1</sup>]
+--
+
+&rarr; Multiple policy analyses of the same quantity contribute to alternative facts<sup>1</sup>
 
 .footnote[<sup>1</sup> What Manski calls *dueling certitudes*: rival analyses that each report one number with confidence and reach opposite conclusions (Charles F. Manski, ["Policy Analysis with Incredible Certitude"](https://doi.org/10.1111/j.1468-0297.2011.02457.x), *The Economic Journal*, 2011).]
 
@@ -458,17 +475,45 @@ table.dt td.l, table.dt th.l { text-align: left; }
 
 ---
 name: ai-challenges
-class: mid-bullets
+class: mid-bullets, ai7-tight
 
 # The challenges of AI for OPA
 
-- Agentic coding tools can substantially reduce the cost of generating fully reproducible and transparent policy analysis. But can we trust the final output?
-- Two challenges: **reliability** (did it make up a result?) and **intelligibility** (are the exposition, methods and code easy to digest for different audiences?).
-- Reliability verification is key. When an OPA is built by the same authors or organization, verification is much easier. When it is built by outside analysts (as in this case), different strategies can be taken:
-  - A thorough review of each layer, to confirm that the output is accurate.
-  - Running the paper's robustness cases through the OPA, to see if it generates the same results.
-  - Generating a set of tests where the OPA estimates under conditions that are not in the original paper, and asking the authors to run those scenarios in their model to verify that they obtain the same results.
-- Here we adopt a combination of the three strategies above, and disclose for each component of the OPA what has been AI generated, what has been reviewed and what has been verified. Each analysis's pages carry a badge that says how far they have been reviewed.
+```{css, echo=FALSE}
+/* ai-challenges: close the gap between the title and the column headers, and
+   fit the closing bullets at normal size instead of shrinking them (author
+   rules 2026-10-30). A custom class, since it must survive incremental
+   builds if any are added later (see why-opa-3's .opa3-tight for why). */
+.ai7-tight h1 { margin-bottom: 0.1em; }
+.ai7-tight .pull-left, .ai7-tight .pull-right { margin-top: 0; }
+.ai7-tight .pull-left h3, .ai7-tight .pull-right h3 { margin: 0 0 0.15em; }
+.ai7-tight .pull-left p, .ai7-tight .pull-right p { margin: 0 0 0.3em; }
+.ai7-tight .pull-left ol, .ai7-tight .pull-right ul { margin-top: 0.2em; }
+.ai7-tight .pull-left li, .ai7-tight .pull-right li { margin-bottom: 0.1em; }
+```
+
+.pull-left[
+### Verification
+
+**Is the reproduction correct?**
+
+  1. Running the paper's robustness cases through the OPA, to see if it generates the same results.
+  2. Generating a set of tests where the OPA estimates conditions not in the paper, and asking the authors to run those scenarios in their own model to verify they obtain the same results.
+  3. A thorough review of each layer, to confirm that the output is accurate.
+]
+
+.pull-right[
+### Intelligibility
+**Is the exposition, methods and code easy to digest for different audiences?**
+- Strong parallels with how the field of mathematics is evolving alongside AI.
+- AI-generated proofs can be verified using software (Lean). OPAs can be verified using strategies 1 to 3 above.
+- Both fields require much human effort in "digesting"<sup>1</sup> the explanations.
+]
+
+- Internal OPAs are much easier to verify than external OPAs.
+- Here we adopt a combination of 1, 2 and 3, and disclose for each component what has been AI generated, reviewed and verified. Each analysis's pages carry a badge that says how far they have been reviewed.
+
+.footnote[<sup>1</sup> Terence Tao, ["Mathematics in the age of AI"](https://teorth.github.io/tao-web/slides/age-of-ai-icm-2026.pdf), public lecture, International Congress of Mathematicians, 2026: on "proof indigestion," the widening gap between generating, verifying and digesting proofs.]
 
 
 ---
@@ -516,35 +561,6 @@ An example from the [BSZ analysis OPA](../../bsz-analysis/site/). The columns gr
 
 <a class="corner-btn" href="#credit-jr">The other two OPAs&rsquo; tables &rarr;</a>
 
-
----
-name: policyengine
-class: mid-bullets
-
-# A third, independent check: PolicyEngine's calculator
-
-- PolicyEngine built its own Prop 40 calculator: one person-level model of California's Forbes billionaires, with each paper's assumptions as a setting a reader can flip.
-- It was built independently (its repository predates this project) and neither team knew of the other's work until after this project's launch.
-- Its numbers land within a few billion of this comparison's, despite a different construction: settings inside one shared model there, reproductions of each paper's own pipeline here.
-  - PolicyEngine's Berkeley preset: about $106.2B. This OPA's BSZ-based estimate: `r usd(eb$bsz_model)`.
-  - PolicyEngine's Hoover preset: about -$37.2B. This OPA's JR-based estimate: `r usd(rj_main, 2)`.
-- Two independent builds of the same idea, in the same year, converging within a few billion: that convergence is itself evidence that the tools now make this kind of transparency cheap enough that people build it unasked.
-
----
-name: closing
-class: head-beside, summary
-
-# Closing thought
-
-.beside.mid[
-- Claude Code (a week) and PolicyEngine's calculator (by hand) reached the same neighborhood by different routes, independently, in the same year.
-- That convergence is the real headline: transparency in policy analysis is now cheap enough to build unasked.
-- What is left is not compute. It is **verification** and **intelligibility**.
-]
-
-.fig-pinned.fig-split.fig-tall[<img src="../../assets/figures/evidence-to-policy-competing-from-analysis-opa-third.svg" alt="The two analyses, each an Open Policy Analysis, feed a third Open Policy Analysis, the comparison, which informs both decision makers.">]
-
-.footnote[Explore: tinyurl.com/prop40-explorer &middot; Project: tinyurl.com/prop40-opa &middot; Survey: tinyurl.com/prop40-survey]
 
 ---
 name: backup
