@@ -518,34 +518,16 @@ class: mid-bullets, ai7-tight
 
 ---
 name: verification
+class: head-small, credit-slide
 
-# Verification: what was checked, and how
+# The verification and review of these three OPAs
 
-```{r verification-checks}
+```{r credit-build-fns, include=FALSE}
 stopifnot(bsz_checks$match == bsz_checks$n, jr_checks$match == jr_checks$n)
-```
 
-<div class="opa-trio">
-<figure><img src="../../assets/opa/opa-all.png" alt="The OPA icon: four stacked layers."><figcaption>The BSZ analysis</figcaption></figure>
-<figure><img src="../../assets/opa/opa-all.png" alt="The OPA icon: four stacked layers."><figcaption>The JR analysis</figcaption></figure>
-<figure><img src="../../assets/opa/opa-all.png" alt="The OPA icon: four stacked layers."><figcaption>The comparison</figcaption></figure>
-</div>
-
-- **Three OPAs, five objects each**: an explorer, a report, slides, a repository and an overview page. With 15 objects in all, human verification was limited.
-- **Two tests** check the output:
-  - *Results the papers print*, rerun in each OPA: all match ([BSZ `r bsz_checks$match` of `r bsz_checks$n`](../../bsz-analysis/site/checks.html#results), [JR `r jr_checks$match` of `r jr_checks$n`](../../rjkdc-analysis/site/checks.html#results)).
-  - *Estimates the papers do not print*, sent to the authors to run in their own models: `r bsz_settings` settings to the BSZ team, `r jr_settings` to the JR team.
-- **Next, an approach to disclose and verify**: an attribution table for each OPA shows what was human generated, what was human reviewed and what was neither. Readers can weigh each piece accordingly.
-
----
-name: disclosure
-
-# Disclosure and verification: the BSZ analysis
-
-```{r ai-use-table, results="asis"}
-# An overview page's credit table and its key, read from the built page so the slide always
-# matches it. Used here for the BSZ analysis (bsz-analysis/site/index.html) and in the appendix
-# for the other two OPAs.
+# An overview page's credit table and its key, read from the built page so the slides always
+# match it. credit_table() draws one page's table whole (the appendix uses it for the JR analysis
+# and the comparison); credit_build() draws all three, row by row, for the build on this slide.
 credit_table <- function(page) {
   ov <- paste(readLines(file.path(root, page), warn = FALSE), collapse = "\n")
   tab <- regmatches(ov, regexpr('(?s)<table class="ai-use">.*?</table>', ov, perl = TRUE))
@@ -554,14 +536,156 @@ credit_table <- function(page) {
   tab <- sub('<span class="table-subhead">this page</span>', '<span class="table-subhead">the overview</span>', tab, fixed = TRUE)
   cat('<div class="ai-use-slide">', gsub("\n\\s*", " ", tab), gsub("\n\\s*", " ", key), "</div>")
 }
-credit_table("bsz-analysis/site/index.html")
+
+credit_rows <- function(page, opa) {
+  ov <- paste(readLines(file.path(root, page), warn = FALSE), collapse = "\n")
+  tab <- regmatches(ov, regexpr('(?s)<table class="ai-use">.*?</table>', ov, perl = TRUE))
+  rows <- regmatches(tab, gregexpr("(?s)<tr>.*?</tr>", tab, perl = TRUE))[[1]][-1]   # drop the header row
+  stopifnot(length(rows) == 5)
+  lapply(rows, function(r) {
+    cells <- regmatches(r, gregexpr("(?s)<td>.*?</td>", r, perl = TRUE))[[1]]
+    stopifnot(length(cells) == 5)
+    cells <- gsub("</?td>", "", cells)
+    list(opa = opa, object = sub("<br>.*", "", cells[1]),
+         layer = sub('.*<span class="table-subhead">(.*?)</span>.*', "\\1", cells[1]),
+         cells = cells[2:5],
+         titles = vapply(cells[2:5], function(cc) sub('.*title="([^"]*)".*', "\\1", cc), ""))
+  })
+}
+CREDIT <- c(credit_rows("bsz-analysis/site/index.html", "The BSZ analysis"),
+            credit_rows("rjkdc-analysis/site/index.html", "The JR analysis"),
+            credit_rows("index.html", "The comparison"))
+credit_key <- local({
+  ov <- paste(readLines(file.path(root, "bsz-analysis/site/index.html"), warn = FALSE), collapse = "\n")
+  gsub("\n\\s*", " ", regmatches(ov, regexpr('(?s)<div class="ai-key">.*?</div>\\s*</div>', ov, perl = TRUE)))
+})
+# The layer each object belongs to, in the colours slide 4 gives the three layers; the overview
+# page is not a layer, so it is grey.
+LAYER_COL <- c("Open Output" = "#d4880f", "Open Analysis" = "#1484c5", "Open Materials" = "#0b4a7c", "this page" = "#9a9a9a")
+layer_name <- function(l) if (l == "this page") "the overview" else l
+
+# step 1: the three icons only; 2: the rows, empty; 3: the first row filled; 4: every row filled.
+# Every state draws every cell (hidden ones invisible, not absent) so nothing moves between clicks.
+credit_build <- function(step) {
+  vis <- function(show, html) if (show) html else sprintf('<span style="visibility:hidden">%s</span>', html)
+  hdr <- c("Object", "Ideas and<br>direction", "Doing<br>the work", "Writing", "Human<br>verification")
+  out <- sprintf('<div class="ai-use-slide credit-build step%d"><table class="ai-use"><tr><th></th>%s</tr>', step,
+                 paste(sprintf("<th>%s</th>", vapply(hdr, function(h) vis(step >= 2, h), "")), collapse = ""))
+  for (i in seq_along(CREDIT)) {
+    r <- CREDIT[[i]]
+    icon <- if ((i - 1) %% 5 == 0) sprintf('<td class="opa-ico" rowspan="5"><img src="../../assets/opa/opa-all.png" alt="The OPA icon: four stacked layers."><span>%s</span></td>', r$opa) else ""
+    chip <- sprintf('<i class="layer-chip" style="background:%s" title="%s"></i>', LAYER_COL[[r$layer]], layer_name(r$layer))
+    filled <- step >= 4 || (step >= 3 && i == 1)
+    out <- c(out, sprintf("<tr>%s<td>%s</td>%s</tr>", icon, vis(step >= 2, paste0(chip, r$object)),
+                          paste(sprintf("<td>%s</td>", vapply(r$cells, function(cc) vis(filled, cc), "")), collapse = "")))
+  }
+  cat(c(out, "</table></div>"), sep = "\n")   # one row per line: a single very long line trips knitr's regexes
+}
+
+# The worked example beside the table: the first row, read out from its own tooltips.
+credit_example <- function() {
+  r <- CREDIT[[1]]
+  groups <- vapply(r$titles[1:3], function(t) sub("; not applicable:.*$", "", t), "")
+  cat('<div class="credit-right ai-use-slide"><p><b>Reading the first row</b>, the explorer of the BSZ analysis. The chip is the layer the object belongs to, in the icon&rsquo;s colours (grey: the overview page). Then one square per CRediT role, coloured by who led it:</p><ul>',
+      paste(sprintf("<li>%s.</li>", groups), collapse = ""),
+      sprintf('<li><b>Human verification</b>, this OPA&rsquo;s addition: how closely the author has checked the object. Here: %s.</li>', tolower(r$titles[4])),
+      "</ul>", credit_key, "</div>", sep = "\n")
+}
 ```
 
-An example from the [BSZ analysis OPA](../../bsz-analysis/site/). The columns group the 14 roles of the [CRediT contributor taxonomy](https://credit.niso.org/) (ANSI/NISO Z39.104-2022) into three: ideas and direction, doing the work, and writing. The last column, **human verification**, is this OPA's addition: how closely the author has checked each part. When an object is lightly reviewed or not reviewed, its title carries a badge: <span class="ai-badge ai-badge-yellow inline">AI generated, partially reviewed</span> or <span class="ai-badge ai-badge-red inline">AI generated, not reviewed yet</span>.
+```{css, echo=FALSE}
+/* verification, the build: the table on the left, the worked example on the right, and the
+   bottom of the slide kept clear for one closing sentence. */
+.credit-slide h1 { margin-bottom: 0.25em; }
+.credit-slide > ul { margin: 0 0 0.2em; font-size: 92%; }
+.credit-slide .review-lead { margin: 0.2em 0 0.1em; font-weight: 600; font-size: 92%; }
+.credit-slide .credit-build { float: left; width: 62%; }
+.credit-slide .credit-right { float: right; width: 35%; font-size: 72%; line-height: 1.35; }
+.credit-slide .credit-right p { margin: 0 0 0.3em; }
+.credit-slide .credit-right ul { margin: 0 0 0.4em 1.1em; padding: 0; }
+.credit-slide .credit-right li { margin-bottom: 0.15em; }
+.credit-slide .credit-right .ai-key { font-size: 88%; line-height: 1.5; }
+.credit-build table.ai-use { font-size: 58%; }
+.credit-build table.ai-use th, .credit-build table.ai-use td { padding: 1px 6px; line-height: 1.2; white-space: nowrap; }
+.credit-build td.opa-ico { text-align: center; vertical-align: middle; width: 76px; padding: 2px; }
+.credit-build td.opa-ico img { height: 48px; width: auto; display: block; margin: 0 auto 1px; }
+.credit-build td.opa-ico span { font-size: 82%; color: #444; }
+.credit-build .layer-chip { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+.credit-build.step1 table.ai-use th, .credit-build.step1 table.ai-use td { border-color: transparent; }
+.credit-build .sq { width: 11px; height: 11px; margin-right: 2px; }
+.credit-build .pip { width: 9px; height: 9px; }
+```
 
-<a class="corner-btn" href="#credit-jr">The other two OPAs&rsquo; tables &rarr;</a>
+- **Results the papers print**, rerun in each OPA: all match ([BSZ `r bsz_checks$match` of `r bsz_checks$n`](../../bsz-analysis/site/checks.html#results), [JR `r jr_checks$match` of `r jr_checks$n`](../../rjkdc-analysis/site/checks.html#results)).
+- **Estimates the papers do not print**, sent to the authors to run in their own models: `r bsz_settings` settings to the BSZ team, `r jr_settings` to the JR team.
 
+---
+name: verification-2
+count: false
+class: head-small, credit-slide
 
+# The verification and review of these three OPAs
+
+- **Results the papers print**, rerun in each OPA: all match ([BSZ `r bsz_checks$match` of `r bsz_checks$n`](../../bsz-analysis/site/checks.html#results), [JR `r jr_checks$match` of `r jr_checks$n`](../../rjkdc-analysis/site/checks.html#results)).
+- **Estimates the papers do not print**, sent to the authors to run in their own models: `r bsz_settings` settings to the BSZ team, `r jr_settings` to the JR team.
+
+.review-lead[The review: every object of the three OPAs, who did what and how far the author checked it.]
+
+```{r credit-build-1, results="asis"}
+credit_build(1)
+```
+
+---
+name: verification-3
+count: false
+class: head-small, credit-slide
+
+# The verification and review of these three OPAs
+
+- **Results the papers print**, rerun in each OPA: all match ([BSZ `r bsz_checks$match` of `r bsz_checks$n`](../../bsz-analysis/site/checks.html#results), [JR `r jr_checks$match` of `r jr_checks$n`](../../rjkdc-analysis/site/checks.html#results)).
+- **Estimates the papers do not print**, sent to the authors to run in their own models: `r bsz_settings` settings to the BSZ team, `r jr_settings` to the JR team.
+
+.review-lead[The review: every object of the three OPAs, who did what and how far the author checked it.]
+
+```{r credit-build-2, results="asis"}
+credit_build(2)
+```
+
+---
+name: verification-4
+count: false
+class: head-small, credit-slide
+
+# The verification and review of these three OPAs
+
+- **Results the papers print**, rerun in each OPA: all match ([BSZ `r bsz_checks$match` of `r bsz_checks$n`](../../bsz-analysis/site/checks.html#results), [JR `r jr_checks$match` of `r jr_checks$n`](../../rjkdc-analysis/site/checks.html#results)).
+- **Estimates the papers do not print**, sent to the authors to run in their own models: `r bsz_settings` settings to the BSZ team, `r jr_settings` to the JR team.
+
+.review-lead[The review: every object of the three OPAs, who did what and how far the author checked it.]
+
+```{r credit-build-3, results="asis"}
+credit_build(3)
+credit_example()
+```
+
+---
+name: disclosure
+count: false
+class: head-small, credit-slide
+
+# The verification and review of these three OPAs
+
+- **Results the papers print**, rerun in each OPA: all match ([BSZ `r bsz_checks$match` of `r bsz_checks$n`](../../bsz-analysis/site/checks.html#results), [JR `r jr_checks$match` of `r jr_checks$n`](../../rjkdc-analysis/site/checks.html#results)).
+- **Estimates the papers do not print**, sent to the authors to run in their own models: `r bsz_settings` settings to the BSZ team, `r jr_settings` to the JR team.
+
+.review-lead[The review: every object of the three OPAs, who did what and how far the author checked it.]
+
+```{r credit-build-4, results="asis"}
+credit_build(4)
+credit_example()
+```
+
+<!-- Space below the table is kept for one closing sentence (text to come from the author). -->
 ---
 name: backup
 class: center, middle
