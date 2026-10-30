@@ -789,15 +789,16 @@ class: head-small
 # The main inputs of the path (D and q, and the loss box: H, f, C, r), in path order, with each
 # analysis's value: the helpers the backup's (iii) and (iv) slides use, with two long value texts
 # shortened to one line.
-short_vals <- list(confirmed_departures = c(bsz = "none counted by name", rjkdc = "7 publicly reported moves"),
-                   income_loss_share = c(bsz = sprintf("%s, the movers' share of the wealth", pct(vs[["f"]], 0)),
-                                         rjkdc = sprintf("a flat %s of all billionaires' income tax", pct(vr[["f"]], 0))))
+# Each analysis's value as a bare number, then a dash: the explanation after the dash is still to
+# be written (author, 2026-10-29). D counts the billionaires removed by name; f is the share lost.
+short_vals <- list(confirmed_departures = c(bsz = "0", rjkdc = "7"),
+                   income_loss_share = c(bsz = pct(vs[["f"]], 0), rjkdc = pct(vr[["f"]], 0)))
 cat('<div class="gap-table"><div class="gap-table-title">Key assumptions behind the differences: steelmanning each choice</div>')
-cat('<table class="dt"><tr><th>Input</th><th>BSZ analysis</th><th>JR analysis</th></tr>')
+cat('<table class="dt"><tr><th>Input</th><th class="l">BSZ analysis</th><th class="l">JR analysis</th></tr>')
 for (i in sort(c(et$main, et$loss))) {
   ids <- dial_ids(dp$step_id[i]); tx <- lapply(ids, function(x) step_texts(inp, x))
   val <- function(side) if (dp$step_id[i] %in% names(short_vals)) short_vals[[dp$step_id[i]]][[side]] else paste(vapply(tx, `[[`, "", side), collapse = "; ")
-  cat(sprintf('<tr><td><i>%s</i>, %s</td><td>%s</td><td>%s</td></tr>', dp$symbol[i], esc(dp$title[i]), val("bsz"), val("rjkdc")))
+  cat(sprintf('<tr><td><i>%s</i>, %s</td><td class="l">%s -</td><td class="l">%s -</td></tr>', dp$symbol[i], esc(dp$title[i]), val("bsz"), val("rjkdc")))
 }
 cat("</table></div>")
 ```
