@@ -574,14 +574,18 @@ layer_name <- function(l) if (l == "this page") "the overview" else l
 
 # step 1: the three icons only; 2: the rows, empty; 3: the first row filled; 4: every row filled.
 # Every state draws every cell (hidden ones invisible, not absent) so nothing moves between clicks.
-credit_build <- function(step) {
+# layout "wide" fills the slide's width and leaves room at the bottom; "tall" fills the height and
+# leaves room on the right (author request 2026-10-30, two designs to choose from).
+CREDIT_LAYOUT <- "wide"
+OPA_LABELS <- c("The BSZ analysis" = "BSZ", "The JR analysis" = "JR", "The comparison" = "compar&shy;ison")
+credit_build <- function(step, layout = CREDIT_LAYOUT) {
   vis <- function(show, html) if (show) html else sprintf('<span style="visibility:hidden">%s</span>', html)
   hdr <- c("Object", "Ideas and<br>direction", "Doing<br>the work", "Writing", "Human<br>verification")
-  out <- sprintf('<div class="ai-use-slide credit-build step%d"><table class="ai-use"><tr><th></th>%s</tr>', step,
+  out <- sprintf('<div class="ai-use-slide credit-build step%d lay-%s"><table class="ai-use"><tr><th></th><th></th>%s</tr>', step, layout,
                  paste(sprintf("<th>%s</th>", vapply(hdr, function(h) vis(step >= 2, h), "")), collapse = ""))
   for (i in seq_along(CREDIT)) {
     r <- CREDIT[[i]]
-    icon <- if ((i - 1) %% 5 == 0) sprintf('<td class="opa-ico" rowspan="5"><img src="../../assets/opa/opa-all.png" alt="The OPA icon: four stacked layers."><span>%s</span></td>', r$opa) else ""
+    icon <- if ((i - 1) %% 5 == 0) sprintf('<td class="opa-lab" rowspan="5">%s</td><td class="opa-ico" rowspan="5"><img src="../../assets/opa/opa-all.png" alt="The OPA icon: four stacked layers."></td>', OPA_LABELS[[r$opa]]) else ""
     chip <- sprintf('<i class="layer-chip" style="background:%s" title="%s"></i>', LAYER_COL[[r$layer]], layer_name(r$layer))
     filled <- step >= 4 || (step >= 3 && i == 1)
     out <- c(out, sprintf("<tr>%s<td>%s</td>%s</tr>", icon, vis(step >= 2, paste0(chip, r$object)),
@@ -615,9 +619,23 @@ credit_example <- function() {
 .credit-slide .credit-right .ai-key { font-size: 88%; line-height: 1.5; }
 .credit-build table.ai-use { font-size: 58%; }
 .credit-build table.ai-use th, .credit-build table.ai-use td { padding: 1px 6px; line-height: 1.2; white-space: nowrap; }
-.credit-build td.opa-ico { text-align: center; vertical-align: middle; width: 76px; padding: 2px; }
-.credit-build td.opa-ico img { height: 48px; width: auto; display: block; margin: 0 auto 1px; }
-.credit-build td.opa-ico span { font-size: 82%; color: #444; }
+.credit-build td.opa-lab { font-weight: 600; text-align: right; vertical-align: middle; width: 5em; padding-right: 2px; line-height: 1.1; }
+.credit-build td.opa-ico { text-align: center; vertical-align: middle; width: 80px; padding: 2px; }
+.credit-build td.opa-ico img { width: auto; display: block; margin: 0 auto; }
+/* design A, "wide": the table spans the slide, the bottom stays clear for one sentence */
+.credit-slide .credit-build.lay-wide { float: none; width: 100%; }
+.credit-build.lay-wide table.ai-use { font-size: 64%; }
+.credit-build.lay-wide table.ai-use th, .credit-build.lay-wide table.ai-use td { padding: 1px 8px; }
+.credit-build.lay-wide td.opa-ico img { height: 62px; }
+.credit-build.lay-wide .sq { width: 13px; height: 13px; margin-right: 3px; }
+.credit-build.lay-wide .pip { width: 11px; height: 11px; }
+/* design B, "tall": the table runs to the bottom of the slide, the right stays clear */
+.credit-slide .credit-build.lay-tall { float: none; width: 74%; }
+.credit-build.lay-tall table.ai-use { font-size: 70%; }
+.credit-build.lay-tall table.ai-use th, .credit-build.lay-tall table.ai-use td { padding: 2px 8px; }
+.credit-build.lay-tall td.opa-ico img { height: 74px; }
+.credit-build.lay-tall .sq { width: 14px; height: 14px; margin-right: 3px; }
+.credit-build.lay-tall .pip { width: 12px; height: 12px; }
 .credit-build .layer-chip { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
 .credit-build.step1 table.ai-use th, .credit-build.step1 table.ai-use td { border-color: transparent; }
 .credit-build .sq { width: 11px; height: 11px; margin-right: 2px; }
@@ -673,7 +691,6 @@ class: head-small, credit-slide
 
 ```{r credit-build-3, results="asis"}
 credit_build(3)
-credit_example()
 ```
 
 ---
@@ -690,7 +707,6 @@ class: head-small, credit-slide
 
 ```{r credit-build-4, results="asis"}
 credit_build(4)
-credit_example()
 ```
 
 <!-- Space below the table is kept for one closing sentence (text to come from the author). -->
