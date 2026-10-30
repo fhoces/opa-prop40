@@ -190,7 +190,7 @@ class: center, middle, inverse, title-slide
 ### PolicyEngine workshop, 30 October 2026
 ]
 
-<p class="narration-note">AI-generated presentation based on these slides: <audio class="narration-player" controls preload="none"></audio><br><span class="narration-sub">Press play and move through the slides as you listen.</span></p>
+<p class="narration-note">AI-generated presentation based on these slides:<audio class="narration-player" controls preload="none"></audio><span class="narration-sub">Press play and move through the slides as you listen.</span></p>
 
 ---
 
@@ -230,10 +230,10 @@ class: head-small, opa3-tight
 ```{css, echo=FALSE}
 /* The title slide's foot: the AI-generated narration, playable in place (the <audio> element stays
    in the DOM while remark switches slides, so it keeps playing as the reader clicks through). */
-.title-slide .narration-note { position: absolute; left: 0; right: 0; bottom: 34px; margin: 0;
+.title-slide .narration-note { position: absolute; left: 0; right: 0; bottom: 30px; margin: 0;
   font-size: 58%; color: #555; line-height: 1.5; }
-.title-slide .narration-note audio { height: 28px; vertical-align: middle; margin-left: 6px; }
-.title-slide .narration-sub { font-size: 90%; color: #777; }
+.title-slide .narration-note audio { display: block; width: 320px; height: 32px; margin: 4px auto 2px; }
+.title-slide .narration-sub { display: block; font-size: 90%; color: #777; }
 /* why-opa-3: pull the text and figures up so the arrow line clears the footnote,
    without shrinking the figures themselves (author rule 2026-10-30).
    A custom class, not the auto id, because remark.js only tags the FIRST
