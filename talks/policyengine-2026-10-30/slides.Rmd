@@ -770,7 +770,7 @@ class: head-small, no-overview
 /* the lower half: the key assumptions of each study, from the same export as the backup slides */
 .gap-table { clear: both; padding-top: 0.1em; }
 .gap-table .gap-table-title { font-weight: 600; font-size: 92%; margin: 0; text-align: center; }
-.gap-table .cell-more { font-size: 80%; white-space: nowrap; }
+.gap-table .cell-num { font-weight: 600; }
 .gap-table table.dt td.num, .gap-table table.dt th.num { text-align: left; vertical-align: middle; color: #5b6873; padding-right: 0; }
 .gap-table table.dt { font-size: 82%; margin-top: 0; }   /* the bullets' size */
 .gap-table table.dt td, .gap-table table.dt th { padding: 1px 6px; line-height: 1.15; vertical-align: top; }
@@ -834,11 +834,12 @@ for (i in rows_shown) {
   val <- function(side) if (dp$step_id[i] %in% names(short_vals)) short_vals[[dp$step_id[i]]][[side]] else paste(vapply(tx, `[[`, "", side), collapse = "; ")
   grp <- if (i %in% et$main) ' class="grp-end"' else ""
   stopifnot(dp$step_id[i] %in% names(defense))
-  more <- function(side) sprintf(' <a class="cell-more" href="#defense-%s">more &rarr;</a>', if (side == "bsz") "bsz" else "jr")
+  # the number itself links to the paper's backup slide (defense-bsz or defense-jr)
+  linked <- function(side) sprintf('<a class="cell-num" href="#defense-%s">%s</a>', if (side == "bsz") "bsz" else "jr", val(side))
   roman <- if (i %in% et$main) sprintf('<td class="num">(%s)</td>', c("i", "ii")[match(i, et$main)]) else
     if (i == loss_rows[1]) sprintf('<td class="num" rowspan="%d">(iii)</td>', length(loss_rows)) else ""
-  cat(sprintf('<tr%s>%s<td>%s (<i>%s</i>)</td><td class="l">%s - %s%s</td><td class="l">%s - %s%s</td></tr>', grp, roman, esc(dp$title[i]), dp$symbol[i],
-              val("bsz"), defense[[dp$step_id[i]]][["bsz"]], more("bsz"), val("rjkdc"), defense[[dp$step_id[i]]][["rjkdc"]], more("rjkdc")))
+  cat(sprintf('<tr%s>%s<td>%s (<i>%s</i>)</td><td class="l">%s - %s</td><td class="l">%s - %s</td></tr>', grp, roman, esc(dp$title[i]), dp$symbol[i],
+              linked("bsz"), defense[[dp$step_id[i]]][["bsz"]], linked("rjkdc"), defense[[dp$step_id[i]]][["rjkdc"]]))
 }
 cat("</table></div>")
 ```
