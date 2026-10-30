@@ -771,11 +771,14 @@ class: head-small, no-overview
 .gap-table { clear: both; padding-top: 0.1em; }
 .gap-table .gap-table-title { font-weight: 600; font-size: 92%; margin: 0; text-align: center; }
 .gap-table .cell-more { font-size: 80%; white-space: nowrap; }
-.gap-table table.dt td.num, .gap-table table.dt th.num { width: 2.2em; text-align: left; vertical-align: middle; color: #5b6873; padding-right: 0; }
+.gap-table table.dt td.num, .gap-table table.dt th.num { text-align: left; vertical-align: middle; color: #5b6873; padding-right: 0; }
 .gap-table table.dt { font-size: 82%; margin-top: 0; }   /* the bullets' size */
 .gap-table table.dt td, .gap-table table.dt th { padding: 1px 6px; line-height: 1.15; vertical-align: top; }
 /* the input column at its minimum, so every description wraps to two lines and each row has two lines of room */
-.gap-table table.dt td:nth-child(2), .gap-table table.dt th:nth-child(2) { width: 185px; }
+.gap-table table.dt { table-layout: fixed; }
+.gap-table table.dt td.num, .gap-table table.dt th.num { width: 36px; }
+.gap-table table.dt td:nth-child(2), .gap-table table.dt th:nth-child(2) { width: 185px; text-align: left; }
+.gap-table table.dt td:nth-child(3), .gap-table table.dt td:nth-child(4) { word-wrap: break-word; }
 /* a gap, not a heavier rule, separates the three groups (D alone, q alone, the loss box together) */
 .gap-table table.dt tr.grp-end td { padding-bottom: 8px; }
 .gap-table table.dt tr.grp-end + tr td { padding-top: 8px; }
@@ -816,7 +819,7 @@ defense <- list(
     rjkdc = "212 billionaires among the top 212 to 500 of $10m+ filers give $5.8B to $3.3B a year; the midpoint"),
   horizon = c(
     bsz = "a one-time tax makes departures temporary; five years, the payment period, is the paper's own example",
-    rjkdc = "leavers do not return: the cap on wealth taxation is gone for good and \u00a750310 lets the Legislature amend the Act"))
+    rjkdc = "leavers do not return: the constitutional cap is gone and \u00a750310 lets the Legislature amend the Act"))
 cat('<div class="gap-table"><div class="gap-table-title">Key assumptions behind the differences: steelmanning each choice</div>')
 # A thin first column numbers the three components, (i) D, (ii) q, (iii) the loss box, as the
 # equation slide does; the (iii) cell spans its three rows.
