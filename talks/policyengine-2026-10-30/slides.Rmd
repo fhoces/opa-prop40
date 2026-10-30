@@ -740,9 +740,9 @@ class: head-small
 
 ```{css, echo=FALSE}
 /* gap-summary: bullets left, the explorer's middle band right */
-.gap-left { float: left; width: 40%; font-size: 88%; }
+.gap-left { float: left; width: 47%; font-size: 88%; }
 .gap-left li { margin-bottom: 0.5em; }
-.gap-right { float: right; width: 57%; }
+.gap-right { float: right; width: 49%; margin-top: 0.4em; }
 .gap-right img { width: 100%; border: 1px solid #ccc; box-shadow: 0 1px 4px rgba(0,0,0,.15); }
 .gap-right .cap { font-size: 65%; color: #5b6873; margin-top: 4px; }
 ```
@@ -755,8 +755,8 @@ class: head-small
 ]
 
 .gap-right[
-<img src="figs/explorer-middle.png" alt="The middle of the comparison explorer: the equation from the BSZ estimate to the JR estimate, term by term, and the two slider panels with the two bars between them.">
-<div class="cap">The comparison explorer, tinyurl.com/prop40-explorer: the equation walks the BSZ panel's dials to the JR values, term by term.</div>
+<img src="figs/explorer-middle.png" alt="The comparison explorer: the BSZ panel's wealth-tax dials (wealth, departed, avoidance, litigation), each with its BSZ and JR ends, beside the two bars, $106.8B for the BSZ panel and -$39.0B for the JR panel.">
+<div class="cap">The comparison explorer, tinyurl.com/prop40-explorer: one panel's dials, each with a BSZ end and a JR end, and the two estimates beside them.</div>
 ]
 
 ---
