@@ -591,7 +591,13 @@ credit_build <- function(step, layout = CREDIT_LAYOUT) {
     out <- c(out, sprintf("<tr>%s<td>%s</td>%s</tr>", icon, vis(step >= 2, paste0(chip, r$object)),
                           paste(sprintf("<td>%s</td>", vapply(r$cells, function(cc) vis(filled, cc), "")), collapse = "")))
   }
-  cat(c(out, "</table></div>"), sep = "\n")   # one row per line: a single very long line trips knitr's regexes
+  # the legend under the table, drawn in every state (invisible before the squares appear)
+  legend <- paste0(sprintf('<div class="credit-legend"%s>', if (step >= 3) "" else ' style="visibility:hidden"'),
+                   '<span><i class="sq h"></i> human</span><span><i class="sq ai"></i> AI</span>',
+                   '<span><span class="meter"><i class="pip"></i><i class="pip"></i></span> not reviewed</span>',
+                   '<span><span class="meter"><i class="pip on"></i><i class="pip"></i></span> lightly reviewed</span>',
+                   '<span><span class="meter"><i class="pip on"></i><i class="pip on"></i></span> fully reviewed</span></div>')
+  cat(c(out, "</table>", legend, "</div>"), sep = "\n")   # one row per line: a single very long line trips knitr's regexes
 }
 
 # The worked example beside the table: the first row, read out from its own tooltips.
@@ -609,8 +615,8 @@ credit_example <- function() {
 /* verification, the build: the table on the left, the worked example on the right, and the
    bottom of the slide kept clear for one closing sentence. */
 .credit-slide h1 { margin-bottom: 0.25em; }
-.credit-slide > ul { margin: 0 0 0.2em; font-size: 92%; }
-.credit-slide .review-lead { margin: 0.2em 0 0.1em; font-weight: 600; font-size: 92%; }
+.credit-slide > ul { margin: 0 0 0.1em; font-size: 92%; }
+.credit-slide .review-lead { margin: 0.1em 0 0; font-weight: 600; font-size: 92%; }
 .credit-slide .credit-build { float: left; width: 62%; }
 .credit-slide .credit-right { float: right; width: 35%; font-size: 72%; line-height: 1.35; }
 .credit-slide .credit-right p { margin: 0 0 0.3em; }
@@ -638,10 +644,15 @@ credit_example <- function() {
 .credit-build.lay-tall td.opa-lab { width: auto; padding-right: 6px; }
 .credit-build.lay-tall td.opa-ico { width: auto; padding-right: 14px; }
 .credit-build.lay-tall table.ai-use { font-size: 76%; }
-.credit-build.lay-tall table.ai-use th, .credit-build.lay-tall table.ai-use td { padding: 3px 8px; }
+.credit-build.lay-tall table.ai-use th, .credit-build.lay-tall table.ai-use td { padding: 2px 8px; }
 .credit-build.lay-tall td.opa-ico img { height: 80px; }
 .credit-build.lay-tall .sq { width: 14px; height: 14px; margin-right: 3px; }
 .credit-build.lay-tall .pip { width: 12px; height: 12px; }
+/* the legend row under the table */
+.credit-build .credit-legend { font-size: 62%; color: #444; margin-top: 7px; white-space: nowrap; }
+.credit-build .credit-legend > span { margin-right: 18px; }
+.credit-build .credit-legend .sq { vertical-align: -2px; margin-right: 4px; }
+.credit-build .credit-legend .meter { margin-right: 4px; }
 .credit-build .layer-chip { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
 .credit-build.step1 table.ai-use th, .credit-build.step1 table.ai-use td { border-color: transparent; }
 .credit-build .sq { width: 11px; height: 11px; margin-right: 2px; }
