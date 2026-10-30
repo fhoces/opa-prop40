@@ -576,7 +576,7 @@ layer_name <- function(l) if (l == "this page") "the overview" else l
 # Every state draws every cell (hidden ones invisible, not absent) so nothing moves between clicks.
 # layout "wide" fills the slide's width and leaves room at the bottom; "tall" fills the height and
 # leaves room on the right (author request 2026-10-30, two designs to choose from).
-CREDIT_LAYOUT <- "wide"
+CREDIT_LAYOUT <- "tall"
 OPA_LABELS <- c("The BSZ analysis" = "BSZ", "The JR analysis" = "JR", "The comparison" = "compar&shy;ison")
 credit_build <- function(step, layout = CREDIT_LAYOUT) {
   vis <- function(show, html) if (show) html else sprintf('<span style="visibility:hidden">%s</span>', html)
