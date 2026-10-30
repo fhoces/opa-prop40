@@ -631,7 +631,12 @@ credit_example <- function() {
 .credit-build.lay-wide .pip { width: 11px; height: 11px; }
 /* design B, "tall": the table runs to the very bottom of the slide (the Overview link is hidden
    on these slides, see mathjax-config.html), the right stays clear */
-.credit-slide .credit-build.lay-tall { float: none; width: 74%; }
+.credit-slide .credit-build.lay-tall { float: none; width: auto; display: inline-block; }
+/* the table takes only the width its columns need, so no column floats apart from its header */
+.credit-build.lay-tall table.ai-use { width: auto; }
+.credit-build.lay-tall table.ai-use th, .credit-build.lay-tall table.ai-use td { padding-left: 10px; padding-right: 10px; }
+.credit-build.lay-tall td.opa-lab { width: auto; padding-right: 6px; }
+.credit-build.lay-tall td.opa-ico { width: auto; padding-right: 14px; }
 .credit-build.lay-tall table.ai-use { font-size: 76%; }
 .credit-build.lay-tall table.ai-use th, .credit-build.lay-tall table.ai-use td { padding: 3px 8px; }
 .credit-build.lay-tall td.opa-ico img { height: 80px; }
