@@ -761,16 +761,34 @@ class: head-small
 
 ---
 name: one-shot
-class: mid-bullets
+class: head-small
 
-# A warning against one-shotting a policy analysis
+# A word of caution: AI as a quick appraiser
 
-- The temptation is real: one prompt, one report, one number. The first draft of each of these OPAs looked finished.
-- What it took before the numbers could be trusted:
-  - every result the papers print, rerun as a test, and settings they do not print sent to both author teams; their replies changed the comparison (the JR analysis's September version became its anchor, and the report gained a section on the decisions the comparison makes);
-  - several review rounds by AI readers and by the author, dozens of findings each; the layer-by-layer code review caught R and Python code paired as twins that were not, after two edits had built on the mistake;
-  - a disclosure table on every page: what the AI did, what the author checked, and how far.
-- The lesson: agentic coding makes the first draft cheap. Verification is still human work, measured in days, not minutes, and the honest output says how far it went.
+```{css, echo=FALSE}
+/* one-shot: the blog post's title and its one line of method on the left, the caution on the right */
+.shot-left { float: left; width: 56%; margin-top: 1.4em; }
+.shot-left img { display: block; border: 1px solid #ccc; box-shadow: 0 1px 4px rgba(0,0,0,.15); background: #fff; }
+.shot-left img.title { width: 100%; }
+.shot-left img.line { width: 50%; margin-top: 16px; }
+.shot-left .cap { font-size: 80%; color: #5b6873; margin-top: 14px; line-height: 1.45; }
+.shot-right { float: right; width: 40%; font-size: 112%; margin-top: 1.2em; }
+.shot-right p { margin: 0 0 1.1em; line-height: 1.4; }
+```
+
+.shot-left[
+<img class="title" src="figs/mr-post-title.png" alt="Blog post title: Errors in the research of Emmanuel Saez and Gabriel Zucman, by Tyler Cowen, October 28, 2026.">
+<img class="line" src="figs/mr-post-ai-judgment.png" alt="A line from the post: AI issues its judgment, as a link.">
+<div class="cap">Marginal Revolution, 28 October 2026: an anonymous reader's AI audit of 138 Saez and Zucman papers reports 2,035 "problems". In the post: no code, no number rerun, no error a reader can check.</div>
+]
+
+.shot-right[
+**One prompt over 138 papers, a verdict, nothing to check.** Expect a lot more of this.
+
+Serious academics and public intellectuals should demand two things of any AI appraisal: **verification** and **disclosure**.
+
+**Here, by contrast:** every printed result rerun as a test, unprinted settings sent to the authors, a layer-by-layer code review, and a table of what the AI did and what the author checked.
+]
 
 .footnote[Explore: tinyurl.com/prop40-explorer &middot; Project: tinyurl.com/prop40-opa &middot; Survey: tinyurl.com/prop40-survey]
 
