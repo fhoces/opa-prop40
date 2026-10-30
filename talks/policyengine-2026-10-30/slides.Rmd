@@ -754,11 +754,17 @@ class: head-small
 
 ```{css, echo=FALSE}
 /* gap-summary: bullets left, the explorer's middle band right */
-.gap-left { float: left; width: 47%; font-size: 88%; }
-.gap-left li { margin-bottom: 0.5em; }
-.gap-right { float: right; width: 49%; margin-top: 0.4em; }
+.gap-left { float: left; width: 57%; font-size: 82%; }
+.gap-left ul { margin-top: 0; }
+.gap-left li { margin-bottom: 0.35em; }
+.gap-right { float: right; width: 36%; margin-top: -0.6em; }
 .gap-right img { width: 100%; border: 1px solid #ccc; box-shadow: 0 1px 4px rgba(0,0,0,.15); }
-.gap-right .cap { font-size: 65%; color: #5b6873; margin-top: 4px; }
+.gap-right .cap { font-size: 60%; color: #5b6873; margin-top: 3px; line-height: 1.3; }
+/* the lower half: the key assumptions of each study, from the same export as the backup slides */
+.gap-table { clear: both; padding-top: 0.6em; }
+.gap-table .gap-table-title { font-weight: 600; font-size: 92%; margin: 0 0 0.15em; }
+.gap-table table.dt { font-size: 66%; margin-top: 0; }
+.gap-table table.dt td, .gap-table table.dt th { padding: 1px 6px; line-height: 1.25; }
 ```
 
 .gap-left[
@@ -770,8 +776,27 @@ class: head-small
 
 .gap-right[
 <img src="figs/explorer-middle.png" alt="The comparison explorer: the BSZ panel's wealth-tax dials (wealth, departed, avoidance, litigation), each with its BSZ and JR ends, beside the two bars, $106.8B for the BSZ panel and -$39.0B for the JR panel.">
-<div class="cap">The comparison explorer, tinyurl.com/prop40-explorer: one panel's dials, each with a BSZ end and a JR end, and the two estimates beside them.</div>
+<div class="cap">The comparison explorer (tinyurl.com/prop40-explorer): one panel's dials and the two estimates.</div>
 ]
+
+```{r gap-assumptions, results="asis"}
+# The main inputs of the path (D and q, and the loss box: H, f, C, r), in path order, with each
+# analysis's value, the kind of claim and the step on output (b): the helpers the backup's (iii)
+# and (iv) slides use, with two long value texts shortened to one line.
+short_vals <- list(confirmed_departures = c(bsz = "none counted by name", rjkdc = "7 publicly reported moves"),
+                   income_loss_share = c(bsz = sprintf("%s, the movers' share of the wealth", pct(vs[["f"]], 0)),
+                                         rjkdc = sprintf("a flat %s of all billionaires' income tax", pct(vr[["f"]], 0))))
+cat('<div class="gap-table"><div class="gap-table-title">Summarizing the key assumptions for each study</div>')
+cat('<table class="dt"><tr><th>Input</th><th>BSZ analysis</th><th>JR analysis</th><th class="l">Kind of claim</th><th>Step on the path, (b)</th></tr>')
+for (i in sort(c(et$main, et$loss))) {
+  ids <- dial_ids(dp$step_id[i]); tx <- lapply(ids, function(x) step_texts(inp, x))
+  kind <- paste(unique(steps$kind[match(ids, steps$step_id)]), collapse = ", ")
+  val <- function(side) if (dp$step_id[i] %in% names(short_vals)) short_vals[[dp$step_id[i]]][[side]] else paste(vapply(tx, `[[`, "", side), collapse = "; ")
+  cat(sprintf('<tr><td><i>%s</i>, %s</td><td>%s</td><td>%s</td><td class="l">%s</td><td>%s</td></tr>',
+              dp$symbol[i], esc(dp$title[i]), val("bsz"), val("rjkdc"), kind, money(dp$change[i], 1, TRUE)))
+}
+cat("</table></div>")
+```
 
 ---
 name: one-shot

@@ -1039,11 +1039,17 @@ class: head-small
 
 &lt;style type=&quot;text/css&quot;&gt;
 /* gap-summary: bullets left, the explorer&#39;s middle band right */
-.gap-left { float: left; width: 47%; font-size: 88%; }
-.gap-left li { margin-bottom: 0.5em; }
-.gap-right { float: right; width: 49%; margin-top: 0.4em; }
+.gap-left { float: left; width: 57%; font-size: 82%; }
+.gap-left ul { margin-top: 0; }
+.gap-left li { margin-bottom: 0.35em; }
+.gap-right { float: right; width: 36%; margin-top: -0.6em; }
 .gap-right img { width: 100%; border: 1px solid #ccc; box-shadow: 0 1px 4px rgba(0,0,0,.15); }
-.gap-right .cap { font-size: 65%; color: #5b6873; margin-top: 4px; }
+.gap-right .cap { font-size: 60%; color: #5b6873; margin-top: 3px; line-height: 1.3; }
+/* the lower half: the key assumptions of each study, from the same export as the backup slides */
+.gap-table { clear: both; padding-top: 0.6em; }
+.gap-table .gap-table-title { font-weight: 600; font-size: 92%; margin: 0 0 0.15em; }
+.gap-table table.dt { font-size: 66%; margin-top: 0; }
+.gap-table table.dt td, .gap-table table.dt th { padding: 1px 6px; line-height: 1.25; }
 &lt;/style&gt;
 
 .gap-left[
@@ -1055,8 +1061,10 @@ class: head-small
 
 .gap-right[
 &lt;img src=&quot;figs/explorer-middle.png&quot; alt=&quot;The comparison explorer: the BSZ panel&#39;s wealth-tax dials (wealth, departed, avoidance, litigation), each with its BSZ and JR ends, beside the two bars, $106.8B for the BSZ panel and -$39.0B for the JR panel.&quot;&gt;
-&lt;div class=&quot;cap&quot;&gt;The comparison explorer, tinyurl.com/prop40-explorer: one panel&#39;s dials, each with a BSZ end and a JR end, and the two estimates beside them.&lt;/div&gt;
+&lt;div class=&quot;cap&quot;&gt;The comparison explorer (tinyurl.com/prop40-explorer): one panel&#39;s dials and the two estimates.&lt;/div&gt;
 ]
+
+&lt;div class=&quot;gap-table&quot;&gt;&lt;div class=&quot;gap-table-title&quot;&gt;Summarizing the key assumptions for each study&lt;/div&gt;&lt;table class=&quot;dt&quot;&gt;&lt;tr&gt;&lt;th&gt;Input&lt;/th&gt;&lt;th&gt;BSZ analysis&lt;/th&gt;&lt;th&gt;JR analysis&lt;/th&gt;&lt;th class=&quot;l&quot;&gt;Kind of claim&lt;/th&gt;&lt;th&gt;Step on the path, (b)&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;i&gt;D&lt;/i&gt;, Billionaires who moved out in time&lt;/td&gt;&lt;td&gt;none counted by name&lt;/td&gt;&lt;td&gt;7 publicly reported moves&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;guesswork on data&lt;/td&gt;&lt;td&gt;−$29.9B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;i&gt;q&lt;/i&gt;, Chance the tax does not survive litigation&lt;/td&gt;&lt;td&gt;100%&lt;/td&gt;&lt;td&gt;50%&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;guesswork&lt;/td&gt;&lt;td&gt;−$39.4B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;i&gt;f&lt;/i&gt;, Share of billionaires&#39; income tax lost&lt;/td&gt;&lt;td&gt;5%, the movers&#39; share of the wealth&lt;/td&gt;&lt;td&gt;a flat 45% of all billionaires&#39; income tax&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;guesswork&lt;/td&gt;&lt;td&gt;−$5.0B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;i&gt;C&lt;/i&gt;, Billionaires&#39; yearly California income tax&lt;/td&gt;&lt;td&gt;$3.06B/yr&lt;/td&gt;&lt;td&gt;$4.55B/yr&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;research vs guesswork&lt;/td&gt;&lt;td&gt;−$3.4B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;i&gt;H&lt;/i&gt;, How long the lost income tax is counted&lt;/td&gt;&lt;td&gt;5 years&lt;/td&gt;&lt;td&gt;for ever&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;scenario&lt;/td&gt;&lt;td&gt;−$65.4B&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;i&gt;r&lt;/i&gt;, Discount rate for the lost income tax&lt;/td&gt;&lt;td&gt;3%&lt;/td&gt;&lt;td&gt;2.73%&lt;/td&gt;&lt;td class=&quot;l&quot;&gt;scenario vs derived&lt;/td&gt;&lt;td&gt;−$7.5B&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;
 
 ---
 name: one-shot
