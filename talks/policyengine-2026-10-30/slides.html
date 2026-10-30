@@ -158,20 +158,12 @@ color: #1d4e89;
         a.style.top = (rect.bottom - a.offsetHeight - 10) + "px";
         a.style.left = (rect.left + 10) + "px";
       }
-      // The slide number reads "n / 11" throughout: the numerator keeps counting into the backup
-      // slides, the denominator stays at the number of the thank-you slide (the last slide of the
-      // talk), which remark would otherwise report as the deck's full length (author rule 2026-10-29).
-      var talkEnd = null;
+      // The slide number reads "n / 10" throughout: the numerator keeps counting into the backup
+      // slides, the denominator is fixed at 10 (author rule 2026-10-30; before that it read the
+      // thank-you slide's own number, 11), instead of the deck's full length that remark would report.
+      var talkEnd = "10";
       function pinDenominator() {
         var nums = document.querySelectorAll(".remark-slide-number");
-        if (talkEnd === null) {
-          var thanks = document.getElementById("slide-thanks");
-          if (!thanks) return;
-          var n = thanks.querySelector(".remark-slide-number");
-          if (!n) return;
-          talkEnd = (n.textContent.split("/")[0] || "").trim();
-          if (!talkEnd) { talkEnd = null; return; }
-        }
         nums.forEach(function (n) {
           var parts = n.textContent.split("/");
           if (parts.length === 2) n.textContent = parts[0].trim() + " / " + talkEnd;
