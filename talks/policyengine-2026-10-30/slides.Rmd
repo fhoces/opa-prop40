@@ -378,6 +378,7 @@ table.dt.verif td { vertical-align: top; text-align: left; padding: 8px 10px; }
 .thanks-trio a:hover figcaption { text-decoration: underline; }
 .thanks-trio figcaption { font-size: 80%; }
 .thanks-cta { margin-top: 1.6em; }
+#slide-thanks .remark-slide-number { display: none; }   /* no counter on the thank-you slide (author, 2026-10-30) */
 /* the explorer's button, but outlined: white, black border, black text */
 .remark-slide-content a.q-survey { background: #fff; color: #111 !important; border: 1.5px solid #111; }
 .remark-slide-content a.q-survey:hover { background: #111; color: #fff !important; }
