@@ -512,7 +512,7 @@ class: head-small, opa3-tight
    A custom class, not the auto id, because remark.js only tags the FIRST
    incremental build fragment with the name-derived id; the class from
    &quot;class:&quot; propagates to every fragment of an incremental slide. */
-.opa3-tight { padding-top: 0.3em; }
+.remark-slide-content.opa3-tight { padding-top: 0.3em; }   /* two classes: a later .remark-slide-content padding rule otherwise wins on the revealed state */
 .opa3-tight h1 { margin: 0 0 0.1em; }
 .opa3-tight .pull-left, .opa3-tight .pull-right { margin-top: 0; font-size: 90%; }
 .opa3-tight .pull-left p, .opa3-tight .pull-right p { margin-bottom: 0.15em; }
@@ -546,7 +546,12 @@ class: head-beside, head-small
 
 .fig-pinned.fig-split[&lt;img class=&quot;half-bottom&quot; src=&quot;../../assets/figures/evidence-to-policy-competing-from-analysis-blackbox.svg&quot; aria-hidden=&quot;true&quot; alt=&quot;Two competing policy analyses of the same policy, drawn as black boxes: one shows only gains and leads Decision Maker 1 to support it; the other shows only losses and leads Decision Maker 2 to oppose it.&quot;&gt;&lt;img class=&quot;half-top&quot; src=&quot;../../assets/figures/evidence-to-policy-competing-from-analysis-blackbox.svg&quot; alt=&quot;Two competing policy analyses of the same policy, drawn as black boxes: one shows only gains and leads Decision Maker 1 to support it; the other shows only losses and leads Decision Maker 2 to oppose it.&quot;&gt;]
 
---
+---
+name: why-opa-4b
+count: false
+class: head-beside, head-small
+
+# From alternative facts to one common estimate
 
 .beside[
 **With transparency: Open Policy Analysis (OPA)**&lt;sup&gt;1&lt;/sup&gt;
@@ -828,7 +833,7 @@ class: mid-bullets, ai7-tight
 name: verification
 class: head-small, credit-slide, no-overview
 
-# The verification and review of these three OPAs
+# Verification and disclosure ofthese three OPAs
 
 
 
