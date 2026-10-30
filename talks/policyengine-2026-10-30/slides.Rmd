@@ -800,8 +800,10 @@ short_vals <- list(confirmed_departures = c(bsz = "0", rjkdc = "7"),
                    income_loss_share = c(bsz = pct(vs[["f"]], 0), rjkdc = pct(vr[["f"]], 0)))
 cat('<div class="gap-table"><div class="gap-table-title">Key assumptions behind the differences: steelmanning each choice</div>')
 cat('<table class="dt"><tr><th>Input</th><th class="l">BSZ analysis</th><th class="l">JR analysis</th></tr>')
-# Three groups, as in the equation: D alone, q alone, then the loss box (f, C, H, r) together.
-rows_shown <- sort(c(et$main, et$loss))
+# Three groups, as in the equation: D alone, q alone, then the loss box without the discount
+# rate (f, C, H), which the author left out of this summary (2026-10-29).
+rows_shown <- setdiff(sort(c(et$main, et$loss)), which(dp$symbol == "r"))
+stopifnot(length(rows_shown) == 5)
 for (i in rows_shown) {
   ids <- dial_ids(dp$step_id[i]); tx <- lapply(ids, function(x) step_texts(inp, x))
   val <- function(side) if (dp$step_id[i] %in% names(short_vals)) short_vals[[dp$step_id[i]]][[side]] else paste(vapply(tx, `[[`, "", side), collapse = "; ")
