@@ -166,9 +166,45 @@ color: #1d4e89; display: flex; align-items: center; justify-content: center;
         btn.title = playing ? "Pause the narration" : "Play the AI-generated narration";
         btn.setAttribute("aria-label", btn.title);
       }
+      // The narration has one chapter per slide of the talk (the eleven MP3 sections the audiobook
+      // was built from, concatenated in order; lengths in seconds from ffmpeg). Consecutive remark
+      // slides with the same h1 are one slide of the talk (its click-through states), so a slide's
+      // chapter is the count of h1 changes up to it. Slides past the thank-you have no chapter.
+      var chapterLengths = [37.08, 55.78, 57.12, 60.43, 56.28, 69.84, 100.13, 85.58, 129.82, 91.92, 26.90];
+      var chapterStarts = [0];
+      chapterLengths.forEach(function (d) { chapterStarts.push(chapterStarts[chapterStarts.length - 1] + d); });
+      (function tagChapters() {
+        var k = 0, last = null;
+        document.querySelectorAll(".remark-slides-area .remark-slide-container").forEach(function (c) {
+          var h = c.querySelector("h1");
+          var t = h ? h.textContent.trim() : "";
+          if (t !== last) { k += 1; last = t; }
+          if (k <= chapterLengths.length) c.setAttribute("data-chapter", k);
+        });
+      })();
+      function currentChapter() {
+        var c = document.querySelector(".remark-slide-container.remark-visible");
+        return c && c.hasAttribute("data-chapter") ? parseInt(c.getAttribute("data-chapter"), 10) : null;
+      }
+      // Play from t; with preload="none" the file may not be loaded yet, so the seek waits for its metadata.
+      function playFrom(t) {
+        if (audio.readyState >= 1) { audio.currentTime = t; audio.play(); return; }
+        audio.addEventListener("loadedmetadata", function h() {
+          audio.removeEventListener("loadedmetadata", h); audio.currentTime = t; audio.play();
+        });
+        audio.load();
+      }
       if (audio) {
         paintToggle();
-        btn.addEventListener("click", function () { if (audio.paused || audio.ended) audio.play(); else audio.pause(); });
+        // Play starts the chapter of the slide on screen, unless the narration is already paused
+        // inside that chapter, in which case it resumes. Pause is pause.
+        btn.addEventListener("click", function () {
+          if (!audio.paused && !audio.ended) { audio.pause(); return; }
+          var k = currentChapter();
+          if (k === null) { audio.play(); return; }
+          var start = chapterStarts[k - 1], end = chapterStarts[k];
+          if (audio.ended || audio.currentTime < start || audio.currentTime >= end) playFrom(start); else audio.play();
+        });
         ["play", "pause", "ended"].forEach(function (ev) { audio.addEventListener(ev, paintToggle); });
         document.body.appendChild(btn);
       }
