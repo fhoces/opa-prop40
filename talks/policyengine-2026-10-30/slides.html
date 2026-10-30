@@ -126,7 +126,7 @@ color: #1d4e89;
     <script>
     document.addEventListener("DOMContentLoaded", function () {
       var a = document.createElement("a");
-      a.href = "../../../index.html";  // the comparison overview is the site root
+      a.href = "../../index.html";  // the comparison overview is the site root (this deck sits at talks/<name>/)
       a.className = "site-footer-link";
       a.textContent = "← Overview";
       document.body.appendChild(a);
@@ -545,7 +545,7 @@ class: head-beside, head-small
 --
 
 .beside[
-**With transparency: Open Policy Analysis**&lt;sup&gt;1&lt;/sup&gt;
+**With transparency: Open Policy Analysis (OPA)**&lt;sup&gt;1&lt;/sup&gt;
 
 - &lt;b style=&quot;color:#d4880f&quot;&gt;Open output&lt;/b&gt;: one main estimate, with each main assumption as an input that the reader can move.
 - &lt;b style=&quot;color:#1484c5&quot;&gt;Open analysis&lt;/b&gt;: every step from the inputs to that estimate, written out in prose, equations and code, with the guesswork marked.
@@ -794,19 +794,19 @@ class: mid-bullets, ai7-tight
 **Is the reproduction correct?**
 
   1. Running the paper&#39;s robustness cases through the OPA, to see if it generates the same results.
-  2. Generating a set of tests where the OPA estimates conditions not in the paper, and asking the authors to run those scenarios in their own model to verify they obtain the same results.
+  2. Estimating, in the OPA, settings the paper does not print, and asking the authors to run them in their own model to check they get the same results.
   3. A thorough review of each layer, to confirm that the output is accurate.
 ]
 
 .pull-right[
 ### Intelligibility
-**Is the exposition, methods and code easy to digest for different audiences?**
+**Are the exposition, methods and code easy to digest for different audiences?**
 - Strong parallels with how the field of mathematics is evolving alongside AI.
 - AI-generated proofs can be verified using software (Lean). OPAs can be verified using strategies 1 to 3 above.
 - Both fields require much human effort in &quot;digesting&quot;&lt;sup&gt;1&lt;/sup&gt; the explanations.
 ]
 
-- Internal OPAs are much easier to verify than external OPAs.
+- An OPA built by the original authors is much easier to verify than one built by outsiders, as here.
 - Here we adopt a combination of 1, 2 and 3, and disclose for each component what has been AI generated, reviewed and verified. Each analysis&#39;s pages carry a badge that says how far they have been reviewed.
 
 .footnote[&lt;sup&gt;1&lt;/sup&gt; Terence Tao, [&quot;Mathematics in the age of AI&quot;](https://teorth.github.io/tao-web/slides/age-of-ai-icm-2026.pdf), public lecture, International Congress of Mathematicians, 2026: on &quot;proof indigestion,&quot; the widening gap between generating, verifying and digesting proofs.]

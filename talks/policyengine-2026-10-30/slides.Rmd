@@ -249,7 +249,7 @@ class: head-beside, head-small
 --
 
 .beside[
-**With transparency: Open Policy Analysis**<sup>1</sup>
+**With transparency: Open Policy Analysis (OPA)**<sup>1</sup>
 
 - <b style="color:#d4880f">Open output</b>: one main estimate, with each main assumption as an input that the reader can move.
 - <b style="color:#1484c5">Open analysis</b>: every step from the inputs to that estimate, written out in prose, equations and code, with the guesswork marked.
@@ -498,19 +498,19 @@ class: mid-bullets, ai7-tight
 **Is the reproduction correct?**
 
   1. Running the paper's robustness cases through the OPA, to see if it generates the same results.
-  2. Generating a set of tests where the OPA estimates conditions not in the paper, and asking the authors to run those scenarios in their own model to verify they obtain the same results.
+  2. Estimating, in the OPA, settings the paper does not print, and asking the authors to run them in their own model to check they get the same results.
   3. A thorough review of each layer, to confirm that the output is accurate.
 ]
 
 .pull-right[
 ### Intelligibility
-**Is the exposition, methods and code easy to digest for different audiences?**
+**Are the exposition, methods and code easy to digest for different audiences?**
 - Strong parallels with how the field of mathematics is evolving alongside AI.
 - AI-generated proofs can be verified using software (Lean). OPAs can be verified using strategies 1 to 3 above.
 - Both fields require much human effort in "digesting"<sup>1</sup> the explanations.
 ]
 
-- Internal OPAs are much easier to verify than external OPAs.
+- An OPA built by the original authors is much easier to verify than one built by outsiders, as here.
 - Here we adopt a combination of 1, 2 and 3, and disclose for each component what has been AI generated, reviewed and verified. Each analysis's pages carry a badge that says how far they have been reviewed.
 
 .footnote[<sup>1</sup> Terence Tao, ["Mathematics in the age of AI"](https://teorth.github.io/tao-web/slides/age-of-ai-icm-2026.pdf), public lecture, International Congress of Mathematicians, 2026: on "proof indigestion," the widening gap between generating, verifying and digesting proofs.]
