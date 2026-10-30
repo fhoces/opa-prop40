@@ -1077,8 +1077,9 @@ class: head-small
 .gap-table .gap-table-title { font-weight: 600; font-size: 92%; margin: 0 0 0.15em; }
 .gap-table table.dt { font-size: 82%; margin-top: 0; }   /* the bullets&#39; size */
 .gap-table table.dt td, .gap-table table.dt th { padding: 1px 6px; line-height: 1.25; }
-/* a heavier rule closes each of the first two groups (D alone, q alone); the last four rows stay together */
-.gap-table table.dt tr.grp-end td { border-bottom: 2px solid #5b6873; }
+/* a gap, not a heavier rule, separates the three groups (D alone, q alone, the loss box together) */
+.gap-table table.dt tr.grp-end td { padding-bottom: 12px; }
+.gap-table table.dt tr.grp-end + tr td { padding-top: 12px; }
 &lt;/style&gt;
 
 .gap-left[
