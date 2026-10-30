@@ -809,7 +809,16 @@ Serious academics and public intellectuals should demand two things of any AI ap
 **Here, by contrast:** every printed result rerun as a test, unprinted settings sent to the authors, a layer-by-layer code review, and a table of what the AI did and what the author checked.
 ]
 
-.footnote[Explore: tinyurl.com/prop40-explorer &middot; Project: tinyurl.com/prop40-opa &middot; Survey: tinyurl.com/prop40-survey]
+
+---
+name: thanks
+class: center, middle
+
+# Thank you
+
+fhoces@gmail.com
+
+.small[Explore: tinyurl.com/prop40-explorer &middot; Project: tinyurl.com/prop40-opa &middot; Survey: tinyurl.com/prop40-survey]
 
 ---
 name: backup
