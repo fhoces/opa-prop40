@@ -770,7 +770,7 @@ class: head-small, no-overview
 /* the lower half: the key assumptions of each study, from the same export as the backup slides */
 .gap-table { clear: both; padding-top: 0.1em; }
 .gap-table .gap-table-title { font-weight: 600; font-size: 92%; margin: 0; text-align: center; }
-.gap-table .title-link { float: right; font-weight: 400; font-size: 80%; }
+.gap-table .cell-more { font-size: 80%; white-space: nowrap; }
 .gap-table table.dt { font-size: 82%; margin-top: 0; }   /* the bullets' size */
 .gap-table table.dt td, .gap-table table.dt th { padding: 1px 6px; line-height: 1.15; vertical-align: top; }
 /* the input column at its minimum, so every description wraps to two lines and each row has two lines of room */
@@ -795,28 +795,28 @@ class: head-small, no-overview
 # The main inputs of the path (D and q, and the loss box: H, f, C, r), in path order, with each
 # analysis's value: the helpers the backup's (iii) and (iv) slides use, with two long value texts
 # shortened to one line.
-# Each analysis's value as a bare number, then a dash and the paper's own best defense of it, in
-# a line: page numbers are PDF pages of each paper (the backup slides defense-bsz and defense-jr
-# quote the passages). D counts the billionaires removed by name; f is the share lost.
+# Each analysis's value as a bare number, then a dash and the paper's own best defense of it in a
+# line, with a link to the backup slide (defense-bsz, defense-jr) that quotes the passages with
+# their pages. D counts the billionaires removed by name; f is the share lost.
 short_vals <- list(confirmed_departures = c(bsz = "0", rjkdc = "7"),
                    income_loss_share = c(bsz = pct(vs[["f"]], 0), rjkdc = pct(vr[["f"]], 0)))
 defense <- list(
   confirmed_departures = c(
-    bsz = "residents on 1 Jan 2026 owe the tax; tax attorneys doubt any billionaire has changed residency (p.21; p.23, fn.30)",
-    rjkdc = "seven moves confirmed in the press between the October 2025 filing and the 1 Jan 2026 snapshot, \"a floor\" (pp.21-22)"),
+    bsz = "residents on 1 Jan 2026 owe the tax; tax attorneys doubt any billionaire has changed residency",
+    rjkdc = "seven moves confirmed in the press between the October 2025 filing and the 1 Jan 2026 snapshot, \"a floor\""),
   litigation_survival = c(
-    bsz = "the Act as written; a companion legal report: low-merit theories courts have repeatedly rejected (p.18; report p.5)",
-    rjkdc = "a novel tax with no precedent, booked as GAAP books uncertain tax positions, at the 50% line (ASC 740-10, pp.19-20)"),
+    bsz = "the Act as written; a companion legal report: low-merit theories courts have repeatedly rejected",
+    rjkdc = "a novel tax with no precedent, booked as GAAP books uncertain tax positions, at the 50% line"),
   income_loss_share = c(
-    bsz = "if half of the 10% avoidance is people leaving, 5% of billionaires' income tax leaves with them (p.24)",
-    rjkdc = "income tax need not leave in step with wealth (28.6% gone): a 30-60% range centred near it, midpoint 45% (p.31)"),
+    bsz = "if half of the 10% avoidance is people leaving, 5% of billionaires' income tax leaves with them",
+    rjkdc = "income tax need not leave in step with wealth (28.6% gone): a 30-60% range centred near it, midpoint 45%"),
   income_level = c(
-    bsz = "FTB data, adjusted since top wealth holders are not top earners: $3B a year on average, 2019-2025 (pp.11, 14)",
-    rjkdc = "212 billionaires among the top 212 to 500 of $10m+ filers give $5.8B to $3.3B a year; the midpoint (Table 9, pp.27-30)"),
+    bsz = "FTB data, adjusted since top wealth holders are not top earners: $3B a year on average, 2019-2025",
+    rjkdc = "212 billionaires among the top 212 to 500 of $10m+ filers give $5.8B to $3.3B a year; the midpoint"),
   horizon = c(
-    bsz = "a one-time tax makes departures temporary; five years, the payment period, is the paper's own example (pp.22, 27)",
-    rjkdc = "leavers do not return: the cap on wealth taxation is gone for good and \u00a750310 lets the Legislature amend the Act (pp.32-33)"))
-cat('<div class="gap-table"><div class="gap-table-title">Key assumptions behind the differences: steelmanning each choice<a class="title-link" href="#defense-bsz">the papers&rsquo; own words &rarr;</a></div>')
+    bsz = "a one-time tax makes departures temporary; five years, the payment period, is the paper's own example",
+    rjkdc = "leavers do not return: the cap on wealth taxation is gone for good and \u00a750310 lets the Legislature amend the Act"))
+cat('<div class="gap-table"><div class="gap-table-title">Key assumptions behind the differences: steelmanning each choice</div>')
 cat('<table class="dt"><tr><th>Input</th><th class="l">BSZ analysis</th><th class="l">JR analysis</th></tr>')
 # Three groups, as in the equation: D alone, q alone, then the loss box without the discount
 # rate (f, C, H), which the author left out of this summary (2026-10-29).
@@ -827,8 +827,9 @@ for (i in rows_shown) {
   val <- function(side) if (dp$step_id[i] %in% names(short_vals)) short_vals[[dp$step_id[i]]][[side]] else paste(vapply(tx, `[[`, "", side), collapse = "; ")
   grp <- if (i %in% et$main) ' class="grp-end"' else ""
   stopifnot(dp$step_id[i] %in% names(defense))
-  cat(sprintf('<tr%s><td>%s (<i>%s</i>)</td><td class="l">%s - %s</td><td class="l">%s - %s</td></tr>', grp, esc(dp$title[i]), dp$symbol[i],
-              val("bsz"), defense[[dp$step_id[i]]][["bsz"]], val("rjkdc"), defense[[dp$step_id[i]]][["rjkdc"]]))
+  more <- function(side) sprintf(' <a class="cell-more" href="#defense-%s">more &rarr;</a>', if (side == "bsz") "bsz" else "jr")
+  cat(sprintf('<tr%s><td>%s (<i>%s</i>)</td><td class="l">%s - %s%s</td><td class="l">%s - %s%s</td></tr>', grp, esc(dp$title[i]), dp$symbol[i],
+              val("bsz"), defense[[dp$step_id[i]]][["bsz"]], more("bsz"), val("rjkdc"), defense[[dp$step_id[i]]][["rjkdc"]], more("rjkdc")))
 }
 cat("</table></div>")
 ```
