@@ -672,8 +672,11 @@ credit_example <- function() {
 - **Estimates the papers do not print**, sent to the authors to run in their own models: `r bsz_settings` settings to the BSZ team, `r jr_settings` to the JR team.
 
 .credit-left[
-- **The review**: every object of the three OPAs, who did what and how far the author checked it.
-- &nbsp; <!-- placeholder: the author's bullet, to fill in -->
+
+&nbsp;
+
+- **The review**: every object of the three OPAs, who did what and how far the I have checked it.
+- **CRediT** (the Contributor Roles Taxonomy, ANSI/NISO Z39.104-2022) names 14 roles a contributor can take in a work, from conceptualization and methodology to software, validation and writing. The table groups them into three columns, one square per role, coloured by who led it. **Human verification** is this OPA's own addition. [The question behind each square &rarr;](#credit-questions)
 ]
 
 ---
@@ -688,7 +691,7 @@ class: head-small, credit-slide, no-overview
 
 .credit-left[
 - **The review**: every object of the three OPAs, who did what and how far the author checked it.
-- &nbsp; <!-- placeholder: the author's bullet, to fill in -->
+- **CRediT** (the Contributor Roles Taxonomy, ANSI/NISO Z39.104-2022) names 14 roles a contributor can take in a work, from conceptualization and methodology to software, validation and writing. The table groups them into three columns, one square per role, coloured by who led it. **Human verification** is this OPA's own addition. [The question behind each square &rarr;](#credit-questions)
 ]
 
 ```{r credit-build-1, results="asis"}
@@ -707,7 +710,7 @@ class: head-small, credit-slide, no-overview
 
 .credit-left[
 - **The review**: every object of the three OPAs, who did what and how far the author checked it.
-- &nbsp; <!-- placeholder: the author's bullet, to fill in -->
+- **CRediT** (the Contributor Roles Taxonomy, ANSI/NISO Z39.104-2022) names 14 roles a contributor can take in a work, from conceptualization and methodology to software, validation and writing. The table groups them into three columns, one square per role, coloured by who led it. **Human verification** is this OPA's own addition. [The question behind each square &rarr;](#credit-questions)
 ]
 
 ```{r credit-build-2, results="asis"}
@@ -726,7 +729,7 @@ class: head-small, credit-slide, no-overview
 
 .credit-left[
 - **The review**: every object of the three OPAs, who did what and how far the author checked it.
-- &nbsp; <!-- placeholder: the author's bullet, to fill in -->
+- **CRediT** (the Contributor Roles Taxonomy, ANSI/NISO Z39.104-2022) names 14 roles a contributor can take in a work, from conceptualization and methodology to software, validation and writing. The table groups them into three columns, one square per role, coloured by who led it. **Human verification** is this OPA's own addition. [The question behind each square &rarr;](#credit-questions)
 ]
 
 ```{r credit-build-3, results="asis"}
@@ -745,7 +748,7 @@ class: head-small, credit-slide, no-overview
 
 .credit-left[
 - **The review**: every object of the three OPAs, who did what and how far the author checked it.
-- &nbsp; <!-- placeholder: the author's bullet, to fill in -->
+- **CRediT** (the Contributor Roles Taxonomy, ANSI/NISO Z39.104-2022) names 14 roles a contributor can take in a work, from conceptualization and methodology to software, validation and writing. The table groups them into three columns, one square per role, coloured by who led it. **Human verification** is this OPA's own addition. [The question behind each square &rarr;](#credit-questions)
 ]
 
 ```{r credit-build-4, results="asis"}
@@ -901,6 +904,11 @@ class: defense-slide
 
 ```{css, echo=FALSE}
 .defense-slide .remark-slide-content, .defense-slide { font-size: 16px; }
+table.credit-q { font-size: 95%; margin: 0.4em 0 0.6em; }
+table.credit-q td, table.credit-q th { padding: 2px 10px; line-height: 1.25; vertical-align: top; text-align: left; }
+table.credit-q td.grp { font-weight: 600; }
+table.credit-q tr.grp-end td { padding-bottom: 7px; }
+table.credit-q tr.grp-end + tr td { padding-top: 7px; }
 .defense-slide h1 { font-size: 34px; margin-bottom: 0.3em; }
 .defense-slide p { margin: 0 0 0.5em; line-height: 1.3; }
 .defense-slide .src { font-size: 85%; color: #5b6873; }
@@ -939,6 +947,34 @@ class: defense-slide
 **How long the lost income tax is counted, for ever.** The lost income tax is valued as a growing perpetuity, f times C over r minus g (Section 5.2, equations 13 and 14, p.31). Departed billionaires are assumed not to return because the conditions persist after collection: the constitutional cap on intangible property taxation is permanently removed, section 50310 lets the Legislature amend any part of the Act by a two-thirds vote, and the spending the Act funds is open-ended (p.32; Section 6, pp.36 to 37). The asymmetry is "not a modeling assumption but a feature of the Act's structure", and the same conditions deter new entry (p.33).
 
 <a class="corner-btn" href="#gap-summary">&larr; Back</a>
+
+---
+name: credit-questions
+class: head-small, defense-slide
+
+# The CRediT squares: the question behind each one
+
+Every object (explorer, report, slides, repository, overview page) was scored by the author in a questionnaire, one question per CRediT role: *who contributed?*, answered human only, human lead, equal, AI lead, AI only or not applicable. A square is coloured by the answer; roles marked not applicable are left out. Funding acquisition and Resources, the two remaining CRediT roles, were not asked. The questions paraphrase the official definitions (credit.niso.org).
+
+<table class="dt credit-q">
+<tr><th>Column</th><th>Square (CRediT role)</th><th class="l">The question: who did this?</th></tr>
+<tr><td class="grp" rowspan="4">Ideas and direction</td><td>Conceptualization</td><td class="l">Formulated the overarching goals and aims of the work</td></tr>
+<tr><td>Methodology</td><td class="l">Designed the method and built the models</td></tr>
+<tr><td>Supervision</td><td class="l">Took oversight and leadership of the planning and execution</td></tr>
+<tr class="grp-end"><td>Project administration</td><td class="l">Managed and coordinated the planning and execution</td></tr>
+<tr><td class="grp" rowspan="6">Doing the work</td><td>Data curation</td><td class="l">Annotated, cleaned and maintained the data, and the code needed to read it</td></tr>
+<tr><td>Formal analysis</td><td class="l">Applied statistical, mathematical or computational techniques to the data</td></tr>
+<tr><td>Investigation</td><td class="l">Collected the data and evidence</td></tr>
+<tr><td>Software</td><td class="l">Programmed, implemented and tested the code</td></tr>
+<tr><td>Validation</td><td class="l">Verified that the results replicate and reproduce</td></tr>
+<tr class="grp-end"><td>Visualization</td><td class="l">Prepared the figures and the presentation of the data</td></tr>
+<tr><td class="grp" rowspan="2">Writing</td><td>Writing &ndash; original draft</td><td class="l">Wrote the first draft</td></tr>
+<tr><td>Writing &ndash; review &amp; editing</td><td class="l">Critically reviewed, commented on and revised the text</td></tr>
+</table>
+
+**Human verification** is not part of CRediT. Its question: *how closely has a human checked this output?* No human review (&#9675;&#9675;); lightly checked, but cannot be clearly explained (&#9679;&#9675;); understood, can be explained to others (&#9679;&#9679;).
+
+<a class="corner-btn" href="#disclosure">&larr; Back</a>
 ---
 
 name: why-opa
