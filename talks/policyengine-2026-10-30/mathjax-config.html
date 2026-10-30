@@ -50,6 +50,10 @@ document.addEventListener("DOMContentLoaded", function () {
     var visible = document.querySelector(".remark-slide-container.remark-visible .remark-slide-scaler");
     var scaler = visible || document.querySelector(".remark-slide-scaler");
     if (!scaler) return;
+    // A slide whose content carries class "no-overview" (the credit-table build, which uses the
+    // whole height) shows no link at all.
+    var content = scaler.querySelector(".remark-slide-content");
+    a.style.display = (content && content.classList.contains("no-overview")) ? "none" : "";
     var rect = scaler.getBoundingClientRect();
     // Bottom-left corner of the visible slide, clear of the slide number at the
     // bottom right and of the author credit, which the OPA slide raises above it.

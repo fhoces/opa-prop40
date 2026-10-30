@@ -140,6 +140,10 @@ color: #1d4e89;
         var visible = document.querySelector(".remark-slide-container.remark-visible .remark-slide-scaler");
         var scaler = visible || document.querySelector(".remark-slide-scaler");
         if (!scaler) return;
+        // A slide whose content carries class "no-overview" (the credit-table build, which uses the
+        // whole height) shows no link at all.
+        var content = scaler.querySelector(".remark-slide-content");
+        a.style.display = (content && content.classList.contains("no-overview")) ? "none" : "";
         var rect = scaler.getBoundingClientRect();
         // Bottom-left corner of the visible slide, clear of the slide number at the
         // bottom right and of the author credit, which the OPA slide raises above it.
@@ -822,7 +826,7 @@ class: mid-bullets, ai7-tight
 
 ---
 name: verification
-class: head-small, credit-slide
+class: head-small, credit-slide, no-overview
 
 # The verification and review of these three OPAs
 
@@ -852,11 +856,12 @@ class: head-small, credit-slide
 .credit-build.lay-wide td.opa-ico img { height: 62px; }
 .credit-build.lay-wide .sq { width: 13px; height: 13px; margin-right: 3px; }
 .credit-build.lay-wide .pip { width: 11px; height: 11px; }
-/* design B, &quot;tall&quot;: the table runs to the bottom of the slide, the right stays clear */
+/* design B, &quot;tall&quot;: the table runs to the very bottom of the slide (the Overview link is hidden
+   on these slides, see mathjax-config.html), the right stays clear */
 .credit-slide .credit-build.lay-tall { float: none; width: 74%; }
-.credit-build.lay-tall table.ai-use { font-size: 70%; }
-.credit-build.lay-tall table.ai-use th, .credit-build.lay-tall table.ai-use td { padding: 2px 8px; }
-.credit-build.lay-tall td.opa-ico img { height: 74px; }
+.credit-build.lay-tall table.ai-use { font-size: 76%; }
+.credit-build.lay-tall table.ai-use th, .credit-build.lay-tall table.ai-use td { padding: 3px 8px; }
+.credit-build.lay-tall td.opa-ico img { height: 80px; }
 .credit-build.lay-tall .sq { width: 14px; height: 14px; margin-right: 3px; }
 .credit-build.lay-tall .pip { width: 12px; height: 12px; }
 .credit-build .layer-chip { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
@@ -871,7 +876,7 @@ class: head-small, credit-slide
 ---
 name: verification-2
 count: false
-class: head-small, credit-slide
+class: head-small, credit-slide, no-overview
 
 # The verification and review of these three OPAs
 
@@ -901,7 +906,7 @@ class: head-small, credit-slide
 ---
 name: verification-3
 count: false
-class: head-small, credit-slide
+class: head-small, credit-slide, no-overview
 
 # The verification and review of these three OPAs
 
@@ -931,7 +936,7 @@ class: head-small, credit-slide
 ---
 name: verification-4
 count: false
-class: head-small, credit-slide
+class: head-small, credit-slide, no-overview
 
 # The verification and review of these three OPAs
 
@@ -961,7 +966,7 @@ class: head-small, credit-slide
 ---
 name: disclosure
 count: false
-class: head-small, credit-slide
+class: head-small, credit-slide, no-overview
 
 # The verification and review of these three OPAs
 
