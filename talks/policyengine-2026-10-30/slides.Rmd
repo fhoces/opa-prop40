@@ -908,7 +908,7 @@ class: head-small
 
 # A word of caution against "one-shotting" policy analyses
 
-.shot-def[*One-shotting*: a single prompt to an AI, and its answer taken as the finished analysis, with nothing checked in between.]
+.shot-def[*One-shotting*: a single prompt to an AI, and its answer taken as the finished analysis, with nothing reliably checked in between.]
 
 ```{css, echo=FALSE}
 /* one-shot: the blog post's title and its one line of method on the left, the caution on the right */
