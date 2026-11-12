@@ -806,6 +806,8 @@ randomization test of section 7 has 6 possible assignments, so its p-value canno
 0.33. Every other tier is below its threshold. No outcome was tabulated before this decision;
 only the response counts and timestamps were read. On 12 November the four forms were still
 accepting responses, past the registered close. No response had arrived after 3 November.
+The author keeps the forms open for three to four more months, until about March 2027, as an
+exploratory exercise. Responses submitted after the close are not part of the registered study.
 
 ## Appendix A. Treatment page text
 
